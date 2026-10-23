@@ -45,3 +45,7 @@ Published thirteen reviewed #29/#32 non-Matchms execution archives with accounti
 ## 2026-10-23 — follow-up retention milestone
 
 Published whitelisted scalar Matchms outcomes/provenance for #29/#30/#32 under HF snapshot `research/33-unattended-validation/2026-10-23/c89055424187380fb21b47a335ab4946bf60f30d86d863ca4ef35d09bb559572`; all5objects passed anonymous checksum readback. No raw logs, patches or fixture data included. Removed verified staging. Together with prior snapshots,21eligible full archives are public and five raw Matchms archives remain protected locally with exact path/hash retention records. This completes initial #29–#32 eligible-evidence preservation, not public release of the restricted originals or retention of future #34 outputs.
+
+## 2026-10-23 — reusable-change assessment
+
+Reviewed exact #30 transport and #32 completion candidates against their recorded experiments. Stdin transport has synthetic payload and one live control-parity support, but timeout cleanup remains an independent obligation. The initial outer completion check is insufficient; the stronger pytest candidate has real synthetic runner evidence but lacks biological Harbor validation and skips other runners. Targeting changes test scope and is not bundled into completion correctness. Recorded the qualified decisions and source hashes; no new test run, job, model call or pipeline change. This completes the epic's assessment item, leaving offline comparison and resumable-runner demonstration outstanding.

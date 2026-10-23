@@ -1,0 +1,68 @@
+{
+  "scope": "Source-bound assessment of existing #30/#32 evidence; no new execution, pipeline promotion or baseline change",
+  "sources": {
+    "30/transport.patch": {
+      "commit": "fc2e59f8a77bc4569d363c3bd2fd3a9e81378920",
+      "sha256": "9540240246d1a51267cbbf1fe6dbc5ca6ab61ddc5ad00593e0718f57e1d1222e"
+    },
+    "30/local-results.json": {
+      "commit": "fc2e59f8a77bc4569d363c3bd2fd3a9e81378920",
+      "sha256": "3e7cdcf11ba528d42a80b222b5e78e4730bf57e277f31e86b29b0fc2d46a13ad"
+    },
+    "30/live-diagnosis.json": {
+      "commit": "fc2e59f8a77bc4569d363c3bd2fd3a9e81378920",
+      "sha256": "3bf606930bd21948b99ce4dc2f9921a3eca641d8ba05506553e262b16749cac0"
+    },
+    "30/live-readback.json": {
+      "commit": "fc2e59f8a77bc4569d363c3bd2fd3a9e81378920",
+      "sha256": "e030ae5a1a5c18b69d62dc0f73d1d2a2f9b09d725dcdb8ff4f77d5c2ae9fb8c9"
+    },
+    "30/attempts/004/result.json": {
+      "commit": "fc2e59f8a77bc4569d363c3bd2fd3a9e81378920",
+      "sha256": "ed638b811831feafe6fddba25b2a91106e61bdc997e12f07c1a43b965c3ba6f0"
+    },
+    "32/completion-gate.patch": {
+      "commit": "706f369f0ec7be96b0ba700d01af7e3e4bdbbbb8",
+      "sha256": "b694b643ae04a5dd68d505ffde42f3a79e0b36caa286b44be879c8bb9dda67ad"
+    },
+    "32/completion-results.json": {
+      "commit": "706f369f0ec7be96b0ba700d01af7e3e4bdbbbb8",
+      "sha256": "79eb7e64e26212026d89a15c3cdb02da9fafa9436824d55dcfac8245854c76da"
+    },
+    "32/inner-exit-results.json": {
+      "commit": "706f369f0ec7be96b0ba700d01af7e3e4bdbbbb8",
+      "sha256": "36cc65a269dc2c690ae57daa82a64b0c69a4672eec783b5ad705451ffa8cc344"
+    },
+    "32/pytest-completion.patch": {
+      "commit": "706f369f0ec7be96b0ba700d01af7e3e4bdbbbb8",
+      "sha256": "7d4a52c4db61d39641e65aaa882787dd5431996a33a60b422ed9c076bb821459"
+    },
+    "32/pytest-completion-results.json": {
+      "commit": "706f369f0ec7be96b0ba700d01af7e3e4bdbbbb8",
+      "sha256": "45e255f2ecd30e78405a10d660b7a5a922bb2f4f9bc27804bc9edaab0660c618"
+    },
+    "32/policy-integration-results.json": {
+      "commit": "706f369f0ec7be96b0ba700d01af7e3e4bdbbbb8",
+      "sha256": "3cc81401ac1e863e9fd5b7000ab771611d6220c03e8e94f8756ab6f586c1cfc8"
+    },
+    "32/target-live-diagnosis.json": {
+      "commit": "706f369f0ec7be96b0ba700d01af7e3e4bdbbbb8",
+      "sha256": "ee13f0a856708f73b2447199b05dbe68fd6be6e896cfb67108516a4521eac019"
+    },
+    "32/samtools-native-log-audit.json": {
+      "commit": "706f369f0ec7be96b0ba700d01af7e3e4bdbbbb8",
+      "sha256": "17e85afd4911571b9def2c898bc79fe5c1805f3da24a41c21fe091d3d4d138b7"
+    }
+  },
+  "decisions": {
+    "stdin_transport": "Suitable for a separately tested reusable change; require ownership-scoped teardown on client timeout. Exact payload delivery and one live parity control are established, universal shell equivalence is not.",
+    "outer_completion_gate": "Do not promote alone. Actual Bash experiments show outer exit/markers can hide failing inner runner exits.",
+    "pytest_completion": "Promising opt-in candidate: retain setup/transport/marker checks and capture inner pytest exit; accept ordinary test failures, reject interruption/no-tests/usage failures. Evidence is synthetic real pytest plus standalone verifier, not full biological Harbor validation.",
+    "runner_coverage": "Do not apply pytest-only validation as a universal replacement; it skips non-pytest commands including the OHIF/Jest cohort.",
+    "target_selection": "Keep separate from completion correctness: choosing surviving/changed tests changes scope. It did not recover Matchms958 and remains unvalidated on MNE.",
+    "samtools": "Recognition alone is insufficient: repeated headings and composite make targets require stable identities and completion coverage."
+  },
+  "next_integration_boundary": "Keep existing official baseline and #34 frozen comparison unchanged. A future consolidated candidate must independently test transport timeout cleanup, runner-specific completion, and ordinary exit1 behavior before broader rollout.",
+  "model_calls": 0,
+  "remote_jobs": 0
+}
