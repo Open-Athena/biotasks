@@ -67,7 +67,8 @@ def main():
                 paths.update(b for a, b in patch_paths)
                 for path in [b for a,b in patch_paths if 'LICENSE' in b.upper() or 'COPYING' in b.upper()]:
                     notice_refs.setdefault(path, set()).add(int(re.search(r'pr-(\d+)', member.name)[1]))
-                if 'pip install -e .' in command and value['result']['duration_sec'] > 1:
+                if (re.search(r'/exec-\d+-pr-None\.json\.gz$', member.name)
+                        and 'pip install -e .' in command and value['result']['duration_sec'] > 1):
                     output = value['result']['stdout'] + value['result']['stderr']
                     installs.append({'member': member.name, 'command': command,
                         'shell_exit': value['result']['exit_code'],

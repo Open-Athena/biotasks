@@ -77,8 +77,11 @@ def main():
             assert start['pr'] == int(found[3]) and start['language'] == 'python'
             assert any('pytest' in command for command in start['test_cmds'])
             statuses = {stage: parse(slice_output(outcome[stage + '_log'])) for stage in ['pre', 'post']}
-            f2p = sorted(t for t,s in statuses['pre'].items() if s in ['FAILED', 'ERROR'] and statuses['post'].get(t) == 'PASSED')
-            p2p = sorted(t for t,s in statuses['pre'].items() if s == 'PASSED' and statuses['post'].get(t) == 'PASSED')
+            # Native no-F2P returns preserve insertion order; verified returns sort.
+            f2p = [t for t,s in statuses['pre'].items() if s in ['FAILED', 'ERROR'] and statuses['post'].get(t) == 'PASSED']
+            p2p = [t for t,s in statuses['pre'].items() if s == 'PASSED' and statuses['post'].get(t) == 'PASSED']
+            if outcome['status'] == 'verified':
+                f2p, p2p = sorted(f2p), sorted(p2p)
             compared = outcome['status'] == 'verified' or outcome['reason'] == 'no fail-to-pass tests after validation'
             if compared:
                 assert f2p == outcome['fail_to_pass'] and p2p == outcome['pass_to_pass']

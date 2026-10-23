@@ -402,3 +402,16 @@ Meaningful route/receipt checks reject mixed-license public routing, wrong bucke
 
 
 Original05:20:40metadata shows96completed controls, one running and19unstarted in the fixed allocation; no grade is inferred from wrapper status. Published data-retention comment6358086906 with exact readback and unchanged58-export current body/OPEN/agent-generated checks. The frozen execution protocol is preserved byte-for-byte; a separate restricted-retention addendum documents authenticated/private proof gates and keeps scientific acceptance distinct from data reuse. No restricted spectral peak bytes are in public Git, and no original Matchms phase has been published.
+
+
+### Matchms terminal controls and exact source binding
+
+Original Matchms job finished05:26:47UTC with one attempt, six upstream calls/$0.165093complete,7.579673333allocatedCPUh and owned cleanup verified empty. The same serial controller submitted the first original Cobrapy handle; authoritative05:35:55query confirms RUNNING/oneattempt. No job or model regeneration occurs.
+
+Read-only original-result assessment finds58exports,54complete positive tracked-test control pairs and49clean oracle command pairs.109controls completed; seven remain unstarted at the unchanged primary allocation boundary (oracle671and both675/70/98). Five positive oracle controls (304/349/350/399/405) retain one untracked failure each; they are primary successes, not clean command successes. All58packages are new relative to September and unchanged across controls. Runtime-byte comparison finds57groups, with349/350identical across base/image/recipe/test/verifier/F2P/P2P/gold-patch bytes; raw PR-package counts remain unchanged and are not a distinct-problem estimate.
+
+Terminal binding verifies28original live ledger/event/returned-list/export hashes,164outcome gzip hashes/headers,174validation-start/head-descriptor pairs,all58contracts,31earlier exported-file inventories,the first pair/full logs,and the saved bootstrap JSON against the original phase.327notices cover348actual base/head uses exactly. The pinned-parser census reproduces all164original pair outcomes:80pre and23post collection-error pairs, no compiled-extension removals, zero timeout markers among319recorded native test stages. Missing dependencies and original patch/argument-limit failures remain unrepaired.
+
+Two reporting-only corrections were needed to read these originals faithfully: native no-F2P outcomes preserve parser insertion order while verified outcomes sort test IDs; bootstrap editable-install detection now excludes pip text inside PR patches. These change only derived audits, not native parsers, execution, task files or rewards. The census reports exact pinned source hashes.
+
+All ten long encoded-payload signals are actual XML mass-spectrum binary arrays in two original PR110 patch records, adding unresolved fixture lineage/terms to the already documented CC BY-NC/reference-data limitations. No encoded bytes or spectral peaks are added to public metadata. A canonical explicit private-only review permits retention of132original root files plus327exact notices/supporting metadata in the dedicated private bucket. Actual full-object/member private readback and full accounting remain pending; native output metadata is not rewritten into accepted state.
