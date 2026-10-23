@@ -79,3 +79,5 @@ Verified23,940-byte archive4f4bfd35428e998776d628d84fe5d345479888b8b32a508e8f800
 ### 2026-10-23 — Checkpoint MNE post-check timeout comparison
 
 Prepared a separate replay with only the exact upstream smoke/fresh invocations extended 300→1,200 seconds. All 12 original recorded actions and source inputs remain unchanged, including invalid `Assistant:` tails and exit 127. The original failure/partial smoke record remains intact. Seven pure routing checks pass, including original action/commit limits unchanged; five entrypoints syntax-check. Preflight finds the same reserved worker healthy. One attempt reserves 5 CPU-hours; 0.72125 prior measured usage plus 5 fits the 10-hour issue ceiling. No models/new capacity. Native PR validation still requires a usable retained image and a separate comparison.
+
+Submitted `biotasks32-mne-longcheck-001` from `4b3bc656` to the original reserved worker; payload hashes match preflight. Results/archive/cleanup pending.
