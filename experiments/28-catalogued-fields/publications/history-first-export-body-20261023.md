@@ -1,0 +1,7 @@
+Evaluate official Repo2RLEnv `pr_runtime` across merged-PR history for the same ten repositories, without the September cutoff, toward scalable automated task generation. Keep changes minimal and justified, with only upstream's model calls and no extra repair loop.
+
+**Status: in progress.** Discovery is verified and archived: **23,285 unique merged PRs / 237 pages**. One of ten history runs is complete: SAMtools entered all 735 identities, exported no tasks and cost $0.602694. Scanpy has reached native task export; independent controls and terminal results remain pending, along with the remaining repository results. Inventoried PRs are not all validated or suitable tasks.
+
+**OpenRouter ceiling: $100 total**, including the **$5.975286 September baseline**. Current reconciled history charges are **$0.602694**, excluding the active Scanpy run. Conservative reservations gate original model requests; repos run serially on existing reserved TRC CPUs, with no new capacity or accelerators.
+
+The September baseline remains separate: two exports, one tracked-test verified task, zero clean oracle commands. [Baseline conclusion](https://github.com/Open-Athena/biotasks/issues/28#issuecomment-6352713291) · [History protocol and discovery evidence](https://github.com/Open-Athena/biotasks/issues/28#issuecomment-6353824098) · [SAMtools result](https://github.com/Open-Athena/biotasks/issues/28#issuecomment-6354537111) · [Scanpy export update](https://github.com/Open-Athena/biotasks/issues/28#issuecomment-6354767143). Detailed updates remain in comments.
