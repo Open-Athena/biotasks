@@ -83,3 +83,7 @@ Prepared a separate replay with only the exact upstream smoke/fresh invocations 
 Submitted `biotasks32-mne-longcheck-001` from `4b3bc656` to the original reserved worker; payload hashes match preflight. Results/archive/cleanup pending.
 
 Prepared bounded MNE timing archive readback. It verifies downloaded archive identity, original actions, source/commit/base-image parity with the earlier replay, original versus applied post-check timeouts, raw command output hashes and cleanup report. No live result is inferred while the handle is running.
+
+### 2026-10-23 — SAMtools original runner evidence
+
+Anonymously downloaded the previously verified public #28 SAMtools phase archive (896,539 bytes, SHA256 `b4f08783faf68a2d11b91c89192d019928b9fb968b9ba8b3cb6dbf872d420675`) into ignored private experiment storage; its temporary HF Xet cache was removed after verification. The original bootstrap `make test` record at ref `d4fd5c9d` completed with exit0 in46.995s. It contains523 per-test heading occurrences but only29 names; `test_sort` appears36times. Perl summary reports1,052 total /1,020 passed /0 failed /32 expected failure /0 unexpected pass; other make components follow. The raw member hash and parsed counts are recorded in `samtools-native-log-audit.json`. This confirms actual heading collisions, but it is bootstrap smoke, not PR1605 validation or a task control. No new jobs/model calls.
