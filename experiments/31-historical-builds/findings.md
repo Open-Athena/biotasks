@@ -44,3 +44,9 @@ No generic lifecycle patch has been applied to a repository pipeline and no live
 `historical-rebuild.patch` adds `replay_bootstrap_rebuild=False`, passes recorded bootstrap commands to native validation and exported verification, and records the procedure in exported metadata. Enabled native setup checks checkout/patch/build completion before parsing; disabled script output is byte-identical in the exercised cases. Export installs a zero reward before rebuilding to avoid retaining an old success if the build is interrupted.
 
 The same 12 compiled cases pass through candidate builders (rather than the earlier script adapter). Source parsing and patch application against pinned sources also pass. A first fixture attempt caught a list-index error in candidate generation; it was corrected and the failed resource record is retained. Full configuration execution, graded-verifier checks and fail-closed handling of exported test reset remain unverified. Do not use this candidate for a live recovery claim yet.
+
+## Graded export and reset checks
+
+Seven additional cases execute actual unittest output through the unchanged pinned graded verifier. Nop receives zero; oracle receives one with `command_resolved=true`. A deliberately failing extra command preserves tracked resolution but makes `command_resolved=false`. Rebuild failure clears a prior successful reward. Invalid base and obstructed test paths stop with zero; a test file legitimately absent at base is removed/reapplied successfully. The candidate now checks exported reset operations instead of inheriting the original blanket `|| true` at setup.
+
+The 12-case compiled check still passes. These checks close the graded-verifier/reset fixture gaps described above, but do not exercise full pipeline configuration, native ValidationOutcome plumbing or biological task recovery. Details are in `graded-export-results.json`.

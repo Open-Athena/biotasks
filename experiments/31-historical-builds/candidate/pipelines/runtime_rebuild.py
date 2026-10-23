@@ -19,3 +19,24 @@ def rebuild_script(commands: list[str], *, exported: bool = False) -> str:
             + '  echo R2E_REBUILD_FAILED >&2\n  exit "$R2E_REBUILD_RC"\nfi\n'
         )
     return script + '\n'
+
+
+def reset_test_script(base_commit: str, files: list[str]) -> str:
+    """Restore existing test files; remove additions before reapplying tests."""
+    # Validate the commit independently: an absent path is normal for added
+    # tests, while an invalid commit or Git error must not be ignored.
+    lines = ['git rev-parse --verify ' + shlex.quote(base_commit + '^{commit}') + ' >/dev/null || exit $?']
+    for path in files:
+        if not path or path.startswith('/') or any(p in ('', '.', '..') for p in path.split('/')):
+            raise ValueError('Unsafe or non-normalized test patch path')
+        quoted = shlex.quote(path)
+        base = shlex.quote(base_commit)
+        lines += [
+            f'R2E_TRACKED=$(git --literal-pathspecs ls-tree -r --name-only {base} -- {quoted}) || exit $?',
+            'if [ -n "$R2E_TRACKED" ]; then',
+            f'  git --literal-pathspecs checkout {base} -- {quoted} || exit $?',
+            'else',
+            f'  rm -f -- {quoted} || exit $?',
+            'fi',
+        ]
+    return '\n'.join(lines) + '\n'

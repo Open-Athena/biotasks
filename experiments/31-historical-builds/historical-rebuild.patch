@@ -4,7 +4,7 @@
      return f'export PATH="{joined}:$PATH"\n'
  
  
-+from repo2rlenv.pipelines.runtime_rebuild import rebuild_script
++from repo2rlenv.pipelines.runtime_rebuild import rebuild_script, reset_test_script
 +
 +
  def build_eval_script(
@@ -34,7 +34,25 @@
          # Capture the suite output so the verifier can parse per-test status.
          # `( ... )` subshell + redirect keeps the whole `a && b` block's output;
          # pipefail preserves the real test exit code.
-@@ -836,6 +842,11 @@
+@@ -515,6 +521,17 @@
+         "TEST_EXIT_CODE=$?\n"
+         "cat /logs/verifier/test_output.log\n"
+     )
++
++    if rebuild_cmds is not None:
++        # Before any setup failure, invalidate the previous reward. Restore
++        # test files exactly, allowing additions but not masking Git errors.
++        initial = (
++            "mkdir -p /logs/verifier || exit $?\n"
++            "echo 0.0 > /logs/verifier/reward.txt || exit $?\n"
++            "echo '{\"reward\":0.0,\"resolved\":false,\"parse_status\":\"setup_incomplete\"}' > /logs/verifier/reward-details.json || exit $?\n"
++        )
++        head = head.replace("cd /workspace\n", initial + "cd /workspace || exit $?\n", 1)
++        head = head.replace(f"{reset} || true\n", reset_test_script(base_commit, test_files), 1)
+ 
+     if not fail_to_pass:
+         # No F2P oracle available (e.g. --skip-validation). Fall back to the
+@@ -836,6 +853,11 @@
          self.input = input
          self.options = options
          self.bootstrap = bootstrap
@@ -46,7 +64,7 @@
          self._progress_cb = None
  
      def set_progress_callback(self, cb) -> None:
-@@ -950,6 +961,7 @@
+@@ -950,6 +972,7 @@
                          test_cmds=targeted_cmds,
                          language=self.bootstrap.language.value,
                          timeout=self.options.validation_timeout_sec,
@@ -54,7 +72,7 @@
                      )
                      fail_to_pass = outcome.fail_to_pass
                      pass_to_pass = outcome.pass_to_pass
-@@ -1110,6 +1122,7 @@
+@@ -1110,6 +1133,7 @@
              language=self.bootstrap.language.value,
              fail_to_pass=fail_to_pass,
              pass_to_pass=pass_to_pass,
@@ -62,7 +80,7 @@
          )
          # Use image_tag for local-only bootstraps (Docker can resolve locally),
          # image_digest only when the image is in a registry that BuildKit can
-@@ -1147,6 +1160,8 @@
+@@ -1147,6 +1171,8 @@
                  # go to reward-details.json (eval signal — Harbor's reward.json
                  # schema is flat-numeric-only). See _pr_runtime_verifier.py.
                  "reward_mode": "graded",
@@ -164,7 +182,7 @@
      lite_filter: bool = False
 --- /dev/null
 +++ b/src/repo2rlenv/pipelines/runtime_rebuild.py
-@@ -0,0 +1,21 @@
+@@ -0,0 +1,42 @@
 +"""Opt-in deterministic replay of recorded bootstrap build commands."""
 +import shlex
 +
@@ -186,3 +204,24 @@
 +            + '  echo R2E_REBUILD_FAILED >&2\n  exit "$R2E_REBUILD_RC"\nfi\n'
 +        )
 +    return script + '\n'
++
++
++def reset_test_script(base_commit: str, files: list[str]) -> str:
++    """Restore existing test files; remove additions before reapplying tests."""
++    # Validate the commit independently: an absent path is normal for added
++    # tests, while an invalid commit or Git error must not be ignored.
++    lines = ['git rev-parse --verify ' + shlex.quote(base_commit + '^{commit}') + ' >/dev/null || exit $?']
++    for path in files:
++        if not path or path.startswith('/') or any(p in ('', '.', '..') for p in path.split('/')):
++            raise ValueError('Unsafe or non-normalized test patch path')
++        quoted = shlex.quote(path)
++        base = shlex.quote(base_commit)
++        lines += [
++            f'R2E_TRACKED=$(git --literal-pathspecs ls-tree -r --name-only {base} -- {quoted}) || exit $?',
++            'if [ -n "$R2E_TRACKED" ]; then',
++            f'  git --literal-pathspecs checkout {base} -- {quoted} || exit $?',
++            'else',
++            f'  rm -f -- {quoted} || exit $?',
++            'fi',
++        ]
++    return '\n'.join(lines) + '\n'

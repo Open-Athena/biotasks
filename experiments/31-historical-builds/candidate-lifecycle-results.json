@@ -1,5 +1,5 @@
 {
-  "scope": "Synthetic C library through pinned baseline and opt-in candidate builders. Local path mapping; no full pipeline, Docker, Harbor or biological PR execution.",
+  "scope": "Synthetic C shared library; pinned native/export shell builders, local path mapping and optional research rebuild adapter. No Docker, model, biological PR, full pipeline or Harbor execution.",
   "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
   "cases": [
     {
@@ -11,7 +11,7 @@
       "test_passed": false,
       "stale_false_positive": false,
       "binary_sha256": null,
-      "output": "HEAD is now at 0d62bae Base revision\nRemoving fixture.so\nR2E_START_TEST_OUTPUT\nTraceback (most recent call last):\n  File \"<fixture>/workspace/check.py\", line 3, in <module>\n    lib=ctypes.CDLL(str(p))\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 361, in __init__\n    self._handle = self._load_library(name, mode, handle, winmode)\n                   ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 403, in _load_library\n    return _dlopen(name, mode)\nOSError: <fixture>/workspace/fixture.so: cannot open shared object file: No such file or directory\nR2E_END_TEST_OUTPUT\n",
+      "output": "HEAD is now at 5f49d9a Base revision\nRemoving fixture.so\nR2E_START_TEST_OUTPUT\nTraceback (most recent call last):\n  File \"<fixture>/workspace/check.py\", line 3, in <module>\n    lib=ctypes.CDLL(str(p))\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 361, in __init__\n    self._handle = self._load_library(name, mode, handle, winmode)\n                   ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 403, in _load_library\n    return _dlopen(name, mode)\nOSError: <fixture>/workspace/fixture.so: cannot open shared object file: No such file or directory\nR2E_END_TEST_OUTPUT\n",
       "reward": null
     },
     {
@@ -23,7 +23,7 @@
       "test_passed": false,
       "stale_false_positive": false,
       "binary_sha256": null,
-      "output": "HEAD is now at 0d62bae Base revision\nRemoving fixture.so\nR2E_START_TEST_OUTPUT\nTraceback (most recent call last):\n  File \"<fixture>/workspace/check.py\", line 3, in <module>\n    lib=ctypes.CDLL(str(p))\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 361, in __init__\n    self._handle = self._load_library(name, mode, handle, winmode)\n                   ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 403, in _load_library\n    return _dlopen(name, mode)\nOSError: <fixture>/workspace/fixture.so: cannot open shared object file: No such file or directory\nR2E_END_TEST_OUTPUT\n",
+      "output": "HEAD is now at 5f49d9a Base revision\nRemoving fixture.so\nR2E_START_TEST_OUTPUT\nTraceback (most recent call last):\n  File \"<fixture>/workspace/check.py\", line 3, in <module>\n    lib=ctypes.CDLL(str(p))\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 361, in __init__\n    self._handle = self._load_library(name, mode, handle, winmode)\n                   ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 403, in _load_library\n    return _dlopen(name, mode)\nOSError: <fixture>/workspace/fixture.so: cannot open shared object file: No such file or directory\nR2E_END_TEST_OUTPUT\n",
       "reward": null
     },
     {
@@ -35,7 +35,7 @@
       "test_passed": false,
       "stale_false_positive": false,
       "binary_sha256": "3052e32cdb743ccf439c317cab73a90314a0e95787ea54c8e417fe21a46df6b9",
-      "output": "HEAD is now at 0d62bae Base revision\nRemoving fixture.so\nR2E_START_TEST_OUTPUT\nIMPORT <fixture>/workspace/fixture.so VALUE 1 SHA256 3052e32cdb743ccf439c317cab73a90314a0e95787ea54c8e417fe21a46df6b9\nTraceback (most recent call last):\n  File \"<fixture>/workspace/check.py\", line 6, in <module>\n    assert v == 2\n           ^^^^^^\nAssertionError\nR2E_END_TEST_OUTPUT\n",
+      "output": "HEAD is now at 5f49d9a Base revision\nRemoving fixture.so\nR2E_START_TEST_OUTPUT\nIMPORT <fixture>/workspace/fixture.so VALUE 1 SHA256 3052e32cdb743ccf439c317cab73a90314a0e95787ea54c8e417fe21a46df6b9\nTraceback (most recent call last):\n  File \"<fixture>/workspace/check.py\", line 6, in <module>\n    assert v == 2\n           ^^^^^^\nAssertionError\nR2E_END_TEST_OUTPUT\n",
       "reward": null
     },
     {
@@ -47,7 +47,7 @@
       "test_passed": true,
       "stale_false_positive": false,
       "binary_sha256": "9fa6d1bc931018ed60f7c889b57b71ae0fb6f4f8e20e45b5c1dad023ae7b77a0",
-      "output": "HEAD is now at 0d62bae Base revision\nRemoving fixture.so\nR2E_START_TEST_OUTPUT\nIMPORT <fixture>/workspace/fixture.so VALUE 2 SHA256 9fa6d1bc931018ed60f7c889b57b71ae0fb6f4f8e20e45b5c1dad023ae7b77a0\nFIXTURE_PASS\nR2E_END_TEST_OUTPUT\n",
+      "output": "HEAD is now at 5f49d9a Base revision\nRemoving fixture.so\nR2E_START_TEST_OUTPUT\nIMPORT <fixture>/workspace/fixture.so VALUE 2 SHA256 9fa6d1bc931018ed60f7c889b57b71ae0fb6f4f8e20e45b5c1dad023ae7b77a0\nFIXTURE_PASS\nR2E_END_TEST_OUTPUT\n",
       "reward": null
     },
     {
@@ -90,7 +90,7 @@
       "test_passed": false,
       "stale_false_positive": false,
       "binary_sha256": "3052e32cdb743ccf439c317cab73a90314a0e95787ea54c8e417fe21a46df6b9",
-      "output": "no test files to reset\n+ python3 check.py\nIMPORT <fixture>/workspace/fixture.so VALUE 1 SHA256 3052e32cdb743ccf439c317cab73a90314a0e95787ea54c8e417fe21a46df6b9\nTraceback (most recent call last):\n  File \"<fixture>/workspace/check.py\", line 6, in <module>\n    assert v == 2\n           ^^^^^^\nAssertionError\nno test files to reset\n",
+      "output": "+ python3 check.py\nIMPORT <fixture>/workspace/fixture.so VALUE 1 SHA256 3052e32cdb743ccf439c317cab73a90314a0e95787ea54c8e417fe21a46df6b9\nTraceback (most recent call last):\n  File \"<fixture>/workspace/check.py\", line 6, in <module>\n    assert v == 2\n           ^^^^^^\nAssertionError\nno test files to reset\n",
       "reward": "0.0"
     },
     {
@@ -102,7 +102,7 @@
       "test_passed": true,
       "stale_false_positive": false,
       "binary_sha256": "9fa6d1bc931018ed60f7c889b57b71ae0fb6f4f8e20e45b5c1dad023ae7b77a0",
-      "output": "no test files to reset\n+ python3 check.py\nIMPORT <fixture>/workspace/fixture.so VALUE 2 SHA256 9fa6d1bc931018ed60f7c889b57b71ae0fb6f4f8e20e45b5c1dad023ae7b77a0\nFIXTURE_PASS\nno test files to reset\n",
+      "output": "+ python3 check.py\nIMPORT <fixture>/workspace/fixture.so VALUE 2 SHA256 9fa6d1bc931018ed60f7c889b57b71ae0fb6f4f8e20e45b5c1dad023ae7b77a0\nFIXTURE_PASS\nno test files to reset\n",
       "reward": "1.0"
     },
     {
@@ -141,10 +141,8 @@
   "all_assertions_passed": true,
   "temporary_directory_removed": true,
   "limits": [
-    "Export fixture uses binary reward fallback, not graded parser",
-    "No dependency installation or historical drift",
-    "Configuration/call-site wiring exists but full pipeline is not executed",
-    "No MACS recovery claim"
+    "No full pipeline configuration or Docker/Harbor execution",
+    "No biological repository recovery or historical dependency replay"
   ],
   "implementation": "candidate builders"
 }

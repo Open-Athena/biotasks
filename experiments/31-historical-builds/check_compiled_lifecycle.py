@@ -58,9 +58,10 @@ def main():
     candidate_export = dict(exported)
     helper = {'shlex': shlex}
     if args.candidate:
-        load_functions(ROOT / 'candidate/pipelines/runtime_rebuild.py', ['rebuild_script'], helper)
+        load_functions(ROOT / 'candidate/pipelines/runtime_rebuild.py', ['rebuild_script', 'reset_test_script'], helper)
         candidate_native['rebuild_script'] = helper['rebuild_script']
         candidate_export['rebuild_script'] = helper['rebuild_script']
+        candidate_export['reset_test_script'] = helper['reset_test_script']
         load_functions(ROOT / 'candidate/pipelines/pr_runtime_validate.py', ['_build_stage_script'], candidate_native)
         load_functions(ROOT / 'candidate/pipelines/pr_runtime.py', ['build_eval_script'], candidate_export)
         # Default-off must retain the exact original generated script.

@@ -432,7 +432,7 @@ def _path_prelude_for_language(language: str | None) -> str:
     return f'export PATH="{joined}:$PATH"\n'
 
 
-from repo2rlenv.pipelines.runtime_rebuild import rebuild_script
+from repo2rlenv.pipelines.runtime_rebuild import rebuild_script, reset_test_script
 
 
 def build_eval_script(
@@ -521,6 +521,17 @@ def build_eval_script(
         "TEST_EXIT_CODE=$?\n"
         "cat /logs/verifier/test_output.log\n"
     )
+
+    if rebuild_cmds is not None:
+        # Before any setup failure, invalidate the previous reward. Restore
+        # test files exactly, allowing additions but not masking Git errors.
+        initial = (
+            "mkdir -p /logs/verifier || exit $?\n"
+            "echo 0.0 > /logs/verifier/reward.txt || exit $?\n"
+            "echo '{\"reward\":0.0,\"resolved\":false,\"parse_status\":\"setup_incomplete\"}' > /logs/verifier/reward-details.json || exit $?\n"
+        )
+        head = head.replace("cd /workspace\n", initial + "cd /workspace || exit $?\n", 1)
+        head = head.replace(f"{reset} || true\n", reset_test_script(base_commit, test_files), 1)
 
     if not fail_to_pass:
         # No F2P oracle available (e.g. --skip-validation). Fall back to the
