@@ -3887,3 +3887,7 @@ Cohort014is now entirely terminal and clean: two independently validated tasks(0
 ## 2026-10-23 UTC: launch the tested general candidate after full prior cleanup
 
 096protein-sequence and103molecular-dynamics payloads were submitted on the identical187-filefactory after checking every086–095host terminal and its cleanup proof clear. Original source/notebook assets and payload/runtime maps match their freezes; no past answers or diagnoses were supplied. Two active hosts maximum, one sandbox each, same deadlines/GLMhigh/resource/network rules. Five other panel cases remain unfunded and cannot launch. A policy clarification is pending about the earlier supplied-label decision versus the later stricter artifact-reproduction proposal; no new intermediate-input permission was assumed or hotpatched into these runs.
+
+## 2026-10-23 UTC: reference inspection exercised in live workers
+
+Read-only streaming of the two active specification traces confirms096used the new reference-file tool twice for recorded HMM/domain-table artifacts;103used it once for a recorded result table. Returned size/hash identities are present in the recorded tool results. This supports the evidence-access mechanism, not task acceptance or correctness. No extra model calls, scientific computation, source edits or operator task hints were introduced. See factory-checks/reference-inspection/live-round015-observation.json.
