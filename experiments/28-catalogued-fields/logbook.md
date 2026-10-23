@@ -572,3 +572,8 @@ The user requested a diagnosis of all current repositories and whether different
 ### 2026-10-23: user-requested closure after diagnosis
 
 After discussing our CPU/scheduling limits, historical and language coverage, and limitations in the pinned upstream implementation, the user requested closing #28 for now with a summary in the issue body. This explicitly supersedes the prior keep-open instruction. Updated the diagnosis status and prepared a concise body covering results, limitations, untested recovery proposals, spending and retention. No further native/model jobs, repairs or spending. Original evidence and earlier lifecycle records remain preserved.
+
+
+### 2026-10-23: separate follow-up issues
+
+At the user's request, checked existing issues and filed #29 (timeout/scheduling), #30 (script transport), #31 (historical compiled environments) and #32 (test selection/parser coverage). Exact bodies, OPEN states and agent-generated labels passed readback. Each records the baseline evidence, bounded first investigation, proposed comparison and distinction between mechanism recovery and independently validated tasks. No additional remote/native/model jobs or repairs were launched. #28 remains closed; linked follow-ups in a comment.
