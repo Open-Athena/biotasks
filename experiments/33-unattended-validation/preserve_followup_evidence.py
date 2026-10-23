@@ -123,7 +123,7 @@ def prepare(args):
 
 
 def publish(stem='followup', approved_scope='thirteen_non_matchms_followup_execution_archives'):
-    assert stem in ('followup', 'matchms-summary')
+    assert stem in ('followup', 'matchms-summary', 'offline')
     for name in (f'{stem}-evidence-manifest.json', f'{stem}-public-review.json', 'preserve_followup_evidence.py'):
         subprocess.run(['git', 'ls-files', '--error-unmatch', str(ROOT / name)], cwd=ROOT, check=True, capture_output=True)
         subprocess.run(['git', 'diff', '--exit-code', 'HEAD', '--', str(ROOT / name)], cwd=ROOT, check=True, capture_output=True)

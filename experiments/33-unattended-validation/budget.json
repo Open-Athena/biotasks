@@ -10,7 +10,7 @@
   "admission_rule": "Before enabling paid model execution, verify model pricing and maximum request cost; atomically reserve a conservative bound, then reconcile provider-reported actual usage. Stop if accrued cost plus outstanding reservations plus the proposed bound exceeds 90 USD or cost is unknown.",
   "per_repository_settings": "Preserve official bootstrap settings: Sonnet 4.6 through OpenRouter, temperature 0.2, 2048 output-token cap, 20 calls, 5 USD estimated repository stop threshold; global admission remains required.",
   "additional_reserved_cpu_hour_ceiling": 32,
-  "additional_allocated_cpu_hours": 1.5525788889990912,
+  "additional_allocated_cpu_hours": 2.203876666757796,
   "new_paid_capacity_allowed": false,
   "events": [
     {
@@ -36,9 +36,18 @@
       "run_id": "biotasks34-macs-742-controls-001",
       "maximum_allocated_cpu_hours": 4,
       "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "child_issue": 34,
+      "actual_allocated_cpu_hours": 0.6512977777587043
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks34-macs-742-image-cleanup-001",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
       "state": "reserved before submission",
       "child_issue": 34
     }
   ],
-  "outstanding_cpu_hour_reservations": 4
+  "outstanding_cpu_hour_reservations": 0.16666666666666666
 }
