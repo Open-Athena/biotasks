@@ -4360,3 +4360,6 @@ Future autonomous setup/replay/grading configs now select the live-checked async
 ## 2026-10-24 UTC: fresh integrated Matchms validation
 
 Reserve campaign144(5USD) for the unchanged original source-only Matchms notebook. The previous135transport/setup exhaustion remains an incomplete result. This fresh campaign will test the general async-session integration and intervening reviewer/input/precision/error improvements, with no previous generated artifacts supplied. Existing high/CPU/offline/10-minute/two-reference-test/one-quality-repair policy is unchanged. Shared pool still includes142; the synthetic compatibility sandbox is independently clean. Aggregate conservative holds162/200,38unallocated. Prepared/reserved is not submitted.
+
+
+144is confirmed submitted on the approved reserved CPU route after fresh typed admission found only142nonterminal. All204runtime files and unchanged source assets were verified against its freeze; one exclusive original submission claim exists. No prior generated artifacts were supplied. Conservative holds remain162/200with38unallocated. Submission is not completion or validation; original135remains preserved. See panel-rounds/027/submission-144.json.
