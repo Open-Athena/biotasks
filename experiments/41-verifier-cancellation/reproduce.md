@@ -1,0 +1,15 @@
+# Reproduce the verifier cancellation diagnostic
+
+This is a self-authored infrastructure fixture, not a biological task rerun. Native Harbor 0.6.6 and Tenacity 9.2.1 are pinned in package-acquisition.json and test-dependency-acquisition.json. Reacquire those public wheels with the recorded hashes; package binaries and installed environments are excluded from publication. Source acquisition helpers do not install into the project/global environment.
+
+The failed first managed attempt and exact pre-correction source/configuration are preserved in the three-object HF snapshot described by runs/failed-startup-1/manifest.json and hf-receipt.json. Its journal deliberately remains incomplete. Do not resume or replace that handle. The failure proves no nested creation only because the source-bound traceback occurs in a pure constructor before execute; an empty archive alone would not suffice.
+
+For the corrected attempt, runtime-plan.json records the exact payload manifest, owner handle, resource limits and remaining original CPU allowance. cohort.json records the ten fixture files, including five-second deadlines and two/thirty-second writers. Public-base references are digest-pinned. The metadata-only owned images differ solely by ownership labels and must preserve the public base layers/environment. No public base is deleted.
+
+On a separately authorized worker with Docker, render a new ownership handle and preserve the same fixture settings; never reuse these completed fixed handles. Run the official Harbor CLI shown in each native case command with nop, one trial and no job retries. Native internal verifier retries remain unchanged. A trusted outer controller supplies isolated Docker access, resource caps, independent inspections and ownership cleanup. Do not pass model/GitHub/storage credentials to it. The worker must have its own network access for public package/tool acquisition; fixture task containers have no network.
+
+The finite case is a prerequisite for interpreting the timeout case. Preserve native trial records, append-only process-events.jsonl and raw writer.log bytes before teardown. Inspect PID plus start ticks and non-zombie state, matching file inode, the old writer's offset versus the retried writer's reset offset, and in-container samples. NUL holes in a copied archive alone cannot prove native creation. collect.py computes observations without converting them into a biological score or proof of historical Scanpy causation.
+
+controller.py uses an eight-stage fixed-handle journal. Root Python/configuration changes after an effect invalidate its input binding. Postprocessing belongs under analysis/. Failed startup uses its separately archived fallback disposition; successful native lifecycle requires HF anonymous readback and owned cleanup before completion. The completed-reinvocation check must leave all stage evidence and budget bytes unchanged.
+
+Original settings or native package modifications are separate experiments. These synthetic five-second deadlines intentionally expose cancellation/retry behavior and must not be reported as the original Scanpy timeout settings.
