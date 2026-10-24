@@ -203,12 +203,25 @@ class Pipeline:
             value["terminal"] and value["job_id"] == "/exedev/" + group["run_id"],
             "Wrong accounting handle",
         )
-        budget.reconcile(self.ledger, group["run_id"], value["allocated_cpu_hours"])
+        try:
+            budget.reconcile(self.ledger, group["run_id"], value["allocated_cpu_hours"])
+        except budget.BudgetExceeded as error:
+            write_json(
+                directory / "budget-hold.json",
+                {
+                    "reason": str(error),
+                    "new_admission_closed": True,
+                    "already_reserved_preservation_cleanup_allowed": True,
+                },
+            )
         return value
 
     def terminal(self) -> None:
         if self.observe(self.group, self.directory) is not None:
-            self.record("remote_terminal", [self.directory / "accounting.json"])
+            paths = [self.directory / "accounting.json"]
+            if (self.directory / "budget-hold.json").exists():
+                paths.append(self.directory / "budget-hold.json")
+            self.record("remote_terminal", paths)
 
     def auxiliary(self, role: str, **settings: Any) -> tuple[dict[str, Any], Path, dict[str, Any]]:
         primary = read_json(self.directory / "submission.json")
@@ -347,7 +360,13 @@ class Pipeline:
             "source/notices.tar.gz": self.root / self.group["notices"]["path"],
             **extra,
         }
-        for name in ("submission.json", "accounting.json", "readback.json", "runtime.tar.zst"):
+        for name in (
+            "submission.json",
+            "accounting.json",
+            "readback.json",
+            "runtime.tar.zst",
+            "budget-hold.json",
+        ):
             if (directory / name).exists():
                 sources["execution/" + name] = directory / name
         return sources
@@ -409,15 +428,15 @@ class Pipeline:
         )
         write_json(self.directory / "cleanup-proof.json", proof)
         budget.release_cleanup(self.ledger, self.group["run_id"], proof, "stop")
-        self.record(
-            "cleanup_terminal",
-            [
-                raw,
-                directory / "accounting.json",
-                directory / "submission.json",
-                self.directory / "cleanup-proof.json",
-            ],
-        )
+        paths = [
+            raw,
+            directory / "accounting.json",
+            directory / "submission.json",
+            self.directory / "cleanup-proof.json",
+        ]
+        if (directory / "budget-hold.json").exists():
+            paths.append(directory / "budget-hold.json")
+        self.record("cleanup_terminal", paths)
 
     def cleanup_verified(self) -> None:
         directory = self.directory / "cleanup"
@@ -461,6 +480,21 @@ def run(root: Path, once: bool = False) -> dict[str, Any]:
             state = pipeline.step()
             states[group["id"]] = state
             if state == "complete":
+                holds = [
+                    pipeline.directory / p
+                    for p in (
+                        "budget-hold.json",
+                        "cleanup/budget-hold.json",
+                        "stop/budget-hold.json",
+                    )
+                ]
+                if any(p.exists() for p in holds):
+                    return {
+                        "state": "held",
+                        "reason": "CPU bound exceeded; preservation and cleanup completed, no further admission",
+                        "tasks": states,
+                        "unsupported": plan["unsupported"],
+                    }
                 break
             if state.startswith("held:"):
                 return {"state": "held", "tasks": states, "unsupported": plan["unsupported"]}
@@ -495,6 +529,16 @@ def status(root: Path) -> dict[str, Any]:
             {
                 "id": g["id"],
                 "repo": g["repo"],
+                "holds": {
+                    name: read_json(root / "runs" / g["id"] / name)
+                    for name in (
+                        "held.json",
+                        "budget-hold.json",
+                        "cleanup/budget-hold.json",
+                        "stop/budget-hold.json",
+                    )
+                    if (root / "runs" / g["id"] / name).exists()
+                },
                 "journal": read_json(root / "runs" / g["id"] / "journal.json")
                 if (root / "runs" / g["id"] / "journal.json").exists()
                 else None,

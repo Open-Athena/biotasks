@@ -4,7 +4,11 @@ import math
 from pathlib import Path
 from typing import Any
 
-from biotasks.validation.files import lock, read_json, require, write_json
+from biotasks.validation.files import ValidationError, lock, read_json, require, write_json
+
+
+class BudgetExceeded(ValidationError):
+    """Actual CPU is recorded; no new primary work, but finish preservation/cleanup."""
 
 
 def create(path: Path, ceiling: float) -> None:
@@ -20,6 +24,7 @@ def create(path: Path, ceiling: float) -> None:
                 "outstanding_cpu_hour_reservations": 0,
                 "new_paid_capacity_allowed": False,
                 "paid_model_execution_enabled": False,
+                "admission_closed": False,
                 "events": [],
             },
         )
@@ -41,6 +46,7 @@ def admit(path: Path, run_id: str, maximum: float, cleanup: float) -> dict[str, 
     require(all(math.isfinite(v) and v > 0 for v in (maximum, cleanup)), "Invalid CPU bound")
     with lock(path.with_suffix(path.suffix + ".lock")):
         value = read_json(path)
+        require(not value.get("admission_closed"), "CPU admission is closed")
         require(value["new_paid_capacity_allowed"] is False, "This backend cannot create capacity")
         require(value["paid_model_execution_enabled"] is False, "Validation cannot call models")
         totals(value)
@@ -73,6 +79,7 @@ def admit(path: Path, run_id: str, maximum: float, cleanup: float) -> dict[str, 
                         "new_paid_capacity": False,
                         "state": "reserved before submission",
                         "controller": "biotasks.validation.v1",
+                        "role": "primary" if name == run_id else name.rsplit("-", 1)[-1],
                     }
                 )
             totals(value)
@@ -91,6 +98,11 @@ def verify_reserved(path: Path, run_id: str) -> None:
     value = read_json(path)
     event = next(e for e in value["events"] if e.get("run_id") == run_id)
     require(event["state"] == "reserved before submission", "Run has no outstanding admission")
+    role = event.get("role", run_id.rsplit("-", 1)[-1])
+    require(
+        not value.get("admission_closed") or role in ("cleanup", "stop"),
+        "CPU admission is closed; only already reserved stop/cleanup may start",
+    )
 
 
 def reconcile(path: Path, run_id: str, actual: float) -> None:
@@ -104,14 +116,20 @@ def reconcile(path: Path, run_id: str, actual: float) -> None:
             require(event["state"] == "reserved before submission", "Admission is not reserved")
             event.update(state="terminal reconciled", actual_allocated_cpu_hours=actual)
         totals(value)
+        problem = None
+        if actual > event["maximum_allocated_cpu_hours"]:
+            problem = "Actual CPU bound exceeded"
+        elif (
+            value["additional_allocated_cpu_hours"] + value["outstanding_cpu_hour_reservations"]
+            > value["additional_reserved_cpu_hour_ceiling"]
+        ):
+            problem = "Cumulative CPU ceiling exceeded"
+        if problem:
+            value.update(admission_closed=True, admission_closed_reason=problem)
         # Preserve actual overspend before reporting it; never hide failed attempts.
         write_json(path, value)
-        require(actual <= event["maximum_allocated_cpu_hours"], "Actual CPU bound exceeded")
-        require(
-            value["additional_allocated_cpu_hours"] + value["outstanding_cpu_hour_reservations"]
-            <= value["additional_reserved_cpu_hour_ceiling"],
-            "Cumulative CPU ceiling exceeded",
-        )
+        if problem:
+            raise BudgetExceeded(problem)
 
 
 def release_cleanup(path: Path, run_id: str, proof: dict[str, Any], role: str = "cleanup") -> None:

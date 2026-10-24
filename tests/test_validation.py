@@ -635,3 +635,52 @@ main(['prompts','list'])
         [sys.executable, "-c", command], capture_output=True, text=True, check=True, timeout=10
     )
     assert result.stdout.splitlines() == ["author-task", "find-units"]
+
+
+def test_budget_overrun_preserves_and_cleans_before_holding(
+    prepared: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root, _ = prepared
+    remote = Remote(root, monkeypatch)
+    output = remote.output
+
+    def overspend(group: dict[str, Any], request: dict[str, Any]) -> dict[str, Any]:
+        value = output(group, request)
+        if not group["run_id"].endswith("-cleanup"):
+            value["allocated_cpu_hours"] = 3.25
+        return value
+
+    monkeypatch.setattr(remote, "output", overspend)
+    assert finish(root)["state"] == "held"
+    assert len(remote.submissions) == 2
+    proof = next(root.glob("runs/*/cleanup-proof.json"))
+    assert read_json(proof)["verified_empty"]
+    ledger = read_json(Path(read_json(root / "plan.json")["budget_ledger"]))
+    assert ledger["admission_closed"] is True
+    assert ledger["additional_allocated_cpu_hours"] == pytest.approx(3.26)
+    assert ledger["outstanding_cpu_hour_reservations"] == 0
+    assert controller.status(root)["tasks"][0]["holds"]["budget-hold.json"]["new_admission_closed"]
+    preservation.verify_receipt(proof.parent)
+    manifest = read_json(proof.parent / "preserved/manifest.json")
+    assert "execution/budget-hold.json" in {row["path"] for row in manifest["files"]}
+    monkeypatch.setattr(
+        bridge, "call", lambda *a, **k: pytest.fail("A completed budget hold must be inert")
+    )
+    assert controller.run(root, once=True)["state"] == "held"
+
+
+def test_closed_budget_blocks_primary_submissions_but_keeps_reserved_cleanup(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "budget.json"
+    budget.create(path, 10)
+    budget.admit(path, "one", 1, 0.1)
+    budget.admit(path, "other-cleanup", 1, 0.1)
+    with pytest.raises(ValidationError, match="Actual CPU bound"):
+        budget.reconcile(path, "one", 1.1)
+    with pytest.raises(ValidationError, match="closed"):
+        budget.verify_reserved(path, "other-cleanup")
+    with pytest.raises(ValidationError, match="closed"):
+        budget.admit(path, "new", 1, 0.1)
+    budget.verify_reserved(path, "one-cleanup")
+    budget.verify_reserved(path, "one-stop")

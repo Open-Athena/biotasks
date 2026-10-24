@@ -89,7 +89,9 @@ submission. A timeout is an incomplete control, not permission to repair it.
 
 One cumulative ledger reserves each task maximum plus one-sixth CPU-hour each
 for emergency stop and cleanup. Terminal actual allocations, including failures,
-reconcile reservations. Actual overruns are recorded before reporting failure.
+reconcile reservations. Actual overruns close new admission while preserving
+already reserved stop/cleanup operations; the run reports a budget hold after
+preservation and cleanup finish. Recorded actual usage is never discarded.
 Models and new capacity remain disabled.
 
 The journal flushes intent before every effect: candidate verification,
