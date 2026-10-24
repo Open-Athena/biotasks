@@ -1099,7 +1099,24 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         outputs = tmp_path / "original-outputs"
         outputs.mkdir()
         (outputs / "value.txt").write_bytes(b"1")
-        reference = HERE / config["reference_directory"]
+        original_reference = HERE / config["reference_directory"]
+        original_trial_result = (original_reference / "trial/result.json").read_bytes()
+        reference = tmp_path / "inspection-reference"
+        # Synthetic trial evidence must never overwrite retained run records.
+        for name in (
+            "inputs/original.py",
+            "inputs/exports.py",
+            "inputs/plan.json",
+            "trial/source.diff",
+            "candidate/pyproject.toml",
+            "trial/environment.txt",
+            "trial/uv.lock",
+            "output-audit.json",
+        ):
+            target = reference / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((original_reference / name).read_bytes())
+        config["reference_directory"] = str(reference)
         (reference / "trial/result.json").write_text(
             json.dumps({"input_observations": {"files": []}})
         )
@@ -1154,6 +1171,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         assert not (tmp_path / "final-candidate.json").exists()
         return
     result = asyncio.run(exercise())
+    if inspect_review:
+        assert (original_reference / "trial/result.json").read_bytes() == original_trial_result
     if question_defect:
         assert result["status"] == "public_question_defect"
         assert calls == ["independent", "grader", "probes", "review"]

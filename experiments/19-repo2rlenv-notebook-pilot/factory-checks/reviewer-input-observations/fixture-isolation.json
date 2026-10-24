@@ -1,0 +1,21 @@
+{
+  "recorded_at": "2026-10-24T09:33:24.773033+00:00",
+  "change": "Keep synthetic review input observations under the test-owned temporary directory and assert the retained original trial result stays unchanged.",
+  "cause": "The initial added fixture temporarily wrote its synthetic trial result into the retained example directory. The synthetic bytes were preserved privately and the original was restored byte-for-byte from Git before rerunning.",
+  "original_trial_result_path": "experiments/19-repo2rlenv-notebook-pilot/setup-runs/001/trial/result.json",
+  "original_restored_sha256": "6e01b24e147e69aebdf5f1735356c809f8e04d5bd5896c4086820cc02b57487d",
+  "original_byte_exact_restored": true,
+  "remote_archives_or_scientific_execution_changed": false,
+  "final_offline_verification": {
+    "passed": 134,
+    "pytest_seconds": 5.1,
+    "guarded_wall_seconds": 6.0,
+    "peak_rss_kib": 136464,
+    "junit_sha256": "0a2c5a1b3bd674d5081481679bb3dc1db1c8cab3c7b5bd267a5895eb345d4c83",
+    "resource_report_sha256": "2dcb73a83ebb29f914d22ff51ffc2809990d72201c2f34dab24f04fff081269d",
+    "test_grading_source_sha256": "e6f15027a84660edce49daaa528a9dcc78ca8857f4436ad68815bfa921b04470",
+    "ruff_check": "passed",
+    "ruff_format_check": "passed"
+  },
+  "limits": "Test isolation correction only; no runtime/prompt change, new model call, scientific task edit or acceptance override."
+}
