@@ -1,0 +1,46 @@
+{
+  "source_archive_manifest_sha256": "8478db63e98af2805447897048c0978c164b59f62ba05b3db87345b197425932",
+  "pipeline_status": "rejected",
+  "source_id": "neurokit-hrv",
+  "elapsed_pipeline_seconds": 268.598,
+  "stage_elapsed_seconds": {
+    "preparation": 8.869,
+    "setup": 254.824
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "rejected"
+  },
+  "accounted_model_request_attempts": 25,
+  "request_ledgers": [
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "5f1a3a9302be976a2fd3c9419f43251fe9ab741915962306be5bf89bb70dc734",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "13b41e2af19f7b652b2c79b82e661719593f8c6347c8836da61675349f979fa0",
+      "count": 24,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 24
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 25,
+  "distinct_author_response_operations_within_stage": 25,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 0
+}
