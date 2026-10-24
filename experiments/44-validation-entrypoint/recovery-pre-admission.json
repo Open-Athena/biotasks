@@ -1,0 +1,31 @@
+{
+  "issue": 44,
+  "state": "prepared, not admitted",
+  "pipeline_commit": "92afd3e433c52e86ff1d43fe3db34a4bb3ac28a3",
+  "plan_identity": "22a5122b56ce36fbb8a2ccfe61a96e2fe3f71fb56779823e930c0337ba5b906f",
+  "plan_sha256": "87b9f2a384040411114b6b098c3662b999d0261f68addaad12ecebd0b8ea39ea",
+  "run_id": "biotasks-val-issue44-recovery-1f414bc1057a",
+  "unchanged_reference_package_sha256": "69578eb42e2adb51cb5c10e65e9497589d8f6ca917b59d05785b5ed7c7b83fbf",
+  "native_modules_verified_unchanged": [
+    "worker/controls.py",
+    "worker/job.py",
+    "worker/docker_bridge.py",
+    "worker/cleanup.py",
+    "worker/common.py",
+    "worker/setup_controller.sh",
+    "recipes.py",
+    "collection.py",
+    "journal.py"
+  ],
+  "task_bytes_modes_settings_equal_to_baseline": true,
+  "purpose": "Native regression for ready-stage recovery and batched anonymous-readback publisher; only host control/transfer/bounds/compatibility fixes, no biological or bootstrap repair",
+  "checks": "38 offline tests, installed distribution, Ruff/ty/hooks pass",
+  "actual_cpu_before": 6.578230555322436,
+  "outstanding_cpu_before": 0.3333333333333333,
+  "proposed_maximum_cpu_hours": 6.333333333333333,
+  "global_ceiling_cpu_hours": 32,
+  "new_model_calls": 0,
+  "new_paid_capacity": false,
+  "storage": "Existing $10 archival reservation; no new storage tier or purchase",
+  "parallelism": "Separate immutable controller; may overlap baseline Scanpy validation on existing reserved CPUs, under the shared atomic CPU ledger. No new Codex tasks/agents."
+}
