@@ -1,0 +1,9 @@
+Can the official Repo2RLEnv pipeline feed portable exports into independent validation without per-repository edits or extra LLM repairs? Subissue of #33; validation component: [PR #46](https://github.com/Open-Athena/biotasks/pull/46).
+
+**Current:** fresh reference `/exedev/biotasks45-cobrapy-generation-002` is in progress on reserved TRC CPUs. Actual logs verify isolated credentials, original setup exit 0 and native generation entry. Charges and task outputs await terminal readback. The original identity failed before any submit RPC and is preserved with zero worker/model usage.
+
+**Verified separately:** 35 generation/connector checks pass; all 12 historical Cobrapy exports also prepare/plan through the unchanged exporter with original modes/grading preserved. These are not new tasks or native controls. [Running evidence](https://github.com/Open-Athena/biotasks/blob/26b8cfc8/experiments/45-generation-handoff/generation-started.json).
+
+**Next:** the checkpointed connector waits for verified generation archival/cleanup, then sends exactly the same raw/cache outputs through official local export and ordinary native validation. No regeneration, task/package/parser/grading repairs or automatic dataset release. The known PR #1497 window tests integration, not unbiased yield; full end-to-end completion remains unproven.
+
+**Bounds:** $13.07 model maximum plus $10 storage reserved; actual charges pending. Generation reserves 6.333333 CPUh including possible stop/cleanup; prior reconciled actual is 6.764819 CPUh. Generation plus one later validator stays within 12.666667 additional CPUh and #33’s 32 CPUh / $90 operating ceiling, strictly below $100 extra. No new capacity. [Corrected protocol inputs](https://github.com/Open-Athena/biotasks/blob/1e2dbc22/experiments/45-generation-handoff/generation-corrected-pre-admission.json). Keep issue/epic open; detailed logs are in comments.
