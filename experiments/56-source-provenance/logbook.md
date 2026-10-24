@@ -9,3 +9,5 @@ generic provenance representation and real synthetic installation fixtures.
 No native/model admission or extra budget. No task-owned/tmp paths.
 
 2026-10-24: Fixture002 at908a362d completed real offline pip replacement in1.59s/45,676KiB. No network, biological imports, model/native work. First edge harness9ca1d00a failed when a newly created symlink was absent from an already cached directory listing; no collector result was interpreted as scientific evidence. Preserve failed logs and invalidate import finder caches before each newly-created synthetic case; imported-module cache remains intact for the separate sticky-origin case. The collector is unchanged.
+
+2026-10-24: Edge002 atdde857c4 passes all8 real toy-module cases. Original collector542d2dd9 unchanged. Recorded mechanism/limits/results and removed only owned disposable fixture environments/scratch after command/results/wheel hashes retained. Source/wheels remain HOME, no owned/tmp paths. No AnnData rerun, native/model admission or runtime candidate.
