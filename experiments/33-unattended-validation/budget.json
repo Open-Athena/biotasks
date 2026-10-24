@@ -10,7 +10,7 @@
   "admission_rule": "Before enabling paid model execution, verify model pricing and maximum request cost; atomically reserve a conservative bound, then reconcile provider-reported actual usage. Stop if accrued cost plus outstanding reservations plus the proposed bound exceeds 90 USD or cost is unknown.",
   "per_repository_settings": "Preserve official bootstrap settings: Sonnet 4.6 through OpenRouter, temperature 0.2, 2048 output-token cap, 20 calls, 5 USD estimated repository stop threshold; global admission remains required.",
   "additional_reserved_cpu_hour_ceiling": 32,
-  "additional_allocated_cpu_hours": 5.617545555300183,
+  "additional_allocated_cpu_hours": 6.127669444216623,
   "new_paid_capacity_allowed": false,
   "events": [
     {
@@ -151,7 +151,8 @@
       "child_issue": 39,
       "maximum_allocated_cpu_hours": 5,
       "new_paid_capacity": false,
-      "state": "reserved before submission"
+      "state": "terminal reconciled",
+      "actual_allocated_cpu_hours": 0.5101238889164394
     },
     {
       "kind": "reserved_cpu_admission",
@@ -159,9 +160,11 @@
       "child_issue": 39,
       "maximum_allocated_cpu_hours": 0.16666666666666666,
       "new_paid_capacity": false,
-      "state": "reserved before submission"
+      "state": "released unused",
+      "reason": "Primary cleanup or bound no-creation proof verified; no cleanup attempt submitted",
+      "proof_sha256": "2de46e87a0ce14742fdae4ea198125e848be2f00fe57db0b86659ea60a8cfda8"
     }
   ],
-  "outstanding_cpu_hour_reservations": 5.166666666666667,
+  "outstanding_cpu_hour_reservations": 0,
   "cpu_accounting_rule": "Sum terminal admission actuals and still-reserved admission maxima; normalize floating subtraction residue by recomputation."
 }

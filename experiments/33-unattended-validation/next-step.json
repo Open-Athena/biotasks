@@ -1,34 +1,31 @@
 {
-  "next_child_issue": 39,
-  "state": "One frozen OHIF5996 recorded-bootstrap comparison submitted; pending terminal evidence, HF readback and owned cleanup",
-  "question": "Recorded bootstrap fidelity at the frozen standalone task boundary",
-  "source_checkpoint": "95a5b9de",
-  "source_plan": "https://github.com/Open-Athena/biotasks/blob/b8cac779/experiments/39-recorded-bootstrap/source-plan.json",
+  "next_child_issue": 40,
+  "state": "Source preparation for Scanpy transfer; no runtime admission",
+  "question": "Can recorded-bootstrap reconstruction transfer to a Python repository without task repairs?",
+  "source_checkpoint": "fa9227e4",
+  "source_plan": "https://github.com/Open-Athena/biotasks/blob/fa9227e4/experiments/40-recorded-bootstrap-transfer/source-plan.json",
   "completed_predecessor": {
-    "issue": 38,
-    "checkpoint": "998d7f06",
-    "native_positive_pairs": 12,
-    "clean_oracle_commands": 2,
-    "control_invocations": 24,
-    "lifecycle_and_primary_cleanup_complete": true,
-    "final_archive_prefix": "research/38-manifest-validation/2026-10-24/eae2c9b18c4c82005a7d18a09989c8309a1c8c581f59e8e3f9c10d14be2e2690",
-    "redundant_local_bytes_removed": 16204023,
+    "issue": 39,
+    "checkpoint": "206535c8",
+    "positive_pairs": 1,
+    "clean_oracle_commands": 1,
+    "control_invocations": 2,
+    "lifecycle_and_cleanup_complete": true,
+    "final_archive_prefix": "research/39-recorded-bootstrap/2026-10-24/e1f4b248a28a35b679df3c34b0f96bfc0cd57fe64e2f251e498f9ff2697bbe48",
+    "redundant_local_bytes_removed": 2172322,
     "post_cleanup_reinvoke_unchanged": true
   },
   "frozen_task": {
-    "repo": "OHIF/Viewers",
-    "task": "OHIF__Viewers-5996",
-    "bootstrap_ref": "4965e280cada2202a99f9dd0212a8465865b49f7",
-    "original_task_identity": "3e2fefb6d0c5f69f6858a2263e74e7bceebe496fd879c833b8e149fca11ecdfe",
-    "native_prepared_identity": "b44dab7bf6a1a6881753b78c51b497b718bb5050c76ff394beade93f8f7e792c"
+    "repo": "scverse/scanpy",
+    "task": "scverse__scanpy-4389",
+    "original_task_identity": "b7f94b3252cd8d729ce858f4ec547b23865a4d958985be960b11ee5b9696e6bc",
+    "native_prepared_identity": "674eefbb37eb5cbb5ad081e8689452bdb25edebfaa267dd26f1355840a0ec18c"
   },
   "source_issues": [
     29,
     31,
-    35,
-    36,
-    37,
-    38
+    38,
+    39
   ],
   "requirements": [
     "Reuse exact original actions and clone/login-shell behavior; no installation edits or added dependency commands",
@@ -44,13 +41,11 @@
     "maximum_cpu_hours": 5,
     "emergency_cleanup_cpu_hours": 0.16666666666666666
   },
-  "current_epic_allocated_cpu_hours": 5.617545555300183,
-  "current_cpu_reservations": 5.166666666666667,
+  "current_epic_allocated_cpu_hours": 6.127669444216623,
+  "current_cpu_reservations": 0,
   "epic_ceiling_cpu_hours": 32,
   "paid_model_execution_enabled": false,
   "new_paid_capacity_allowed": false,
   "existing_storage_reservation_unreconciled_usd": 10,
-  "interface_assessment": "https://github.com/Open-Athena/biotasks/blob/b8cac779/experiments/39-recorded-bootstrap/interface-assessment.json",
-  "runtime_submission": "https://github.com/Open-Athena/biotasks/blob/95a5b9de/experiments/39-recorded-bootstrap/runs/OHIF__Viewers/submission.json",
-  "public_input_prefix": "research/39-recorded-bootstrap/2026-10-24/cddcdb27ac5934fef2e11f685e3746fb657ee62f7bfc6f4cf4a4894b74cf9e27"
+  "known_interface_gap": "Scanpy activates a venv; OHIF diagnostic probe expects two PATH exports. Assess before declaring data-only transfer."
 }
