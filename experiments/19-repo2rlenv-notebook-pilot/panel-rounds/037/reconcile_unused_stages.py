@@ -89,7 +89,31 @@ for number in args.numbers:
     )
     assert isinstance(increment, ast.BinOp) and isinstance(increment.op, ast.Add)
     assert ast.unparse(increment.left) == "self.receipt['daytona_reserved_usd']"
-    assert isinstance(increment.right, ast.Constant) and increment.right.value == 1
+    reservation_definition_sha256 = None
+    if isinstance(increment.right, ast.Constant):
+        assert type(increment.right.value) is int and increment.right.value == 1
+    else:
+        assert ast.unparse(increment.right) == "float(STAGE_RESERVATION_USD)"
+        with tarfile.open(packet) as source:
+            definition = source.extractfile(
+                "experiments/19-repo2rlenv-notebook-pilot/campaign_budget.py"
+            ).read()
+        declared = [
+            node.value
+            for node in ast.parse(definition).body
+            if isinstance(node, ast.Assign)
+            and any(
+                isinstance(target, ast.Name) and target.id == "STAGE_RESERVATION_USD"
+                for target in node.targets
+            )
+        ]
+        assert len(declared) == 1
+        value = declared[0]
+        assert isinstance(value, ast.Call) and isinstance(value.func, ast.Name)
+        assert value.func.id == "Decimal" and len(value.args) == 1 and not value.keywords
+        assert isinstance(value.args[0], ast.Constant) and type(value.args[0].value) is str
+        assert Decimal(value.args[0].value) == Decimal("1.00")
+        reservation_definition_sha256 = hashlib.sha256(definition).hexdigest()
     calls = sorted(
         [
             n
@@ -127,6 +151,8 @@ for number in args.numbers:
         {
             "campaign": number,
             "controller_sha256": hashlib.sha256(controller).hexdigest(),
+            "reservation_expression": ast.unparse(increment.right),
+            "reservation_definition_sha256": reservation_definition_sha256,
             "source_archive_manifest_sha256": readback["source_manifest_sha256"],
             "terminal": terminal,
             "cleanup_observed_at": cleanup["observed_at"],
