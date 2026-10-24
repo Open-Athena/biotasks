@@ -21,6 +21,7 @@ def main():
         files=[]
         with zipfile.ZipFile(wheel) as archive:
             for info in archive.infolist():
+                if info.is_dir():continue
                 if info.filename.endswith('.py') or info.filename.endswith('/METADATA') or '/licenses/' in info.filename:
                     assert info.file_size<1024**2
                     raw=archive.read(info);raw.decode('utf-8');path=ROOT/'inputs-private/source'/version/info.filename

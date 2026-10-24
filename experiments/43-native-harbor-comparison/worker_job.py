@@ -49,8 +49,8 @@ class Diagnostic(Supervisor):
             '-e','DOCKER_CONFIG=/work/docker-config',pins['controller_image'],'sleep',str(r['timeout_seconds']))
         self.created=True;self.docker('start',self.controller)
         self.docker('exec',self.controller,'mkdir','-p','/work/real','/work/evidence','/work/docker-config/cli-plugins','/work/outputs','/work/jobs','/work/infra')
-        for name in ['pins.json','tasks.tar.gz','family.json','setup_controller.sh','probe_driver.py','package-source-pins.json',
-            'harbor-0.6.6-py3-none-any.whl','tenacity-9.2.1-py3-none-any.whl']:
+        for name in ['pins.json','tasks.tar.gz','family.json','setup_controller.sh','probe_driver.py','observer.py','package-pins.json','baseline-constraints.txt',
+            'harbor-0.6.6-py3-none-any.whl','harbor-0.24.0-py3-none-any.whl','tenacity-9.2.1-py3-none-any.whl']:
             self.docker('cp',str(self.root/name),self.controller+':/work/'+name)
         for src,dest in [(self.tools/'docker','/work/real/docker'),(self.tools/'docker-compose','/work/docker-config/cli-plugins/docker-compose')]:self.docker('cp',str(src),self.controller+':'+dest)
         self.docker('exec',self.controller,'mkdir','-p','/work/bin')
@@ -68,15 +68,15 @@ class Diagnostic(Supervisor):
         self.report['fixture_image_builds']=[]
         for case in self.config['cases']:
             assert time.time()+120+300<deadline
-            context=self.root/'image-context'/case['name'];context.mkdir(parents=True)
+            context=self.root/'image-context'/case['id'];context.mkdir(parents=True)
             recipe=context/'Dockerfile'
-            recipe.write_text('FROM '+self.config['public_base_ref']+'\nLABEL biotasks.run='+self.run+'\nLABEL biotasks.fixture='+case['name']+'\n')
-            with (self.out/(case['name']+'-image-build.log')).open('w') as log:
+            recipe.write_text('FROM '+self.config['public_base_ref']+'\nLABEL biotasks.run='+self.run+'\nLABEL biotasks.fixture='+case['id']+'\n')
+            with (self.out/(case['id']+'-image-build.log')).open('w') as log:
                 import subprocess
                 result=subprocess.run([str(self.tools/'docker'),'build','--force-rm','--cpu-period=100000','--cpu-quota=150000','--memory=6g',
                     '--memory-swap=6g','--network=none','--label','biotasks.run='+self.run,'--tag',case['image_ref'],'-f',str(recipe),str(context)],
                     stdout=log,stderr=subprocess.STDOUT,timeout=120,check=False,env=dict(os.environ,DOCKER_BUILDKIT='0'))
-            build=dict(case=case['name'],exit_code=result.returncode,dockerfile_sha256=sha(recipe),dockerfile_text=recipe.read_text(),image_ref=case['image_ref'])
+            build=dict(case=case['id'],exit_code=result.returncode,dockerfile_sha256=sha(recipe),dockerfile_text=recipe.read_text(),image_ref=case['image_ref'])
             self.report['fixture_image_builds'].append(build);self.checkpoint()
             assert result.returncode==0
             image=json.loads(self.docker('image','inspect',case['image_ref']).stdout)[0]
@@ -86,10 +86,10 @@ class Diagnostic(Supervisor):
         self.report['phase']='controller_setup';self.checkpoint()
         setup=self.exec_logged('setup.log',[self.controller,'bash','/work/setup_controller.sh'],r['setup_timeout_seconds'])
         self.report['setup_exit']=setup.returncode;self.checkpoint();assert setup.returncode==0
-        assert time.time()+240+300<deadline
+        assert time.time()+480+300<deadline
         self.report['phase']='native_fixture_cases';self.checkpoint()
         probe=self.exec_logged('probe-driver.log',['-e','PATH=/work/bin:/usr/local/bin:/usr/bin:/bin',self.controller,
-            '/work/harbor066/bin/python','/work/probe_driver.py'],240)
+            '/usr/local/bin/python','/work/probe_driver.py'],480)
         self.report['probe_driver_exit']=probe.returncode
         after=json.loads(self.docker('image','inspect',self.config['public_base_ref']).stdout)[0]
         assert after['Id']==base['Id'];self.report['shared_public_base_preserved']=True

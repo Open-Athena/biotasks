@@ -1,0 +1,353 @@
+{
+  "issue": 43,
+  "families": [
+    {
+      "id": "harbor_comparison",
+      "repo": "diagnostic/harbor-comparison",
+      "mode": "harbor_timeout_diagnostic",
+      "cases": [
+        {
+          "id": "066-finite",
+          "version": "0.6.6",
+          "short": "066",
+          "name": "finite",
+          "task": "harbor-timeout-finite",
+          "task_directory": "outputs/harbor_timeout_066/harbor-timeout-finite",
+          "writer_seconds": 2,
+          "verifier_seconds": 5,
+          "image_ref": "biotasks43-compare-0cae81dff1-066-finite:fixture"
+        },
+        {
+          "id": "066-timeout",
+          "version": "0.6.6",
+          "short": "066",
+          "name": "timeout",
+          "task": "harbor-timeout-timeout",
+          "task_directory": "outputs/harbor_timeout_066/harbor-timeout-timeout",
+          "writer_seconds": 30,
+          "verifier_seconds": 5,
+          "image_ref": "biotasks43-compare-0cae81dff1-066-timeout:fixture"
+        },
+        {
+          "id": "024-finite",
+          "version": "0.24.0",
+          "short": "024",
+          "name": "finite",
+          "task": "harbor-timeout-finite",
+          "task_directory": "outputs/harbor_timeout_024/harbor-timeout-finite",
+          "writer_seconds": 2,
+          "verifier_seconds": 5,
+          "image_ref": "biotasks43-compare-0cae81dff1-024-finite:fixture"
+        },
+        {
+          "id": "024-timeout",
+          "version": "0.24.0",
+          "short": "024",
+          "name": "timeout",
+          "task": "harbor-timeout-timeout",
+          "task_directory": "outputs/harbor_timeout_024/harbor-timeout-timeout",
+          "writer_seconds": 30,
+          "verifier_seconds": 5,
+          "image_ref": "biotasks43-compare-0cae81dff1-024-timeout:fixture"
+        }
+      ],
+      "task_bundle": {
+        "path": "inputs-private/probe/tasks.tar.gz",
+        "bytes": 2514,
+        "sha256": "dc94d11b3fd8eb1af9939941cf83b3e1d37225e1937e378b748c87a24a595dfe",
+        "files": [
+          {
+            "path": "outputs/harbor_timeout_024/harbor-timeout-finite/environment/docker-compose.yaml",
+            "bytes": 365,
+            "mode": "644",
+            "sha256": "57387683826463e7ee83fa5437caf5187db73ede8140544d88a9c5d4dbca0349"
+          },
+          {
+            "path": "outputs/harbor_timeout_024/harbor-timeout-finite/instruction.md",
+            "bytes": 112,
+            "mode": "644",
+            "sha256": "50c4236306e8b0ad91e987ad273b2009490cdfc71b91a3783e8ee6b9cae15ce4"
+          },
+          {
+            "path": "outputs/harbor_timeout_024/harbor-timeout-finite/task.toml",
+            "bytes": 410,
+            "mode": "644",
+            "sha256": "973010b96bfef946a993828a36a0f3aadc1d116e0c9ce302955b45b1aa2e7180"
+          },
+          {
+            "path": "outputs/harbor_timeout_024/harbor-timeout-finite/tests/test.sh",
+            "bytes": 121,
+            "mode": "755",
+            "sha256": "1e9b23ccbe5982c19e219ccecaa21c3313ede6e48193aa53560c1e95aed8c55f"
+          },
+          {
+            "path": "outputs/harbor_timeout_024/harbor-timeout-finite/tests/writer.py",
+            "bytes": 2939,
+            "mode": "644",
+            "sha256": "8c3e6077701d8299371ea71e72de3aa05380134d4770e0c861dc4a22c1026e13"
+          },
+          {
+            "path": "outputs/harbor_timeout_024/harbor-timeout-timeout/environment/docker-compose.yaml",
+            "bytes": 367,
+            "mode": "644",
+            "sha256": "90c0744f081461281123f34f5c6a487914aa916f51f6d5e85b0fb4a23301366e"
+          },
+          {
+            "path": "outputs/harbor_timeout_024/harbor-timeout-timeout/instruction.md",
+            "bytes": 112,
+            "mode": "644",
+            "sha256": "50c4236306e8b0ad91e987ad273b2009490cdfc71b91a3783e8ee6b9cae15ce4"
+          },
+          {
+            "path": "outputs/harbor_timeout_024/harbor-timeout-timeout/task.toml",
+            "bytes": 413,
+            "mode": "644",
+            "sha256": "e46ea532c64eb33d25a9ef4660b53bb682c61f24cf9f992622058a4841a9d2b5"
+          },
+          {
+            "path": "outputs/harbor_timeout_024/harbor-timeout-timeout/tests/test.sh",
+            "bytes": 121,
+            "mode": "755",
+            "sha256": "1e9b23ccbe5982c19e219ccecaa21c3313ede6e48193aa53560c1e95aed8c55f"
+          },
+          {
+            "path": "outputs/harbor_timeout_024/harbor-timeout-timeout/tests/writer.py",
+            "bytes": 2939,
+            "mode": "644",
+            "sha256": "8c3e6077701d8299371ea71e72de3aa05380134d4770e0c861dc4a22c1026e13"
+          },
+          {
+            "path": "outputs/harbor_timeout_066/harbor-timeout-finite/environment/docker-compose.yaml",
+            "bytes": 365,
+            "mode": "644",
+            "sha256": "77b118d19c6062925d7a67fe1cef1bce860a33886a16a80743ccbb3ae8156f32"
+          },
+          {
+            "path": "outputs/harbor_timeout_066/harbor-timeout-finite/instruction.md",
+            "bytes": 112,
+            "mode": "644",
+            "sha256": "50c4236306e8b0ad91e987ad273b2009490cdfc71b91a3783e8ee6b9cae15ce4"
+          },
+          {
+            "path": "outputs/harbor_timeout_066/harbor-timeout-finite/task.toml",
+            "bytes": 410,
+            "mode": "644",
+            "sha256": "056364a8a7b23930a4333e1dec1e0749a9c86da77f206e536f9780108da14bc5"
+          },
+          {
+            "path": "outputs/harbor_timeout_066/harbor-timeout-finite/tests/test.sh",
+            "bytes": 121,
+            "mode": "755",
+            "sha256": "1e9b23ccbe5982c19e219ccecaa21c3313ede6e48193aa53560c1e95aed8c55f"
+          },
+          {
+            "path": "outputs/harbor_timeout_066/harbor-timeout-finite/tests/writer.py",
+            "bytes": 2939,
+            "mode": "644",
+            "sha256": "8c3e6077701d8299371ea71e72de3aa05380134d4770e0c861dc4a22c1026e13"
+          },
+          {
+            "path": "outputs/harbor_timeout_066/harbor-timeout-timeout/environment/docker-compose.yaml",
+            "bytes": 367,
+            "mode": "644",
+            "sha256": "7d574df655b8c1d6d36121082fc5320359b54fc9c5c0d561b55b4a49ab6f4d04"
+          },
+          {
+            "path": "outputs/harbor_timeout_066/harbor-timeout-timeout/instruction.md",
+            "bytes": 112,
+            "mode": "644",
+            "sha256": "50c4236306e8b0ad91e987ad273b2009490cdfc71b91a3783e8ee6b9cae15ce4"
+          },
+          {
+            "path": "outputs/harbor_timeout_066/harbor-timeout-timeout/task.toml",
+            "bytes": 413,
+            "mode": "644",
+            "sha256": "539c41dc9cf338fbeb260aba5c26f6576630c83fe9622daac87a98c40bf6b329"
+          },
+          {
+            "path": "outputs/harbor_timeout_066/harbor-timeout-timeout/tests/test.sh",
+            "bytes": 121,
+            "mode": "755",
+            "sha256": "1e9b23ccbe5982c19e219ccecaa21c3313ede6e48193aa53560c1e95aed8c55f"
+          },
+          {
+            "path": "outputs/harbor_timeout_066/harbor-timeout-timeout/tests/writer.py",
+            "bytes": 2939,
+            "mode": "644",
+            "sha256": "8c3e6077701d8299371ea71e72de3aa05380134d4770e0c861dc4a22c1026e13"
+          }
+        ]
+      },
+      "notices_bundle": {
+        "path": "inputs-private/probe/notices.tar.gz",
+        "bytes": 4383,
+        "sha256": "7209733b4b5ed6ec4f3a0e3147266245083fc26591c4f7789eef6609dcff6d23",
+        "files": [
+          {
+            "path": "0.24.0-LICENSE",
+            "bytes": 11357,
+            "mode": "644",
+            "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+          },
+          {
+            "path": "0.6.6-LICENSE",
+            "bytes": 11357,
+            "mode": "644",
+            "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+          },
+          {
+            "path": "tenacity-9.2.1-LICENSE",
+            "bytes": 11357,
+            "mode": "644",
+            "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd"
+          }
+        ]
+      },
+      "resources": {
+        "cpus": 2,
+        "memory_gib": 12,
+        "disk_gib": 12,
+        "controller_cpus": 0.5,
+        "task_cpus": 1,
+        "task_memory_gib": 6,
+        "setup_timeout_seconds": 900,
+        "timeout_seconds": 3300,
+        "work_deadline_seconds": 3000,
+        "maximum_cpu_hours": 2,
+        "cleanup_allowance_cpu_hours": 0.16666666666666666
+      },
+      "public_base_ref": "python@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704",
+      "expected_public_base_id": "sha256:a33c10a97f11005523814c6eee013986119fe41f3122f444518117536675c8e1",
+      "task_files": [
+        {
+          "path": "outputs/harbor_timeout_024/harbor-timeout-finite/environment/docker-compose.yaml",
+          "bytes": 365,
+          "mode": "644",
+          "sha256": "57387683826463e7ee83fa5437caf5187db73ede8140544d88a9c5d4dbca0349"
+        },
+        {
+          "path": "outputs/harbor_timeout_024/harbor-timeout-finite/instruction.md",
+          "bytes": 112,
+          "mode": "644",
+          "sha256": "50c4236306e8b0ad91e987ad273b2009490cdfc71b91a3783e8ee6b9cae15ce4"
+        },
+        {
+          "path": "outputs/harbor_timeout_024/harbor-timeout-finite/task.toml",
+          "bytes": 410,
+          "mode": "644",
+          "sha256": "973010b96bfef946a993828a36a0f3aadc1d116e0c9ce302955b45b1aa2e7180"
+        },
+        {
+          "path": "outputs/harbor_timeout_024/harbor-timeout-finite/tests/test.sh",
+          "bytes": 121,
+          "mode": "755",
+          "sha256": "1e9b23ccbe5982c19e219ccecaa21c3313ede6e48193aa53560c1e95aed8c55f"
+        },
+        {
+          "path": "outputs/harbor_timeout_024/harbor-timeout-finite/tests/writer.py",
+          "bytes": 2939,
+          "mode": "644",
+          "sha256": "8c3e6077701d8299371ea71e72de3aa05380134d4770e0c861dc4a22c1026e13"
+        },
+        {
+          "path": "outputs/harbor_timeout_024/harbor-timeout-timeout/environment/docker-compose.yaml",
+          "bytes": 367,
+          "mode": "644",
+          "sha256": "90c0744f081461281123f34f5c6a487914aa916f51f6d5e85b0fb4a23301366e"
+        },
+        {
+          "path": "outputs/harbor_timeout_024/harbor-timeout-timeout/instruction.md",
+          "bytes": 112,
+          "mode": "644",
+          "sha256": "50c4236306e8b0ad91e987ad273b2009490cdfc71b91a3783e8ee6b9cae15ce4"
+        },
+        {
+          "path": "outputs/harbor_timeout_024/harbor-timeout-timeout/task.toml",
+          "bytes": 413,
+          "mode": "644",
+          "sha256": "e46ea532c64eb33d25a9ef4660b53bb682c61f24cf9f992622058a4841a9d2b5"
+        },
+        {
+          "path": "outputs/harbor_timeout_024/harbor-timeout-timeout/tests/test.sh",
+          "bytes": 121,
+          "mode": "755",
+          "sha256": "1e9b23ccbe5982c19e219ccecaa21c3313ede6e48193aa53560c1e95aed8c55f"
+        },
+        {
+          "path": "outputs/harbor_timeout_024/harbor-timeout-timeout/tests/writer.py",
+          "bytes": 2939,
+          "mode": "644",
+          "sha256": "8c3e6077701d8299371ea71e72de3aa05380134d4770e0c861dc4a22c1026e13"
+        },
+        {
+          "path": "outputs/harbor_timeout_066/harbor-timeout-finite/environment/docker-compose.yaml",
+          "bytes": 365,
+          "mode": "644",
+          "sha256": "77b118d19c6062925d7a67fe1cef1bce860a33886a16a80743ccbb3ae8156f32"
+        },
+        {
+          "path": "outputs/harbor_timeout_066/harbor-timeout-finite/instruction.md",
+          "bytes": 112,
+          "mode": "644",
+          "sha256": "50c4236306e8b0ad91e987ad273b2009490cdfc71b91a3783e8ee6b9cae15ce4"
+        },
+        {
+          "path": "outputs/harbor_timeout_066/harbor-timeout-finite/task.toml",
+          "bytes": 410,
+          "mode": "644",
+          "sha256": "056364a8a7b23930a4333e1dec1e0749a9c86da77f206e536f9780108da14bc5"
+        },
+        {
+          "path": "outputs/harbor_timeout_066/harbor-timeout-finite/tests/test.sh",
+          "bytes": 121,
+          "mode": "755",
+          "sha256": "1e9b23ccbe5982c19e219ccecaa21c3313ede6e48193aa53560c1e95aed8c55f"
+        },
+        {
+          "path": "outputs/harbor_timeout_066/harbor-timeout-finite/tests/writer.py",
+          "bytes": 2939,
+          "mode": "644",
+          "sha256": "8c3e6077701d8299371ea71e72de3aa05380134d4770e0c861dc4a22c1026e13"
+        },
+        {
+          "path": "outputs/harbor_timeout_066/harbor-timeout-timeout/environment/docker-compose.yaml",
+          "bytes": 367,
+          "mode": "644",
+          "sha256": "7d574df655b8c1d6d36121082fc5320359b54fc9c5c0d561b55b4a49ab6f4d04"
+        },
+        {
+          "path": "outputs/harbor_timeout_066/harbor-timeout-timeout/instruction.md",
+          "bytes": 112,
+          "mode": "644",
+          "sha256": "50c4236306e8b0ad91e987ad273b2009490cdfc71b91a3783e8ee6b9cae15ce4"
+        },
+        {
+          "path": "outputs/harbor_timeout_066/harbor-timeout-timeout/task.toml",
+          "bytes": 413,
+          "mode": "644",
+          "sha256": "539c41dc9cf338fbeb260aba5c26f6576630c83fe9622daac87a98c40bf6b329"
+        },
+        {
+          "path": "outputs/harbor_timeout_066/harbor-timeout-timeout/tests/test.sh",
+          "bytes": 121,
+          "mode": "755",
+          "sha256": "1e9b23ccbe5982c19e219ccecaa21c3313ede6e48193aa53560c1e95aed8c55f"
+        },
+        {
+          "path": "outputs/harbor_timeout_066/harbor-timeout-timeout/tests/writer.py",
+          "bytes": 2939,
+          "mode": "644",
+          "sha256": "8c3e6077701d8299371ea71e72de3aa05380134d4770e0c861dc4a22c1026e13"
+        }
+      ],
+      "writer_run_marker": "biotasks41-comparison-0cae81dff1",
+      "no_original_task_changes": true
+    }
+  ],
+  "exclusions": {
+    "excluded_worker_ids": [],
+    "excluded_worker_prefixes": []
+  },
+  "model_calls_enabled": false,
+  "new_capacity_allowed": false
+}
