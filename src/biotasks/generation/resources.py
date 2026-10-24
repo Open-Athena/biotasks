@@ -25,7 +25,14 @@ def code_files() -> dict[str, bytes]:
 
 
 def code_identity() -> str:
-    return json_sha({name: content_sha(raw) for name, raw in code_files().items()})
+    from biotasks.retention.actor import implementation
+
+    return json_sha(
+        {
+            "generation": {name: content_sha(raw) for name, raw in code_files().items()},
+            "retention": implementation(),
+        }
+    )
 
 
 def assets() -> dict[str, bytes]:

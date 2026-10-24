@@ -9,6 +9,7 @@ from cyclopts import App, Parameter
 
 from biotasks.generation.cli import app as generation
 from biotasks.prompts import list_prompts, load_prompt
+from biotasks.retention.cli import app as retention
 from biotasks.validation.cli import app as validation
 from biotasks.validation.files import ValidationError
 
@@ -21,6 +22,7 @@ prompts = App(name="prompts", help="List or read bundled prompt templates.")
 app.command(prompts)
 app.command(validation)
 app.command(generation)
+app.command(retention)
 
 
 @prompts.command(name="list")

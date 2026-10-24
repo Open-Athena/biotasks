@@ -35,6 +35,10 @@ def test_installed_distribution_contains_and_loads_prompts(tmp_path: Path) -> No
     generation = generation_files()
     assert "worker/generation_entry.py.txt" in generation
     assert "package-acquisition.json" in generation
+    retention = {
+        path.name: path.read_bytes() for path in (root / "src/biotasks/retention").glob("*.py")
+    }
+    assert {"actor.py", "evidence.py", "log_policy.py", "cli.py"} <= retention.keys()
 
     with zipfile.ZipFile(wheel) as archive:
         for name, content in expected.items():
@@ -43,6 +47,8 @@ def test_installed_distribution_contains_and_loads_prompts(tmp_path: Path) -> No
             assert archive.read("biotasks/validation/" + name) == content
         for name, content in generation.items():
             assert archive.read("biotasks/generation/" + name) == content
+        for name, content in retention.items():
+            assert archive.read("biotasks/retention/" + name) == content
     with tarfile.open(sdist) as archive:
         prefix = sdist.name.removesuffix(".tar.gz")
         for name, content in expected.items():
@@ -56,6 +62,10 @@ def test_installed_distribution_contains_and_loads_prompts(tmp_path: Path) -> No
             assert member.read() == content
         for name, content in generation.items():
             member = archive.extractfile(f"{prefix}/src/biotasks/generation/{name}")
+            assert member is not None
+            assert member.read() == content
+        for name, content in retention.items():
+            member = archive.extractfile(f"{prefix}/src/biotasks/retention/{name}")
             assert member is not None
             assert member.read() == content
 
@@ -128,6 +138,14 @@ def test_installed_distribution_contains_and_loads_prompts(tmp_path: Path) -> No
     from biotasks.generation.resources import code_identity as generation_identity
 
     assert identities["generation_code_identity"] == generation_identity()
+    subprocess.run(
+        [str(cli), "retain", "--help"],
+        cwd=outside,
+        env=environment,
+        check=True,
+        timeout=10,
+        stdout=subprocess.PIPE,
+    )
     # A real wheel lives beside its own dependencies. Only its BioTasks
     # namespace may enter the separately configured SDK interpreter.
     site = Path(

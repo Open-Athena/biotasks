@@ -410,6 +410,7 @@ def advance(path, output, *, allow_generation=False, allow_validation=False):
     """One serial pass. An incomplete/held case prevents admission of the next."""
     manifest, frozen = verify(path, output)
     runtime, finish, _ = adapter(manifest)
+    from biotasks.generation import native
     from biotasks.generation.manifest_handoff import prepare_handoff
     from biotasks.validation import controller
 
@@ -460,7 +461,7 @@ def advance(path, output, *, allow_generation=False, allow_validation=False):
                 planning.prepare(Path(result["validation_manifest"]), validation)
             else:
                 controller.verify_plan(validation)
-            state = controller.run(validation, once=True)
+            state = native.advance(validation)
             if state["state"] == "unsupported":
                 frozen_validation = controller.verify_plan(validation)
                 require(
