@@ -50,6 +50,14 @@ streaming all rows, arrays or mismatches into the conversation.
   unused status or that the import executed; an empty priority list does not
   clear the rest of the catalog. Limit negative claims to the content actually
   inspected, rather than inferring safety from filenames alone.
+  Review against the whole original analysis, not only the initial export files.
+  Preparation can save only surviving named results; construction may later
+  recover other scientific endpoints from unchanged source computations. Inspect
+  fixtures linked to those original computations and inputs too, even when no
+  current export is available for a numeric comparison. Establish the actual
+  scientific relationship and unused status; a similar number or a shared API
+  name alone does not justify removing a file. This does not authorize choosing
+  new endpoints, changing source methods or dropping required inputs.
   Check whether a bundled fixture supplies a full or partial requested answer;
   differing timestamps, comments, headers, precision or serialization do not
   establish absence of scientific answer exposure. Do not use a bundled answer
