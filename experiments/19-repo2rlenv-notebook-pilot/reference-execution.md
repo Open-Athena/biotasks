@@ -8,7 +8,8 @@ confirmed [run 009](preparation-runs/009/README.md) with byte-identical prompt,
 input and API request. [Setup run 001](setup-runs/001/README.md) now completes the
 full reference offline in 147.5 seconds with the reviewed exports unchanged.
 Source/export review and archived-output inspection pass for this notebook;
-independent numerical reproduction and cross-notebook generality remain untested.
+that recorded stage did not establish independent numerical reproduction or
+cross-notebook generality.
 
 ## Stages and exact responsibilities
 
@@ -53,6 +54,14 @@ input construction. It does not permit changing the original scientific source,
 hiding an unrunnable reference, silently omitting a branch or adding test/repair
 allowances.
 
+Construction may also recover an unnamed or overwritten scientific endpoint by
+faithfully rerunning its original source computation on the same original inputs
+and required state. Preserve methods and arguments, record the source location
+and recovery provenance separately, and require independent execution and
+meaningful controls before release. This does not permit guessing missing state,
+repairing broken scientific source or adding a new analysis. Preparation itself
+remains append-only and saves results already accessible at script completion.
+
 Cover independent scientific outcomes in one task, not every tutorial section
 or processing step. Classify results from the source narrative and interpretation:
 preparatory statistics and diagnostics supporting other results are not extra
@@ -73,9 +82,14 @@ and syntax validator alone cannot enforce them.
 `run_preparation.py` uses GLM-5.3 with native `high` reasoning requested and
 strict JSON-schema responses. The served effective reasoning level is
 unverified. The autonomous runner allows one initial call and at most one
-correction after programmatic schema or syntax validation rejects the response.
-A valid first response uses one call; both responses and exact validation
-feedback are preserved when a correction is needed. Empty, truncated or
+correction shared between programmatic schema/syntax validation and a runtime
+failure in the appended export code. A valid first response uses one call. If
+execution exposes an export failure and that correction remains unused, the
+worker can receive the executor's error and observed data layout. The original
+source, selected endpoints and inputs stay fixed; a corrected export must be
+retested using an existing unused reference-test slot. A correction already used
+for static validation cannot be reused at runtime. Preserve both responses,
+the failed trial and exact feedback when a correction is needed. Empty, truncated or
 transport-failed responses do not receive this repair. There are no extra client
 token/byte limits; the per-request timeout remains 600 seconds. A standalone
 configuration may retain a one-call allowance. It creates no task sandbox and

@@ -181,10 +181,15 @@ not become measured facts merely because it is executable code.
 
 The controller owns scheduling, limits, artifact identity and retry accounting.
 The preparation worker has no tools: one creation call and at most one repair
-when programmatic validation rejects its response, native `high` reasoning
-requested, strict JSON-schema responses and no extra client token/byte caps.
-Preserve both responses and validation feedback; this does not authorize retrying
-empty, truncated or transport-failed preparation responses. Execution setup can use tools to inspect and diagnose actual
+shared between static validation and a runtime failure in the appended export
+code. Runtime feedback may include the executor's error and observed data layout;
+it does not permit changing the original source, selected endpoints or inputs.
+Retesting must use an existing unused reference-test slot. A repair already used
+for static validation is not available again at runtime. Native `high` reasoning
+is requested, with strict JSON-schema responses and no extra client token/byte
+caps. Preserve both responses, the failed trial and exact validation feedback;
+this does not authorize retrying empty, truncated or transport-failed preparation
+responses. Execution setup can use tools to inspect and diagnose actual
 failures; running the scientific script itself is programmatic. See the
 [current workflow](reference-execution.md) for implemented boundaries and status.
 
@@ -362,7 +367,7 @@ Proposed finite budgets for the first experiment:
 | Reference or independently computed valid alternative | 600 seconds per complete execution, including imports, all branches and artifact exports. Environment construction and input downloads are separate. |
 | Verifier | 120 seconds per invocation, separate from the solver clock. |
 | Blind solver | Provisionally 600 seconds per attempt, with the total agent allowance to be revisited separately; at most two attempts, with a fresh attempt allowed after a permitted repair. The clock starts when the prepared sandbox and task are handed to the solver, before its first model request. It includes model latency and tool use; it excludes environment setup and final verification. |
-| Preparation repairs | One creation plus at most one programmatic-validation repair; preserve both responses and exact feedback. No automatic empty/length/transport recovery in preparation. Scientific source repairs remain forbidden. |
+| Preparation repairs | One creation plus at most one shared repair for static validation or a runtime export failure. Preserve both responses, the failed trial and exact feedback; keep original source, selected endpoints and inputs fixed. Runtime retesting uses an existing unused reference-test slot. No automatic empty/length/transport recovery in preparation. Scientific source repairs remain forbidden. |
 | Model requests | Preparation permits at most two GLM-5.3 calls as specified above, native `high` reasoning requested, no extra client token/byte caps and the existing 600-second per-request timeout. Tool-enabled execution and downstream stages retain their recorded time/spending boundaries without an extra raw-request cap. No automatic model escalation. The requested level does not establish the served template's effective effort. |
 | Whole experiment | Two hours of wall-clock work, including every stage and retry, followed by up to five minutes of active cleanup. Stop starting work when any applicable limit is exhausted; report and track unresolved cleanup rather than declaring it complete. |
 
