@@ -21,7 +21,7 @@ selection = [
     ("scanpy-clustering", "Single-cell transcriptomics", 137),
     ("bioframe-motifs-to-peaks", "Genomic intervals", 138),
     ("pyteomics-filtering", "Proteomic search results", 139),
-    ("mdanalysis-rmsd", "Molecular dynamics", 140),
+    ("mdanalysis-rmsd", "Molecular dynamics", 146),
     ("sgkit-relatedness", "Statistical genetics", 142),
     ("pymc-rat-tumor", "Bayesian biological inference", 143),
 ]
@@ -143,7 +143,7 @@ report = {
 text = (
     "# Current ten-domain Python development panel\n\n"
     "This is a development panel across recorded factory versions, not a single-version holdout. "
-    "The latest case per source is shown; native controls are separate from full task qualification and release.\n\n"
+    "The latest independently archived outcome per source is shown; active/queued repeats are recorded separately. Native controls are separate from full task qualification and release.\n\n"
     "| Domain | Original notebook | Latest campaign | Current evidence |\n"
     "| --- | --- | --- | --- |\n"
 )

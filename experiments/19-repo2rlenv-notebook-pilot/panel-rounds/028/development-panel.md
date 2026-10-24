@@ -1,6 +1,6 @@
 # Current ten-domain Python development panel
 
-This is a development panel across recorded factory versions, not a single-version holdout. The latest case per source is shown; native controls are separate from full task qualification and release.
+This is a development panel across recorded factory versions, not a single-version holdout. The latest independently archived outcome per source is shown; active/queued repeats are recorded separately. Native controls are separate from full task qualification and release.
 
 | Domain | Original notebook | Latest campaign | Current evidence |
 | --- | --- | --- | --- |
@@ -11,7 +11,7 @@ This is a development panel across recorded factory versions, not a single-versi
 | Single-cell transcriptomics | [scanpy-clustering](https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb) | 137 | [generated comparison rejection with precision failure](../../panel-rounds/026/result-137.json) |
 | Genomic intervals | [bioframe-motifs-to-peaks](https://github.com/open2c/bioframe/blob/95007ed6fc03b01005d75f95cac511b2df286854/docs/tutorials/tutorial_assign_motifs_to_peaks.ipynb) | 138 | [native passed source population review hold](../../panel-rounds/026/result-138.json) |
 | Proteomic search results | [pyteomics-filtering](https://github.com/levitsky/pyteomics/blob/a133667b090e41c645ed682861b73d98bef2d045/doc/source/_static/filtering.ipynb) | 139 | [native validated private rights unestablished](../../panel-rounds/026/result-139.json) |
-| Molecular dynamics | [mdanalysis-rmsd](https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/doc/source/examples/analysis/alignment_and_rms/rmsd.ipynb) | 140 | [native validated dependency fixture review pending](../../panel-rounds/026/result-140.json) |
+| Molecular dynamics | [mdanalysis-rmsd](https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/doc/source/examples/analysis/alignment_and_rms/rmsd.ipynb) | 146 | [native passed unit contract hold](../../panel-rounds/029/result-146.json) |
 | Statistical genetics | [sgkit-relatedness](https://github.com/sgkit-dev/sgkit/blob/a8bc952b6a0b85e156e1bc826597922448ffd078/docs/examples/relatedness_tutorial.ipynb) | 142 | [generated contract rejection after one repair](../../panel-rounds/026/result-142.json) |
 | Bayesian biological inference | [pymc-rat-tumor](https://github.com/pymc-devs/pymc-examples/blob/17c8f90dc90691b41587dfdf477698d74cf5c18c/examples/generalized_linear_models/GLM-hierarchical-binomial-model.ipynb) | 143 | [unsupported conversion profile](../../panel-rounds/028/result-143.json) |
 
