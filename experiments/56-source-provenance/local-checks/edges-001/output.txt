@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/56/experiments/56-source-provenance/check_edges.py", line 89, in <module>
+    main()
+    ~~~~^^
+  File "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/56/experiments/56-source-provenance/check_edges.py", line 41, in main
+    report("outside_declared_path_real_checkout", "bt56_forward", "checkout")
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/56/experiments/56-source-provenance/check_edges.py", line 28, in report
+    assert value["binding"] == expected, value
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'schema_version': 1, 'checkout': '/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/56/experiments/56-source-provenance/inputs-private/edge-001/checkout', 'project': 'biotasks56-no-such-distribution', 'distribution': {'error': 'PackageNotFoundError'}, 'modules': [{'module': 'bt56_forward', 'state': 'ambiguous', 'error': 'ModuleNotFoundError'}], 'binding': 'ambiguous', 'git_revision_or_reward_verified': False, 'installation_or_sys_path_changed_by_collector': False}

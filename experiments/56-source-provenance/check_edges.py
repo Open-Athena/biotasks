@@ -24,6 +24,7 @@ def main():
 
     def report(key, module, expected):
         names.append(module)
+        importlib.invalidate_caches()
         value = collect(checkout, "biotasks56-no-such-distribution", [module])
         assert value["binding"] == expected, value
         assert value["git_revision_or_reward_verified"] is False
