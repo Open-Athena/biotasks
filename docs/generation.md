@@ -62,6 +62,13 @@ Native configuration files use the original upstream schema:
 }
 ```
 
+The optional official `pipeline.options.require_new_test_funcs` field must be a
+JSON boolean. Omitting it retains upstream's default `true`. Explicit `false`
+allows assertions added inside an existing test through that structural gate;
+it does not bypass the original failing-to-passing check or independent native
+controls. This option is frozen into the listing/config binding. Other extra
+native options remain unsupported.
+
 Replace the placeholders with an approved full commit and date range. Freeze
 the actual bounded native listing before generation:
 
@@ -102,6 +109,18 @@ declares `id`, fixed `run_id`, `mode: "fresh"`, `native_config`, `candidates`,
 eligibility/review follows [storage](storage.md). The combined cohort and case
 ID, separated by a hyphen, must be at most32characters for validation identity.
 No executable adapter path or repository-specific Python file is supplied.
+
+A case may explicitly declare `targeting_policy: "workspace-python-v1"`. This
+is an opt-in adapter behavior change, recorded in the payload and generation
+window; it is not the official baseline. It anchors newly appended Python test
+arguments under `/workspace`, applies shell quoting and preserves recognized
+existing targets. It does not change cwd, tests, import/install configuration,
+parser, grading, resources or deadlines. Omitting the field applies no override.
+Unknown policies and escaping paths reject. Runner/option-value ambiguity and
+upstream file extraction remain limitations; filename-with-space cases may run
+but still have no identities under the original parser. JUnit is not a reward
+fallback. Source/manifest changes require a fresh frozen plan and admission;
+never apply a new policy to an active old plan.
 
 Mode `completed` additionally declares `generation_root` and
 `generation_plan_sha256`. It imports only a supported source-bound completed,

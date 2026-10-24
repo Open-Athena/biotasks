@@ -2,6 +2,7 @@
 
 import importlib
 import json
+import sys
 import types
 from dataclasses import dataclass, field
 from decimal import Decimal
@@ -253,8 +254,8 @@ def test_targeting_override_restores_callback_after_native_exit(monkeypatch, int
         ("repo2rlenv.pipelines", pipelines),
         ("repo2rlenv.pipelines.pr_runtime", runtime),
     ):
-        monkeypatch.setitem(__import__("sys").modules, name, module)
-    monkeypatch.setitem(__import__("sys").modules, "python_targeting", load("python_targeting"))
+        monkeypatch.setitem(sys.modules, name, module)
+    monkeypatch.setitem(sys.modules, "python_targeting", load("python_targeting"))
     state = {}
     try:
         with entry.targeting_policy({"targeting_policy": "workspace-python-v1"}, state):
@@ -268,7 +269,7 @@ def test_targeting_override_restores_callback_after_native_exit(monkeypatch, int
 
 
 def test_default_targeting_policy_does_not_import_or_modify_native_module(monkeypatch):
-    monkeypatch.setitem(__import__("sys").modules, "python_targeting", None)
+    monkeypatch.setitem(sys.modules, "python_targeting", None)
     state = {}
     with entry.targeting_policy({}, state):
         assert state == {"targeting_policy": None}
