@@ -306,3 +306,56 @@ def test_unknown_or_malformed_tags_remain_unsupported(tmp_path, tags):
     path.write_text(json.dumps(notebook))
     with pytest.raises(UnsupportedNotebook, match="execution directives"):
         export_python(path)
+
+
+@pytest.mark.parametrize(
+    "directive",
+    [
+        "%config InlineBackend.figure_format = 'retina'",
+        "%config InlineBackend.figure_formats = {'svg', 'pdf'}",
+        "%load_ext watermark",
+        "%watermark -n -u -v -iv -w",
+        "%watermark --date --python --machine",
+    ],
+)
+def test_display_and_environment_reports_do_not_change_scientific_statements(tmp_path, directive):
+    path = source(tmp_path, ["values = [2, 3]", directive, "result = sum(values)"])
+    original = path.read_bytes()
+    script, receipt = export_python(path)
+    assert ast.dump(ast.parse(script)) == ast.dump(ast.parse("values=[2,3]\nresult=sum(values)"))
+    scope = {}
+    exec(compile(script, "synthetic.py", "exec"), scope)
+    assert scope["result"] == 5 and path.read_bytes() == original
+    assert receipt["profile"] == "python-narrative-v6"
+    assert receipt["presentation_normalizations"][0]["directive"] == directive
+    assert receipt["presentation_normalizations"][0]["kind"] in {
+        "environment_reporting",
+        "inline_display_format",
+    }
+    assert export_python(path) == (script, receipt)
+
+
+@pytest.mark.parametrize(
+    "directive",
+    [
+        "%load_ext scientific_extension",
+        "%watermark --check_latest",
+        "%watermark -p scientific_module",
+        "%watermark -w; values.append(7)",
+        "%config InlineBackend.figure_format = change_analysis()",
+        "%config InlineBackend.figure_format = 'png'; values.append(7)",
+        "%config InlineBackend.close_figures = False",
+        "%config InlineBackend.figure_formats = 'png'",
+        "%config InlineBackend.figure_format = 'unknown-format'",
+    ],
+)
+def test_unknown_or_executable_magic_arguments_are_not_silently_discarded(tmp_path, directive):
+    with pytest.raises(UnsupportedNotebook):
+        export_python(source(tmp_path, ["values = []", directive]))
+
+
+def test_reporting_directive_text_in_strings_is_untouched(tmp_path):
+    code = 'text = """%watermark -n\n%config InlineBackend.figure_format = \'retina\'"""\nvalue = 5 % 3'
+    script, receipt = export_python(source(tmp_path, [code]))
+    assert ast.dump(ast.parse(script)) == ast.dump(ast.parse(code))
+    assert receipt["presentation_normalizations"] == []

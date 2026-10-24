@@ -18,7 +18,7 @@ from pathlib import Path
 import jupytext
 
 MAX_SOURCE_BYTES = 16 * 1024 * 1024
-PROFILE = "python-narrative-v5"
+PROFILE = "python-narrative-v6"
 
 
 class UnsupportedNotebook(ValueError):
@@ -64,6 +64,60 @@ def _literal_directory(directive: str) -> str:
     return path
 
 
+def _presentation_kind(line: str, words: list[str]) -> str | None:
+    """Recognize documented display/version reporting, never arbitrary magics."""
+    report_flags = {
+        "-d",
+        "--date",
+        "-n",
+        "--datename",
+        "-t",
+        "--time",
+        "-i",
+        "--iso8601",
+        "-z",
+        "--timezone",
+        "-u",
+        "--updated",
+        "-v",
+        "--python",
+        "-co",
+        "--conda",
+        "-h",
+        "--hostname",
+        "-m",
+        "--machine",
+        "-w",
+        "--watermark",
+        "-iv",
+        "--iversions",
+    }
+    if words == ["%load_ext", "watermark"]:
+        # The standard extension registers reporting magics; it creates no
+        # scientific user bindings. Their supported consumers are removed too.
+        return "environment_reporting"
+    if words[:1] == ["%watermark"] and all(word in report_flags for word in words[1:]):
+        return "environment_reporting"
+    match = re.fullmatch(
+        r"%config\s+InlineBackend\.(figure_format|figure_formats)\s*=\s*(.+)", line
+    )
+    if match is None:
+        return None
+    try:
+        value = ast.literal_eval(match[2])
+    except (SyntaxError, ValueError):
+        return None
+    if match[1] == "figure_format":
+        values = [value] if isinstance(value, str) else None
+    else:
+        values = value if isinstance(value, (list, tuple, set)) else None
+    if values is not None and all(
+        isinstance(item, str) and item in {"png", "retina", "jpeg", "svg", "pdf"} for item in values
+    ):
+        return "inline_display_format"
+    return None
+
+
 def _script_directives(source: str, cell: int) -> tuple[str, list[dict], list[dict]]:
     """Normalize supported directives only at the start of a logical statement.
 
@@ -101,8 +155,16 @@ def _script_directives(source: str, cell: int) -> tuple[str, list[dict], list[di
     for number in sorted(directive_lines):
         line = lines[number - 1].rstrip("\r\n")
         words = line.split()
-        if words == ["%matplotlib", "inline"] or (number == 1 and words == ["%%time"]):
-            changes.append({"cell_index": cell, "line": number, "directive": line})
+        kind = _presentation_kind(line, words)
+        if kind or words == ["%matplotlib", "inline"] or (number == 1 and words == ["%%time"]):
+            changes.append(
+                {
+                    "cell_index": cell,
+                    "line": number,
+                    "directive": line,
+                    **({"kind": kind} if kind else {}),
+                }
+            )
             lines[number - 1] = "# Notebook presentation directive: " + line + "\n"
         elif words and words[0] == "%cd":
             path = _literal_directory(line)
@@ -118,6 +180,10 @@ def _script_directives(source: str, cell: int) -> tuple[str, list[dict], list[di
                     "replacement": replacement,
                 }
             )
+        else:
+            # Keep the directive identity in admission evidence, without copying
+            # arbitrary arguments that could contain private source values.
+            raise UnsupportedNotebook(f"Unsupported notebook directive: {words[0]}")
     return "".join(lines), changes, directories
 
 

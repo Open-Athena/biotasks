@@ -16,7 +16,7 @@ script, receipt = export_python(Path("analysis.ipynb"))
 Path("analysis.py").write_text(script, encoding="utf-8")
 ```
 
-The `python-narrative-v5` profile accepts nbformat 4 with an unambiguous Python
+The `python-narrative-v6` profile accepts nbformat 4 with an unambiguous Python
 language declaration. Jupytext exports ordinary code and retains Markdown cells
 as line comments in source order, without cell markers. Raw cells, saved outputs
 and presentation metadata are excluded from the script. Conversion never runs
@@ -27,8 +27,12 @@ its result. Interactive history, top-level await, unsupported execution directiv
 unknown code-cell metadata are rejected. The converter records a small explicit
 normalization profile: `%matplotlib inline` and a leading `%%time` become
 comments, while a literal `%cd` becomes a directory change at the same position.
-Other magics remain unsupported. Presentation/editor metadata is recorded; it
-does not authorize skipping or changing code. Documentation
+Literal inline-display format settings and standard `watermark` environment-reporting
+flags also become recorded comments. Dynamic settings, arbitrary extensions,
+package-import/check-latest options and appended statements remain unsupported.
+These normalizations preserve the ordered scientific statements; actual package
+versions are captured by execution separately. Presentation/editor metadata is
+recorded; it does not authorize skipping or changing code. Documentation
 execution policy and Jupytext file-pairing metadata are recorded without adopting
 them as instructions to skip or alter analysis. Unsupported or malformed inputs
 raise `UnsupportedNotebook`; admission failure does not establish poor scientific
