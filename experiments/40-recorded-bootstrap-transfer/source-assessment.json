@@ -1,0 +1,192 @@
+{
+  "issue": 40,
+  "kind": "Source-bound retrospective evidence and unmodified-interface assessment; no new runtime",
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "original_task_identity": "b7f94b3252cd8d729ce858f4ec547b23865a4d958985be960b11ee5b9696e6bc",
+  "native_inline_identity": "674eefbb37eb5cbb5ad081e8689452bdb25edebfaa267dd26f1355840a0ec18c",
+  "original_grading_assets_unchanged": 8,
+  "task_targets": {
+    "f2p": 2,
+    "p2p": 10
+  },
+  "task_verifier_seconds": 300,
+  "source_plan_sha256": "39753a55b0f9534361e238c304f4fe95d5b9122821bae24e153974f6f040bf5e",
+  "acquisition_sha256": "fb3168feaf0633670fa83cfed666fecf499491fa1a474095fc57e7115b2d432e",
+  "source_files_verified": 353,
+  "native_package_acquisition_sha256": "5581e3126d5053450e2266ce0b504a0294197af5619ed69e187ca2311f605daf",
+  "phase_sha256": "52eab704e777aeb5f1b78e5447668ea8c91eee574926b60bb740edaf57355f1c",
+  "transcript_member": "bootstrap/scverse__scanpy/903925920218__74ba7084/transcript.jsonl",
+  "transcript_sha256": "116c9ff62a209f484158ecef0b8c8739b3872f1584d9910dc91d9c947529d959",
+  "original_bootstrap_sha256": "6d53a729633dba2446ecda313b5e519b94d55bef170e0dbcaba541a6dff90ef7",
+  "actions_sha256": "4ded2238dc93ad6106e0c74f8c12727d82fab8d9b15bf6a53d478843de0d5d37",
+  "actions": 16,
+  "recorded_nonzero_exits": [
+    {
+      "step": 7,
+      "exit_code": 1
+    }
+  ],
+  "original_smoke_passed": false,
+  "original_verify_passed": false,
+  "historical_replay_actions_matched": true,
+  "historical_smoke_passed": false,
+  "historical_verify_passed": false,
+  "historical_fresh_exit": 2,
+  "fresh_collection_failures": [
+    "pandas future.infer_string deprecation promoted to error",
+    "unregistered flaky pytest marker",
+    "missing dependency_groups in ci/scripts/low-vers.py"
+  ],
+  "exact_public_base_id_matches_native_baseline": true,
+  "public_base_image_id": "sha256:a33c10a97f11005523814c6eee013986119fe41f3122f444518117536675c8e1",
+  "public_base_digest": "python@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704",
+  "bootstrap_source_ref": "903925920218f829f3cad4f9f4730c086267ee53",
+  "historical_replay_image_id": "sha256:c2246a6c6a9f8c6d4b82786d5ef4c56e06704d4f34f9e63cf89fb5f2495b4d57",
+  "historical_controls": [
+    {
+      "agent": "nop",
+      "timeout_seconds": 300,
+      "trial_path": "scverse__scanpy-4389-300s-nop/scverse__scanpy-4389__6HLwxCX/result.json",
+      "trial_sha256": "392c7afd36e5eb626bd08022a970471ec353ea702e6e342d94244e11656b5a24",
+      "exception_type": "VerifierTimeoutError",
+      "reward": null,
+      "scientific_pair_validity": "unmeasured_timeout",
+      "raw_log_path": "jobs/scanpy-controls/scverse__scanpy-4389-300s-nop/scverse__scanpy-4389__6HLwxCX/verifier/test_output.log",
+      "raw_log_sha256": "34fd0282c6624c76a284d625276abac3b9b9fffdbf482d3c7dccdf48bb10e02b",
+      "raw_log_bytes": 67854,
+      "raw_log_nul_bytes": 63659,
+      "maximum_printed_progress_percent": 68,
+      "pytest_collected_items": [
+        952
+      ],
+      "last_test_lines": [
+        "tests/test_preprocessing.py::test_scale_matrix_types[zero_center-clip-dask_array_dense-1d_chunked] PASSED [ 68%]",
+        "tests/test_preprocessing.py::test_scale_matrix_types[zero_center-clip-dask_array_sparse] PASSED [ 68%]",
+        "tests/test_preprocessing.py::test_scale_matrix_types[zero_center-clip-dask_array_sparse-1d_chunked-csr_matrix] PASSED [ 68%]",
+        "tests/test_preprocessing.py::test_scale_matrix_types[zero_center-clip-dask_array_sparse-1d_chunked-csc_matrix] "
+      ],
+      "failed_test_lines": [
+        "tests/test_combat.py::test_categorical_covariates[covariates0] FAILED    [  0%]",
+        "tests/test_combat.py::test_categorical_covariates[covariates1] FAILED    [  0%]"
+      ]
+    },
+    {
+      "agent": "oracle",
+      "timeout_seconds": 300,
+      "trial_path": "scverse__scanpy-4389-300s-oracle/scverse__scanpy-4389__xABE4a8/result.json",
+      "trial_sha256": "1046ca9fb19acafb94340382a2fec6723fd17e6ab5d6ced76f5ae3193a40d71e",
+      "exception_type": "VerifierTimeoutError",
+      "reward": null,
+      "scientific_pair_validity": "unmeasured_timeout",
+      "raw_log_path": "jobs/scanpy-controls/scverse__scanpy-4389-300s-oracle/scverse__scanpy-4389__xABE4a8/verifier/test_output.log",
+      "raw_log_sha256": "72b3b63185bc79adef9bce7769113ac99b16b7f268a4b96a4e88d12a096d85fd",
+      "raw_log_bytes": 68064,
+      "raw_log_nul_bytes": 63659,
+      "maximum_printed_progress_percent": 68,
+      "pytest_collected_items": [
+        952
+      ],
+      "last_test_lines": [
+        "tests/test_preprocessing.py::test_scale_matrix_types[zero_center-clip-dask_array_sparse-1d_chunked-csr_matrix] PASSED [ 68%]",
+        "tests/test_preprocessing.py::test_scale_matrix_types[zero_center-clip-dask_array_sparse-1d_chunked-csc_matrix] PASSED [ 68%]",
+        "tests/test_preprocessing.py::test_scale_matrix_types[no_zero_center-no_clip-numpy_ndarray] PASSED [ 68%]",
+        "tests/test_preprocessing.py::test_scale_matrix_types[no_zero_center-no_clip-scipy_csr_mat] "
+      ],
+      "failed_test_lines": []
+    },
+    {
+      "agent": "nop",
+      "timeout_seconds": 1200,
+      "trial_path": "scverse__scanpy-4389-1200s-nop/scverse__scanpy-4389__dnaKek6/result.json",
+      "trial_sha256": "328fe39f8f94888487dbb0723c01e70b901e790cf777fe791db611ad05997dd6",
+      "exception_type": "VerifierTimeoutError",
+      "reward": null,
+      "scientific_pair_validity": "unmeasured_timeout",
+      "raw_log_path": "jobs/scanpy-controls/scverse__scanpy-4389-1200s-nop/scverse__scanpy-4389__dnaKek6/verifier/test_output.log",
+      "raw_log_sha256": "ca55791eb0a934f8187234b8b0d17a39c57a5866bea6de87fc9e802f0322a6c2",
+      "raw_log_bytes": 91264,
+      "raw_log_nul_bytes": 3551,
+      "maximum_printed_progress_percent": 90,
+      "pytest_collected_items": [
+        952
+      ],
+      "last_test_lines": [
+        "tests/test_rank_genes_groups.py::test_singlets PASSED                    [ 89%]",
+        "tests/test_rank_genes_groups.py::test_emptycat PASSED                    [ 89%]",
+        "tests/test_rank_genes_groups.py::test_log1p_save_restore FAILED          [ 90%]",
+        "tests/test_rank_genes_groups.py::test_wilcoxon_symmetry "
+      ],
+      "failed_test_lines": [
+        "tests/test_preprocessing.py::test_filter_cells[min_counts-scipy_csc_mat] FAILED [ 87%]",
+        "tests/test_preprocessing.py::test_filter_cells[min_counts-scipy_csr_arr] FAILED [ 87%]",
+        "tests/test_preprocessing.py::test_filter_cells[min_counts-dask_array_dense] FAILED [ 87%]",
+        "tests/test_preprocessing.py::test_filter_cells[min_counts-dask_array_dense-1d_chunked] FAILED [ 87%]",
+        "tests/test_preprocessing.py::test_filter_cells[min_counts-dask_array_sparse] FAILED [ 87%]",
+        "tests/test_preprocessing.py::test_filter_cells[min_counts-dask_array_sparse-1d_chunked-csr_matrix] FAILED [ 87%]",
+        "tests/test_preprocessing.py::test_filter_cells[min_counts-dask_array_sparse-1d_chunked-csc_matrix] FAILED [ 87%]",
+        "tests/test_rank_genes_groups.py::test_log1p_save_restore FAILED          [ 90%]"
+      ]
+    },
+    {
+      "agent": "oracle",
+      "timeout_seconds": 1200,
+      "trial_path": "scverse__scanpy-4389-1200s-oracle/scverse__scanpy-4389__S6A8H7D/result.json",
+      "trial_sha256": "f24f49bf5ce8c9a4afdcd60cc1a9fd9d3ea887660e55ffaf7fd8e190951fae12",
+      "exception_type": "VerifierTimeoutError",
+      "reward": null,
+      "scientific_pair_validity": "unmeasured_timeout",
+      "raw_log_path": "jobs/scanpy-controls/scverse__scanpy-4389-1200s-oracle/scverse__scanpy-4389__S6A8H7D/verifier/test_output.log",
+      "raw_log_sha256": "d25b9a7162808e4b855132cfd7dc7831dde57f1f99fd362ed0c65fb1135e0845",
+      "raw_log_bytes": 91264,
+      "raw_log_nul_bytes": 3318,
+      "maximum_printed_progress_percent": 90,
+      "pytest_collected_items": [
+        952
+      ],
+      "last_test_lines": [
+        "tests/test_rank_genes_groups.py::test_singlets PASSED                    [ 89%]",
+        "tests/test_rank_genes_groups.py::test_emptycat PASSED                    [ 89%]",
+        "tests/test_rank_genes_groups.py::test_log1p_save_restore FAILED          [ 90%]",
+        "tests/test_rank_genes_groups.py::test_wilcoxon_symmetry "
+      ],
+      "failed_test_lines": [
+        "tests/test_preprocessing.py::test_filter_cells[min_counts-scipy_csc_mat] FAILED [ 87%]",
+        "tests/test_preprocessing.py::test_filter_cells[min_counts-scipy_csr_arr] FAILED [ 87%]",
+        "tests/test_preprocessing.py::test_filter_cells[min_counts-dask_array_dense] FAILED [ 87%]",
+        "tests/test_preprocessing.py::test_filter_cells[min_counts-dask_array_dense-1d_chunked] FAILED [ 87%]",
+        "tests/test_preprocessing.py::test_filter_cells[min_counts-dask_array_sparse] FAILED [ 87%]",
+        "tests/test_preprocessing.py::test_filter_cells[min_counts-dask_array_sparse-1d_chunked-csr_matrix] FAILED [ 87%]",
+        "tests/test_preprocessing.py::test_filter_cells[min_counts-dask_array_sparse-1d_chunked-csc_matrix] FAILED [ 87%]",
+        "tests/test_rank_genes_groups.py::test_log1p_save_restore FAILED          [ 90%]"
+      ]
+    }
+  ],
+  "historical_control_task_files_unchanged": 10,
+  "historical_owned_cleanup_verified": true,
+  "native_baseline_build_exit": 100,
+  "native_baseline_controls_started": false,
+  "strict39_transfer": "unsupported_as_is",
+  "hard_gate_difference": "Upstream caches/returns failed smoke/verify flags; #39 rejects failed smoke before commit and failed fresh checks before task controls. This is outer acceptance policy, not an upstream rejection.",
+  "probe_interface_difference": "Unchanged Scanpy verifier activates .venv; OHIF probe requires two PATH exports and would not measure the verifier environment as-is.",
+  "policy_source_sha256": {
+    "bootstrap_init.py": "3f6385cd061cef32c483dd0c1fa244b007952d2f7ad8c64a09be10d62b16b113",
+    "docker_bridge.py": "671b26f60d92adda47285555f0c16bad5f07f658eeca8f541fbdce6460095706"
+  },
+  "native_semantics_source_sha256": {
+    "bootstrap/runner.py": "353027eb87f37881e12ba66a0ee6bb1c82e7cab32670552b5bac849c7dab5ee3",
+    "pipelines/pr_runtime.py": "0b748a897f1802fcaf4b59ab7ed54092c8715745b5dff14813c6389b1e134535",
+    "pipelines/pr_runtime_validate.py": "1f8349718bc93315bf3e5cbb10d5823c832539a8ef680b5ee169e4562de3ea49"
+  },
+  "new_remote_jobs": 0,
+  "new_model_calls": 0,
+  "new_allocated_cpu_hours": 0,
+  "new_reservations": 0,
+  "outcome": "Retrospective negative transfer assessment, not a new failed runtime or fresh control score",
+  "decision": "Do not repeat known unchanged replay/control failures or silently relax source/grading/timeout/acceptance contracts. Preserve this assessment and original public evidence.",
+  "limitations": [
+    "Timeout progress is incomplete output, not a pass rate or scored reward",
+    "Partial logs do not prove a hang or that extra time alone would produce valid controls",
+    "No new cold Scanpy rebuild or dependency identity equivalence claim",
+    "Recorded mutable installs can drift; no installation/test/config repair applied"
+  ]
+}
