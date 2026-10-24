@@ -1,0 +1,37 @@
+{
+  "repo": {
+    "url": "https://github.com/biopython/biopython",
+    "ref": "2fbe8755bb44731e60b7bd1e2cc55cf34d94e15b",
+    "access": "public"
+  },
+  "pipeline": {
+    "name": "pr_runtime",
+    "options": {
+      "limit": 50,
+      "since": "2026-10-18",
+      "until": "2026-10-19"
+    }
+  },
+  "llm": {
+    "provider": "openrouter",
+    "model": "anthropic/claude-sonnet-4.6",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "fallback": null
+  },
+  "bootstrap": {
+    "max_iterations": 20,
+    "max_seconds": 1800,
+    "max_llm_spend_usd": 5.0,
+    "cache_dir": "./workspace/bootstrap"
+  },
+  "auth": {
+    "use_gh_cli": false,
+    "use_hf_cli": false
+  },
+  "output": {
+    "destination": "/work/outputs/raw",
+    "org": "open-athena",
+    "dataset_name": "biotasks57-biopython",
+    "visibility": "private"
+  }
+}
