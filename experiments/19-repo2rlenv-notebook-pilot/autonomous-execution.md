@@ -182,3 +182,20 @@ It refuses an existing output directory. Submit those files through the existing
 credentials and endpoint discovery stay outside the public payload. Submission
 is distinct from payload creation. Once the job starts, `run_autonomous.py`
 performs the complete stage dispatch without operator-produced handoffs.
+
+
+## Command transport
+
+New autonomous stage configurations select `async_session`: a single owned
+AsyncDaytona client is reused for a stage, looks up the exact existing sandbox,
+and closes before artifact export and sandbox cleanup. Commands submit once,
+observe their event stream and verify the original completion receipt and log
+hash. An uncertain submission is never reexecuted. The previous blocking
+transport remains available to direct stage configurations that omit
+`command_transport`; frozen historical payloads are unchanged.
+
+The transport changes no scientific calls, model allowances, reference tests,
+time limits or resource profile. Client lookup/close failures preserve evidence
+and trigger the existing incomplete/cleanup path. A synthetic live check covers
+success, nonzero exit and intentionally hidden acknowledgement; it does not
+establish notebook-level latency or platform-wide exactly-once execution.

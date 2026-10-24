@@ -1,0 +1,42 @@
+{
+  "observed_at": "2026-10-24T11:18:46.266545+00:00",
+  "status": "integrated_offline_validated_fresh_campaign_pending",
+  "live_transport_evidence": "live-check-result.json",
+  "new_autonomous_command_transport": "async_session",
+  "direct_legacy_stage_transport_if_unspecified": "blocking",
+  "offline_checks": {
+    "combined_passed": 272,
+    "combined_pytest_seconds": 15.66,
+    "combined_peak_rss_kib": 169872,
+    "combined_junit_sha256": "a1d4582042ebc8e0c37b0b2ec04fafab1c64ff61455ce140ace86896a33d3d70",
+    "final_focused_passed": 91,
+    "final_focused_pytest_seconds": 4.34,
+    "final_peak_rss_kib": 159560,
+    "final_junit_sha256": "35c07fbb7c5c33d8c11cbdb2219a124d8f27d764cba93af1e877b99e162c5c6e"
+  },
+  "source_sha256": {
+    "daytona_session.py": "9dee33c95f0fe76c79ca4bff5017223912401f539ce999e29ab5b754fb2682b0",
+    "run_reference_setup.py": "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc",
+    "run_autonomous.py": "972b6315182a86988dab558ec42e63891d2dd8a380ae224253d209f476db3b12",
+    "test_session_client_lifecycle.py": "4203ffd4ea9bf6de5db2b5600cba2a0970a8a19e4daeb5cd23e9d4926b8cda41",
+    "test_reference_setup.py": "efc263b2d63714dbd545876af8ad69cbfa222de7fd361dee4434fa3f58891f20"
+  },
+  "coverage": [
+    "Stage owns one async SDK client, read-only lookup must match the original sandbox ID.",
+    "Client closes after lookup/work failures before export/owned sandbox cleanup.",
+    "Primary stage or lookup error survives a secondary close failure.",
+    "Legacy direct-stage configuration allocates no async client.",
+    "New autonomous setup/replay/grading select session transport without changing test/request/time allowances.",
+    "Original command receipt/lost-acknowledgement/network recovery and autonomous negative paths remain covered."
+  ],
+  "unchanged": [
+    "Running frozen37payload",
+    "Scientific calls, methods and artifacts",
+    "Model/request/reference-test/repair allowances",
+    "Two-host/sandbox concurrency and resource profile"
+  ],
+  "limitations": [
+    "Live check is synthetic transport only; no fresh integrated model/reference campaign yet.",
+    "Not a platform-wide exactly-once or latency guarantee."
+  ]
+}

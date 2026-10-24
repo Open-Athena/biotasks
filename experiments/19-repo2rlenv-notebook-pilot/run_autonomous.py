@@ -261,6 +261,7 @@ class Pipeline:
             verifier_seconds=120,
             request_timeout_seconds=600,
             reasoning_effort=self.reasoning_effort,
+            command_transport="async_session",
             max_requests=None,
             max_tests=2,
             **({"inspect_review_evidence": True} if entrypoint == "run_notebook_grader.py" else {}),

@@ -998,10 +998,11 @@ def test_failed_offline_policy_prevents_analysis(tmp_path):
     asyncio.run(exercise())
 
 
+@pytest.mark.parametrize("transport", ["blocking", "async_session"])
 @pytest.mark.parametrize("export_failure", [False, True])
 @pytest.mark.parametrize("setup_exhausted", [False, True])
 def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
-    tmp_path, monkeypatch, export_failure, setup_exhausted
+    tmp_path, monkeypatch, export_failure, setup_exhausted, transport
 ):
     from types import SimpleNamespace
 
@@ -1033,7 +1034,27 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
             return SimpleNamespace(checked=lambda msg: None)
 
     monkeypatch.setattr(runner, "DaytonaWorker", lambda *a: Worker())
-    monkeypatch.setattr(runner, "Remote", lambda *a: FakeRemote())
+
+    class AsyncClient:
+        async def get(self, identity, **kwargs):
+            events.append("client-get")
+            assert identity == sandbox.id
+            return SimpleNamespace(id=identity, process="fixture-async-process")
+
+        async def close(self):
+            events.append("client-close")
+
+    import daytona_session
+
+    monkeypatch.setattr(daytona_session, "AsyncDaytona", AsyncClient)
+
+    def remote(*args, **kwargs):
+        assert kwargs == (
+            {"session_process": "fixture-async-process"} if transport == "async_session" else {}
+        )
+        return FakeRemote()
+
+    monkeypatch.setattr(runner, "Remote", remote)
 
     async def failed_stage(**kwargs):
         if setup_exhausted:
@@ -1058,6 +1079,7 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
     config = json.loads((HERE / "reference-setup.json").read_text()) | {
         "max_requests": None,
         "max_tests": 1,
+        "command_transport": transport,
     }
     error = runner.SetupBudgetExceeded if setup_exhausted and not export_failure else RuntimeError
     message = (
@@ -1077,7 +1099,11 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
                 complete=lambda p: None,
             )
         )
-    assert events == ["export", "cleanup"]
+    assert events == (
+        ["client-get", "client-close", "export", "cleanup"]
+        if transport == "async_session"
+        else ["export", "cleanup"]
+    )
     result = json.loads((tmp_path / "run/result.json").read_text())
     assert result["status"] == "incomplete" and result["cleanup_verified"]
     assert result["construction_run"] is False and result["solver_run"] is False

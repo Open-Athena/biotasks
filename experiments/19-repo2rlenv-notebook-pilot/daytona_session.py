@@ -10,8 +10,9 @@ import inspect
 import shlex
 import time
 import uuid
+from contextlib import asynccontextmanager
 
-from daytona import SessionExecuteRequest
+from daytona import AsyncDaytona, SessionExecuteRequest
 from repo2rlenv.execution.base import CommandResult
 from repo2rlenv.execution.lifecycle import save_record
 
@@ -147,3 +148,45 @@ async def session_command(process, argv, *, timeout, directory):
                 record["session_cleanup_error_type"] = type(error).__name__
         record["finished"] = time.time()
         save_record(path, record)
+
+
+@asynccontextmanager
+async def owned_session_process(sandbox_id, root, deadline, *, enabled):
+    """Own one async SDK client per stage, including setup or command failures.
+
+    The legacy transport needs no extra client. Session lookup is read-only;
+    this context never creates a sandbox or retries a submitted command.
+    Closing consumes the existing cleanup allowance, never extends it.
+    """
+    if not enabled:
+        yield None
+        return
+    client = AsyncDaytona()
+    primary = None
+    record = {"transport": "async_session", "state": "opening", "started": time.time()}
+    path = root / "session-client.json"
+    save_record(path, record)
+    try:
+        async with asyncio.timeout(max(0, min(15, deadline - time.time()))):
+            sandbox = await client.get(sandbox_id, request_timeout=15)
+        if sandbox.id != sandbox_id:
+            raise ValueError("Async client returned a different sandbox identity")
+        record["state"] = "open"
+        save_record(path, record)
+        yield sandbox.process
+    except BaseException as error:
+        primary = error
+        record["primary_error_type"] = type(error).__name__
+        raise
+    finally:
+        try:
+            async with asyncio.timeout(15):
+                await client.close()
+            record["state"] = "closed"
+        except BaseException as error:
+            record.update(state="close_failed", close_error_type=type(error).__name__)
+            if primary is None:
+                raise
+        finally:
+            record["finished"] = time.time()
+            save_record(path, record)

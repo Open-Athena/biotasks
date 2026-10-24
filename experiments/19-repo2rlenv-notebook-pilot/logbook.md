@@ -4349,3 +4349,9 @@ The opt-in transport now has a reproducible standalone compatibility runner: one
 
 
 The standalone session-compat-001transport check reserves1USDwithin the existing200authorization:157conservative holds,43unallocated. Fresh typed admission found only142nonterminal;132–140original terminal records and cleanup proofs are present. The compatibility check occupies the second planned pool slot until its own original results and fresh cleanup audit are complete. Frozen runner source is50beb9c9; no model/notebook/extra Iris host, no uncertain mutating retry.
+
+
+The actual standalone compatibility check passed all three cases in12.299seconds; original remote durations were~1.07seconds, controller command durations2.47–2.90seconds. Each append counter recorded exactly one execution; the intentionally hidden acknowledgement was reconciled through the original nonce/log receipt with no resubmission. Original cleanup and a separate fresh exact-ID/owner check are verified. This is a synthetic transport observation, not a natural reproduction of135or model/reference validation. The1USDhold is retained, not an invoice. See factory-checks/daytona-session-transport/live-check-result.json.
+
+
+Future autonomous setup/replay/grading configs now select the live-checked async session client. Each stage owns one client, checks the exact existing sandbox ID, closes it on lookup/work failure, and preserves the original failure if close also fails. Direct legacy stages remain blocking unless explicitly configured.272combined offline checks passed; a final identity guard was followed by91focused passes. Scientific/test/request/time/resource allowances and frozen142are unchanged. Fresh integrated notebook/model validation remains pending; see factory-checks/daytona-session-transport/integration-result.json.

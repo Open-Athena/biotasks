@@ -16,6 +16,7 @@ from pathlib import Path
 
 import httpx
 from daytona import CreateSandboxFromImageParams, Daytona, Resources
+from daytona_session import owned_session_process
 from design_stage import completion_transport
 from model_profile import native_effort
 from openai import AsyncOpenAI
@@ -48,6 +49,8 @@ COMMAND_RETURN_ALLOWANCE_SECONDS = 55
 
 def check_config(config):
     native_effort(config)
+    if config.get("command_transport", "blocking") not in {"blocking", "async_session"}:
+        raise ValueError("Unknown command transport")
     if "allow_quality_repair" in config and type(config["allow_quality_repair"]) is not bool:
         raise ValueError("allow_quality_repair must be boolean")
     if "inspect_review_evidence" in config and type(config["inspect_review_evidence"]) is not bool:
@@ -519,150 +522,163 @@ async def run(
         (
             await asyncio.to_thread(worker.exec, ["mkdir", "-p", "/work", "/work/logs"], timeout=30)
         ).checked("Initialize controller directory")
-        remote = Remote(worker, sandbox, root, work_deadline, target["task_cpus"])
-        if grading:
-            from grading_session import run_grading
+        async with owned_session_process(
+            sandbox.id,
+            root,
+            work_deadline,
+            enabled=config.get("command_transport", "blocking") == "async_session",
+        ) as process:
+            remote = Remote(
+                worker,
+                sandbox,
+                root,
+                work_deadline,
+                target["task_cpus"],
+                **({"session_process": process} if process is not None else {}),
+            )
+            if grading:
+                from grading_session import run_grading
 
-            result.update(
-                await run_grading(
-                    remote=remote,
-                    snapshot=snapshot,
-                    root=root,
-                    config=config,
-                    endpoint=endpoint,
-                    credential=credential,
-                    deadline=work_deadline,
-                    complete=complete,
+                result.update(
+                    await run_grading(
+                        remote=remote,
+                        snapshot=snapshot,
+                        root=root,
+                        config=config,
+                        endpoint=endpoint,
+                        credential=credential,
+                        deadline=work_deadline,
+                        complete=complete,
+                    )
                 )
-            )
-        elif replay:
-            RequestLedger(root / "requests.sqlite", {"setup": Allowance(None, None)})
-            result.update(
-                await replay_reference(
-                    remote=remote,
-                    snapshot=snapshot,
-                    root=root / "replay",
-                    config=config,
+            elif replay:
+                RequestLedger(root / "requests.sqlite", {"setup": Allowance(None, None)})
+                result.update(
+                    await replay_reference(
+                        remote=remote,
+                        snapshot=snapshot,
+                        root=root / "replay",
+                        config=config,
+                    )
                 )
-            )
-        else:
-            ledger = RequestLedger(
-                root / "requests.sqlite", {"setup": Allowance(config["max_requests"], None)}
-            )
-            spend = RunBudget(
-                BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "setup", "1"
-            )
+            else:
+                ledger = RequestLedger(
+                    root / "requests.sqlite", {"setup": Allowance(config["max_requests"], None)}
+                )
+                spend = RunBudget(
+                    BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "setup", "1"
+                )
 
-            async def bounded_repair(feedback):
-                async with asyncio.timeout(max(0, work_deadline - time.time())):
-                    return await repair_exports(feedback, deadline=work_deadline)
+                async def bounded_repair(feedback):
+                    async with asyncio.timeout(max(0, work_deadline - time.time())):
+                        return await repair_exports(feedback, deadline=work_deadline)
 
-            session = SetupSession(
-                prepared=prepared,
-                remote=remote,
-                root=root / "setup",
-                setup_seconds=config["setup_seconds"],
-                reference_seconds=config["reference_seconds"],
-                max_tests=config["max_tests"],
-                repair_exports=bounded_repair if repair_exports is not None else None,
-            )
-            await session.initialize()
-            from reference_setup import import_inventory
+                session = SetupSession(
+                    prepared=prepared,
+                    remote=remote,
+                    root=root / "setup",
+                    setup_seconds=config["setup_seconds"],
+                    reference_seconds=config["reference_seconds"],
+                    max_tests=config["max_tests"],
+                    repair_exports=bounded_repair if repair_exports is not None else None,
+                )
+                await session.initialize()
+                from reference_setup import import_inventory
 
-            context = {
-                "source_imports": {
-                    "analysis": import_inventory(prepared.baseline),
-                    "exports": import_inventory(prepared.exports),
-                    "scope": "Literal source statements and locations only; dynamic imports, native libraries and availability remain unverified.",
-                },
-                "preparation": {
-                    "source": prepared.context["source"],
-                    "conversion": prepared.context["conversion"],
-                    "plan": prepared.plan.model_dump(),
-                },
-                "paths": {
-                    "original.py": "/work/frozen/original.py",
-                    "exports.py": "/work/frozen/exports.py",
-                    "plan.json": "/work/frozen/plan.json",
-                    "setup": "/work/setup",
-                    "reference_cwd": "/work/run",
-                },
-                "limits": {
-                    **target,
-                    **{
-                        k: config[k]
-                        for k in (
-                            "max_requests",
-                            "max_tests",
-                            "setup_seconds",
-                            "reference_seconds",
-                            "campaign_seconds",
-                            "request_timeout_seconds",
-                        )
+                context = {
+                    "source_imports": {
+                        "analysis": import_inventory(prepared.baseline),
+                        "exports": import_inventory(prepared.exports),
+                        "scope": "Literal source statements and locations only; dynamic imports, native libraries and availability remain unverified.",
                     },
-                },
-            }
-            limits = ChatLimits(
-                max_output_tokens=None,
-                max_input_bytes=None,
-                max_response_bytes=None,
-                tool_output_chars=None,
-                reasoning_effort=native_effort(config),
-                request_timeout_sec=config["request_timeout_seconds"],
-            )
-            if complete is None:
-                client = AsyncOpenAI(
-                    base_url=endpoint,
-                    api_key=credential,
-                    max_retries=0,
-                    timeout=limits.request_timeout_sec,
-                    http_client=httpx.AsyncClient(follow_redirects=False),
+                    "preparation": {
+                        "source": prepared.context["source"],
+                        "conversion": prepared.context["conversion"],
+                        "plan": prepared.plan.model_dump(),
+                    },
+                    "paths": {
+                        "original.py": "/work/frozen/original.py",
+                        "exports.py": "/work/frozen/exports.py",
+                        "plan.json": "/work/frozen/plan.json",
+                        "setup": "/work/setup",
+                        "reference_cwd": "/work/run",
+                    },
+                    "limits": {
+                        **target,
+                        **{
+                            k: config[k]
+                            for k in (
+                                "max_requests",
+                                "max_tests",
+                                "setup_seconds",
+                                "reference_seconds",
+                                "campaign_seconds",
+                                "request_timeout_seconds",
+                            )
+                        },
+                    },
+                }
+                limits = ChatLimits(
+                    max_output_tokens=None,
+                    max_input_bytes=None,
+                    max_response_bytes=None,
+                    tool_output_chars=None,
+                    reasoning_effort=native_effort(config),
+                    request_timeout_sec=config["request_timeout_seconds"],
                 )
-                complete = completion_transport(client)
-            outcome = await stage(
-                schema=SetupOutcome,
-                name="setup",
-                prompt_name="notebook-reference-setup",
-                context=context,
-                root=root / "worker",
-                ledger=ledger,
-                budget=AuthorBudget(spend, root / "charges", "setup"),
-                complete=complete,
-                deadline=work_deadline,
-                limits=limits,
-                max_requests=config["max_requests"],
-                validate=session.validate_outcome,
-                recover_output_limit=False,
-                shell=session.shell,
-                extra_tools=[TEST_TOOL],
-                extra_handlers={"test_reference": session.test_reference},
-            )
-            save_record(root / "outcome.json", outcome.model_dump())
-            result.update(
-                status="reference_executed_requires_review"
-                if outcome.disposition == "tested"
-                else "worker_blocked",
-                reference_tests=session.tests,
-                reference_test_requests=session.test_requests,
-                setup_seconds_remaining=session.setup_remaining,
-                last_passing_test=session.last_pass,
-                effective_frozen_directory=session.frozen.relative_to(root).as_posix(),
-                effective_preparation_directory=str(session.effective_preparation)
-                if session.effective_preparation is not None
-                else None,
-            )
-            if (
-                outcome.disposition == "blocked"
-                and session.tests == 0
-                and session.setup_remaining < 1
-            ):
-                # A setup/tool transport stall can spend the whole allowance
-                # before scientific dispatch. Preserve the worker's outcome,
-                # but never turn that lack of execution into a seed rejection.
-                result["incomplete_reason"] = "setup_budget_exhausted_before_reference"
-                raise SetupBudgetExceeded(
-                    "Setup allowance exhausted before any controlled reference dispatch"
+                if complete is None:
+                    client = AsyncOpenAI(
+                        base_url=endpoint,
+                        api_key=credential,
+                        max_retries=0,
+                        timeout=limits.request_timeout_sec,
+                        http_client=httpx.AsyncClient(follow_redirects=False),
+                    )
+                    complete = completion_transport(client)
+                outcome = await stage(
+                    schema=SetupOutcome,
+                    name="setup",
+                    prompt_name="notebook-reference-setup",
+                    context=context,
+                    root=root / "worker",
+                    ledger=ledger,
+                    budget=AuthorBudget(spend, root / "charges", "setup"),
+                    complete=complete,
+                    deadline=work_deadline,
+                    limits=limits,
+                    max_requests=config["max_requests"],
+                    validate=session.validate_outcome,
+                    recover_output_limit=False,
+                    shell=session.shell,
+                    extra_tools=[TEST_TOOL],
+                    extra_handlers={"test_reference": session.test_reference},
                 )
+                save_record(root / "outcome.json", outcome.model_dump())
+                result.update(
+                    status="reference_executed_requires_review"
+                    if outcome.disposition == "tested"
+                    else "worker_blocked",
+                    reference_tests=session.tests,
+                    reference_test_requests=session.test_requests,
+                    setup_seconds_remaining=session.setup_remaining,
+                    last_passing_test=session.last_pass,
+                    effective_frozen_directory=session.frozen.relative_to(root).as_posix(),
+                    effective_preparation_directory=str(session.effective_preparation)
+                    if session.effective_preparation is not None
+                    else None,
+                )
+                if (
+                    outcome.disposition == "blocked"
+                    and session.tests == 0
+                    and session.setup_remaining < 1
+                ):
+                    # A setup/tool transport stall can spend the whole allowance
+                    # before scientific dispatch. Preserve the worker's outcome,
+                    # but never turn that lack of execution into a seed rejection.
+                    result["incomplete_reason"] = "setup_budget_exhausted_before_reference"
+                    raise SetupBudgetExceeded(
+                        "Setup allowance exhausted before any controlled reference dispatch"
+                    )
     except BaseException as error:
         result.update(status="incomplete", error_type=type(error).__name__)
         raise
