@@ -1,0 +1,9 @@
+Can generic recipe emission preserve bootstrap setup state without per-repository repairs or extra model calls? Subissue of #33, following #45.
+
+**Current:** experimental `apt-index-refresh-v1` is running on the same reserved worker as the failed official baseline. Live reports show bootstrap and task-image builds completed and original controls started; terminal results, archive/readback and cleanup remain pending. No independent reward is accepted yet. [Frozen comparison/protocol](https://github.com/Open-Athena/biotasks/blob/1a2f0090/experiments/47-bootstrap-recipe-state/candidate-protocol.md).
+
+**Justified change:** upstream’s saved commands omit a successful live APT update, and its emitter clears indexes. The generic policy refreshes indexes before supported literal installs, preserves package arguments and other commands, and rejects ambiguous APT syntax. Changed recipes are explicitly labelled; original source/raw/cache and failed baseline remain unchanged. No regeneration or per-task/model repair.
+
+**Checks:** 17 offline checks pass. The real local comparison revalidates all 56 generation members and preserves all task modes, grading assets, resources and deadlines; only recipe and exporter metadata differ. Completed recovery is byte-inert with external effects forbidden. [Proof](https://github.com/Open-Athena/biotasks/blob/1a2f0090/experiments/47-bootstrap-recipe-state/local-comparison-proof.json). Build recovery is separate from positive controls, clean full-suite commands and general dependency fidelity.
+
+**Bounds:** one candidate, original 300-second verifier/1800-second agent and task resources, at most 6.333333 CPUh including stop/cleanup inside #33’s 32-hour ceiling. No additional model calls or capacity; epic OpenRouter actual remains $0.287646. Keep issue/epic open for review; detailed logs and HF receipts belong in comments.
