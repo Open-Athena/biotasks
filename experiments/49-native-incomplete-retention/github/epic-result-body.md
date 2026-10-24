@@ -1,0 +1,11 @@
+Build an unattended path from official Repo2RLEnv PR candidates to reproducible, independently controlled task bundles, preserving original grading without per-task human/LLM repairs.
+
+**Current:** [PR #46](https://github.com/Open-Athena/biotasks/pull/46) provides the reusable validation component, open/unmerged with 41 tests and both GitHub checks passing. #45 exercised fresh official generation → local export → independent validation: one known Cobrapy PR #1497 package, 11 upstream calls/$0.287646, then an unchanged APT reconstruction failure. #47’s explicit generic index policy recovered both builds, but original 300-second controls timed out; late files disagree with null native rewards. No independently accepted fresh pair or clean command is established.
+
+**Preservation:** #49 archived the contradictory evidence unchanged, verified anonymous readback and exact-worker owned cleanup, preserved the public base and retained the original held journal without accepting/regrading rewards. [Recovery result](https://github.com/Open-Athena/biotasks/blob/991b287e/experiments/49-native-incomplete-retention/results.md). All owned jobs are terminal.
+
+**Next:** #48 addresses remaining reference-specific config/candidate/notice paths with a manifest interface. Existing upstream/project orchestration was inspected first; implementation and general installed generation/handoff entrypoint remain incomplete. Reuse archived reference evidence rather than regenerate to test an interface. No next native/model admission.
+
+**Coverage/budget:** original #28 totals stay 83 exports, 82 ever-positive, 67 ever-clean; 25 publicly eligible and 58 Matchms withheld. The fresh reproduction is a known PR’s package instance, not a new unique task. Epic actual is 9.596001/32 CPUh, zero CPU reservations, OpenRouter $0.287646 and existing $10 archival reserve unreconciled. Operating ceiling $90, strictly below $100 extra; no new capacity. [Current audit/next scope](https://github.com/Open-Athena/biotasks/blob/bf5e0698/experiments/33-unattended-validation/next-step.json).
+
+Keep #28 closed and epic/children open for review. Concise status here, detailed logs/eligible append-only HF receipts in comments. Retain protected evidence/research branches. No automatic merge or dataset release.
