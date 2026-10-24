@@ -1,0 +1,1281 @@
+"""Repo2RLEnv CLI — argparse-based, Rich-driven UI.
+
+Subcommands:
+  generate    Run a synthesis pipeline against a repo (emits to local dir)
+  validate    Validate a generated dataset directory (fast structural check; --deep for assets)
+  bootstrap   Build a working Docker image via an LLM agent loop
+  push        Push a local dataset directory to HF Hub
+  pull        Pull a Repo2RLEnv dataset from HF Hub to a local directory
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import logging
+import os
+import sys
+from pathlib import Path
+from typing import Any
+
+from repo2rlenv import __version__
+from repo2rlenv.ui import console, ensure_utf8_output, install_logging
+
+logger = logging.getLogger("repo2rlenv")
+
+
+def _load_dotenv_if_present() -> None:
+    """Load .env so OPENAI_API_KEY / ANTHROPIC_API_KEY / HF_TOKEN are available.
+
+    The search starts in the working directory: a bare `load_dotenv()` starts from
+    this module's install location, which misses the user's `.env` under
+    `uv tool install` or any venv outside the project.
+    """
+    try:
+        from dotenv import find_dotenv, load_dotenv
+    except ImportError:
+        return
+    try:
+        path = find_dotenv(usecwd=True)
+    except OSError:  # the working directory no longer exists
+        return
+    # Any parent of the working directory can supply the file, so a bad one must
+    # not take down every command, --help and --version included.
+    try:
+        load_dotenv(path)
+    except (OSError, UnicodeDecodeError) as exc:
+        logger.warning("could not load %s: %s", path, exc, extra={"markup": False})
+
+
+def _parse_pipeline_opts(items: list[str] | None) -> dict[str, Any]:
+    """Parse repeated --pipeline-opt key=value into a dict (with type coercion)."""
+    out: dict[str, Any] = {}
+    if not items:
+        return out
+    for item in items:
+        if "=" not in item:
+            raise SystemExit(f"--pipeline-opt expects key=value, got {item!r}")
+        k, v = item.split("=", 1)
+        if v.lower() in {"true", "false"}:
+            out[k] = v.lower() == "true"
+            continue
+        try:
+            out[k] = json.loads(v)
+            continue
+        except json.JSONDecodeError:
+            pass
+        out[k] = v
+    return out
+
+
+def _split_provider_model(value: str, flag: str) -> tuple[str, str]:
+    if "/" not in value:
+        raise SystemExit(f"{flag} expects provider/model, got {value!r}")
+    provider, model = value.split("/", 1)
+    return provider, model
+
+
+def _llm_overrides(args: argparse.Namespace) -> dict[str, Any]:
+    """The `llm` config block from --llm / --llm-fallback / --llm-endpoint / --llm-key-env.
+
+    Empty when none are given, so a config file's `llm:` block is left alone.
+    --llm-endpoint / --llm-key-env apply to the primary model only.
+    """
+    out: dict[str, Any] = {}
+    if args.llm:
+        out["provider"], out["model"] = _split_provider_model(args.llm, "--llm")
+    if getattr(args, "llm_fallback", None):
+        fb_provider, fb_model = _split_provider_model(args.llm_fallback, "--llm-fallback")
+        out["fallback"] = {"provider": fb_provider, "model": fb_model}
+    if getattr(args, "llm_endpoint", None):
+        out["endpoint"] = args.llm_endpoint
+    if getattr(args, "llm_key_env", None):
+        out["api_key_env"] = args.llm_key_env
+    if out and not args.llm and not getattr(args, "config", None):
+        raise SystemExit(
+            "--llm-fallback / --llm-endpoint / --llm-key-env need --llm "
+            "(or an `llm:` block in --config)"
+        )
+    return out
+
+
+def _drop_config_llm_extras(gen_input, args: argparse.Namespace, config_path: Path):
+    """`--llm` over a config whose `llm:` block names a different model.
+
+    `merge` is recursive, so the block's `endpoint` / `api_key_env` would stay
+    attached to the new model. They belong to the old one — keep only what the
+    CLI re-supplied.
+    """
+    from repo2rlenv.config import load_config_file
+
+    if gen_input.llm is None:
+        return gen_input
+    cfg_llm = load_config_file(config_path).get("llm") or {}
+    if (cfg_llm.get("provider"), cfg_llm.get("model")) == (
+        gen_input.llm.provider,
+        gen_input.llm.model,
+    ):
+        return gen_input
+    llm = gen_input.llm.model_copy(
+        update={
+            "endpoint": getattr(args, "llm_endpoint", None) or None,
+            "api_key_env": getattr(args, "llm_key_env", None) or None,
+        }
+    )
+    return gen_input.model_copy(update={"llm": llm})
+
+
+def _add_llm_args(parser: argparse.ArgumentParser, *, required: bool, fallback: bool) -> None:
+    parser.add_argument(
+        "--llm",
+        required=required,
+        help="LLM as provider/model (e.g. anthropic/claude-sonnet-4-6)",
+    )
+    if fallback:
+        parser.add_argument(
+            "--llm-fallback",
+            help=(
+                "fallback LLM as provider/model — used automatically when the primary "
+                "returns 5xx / rate-limit / network errors"
+            ),
+        )
+    parser.add_argument(
+        "--llm-endpoint",
+        metavar="URL",
+        help=(
+            "base URL of a self-hosted OpenAI-compatible server for the primary --llm "
+            "(vLLM, Ollama, …), e.g. http://localhost:8000/v1. No API key needed; the "
+            "provider-default key is never sent there — use --llm-key-env to send one"
+        ),
+    )
+    parser.add_argument(
+        "--llm-key-env",
+        metavar="VAR",
+        help="env var holding the API key for the primary --llm (overrides the provider default)",
+    )
+
+
+def cmd_generate(args: argparse.Namespace) -> int:
+    from repo2rlenv.config import load_generation_input
+    from repo2rlenv.pipelines import PIPELINES
+    from repo2rlenv.spec.options import parse_options
+    from repo2rlenv.ui.views.generation import generation_view_or_plain
+
+    overrides: dict[str, Any] = {}
+    if args.repo:
+        overrides["repo"] = {"url": args.repo, "ref": args.ref, "access": args.access}
+    if args.pipeline:
+        overrides["pipeline"] = {"name": args.pipeline}
+    if args.pipeline_opt:
+        overrides.setdefault("pipeline", {})["options"] = _parse_pipeline_opts(args.pipeline_opt)
+    if getattr(args, "recipe", None):
+        overrides.setdefault("pipeline", {})["recipe"] = args.recipe
+    if getattr(args, "resume", False):
+        overrides["execution"] = {"resume": True}
+    llm_overrides = _llm_overrides(args)
+    if llm_overrides:
+        overrides["llm"] = llm_overrides
+    if args.out:
+        overrides["output"] = {
+            "destination": args.out,
+            "org": args.org or "default",
+            "dataset_name": args.dataset_name or Path(args.out).name,
+            "visibility": args.visibility,
+        }
+
+    config_path = Path(args.config) if args.config else None
+    # The shared CLI boundary renders validation errors for both human and JSON output.
+    gen_input = load_generation_input(config_path, overrides)
+
+    if args.llm and config_path is not None:
+        gen_input = _drop_config_llm_extras(gen_input, args, config_path)
+
+    if gen_input.pipeline.recipe != "native":
+        if args.max_spend_usd is not None:
+            raise ValueError(
+                "--max-spend-usd is only supported by native generation. Owned recipes use "
+                "the campaign ledger: initialize it with 'campaign init PATH --budget-usd N' "
+                "and select that directory in execution.campaign_dir. No work was dispatched."
+            )
+        from repo2rlenv.pipelines.recipes.cli import run_recipe
+
+        return run_recipe(gen_input, plain=args.no_ui, json_output=getattr(args, "json", False))
+
+    if getattr(args, "json", False):
+        raise ValueError(
+            "generate --json streams owned recipe events. Native generation has no JSON "
+            "output contract; omit --json or select an owned --recipe. No work was dispatched."
+        )
+
+    # Keep the native CLI's historical default while distinguishing an explicit
+    # spending flag from omission on the owned-recipe route.
+    if args.max_spend_usd is None:
+        args.max_spend_usd = 5.0
+
+    pipeline_cls = PIPELINES.get(gen_input.pipeline.name.value)
+    if pipeline_cls is None:
+        console.error(
+            f"pipeline {gen_input.pipeline.name.value!r} not implemented in v{__version__}; "
+            f"available: {sorted(PIPELINES)}"
+        )
+        return 2
+
+    if not getattr(pipeline_cls, "native_supported", True):
+        console.error(
+            f"{gen_input.pipeline.name.value} requires an explicit --recipe; see pipelines list"
+        )
+        return 2
+
+    if getattr(pipeline_cls, "experimental", False):
+        console.warn(
+            f"'{gen_input.pipeline.name.value}' is an EXPERIMENTAL pipeline — its "
+            "interface and output may change without notice, and its quality is not "
+            "yet on par with the stable pipelines (pr_diff, pr_runtime). Proceeding."
+        )
+
+    options = parse_options(gen_input.pipeline.name.value, gen_input.pipeline.options)
+
+    # Pre-flight: can this input source serve what the pipeline needs?
+    # PR-based pipelines (pr_diff, pr_runtime) and cve_patches require platform
+    # data (pull requests / commit API) that a local or GitLab source can't
+    # provide — block here with a clear message instead of failing mid-run.
+    from repo2rlenv.sources import SourceKind, capabilities_for
+
+    src_kind = gen_input.repo.source_kind
+    available_caps = capabilities_for(src_kind)
+    required_caps = getattr(pipeline_cls, "required_capabilities", frozenset())
+    missing_caps = required_caps - available_caps
+    if missing_caps:
+        compatible = sorted(
+            n
+            for n, c in PIPELINES.items()
+            if getattr(c, "required_capabilities", frozenset()) <= available_caps
+        )
+        console.error(
+            f"pipeline {gen_input.pipeline.name.value!r} needs "
+            f"{sorted(m.value for m in missing_caps)}, which a '{src_kind.value}' source "
+            f"does not provide. Pipelines that work on a '{src_kind.value}' source: "
+            f"{compatible}. For PR/CVE-based pipelines, point --repo at a GitHub repo."
+        )
+        return 2
+
+    # Pre-flight: does this pipeline support this repo's primary language?
+    # Cheap GitHub API call; runs BEFORE bootstrap so we fail fast on a
+    # Go/Rust/Node repo + Python-only pipeline mismatch (~2s vs ~5 min).
+    # Only GitHub exposes a language API; for local/GitLab the bootstrap phase
+    # detects the language from repo files instead.
+    if (
+        getattr(pipeline_cls, "supported_languages", None) is not None
+        and src_kind == SourceKind.GITHUB
+    ):
+        from repo2rlenv.auth import resolve_github_token
+        from repo2rlenv.bootstrap.language import language_from_github_name
+        from repo2rlenv.github import get_primary_language
+        from repo2rlenv.pipelines.base import (
+            LanguageMismatchError,
+            check_language_compatibility,
+        )
+
+        owner, name = gen_input.repo.owner_name
+        gh_token = resolve_github_token(gen_input.repo, gen_input.auth)
+        gh_lang_name = get_primary_language(owner, name, token=gh_token)
+        detected = language_from_github_name(gh_lang_name)
+        try:
+            check_language_compatibility(pipeline_cls, detected, force=args.force_language)
+        except LanguageMismatchError as exc:
+            console.error(str(exc))
+            return 2
+
+    # Auto-trigger bootstrap for sandbox-required pipelines (requires_bootstrap=True).
+    # Cache hit ⇒ instant; cache miss ⇒ full LLM-agent run with the live UI.
+    bootstrap_result = None
+    if getattr(pipeline_cls, "requires_bootstrap", False) and gen_input.llm is None:
+        console.error(
+            f"pipeline {gen_input.pipeline.name.value!r} requires --llm "
+            f"(bootstrap needs an LLM to build the sandbox image)"
+        )
+        return 2
+    if getattr(pipeline_cls, "requires_bootstrap", False):
+        from repo2rlenv.bootstrap import LanguageHint, ensure_bootstrap
+        from repo2rlenv.bootstrap.runner import BootstrapError
+        from repo2rlenv.llm import check_provider
+        from repo2rlenv.ui.views.bootstrap import bootstrap_view_or_plain
+
+        try:
+            check_provider(gen_input.llm)
+        except RuntimeError as exc:
+            console.error(str(exc))
+            return 2
+
+        # Mutate spec with CLI overrides (language / base-image / budget / force / --bootstrap-opt)
+        bspec = gen_input.bootstrap.model_copy(deep=True)
+        if args.language:
+            try:
+                bspec.languages_hint = [LanguageHint(args.language).value]
+            except ValueError as exc:
+                raise SystemExit(f"unknown --language: {args.language!r}") from exc
+        if args.base_image:
+            bspec.base_image = args.base_image
+        # --max-spend-usd=0 ⇒ no cap; map to None
+        if args.max_spend_usd is not None:
+            bspec.max_llm_spend_usd = args.max_spend_usd if args.max_spend_usd > 0 else None
+        # Generic --bootstrap-opt key=value for any other BootstrapSpec field
+        # (cache_dir / max_iterations / max_seconds / image_registry / platform / ...)
+        for k, v in _parse_pipeline_opts(getattr(args, "bootstrap_opt", None)).items():
+            if not hasattr(bspec, k):
+                raise SystemExit(f"--bootstrap-opt: unknown BootstrapSpec field {k!r}")
+            # Pydantic will coerce types as needed (str→Path, str→int, etc.)
+            try:
+                bspec = bspec.model_copy(update={k: v})
+            except Exception as exc:
+                raise SystemExit(f"--bootstrap-opt {k}={v!r}: {exc}") from exc
+        with bootstrap_view_or_plain(
+            repo=gen_input.repo.url,
+            ref=gen_input.repo.ref,
+            model=gen_input.llm.qualified_name if gen_input.llm else "none",
+            max_iterations=bspec.max_iterations,
+            language=(bspec.languages_hint[0] if bspec.languages_hint else "unknown"),
+            base_image=bspec.base_image or "(auto-detect)",
+            force_plain=args.no_ui,
+        ) as bs_view:
+            try:
+                bootstrap_result = ensure_bootstrap(
+                    gen_input.repo,
+                    bspec,
+                    gen_input.llm,
+                    gen_input.auth,
+                    force=args.force_bootstrap,
+                    on_turn=bs_view.on_turn if bs_view else None,
+                    on_thinking=bs_view.on_thinking if bs_view else None,
+                    on_executing=bs_view.on_executing if bs_view else None,
+                    on_phase=bs_view.on_phase if bs_view else None,
+                )
+            except BootstrapError as exc:
+                if bs_view is not None:
+                    bs_view.set_outcome(success=False, reason=str(exc))
+                else:
+                    console.error(f"bootstrap error: {exc}")
+                return 1
+            if bs_view is not None:
+                bs_view.set_outcome(
+                    success=True,
+                    image_digest=bootstrap_result.image_digest,
+                    image_tag=bootstrap_result.image_tag,
+                    rebuild_cmds=bootstrap_result.rebuild_cmds,
+                    test_cmds=bootstrap_result.test_cmds,
+                )
+
+    pipeline = pipeline_cls(gen_input, options, bootstrap=bootstrap_result)
+
+    dest = gen_input.output.destination
+    push_to_hub_after = dest.startswith("hf://")
+    if push_to_hub_after:
+        console.warn(
+            "generate --out hf://... is deprecated and will be removed in v0.9. "
+            "Use `repo2rlenv push <local-dir> <hf://...>` instead — explicit, re-pushable, "
+            "and decouples emission from publication."
+        )
+        repo_id = dest.removeprefix("hf://")
+        out_dir = Path(f"./.r2e_cache/{repo_id.replace('/', '__')}").resolve()
+    else:
+        out_dir = Path(dest).expanduser().resolve()
+
+    # Pipeline-specific limit hint for the progress bar
+    limit_hint = int(gen_input.pipeline.options.get("limit", 50)) or 50
+
+    with generation_view_or_plain(
+        repo=gen_input.repo.url,
+        pipeline=gen_input.pipeline.name.value,
+        model=gen_input.llm.qualified_name if gen_input.llm else "none",
+        limit=limit_hint,
+        out=str(out_dir),
+        force_plain=args.no_ui,
+    ) as view:
+        on_candidate = view.on_candidate if view is not None else None
+        # Pipelines that don't yet emit on_candidate just won't update the bar
+        if hasattr(pipeline, "set_progress_callback") and on_candidate is not None:
+            pipeline.set_progress_callback(on_candidate)
+        elif on_candidate is None:
+            console.info(f"generating with pipeline={gen_input.pipeline.name.value}")
+            console.dim(f"  repo: {gen_input.repo.url} (access={gen_input.repo.access})")
+            console.dim(f"  out:  {out_dir}")
+
+        result = pipeline.run(out_dir)
+
+        if view is not None:
+            view.set_outcome(
+                emitted=result.emitted,
+                skipped=result.skipped,
+                skip_reasons=result.skip_reasons,
+            )
+
+    if view is None:
+        console.kv(
+            {
+                "candidates": result.candidates,
+                "emitted": result.emitted,
+                "skipped": f"{result.skipped} ({result.skip_reasons})",
+                "out_dir": str(result.out_dir),
+            },
+            title="Generation result",
+        )
+
+    if push_to_hub_after and result.emitted > 0:
+        from repo2rlenv.hub import push_to_hub
+
+        with console.section(f"Pushing to {dest}"):
+            push_result = push_to_hub(
+                local_dataset_dir=out_dir,
+                repo_id=repo_id,
+                auth=gen_input.auth,
+                private=(gen_input.output.visibility == "private"),
+                pipeline=gen_input.pipeline.name.value,
+                repo_source=f"{gen_input.repo.owner_name[0]}/{gen_input.repo.owner_name[1]}",
+            )
+            console.kv(
+                {
+                    "repo_id": push_result.repo_id,
+                    "commit": push_result.commit_sha,
+                    "task_count": push_result.task_count,
+                    "registry_url": push_result.registry_url,
+                },
+                title="HF Hub push",
+            )
+
+    return 0 if result.emitted > 0 else 1
+
+
+def cmd_validate(args: argparse.Namespace) -> int:
+    import tomllib
+
+    from rich.markup import escape
+
+    oracle = getattr(args, "oracle", False)
+    deep = getattr(args, "deep", False) or oracle
+    dataset_dir = Path(args.path).expanduser().resolve()
+    task_files = sorted(dataset_dir.rglob("task.toml"))
+    if not task_files:
+        console.error(f"no task.toml files found under {dataset_dir}")
+        return 1
+
+    with console.section(f"Validating {dataset_dir}"):
+        failures = 0
+        warnings = 0
+        for tf in task_files:
+            try:
+                data = tomllib.loads(tf.read_text(encoding="utf-8"))
+            except Exception as exc:
+                console.error(f"{tf.relative_to(dataset_dir)}: cannot parse TOML: {exc}")
+                failures += 1
+                continue
+
+            missing = [k for k in ("version", "task") if k not in data]
+            if missing:
+                console.error(f"{tf.relative_to(dataset_dir)}: missing top-level {missing}")
+                failures += 1
+                continue
+
+            t = data["task"]
+            if "name" not in t:
+                console.error(escape(f"{tf.relative_to(dataset_dir)}: [task] missing name"))
+                failures += 1
+                continue
+
+            # escape(): TOML table names like [metadata.repo2env] are Rich markup.
+            r2e = data.get("metadata", {}).get("repo2env")
+            if r2e is None:
+                console.warn(escape(f"{t['name']}: missing [metadata.repo2env] — non-r2e task"))
+            if deep:
+                from repo2rlenv.validation import validate_task
+
+                task_rel = tf.parent.relative_to(dataset_dir)
+                findings = validate_task(tf.parent, data, oracle=oracle)
+                for f in findings:
+                    line = escape(f"{t['name']}: {(task_rel / f.path).as_posix()}: {f.message}")
+                    if f.severity == "error":
+                        console.error(line)
+                    else:
+                        console.warn(line)
+                warnings += sum(f.severity == "warning" for f in findings)
+                if any(f.severity == "error" for f in findings):
+                    failures += 1
+                    continue
+            if r2e is not None:
+                console.success(t["name"])
+
+    suffix = f" ({warnings} warnings)" if warnings else ""
+    if failures == 0:
+        console.success(f"all {len(task_files)} tasks valid{suffix}")
+    else:
+        console.error(f"{failures}/{len(task_files)} tasks failed{suffix}")
+    return 0 if failures == 0 else 1
+
+
+class _Backend:
+    """Which source/destination a URI points at."""
+
+    HF = "hf"
+    HARBOR = "harbor"
+    GITHUB = "github"
+
+
+def _split_revision(s: str) -> tuple[str, str | None]:
+    """Split `name@rev` into (name, rev). Returns (name, None) if no `@`."""
+    if "@" in s:
+        name, _, rev = s.rpartition("@")
+        return name, (rev or None)
+    return s, None
+
+
+def _resolve_hf_owner(name: str) -> str:
+    """Auto-resolve `name` (no slash) to `<whoami>/name` via HfApi.
+
+    Bare-name resolution. Errors clearly if no HF token / whoami fails.
+    """
+    from huggingface_hub import whoami
+
+    from repo2rlenv.auth import resolve_hf_token
+    from repo2rlenv.spec.input import AuthSpec
+
+    token = resolve_hf_token(AuthSpec())
+    if not token:
+        raise SystemExit(
+            f"cannot auto-resolve owner for {name!r}: no HF token found.\n"
+            f"  Either run `huggingface-cli login`, set $HF_TOKEN, or pass `<owner>/{name}` explicitly."
+        )
+    try:
+        info = whoami(token=token)
+    except Exception as exc:
+        raise SystemExit(f"cannot auto-resolve owner for {name!r}: whoami failed ({exc})") from exc
+    user = info.get("name") if isinstance(info, dict) else None
+    if not user:
+        raise SystemExit(f"cannot auto-resolve owner for {name!r}: whoami returned no name")
+    return f"{user}/{name}"
+
+
+def _parse_dataset_uri(uri: str, *, flag: str) -> tuple[str, str, str | None]:
+    """Classify a dataset URI into `(backend, normalized_id, revision)`.
+
+    Forms accepted:
+      "name"                      → (HF,     "<whoami>/name", None)
+      "owner/name"                → (HF,     "owner/name",    None)
+      "owner/name@rev"            → (HF,     "owner/name",    "rev")
+      "hf://owner/name[@rev]"     → (HF,     "owner/name",    rev | None)
+      "hf://name[@rev]"           → (HF,     "<whoami>/name", rev | None)
+      "harbor://name[@tag]"       → (HARBOR, "name",          tag | None)
+      "gh://owner/repo[@ref]"     → (GITHUB, "owner/repo",    ref | None)
+      "https://github.com/owner/repo[/tree/ref][@ref]" → (GITHUB, "owner/repo", ref | None)
+    """
+    s = uri.strip()
+    if not s:
+        raise SystemExit(f"{flag}: empty dataset URI")
+
+    # GitHub full URL → strip prefix
+    gh_url_prefixes = ("https://github.com/", "http://github.com/", "git@github.com:")
+    for prefix in gh_url_prefixes:
+        if s.startswith(prefix):
+            tail = s.removeprefix(prefix)
+            tail = tail.removesuffix(".git")
+            base, rev = _split_revision(tail)
+            parts = [p for p in base.split("/") if p]
+            if len(parts) < 2:
+                raise SystemExit(f"{flag}: GitHub URL needs owner/repo, got {uri!r}")
+            return (_Backend.GITHUB, f"{parts[0]}/{parts[1]}", rev)
+
+    # Scheme prefixes
+    if s.startswith("gh://"):
+        base, rev = _split_revision(s.removeprefix("gh://"))
+        parts = [p for p in base.split("/") if p]
+        if len(parts) != 2:
+            raise SystemExit(f"{flag}: gh:// expects owner/repo, got {uri!r}")
+        return (_Backend.GITHUB, f"{parts[0]}/{parts[1]}", rev)
+
+    if s.startswith("harbor://"):
+        base, rev = _split_revision(s.removeprefix("harbor://"))
+        # Harbor's public registry uses `org/name` (e.g. `cookbook/test`,
+        # `scale-ai/swe-atlas-qna`). Bare `name` (legacy / convenience) is also
+        # accepted and forwarded verbatim — harbor's CLI handles resolution.
+        parts = [p for p in base.split("/") if p]
+        if len(parts) == 2 and base.count("/") == 1:
+            return (_Backend.HARBOR, f"{parts[0]}/{parts[1]}", rev)
+        if len(parts) == 1 and "/" not in base:
+            return (_Backend.HARBOR, parts[0], rev)
+        raise SystemExit(
+            f"{flag}: harbor:// expects 'name' or 'org/name' (optionally `@tag`), got {uri!r}"
+        )
+
+    if s.startswith("hf://"):
+        s = s.removeprefix("hf://")
+        # fall through to bare/owner-name parsing
+
+    # Plain or hf://-stripped: bare name, owner/name, or owner/name@rev
+    base, rev = _split_revision(s)
+    parts = [p for p in base.split("/") if p]
+    if len(parts) == 2 and base.count("/") == 1:
+        # Reject trailing/leading slashes ("owner/", "/name") via the count check.
+        return (_Backend.HF, f"{parts[0]}/{parts[1]}", rev)
+    if len(parts) == 1 and "/" not in base:
+        # Bare name only — no stray slashes allowed.
+        return (_Backend.HF, _resolve_hf_owner(parts[0]), rev)
+    raise SystemExit(
+        f"{flag} expects one of:\n"
+        f"  name | owner/name | hf://owner/name | harbor://name | gh://owner/repo\n"
+        f"got {uri!r}"
+    )
+
+
+def cmd_push(args: argparse.Namespace) -> int:
+    """Push a local dataset directory to HF Hub.
+
+    Only HF is supported as a push target. Harbor publishing happens via
+    `harbor publish`; GitHub publishing is `git push`. We give friendly
+    redirects rather than partially implementing those flows.
+    """
+    from repo2rlenv.hub import push_to_hub
+    from repo2rlenv.spec.input import AuthSpec
+
+    # --check-auth: short-circuit, run the §5.3 probe protocol and exit
+    if getattr(args, "check_auth", False):
+        return _run_check_auth(args)
+
+    local_dir = Path(args.local_dir).expanduser().resolve()
+    if not local_dir.is_dir():
+        console.error(f"local dataset directory not found: {local_dir}")
+        return 2
+
+    backend, repo_id, revision = _parse_dataset_uri(args.dataset, flag="<dataset>")
+    if backend == _Backend.HARBOR:
+        console.error(
+            "Pushing to the Harbor registry is delegated to harbor itself.\n"
+            f"  cd {local_dir} && harbor publish"
+        )
+        return 2
+    if backend == _Backend.GITHUB:
+        console.error(
+            "Pushing a dataset to GitHub is delegated to git.\n"
+            f"  cd {local_dir} && git init && git remote add origin <url> && git push -u origin main"
+        )
+        return 2
+    if revision is not None:
+        console.warn(
+            f"--push does not pin revisions; ignoring `@{revision}` (Hub commit will be the push commit)"
+        )
+
+    with console.section(f"Pushing {local_dir.name} → hf://{repo_id}"):
+        try:
+            result = push_to_hub(
+                local_dataset_dir=local_dir,
+                repo_id=repo_id,
+                auth=AuthSpec(),
+                private=args.private,
+                commit_message=args.message,
+                image_registry=getattr(args, "image_registry", None),
+                inline_dockerfile=getattr(args, "inline_dockerfile", False),
+                require_registry=getattr(args, "require_registry", False),
+                skip_image_push=getattr(args, "skip_image_push", False),
+                image_visibility=getattr(args, "image_visibility", "inherit"),
+                on_message=lambda m: console.info(m),
+            )
+        except Exception as exc:
+            console.error(f"push failed: {exc}")
+            return 1
+        console.kv(
+            {
+                "repo_id": result.repo_id,
+                "task_count": result.task_count,
+                "commit": result.commit_sha,
+                "registry_url": result.registry_url,
+            },
+            title="HF Hub push",
+        )
+        console.dim(f"  to pull back later:  repo2rlenv pull {result.repo_id}")
+    return 0
+
+
+def _run_check_auth(args: argparse.Namespace) -> int:
+    """Run the §5.3 probe protocol against every discovered registry."""
+    import json as _json
+
+    from repo2rlenv.auth import resolve_hf_token
+    from repo2rlenv.registry.auth import (
+        RegistryKind,
+        discover_logged_in_registries,
+        filter_known_registries,
+    )
+    from repo2rlenv.registry.integration import _build_namespace_for
+    from repo2rlenv.registry.probe import probe
+    from repo2rlenv.spec.input import AuthSpec
+
+    json_mode = getattr(args, "json", False)
+    fast = getattr(args, "fast", False)
+    levels = (1, 2) if fast else (1, 2, 3, 4)
+
+    hf_token = resolve_hf_token(AuthSpec())
+    hf_status = "logged in" if hf_token else "NOT logged in"
+
+    candidates = filter_known_registries(discover_logged_in_registries())
+    results = []
+    for auth in candidates:
+        ns = _build_namespace_for(
+            auth, hf_owner=args.dataset.split("/", 1)[0] if "/" in args.dataset else "test"
+        )
+        pr = probe(auth, ns, levels=levels)
+        results.append((auth, pr))
+
+    if json_mode:
+        out = {
+            "hf_hub": {"logged_in": bool(hf_token)},
+            "registries": [
+                {
+                    "host": auth.host,
+                    "kind": auth.kind.value,
+                    "cred_source": auth.cred_source.value,
+                    "reachable": pr.reachable,
+                    "authenticated": pr.authenticated,
+                    "can_read": pr.can_read,
+                    "can_write": pr.can_write,
+                    "is_pushable": pr.is_pushable,
+                    "error": pr.error,
+                    "elapsed_sec": pr.elapsed_sec,
+                }
+                for auth, pr in results
+            ],
+        }
+        print(_json.dumps(out, indent=2))
+        return 0
+
+    with console.section("Checking credentials for push targets"):
+        console.info(f"HF Hub: {hf_status}")
+        if not results:
+            console.warn("no container-registry credentials found in ~/.docker/config.json")
+            return 0
+        for auth, pr in results:
+            label = f"{auth.host}  ({auth.kind.value}, cred: {auth.cred_source.value})"
+            console.info(label)
+            console.dim(
+                f"  L1 reachable          {'✓' if pr.reachable else '✗'}  "
+                f"{pr.elapsed_sec * 1000:.0f}ms"
+            )
+            if 2 in levels:
+                console.dim(f"  L2 auth resolved      {'✓' if pr.authenticated else '✗'}")
+            if 3 in levels:
+                console.dim(f"  L3 can read namespace {'✓' if pr.can_read else '✗'}")
+            if 4 in levels:
+                console.dim(f"  L4 can write          {'✓' if pr.can_write else '✗'}")
+            if pr.is_pushable:
+                console.success(f"  → READY for push as {auth.host}/{pr.namespace}")
+            else:
+                console.warn(f"  → NOT READY: {pr.error or '(unknown)'}")
+                if pr.helper_hint:
+                    console.dim(f"  Fix: {pr.helper_hint}")
+        # Suggest default
+        best = next(
+            (pr for _, pr in results if pr.is_pushable and pr.kind is RegistryKind.GHCR), None
+        )
+        if best is None:
+            best = next((pr for _, pr in results if pr.is_pushable), None)
+        if best:
+            console.info(f"Default registry for push: {best.host}/{best.namespace}")
+        else:
+            console.warn("No verified registry available — push will fall back to inline mode")
+    return 0
+
+
+def cmd_pull(args: argparse.Namespace) -> int:
+    """Pull a Repo2RLEnv dataset from HF Hub / Harbor registry / GitHub.
+
+    URI dispatch:
+      name / owner/name / hf://...   → HF Hub via `huggingface_hub`
+      harbor://name[@tag]            → shell out to `harbor datasets download`
+      gh://owner/repo[@ref], https://github.com/...  → `git clone --depth 1`
+    """
+    backend, normalized_id, revision = _parse_dataset_uri(args.dataset, flag="<dataset>")
+    slug = normalized_id.replace("/", "__")
+    default_dir = Path(f"./datasets/{slug}").resolve()
+    local_dir = Path(args.local_dir).expanduser().resolve() if args.local_dir else default_dir
+
+    if backend == _Backend.HF:
+        from repo2rlenv.hub import pull_from_hub
+        from repo2rlenv.spec.input import AuthSpec
+
+        label = f"hf://{normalized_id}" + (f"@{revision}" if revision else "")
+        with console.section(f"Pulling {label} → {local_dir}"):
+            try:
+                result = pull_from_hub(
+                    repo_id=normalized_id,
+                    local_dir=local_dir,
+                    auth=AuthSpec(),
+                    task=args.task,
+                    force=args.force,
+                    revision=revision,
+                )
+            except Exception as exc:
+                console.error(f"pull failed: {exc}")
+                return 1
+            console.kv(
+                {
+                    "repo_id": result.repo_id,
+                    "revision": revision or "(default)",
+                    "local_dir": str(result.local_dir),
+                    "task_count": result.task_count,
+                },
+                title="HF Hub pull",
+            )
+            console.dim(f"  validate it: repo2rlenv validate {result.local_dir}")
+        return 0
+
+    if backend == _Backend.HARBOR:
+        from repo2rlenv.hub import pull_from_harbor
+
+        label = f"harbor://{normalized_id}" + (f"@{revision}" if revision else "")
+        with console.section(f"Pulling {label} → {local_dir}"):
+            try:
+                result = pull_from_harbor(
+                    name=normalized_id,
+                    local_dir=local_dir,
+                    tag=revision,
+                    registry_url=args.registry_url,
+                    force=args.force,
+                )
+            except Exception as exc:
+                console.error(f"pull failed: {exc}")
+                return 1
+            console.kv(
+                {
+                    "dataset": normalized_id,
+                    "tag": revision or "(default)",
+                    "local_dir": str(result.local_dir),
+                    "task_count": result.task_count,
+                },
+                title="Harbor pull",
+            )
+            console.dim(f"  validate it: repo2rlenv validate {result.local_dir}")
+        return 0
+
+    if backend == _Backend.GITHUB:
+        from repo2rlenv.hub import pull_from_github
+
+        label = f"gh://{normalized_id}" + (f"@{revision}" if revision else "")
+        with console.section(f"Pulling {label} → {local_dir}"):
+            try:
+                result = pull_from_github(
+                    owner_repo=normalized_id,
+                    local_dir=local_dir,
+                    ref=revision,
+                    force=args.force,
+                )
+            except Exception as exc:
+                console.error(f"pull failed: {exc}")
+                return 1
+            console.kv(
+                {
+                    "owner_repo": normalized_id,
+                    "ref": revision or "(default)",
+                    "local_dir": str(result.local_dir),
+                    "task_count": result.task_count,
+                },
+                title="GitHub pull",
+            )
+            console.dim(f"  validate it: repo2rlenv validate {result.local_dir}")
+        return 0
+
+    raise SystemExit(f"unknown backend: {backend}")
+
+
+def cmd_bootstrap(args: argparse.Namespace) -> int:
+    """Build a working Docker image for (repo, ref) via an LLM agent loop."""
+    from repo2rlenv.bootstrap import LanguageHint, ensure_bootstrap
+    from repo2rlenv.bootstrap.language import base_image_for
+    from repo2rlenv.bootstrap.runner import BootstrapError
+    from repo2rlenv.llm import check_provider
+    from repo2rlenv.spec.input import AuthSpec, BootstrapSpec, LLMSpec, RepoSpec
+    from repo2rlenv.ui.views.bootstrap import bootstrap_view_or_plain
+
+    if not args.llm:
+        raise SystemExit("--llm is required as provider/model (e.g. anthropic/claude-sonnet-4-6)")
+    llm = LLMSpec.model_validate(_llm_overrides(args))
+    try:
+        check_provider(llm)
+    except RuntimeError as exc:
+        raise SystemExit(str(exc)) from exc
+
+    repo = RepoSpec(url=args.repo, ref=args.ref, access=args.access)
+    # --max-spend-usd=0 means "no cap"; map to None so the agent loop skips the check
+    spend_cap = args.max_spend_usd if args.max_spend_usd and args.max_spend_usd > 0 else None
+    spec = BootstrapSpec(
+        max_iterations=args.max_iterations,
+        max_seconds=args.max_seconds,
+        cache_dir=Path(args.cache_dir),
+        image_registry=args.image_registry,
+        platform=args.platform,
+        base_image=args.base_image,
+        max_llm_spend_usd=spend_cap,
+    )
+    if args.language:
+        try:
+            spec.languages_hint = [LanguageHint(args.language).value]
+        except ValueError as exc:
+            raise SystemExit(f"unknown language: {args.language!r}") from exc
+
+    guessed_lang = spec.languages_hint[0] if spec.languages_hint else "unknown"
+    try:
+        guessed_enum = LanguageHint(guessed_lang)
+    except ValueError:
+        guessed_enum = LanguageHint.UNKNOWN
+    guessed_base = spec.base_image or base_image_for(guessed_enum)
+
+    with bootstrap_view_or_plain(
+        repo=args.repo,
+        ref=args.ref,
+        model=args.llm,
+        max_iterations=args.max_iterations,
+        language=guessed_lang,
+        base_image=guessed_base,
+        force_plain=args.no_ui,
+    ) as view:
+        on_turn = view.on_turn if view is not None else None
+        on_thinking = view.on_thinking if view is not None else None
+        on_executing = view.on_executing if view is not None else None
+        on_phase = view.on_phase if view is not None else None
+        try:
+            result = ensure_bootstrap(
+                repo,
+                spec,
+                llm,
+                AuthSpec(),
+                force=args.force,
+                on_turn=on_turn,
+                on_thinking=on_thinking,
+                on_executing=on_executing,
+                on_phase=on_phase,
+            )
+        except BootstrapError as exc:
+            # When the user didn't pin the language or base, the failure is
+            # most likely because auto-detection picked the wrong one. Surface
+            # actionable hints instead of just dumping the agent's last error.
+            reason = str(exc)
+            if not args.language and not args.base_image:
+                reason += (
+                    "\n\nhint: language was auto-detected. If this repo is polyglot or has "
+                    "unusual markers, retry with --language <python|node|go|rust|java|c_cpp> "
+                    "or --base-image <image:tag> (e.g. --base-image ubuntu:24.04 for a "
+                    "generic Linux base)."
+                )
+            if view is not None:
+                view.set_outcome(success=False, reason=reason)
+            else:
+                console.error(f"bootstrap error: {reason}")
+            return 1
+        if view is not None:
+            view.set_outcome(
+                success=True,
+                image_digest=result.image_digest,
+                image_tag=result.image_tag,
+                rebuild_cmds=result.rebuild_cmds,
+                test_cmds=result.test_cmds,
+            )
+
+    if view is None:
+        console.kv(
+            {
+                "repo": f"{result.repo}@{result.ref[:12]}",
+                "language": result.language.value,
+                "image_digest": result.image_digest,
+                "image_tag": result.image_tag,
+                "iterations": result.iterations,
+                "build_time": f"{result.build_time_sec:.1f}s",
+                "smoke_passed": result.smoke_passed,
+                "pushed": result.pushed_to_registry,
+            },
+            title="Bootstrap result",
+        )
+    return 0
+
+
+class CLIUsageError(ValueError):
+    """Invalid command syntax, rendered by the same boundary as input errors."""
+
+
+class _ArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        raise CLIUsageError(f"{message}; use '{self.prog} --help' for usage")
+
+
+def _dispatch(argv: list[str]) -> int:
+    ensure_utf8_output()
+    _load_dotenv_if_present()
+
+    parser = _ArgumentParser(
+        prog="repo2rlenv",
+        description="Turn any repository into an RL environment for training and evaluation.",
+    )
+    parser.add_argument("--version", action="version", version=f"repo2rlenv {__version__}")
+    parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument(
+        "--no-ui", action="store_true", help="disable Rich live displays globally (plain logs)"
+    )
+    sub = parser.add_subparsers(dest="command", required=True, metavar="COMMAND")
+
+    from repo2rlenv.campaigns.cli import add_campaign_parsers
+    from repo2rlenv.campaigns.release_cli import add_release_parser
+    from repo2rlenv.pipelines.recipes.cli import add_discovery_parser
+    from repo2rlenv.pipelines.recipes.codemidas.cli import add_parser as add_codemidas_parser
+    from repo2rlenv.quality.loop.cli import add_quality_parser
+    from repo2rlenv.task_labels import add_tasks_parser
+
+    add_discovery_parser(sub)
+    add_codemidas_parser(sub)
+    add_campaign_parsers(sub)
+    add_release_parser(sub)
+    add_quality_parser(sub)
+    add_tasks_parser(sub)
+    from repo2rlenv.tasksmith.cli import add_parser as add_tasksmith_parser
+
+    add_tasksmith_parser(sub)
+
+    # generate
+    g = sub.add_parser("generate", help="Run a synthesis pipeline against a repo")
+    g.add_argument("--config", help="path to YAML/TOML config file")
+    g.add_argument("--repo", help="repo URL or owner/name (overrides config)")
+    g.add_argument("--ref", default="HEAD", help="branch/tag/commit (default: HEAD)")
+    g.add_argument("--access", choices=["public", "private", "auto"], default="auto")
+    g.add_argument("--pipeline", help="pipeline name")
+    g.add_argument("--recipe", help="owned recipe name (native by default)")
+    g.add_argument(
+        "--resume",
+        action="store_true",
+        help="resume an owned run without redispatching completed work",
+    )
+    g.add_argument("--json", action="store_true", help="emit owned recipe progress as JSON Lines")
+    g.add_argument(
+        "--pipeline-opt",
+        action="append",
+        default=[],
+        help="pipeline-specific kwarg, repeatable (key=value)",
+    )
+    _add_llm_args(g, required=False, fallback=True)
+    g.add_argument("--out", help="output directory")
+    g.add_argument("--org", help="task.org for Harbor")
+    g.add_argument("--dataset-name", help="dataset name")
+    g.add_argument("--visibility", choices=["public", "private"], default="public")
+    # Bootstrap-related (only used for pipelines with requires_bootstrap=True)
+    g.add_argument(
+        "--max-spend-usd",
+        type=float,
+        default=None,
+        help=(
+            "native generation LLM budget (default 5.0; 0 = unlimited); "
+            "owned recipes require a campaign ledger budget instead"
+        ),
+    )
+    g.add_argument(
+        "--language", help="bootstrap: override auto-detect (python|node|go|rust|java|c_cpp)"
+    )
+    g.add_argument(
+        "--base-image", help="bootstrap: override base image (e.g. ubuntu:24.04, python:3.11-slim)"
+    )
+    g.add_argument(
+        "--force-bootstrap",
+        action="store_true",
+        help="ignore bootstrap cache, rebuild from scratch",
+    )
+    g.add_argument(
+        "--bootstrap-opt",
+        action="append",
+        metavar="KEY=VALUE",
+        help=(
+            "override any BootstrapSpec field (e.g. cache_dir=./envs-matrix/sonnet-4-6, "
+            "max_iterations=30, max_seconds=2400). Repeatable."
+        ),
+    )
+    g.add_argument(
+        "--force-language",
+        action="store_true",
+        help=(
+            "skip the pipeline-language compatibility check "
+            "(e.g. run a Python-only pipeline against a Go repo anyway)"
+        ),
+    )
+    g.set_defaults(func=cmd_generate)
+
+    # validate
+    v = sub.add_parser("validate", help="Validate task.toml files in a dataset")
+    v.add_argument("path", help="dataset or task directory")
+    v.add_argument(
+        "--deep",
+        action="store_true",
+        help=(
+            "also check task assets + [metadata.repo2env]: instruction, test entry point, "
+            "environment definition, graded verifier files, reproducibility mode"
+        ),
+    )
+    v.add_argument(
+        "--oracle",
+        action="store_true",
+        help="--deep, plus require a usable solution/patch.diff + solve script (Repo2RLEnv tasks)",
+    )
+    v.set_defaults(func=cmd_validate)
+
+    # push
+    p = sub.add_parser("push", help="Push a local dataset directory to HF Hub")
+    p.add_argument(
+        "local_dir",
+        nargs="?",
+        default=".",
+        help="path to dataset directory (output of `generate`). Optional with --check-auth.",
+    )
+    p.add_argument(
+        "dataset",
+        nargs="?",
+        default="",
+        help="HF Hub target as `owner/dataset` (or `hf://owner/dataset`). Optional with --check-auth.",
+    )
+    p.add_argument("--private", action="store_true", help="create the Hub repo as private")
+    p.add_argument(
+        "--message",
+        "-m",
+        help="custom commit message (default: 'Repo2RLEnv: add N tasks')",
+    )
+    # v0.8.2.post3: image-distribution flags
+    p.add_argument(
+        "--image-registry",
+        help=(
+            "force a specific OCI registry prefix (e.g. `ghcr.io/myorg`, "
+            "`123.dkr.ecr.us-east-1.amazonaws.com/r2e`). Default: auto-detect "
+            "from ~/.docker/config.json + verify via OCI probe."
+        ),
+    )
+    p.add_argument(
+        "--inline-dockerfile",
+        action="store_true",
+        help=(
+            "skip image push; bake the bootstrap recipe into each task's "
+            "environment/Dockerfile. Recipe-level reproducibility, not bit-exact."
+        ),
+    )
+    p.add_argument(
+        "--require-registry",
+        action="store_true",
+        help=(
+            "hard-fail if no verified registry credential is available "
+            "(CI / launch-dataset mode; no silent inline fallback)."
+        ),
+    )
+    p.add_argument(
+        "--skip-image-push",
+        action="store_true",
+        help=(
+            "skip the docker push step; rewrite tasks against a remote ref "
+            "assumed to already exist at the registry."
+        ),
+    )
+    p.add_argument(
+        "--image-visibility",
+        choices=["public", "private", "inherit"],
+        default="inherit",
+        help="visibility of the pushed image (default: match HF dataset visibility)",
+    )
+    p.add_argument(
+        "--check-auth",
+        action="store_true",
+        help="probe every detected registry (no push, no upload) and exit",
+    )
+    p.add_argument(
+        "--fast",
+        action="store_true",
+        help="--check-auth: stop after L2 (skip L3/L4 round-trips)",
+    )
+    p.add_argument(
+        "--json",
+        action="store_true",
+        help="--check-auth: emit machine-readable JSON output",
+    )
+    p.set_defaults(func=cmd_push)
+
+    # pull
+    pl = sub.add_parser(
+        "pull",
+        help="Pull a dataset from HF Hub / Harbor registry / GitHub",
+    )
+    pl.add_argument(
+        "dataset",
+        help=(
+            "dataset URI. Accepted forms: `name` (HF, owner via whoami), `owner/name` (HF), "
+            "`owner/name@rev` (HF revision), `hf://owner/name`, `harbor://name[@tag]`, "
+            "`gh://owner/repo[@ref]`, or a full `https://github.com/owner/repo` URL"
+        ),
+    )
+    pl.add_argument(
+        "local_dir",
+        nargs="?",
+        default=None,
+        help="local destination (default: ./datasets/<owner>__<name>)",
+    )
+    pl.add_argument(
+        "--task",
+        help="(HF only) fetch a single task by name (e.g. pallets__click-3373)",
+    )
+    pl.add_argument(
+        "--registry-url",
+        help="(Harbor only) custom Harbor registry URL; defaults to Harbor's public registry",
+    )
+    pl.add_argument(
+        "--force",
+        action="store_true",
+        help="re-download even if a local copy already exists",
+    )
+    pl.set_defaults(func=cmd_pull)
+
+    # bootstrap
+    bs = sub.add_parser("bootstrap", help="Build a working Docker image for a repo (v0.2)")
+    bs.add_argument("--repo", required=True, help="GitHub repo (owner/name or URL)")
+    bs.add_argument("--ref", default="HEAD", help="branch/tag/commit (default: HEAD)")
+    bs.add_argument("--access", choices=["public", "private", "auto"], default="auto")
+    _add_llm_args(bs, required=True, fallback=False)
+    bs.add_argument("--max-iterations", type=int, default=25)
+    bs.add_argument("--max-seconds", type=int, default=1800)
+    bs.add_argument(
+        "--cache-dir",
+        default=os.environ.get("R2E_CACHE_DIR", "./workspace/bootstrap"),
+        help="bootstrap image cache root (env: R2E_CACHE_DIR, default ./workspace/bootstrap)",
+    )
+    bs.add_argument("--image-registry", help="e.g. ghcr.io/myorg/r2e — pushes after build")
+    bs.add_argument("--platform", default="linux/amd64", choices=["linux/amd64", "linux/arm64"])
+    bs.add_argument("--language", help="override auto-detection: python|node|go|rust|java|c_cpp")
+    bs.add_argument(
+        "--base-image",
+        help="override per-language default base (e.g. ubuntu:24.04, python:3.11-slim)",
+    )
+    bs.add_argument(
+        "--max-spend-usd",
+        type=float,
+        default=5.0,
+        help="abort if cumulative LLM cost exceeds this (default 5.0; 0 = unlimited)",
+    )
+    bs.add_argument("--force", action="store_true", help="ignore cache, rebuild from scratch")
+    bs.set_defaults(func=cmd_bootstrap)
+
+    args = parser.parse_args(argv)
+    return args.func(args)
+
+
+def main(argv: list[str] | None = None) -> int:
+    """CLI error boundary; Python APIs continue to raise their original errors."""
+    from repo2rlenv.ui.errors import report_error
+
+    argv = list(sys.argv[1:] if argv is None else argv)
+    verbose = "--verbose" in argv or "-v" in argv
+    install_logging(level=logging.DEBUG if verbose else logging.INFO)
+    try:
+        return _dispatch(argv)
+    except SystemExit as exc:
+        # argparse help/version use numeric exits; legacy adapters use a message.
+        if exc.code is None or isinstance(exc.code, int):
+            raise
+        return report_error(CLIUsageError(str(exc.code)), json_output="--json" in argv)
+    except Exception as exc:
+        return report_error(exc, json_output="--json" in argv, verbose=verbose)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

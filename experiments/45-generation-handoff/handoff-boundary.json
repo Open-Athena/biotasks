@@ -1,0 +1,40 @@
+{
+  "issue": 45,
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "source_manifest_sha256": "4ecc4700374ed188b92927f90dc0c64c58f5ab4baa9174970c640bc60b0a7167",
+  "stage": "source inspection only, no execution admission",
+  "official_generation": "repo2rlenv generate with checkpointed native config",
+  "generation_output": "pr_runtime task Dockerfiles can reference local bootstrap images",
+  "full_push_boundary": {
+    "function": "repo2rlenv.hub.push_to_hub",
+    "side_effect": "Resolves HF token and creates a dataset repository before local image preparation; not the research-bucket archival contract"
+  },
+  "proposed_minimal_handoff": {
+    "function": "repo2rlenv.registry.integration.prepare_dataset_for_push",
+    "arguments": {
+      "inline_dockerfile": true,
+      "hf_owner": "open-athena",
+      "pushed_by": null
+    },
+    "why": "Invoke the exact local preparation stage used by official push, preserving original implementation without publishing a dataset or adding a recipe repair",
+    "status": "Not invoked; checkpoint and test before use",
+    "requires": "Keep the native bootstrap recipe/cache available in its expected workspace layout",
+    "changes_to_audit": [
+      "Dockerfile official inline overlay",
+      "task.toml metadata.repo2env.spec_version",
+      "task.toml metadata.repo2env.reproducibility",
+      "legacy pipeline bootstrap_image metadata only"
+    ],
+    "must_preserve": [
+      "instruction/solution/tests bytes and modes",
+      "agent/verifier resource/timeout contract",
+      "base commit and tracked F2P/P2P identities"
+    ],
+    "validator": "Use the declared native-inline profile in PR46; unsupported/failure states remain explicit"
+  },
+  "model_calls": 0,
+  "remote_jobs": 0,
+  "paid_execution_enabled": false,
+  "budget": "Existing epic only; verify prices and reserve a conservative request bound before enabling upstream model calls; no extra repair calls/capacity",
+  "publication": "Research metadata/eligible artifacts to reviewed append-only HF bucket snapshots; no automatic task dataset publication"
+}

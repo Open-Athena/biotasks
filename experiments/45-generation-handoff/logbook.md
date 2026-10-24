@@ -1,0 +1,9 @@
+# Official generation/export handoff
+
+2026-10-24: Started from main2a1950d239f1ada467c35393991dac87debe35f7 on permanent research branch codex/research/45-generation-handoff. Actual child of epic33; depends on the tested validation component in PR46. No models, upstream execution, installation or remote reservation in this preparation.
+
+Six official source/license blobs were fetched at Repo2RLEnv27d04ee8203cd5b2f20c3997d13836e5f5b64238 and Git-blob/SHA256 verified. The existing CLI has generation and push commands, but full push first resolves an HF token and creates a dataset repository. That is beyond research-bucket logging; do not invoke push_to_hub merely to prepare a portable bundle.
+
+The same pinned implementation exposes registry.integration.prepare_dataset_for_push. Its docstring explicitly says it performs local preparation without HF upload. With inline_dockerfile=True it follows its own _go_inline path using the bootstrap cache; this is the minimal existing upstream preparation stage, rather than an ad hoc installer/renderer. It intentionally rewrites environment/Dockerfile and task.toml reproducibility metadata. Preserve the raw exports first and audit exact deltas; grading files and verifier/agent settings must not change. No helper invocation has run yet.
+
+The next protocol must checkpoint one finite previously catalogued/publicly reviewed repository, exact native candidate filters and settings, a fresh bootstrap/cache, raw versus prepared identities/notices, cost reservations for built-in upstream calls, CPU/cleanup bounds and validator handoff. Keep upstream20 bootstrap turns, temperature0.2,2048 output cap and approved Sonnet/OpenRouter profile unless a change is justified. Verify current prices/maximum request bound before enabling calls. No extra LLM task/environment repair. Unknown cost/eligibility/retention closes admission.
