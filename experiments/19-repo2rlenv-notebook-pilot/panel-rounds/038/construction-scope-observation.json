@@ -1,0 +1,195 @@
+{
+  "campaign": 154,
+  "source_claim_sha256": "ed213f5dd26983f315136fc5a3b68ebf4b9e26225eb5b00cde739bcd75b053c5",
+  "scope": "Read-only completed construction boundary; not whole-campaign scientific qualification.",
+  "read_exit_code": 0,
+  "candidate_sha256": "5c475da6b5a4a5689c37fc7c289bb64a77a8b7eb2bf3ef0b510e2987068271f5",
+  "output_paths": [
+    "rmsd_open_closed.csv",
+    "rmsd_backbone.csv",
+    "rmsd_core_ca.csv",
+    "rmsd_mass_weighted.csv",
+    "rmsd_residue_weighted.csv"
+  ],
+  "result_operation_coverage": [
+    {
+      "artifact_paths": [
+        "rmsd_open_closed.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-92-0"
+      ],
+      "rationale": "Open-vs-closed backbone RMSD scalar computed with center of geometry subtracted and optimal superposition. An unnamed bare expression in the source, absent from the recorded export; recovered by rerunning the unchanged original computation and exposed as requested output rmsd_open_closed.csv.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "rmsd_open_closed.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-92-9"
+      ],
+      "rationale": "Trajectory-universe backbone atom selection supplying the mobile coordinates of the open-vs-closed RMSD endpoint written to rmsd_open_closed.csv.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "rmsd_open_closed.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-93-9"
+      ],
+      "rationale": "Reference-universe backbone atom selection supplying the fixed open-conformation coordinates of the open-vs-closed RMSD endpoint written to rmsd_open_closed.csv.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "rmsd_backbone.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-107-4"
+      ],
+      "rationale": "RMSD analysis over the trajectory universe with the backbone selection and CORE/LID/NMP group selections against reference frame 0. Its result variables were overwritten by later source sections, so it is absent from the recorded export; recovered by rerunning the unchanged original computation and exposed as requested output rmsd_backbone.csv.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "rmsd_backbone.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-112-0"
+      ],
+      "rationale": "Execution of the backbone RMSD analysis over all trajectory frames; produces the per-frame values written to rmsd_backbone.csv.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "rmsd_backbone.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-124-5"
+      ],
+      "rationale": "Tabulation of the backbone analysis results as Frame, Time (ns), Backbone, CORE, LID, NMP; the serialization of the recovered rmsd_backbone.csv endpoint.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "rmsd_core_ca.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-147-5"
+      ],
+      "rationale": "Selection of all atoms named CA into the restricted atom group used by the alpha-carbon CORE analysis; input construction for the rmsd_core_ca.csv endpoint.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "rmsd_core_ca.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-149-4"
+      ],
+      "rationale": "RMSD analysis restricted to the CA atom group with the CORE domain selection against reference frame 0; the alpha-carbon CORE endpoint, exported in the recorded reference as rmsd_core_ca.csv.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "rmsd_core_ca.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-150-0"
+      ],
+      "rationale": "Execution of the CA-restricted CORE RMSD analysis over all frames; produces the values in rmsd_core_ca.csv.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "rmsd_core_ca.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-152-5"
+      ],
+      "rationale": "Tabulation of the CA-restricted CORE results as Frame, Time (ns), CORE; the serialization of the recorded rmsd_core_ca.csv endpoint.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "rmsd_mass_weighted.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-167-9"
+      ],
+      "rationale": "Mass-weighted RMSD analysis over the protein alpha-carbon selection with mass weights and unweighted CORE/LID/NMP group selections against the default reference frame; exported in the recorded reference as rmsd_mass_weighted.csv.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "rmsd_mass_weighted.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-171-0"
+      ],
+      "rationale": "Execution of the mass-weighted RMSD analysis over all frames; produces the values in rmsd_mass_weighted.csv.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "rmsd_mass_weighted.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-175-10"
+      ],
+      "rationale": "Tabulation of the mass-weighted results as Frame, Time (ns), C-alphas, CORE, LID, NMP; the serialization of the recorded rmsd_mass_weighted.csv endpoint.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "rmsd_residue_weighted.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-198-11"
+      ],
+      "rationale": "Residue-number-weighted RMSD analysis over the protein alpha-carbon selection with residue-number weights on the top-level and the CORE/LID/NMP backbone group selections; exported in the recorded reference as rmsd_residue_weighted.csv.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "rmsd_residue_weighted.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-205-0"
+      ],
+      "rationale": "Execution of the residue-number-weighted RMSD analysis over all frames; produces the values in rmsd_residue_weighted.csv.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "rmsd_residue_weighted.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-211-12"
+      ],
+      "rationale": "Tabulation of the residue-weighted results as Frame, Time (ns), C-alphas, CORE, LID, NMP; the serialization of the recorded rmsd_residue_weighted.csv endpoint.",
+      "role": "result"
+    }
+  ],
+  "whole_campaign_qualified": false,
+  "answer_isolation_validated": false,
+  "operator_scientific_edits": 0
+}
