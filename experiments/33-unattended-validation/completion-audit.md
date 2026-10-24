@@ -20,7 +20,7 @@ removes unnecessary local-transition waits without changing native deadlines.
 | Scientific/release claims | Original28 counts83/82/67 unchanged | No accepted fresh pair, population yield, price per valid task or production-readiness claim |
 
 Settled epic totals:11.651100555260976/32 allocated CPUh;30 original model calls,
-provider actual0.979191USD. Original57has both HF readbacks and verified owned cleanup, with final controller return/replay pending;
+provider actual0.979191USD. Original57is fully complete with both HF readbacks, owned cleanup and inert completed replay;
 existing10USD storage reservation remains unreconciled. Same90USD operating
 ceiling, strictly below100USD extra, no new capacity. `budget.json` is the live
 admission ledger, not old launch snapshots. The model-enabled status is not an
@@ -32,9 +32,7 @@ plan728827e8. Existing official boolean false plus separately qualified #59
 workspace-python path adapter, with supported55local-ready scheduling.166core
 checks and1distribution/install check pass; lint/types/hooks pass. Actual
 installed offline CLI replay is byte-inert and rejects old57plan without adoption.
-Same exact official descriptors/SDK/model/grading/resource profile. No new
-model/native admission: launch guard requires original57completed replay and
-both HF receipts, then cumulative ledger reservations. Max19CPUh/13.07USDmodel
+Same exact official descriptors/SDK/model/grading/resource profile. Original58is now admitted and confirmed running under its fixed handle, installed controller57429 and6.333333CPUh/13.07USDreservation. Native outcomes/finalbilling/readback/cleanup remain pending. The launchguard first verified original57completed replay and both HF receipts. Max19CPUh/13.07USDmodel
 within existing32/90limits, not new allowance. Filename-with-space parser
 identities remain unsupported, no parser/JUnit reward rescue. #56 remains
 separate; no AnnData retry, task repair, auto merge or release. Native accepted
