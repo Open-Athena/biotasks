@@ -32,7 +32,10 @@ def main():
             assert len(matches)==1,(ref,suffix,matches)
             paths+=matches
         paths+=['pyproject.toml','LICENSE']
-        tests=[r['path'] for r in candidates if r['path'].startswith('tests/') and r['path'].endswith('.py') and any(s in r['path'].lower() for s in ['docker','verif','trial','cancel','timeout'])]
+        selected_names={'test_docker.py','test_docker_service_ops.py','test_docker_utils.py','test_verifier.py',
+            'test_trial_cleanup.py','test_single_step_trial.py','test_trial_verifier_artifact_transfer.py',
+            'test_trial_verifier_separate.py','test_resolved_timeouts.py','test_log_streaming.py'}
+        tests=[r['path'] for r in candidates if r['path'].startswith('tests/') and Path(r['path']).name in selected_names]
         assert len(tests)<=40
         paths+=tests
         directory=ROOT/'inputs-private'/label;directory.mkdir()
