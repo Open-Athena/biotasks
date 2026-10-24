@@ -7,18 +7,20 @@ from typing import Annotated
 
 from cyclopts import App, Parameter
 
+from biotasks.generation.cli import app as generation
 from biotasks.prompts import list_prompts, load_prompt
 from biotasks.validation.cli import app as validation
 from biotasks.validation.files import ValidationError
 
 app = App(
     name="biotasks",
-    help="Inspect prompt templates and validate existing PR task exports.",
+    help="Inspect prompts and run bounded official PR task generation/validation.",
     version=f"biotasks {version('biotasks')}",
 )
 prompts = App(name="prompts", help="List or read bundled prompt templates.")
 app.command(prompts)
 app.command(validation)
+app.command(generation)
 
 
 @prompts.command(name="list")
