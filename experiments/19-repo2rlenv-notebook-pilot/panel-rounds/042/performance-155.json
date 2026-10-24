@@ -1,0 +1,135 @@
+{
+  "source_archive_manifest_sha256": "3954a34796f4e9d464afe76022aa4860ecd17e878cd561cefdfe2611685438e2",
+  "pipeline_status": "validated",
+  "source_id": "bioframe-motifs-to-peaks",
+  "elapsed_pipeline_seconds": 6344.204,
+  "stage_elapsed_seconds": {
+    "preparation": 6.781,
+    "setup": 203.978,
+    "replay": 70.538,
+    "specification": 897.569,
+    "construction": 427.371,
+    "grading": 4244.24,
+    "native": 488.231
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "completed",
+    "replay": "completed",
+    "specification": "completed",
+    "construction": "completed",
+    "grading": "completed",
+    "native": "completed"
+  },
+  "accounted_model_request_attempts": 167,
+  "request_ledgers": [
+    {
+      "path": "grading/requests.sqlite",
+      "sha256": "c5f45c413454c4697c025bb9fc2c6ee095b147abcc1081cb7e90deb51435147a",
+      "count": 110,
+      "calls": [
+        {
+          "scope": "grader",
+          "state": "response_received",
+          "count": 16
+        },
+        {
+          "scope": "independent",
+          "state": "response_received",
+          "count": 12
+        },
+        {
+          "scope": "probes",
+          "state": "response_received",
+          "count": 9
+        },
+        {
+          "scope": "repair",
+          "state": "response_received",
+          "count": 24
+        },
+        {
+          "scope": "review",
+          "state": "response_received",
+          "count": 11
+        },
+        {
+          "scope": "review-repair",
+          "state": "response_received",
+          "count": 38
+        }
+      ]
+    },
+    {
+      "path": "materialization-raw/requests.sqlite",
+      "sha256": "55f563d680d9ffe5bbb43a6ba6d39da46a46bcfc210131a5de77381b56de0f94",
+      "count": 10,
+      "calls": [
+        {
+          "scope": "materialize",
+          "state": "response_received",
+          "count": 10
+        }
+      ]
+    },
+    {
+      "path": "native/requests.sqlite",
+      "sha256": "b10afb150928e4a300d050d6cf2b9e97f34a896d442d365ce76d4156e2d3ddec",
+      "count": 10,
+      "calls": [
+        {
+          "scope": "solver",
+          "state": "http_200",
+          "count": 10
+        }
+      ]
+    },
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "4c089f451fd5bbf07348cbab3434dd1d33faada78ab3b7f69fa08d9efbf9545a",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "replay/requests.sqlite",
+      "sha256": "e2f280d7b17f832639376556a77f40ca2dc283bfd9df736e7768584274fcf1fa",
+      "count": 0,
+      "calls": []
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "f954fc9bdbb418a3decb78049dc86534fa1fea327c253f805e828f658fb5db75",
+      "count": 18,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 18
+        }
+      ]
+    },
+    {
+      "path": "specification/requests.sqlite",
+      "sha256": "560612e914785f155ee06384e091942dcf90d9c3179d1f5362359b625d7c6c95",
+      "count": 18,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 18
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 157,
+  "distinct_author_response_operations_within_stage": 157,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 1
+}
