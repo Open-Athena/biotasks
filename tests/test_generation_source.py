@@ -5,6 +5,7 @@ import io
 import tarfile
 import urllib.request
 import zipfile
+from pathlib import PurePosixPath
 
 import pytest
 
@@ -23,6 +24,7 @@ from biotasks.validation.planning import UPSTREAM
 def test_pinned_writer_inventory_is_portable_wheel_content_not_runtime_cache():
     rows = source.writer_inventory()
     assert len(rows) == 7
+    assert rows == sorted(rows, key=lambda row: PurePosixPath(row["path"]))
     assert all(
         "__pycache__" not in row["path"] and not row["path"].endswith(".pyc") for row in rows
     )
