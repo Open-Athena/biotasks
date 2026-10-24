@@ -29,8 +29,8 @@ draft and unmerged.
 The unresolved work is substantive: finish and audit150/151, retain the scientific
 and redistribution holds, and assess the remaining generated failures against
 the current general factory. In particular,137's numeric-encoding failure has
-general source-precision guidance in later prompts; a fresh source-only150 run
-is reserved to test that improvement. A successful run on a different numeric task
+general source-precision guidance in later prompts; fresh source-only run150
+is in grading to test that improvement. A successful run on a different numeric task
 does not establish that this original failure is fixed. Neither the two public
 outcomes nor green helper tests prove broad ten-domain reliability.
 
@@ -41,8 +41,9 @@ worker's executed inspection. The worker could identify the unused files but
 could not modify the root-owned environment from grading, so it correctly
 blocked. The newer general source-import discovery hints prioritize relevant
 test-source names before the environment is frozen; 102 offline checks pass.
-They neither classify assets nor remove them, and are not live-validated or
-applied to the already frozen 150 worker. A late environment-rebuild repair route
+They neither classify assets nor remove them, and are not applied to the already
+frozen150worker. Their setup step now has [selected original live evidence](../../autonomous-runs/151/setup-boundary-check.json),
+while qualification of the updated complete pipeline remains pending. A late environment-rebuild repair route
 remains unsupported; rejecting that candidate is preferable to claiming a clean
 environment without executing the removal and revalidation.
 
@@ -50,5 +51,11 @@ environment without executing the removal and revalidation.
 fix. It uses the unused $5 reservation transferred from never-submitted141;
 used campaign reservations and the imaging execution/access hold are unchanged.
 Total reservations remain $197 of $200. Source, seed and notices are unchanged;
-no previous task or answer-file identities are supplied. Submission is not proof
-that the updated discovery or any removal has succeeded.
+no previous task or answer-file identities are supplied. Nine selected files from
+the completed setup-stage export were independently hash/size/mode-verified.
+The initial catalog highlighted the asset through its source-import relationship;
+GLM declared the removal, and both offline reference tests passed with identical
+export hashes. This establishes the observed removal and retest of the initial
+exports, not final task coverage or solver-image answer isolation. The worker
+chose version2.11.0, whereas149used2.8.0; no controlled cross-run causal claim is
+made. Native trials and whole-campaign qualification are still pending.
