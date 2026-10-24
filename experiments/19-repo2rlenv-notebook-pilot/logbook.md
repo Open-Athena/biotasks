@@ -4103,64 +4103,67 @@ Round025tracksalltenpreviouslyapprovedPythondomains, reusing123rejection/124live
 Alltenapprovedsourcesnowhavefrozenpayloadsforcommon501fbc2f:123/124existingoriginalruns,125submitted,126fundedqueued,and127–132explicitlyunfunded/notlaunched. Everyactualpayloadarchive/sourcehashwasrechecked; all198runtimefilemaps areidentical, including allpackagedprompts. See panel-rounds/025/cohort-freeze.json and runtime-identity.json. Thischangesno worker/science/allowanceorbudget andisnotanexecutionclaim. Originalsourceassetsfor127–132arealsoverifiedagainsttheirprior submission-boundpayloads,notcopiedfromgeneratedtasks. Twoinitiallocalpreparationattemptsfailedbeforemutations(syntax/missingassumedpayloadpath);thecorrectedmetadatahelperresolvesoriginalpayloadsbymanifestidentity. Finalcohortverificationpassed.
 
 
-## 2026-10-23 UTC: user authorizes another100USD; complete frozen cohort funded
+## 2026-10-23 UTC: additional authorization funds the complete frozen cohort
 
-The user explicitly authorized100USDmore, raising the aggregate before-credit ceiling from100to200USD. Reserve1USDfor each already-frozen127–132 original source campaign, retaining every existing hold; total conservative holds106USD,94USDunallocated, not aninvoiceorcreditsclaim. Alltenactualpayload runtime maps remainidentical198files/501fbc2f; frozen receipts areunchanged.126–132arefundedqueuedbehind124/125, withatmosttwohosts/sandboxes. Noresource/time/model/test/repair/concurrencyallowanceorscientificartifactchanged. Stopadditionalbudget-reclamationworkfornow;preserveitsaudits. See panel-rounds/025/funding-127-132.json.
+The user authorized another $100, raising the aggregate ceiling from $100 to $200 before credits. Reserve $1 for each already-frozen case 127–132, retaining existing holds: $106 conservative holds and $94 unallocated. These are bounds, not invoices or assumed free credits. All ten payloads retain identical 198-file worker runtimes at `501fbc2f`; no scientific artifact, worker prompt, resource, deadline, model, test, repair or concurrency allowance changed. Stop further financial hold-reclamation audits. See `panel-rounds/025/funding-127-132.json`.
+
+## 2026-10-23 UTC: PyHMMER validates and a clean slot starts NeuroKit
+
+Case 124 completed all seven stages autonomously in 3,352.453 seconds with zero operator interventions. Its single quality repair corrected one probe expectation; fresh 18/18 controls and source-coverage review accepted, followed by native oracle/no-op/GLM rewards 1/0/1 on one exact bundle. All 19 captured live receipts match the sealed originals. Independently verified the complete 1,935-file, 64,983,489-byte archive, 103-file root export and seven original/fresh cleanup records. Publication remained pending the separate release audit. See `panel-rounds/025/result-124.json`.
+
+Case 126 then started from its frozen source-only payload. The dispatcher checked owned hosts 086–125 and all terminal cleanup proofs; 125 was the sole prior active host. All 198 runtime hashes match the common factory. Holds remained $106, with $94 unallocated; cases 127–132 were funded and queued.
+
+The release-only staging helper now reads the explicitly configured aggregate authorization, retaining the legacy default. This lets the release report $200 rather than a stale hardcoded $100. It changes no frozen worker payload or scientific contract.
+
+## 2026-10-23 UTC: PyHMMER published and anonymously downloaded
+
+The exact native bundle `e4ae4d73…` was released in the personal issue-19 PyHMMER dataset at `107920c0ae798907d709f6151d7d1d3fc983c4cf`. All 42 release files (685,854 bytes) passed staging verification. A forced anonymous download with a new cache verified every file, executable mode and original task identity. The source-specific rights review covers only the two listed Pfam/UniProt input identities; notices and accession attribution are retained.
+
+The audit checked the declared packaged-answer exclusion, reference retest, native build guard and recorded solver computation. This is not an exhaustive semantic exposure audit or different-engine portability claim. A first local staging attempt lacked the Harbor reader; it is preserved separately. The successful attempt used the existing pinned Harbor 0.22.0 wheel without another scientific/model run. The latest viewer selects 68 byte-matching original text records plus clearly identified derived harness/release metadata. Worker payloads and prompts remain frozen.
+
+## 2026-10-23 UTC: both active cases reach scientific grading
+
+Authenticated observations showed Matchms125 and NeuroKit126 completed preparation, setup, offline replay, specification and construction and entered independent implementation/grading. Acceptance, native execution and final cleanup were still unproven. A five-minute wait confirmed both exact handles RUNNING at 22:52:55 UTC; interval expiration was not termination and neither was restarted. The private observer now captures construction metadata as well as setup/grading and preserves receipt bytes.
+
+A read-only import-closure audit found 39 controller/launcher modules (9,028 lines) without the ten seed/tool names. This bounded static check does not prove absence of indirect overfitting. PR23 remains draft and helper-only; it does not ship the full controller. Limited upstream queries did not establish PyRadiomics/Pyteomics input redistribution terms, so existing holds remain; software licenses were not assumed to cover external data.
+
+## 2026-10-23 UTC: NeuroKit uses its existing question-repair allowance
+
+Initial grading for 126 recorded `public_question_defect`, with the allowance not yet used in the original capsule. The controller subsequently consumed its one quality allowance for `public_question_diagnosis` and started the GLM comparison-repair worker. Original materialization/grading remained separate. This was not a manual task edit or added allowance. If a repaired run succeeds, use the pipeline's `effective_materialization` and `effective_grading` directories for release/viewer; never present an original failed review as the final candidate. See `panel-rounds/025/live-quality-126.json`.
+
+## 2026-10-23 UTC: measure stages separately from model requests
+
+Immutable read-only SQL over all seven hash/size-verified original 124 request ledgers finds 234 accounted requests: 215 authoring/validation responses and 19 native-solver HTTP-200 requests, with no other request states. Grading used 171 requests and 2,601.251 seconds (43.4 of 55.9 pipeline minutes), including independent implementation, grader/probes, reviews and the single quality repair. Three API turns in the repair worker consumed one logical allowance. Replay made no model requests.
+
+These are client/gateway claims, not overall network-transmission or invoice totals. The generic sealed-archive collector and `performance-124.json` preserve queries and ledger hashes. No model call, scientific artifact, cap or budget changed for this measurement.
+
+## 2026-10-23 UTC: preserve NeuroKit rejection; start Scanpy
+
+Case 126 finished autonomously in 3,399.239 seconds: the host SUCCEEDED but the pipeline REJECTED the candidate. GLM repaired the public question within one allowance. Fresh 17/17 executable controls passed, all four endpoints remained covered and no public-question issue remained. Final review nevertheless required correction of inaccurate private claims about FFT padding and quadratic/cubic interpolation, despite correct unchanged executed library calls. No further repair was granted. This is not broken source or failed executable controls.
+
+The complete 1,602-file, 57,299,636-byte archive and 69-file root export are verified; the live failure capsule matches the sealed original, and all five original/fresh cleanup checks passed. See `panel-rounds/025/result-126.json`. After the cohort, assess whether duplicated narrative claims are an avoidable general quality-gate failure; do not retroactively change this result.
+
+Case 127 Scanpy started only after that verification. The dispatcher checked all owned states 086–126 and terminal proofs; 125 was the sole prior active host. The unchanged original 119 source and 198 runtime hashes match the frozen cohort. Cases 128–132 remained funded and queued, with holds $106 and $94 unallocated. No scientific modification, source reduction or resource/deadline/repair increase was made.
+
+## 2026-10-23 UTC: Matchms comparison times out; incomplete is not rejection
+
+Case 125 completed source execution, clean replay and construction. The independent alternative differed in 11 of 1,605,289 modified-cosine matched-peak counts; the other three artifact checks agreed. Responsibility remains unresolved. Its existing comparison diagnosis timed out after three received responses and one uncertain request. The pipeline reported `infrastructure_failed`/`TimeoutError` after 6,894.320 seconds; the host FAILED. No accepted grader, scientific rejection, native trial, solver or release was established.
+
+The complete 1,486-file, 330,346,324-byte archive, 54-file root export and all four original/fresh cleanup checks are verified. Preserve the uncertainty and original deadline; do not relabel the source broken. See `panel-rounds/025/result-125.json`.
+
+## 2026-10-24 UTC: frozen Bioframe starts after Matchms cleanup
+
+Case 128 Bioframe started only after complete original 125 archive/root, terminal state and four fresh provider-absence checks. The dispatcher checked all owned states 086–127 and terminal proofs; 127 was the sole prior active host. Original 102 source/seed/notices and all 198 runtime hashes match the cohort. The `20261023-panel025` prefix remains its identity despite the UTC rollover. Cases 129–132 remained funded and queued; holds stayed $106 with $94 unallocated.
+
+A policy question is pending with the user: should clearly incidental private-comment/rationale errors be advisory when public-contract, science, grader and substantive provenance are correct? Substantive errors would remain blocking. No policy change is adopted; current frozen runs remain unchanged.
+
+## 2026-10-24 UTC: Scanpy setup outcome is uncertain
+
+Case 127's host FAILED and its pipeline reported `infrastructure_failed` after 1,278.871 seconds. Preparation passed. The last worker trace invokes `test_reference`; the artifact-stage operation then reports “Remote operation outcome uncertain; cleanup/reconciliation required.” No completed reference, source-quality rejection or scientific acceptance was established.
+
+The complete 481-file, 21,113,524-byte archive and 18-file root export are verified. The original sandbox deletion and fresh exact-ID/owner absence are verified. No retry, source substitution or manual science fix was made. Investigate controlled-operation reconciliation after the cohort, using original operation records rather than a notebook-specific patch. The metadata-only performance collector now tolerates an absent original `pipeline.source` on early failure, records null and does not invent identity. See `result-127.json` and `performance-127.json`; frozen worker payloads remain unchanged.
 
 
-## 2026-10-23 UTC: common-factory PyHMMER validates; publication audit remains
+## 2026-10-24 UTC: frozen Pyteomics starts after Scanpy cleanup
 
-124 completed all seven stages autonomously in 3352.5 seconds, with zero operator interventions. The existing single quality repair corrected one probe expectation; fresh 18/18 controls and source-aware coverage review accepted, followed by native oracle/no-op/GLM solver rewards 1/0/1 on one exact bundle. All 19 captured live receipts match the sealed originals. Independently verified the complete 1,935-file/64,983,489-byte original archive, 103-file root export and seven original/fresh cleanup records; no owned sandbox remains. Publication still requires exact-bundle, dependency-answer exclusion, source-specific input-notice and solver-trajectory audit plus anonymous immutable Hub download. No task/science/runtime/prompt changed. See panel-rounds/025/result-124.json.
-
-
-126 NeuroKit submitted only after complete original124 archive/root and fresh absence proof. Dispatcher checked all086–125ownedhost states and every terminal cleanup;125was the sole prior active host. Original source-only126payload and all198runtime hashes match the frozen common factory. No source, scientific method, prompt, worker allowance or spending ceiling changed;106USDholds/94USDunallocated. Remaining127–132arefundedqueued.
-
-
-Release-only staging metadata now accepts the explicitly configured aggregate authorization (legacy default retained), so a new release can report the approved200USD rather than a stale hardcoded100USD. This does not change any frozen campaign payload, prompt, scientific contract or worker; alltencontinueusingtheir198-file501fbc2farchives.124releaseauditpassedtheexactsource/inputnotices,installedfixtureexclusion/buildguard,source-awarecontrolsandrecordedsolvercomputation;different-engineportabilityisexcludedfromclaims.
-
-
-## 2026-10-23 UTC: common-factory PyHMMER published with immutable readback
-
-124 exact native bundle e4ae4d73 was publicly released in the personal issue19PyHMMER dataset at107920c0ae798907d709f6151d7d1d3fc983c4cf. All42releasefiles(685,854bytes)passedupstreamstagingverification; forcedanonymousdownloadwithanewcacheverifiedeveryfile/modeandtheoriginaltaskidentity. RightsreviewcoversonlythetwoexactlistedPfam/UniProtinputidentities; originalnotices/accessionsretained. Auditeddeclaredfixtureexclusion,setupretest/nativebuildguardandrecordedsolvercomputation; thisisnotanexhaustivesemanticexposureorcross-engineportabilityclaim. A localreleaseclientfirstlackedtheHarborreader; failedstagingispreservedseparately,thesuccessfulattemptusedtheexistingpinned0.22.0wheel,andnonewmodel/scientificrunwasmade. Selected68byte-matchingoriginaltextrecordsforlatestviewer,plusclearlyderivedharness/releaseverificationmetadata; workerpayloads/promptsstillfrozen.125/126continue,127–132fundedqueued.
-
-
-## 2026-10-23 UTC: both active frozen cases reach scientific grading
-
-Read-only authenticated observations show125Matchmsand126NeuroKitcompletedpreparation/setup/offlinereplay/specification/constructionandarebothrunningindependentimplementation/grading. Fullcaseacceptance/native/solver/cleanupstillunproven. Separatefive-minuteowner-handlewaitconfirmedbothRUNNINGat22:52:55;intervalexpirationisnotterminationandneitherwasrestarted. Privateobservernowcapturesconstructionmetadataaswellassetup/gradingandpreservesreceiptbytes. Atmosttwohosts/sandboxes;127–132remainfundedqueued,106USDholds/94unallocatedunchanged.
-
-Read-onlyscopeauditfound39localmodulesinthecontroller/launcherimportclosure(9,028lines),withnoneofthetenseed/toolnamesinthecode;thisboundedstaticcheckisnotproofagainstindirectoverfitting. PR23isstilldraft/helper-onlyanddoesnotshipthefullcontroller. Boundedupstreamsample-dataqueriesdidnotestablishPyRadiomicsorPyteomicsinputredistributionterms;existingrightsholdsremain,softwarelicensesnotassumedtocoverexternaldata. No source/modelprompt/scientificartifactorworkerallowancechanged.
-
-
-## 2026-10-23 UTC: NeuroKit initial public-question defect enters existing repair
-
-126initialsource-awaregradingreturnedpublic_question_defectwithquality_repair_usedfalseintheoriginalfailurecapsule. Thelivepipeline subsequentlymarkeditsoneexistingqualityallowanceconsumedforpublic_question_diagnosisandstartedthecomparison-repairGLMworker;thisisnomanualtaskeditorextraallowance. Originalmaterialization/gradingremainedseparate. Finalacceptance/native/cleanupstillunproven. Ifsuccessful, usethepipeline'seffective_materialization/effective_gradingdirectoriesforrelease/viewer;neverpresenttheoriginalfailedquestion/reviewasthefinalcandidate.125independentimplementationcompletedandgraderconstructionisactive. BothoriginalhandlesRUNNINGat23:13:39,127–132stillfundedqueued. See panel-rounds/025/live-quality-126.json.
-
-
-## 2026-10-23 UTC: measure fixed-stage versus model-request runtime
-
-Read-onlySQLonallsevenhash/size-boundoriginal124requestledgersfinds234accountedmodelrequests:215author/validationresponsesplus19native-solverHTTP200requests,withnootherrequeststates. Gradingused171requestsand2601.251seconds(43.4of55.9pipeline minutes),includingindependentimplementation,grader/probes,source-aware reviewandtheoneexistingqualityrepair. Threerepair-workerAPIturnsareonequalityallowance,notthree repairs. Replaymade0modelrequests. Thesearemeasuredclient/gatewayclaims,notoverallnetworktransmissionorinvoicetotals. Genericsealed-archivecollectorandperformance-124.jsonpreservethequery/ledgerhashes. Thischangesno caps,worker/prompt,scientificartifactorbudget; fullcohortoutcomesstillpending.
-
-
-## 2026-10-23 UTC: preserve NeuroKit rejection and free its verified-clean slot
-
-126finishedautonomouslyin3399.239seconds,hostSUCCEEDEDbutpipelineREJECTED. ItsoriginalquestiondefectwasGLM-repairedwithinoneallowance;fresh17/17controlsandallfourendpointswerepreserved,withnopublic-questionissuesremaining. Finalreviewstillrequiredcorrectingprivateindependent/rationaleclaimsthatmisstatedFFTpaddingandquadratic/cubicinterpolation,despiteunchangedcorrectexecutedlibrarycalls. Nofurtherrepairwasgranted; donotmislabelthisasbrokensourceorfailedexecutablecontrols. Full1,602-file/57,299,636-bytearchiveand69-fileoriginalrootexportverified;livefailurecapsulehashmatchesoriginal;all5original/freshcleanupproofsverified,noownedDaytonasandbox. See panel-rounds/025/result-126.json. Maintainfrozenfactoryuntilall10outcomes;assesswhetherduplicatednarrativeclaimsareanavoidablegeneralquality-gatefailureafterthecohort.
-
-
-127Scanpysubmittedonlyafter126completeoriginalarchive/root/terminalandfivefreshcleanupchecks. Dispatcherguardverifiedall086–126hoststates/terminalproofs;125wasthesoleprioractivehost. Itsunchangedoriginal119sourceand198runtimehashesmatchthefrozencohort.128–132remainfundedqueued;holds106USD/unallocated94USDunchangedinside200authorized. No new source reduction, scientific modification, model setting, resource/deadline/repair allowance or concurrency increase.
-
-
-## 2026-10-23 UTC: Matchms comparison diagnosis times out; incomplete is not rejection
-
-125completedsource/reference/replay/construction,thenfailedtheindependent-alternativecontrolon11of1,605,289modified-cosinematched-peakcounts;otherthreeartifactchecksmatched. Responsibilityremainsunresolved. Existingcomparisondiagnosisconsumeditsoneallowancebuttimedoutafter3responses/1uncertainrequest;pipelineinfrastructure_failed/TimeoutErrorafter6894.320seconds,hostFAILED. No scientificrejectionoracceptedgrader/native/solver/releasewasestablished. Full1,486-file/330,346,324-byteoriginalarchiveand54-fileoriginalrootverified,all4original/freshcleanupchecksverified;noneleft. Preservebudgetandalluncertainty,donotextenddeadlineorrelabelsourcebroken. See panel-rounds/025/result-125.json.
-
-
-## 2026-10-24 UTC: frozen Bioframe starts after verified Matchms cleanup
-
-128Bioframesubmittedonlyaftercomplete125originalarchive/root,FAILEDhoststateandall4freshproviderabsencechecks. Dispatcherverifiedall086–127ownedstatesandterminalproofs;127wasthesolepriorlivehost. Original102source/seed/noticesand198runtimehashesmatchthecommonfrozencohort;prefix20261023-panel025isretainedasthecohortidentitydespitetheUTCdaterollover.129–132remainfundedqueued;106USDconservativeholds/94unallocatedunchangedinside200authorized. No allowance/worker/prompt/scientificartifactchanged.
-
-Anoptionalpolicyquestionispendingwiththeuser:shouldclearlyincidentalprivatecomment/rationaleerrorsbeadvisorywhenallpublic-contract/science/grader/provenancechecksarecorrect? Substantiveerrorswouldremainblocking. No policychangeisadopted;completeallcurrentfrozencasesunchanged.
-
-
-## 2026-10-24 UTC: Scanpy setup remote-operation uncertainty preserved
-
-127hostFAILED/pipelineinfrastructure_failedafter1278.871seconds. Preparationpassed;thelastworkertraceinvokestest_reference,thenartifact-stageoperationreportsspecifically"Remoteoperationoutcomeuncertain;cleanup/reconciliationrequired". No completedreference/source-rejection/scientificacceptanceestablished. Full481-file/21,113,524-byteoriginalarchiveand18-fileoriginalrootverified,original1sandboxcleanupandfreshexact-ID/ownerabsenceverified. No retry/seedsubstitution/manualsciencefix. Post-cohortinvestigatecontrolledlong-runningoperationreconciliation,notnotebook-specificpatches. Themetadata-onlyperformancecollector now toleratesabsentoriginalpipeline.sourceonearlyfailure,recordsnullratherthaninventingidentity;allfrozenworkerpayloadsstillunchanged. See result-127.json/performance-127.json.
+Case 129 Pyteomics started only after the complete original 127 archive/root, FAILED host state and original/fresh sandbox absence were verified. The dispatcher checked owned states 086–128 and terminal proofs; 128 was the sole prior live host. Original 98 source/seed bytes and all 198 runtime hashes match the frozen cohort. Cases 130–132 remain funded and queued, with $106 conservative holds and $94 unallocated inside the authorized $200. No worker, prompt, scientific artifact or execution allowance changed. Recent operator logbook prose was clarified for readability; original execution records and their immutable manifests were not edited.
