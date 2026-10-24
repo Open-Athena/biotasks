@@ -27,3 +27,5 @@ Each arm rebuilt a different image ID from the same original/effective recipe; a
 Primary cleanup verified no owned containers, controllers, images or volumes. Released emergency cleanup without submitting another attempt. Epic actual is now 4.715986666414473 CPU-hours, no outstanding CPU reservation, zero new model calls. Prepared an 18-object/333,590-byte append-only snapshot with original/current analyses and source notices; publication/readback is the remaining gate.
 
 Filed #36 as an actual epic child for the separately observed generic cache-identity inconsistency. Its source/fixture work is queued, with no new execution allocation. Issue #35 remains open for review.
+
+Verified all 18 HF objects anonymously, including nested archive/member hashes, with no overwrites. Removed 12,389,446 bytes of disposable public phase downloads; transfer caches and fresh readbacks were removed by the publisher. completion-status.json records remaining small verification inputs and native-preparation copies retained temporarily for #36, with explicit cleanup conditions. No task-owned /tmp evidence or remote jobs remain.
