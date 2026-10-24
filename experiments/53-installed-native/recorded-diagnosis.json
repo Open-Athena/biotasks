@@ -1,0 +1,86 @@
+{
+  "original_run": "/exedev/biotasks53-anndata-001",
+  "original_archive_sha256": "01a3f326d8f85e410f163dc88f7cf834e990c449c461f634a7f678c2ad184a53",
+  "native_exit": 1,
+  "native_candidates": 2,
+  "native_skipped": {
+    "non_bug_pr": 1,
+    "no_fail_to_pass": 1
+  },
+  "validated_pr": 2641,
+  "backport_filtered_pr": 2710,
+  "exports": 0,
+  "model_billing": {
+    "known_actual_usd": "0.313983",
+    "calls": 9,
+    "complete": true,
+    "reason": "Original upstream observed request/charge events"
+  },
+  "allocated_primary_cpu_hours": 1.5610444442431133,
+  "validation_status": "failed",
+  "validation_reason": "no fail-to-pass tests after validation",
+  "fail_to_pass_count": 0,
+  "pass_to_pass_count": 1536,
+  "validation_observation_sha256": "99b4ad151ab2118b912e27a543baad4e2a79afc12e2c81b6538cc83e570c31ae",
+  "trials": [
+    {
+      "phase": "pre",
+      "source_observation": "exec-0015-pr-2641.json.gz",
+      "sha256": "b9a4378e65ebcca1e27b2c5800c673ddfd10652e07443d0dcd0a2afe29a764c9",
+      "duration_sec": 206.12998688500375,
+      "shell_wrapper_exit_code": 0,
+      "pytest_summary": "= 2 failed, 1536 passed, 578 skipped, 2 xfailed, 11329 warnings in 200.77s (0:03:20) =",
+      "target_lines": [
+        "tests/test_obsmvarm.py::test_roundtrips_df_with_different_index[var] FAILED [  0%]",
+        "tests/test_obsmvarm.py::test_roundtrips_df_with_different_index[obs] FAILED [  0%]"
+      ],
+      "observed_module_traceback_lines": [
+        "/usr/local/lib/python3.12/site-packages/anndata/_core/aligned_mapping.py:232: in __setitem__",
+        "/usr/local/lib/python3.12/site-packages/anndata/_core/aligned_mapping.py:297: ValueError"
+      ],
+      "patched_worktree_source": "/workspace/src/anndata/_core/aligned_mapping.py",
+      "source_patch_in_command": false,
+      "source_patch_applied_cleanly": false,
+      "target_index_guard_still_in_failure": true
+    },
+    {
+      "phase": "post",
+      "source_observation": "exec-0016-pr-2641.json.gz",
+      "sha256": "f5fdb4911b0549df3b8818d67edc9288a3844591d3d31c486ab3f207b89e76c0",
+      "duration_sec": 206.36841063800966,
+      "shell_wrapper_exit_code": 0,
+      "pytest_summary": "= 2 failed, 1536 passed, 578 skipped, 2 xfailed, 11286 warnings in 201.79s (0:03:21) =",
+      "target_lines": [
+        "tests/test_obsmvarm.py::test_roundtrips_df_with_different_index[obs] FAILED [ 99%]",
+        "tests/test_obsmvarm.py::test_roundtrips_df_with_different_index[var] FAILED [ 99%]"
+      ],
+      "observed_module_traceback_lines": [
+        "/usr/local/lib/python3.12/site-packages/anndata/_core/aligned_mapping.py:232: in __setitem__",
+        "/usr/local/lib/python3.12/site-packages/anndata/_core/aligned_mapping.py:297: ValueError"
+      ],
+      "patched_worktree_source": "/workspace/src/anndata/_core/aligned_mapping.py",
+      "source_patch_in_command": true,
+      "source_patch_applied_cleanly": true,
+      "target_index_guard_still_in_failure": true
+    }
+  ],
+  "bootstrap": {
+    "iterations": 9,
+    "smoke_passed": false,
+    "verify_passed": false,
+    "verify_detail": "exit=124; ] XFAIL [ 26%]\ntests/test_views.py::test_ellipsis_index[np_array-obs-var-ellipsis] PASSED [ 26%]\ntests/test_views.py::test_view_of_view[np_array-array_bool_subset-list_int_subset] [timeout after 300s]",
+    "rebuild_cmds": [
+      "SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 pip install -e '.[dask,lazy]' --quiet",
+      "pip install pytest pytest-xdist pytest-randomly pytest-memray pytest-mock pytest-cov filelock jsonschema matplotlib scikit-learn openpyxl joblib boltons 'scanpy>=1.10' 'dask[distributed]' 'awkward>=2.6.3' pyarrow pooch fast-array-utils --quiet"
+    ],
+    "test_cmds": [
+      "cd /workspace && python -m pytest -v"
+    ]
+  },
+  "observed": "Both complete native validations execute the old index guard under site-packages while the head patch changes workspace source; no F2P transition is observed",
+  "inference": "The test dependency installation may replace editable anndata0.0.0 with a released dependency; direct_url/realpath/install transaction evidence is needed to prove that exact mechanism",
+  "timeout_attribution": "Bootstrap full-suite300s checks time out separately; the changed-file pre/post validations each finish in about206s, so their zero F2P is not a600s validation timeout",
+  "scientific_acceptance": false,
+  "additional_native_or_model_calls": 0,
+  "original_inputs_or_results_modified": false
+}
