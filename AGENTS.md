@@ -5,7 +5,9 @@ Following Marin's approach to research through code, experiments and recorded
 results, keep reasonably established pipelines and reusable helpers on `main`
 and preserve experiments independently. Read the [documentation](docs/README.md)
 for existing tools and operational practices. The implemented CLI lists and reads
-packaged prompt templates; it does not generate or validate tasks.
+packaged prompt templates; reusable Python helpers are described in
+[Notebook factory building blocks](docs/notebook-helpers.md). The CLI does not
+generate or validate tasks.
 
 ## Setup and CLI
 

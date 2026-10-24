@@ -9,16 +9,23 @@ from biotasks.prompts import list_prompts, load_prompt
 def test_list_and_read_prompts_outside_checkout(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
+    sources = {
+        path.stem: path.read_text(encoding="utf-8")
+        for path in (Path(__file__).resolve().parents[1] / "src/biotasks/prompts").glob("*.md")
+    }
     monkeypatch.chdir(tmp_path)
     with pytest.raises(SystemExit) as result:
         main(["prompts", "list"])
     assert result.value.code == 0
-    assert capsys.readouterr().out.splitlines() == ["author-task", "find-units"]
+    assert capsys.readouterr().out.splitlines() == sorted(sources)
+    assert list_prompts() == tuple(sorted(sources))
 
     for name in list_prompts():
         template = load_prompt(name)
-        assert "{{REPO}}" in template
-        assert "{{REPO_URL}}" in template
+        assert template == sources[name]
+        if name in {"author-task", "find-units"}:
+            assert "{{REPO}}" in template
+            assert "{{REPO_URL}}" in template
         with pytest.raises(SystemExit) as result:
             main(["prompts", "show", name])
         assert result.value.code == 0
