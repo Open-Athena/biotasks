@@ -1,0 +1,20 @@
+{
+  "status": "offline_validated_live_readback_pending",
+  "source_sha256": {
+    "readback_cache.py": "03ce845574458a65f2d2492bc28afc48c8955b62af01c72e672cee6b02079a77",
+    "test_readback_cache.py": "fd251ba832510e3ef3e7a05d14a6ddc5f004158a74ac9d54f8f9e32125540077"
+  },
+  "tests_passed": 5,
+  "pytest_seconds": 0.04,
+  "peak_rss_kib": 34856,
+  "junit_sha256": "74cf935e52cfb987bdab5921c054233d41928720e574b3c13bb0bd63455fc6c3",
+  "scope": "Task-owned post-run recovery only. Equal SHA256/size/mode files can share local storage after each newly fetched remote object is independently stream-read and verified. No path/content/mode omission, no source change, model call or scientific execution.",
+  "actual_need": "SGkit142original seal contains1901files/7202439010bytes,1869717520unique content/mode bytes. Ordinary materialization would violate2GiBremainingfilesystemheadroom and was refused beforedata writes.",
+  "failure_properties": [
+    "Different modes never share an inode.",
+    "A corrupt duplicate remote object is detected even when a correct local copy exists.",
+    "A changed local copy cannot be linked as verified evidence.",
+    "Interrupted first materialization remains preserved and cannot be silently overwritten."
+  ],
+  "limits": "Immutable local evidence cache must not be used as an editable working directory; source objects remain unchanged. Live original readback still pending."
+}
