@@ -158,6 +158,18 @@ def readback(family,directory,gcloud='/home/exedev/.local/google-cloud-sdk/bin/g
             assert bootstrap['source_sandbox_removed_before_fresh_check'] and bootstrap['bootstrap_containers_removed']
             assert bootstrap['context_removed'] and bootstrap['docker_config_removed']
             assert bootstrap['replay']['status']=='matched_recorded_exits' and len(bootstrap['replay']['steps'])==len(actions)
+            assert not bootstrap['replay']['unstarted_steps'] and not bootstrap['replay']['commands_edited']
+            assert json.loads(outer['bootstrap/actions/replay.json']['data'])==bootstrap['replay']
+            for action,step in zip(actions,bootstrap['replay']['steps'],strict=True):
+                for key in ['step','command_sha256','expected_exit_code','timeout_seconds']:assert step[key]==action[key]
+                assert step['exit_code']==action['expected_exit_code'] and 'exception' not in step
+                for stream in ['stdout','stderr']:
+                    row=outer['bootstrap/actions/step-'+format(action['step'],'03d')+'-'+stream+'.txt']
+                    assert row['sha256']==step[stream+'_sha256'] and row['bytes']==step[stream+'_bytes']
+            for build in builds:
+                if build.get('exit_code')==0:
+                    assert build['dependency_ancestry_verified'] and build['bootstrap_dependency_image_id']==bootstrap['image_id']
+                    assert build['dependency_ancestry'][-1]==bootstrap['image_id']
         if report.get('controls_started'):assert bootstrap['stage']=='dependency_verified'
     cleanup=report.get('cleanup')
     if cleanup and cleanup.get('verified_no_creation'):
