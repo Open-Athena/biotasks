@@ -54,3 +54,23 @@ reports, commands, failed/successful logs and hashes are Git-versioned; owned
 fixture environments and scratch are removed, retained toy sources/wheels stay
 under HOME. No owned `/tmp` data. Keep #56 and #33 open for review; no promotion,
 merge, dataset release or accepted fresh task is claimed.
+
+## Same-process reporting candidate
+
+Separate candidate39caec11 adds an explicit pytest plugin, not installed into
+AnnData or the supported pipeline. Eight paired real pytest comparisons
+(16processes) preserve exit codes/counts, including an intentional failure.
+Reports observe named loaded modules at collection/session finish in the same
+PID without importing targets. The runtime-only import is initially unobserved,
+then visible; a module loaded before a source change has mismatching observed
+function code at session end. Foreign imports remain foreign; an editable-style
+symlink resolves into checkout. Runtime4.88s, peak35,176KiB; fixture scratch removed.
+
+`process-results.json` preserves all commands, original stdout/stderr, counts
+and reports. `process-candidate.md` defines changes and limits. This is real
+pytest evidence on our own synthetic modules, not native biology validation.
+Only explicitly named modules and observed ordinary functions/methods are
+covered; no project mapping, exact patch/Git identity, native/generated code,
+subprocess/xdist identity or complete executing-code claim. Report failure or
+absence is missing evidence. No runtime/model admission, AnnData retry, import
+repair or reward change.
