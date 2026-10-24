@@ -1,0 +1,7 @@
+🤖 [Draft #55](https://github.com/Open-Athena/biotasks/pull/55), exact source `656c49e2`, is open/unmerged, stacked on #52. Both GitHub checks succeeded. [Research results](https://github.com/Open-Athena/biotasks/blob/4ddbab27/experiments/54-manifest-wait/results.md).
+
+152 locked tests passed in 13.79 s (15.92 s overall, 99,312 KiB peak); lint/format/types/hooks pass. Checks exercise actual generation/native/retention hint propagation, ready evidence, conservative unknown hints, pending handles/cleanup, once mode and held outcomes. The original journal still verifies bound bytes before each effect. Frozen validation/retention core/worker assets remain byte-identical.
+
+After driver checkpoint 6dd7451f, real old installed/new source CLI functions ran identical synthetic state sequences with all transport/credential access forbidden. Ready idle 1200 → 0 s, pending 900 → 900 s, held/once 0 → 0; same passes/exits/original flags. The actual active #53 plan was refused with `Manifest/implementation identity changed`; no adoption or admission was attempted. These are not native performance/scientific results.
+
+Retained exact wheel/sdist hashes and source/check receipts, then removed 5706 disposable test files / 101,934,373 logical bytes. No owned /tmp files or active #53 changes. No extra model/native jobs/calls/spend. The active AnnData run remains frozen 88a02827. Source-only candidate is ready for review; no automatic merge/release or issue closure.
