@@ -49,6 +49,13 @@ missing-file case for each required endpoint. Rejections return actual evidence;
 repair the candidate, never the reference data or the target scientific methods.
 A separate worker will generate scientific counterexamples without seeing your
 grader. In a repair session, those frozen probes and measured failures are supplied.
+The controller may also append new negative probes from a separate independent
+worker to fill executed coverage gaps. Such additions are frozen before your
+repair begins and use the existing single quality-repair allowance and deadline;
+they do not let you modify, delete or replace any original program. Every original
+and added probe must run again. They are scientific challenges to assess against
+the unchanged public requirement, not targets that justify weakening a correct
+comparator. An invalid original challenge still blocks this route.
 
 In that existing repair session only, the response schema also permits
 `probe_expectations`: corrections to named probes' `check_ids`, `rationale` and,

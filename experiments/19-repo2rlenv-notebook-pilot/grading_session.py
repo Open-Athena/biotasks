@@ -28,6 +28,7 @@ from grading_protocol import (
 )
 from model_profile import native_effort
 from openai import AsyncOpenAI
+from probe_coverage import prepare_supplement, unexercised_scientific_checks
 from reference_environment import setup_script
 from reference_replay import sha256
 from reference_stage import stage
@@ -727,7 +728,16 @@ async def run_grading(
             fixed_grader.model_dump(),
         )
         save_record(root / "independent-repair-feedback.json", independent_feedback)
-    scopes = ("independent", "grader", "probes", "review", "repair", "review-repair", "contract")
+    scopes = (
+        "independent",
+        "grader",
+        "probes",
+        "probe-supplement",
+        "review",
+        "repair",
+        "review-repair",
+        "contract",
+    )
     ledger = RequestLedger(root / "requests.sqlite", {s: Allowance(None, None) for s in scopes})
     budget = RunBudget(BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "grading", "1")
     limits = ChatLimits(
@@ -1070,6 +1080,15 @@ async def run_grading(
                     raise ValueError(
                         "Acceptance requires all executed controls to pass and no unresolved issues"
                     )
+                if value.decision == "accept_for_packaging" and (
+                    missing := unexercised_scientific_checks(
+                        reviewed_candidate or candidate, session.last_controls
+                    )
+                ):
+                    raise ValueError(
+                        "Acceptance requires executed wrong-result coverage for every scientific "
+                        "check; missing: " + json.dumps(missing)
+                    )
 
             return await call(
                 Review,
@@ -1081,6 +1100,10 @@ async def run_grading(
                     "candidate": (reviewed_candidate or candidate).model_dump(),
                     "probes": (reviewed_probes or probes).model_dump(),
                     "initial_probes": initial_probes.model_dump(),
+                    "probe_supplement": probe_supplement_record,
+                    "unexercised_scientific_checks": unexercised_scientific_checks(
+                        reviewed_candidate or candidate, session.last_controls
+                    ),
                     "initial_checks": quality_revision["grader_candidate"]["checks"]
                     if quality_revision
                     else [check.model_dump() for check in session.frozen_checks],
@@ -1101,6 +1124,7 @@ async def run_grading(
             if quality_revision
             else probes
         )
+        probe_supplement_record = None
         assessment = await review("review")
         save_record(root / "review.json", assessment.model_dump())
         if assessment.question_issues:
@@ -1139,6 +1163,24 @@ async def run_grading(
             and contract_base is None
             and config.get("allow_quality_repair", True)
         ):
+            repair_probe_base = probes
+            missing = unexercised_scientific_checks(candidate, session.last_controls)
+            if missing:
+                supplemented = await prepare_supplement(
+                    session=session,
+                    call=call,
+                    probe_context=probe_context,
+                    original=probes,
+                    candidate=candidate,
+                    controls=session.last_controls,
+                    targets=missing,
+                    hide_inputs=hide_inputs,
+                    root=root,
+                )
+                probe_supplement_record = json.loads((root / "probe-supplement.json").read_text())
+                if supplemented is None:
+                    return {"status": "probe_supplement_blocked", "grader_construction_run": True}
+                repair_probe_base = probes = supplemented
             repair_base = candidate.model_copy(deep=True)
             repair_assessment = None
             repair_review_attempt = 0
@@ -1149,7 +1191,7 @@ async def run_grading(
                 bound = bind_repair_checks(
                     value, session.frozen_checks, prior_candidate=repair_base
                 )
-                corrected, corrected_probes = apply_probe_expectations(bound, initial_probes)
+                corrected, corrected_probes = apply_probe_expectations(bound, repair_probe_base)
                 if corrected.disposition == "ready":
                     session.frozen_probes = corrected_probes
                 await session.validate_candidate(corrected)
@@ -1194,6 +1236,7 @@ async def run_grading(
                     "prior_candidate": repair_base.model_dump(),
                     "review": assessment.model_dump(),
                     "frozen_probes": probes.model_dump(),
+                    "probe_supplement": probe_supplement_record,
                     "controls": session.last_controls,
                     "control_summary": author_input_control_summary,
                 },
@@ -1205,7 +1248,7 @@ async def run_grading(
             )
             save_record(root / "repair.json", repaired.model_dump())
             check_description_updates = [item.model_dump() for item in repaired.check_descriptions]
-            candidate, probes = apply_probe_expectations(repaired, initial_probes)
+            candidate, probes = apply_probe_expectations(repaired, repair_probe_base)
             save_record(root / "repaired-probes.json", probes.model_dump())
             save_record(root / "repaired-candidate.json", candidate.model_dump())
             if candidate.disposition == "blocked":

@@ -681,6 +681,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     question_defect=False,
     joint_revision=False,
     probe_failure=False,
+    probe_coverage_gap=False,
 ):
     import grading_session as module
 
@@ -729,6 +730,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     calls = []
     commands = []
     c = candidate()
+    if probe_coverage_gap:
+        c.checks.append(c.checks[0].model_copy(update={"id": "metadata"}))
     if frozen_grader:
         config["frozen_grader_file"] = str(tmp_path / "frozen-grader-input.json")
         (tmp_path / "frozen-grader-input.json").write_text(
@@ -765,6 +768,21 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         probes=[probe(), probe(name="format", kind="valid_alternative")],
         concerns=[],
     )
+    supplement = None
+    if probe_coverage_gap:
+        from probe_coverage import ProbeSupplement
+
+        suite.probes[0].check_ids = ["value", "metadata"]
+        supplement = ProbeSupplement(
+            disposition="ready",
+            probes=[
+                probe(name="independent-metadata-edit").model_copy(
+                    update={"check_ids": ["metadata"]}
+                )
+            ],
+            concerns=[],
+            rationale="New independent challenge; original mutation remains unchanged",
+        )
     if joint_revision:
         from comparison_repair import ComparisonRepair, freeze_comparison_revision
 
@@ -870,17 +888,49 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
 
         async def validate_candidate(self, value):
             self.last_controls = [{"passed_control": True, "kind": "reference"}]
+            if self.frozen_probes:
+                self.last_controls.append({"passed_control": True, "kind": "empty"})
+                for p in self.frozen_probes.probes:
+                    self.last_controls.append(await self.case(value, kind="probe", probe=p))
             self.case_number += 1
             self.validation_count += 1
             if self.validation_count == conflict_on:
                 self.independent_conflict = {"fixture": "unresolved independent output"}
 
         async def validate_probe_execution(self, value):
-            assert value in suite.probes
+            assert value in suite.probes or (supplement and value in supplement.probes)
 
         async def case(self, *args, **kwargs):
             self.case_number += 1
-            return {"passed_control": True, "kind": "probe"}
+            p = kwargs["probe"]
+            failed = (
+                {"metadata"}
+                if p.name == "independent-metadata-edit"
+                else {"value"}
+                if p.kind == "wrong_solution"
+                else set()
+            )
+            return {
+                "passed_control": p.kind == "valid_alternative" or set(p.check_ids) <= failed,
+                "kind": "probe",
+                "probe": p.model_dump(),
+                "execution": {
+                    "status": "executed",
+                    "probe_valid_execution": True,
+                    "grader": {"exit_code": 0},
+                    "report": {
+                        "passed": not failed,
+                        "checks": [
+                            {
+                                "id": check.id,
+                                "passed": check.id not in failed,
+                                "message": "synthetic",
+                            }
+                            for check in c.checks
+                        ],
+                    },
+                },
+            }
 
     monkeypatch.setattr(module, "GradingSession", Session)
 
@@ -914,7 +964,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             assert "execution_inspection" not in inputs
         if name != "independent":
             assert inputs["artifact_interface"] == module.artifact_interface(["value.txt"])
-        if derived and name not in {"independent", "probes"}:
+        if derived and name not in {"independent", "probes", "probe-supplement"}:
             assert inputs["specification"] == {"task_brief": "Scientific question"}
             assert "operator_handoff" not in inputs
             assert "repeatability" in inputs and "source_evidence" in inputs
@@ -965,6 +1015,12 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             if derived:
                 assert commands[-1] == ["chmod", "700", "/work/task-inputs"]
             value = suite
+        elif name == "probe-supplement":
+            assert probe_coverage_gap and inputs["coverage_targets"] == ["metadata"]
+            assert inputs["original_probes"] == suite.model_dump()
+            assert "source_evidence" not in inputs and "controls" not in inputs
+            assert "grader_code" not in json.dumps(inputs)
+            value = supplement
         elif name.startswith("review"):
             review_roots.append(kwargs["root"])
             operation = kwargs["budget"].reserve(0.001, "Synthetic review response")
@@ -993,6 +1049,10 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                     == "Correction justified by the unchanged public rule"
                 )
                 assert inputs["probes"]["probes"][0]["script"] == suite.probes[0].script
+                if probe_coverage_gap:
+                    assert inputs["probe_supplement"] == supplement.model_dump()
+                    assert inputs["unexercised_scientific_checks"] == []
+                    assert len(inputs["probes"]["probes"]) == len(suite.probes) + 1
             if derived:
                 assert ["chmod", "555", "/work/task-inputs"] in commands
             assert inputs["candidate"]["grader_code"] == c.grader_code
@@ -1067,7 +1127,9 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                     probe_expectations=[
                         {
                             "name": suite.probes[0].name,
-                            "check_ids": suite.probes[0].check_ids,
+                            "check_ids": ["value"]
+                            if probe_coverage_gap
+                            else suite.probes[0].check_ids,
                             "rationale": "Correction justified by the unchanged public rule",
                         }
                     ],
@@ -1225,7 +1287,11 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         )
         + ([] if reuse_probes else ["probes"])
         + ["review"]
-        + (["repair", "review-repair"] if effective_repair else [])
+        + (
+            [*(["probe-supplement"] if probe_coverage_gap else []), "repair", "review-repair"]
+            if effective_repair
+            else []
+        )
     )
     if frozen_grader:
         expected = ["independent"] + ([] if joint_revision else ["probes"]) + ["review"]
@@ -1264,6 +1330,46 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     if semantic_feedback:
         expected_candidate["rationale"] = "Supported comparison; no unsupported measurement claim"
     assert json.loads((tmp_path / "final-candidate.json").read_text()) == expected_candidate
+
+
+def test_coverage_supplement_uses_one_repair_and_fresh_full_validation(tmp_path, monkeypatch):
+    from release_metadata import scientific_probe_documents
+
+    test_orchestration_separates_probe_author_and_gates_acceptance(
+        tmp_path,
+        monkeypatch,
+        repair=True,
+        derived=True,
+        resume=False,
+        reuse_probes=False,
+        contract_only=False,
+        comparison_conflict=False,
+        probe_coverage_gap=True,
+    )
+    original = json.loads((tmp_path / "probes.json").read_text())
+    extended = json.loads((tmp_path / "supplemented-probes.json").read_text())
+    final = json.loads((tmp_path / "repaired-probes.json").read_text())
+    assert extended["probes"][: len(original["probes"])] == original["probes"]
+    assert len(final["probes"]) == len(original["probes"]) + 1
+    assert final["probes"][0]["script"] == original["probes"][0]["script"]
+    assert original["probes"][0]["check_ids"] == ["value", "metadata"]
+    assert final["probes"][0]["check_ids"] == ["value"]
+    assert final["probes"][-1]["check_ids"] == ["metadata"]
+    assert len(list((tmp_path / "repair-submission-reviews").glob("*.json"))) == 1
+    assert all(
+        c["passed_control"] for c in json.loads((tmp_path / "final-controls.json").read_text())
+    )
+    documents = scientific_probe_documents(tmp_path)
+    assert documents["scientific-probes.json"] == final
+    assert documents["initial-scientific-probes.json"] == original
+    assert documents["independent-probe-supplement.json"]["coverage_targets"] == ["metadata"]
+    assert documents["independent-probe-supplement.json"]["quality_repair_allowances"] == 1
+    baseline = json.loads((tmp_path / "probe-coverage-baseline.json").read_text())
+    assert any(c["passed_control"] is False for c in baseline["controls"])
+    baseline["targets"] = ["value"]
+    (tmp_path / "probe-coverage-baseline.json").write_text(json.dumps(baseline))
+    with pytest.raises(ValueError, match="targets differ"):
+        scientific_probe_documents(tmp_path)
 
 
 def test_probe_controller_failure_is_not_masked_by_permission_restore(tmp_path, monkeypatch):

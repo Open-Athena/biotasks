@@ -140,7 +140,20 @@ science, change selected outputs, or weaken acceptance rules to make controls pa
 A failed/unknown test cannot be described as passing. Distinguish problems with
 the proposed public rule from problems with its implementation or a probe.
 
-If `initial_probes` differs from `probes`, the existing repair worker corrected
+If `probe_supplement` is present, a separate worker received only the public
+contract, reference results and targeted coverage IDs, with execution-only
+preflight and no grader implementation or score feedback. Its additional
+wrong-result programs must exactly match the recorded supplement. All original
+programs must remain present and unchanged; only the existing allowed annotation
+corrections may differ. Independently verify that each addition introduces a
+meaningful scientific error under the unchanged criterion, rather than another
+format or missing-file check. Added probes are not proof that the grader is
+correct: require fresh full execution, accurate annotations and meaningful
+negative coverage for every scientific check. The controller's
+`unexercised_scientific_checks` counts observed declared negatives, not their
+scientific validity. All original failed records remain failures.
+
+If `initial_probes` differs from the original probes within `probes`, the existing repair worker corrected
 expected check IDs, rationale, suite-level concerns or an originally mistaken
 `kind` classification. Mutation scripts, names, focus and source evidence must
 remain unchanged. Verify every correction against the

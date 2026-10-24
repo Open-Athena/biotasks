@@ -129,20 +129,53 @@ def scientific_probe_documents(grading):
     original = Probes.model_validate(read("probes.json"))
     candidate = Grader.model_validate(read("final-candidate.json"))
     suite = original
+    repair_base = original
+    supplement = None
+    supplement_files = (
+        "probe-supplement.json",
+        "probe-coverage-baseline.json",
+        "supplemented-probes.json",
+    )
+    if any((grading / name).exists() for name in supplement_files):
+        from grading_protocol import check_repair_inventory
+        from probe_coverage import ProbeSupplement, append_supplement, unexercised_scientific_checks
+
+        if not all((grading / name).exists() for name in supplement_files):
+            raise ValueError("Incomplete independent probe supplement evidence")
+        baseline = read("probe-coverage-baseline.json")
+        prior_candidate = Grader.model_validate(baseline["candidate"])
+        check_repair_inventory(candidate.checks, prior_candidate.checks)
+        if Probes.model_validate(baseline["original_probes"]) != original:
+            raise ValueError("Supplement baseline differs from the original probe suite")
+        targets = unexercised_scientific_checks(prior_candidate, baseline["controls"])
+        if targets != baseline["targets"]:
+            raise ValueError("Supplement targets differ from recorded executed coverage")
+        supplement = ProbeSupplement.model_validate(read("probe-supplement.json"))
+        repair_base = append_supplement(original, supplement, prior_candidate, targets)
+        if Probes.model_validate(read("supplemented-probes.json")) != repair_base:
+            raise ValueError("Supplemented suite differs from preserved original and additions")
     repair_path, revised_path = grading / "repair.json", grading / "repaired-probes.json"
     if repair_path.exists() != revised_path.exists():
         raise ValueError("Incomplete probe annotation repair evidence")
     repair = None
     if repair_path.exists():
         repair = GraderRepair.model_validate(read("repair.json"))
-        expected_candidate, expected_suite = apply_probe_expectations(repair, original)
+        expected_candidate, expected_suite = apply_probe_expectations(repair, repair_base)
         suite = Probes.model_validate(read("repaired-probes.json"))
         if candidate != expected_candidate or suite != expected_suite:
             raise ValueError("Repaired probes or grader differ from recorded repair")
+    elif supplement is not None:
+        raise ValueError("A probe supplement requires the existing quality-repair validation")
     check_probes(suite, candidate)
     expected = {p.name: p.model_dump() for p in suite.probes}
     seen = set()
-    for control in read("final-controls.json"):
+    final_controls = read("final-controls.json")
+    if supplement is not None and (
+        unexercised_scientific_checks(candidate, final_controls)
+        or not all(c.get("passed_control") is True for c in final_controls)
+    ):
+        raise ValueError("Supplement publication requires fresh complete passing negative coverage")
+    for control in final_controls:
         if control["kind"] != "probe":
             continue
         probe = control.get("probe") or {}
@@ -153,6 +186,14 @@ def scientific_probe_documents(grading):
     if seen != set(expected):
         raise ValueError("Final controls omit an effective probe")
     documents = {"scientific-probes.json": suite.model_dump()}
+    if supplement is not None:
+        documents["independent-probe-supplement.json"] = {
+            **supplement.model_dump(),
+            "coverage_targets": targets,
+            "original_mutation_programs_preserved": True,
+            "quality_repair_allowances": 1,
+            "scope": "Additional independent challenges, not replacements or weaker acceptance criteria.",
+        }
     if repair is not None:
         documents["initial-scientific-probes.json"] = original.model_dump()
         documents["probe-expectation-corrections.json"] = {
@@ -161,7 +202,7 @@ def scientific_probe_documents(grading):
         }
         kinds = [
             {"name": old.name, "original": old.kind, "revised": new.kind}
-            for old, new in zip(original.probes, suite.probes, strict=True)
+            for old, new in zip(repair_base.probes, suite.probes, strict=True)
             if old.kind != new.kind
         ]
         if kinds:

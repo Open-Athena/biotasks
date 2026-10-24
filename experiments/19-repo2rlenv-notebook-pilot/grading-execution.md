@@ -1,7 +1,7 @@
 # Artifact-grader construction and controls
 
-This stage turns specification 013 into a candidate executable grader using the
-saved terminal outputs from setup 001 and the two successful reference repeats.
+This stage turns a frozen executed reference and materialized task into a
+candidate executable grader, using recorded outputs and reference repeats.
 It does not rerun the notebook. It precedes Harbor packaging and a blind solver
 attempt; passing here is not a released task or software-portability evidence.
 
@@ -19,19 +19,28 @@ worker inputs. The reference recipe and selected exports remain fixed.
    reference, an empty submission and a submission missing each required file.
    Failed executable checks return feedback through the existing Tasksmith
    submit/revise mechanism.
-2. **Probe author:** a separate GLM session sees the same scientific evidence,
-   public instructions and named requirements, but not the grader implementation.
+2. **Probe author:** a separate GLM session sees public instructions, named
+   requirements and reference result files, without grader code, analysis programs
+   or raw scientific inputs.
    It proposes deterministic wrong-result controls covering each scientific check
    and justified valid-representation controls. Scripts run on fresh copies of
-   the outputs; a nonzero exit, missing required file or unchanged submission is
-   an incomplete probe, not a successful rejection.
+   the outputs; a nonzero exit or unchanged submission is incomplete. Missing-file
+   controls do not establish scientific-value coverage.
 3. **Review:** another GLM session inspects the candidate, probe rationale and
    executed results. It checks scientific coverage, tolerances, public/private
    consistency and what the controls actually establish. It cannot accept a
    candidate with failed controls or unresolved issues.
-4. **Optional repair:** at most one separate author repair session, followed by
-   fresh execution of all frozen controls and a fresh review. The check inventory
-   and probes remain frozen. A necessary scope change is reported as a blocker.
+4. **Optional repair:** one coherent quality-repair allowance, followed by fresh
+   execution of all controls and a fresh review. If a named scientific check has
+   no observed declared negative, a separate GLM role may first append meaningful
+   negative probes using only the public contract, reference outputs and target
+   IDs. It receives execution-only preflight, without grader code or scores.
+   Original programs stay frozen and their failed records remain failures. The
+   existing repair author may correct justified annotations but cannot replace
+   mutations, change check identities or weaken scientific criteria. All original
+   and added probes run again, and every scientific check needs an executed
+   negative plus independent scientific review. A necessary scope change blocks.
+   This uses the existing single repair and deadline, not a second campaign.
 
 These are fixed sessions with tool-use turns, not fixed raw API-call counts.
 Only GLM creates task-specific code and repairs. Generic controller code validates
@@ -59,13 +68,16 @@ not a claim of hardened adversarial sandboxing.
 Use the existing CPU-only 4-CPU, 8-GiB, 10-GiB Daytona environment and one reserved
 2-CPU/4-GiB Iris host. The campaign is bounded by two hours, with the final five
 minutes reserved for cleanup; setup allows 30 minutes. Each grader or probe
-execution allows 120 seconds. GLM uses medium reasoning and the approved endpoint,
+execution allows 120 seconds. GLM requests native high reasoning (served effort
+is unverified) through the approved endpoint,
 with a 600-second request timeout and no added token, byte or request-count cap.
 There is no solver attempt or automatic replacement campaign.
 
-Reserve $2 under the already authorized $100 aggregate ceiling. The resulting
-$100 of conservative reservations is not measured provider expenditure. Reconcile
-unused reservations before any further campaign.
+Each fresh campaign reserves its configured ceiling within the standing aggregate
+authorization before submission. Reservations are bounds, not measured charges.
+Keep the shared two-host/two-sandbox limit; terminal slots require original
+archive verification and fresh cleanup before reuse. Do not reclaim historical
+financial holds or automatically start another campaign after a rejection.
 
 Preserve rendered inputs/prompts, raw model responses, every candidate, probe
 scripts, control reports, input/output hashes, environment checks and cleanup
