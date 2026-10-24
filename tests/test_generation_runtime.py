@@ -235,3 +235,40 @@ def test_worker_receives_only_named_credentials_and_binds_payload(tmp_path, monk
     (root / "native_docker.py").write_text("changed source")
     with pytest.raises(ValidationError, match="payload changed"):
         worker.Generation(root, out, config).validate()
+
+
+@pytest.mark.parametrize("interrupted", [False, True])
+def test_targeting_override_restores_callback_after_native_exit(monkeypatch, interrupted):
+    root = types.ModuleType("repo2rlenv")
+    root.__path__ = []
+    pipelines = types.ModuleType("repo2rlenv.pipelines")
+    pipelines.__path__ = []
+    runtime = types.ModuleType("repo2rlenv.pipelines.pr_runtime")
+    original = lambda commands, files: commands  # noqa: E731
+    runtime.targeted_test_cmds_for_pr = original
+    pipelines.pr_runtime = runtime
+    root.pipelines = pipelines
+    for name, module in (
+        ("repo2rlenv", root),
+        ("repo2rlenv.pipelines", pipelines),
+        ("repo2rlenv.pipelines.pr_runtime", runtime),
+    ):
+        monkeypatch.setitem(__import__("sys").modules, name, module)
+    monkeypatch.setitem(__import__("sys").modules, "python_targeting", load("python_targeting"))
+    state = {}
+    try:
+        with entry.targeting_policy({"targeting_policy": "workspace-python-v1"}, state):
+            assert runtime.targeted_test_cmds_for_pr is not original
+            if interrupted:
+                raise SystemExit(1)
+    except SystemExit:
+        assert interrupted
+    assert runtime.targeted_test_cmds_for_pr is original
+    assert state == {"targeting_policy": "workspace-python-v1", "targeting_policy_restored": True}
+
+
+def test_default_targeting_policy_does_not_import_or_modify_native_module(monkeypatch):
+    monkeypatch.setitem(__import__("sys").modules, "python_targeting", None)
+    state = {}
+    with entry.targeting_policy({}, state):
+        assert state == {"targeting_policy": None}

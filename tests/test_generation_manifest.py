@@ -332,3 +332,32 @@ def test_official_filter_survives_manifest_and_worker_guard_with_caps_unchanged(
     assert not worker_guard.matches(frozen["pipeline"]["options"], expected)
     expected["require_new_test_funcs"] = int(setting)
     assert not worker_guard.matches(frozen["pipeline"]["options"], expected)
+
+
+def test_targeting_policy_is_explicit_frozen_payload_metadata(cohort):
+    from biotasks.generation import resources
+
+    path, output, manifest = cohort
+    manifest["cases"][0]["targeting_policy"] = "workspace-python-v1"
+    write_json(path, manifest)
+    flow.prepare(path, output)
+    payload = output / "metabolism/payload"
+    assert read_json(payload / "family.json")["targeting_policy"] == "workspace-python-v1"
+    assert read_json(output / "single-cell/payload/family.json")["targeting_policy"] is None
+    assert (payload / "python_targeting.py").read_bytes() == resources.assets()[
+        "python_targeting.py"
+    ]
+    planned = read_json(output / "metabolism/plan.json")
+    assert "python_targeting.py" not in planned["reused_baseline_sha256"]
+    assert "option_policy.py" not in planned["reused_baseline_sha256"]
+    assert planned["group"]["resources"] == flow.RESOURCES
+
+
+@pytest.mark.parametrize("policy", [True, "unknown", {"override": "anything"}])
+def test_unknown_targeting_policy_rejects_before_planning(cohort, policy):
+    path, output, manifest = cohort
+    manifest["cases"][0]["targeting_policy"] = policy
+    write_json(path, manifest)
+    with pytest.raises(ValidationError, match="Unknown targeting policy"):
+        flow.prepare(path, output)
+    assert not output.exists()
