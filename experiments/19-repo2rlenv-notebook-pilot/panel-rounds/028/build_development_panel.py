@@ -23,7 +23,7 @@ selection = [
     ("pyteomics-filtering", "Proteomic search results", 139),
     ("mdanalysis-rmsd", "Molecular dynamics", 146),
     ("sgkit-relatedness", "Statistical genetics", 142),
-    ("pymc-rat-tumor", "Bayesian biological inference", 143),
+    ("pymc-rat-tumor", "Bayesian biological inference", 145),
 ]
 records, live = [], []
 for identifier, domain, number in selection:
@@ -118,6 +118,10 @@ counts = {
     "unsupported_conversion_profile": sum(
         row["state"] == "unsupported_conversion_profile" for row in records
     ),
+    "generated_candidate_rejections": sum(
+        row["terminal_original_audited"] and row["state"].startswith("generated_")
+        for row in records
+    ),
     "running": sum(row["state"] == "running" for row in records),
     "terminal_awaiting_original_audit": sum(
         row["state"] == "terminal_awaiting_original_audit" for row in records
@@ -156,12 +160,13 @@ text += (
     f"\n{counts['terminal_original_audits']} latest cases have terminal original-evidence audits, "
     f"running: {counts['running']}; frozen but unsubmitted: {counts['queued_not_submitted']}. "
     f"{counts['native_control_passes']} passed native controls; qualification holds remain. "
-    "Five terminal cases reject generated setup/tasks; one stops at unsupported notebook conversion. "
+    f"Generated setup/task rejections: {counts['generated_candidate_rejections']}; "
+    f"conversion limitations: {counts['unsupported_conversion_profile']}. "
     "These are not demonstrated broken source notebooks. "
     "Earlier Matchms135 infrastructure failure is preserved;144 is a fresh run. "
     "Earlier PyHMMER124 remains the latest qualified public release and is not substituted for134 here.\n\n"
     "PyRadiomics141 remains on its execution/access hold and is not counted as a tested tenth notebook. "
-    "PyMC143 is the selected tenth domain; original source and all branches remain intact, with suitability left to the factory. "
+    "PyMC145 is the selected tenth domain; original source and all branches remain intact, with suitability left to the factory. "
     "R support stays deferred.\n"
 )
 (root / "development-panel.md").write_text(text)
