@@ -10,10 +10,11 @@ from preserve import inspect,verified_receipt
 def main():
     verified_receipt(ROOT/'private/OHIF__Viewers')
     results=json.loads((ROOT/'results.json').read_text());assert results['cleanup_verified'] and results['anonymous_download_verified']
-    files=[p for p in ROOT.iterdir() if p.is_file() and p.suffix in ['.py','.json','.md','.txt'] and not p.name.startswith(('final-evidence-','local-cleanup'))]
+    files=[p for p in ROOT.iterdir() if p.is_file() and p.suffix in ['.py','.json','.md','.txt'] and p.name!='preserve.py' and not p.name.startswith(('final-evidence-','local-cleanup'))]
     files+=list((ROOT/'runs').rglob('*.json'))
     files+=[p for p in (ROOT/'private').glob('controller-*.log') if p.is_file()]
     files+=list((ROOT/'analysis').glob('*.py'))
+    files.append(ROOT/'analysis/curation-preparation-note.json')
     rows=[]
     for path in sorted(set(files)):
         raw=path.read_bytes();inspect(raw)
@@ -25,7 +26,7 @@ def main():
         inputs=rows,source_review_sha256=sha(ROOT/'public-policy.json'),
         exclusions='No credentials, signed URLs, images/layers, installed dependencies, source checkout/data binaries or restricted Matchms material.',
         source_task_and_notices='Already separately preserved with verified anonymous input/runtime readback.',
-        retention='Retain while cited; no automatic deletion.',model_calls=0))
+        excluded_scanner_source=dict(path='preserve.py',sha256=sha(ROOT/'preserve.py'),source='https://github.com/Open-Athena/biotasks/blob/5e72a360/experiments/39-recorded-bootstrap/preserve.py',reason='Scanner guard literals are not execution logs; retain exact source in Git rather than weakening the raw artifact scanner.'),retention='Retain while cited; no automatic deletion.',model_calls=0))
     print(json.dumps(dict(reviewed_inputs=len(rows),reviewed_bytes=sum(r['bytes'] for r in rows))))
 
 
