@@ -193,6 +193,153 @@ def test_environment_setup_requires_time_for_existing_return_margin(tmp_path, mo
     assert remote.operation == 0 and not remote.uncertain
 
 
+@pytest.mark.parametrize("available,expected", [(4000, 600), (400, 315), (86, 1)])
+def test_independent_execution_admits_coherent_timeouts_once(
+    tmp_path, monkeypatch, available, expected
+):
+    import hashlib
+    from types import SimpleNamespace
+
+    import run_reference_setup
+    from grading_session import GradingSession
+    from run_reference_setup import Remote
+
+    monkeypatch.setattr(run_reference_setup.time, "time", lambda: 100.0)
+    requests, executions = [], []
+    log = b"synthetic independent execution\n"
+
+    class Worker:
+        def upload(self, source, destination):
+            if destination.endswith("alternative-request.json"):
+                requests.append(json.loads(source.read_text()))
+
+        def exec(self, argv, **kwargs):
+            executions.append((requests[-1], int(argv[-3])))
+            receipt = {
+                "argv": json.loads(argv[-4]),
+                "timeout_seconds": int(argv[-3]),
+                "directory": argv[-2],
+                "label": argv[-1],
+                "exit_code": 0,
+                "timed_out": False,
+                "log_sha256": hashlib.sha256(log).hexdigest(),
+            }
+            return SimpleNamespace(stdout=json.dumps(receipt), checked=lambda *args: None)
+
+        def download(self, source, destination):
+            destination.write_bytes(log)
+
+    remote = Remote(Worker(), None, tmp_path / "remote", 115 + available, 1)
+    config = {"reference_seconds": 600}
+    session = GradingSession(
+        remote=remote,
+        snapshot={"outputs": [{"path": "value.txt"}]},
+        root=tmp_path / "session",
+        config=config,
+    )
+    folder = session.root / "independent-executions/one"
+    folder.mkdir(parents=True)
+    result = asyncio.run(session.independent_command("unchanged scientific program", folder))
+    assert result["exit_code"] == 0
+    assert remote.operation == len(executions) == 1 and not remote.uncertain
+    request, outer = executions[0]
+    assert request == {
+        "code": "unchanged scientific program",
+        "output_paths": ["value.txt"],
+        "seconds": expected,
+    }
+    assert outer == expected + 30
+    assert config == {"reference_seconds": 600}
+    assert remote.deadline == 115 + available
+    assert requests[0]["seconds"] == 600
+    assert (folder / "admission.json").exists() == (available < 630)
+    if available < 630:
+        assert json.loads((folder / "request-before-admission.json").read_text()) == requests[0]
+        admission = json.loads((folder / "admission.json").read_text())
+        assert admission["initial_command_dispatched"] is False
+        assert admission["campaign_deadline_extended"] is False
+        assert admission["effective_computation_seconds"] == expected
+
+
+@pytest.mark.parametrize("available", [0, 85])
+def test_independent_execution_requires_time_for_nested_and_return_margins(
+    tmp_path, monkeypatch, available
+):
+    import run_reference_setup
+    from grading_session import GradingSession
+    from run_reference_setup import OperationBudgetExceeded, Remote
+
+    monkeypatch.setattr(run_reference_setup.time, "time", lambda: 100.0)
+    remote = Remote(None, None, tmp_path / "remote", 115 + available, 1)
+
+    async def upload(*args):
+        pass
+
+    remote.upload = upload
+    session = GradingSession(
+        remote=remote,
+        snapshot={"outputs": []},
+        root=tmp_path / "session",
+        config={"reference_seconds": 600},
+    )
+    with pytest.raises(OperationBudgetExceeded):
+        asyncio.run(session.independent_command("same code", session.root))
+    assert remote.operation == 0 and not remote.uncertain
+    assert not (session.root / "admission.json").exists()
+
+
+def test_independent_execution_never_retries_uncertain_dispatch(tmp_path):
+    from grading_session import GradingSession
+
+    executions = []
+
+    class Remote:
+        async def upload(self, *args):
+            pass
+
+        async def command(self, *args):
+            executions.append(args)
+            raise TimeoutError("execution outcome unknown")
+
+    session = GradingSession(
+        remote=Remote(),
+        snapshot={"outputs": []},
+        root=tmp_path / "session",
+        config={"reference_seconds": 600},
+    )
+    with pytest.raises(TimeoutError, match="outcome unknown"):
+        asyncio.run(session.independent_command("same code", session.root))
+    assert len(executions) == 1
+    assert not (session.root / "admission.json").exists()
+
+
+def test_independent_execution_second_admission_refusal_is_terminal(tmp_path):
+    from grading_session import GradingSession
+    from run_reference_setup import OperationBudgetExceeded
+
+    attempts, requests = [], []
+
+    class Remote:
+        async def upload(self, source, destination):
+            if destination.endswith("alternative-request.json"):
+                requests.append(json.loads(source.read_text()))
+
+        async def command(self, *args):
+            attempts.append(args)
+            raise OperationBudgetExceeded(400 if len(attempts) == 1 else 0)
+
+    session = GradingSession(
+        remote=Remote(),
+        snapshot={"outputs": []},
+        root=tmp_path / "session",
+        config={"reference_seconds": 600},
+    )
+    with pytest.raises(OperationBudgetExceeded):
+        asyncio.run(session.independent_command("same code", session.root))
+    assert len(attempts) == 2  # Both are pre-dispatch refusals, not executions.
+    assert [r["seconds"] for r in requests] == [600, 315]
+
+
 def test_grader_author_can_inspect_before_candidate_submission(tmp_path):
     from grading_session import GradingSession
 
@@ -667,7 +814,10 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     conflict_on = (2 if effective_repair else 1) if comparison_conflict else None
 
     class Session:
+        independent_command = module.GradingSession.independent_command
+
         def __init__(self, **kwargs):
+            self.config = kwargs["config"]
             self.independent_conflict = None
             self.validation_count = 0
             self.last_controls = []

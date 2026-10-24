@@ -103,6 +103,52 @@ class GradingSession:
             )
             return await self.command(argv, effective, "grading-environment")
 
+    async def independent_command(self, code, folder):
+        """Admit one blind computation with coherent inner and outer timeouts."""
+        request = {
+            "code": code,
+            "output_paths": self.paths,
+            "seconds": self.config["reference_seconds"],
+        }
+        path = folder / "request.json"
+        save_record(path, request)
+        remote_path = "/work/grading-private/alternative-request.json"
+        await self.remote.upload(path, remote_path)
+        await self.remote.upload(HERE / "alternative_remote.py", "/work/alternative_remote.py")
+        await self.remote.upload(HERE / "grading_remote.py", "/work/grading_remote.py")
+        argv = ["python", "/work/alternative_remote.py"]
+        label = "independent-" + folder.name
+        outer_padding = 30
+        try:
+            return await self.command(argv, request["seconds"] + outer_padding, label)
+        except OperationBudgetExceeded as error:
+            # Certified pre-dispatch refusal, not an executed failure or an
+            # uncertain provider response. Shorten both nested timeouts; a
+            # second refusal remains terminal. Preserve the original request.
+            effective = min(
+                request["seconds"],
+                error.available_seconds - COMMAND_RETURN_ALLOWANCE_SECONDS - outer_padding,
+            )
+            if effective < 1:
+                raise
+            (folder / "request-before-admission.json").write_bytes(path.read_bytes())
+            save_record(
+                folder / "admission.json",
+                {
+                    "requested_computation_seconds": request["seconds"],
+                    "effective_computation_seconds": effective,
+                    "outer_padding_seconds": outer_padding,
+                    "available_seconds_before_return_allowance": error.available_seconds,
+                    "return_allowance_seconds": COMMAND_RETURN_ALLOWANCE_SECONDS,
+                    "initial_command_dispatched": False,
+                    "campaign_deadline_extended": False,
+                },
+            )
+            request["seconds"] = effective
+            save_record(path, request)
+            await self.remote.upload(path, remote_path)
+            return await self.command(argv, effective + outer_padding, label)
+
     async def helper(self, args, seconds, label):
         # Always restore controller code; workers never author or edit this helper.
         await self.remote.upload(HERE / "grading_remote.py", "/work/grading_remote.py")
@@ -725,26 +771,7 @@ async def run_grading(
                     return
                 folder = root / "independent-executions" / str(time.time_ns())
                 folder.mkdir(parents=True)
-                save_record(
-                    folder / "request.json",
-                    {
-                        "code": value.code,
-                        "output_paths": session.paths,
-                        "seconds": config["reference_seconds"],
-                    },
-                )
-                await session.remote.upload(
-                    folder / "request.json", "/work/grading-private/alternative-request.json"
-                )
-                await session.remote.upload(
-                    HERE / "alternative_remote.py", "/work/alternative_remote.py"
-                )
-                await session.remote.upload(HERE / "grading_remote.py", "/work/grading_remote.py")
-                reply = await session.command(
-                    ["python", "/work/alternative_remote.py"],
-                    config["reference_seconds"] + 30,
-                    "independent-" + folder.name,
-                )
+                reply = await session.independent_command(value.code, folder)
                 result = {"controller": reply}
                 if reply["exit_code"] == 0:
                     result["execution"] = json.loads(reply["log"])

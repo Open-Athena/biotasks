@@ -174,6 +174,22 @@ validation requirement or retry is added or reset.
 This is an offline-tested candidate. The ten-case cohort remains frozen on
 `501fbc2f` without this notice; its effect on live worker behavior is unverified.
 
+### Next-version independent-execution admission
+
+The independent validation runner can shorten its requested maximum when the
+full computation plus wrapper cannot fit the existing phase deadline. This is
+allowed only after `OperationBudgetExceeded` certifies refusal before dispatch.
+It preserves the original request and records an admission receipt, shortens the
+inner computation timeout and outer wrapper together, and retains the existing
+return allowance. A second refusal is terminal. It never retries an executed
+failure or uncertain response, extends a deadline, changes the scientific
+program, or changes the configured reference/solver maximum. A shortened run
+must still complete all ordinary output and scientific validation checks.
+
+This candidate is covered by offline controller/orchestration tests; the frozen
+ten-case cohort does not use it. MDAnalysis130 remains an incomplete original
+admission failure, with no inferred post-repair acceptance.
+
 ## Historical single-case preparation/setup evidence
 
 Runs 009 and 010 select explicit cell-result fields, UMAP and full ranked marker
