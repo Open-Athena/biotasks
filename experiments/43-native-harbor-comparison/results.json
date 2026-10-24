@@ -1,0 +1,3655 @@
+{
+  "issue": 43,
+  "run_id": "biotasks43-compare-0cae81dff1",
+  "stage": "native_probe_returned",
+  "probe_driver_exit": 0,
+  "native_driver_completed": true,
+  "versions": [
+    {
+      "version": "0.6.6",
+      "finite_control_passed": true,
+      "native_timeout_observed": true,
+      "observed_timeout_writer_starts": 2,
+      "live_after_native_verifier_end_observed": true
+    },
+    {
+      "version": "0.24.0",
+      "finite_control_passed": false,
+      "native_timeout_observed": false,
+      "observed_timeout_writer_starts": null,
+      "live_after_native_verifier_end_observed": null
+    }
+  ],
+  "cases": [
+    {
+      "id": "066-finite",
+      "version": "0.6.6",
+      "name": "finite",
+      "state": "native_returned",
+      "measured": true,
+      "wrapper_exit": 0,
+      "exception": null,
+      "fixture_reward": 0.0,
+      "resources_verified": true,
+      "events_path": "jobs/biotasks43-compare-0cae81dff1-066-finite/harbor-timeout-finite__RqnGbWU/verifier/process-events.jsonl",
+      "writer_log_path": "jobs/biotasks43-compare-0cae81dff1-066-finite/harbor-timeout-finite__RqnGbWU/verifier/writer.log",
+      "writer_log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+      "events": [
+        {
+          "event": "start",
+          "token": "8ca884aa9eb1482792fa6a9945036ea9",
+          "pid": 51,
+          "ppid": 50,
+          "pgrp": 44,
+          "session": 44,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45960130,
+            "fd1_inode": 1825389,
+            "fd1_size": 0,
+            "fd1_offset": 0,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "writer_seconds": 2.0,
+          "cgroup": {
+            "cpu.max": "100000 100000",
+            "memory.max": "6442450944"
+          },
+          "monotonic_ns": 459601460399917,
+          "wall_ns": 1792831038203823210,
+          "previous": []
+        },
+        {
+          "event": "sample",
+          "token": "8ca884aa9eb1482792fa6a9945036ea9",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45960130,
+            "fd1_inode": 1825389,
+            "fd1_size": 10240,
+            "fd1_offset": 10240,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 10240,
+          "log_nul_bytes": 0,
+          "log_sha256": "f2721e270e3057220849a4050bb39f10e4c2104f16c22c3f24a73b622b26cc0d",
+          "monotonic_ns": 459602361585980,
+          "wall_ns": 1792831039105009073
+        },
+        {
+          "event": "sample",
+          "token": "8ca884aa9eb1482792fa6a9945036ea9",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45960130,
+            "fd1_inode": 1825389,
+            "fd1_size": 20480,
+            "fd1_offset": 20480,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "monotonic_ns": 459603362703256,
+          "wall_ns": 1792831040106125919
+        },
+        {
+          "event": "end",
+          "token": "8ca884aa9eb1482792fa6a9945036ea9",
+          "pid": 51,
+          "records": 20,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45960130,
+            "fd1_inode": 1825389,
+            "fd1_size": 20480,
+            "fd1_offset": 20480,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "monotonic_ns": 459603462952811,
+          "wall_ns": 1792831040206375444
+        }
+      ],
+      "observations": [
+        {
+          "state": "awaiting_writer",
+          "observed_start_ns": 1792831036143402610,
+          "observed_finished_ns": 1792831036143476860,
+          "observer_started_ns": 1792831035859053586,
+          "observer_finished_ns": 1792831036152202340
+        },
+        {
+          "state": "awaiting_writer",
+          "observed_start_ns": 1792831036984799115,
+          "observed_finished_ns": 1792831036984845295,
+          "observer_started_ns": 1792831036652639303,
+          "observer_finished_ns": 1792831037045587503
+        },
+        {
+          "state": "awaiting_writer",
+          "observed_start_ns": 1792831037808439972,
+          "observed_finished_ns": 1792831037808540012,
+          "observer_started_ns": 1792831037546285506,
+          "observer_finished_ns": 1792831037817862221
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831038452946287,
+          "observed_finished_ns": 1792831038456220627,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45960130,
+                "fd1_inode": 1825389,
+                "fd1_size": 3072,
+                "fd1_offset": 3072,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "11761dc4f629fb05251019ed03d9b42e4b392c69fd4b4f9a52b90828d4b185be",
+          "event_bytes": 469,
+          "log_bytes": 3072,
+          "log_nul_bytes": 0,
+          "log_sha256": "4bdc22eda5038249ddf25570344448f6821e9f2db482397484e54b7c3aad4f69",
+          "observer_started_ns": 1792831038321612824,
+          "observer_finished_ns": 1792831038464123727
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831039081341634,
+          "observed_finished_ns": 1792831039084542354,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45960130,
+                "fd1_inode": 1825389,
+                "fd1_size": 9216,
+                "fd1_offset": 9216,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "11761dc4f629fb05251019ed03d9b42e4b392c69fd4b4f9a52b90828d4b185be",
+          "event_bytes": 469,
+          "log_bytes": 9216,
+          "log_nul_bytes": 0,
+          "log_sha256": "d1379bfa3e953eb97276db4b9163e8631c7dcb8bc7c9766a333193269453eba3",
+          "observer_started_ns": 1792831038964513870,
+          "observer_finished_ns": 1792831039092523303
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831039716732930,
+          "observed_finished_ns": 1792831039720048560,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45960130,
+                "fd1_inode": 1825389,
+                "fd1_size": 16384,
+                "fd1_offset": 16384,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "ecaf84e8611f5c11c11c6f51a94ddd05961c2a79ffcf84d73266deb297cf4255",
+          "event_bytes": 932,
+          "log_bytes": 16384,
+          "log_nul_bytes": 0,
+          "log_sha256": "828e94c16f3d1e42c007df51c1dbe4ae528c536240f3665b03ea3c082219bf1c",
+          "observer_started_ns": 1792831039593149436,
+          "observer_finished_ns": 1792831039728207019
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831040354690886,
+          "observed_finished_ns": 1792831040357768575,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831040228668613,
+          "observer_finished_ns": 1792831040444069981
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831041070709338,
+          "observed_finished_ns": 1792831041073797537,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831040944554124,
+          "observer_finished_ns": 1792831041082937377
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831041694608804,
+          "observed_finished_ns": 1792831041697626994,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831041583641981,
+          "observer_finished_ns": 1792831041706059294
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831042322003891,
+          "observed_finished_ns": 1792831042325082081,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831042206866227,
+          "observer_finished_ns": 1792831042334030480
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831042962698957,
+          "observed_finished_ns": 1792831042965715817,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831042834814023,
+          "observer_finished_ns": 1792831042974132626
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831043602755602,
+          "observed_finished_ns": 1792831043605784962,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831043475075760,
+          "observer_finished_ns": 1792831043614383242
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831044250225018,
+          "observed_finished_ns": 1792831044253279008,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831044114990565,
+          "observer_finished_ns": 1792831044261579687
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831044871247885,
+          "observed_finished_ns": 1792831044874439285,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831044762241421,
+          "observer_finished_ns": 1792831044883176764
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831045510649100,
+          "observed_finished_ns": 1792831045513712950,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831045384228107,
+          "observer_finished_ns": 1792831045522522220
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831046147307177,
+          "observed_finished_ns": 1792831046150385827,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831046023491023,
+          "observer_finished_ns": 1792831046158540806
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831046777470573,
+          "observed_finished_ns": 1792831046780435513,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831046659315319,
+          "observer_finished_ns": 1792831046788950692
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831047409766869,
+          "observed_finished_ns": 1792831047412871359,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831047289709066,
+          "observer_finished_ns": 1792831047421329269
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831048041673106,
+          "observed_finished_ns": 1792831048044669656,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831047922426872,
+          "observer_finished_ns": 1792831048052894645
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831048699024130,
+          "observed_finished_ns": 1792831048702215131,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831048554094498,
+          "observer_finished_ns": 1792831048710454600
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831049359111125,
+          "observed_finished_ns": 1792831049362241115,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831049212450783,
+          "observer_finished_ns": 1792831049370674105
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831050006523541,
+          "observed_finished_ns": 1792831050009535521,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831049871882838,
+          "observer_finished_ns": 1792831050018157440
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831050654695366,
+          "observed_finished_ns": 1792831050657721076,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45960130,
+              "token": "8ca884aa9eb1482792fa6a9945036ea9",
+              "observed": {
+                "pid": 51,
+                "unavailable": true
+              }
+            }
+          ],
+          "events_sha256": "29c110589088f83c53cc86b4fee287a320d97c3f3375dc4c85ba625d56b9b75a",
+          "event_bytes": 1752,
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "9a5cc864933de1cf21e21fad06b652e166f25b4f41c52a6c36dc32faf9d01d65",
+          "observer_started_ns": 1792831050519402734,
+          "observer_finished_ns": 1792831050665923565
+        },
+        {
+          "state": "exec_unavailable",
+          "exit_code": 1,
+          "observer_started_ns": 1792831051166885709,
+          "observer_finished_ns": 1792831051251911294,
+          "stderr": "Error response from daemon: No such container: ec7ce2385ec5\n"
+        },
+        {
+          "state": "exec_unavailable",
+          "exit_code": 1,
+          "observer_started_ns": 1792831051753053367,
+          "observer_finished_ns": 1792831051847076093,
+          "stderr": "Error response from daemon: No such container: ec7ce2385ec5\n"
+        },
+        {
+          "state": "exec_unavailable",
+          "exit_code": 1,
+          "observer_started_ns": 1792831052348318876,
+          "observer_finished_ns": 1792831052446892070,
+          "stderr": "Error response from daemon: No such container: ec7ce2385ec5\n"
+        }
+      ],
+      "deadline_observations": {
+        "native_verifier_end_epoch_ns": 1792831040222775000,
+        "native_verifier_end_field": "verifier.finished_at",
+        "timestamp_policy": "Controller and task TZ=UTC; timezone-naive native exception timestamps interpreted as UTC.",
+        "live_writer_after_native_verifier_end_observed": false,
+        "post_deadline_live_samples": [],
+        "observer_successful_samples": 20,
+        "observer_unavailable_samples": 3,
+        "observer_hole_samples": 0,
+        "observer_maximum_nul_bytes": 0,
+        "lifecycle_events": [
+          {
+            "action": "kill",
+            "time_ns": 1792831040894588707,
+            "seconds_after_native_verifier_end": 0.671813707,
+            "attributes": {
+              "biotasks.case": "066-finite",
+              "biotasks.fixture": "066-finite",
+              "biotasks.run": "biotasks43-compare-0cae81dff1",
+              "com.docker.compose.config-hash": "37fa60d62f451cfec54d27dffc30d03e26d3cf428cd0a76fd2242179f85ffb7a",
+              "com.docker.compose.container-number": "1",
+              "com.docker.compose.depends_on": "",
+              "com.docker.compose.image": "sha256:6eedaa6feef17aa1facc6c6275f9e6fd305d583d576ed55d0390c3a1c1230f40",
+              "com.docker.compose.oneoff": "False",
+              "com.docker.compose.project": "harbor-timeout-finite__rqngbwu",
+              "com.docker.compose.project.config_files": "/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-base.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-prebuilt.yaml,/work/outputs/harbor_timeout_066/harbor-timeout-finite/environment/docker-compose.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-no-network.yaml",
+              "com.docker.compose.project.working_dir": "/work/outputs/harbor_timeout_066/harbor-timeout-finite/environment",
+              "com.docker.compose.service": "main",
+              "com.docker.compose.version": "2.30.3",
+              "image": "biotasks43-compare-0cae81dff1-066-finite:fixture",
+              "name": "harbor-timeout-finite__rqngbwu-main-1",
+              "signal": "15"
+            }
+          },
+          {
+            "action": "kill",
+            "time_ns": 1792831050907976172,
+            "seconds_after_native_verifier_end": 10.685201172,
+            "attributes": {
+              "biotasks.case": "066-finite",
+              "biotasks.fixture": "066-finite",
+              "biotasks.run": "biotasks43-compare-0cae81dff1",
+              "com.docker.compose.config-hash": "37fa60d62f451cfec54d27dffc30d03e26d3cf428cd0a76fd2242179f85ffb7a",
+              "com.docker.compose.container-number": "1",
+              "com.docker.compose.depends_on": "",
+              "com.docker.compose.image": "sha256:6eedaa6feef17aa1facc6c6275f9e6fd305d583d576ed55d0390c3a1c1230f40",
+              "com.docker.compose.oneoff": "False",
+              "com.docker.compose.project": "harbor-timeout-finite__rqngbwu",
+              "com.docker.compose.project.config_files": "/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-base.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-prebuilt.yaml,/work/outputs/harbor_timeout_066/harbor-timeout-finite/environment/docker-compose.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-no-network.yaml",
+              "com.docker.compose.project.working_dir": "/work/outputs/harbor_timeout_066/harbor-timeout-finite/environment",
+              "com.docker.compose.service": "main",
+              "com.docker.compose.version": "2.30.3",
+              "image": "biotasks43-compare-0cae81dff1-066-finite:fixture",
+              "name": "harbor-timeout-finite__rqngbwu-main-1",
+              "signal": "9"
+            }
+          },
+          {
+            "action": "stop",
+            "time_ns": 1792831050952654070,
+            "seconds_after_native_verifier_end": 10.72987907,
+            "attributes": {
+              "biotasks.case": "066-finite",
+              "biotasks.fixture": "066-finite",
+              "biotasks.run": "biotasks43-compare-0cae81dff1",
+              "com.docker.compose.config-hash": "37fa60d62f451cfec54d27dffc30d03e26d3cf428cd0a76fd2242179f85ffb7a",
+              "com.docker.compose.container-number": "1",
+              "com.docker.compose.depends_on": "",
+              "com.docker.compose.image": "sha256:6eedaa6feef17aa1facc6c6275f9e6fd305d583d576ed55d0390c3a1c1230f40",
+              "com.docker.compose.oneoff": "False",
+              "com.docker.compose.project": "harbor-timeout-finite__rqngbwu",
+              "com.docker.compose.project.config_files": "/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-base.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-prebuilt.yaml,/work/outputs/harbor_timeout_066/harbor-timeout-finite/environment/docker-compose.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-no-network.yaml",
+              "com.docker.compose.project.working_dir": "/work/outputs/harbor_timeout_066/harbor-timeout-finite/environment",
+              "com.docker.compose.service": "main",
+              "com.docker.compose.version": "2.30.3",
+              "image": "biotasks43-compare-0cae81dff1-066-finite:fixture",
+              "name": "harbor-timeout-finite__rqngbwu-main-1"
+            }
+          },
+          {
+            "action": "die",
+            "time_ns": 1792831050956417650,
+            "seconds_after_native_verifier_end": 10.73364265,
+            "attributes": {
+              "biotasks.case": "066-finite",
+              "biotasks.fixture": "066-finite",
+              "biotasks.run": "biotasks43-compare-0cae81dff1",
+              "com.docker.compose.config-hash": "37fa60d62f451cfec54d27dffc30d03e26d3cf428cd0a76fd2242179f85ffb7a",
+              "com.docker.compose.container-number": "1",
+              "com.docker.compose.depends_on": "",
+              "com.docker.compose.image": "sha256:6eedaa6feef17aa1facc6c6275f9e6fd305d583d576ed55d0390c3a1c1230f40",
+              "com.docker.compose.oneoff": "False",
+              "com.docker.compose.project": "harbor-timeout-finite__rqngbwu",
+              "com.docker.compose.project.config_files": "/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-base.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-prebuilt.yaml,/work/outputs/harbor_timeout_066/harbor-timeout-finite/environment/docker-compose.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-no-network.yaml",
+              "com.docker.compose.project.working_dir": "/work/outputs/harbor_timeout_066/harbor-timeout-finite/environment",
+              "com.docker.compose.service": "main",
+              "com.docker.compose.version": "2.30.3",
+              "exitCode": "137",
+              "image": "biotasks43-compare-0cae81dff1-066-finite:fixture",
+              "name": "harbor-timeout-finite__rqngbwu-main-1"
+            }
+          },
+          {
+            "action": "destroy",
+            "time_ns": 1792831050963339360,
+            "seconds_after_native_verifier_end": 10.74056436,
+            "attributes": {
+              "biotasks.case": "066-finite",
+              "biotasks.fixture": "066-finite",
+              "biotasks.run": "biotasks43-compare-0cae81dff1",
+              "com.docker.compose.config-hash": "37fa60d62f451cfec54d27dffc30d03e26d3cf428cd0a76fd2242179f85ffb7a",
+              "com.docker.compose.container-number": "1",
+              "com.docker.compose.depends_on": "",
+              "com.docker.compose.image": "sha256:6eedaa6feef17aa1facc6c6275f9e6fd305d583d576ed55d0390c3a1c1230f40",
+              "com.docker.compose.oneoff": "False",
+              "com.docker.compose.project": "harbor-timeout-finite__rqngbwu",
+              "com.docker.compose.project.config_files": "/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-base.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-prebuilt.yaml,/work/outputs/harbor_timeout_066/harbor-timeout-finite/environment/docker-compose.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-no-network.yaml",
+              "com.docker.compose.project.working_dir": "/work/outputs/harbor_timeout_066/harbor-timeout-finite/environment",
+              "com.docker.compose.service": "main",
+              "com.docker.compose.version": "2.30.3",
+              "image": "biotasks43-compare-0cae81dff1-066-finite:fixture",
+              "name": "harbor-timeout-finite__rqngbwu-main-1"
+            }
+          }
+        ],
+        "absence_of_live_sample_proves_termination": false
+      },
+      "writer_starts": 1,
+      "writer_ends": 1,
+      "live_prior_writers": [],
+      "native_container_sample_count": 2,
+      "in_container_hole_samples": 0,
+      "raw_log_nul_bytes": 0,
+      "raw_log_tokens": [
+        "8ca884aa9eb1482792fa6a9945036ea9"
+      ],
+      "fixture_mechanism_observed": false,
+      "historical_scanpy_cause_proven": false
+    },
+    {
+      "id": "066-timeout",
+      "version": "0.6.6",
+      "name": "timeout",
+      "state": "native_returned",
+      "measured": true,
+      "wrapper_exit": 0,
+      "exception": {
+        "exception_type": "VerifierTimeoutError",
+        "exception_message": "Verifier execution timed out after 5.0 seconds",
+        "exception_traceback": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/verifier/verifier.py\", line 185, in verify\n    await self._environment.exec(\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 599, in exec\n    return await self._run_docker_compose_command(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 360, in _run_docker_compose_command\n    stdout_bytes, stderr_bytes = await process.communicate()\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 201, in communicate\n    stdin, stdout, stderr = await tasks.gather(stdin, stdout, stderr)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 181, in _read_stream\n    output = await stream.read()\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 706, in read\n    block = await self.read(self._limit)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 713, in read\n    await self._wait_for_data('read')\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 545, in _wait_for_data\n    await self._waiter\nasyncio.exceptions.CancelledError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 410, in _verify_with_retry\n    self.result.verifier_result = await asyncio.wait_for(\n                                  ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 519, in wait_for\n    async with timeouts.timeout(timeout):\n               ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/timeouts.py\", line 115, in __aexit__\n    raise TimeoutError from exc_val\nTimeoutError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 986, in run\n    await self._run_verification()\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 391, in _run_verification\n    await self._verify_with_retry()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 232, in async_wrapped\n    return await copy(fn, *args, **kwargs)  # type: ignore[type-var]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 126, in __call__\n    do = await self.iter(retry_state=retry_state)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 171, in iter\n    result = await action(retry_state)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/_utils.py\", line 130, in inner\n    return call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 482, in exc_check\n    retry_exc.reraise()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 216, in reraise\n    raise self.last_attempt.result()\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 449, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 401, in __get_result\n    raise self._exception\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 130, in __call__\n    result = await fn(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 415, in _verify_with_retry\n    raise VerifierTimeoutError(\nharbor.trial.trial.VerifierTimeoutError: Verifier execution timed out after 5.0 seconds\n",
+        "occurred_at": "2026-10-24T08:37:55.617736"
+      },
+      "fixture_reward": null,
+      "resources_verified": true,
+      "events_path": "jobs/biotasks43-compare-0cae81dff1-066-timeout/harbor-timeout-timeout__7jNeuw2/verifier/process-events.jsonl",
+      "writer_log_path": "jobs/biotasks43-compare-0cae81dff1-066-timeout/harbor-timeout-timeout__7jNeuw2/verifier/writer.log",
+      "writer_log_sha256": "3a69d21bf44c472c6e73dd4823fe6755d34cf6256bea8c8f49aacb98d7f085db",
+      "events": [
+        {
+          "event": "start",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "ppid": 50,
+          "pgrp": 44,
+          "session": 44,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 0,
+            "fd1_offset": 0,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "writer_seconds": 30.0,
+          "cgroup": {
+            "cpu.max": "100000 100000",
+            "memory.max": "6442450944"
+          },
+          "monotonic_ns": 459629047457326,
+          "wall_ns": 1792831065790880559,
+          "previous": []
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 10240,
+            "fd1_offset": 10240,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 10240,
+          "log_nul_bytes": 0,
+          "log_sha256": "94c5441154b33c04f31144ea495006e957a35ccf54159725b866c1ef4aa71e6b",
+          "monotonic_ns": 459629948577008,
+          "wall_ns": 1792831066691999930
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 20480,
+            "fd1_offset": 20480,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "2f6773792c55313137dcb3996f88bb15f92d951eb94388f7ac3560aa59022695",
+          "monotonic_ns": 459630949687414,
+          "wall_ns": 1792831067693110057
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 30720,
+            "fd1_offset": 30720,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 30720,
+          "log_nul_bytes": 0,
+          "log_sha256": "6c01aceffac2fc17fb3eb70c4175247ff1ef9c56cce77828733498676bb6dacc",
+          "monotonic_ns": 459631950808630,
+          "wall_ns": 1792831068694231314
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 40960,
+            "fd1_offset": 40960,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 40960,
+          "log_nul_bytes": 0,
+          "log_sha256": "c95e21b67d7ebfbea73b65699cc76e99d26288ec9b7287324cb9a2f62fff9e34",
+          "monotonic_ns": 459632951949977,
+          "wall_ns": 1792831069695372630
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 51200,
+            "fd1_offset": 51200,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 51200,
+          "log_nul_bytes": 0,
+          "log_sha256": "4fc04870835864a5a7d6c708c8f45f8596644739473700777738d78c97581a05",
+          "monotonic_ns": 459633953292574,
+          "wall_ns": 1792831070696715597
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 61440,
+            "fd1_offset": 61440,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 61440,
+          "log_nul_bytes": 0,
+          "log_sha256": "a8df1a4e9683bbdb97da55b34b4dc18dee5a7fa17654e61a1f0d13c464d46f1d",
+          "monotonic_ns": 459634954620110,
+          "wall_ns": 1792831071698043023
+        },
+        {
+          "event": "start",
+          "token": "a3054711ad974feb8e02bfb43eef6667",
+          "pid": 119,
+          "ppid": 118,
+          "pgrp": 112,
+          "session": 112,
+          "self": {
+            "pid": 119,
+            "state": "R",
+            "start_ticks": 45963499,
+            "fd1_inode": 1825405,
+            "fd1_size": 0,
+            "fd1_offset": 0,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "writer_seconds": 30.0,
+          "cgroup": {
+            "cpu.max": "100000 100000",
+            "memory.max": "6442450944"
+          },
+          "monotonic_ns": 459635033105166,
+          "wall_ns": 1792831071776528529,
+          "previous": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "expected_token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 0,
+                "fd1_offset": 61440,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ]
+        },
+        {
+          "event": "sample",
+          "token": "a3054711ad974feb8e02bfb43eef6667",
+          "pid": 119,
+          "self": {
+            "pid": 119,
+            "state": "R",
+            "start_ticks": 45963499,
+            "fd1_inode": 1825405,
+            "fd1_size": 70656,
+            "fd1_offset": 10240,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 70656,
+          "log_nul_bytes": 51200,
+          "log_sha256": "51a71787b60e6898f6dedbb6b9f3b488d958fc299d9d18b7c21b29bef8fc6e78",
+          "monotonic_ns": 459635934641908,
+          "wall_ns": 1792831072678064671
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 71680,
+            "fd1_offset": 71680,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 71680,
+          "log_nul_bytes": 51200,
+          "log_sha256": "000c69e4e356546f405d8beac55f41c14c3e9d75a5c7b587b6012b1ed4d32541",
+          "monotonic_ns": 459635956034157,
+          "wall_ns": 1792831072699457280
+        },
+        {
+          "event": "sample",
+          "token": "a3054711ad974feb8e02bfb43eef6667",
+          "pid": 119,
+          "self": {
+            "pid": 119,
+            "state": "R",
+            "start_ticks": 45963499,
+            "fd1_inode": 1825405,
+            "fd1_size": 80896,
+            "fd1_offset": 20480,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 80896,
+          "log_nul_bytes": 40960,
+          "log_sha256": "a4f45a36cb8b2fdbed6735feb50972d4dd20a170e0384fa72dcb90e2691ead67",
+          "monotonic_ns": 459636935911375,
+          "wall_ns": 1792831073679334048
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 81920,
+            "fd1_offset": 81920,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 81920,
+          "log_nul_bytes": 40960,
+          "log_sha256": "5be44377a1686e55274c0ee6d67283e0945ba8bbe65cf922068f252affb47624",
+          "monotonic_ns": 459636957297474,
+          "wall_ns": 1792831073700720307
+        },
+        {
+          "event": "sample",
+          "token": "a3054711ad974feb8e02bfb43eef6667",
+          "pid": 119,
+          "self": {
+            "pid": 119,
+            "state": "R",
+            "start_ticks": 45963499,
+            "fd1_inode": 1825405,
+            "fd1_size": 91136,
+            "fd1_offset": 30720,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 91136,
+          "log_nul_bytes": 30720,
+          "log_sha256": "c62883c16a05c4da9c8a09bcf17b7c02311ea2ac84d3f96bf1381ce39622770c",
+          "monotonic_ns": 459637937200021,
+          "wall_ns": 1792831074680622674
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 92160,
+            "fd1_offset": 92160,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 92160,
+          "log_nul_bytes": 30720,
+          "log_sha256": "991e311ebf928126af46edc7170a054c2558d36c192fdb078f78eb3baee20426",
+          "monotonic_ns": 459637958610480,
+          "wall_ns": 1792831074702033133
+        },
+        {
+          "event": "sample",
+          "token": "a3054711ad974feb8e02bfb43eef6667",
+          "pid": 119,
+          "self": {
+            "pid": 119,
+            "state": "R",
+            "start_ticks": 45963499,
+            "fd1_inode": 1825405,
+            "fd1_size": 101376,
+            "fd1_offset": 40960,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 101376,
+          "log_nul_bytes": 20480,
+          "log_sha256": "ddfb94e868936f8bdd330f28f688092d36a45b579147f1e7e85d96c946b92b7c",
+          "monotonic_ns": 459638938561018,
+          "wall_ns": 1792831075681983731
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 102400,
+            "fd1_offset": 102400,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 102400,
+          "log_nul_bytes": 20480,
+          "log_sha256": "959af2aa659fb2933baa0c8e5169c793953331078a79ebb2bea20fae54bb424a",
+          "monotonic_ns": 459638959880347,
+          "wall_ns": 1792831075703303010
+        },
+        {
+          "event": "sample",
+          "token": "a3054711ad974feb8e02bfb43eef6667",
+          "pid": 119,
+          "self": {
+            "pid": 119,
+            "state": "R",
+            "start_ticks": 45963499,
+            "fd1_inode": 1825405,
+            "fd1_size": 111616,
+            "fd1_offset": 51200,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 111616,
+          "log_nul_bytes": 10240,
+          "log_sha256": "1756ad2cb68ab4f29447b6788a9aa92b732b1b0518e835792c7eef765df7dee0",
+          "monotonic_ns": 459639939899604,
+          "wall_ns": 1792831076683322257
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 112640,
+            "fd1_offset": 112640,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 112640,
+          "log_nul_bytes": 10240,
+          "log_sha256": "61ff917c93fef18e5466483aab731ac7a8da5799f5d69e3df8997a5014382ad2",
+          "monotonic_ns": 459639961348394,
+          "wall_ns": 1792831076704771447
+        },
+        {
+          "event": "sample",
+          "token": "a3054711ad974feb8e02bfb43eef6667",
+          "pid": 119,
+          "self": {
+            "pid": 119,
+            "state": "R",
+            "start_ticks": 45963499,
+            "fd1_inode": 1825405,
+            "fd1_size": 121856,
+            "fd1_offset": 61440,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 121856,
+          "log_nul_bytes": 0,
+          "log_sha256": "1218652e273ea5da8b9a002ec8f2a1996703de892eeb6a28ddd806fa512f580c",
+          "monotonic_ns": 459640941178671,
+          "wall_ns": 1792831077684601344
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 122880,
+            "fd1_offset": 122880,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 122880,
+          "log_nul_bytes": 0,
+          "log_sha256": "96f3b2315d7ed0668c95ac5720968268a1dd71c20078be53d15eeb7e8209279e",
+          "monotonic_ns": 459640962750129,
+          "wall_ns": 1792831077706173253
+        },
+        {
+          "event": "sample",
+          "token": "a3054711ad974feb8e02bfb43eef6667",
+          "pid": 119,
+          "self": {
+            "pid": 119,
+            "state": "R",
+            "start_ticks": 45963499,
+            "fd1_inode": 1825405,
+            "fd1_size": 132096,
+            "fd1_offset": 71680,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 132096,
+          "log_nul_bytes": 0,
+          "log_sha256": "ef99726a9ffe8d91f23b36fb7999442e5cec58e3a2281760bb1291152bf9d9f5",
+          "monotonic_ns": 459641942577028,
+          "wall_ns": 1792831078685999841
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 133120,
+            "fd1_offset": 133120,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 133120,
+          "log_nul_bytes": 0,
+          "log_sha256": "6ea0b9d2e02adb94e1e697b4a7a384bc3964ca4598efa1a4aad99f6e82d0b690",
+          "monotonic_ns": 459641964107706,
+          "wall_ns": 1792831078707530709
+        },
+        {
+          "event": "sample",
+          "token": "a3054711ad974feb8e02bfb43eef6667",
+          "pid": 119,
+          "self": {
+            "pid": 119,
+            "state": "R",
+            "start_ticks": 45963499,
+            "fd1_inode": 1825405,
+            "fd1_size": 142336,
+            "fd1_offset": 81920,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 142336,
+          "log_nul_bytes": 0,
+          "log_sha256": "a879e4bc17d2f960319a5beac6d178d40e42472d4f151402136bd0ddb4961bdd",
+          "monotonic_ns": 459642943973994,
+          "wall_ns": 1792831079687396867
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 143360,
+            "fd1_offset": 143360,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 143360,
+          "log_nul_bytes": 0,
+          "log_sha256": "2166466182f093f220e6fa59daa3418893174a81e6c84f07a94081cdfe117bef",
+          "monotonic_ns": 459642965469583,
+          "wall_ns": 1792831079708892606
+        },
+        {
+          "event": "sample",
+          "token": "a3054711ad974feb8e02bfb43eef6667",
+          "pid": 119,
+          "self": {
+            "pid": 119,
+            "state": "R",
+            "start_ticks": 45963499,
+            "fd1_inode": 1825405,
+            "fd1_size": 152576,
+            "fd1_offset": 92160,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 152576,
+          "log_nul_bytes": 0,
+          "log_sha256": "3b610f4d8cc9df0d7cf3bb244641eec26ee7e7ee7683c6b580d12b08a79fea7d",
+          "monotonic_ns": 459643945368541,
+          "wall_ns": 1792831080688791223
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 153600,
+            "fd1_offset": 153600,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 153600,
+          "log_nul_bytes": 0,
+          "log_sha256": "82f251b50fefb00464403e7541d392ecd492ae1e1076465260d76dbc31371995",
+          "monotonic_ns": 459643966995889,
+          "wall_ns": 1792831080710418592
+        },
+        {
+          "event": "sample",
+          "token": "a3054711ad974feb8e02bfb43eef6667",
+          "pid": 119,
+          "self": {
+            "pid": 119,
+            "state": "R",
+            "start_ticks": 45963499,
+            "fd1_inode": 1825405,
+            "fd1_size": 162816,
+            "fd1_offset": 102400,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 162816,
+          "log_nul_bytes": 0,
+          "log_sha256": "48b722c24be4d8b65725c9d1a8e37167f8816057316cddb830abe12841d66393",
+          "monotonic_ns": 459644946822227,
+          "wall_ns": 1792831081690244910
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 163840,
+            "fd1_offset": 163840,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 163840,
+          "log_nul_bytes": 0,
+          "log_sha256": "62a40ecbb65d307cbf075043420036470f668a8e0bed432ae86107c79105d7c2",
+          "monotonic_ns": 459644968365516,
+          "wall_ns": 1792831081711788129
+        },
+        {
+          "event": "sample",
+          "token": "a3054711ad974feb8e02bfb43eef6667",
+          "pid": 119,
+          "self": {
+            "pid": 119,
+            "state": "R",
+            "start_ticks": 45963499,
+            "fd1_inode": 1825405,
+            "fd1_size": 173056,
+            "fd1_offset": 112640,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 173056,
+          "log_nul_bytes": 0,
+          "log_sha256": "17ad2d66608ca4362784515a77823d5f1b0b9eae3185003ba10aa770cb4e5e79",
+          "monotonic_ns": 459645948262394,
+          "wall_ns": 1792831082691685087
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 174080,
+            "fd1_offset": 174080,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 174080,
+          "log_nul_bytes": 0,
+          "log_sha256": "9d29a0e6fee65cccb9c0c3509d126c5e6c77ee8f2bcad8599b43b8ed7d481a52",
+          "monotonic_ns": 459645969929353,
+          "wall_ns": 1792831082713352436
+        },
+        {
+          "event": "sample",
+          "token": "a3054711ad974feb8e02bfb43eef6667",
+          "pid": 119,
+          "self": {
+            "pid": 119,
+            "state": "R",
+            "start_ticks": 45963499,
+            "fd1_inode": 1825405,
+            "fd1_size": 183296,
+            "fd1_offset": 122880,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 183296,
+          "log_nul_bytes": 0,
+          "log_sha256": "235ad9e106471230633376ab0f5598416cd1086078d5d184154e97928cab7c00",
+          "monotonic_ns": 459646949716620,
+          "wall_ns": 1792831083693139313
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 184320,
+            "fd1_offset": 184320,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 184320,
+          "log_nul_bytes": 0,
+          "log_sha256": "92f39de7ac6b300dc1af499c77af55086f2fcd5456ead77d965dacd4e3389156",
+          "monotonic_ns": 459646971452799,
+          "wall_ns": 1792831083714875492
+        },
+        {
+          "event": "sample",
+          "token": "a3054711ad974feb8e02bfb43eef6667",
+          "pid": 119,
+          "self": {
+            "pid": 119,
+            "state": "R",
+            "start_ticks": 45963499,
+            "fd1_inode": 1825405,
+            "fd1_size": 193536,
+            "fd1_offset": 133120,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 193536,
+          "log_nul_bytes": 0,
+          "log_sha256": "cd7ff20f1630df57f2172b00c4083b05e1871886f2cf4efe48b4504611eb67ee",
+          "monotonic_ns": 459647951223197,
+          "wall_ns": 1792831084694645900
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 194560,
+            "fd1_offset": 194560,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 194560,
+          "log_nul_bytes": 0,
+          "log_sha256": "2cbc2393f11764dadfed3a981444710f86766f620757ca0651b5e0054e4427a4",
+          "monotonic_ns": 459647972981396,
+          "wall_ns": 1792831084716404139
+        },
+        {
+          "event": "sample",
+          "token": "a3054711ad974feb8e02bfb43eef6667",
+          "pid": 119,
+          "self": {
+            "pid": 119,
+            "state": "R",
+            "start_ticks": 45963499,
+            "fd1_inode": 1825405,
+            "fd1_size": 203776,
+            "fd1_offset": 143360,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 203776,
+          "log_nul_bytes": 0,
+          "log_sha256": "f8ab7dfd32fa54ca30cbfaf1f766a96ee79addbdaa511531e6d4949d8cc13306",
+          "monotonic_ns": 459648952721743,
+          "wall_ns": 1792831085696144506
+        },
+        {
+          "event": "sample",
+          "token": "8ccee145397f42b2b5a85ca76900a300",
+          "pid": 51,
+          "self": {
+            "pid": 51,
+            "state": "R",
+            "start_ticks": 45962889,
+            "fd1_inode": 1825405,
+            "fd1_size": 204800,
+            "fd1_offset": 204800,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 204800,
+          "log_nul_bytes": 0,
+          "log_sha256": "6ed35b377a44be9206f92e2fee9f1baff0df791f7aa5e0ffe52a4e12808f2052",
+          "monotonic_ns": 459648974451862,
+          "wall_ns": 1792831085717874655
+        }
+      ],
+      "observations": [
+        {
+          "state": "awaiting_writer",
+          "observed_start_ns": 1792831063866234501,
+          "observed_finished_ns": 1792831063866301501,
+          "observer_started_ns": 1792831063560213538,
+          "observer_finished_ns": 1792831063875971051
+        },
+        {
+          "state": "awaiting_writer",
+          "observed_start_ns": 1792831064704742707,
+          "observed_finished_ns": 1792831064704794876,
+          "observer_started_ns": 1792831064377566494,
+          "observer_finished_ns": 1792831064744328934
+        },
+        {
+          "state": "awaiting_writer",
+          "observed_start_ns": 1792831065560400651,
+          "observed_finished_ns": 1792831065560502821,
+          "observer_started_ns": 1792831065246044147,
+          "observer_finished_ns": 1792831065638707607
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831066263609633,
+          "observed_finished_ns": 1792831066267034093,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 5120,
+                "fd1_offset": 5120,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "cde37def51dca8fbffadead6c6c40fb94a2a9f2b8aba3e404b7322a167cd2f25",
+          "event_bytes": 470,
+          "log_bytes": 5120,
+          "log_nul_bytes": 0,
+          "log_sha256": "6ce32fda440ac9980bbd7de6bf6a134408c71ca1a5078c47833f854d4f18d182",
+          "observer_started_ns": 1792831066139980080,
+          "observer_finished_ns": 1792831066275793433
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831066919039549,
+          "observed_finished_ns": 1792831066922432718,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 12288,
+                "fd1_offset": 12288,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "f94d938ad7cef0a2e75b9343a3e20f86efbcd0005d6717305be12f079ea63559",
+          "event_bytes": 933,
+          "log_bytes": 12288,
+          "log_nul_bytes": 0,
+          "log_sha256": "3667491fafe0319e99c172e9a61b0cc1b66682f9b39d6516321e2552257514c3",
+          "observer_started_ns": 1792831066777365006,
+          "observer_finished_ns": 1792831066930906928
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831067583361753,
+          "observed_finished_ns": 1792831067586812162,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 18432,
+                "fd1_offset": 18432,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "f94d938ad7cef0a2e75b9343a3e20f86efbcd0005d6717305be12f079ea63559",
+          "event_bytes": 933,
+          "log_bytes": 18432,
+          "log_nul_bytes": 0,
+          "log_sha256": "ea76dbbca10d1eeaad09b22b7bc35ae6bb6870bb7678ee021287c724fe63f3fb",
+          "observer_started_ns": 1792831067432559761,
+          "observer_finished_ns": 1792831067595582862
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831068223592149,
+          "observed_finished_ns": 1792831068226948799,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 25600,
+                "fd1_offset": 25600,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "3427e2bc0633b34c454e7089624e1598b15da3a37ae8822f271f4588e9d183d0",
+          "event_bytes": 1396,
+          "log_bytes": 25600,
+          "log_nul_bytes": 0,
+          "log_sha256": "1eaee2e77ed53a98d1fa9dba42a1b002380c25749527a384b85fed0e2e293b3d",
+          "observer_started_ns": 1792831068096946835,
+          "observer_finished_ns": 1792831068235552608
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831068858300815,
+          "observed_finished_ns": 1792831068861564254,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 31744,
+                "fd1_offset": 31744,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "3cf66a0231476757f076f2d06852e92b1426c57f50d392e749bf75a4de306ec6",
+          "event_bytes": 1859,
+          "log_bytes": 31744,
+          "log_nul_bytes": 0,
+          "log_sha256": "f3295d09d78ebb91e376cf0738fdcf14e3a0459a8d2f678d93a05ba1041fb989",
+          "observer_started_ns": 1792831068737140601,
+          "observer_finished_ns": 1792831068869918964
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831069498873561,
+          "observed_finished_ns": 1792831069502240271,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 38912,
+                "fd1_offset": 38912,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "3cf66a0231476757f076f2d06852e92b1426c57f50d392e749bf75a4de306ec6",
+          "event_bytes": 1859,
+          "log_bytes": 38912,
+          "log_nul_bytes": 0,
+          "log_sha256": "9b87040ef0207bfa89d9a8b47b731c19cbde5f38d32742c5f76194bd088dd434",
+          "observer_started_ns": 1792831069371792627,
+          "observer_finished_ns": 1792831069510687710
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831070150664406,
+          "observed_finished_ns": 1792831070153968356,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 45056,
+                "fd1_offset": 45056,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "c6f83d46dfa8ed0b8647b600d61b91288e253984b77f818bcf21beb173c29d98",
+          "event_bytes": 2322,
+          "log_bytes": 45056,
+          "log_nul_bytes": 0,
+          "log_sha256": "788389bccf98e4ebbad0b5a12c731cfac280386dfe7ea730bf66a17bd622c50d",
+          "observer_started_ns": 1792831070012511133,
+          "observer_finished_ns": 1792831070162713895
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831070939021494,
+          "observed_finished_ns": 1792831070942381204,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 53248,
+                "fd1_offset": 53248,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "14170e5d9ea61ae631ce3ea0aa4be3a803281f2e24763b29ee2f213d6c939fb0",
+          "event_bytes": 2785,
+          "log_bytes": 53248,
+          "log_nul_bytes": 0,
+          "log_sha256": "f9cedb2a3ed55503ad90dfc3ff1452d6d5f158c9ff66b036646203700809013f",
+          "observer_started_ns": 1792831070664674968,
+          "observer_finished_ns": 1792831070951045994
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831071674328615,
+          "observed_finished_ns": 1792831071677663755,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 60416,
+                "fd1_offset": 60416,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "14170e5d9ea61ae631ce3ea0aa4be3a803281f2e24763b29ee2f213d6c939fb0",
+          "event_bytes": 2785,
+          "log_bytes": 60416,
+          "log_nul_bytes": 0,
+          "log_sha256": "2010849cdfb682525b55e34d4a5bbec0ed531fa83cb79bfa20a92ce1b3eaf0b5",
+          "observer_started_ns": 1792831071452638486,
+          "observer_finished_ns": 1792831071744469131
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831072371500937,
+          "observed_finished_ns": 1792831072375291437,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 67584,
+                "fd1_offset": 67584,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 67584,
+                "fd1_offset": 6144,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "b37f0e76462590518f1714135332493511d4b2114c2c5196b69d59cb60ff5496",
+          "event_bytes": 4041,
+          "log_bytes": 67584,
+          "log_nul_bytes": 55296,
+          "log_sha256": "a1aef01600d64e360b68f2eedd4225dc17826e2d590e0eadfdd80f14b5ffe827",
+          "observer_started_ns": 1792831072246479564,
+          "observer_finished_ns": 1792831072384144757
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831073027414543,
+          "observed_finished_ns": 1792831073031106622,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 74752,
+                "fd1_offset": 74752,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 74752,
+                "fd1_offset": 13312,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "ee69e936ce389a42a9fdde590835d989e6caf7b528cd9482fe28fd110886a90a",
+          "event_bytes": 4977,
+          "log_bytes": 74752,
+          "log_nul_bytes": 48128,
+          "log_sha256": "eae1e8d21cc96cf3a511ccedd1aa335fe9f7de3d18e533380c889ad0bb30d71f",
+          "observer_started_ns": 1792831072886244480,
+          "observer_finished_ns": 1792831073040205552
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831073664065148,
+          "observed_finished_ns": 1792831073667667228,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 80896,
+                "fd1_offset": 80896,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 80896,
+                "fd1_offset": 19456,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "ee69e936ce389a42a9fdde590835d989e6caf7b528cd9482fe28fd110886a90a",
+          "event_bytes": 4977,
+          "log_bytes": 80896,
+          "log_nul_bytes": 41984,
+          "log_sha256": "4ffab5f7e933f686d077403b6c7741fcbd61efffca5f927825ad1b37403bf587",
+          "observer_started_ns": 1792831073543384725,
+          "observer_finished_ns": 1792831073676361798
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831074305003835,
+          "observed_finished_ns": 1792831074308813464,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 88064,
+                "fd1_offset": 88064,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 88064,
+                "fd1_offset": 26624,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "82587f23412a987c79551e851fc46e656cbc3f2c8c12917c6d8cfa0e2d5e000f",
+          "event_bytes": 5913,
+          "log_bytes": 88064,
+          "log_nul_bytes": 34816,
+          "log_sha256": "30414c335b195ece4e5e9fcc5ad07e7e1b08916af17d63c5c6fbc5acf38bda5e",
+          "observer_started_ns": 1792831074178402751,
+          "observer_finished_ns": 1792831074317696564
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831074963479649,
+          "observed_finished_ns": 1792831074967293689,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 94208,
+                "fd1_offset": 94208,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 94208,
+                "fd1_offset": 32768,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "bbd9e26270d46e6062ca4fe8a50d3402a62ba7f6ec0332ddd6bf508b74a07f45",
+          "event_bytes": 6849,
+          "log_bytes": 94208,
+          "log_nul_bytes": 28672,
+          "log_sha256": "b081f3ab78568dbfbdd00cf4a1d7bba04da85bcde1392b9e894fbd8917b5e91d",
+          "observer_started_ns": 1792831074820047207,
+          "observer_finished_ns": 1792831074976092148
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831075615645414,
+          "observed_finished_ns": 1792831075619364384,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 101376,
+                "fd1_offset": 101376,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 101376,
+                "fd1_offset": 39936,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "bbd9e26270d46e6062ca4fe8a50d3402a62ba7f6ec0332ddd6bf508b74a07f45",
+          "event_bytes": 6849,
+          "log_bytes": 101376,
+          "log_nul_bytes": 21504,
+          "log_sha256": "e6852c46ddcf8080e151e1bf353cc4626613c470311958c80478e652979a8915",
+          "observer_started_ns": 1792831075478299392,
+          "observer_finished_ns": 1792831075628109184
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831076275605299,
+          "observed_finished_ns": 1792831076279370989,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 107520,
+                "fd1_offset": 107520,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 107520,
+                "fd1_offset": 46080,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "a5d17af6c85db1d1a9dea1f510ffa313e68381c657db781270158f8d06d8e44c",
+          "event_bytes": 7790,
+          "log_bytes": 107520,
+          "log_nul_bytes": 15360,
+          "log_sha256": "4c958659f89c8c7c48ae70d4085e12d56c4d38c757a56c5e63869dc9dffa67f9",
+          "observer_started_ns": 1792831076130378857,
+          "observer_finished_ns": 1792831076288055469
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831076927381184,
+          "observed_finished_ns": 1792831076931198654,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 114688,
+                "fd1_offset": 114688,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 114688,
+                "fd1_offset": 53248,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "18666b2eab25dd7215a5942702c7878b219bc97c75cf1bb75819dddda0f09d2f",
+          "event_bytes": 8731,
+          "log_bytes": 114688,
+          "log_nul_bytes": 8192,
+          "log_sha256": "921a5dc845fad16ea13a2e2271fb8759afba0d8c21ebdda566e87d44402c4263",
+          "observer_started_ns": 1792831076790587142,
+          "observer_finished_ns": 1792831076940014383
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831077563763270,
+          "observed_finished_ns": 1792831077567534350,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 120832,
+                "fd1_offset": 120832,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 120832,
+                "fd1_offset": 59392,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "18666b2eab25dd7215a5942702c7878b219bc97c75cf1bb75819dddda0f09d2f",
+          "event_bytes": 8731,
+          "log_bytes": 120832,
+          "log_nul_bytes": 2048,
+          "log_sha256": "85a5d46e5e58c6cf6e078ed0bec6c12d2a018d4e6b32bcb087880a38255fb8bf",
+          "observer_started_ns": 1792831077442079207,
+          "observer_finished_ns": 1792831077576048360
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831078211511176,
+          "observed_finished_ns": 1792831078215338206,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 128000,
+                "fd1_offset": 128000,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 128000,
+                "fd1_offset": 66560,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "c5389d97814c139d4d789b7e9afc2c0fb06e1118840b62bcafd03452f51e9634",
+          "event_bytes": 9664,
+          "log_bytes": 128000,
+          "log_nul_bytes": 0,
+          "log_sha256": "ce7a2e9a548d04735f2d6ebef65871b580d89ef5676803aa82d95f54964e8daf",
+          "observer_started_ns": 1792831078078497463,
+          "observer_finished_ns": 1792831078224039945
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831078855346172,
+          "observed_finished_ns": 1792831078859198241,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 134144,
+                "fd1_offset": 134144,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 134144,
+                "fd1_offset": 72704,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "ab9ea051c08a92d331fb07315de6c9ab35cde6ccb315ecb153b98ea4d4997d5e",
+          "event_bytes": 10597,
+          "log_bytes": 134144,
+          "log_nul_bytes": 0,
+          "log_sha256": "5a0eea374e8c0e657c9c3e4ebfd76087e3fe10cb0752183a4c1d81be57eded4f",
+          "observer_started_ns": 1792831078726619768,
+          "observer_finished_ns": 1792831078868096621
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831079515909106,
+          "observed_finished_ns": 1792831079519844926,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 141312,
+                "fd1_offset": 141312,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 141312,
+                "fd1_offset": 79872,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "ab9ea051c08a92d331fb07315de6c9ab35cde6ccb315ecb153b98ea4d4997d5e",
+          "event_bytes": 10597,
+          "log_bytes": 141312,
+          "log_nul_bytes": 0,
+          "log_sha256": "0c6ab84ac13c918605115ebd989a38272048fa0fdbc8902bd0d34dfdd8efca0f",
+          "observer_started_ns": 1792831079370829294,
+          "observer_finished_ns": 1792831079528368816
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831080155147052,
+          "observed_finished_ns": 1792831080159061542,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 147456,
+                "fd1_offset": 147456,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 147456,
+                "fd1_offset": 86016,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "27b85057fc9a5a23bf17e8e0900516cf55a291acf2bc45a2bc419ae60522e484",
+          "event_bytes": 11530,
+          "log_bytes": 147456,
+          "log_nul_bytes": 0,
+          "log_sha256": "5fa1ebcbcf6e8a4c87a46b16195911efe4708ff4df44d8d5aed359c1b61e6c71",
+          "observer_started_ns": 1792831080031030889,
+          "observer_finished_ns": 1792831080168539462
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831080802908167,
+          "observed_finished_ns": 1792831080806797857,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 153600,
+                "fd1_offset": 153600,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 153600,
+                "fd1_offset": 93184,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "caa42d2e34d24ef45d180f856be4d314c3993c80ede12a5e23b3e005d4b5a570",
+          "event_bytes": 12463,
+          "log_bytes": 153600,
+          "log_nul_bytes": 0,
+          "log_sha256": "afe2ad321ab0e8f3b54c98ad5323059ed70ca7861439876744570c93e29338a4",
+          "observer_started_ns": 1792831080672428924,
+          "observer_finished_ns": 1792831080815671147
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831081443033094,
+          "observed_finished_ns": 1792831081446940823,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 160768,
+                "fd1_offset": 160768,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 160768,
+                "fd1_offset": 99328,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "caa42d2e34d24ef45d180f856be4d314c3993c80ede12a5e23b3e005d4b5a570",
+          "event_bytes": 12463,
+          "log_bytes": 160768,
+          "log_nul_bytes": 0,
+          "log_sha256": "821a96be5184cce35e4cc6d5c1106dae07f4dbc216c1a10acc84ccf0e413d632",
+          "observer_started_ns": 1792831081318387390,
+          "observer_finished_ns": 1792831081455731293
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831082094940098,
+          "observed_finished_ns": 1792831082098886698,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 166912,
+                "fd1_offset": 166912,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 166912,
+                "fd1_offset": 106496,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "70701dab0ae2b8aeee68ccf205f015cba1b5dc6f7fb65bdde8733a73fa309b8e",
+          "event_bytes": 13397,
+          "log_bytes": 166912,
+          "log_nul_bytes": 0,
+          "log_sha256": "b8b6eb4ba6d31f6add50e712c7f48657b47974ae2a63c726d22d7169853d759b",
+          "observer_started_ns": 1792831081958563336,
+          "observer_finished_ns": 1792831082107525228
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831082718774415,
+          "observed_finished_ns": 1792831082722833765,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 174080,
+                "fd1_offset": 174080,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 174080,
+                "fd1_offset": 112640,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "2d1815073ffa2671f62d070a5e5e4bf3b2fafb2d51317ee6522a7c4d871fca54",
+          "event_bytes": 14331,
+          "log_bytes": 174080,
+          "log_nul_bytes": 0,
+          "log_sha256": "9d29a0e6fee65cccb9c0c3509d126c5e6c77ee8f2bcad8599b43b8ed7d481a52",
+          "observer_started_ns": 1792831082610634251,
+          "observer_finished_ns": 1792831082731702165
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831083374687330,
+          "observed_finished_ns": 1792831083378667980,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 180224,
+                "fd1_offset": 180224,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 180224,
+                "fd1_offset": 118784,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "2d1815073ffa2671f62d070a5e5e4bf3b2fafb2d51317ee6522a7c4d871fca54",
+          "event_bytes": 14331,
+          "log_bytes": 180224,
+          "log_nul_bytes": 0,
+          "log_sha256": "f00c4c73f598b86ee840540fbe86630dc60828b5677806bd8c0dd5219869dd60",
+          "observer_started_ns": 1792831083234598218,
+          "observer_finished_ns": 1792831083387489409
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831084014501306,
+          "observed_finished_ns": 1792831084018485766,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 187392,
+                "fd1_offset": 187392,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 187392,
+                "fd1_offset": 125952,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "a4c4acdeb8ca1d8ac213aaf539892f9477742d64854cfb12b13f8b09f4ee4a71",
+          "event_bytes": 15265,
+          "log_bytes": 187392,
+          "log_nul_bytes": 0,
+          "log_sha256": "020db04037199e5585c76ca2d1b0b1b8c11194de9570157a675fba01cb284591",
+          "observer_started_ns": 1792831083890123333,
+          "observer_finished_ns": 1792831084027381745
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831084658126182,
+          "observed_finished_ns": 1792831084661973511,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 193536,
+                "fd1_offset": 193536,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 193536,
+                "fd1_offset": 132096,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "a4c4acdeb8ca1d8ac213aaf539892f9477742d64854cfb12b13f8b09f4ee4a71",
+          "event_bytes": 15265,
+          "log_bytes": 193536,
+          "log_nul_bytes": 0,
+          "log_sha256": "ef4a99c11c468f260323ec5b48ccdb76dd832ba6ee8379199f33b6fc085ae262",
+          "observer_started_ns": 1792831084531371059,
+          "observer_finished_ns": 1792831084670641631
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831085306694717,
+          "observed_finished_ns": 1792831085310695917,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 199680,
+                "fd1_offset": 199680,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 199680,
+                "fd1_offset": 139264,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "ae021877e13359d37c4947ac44be5c76cfbb89789ec87666e58d06877193a6c1",
+          "event_bytes": 16199,
+          "log_bytes": 199680,
+          "log_nul_bytes": 0,
+          "log_sha256": "8985cdfc04fec69ae70d27b2f1f7e527e4c700374f4073de9897b6d6c4d17f23",
+          "observer_started_ns": 1792831085173401084,
+          "observer_finished_ns": 1792831085319550987
+        },
+        {
+          "state": "sampled",
+          "observed_start_ns": 1792831085947880213,
+          "observed_finished_ns": 1792831085951997403,
+          "processes": [
+            {
+              "expected_pid": 51,
+              "expected_start_ticks": 45962889,
+              "token": "8ccee145397f42b2b5a85ca76900a300",
+              "observed": {
+                "pid": 51,
+                "state": "S",
+                "start_ticks": 45962889,
+                "fd1_inode": 1825405,
+                "fd1_size": 206848,
+                "fd1_offset": 206848,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            },
+            {
+              "expected_pid": 119,
+              "expected_start_ticks": 45963499,
+              "token": "a3054711ad974feb8e02bfb43eef6667",
+              "observed": {
+                "pid": 119,
+                "state": "S",
+                "start_ticks": 45963499,
+                "fd1_inode": 1825405,
+                "fd1_size": 206848,
+                "fd1_offset": 145408,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ],
+          "events_sha256": "6d1517fc69bc0245e0f0b459287b0cc883bd631dd11ac71b8712987896d9a4e8",
+          "event_bytes": 17133,
+          "log_bytes": 206848,
+          "log_nul_bytes": 0,
+          "log_sha256": "a72eed140af2e6120ce44e847e973017fb646a514067abd6230b49b70f73f839",
+          "observer_started_ns": 1792831085822935610,
+          "observer_finished_ns": 1792831085961613032
+        },
+        {
+          "state": "exec_unavailable",
+          "exit_code": 1,
+          "observer_started_ns": 1792831086464779945,
+          "observer_finished_ns": 1792831086551094091,
+          "stderr": "Error response from daemon: No such container: a08c0ba228be\n"
+        },
+        {
+          "state": "exec_unavailable",
+          "exit_code": 1,
+          "observer_started_ns": 1792831087054592144,
+          "observer_finished_ns": 1792831087151148189,
+          "stderr": "Error response from daemon: No such container: a08c0ba228be\n"
+        },
+        {
+          "state": "exec_unavailable",
+          "exit_code": 1,
+          "observer_started_ns": 1792831087654638912,
+          "observer_finished_ns": 1792831087750333487,
+          "stderr": "Error response from daemon: No such container: a08c0ba228be\n"
+        }
+      ],
+      "deadline_observations": {
+        "native_verifier_end_epoch_ns": 1792831075614156000,
+        "native_verifier_end_field": "verifier.finished_at",
+        "timestamp_policy": "Controller and task TZ=UTC; timezone-naive native exception timestamps interpreted as UTC.",
+        "live_writer_after_native_verifier_end_observed": true,
+        "post_deadline_live_samples": [
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831075615645414,
+            "observation_finish_ns": 1792831075619364384,
+            "seconds_after_native_verifier_end": 0.001489414,
+            "fd1_inode": 1825405,
+            "fd1_offset": 101376
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831075615645414,
+            "observation_finish_ns": 1792831075619364384,
+            "seconds_after_native_verifier_end": 0.001489414,
+            "fd1_inode": 1825405,
+            "fd1_offset": 39936
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831076275605299,
+            "observation_finish_ns": 1792831076279370989,
+            "seconds_after_native_verifier_end": 0.661449299,
+            "fd1_inode": 1825405,
+            "fd1_offset": 107520
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831076275605299,
+            "observation_finish_ns": 1792831076279370989,
+            "seconds_after_native_verifier_end": 0.661449299,
+            "fd1_inode": 1825405,
+            "fd1_offset": 46080
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831076927381184,
+            "observation_finish_ns": 1792831076931198654,
+            "seconds_after_native_verifier_end": 1.313225184,
+            "fd1_inode": 1825405,
+            "fd1_offset": 114688
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831076927381184,
+            "observation_finish_ns": 1792831076931198654,
+            "seconds_after_native_verifier_end": 1.313225184,
+            "fd1_inode": 1825405,
+            "fd1_offset": 53248
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831077563763270,
+            "observation_finish_ns": 1792831077567534350,
+            "seconds_after_native_verifier_end": 1.94960727,
+            "fd1_inode": 1825405,
+            "fd1_offset": 120832
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831077563763270,
+            "observation_finish_ns": 1792831077567534350,
+            "seconds_after_native_verifier_end": 1.94960727,
+            "fd1_inode": 1825405,
+            "fd1_offset": 59392
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831078211511176,
+            "observation_finish_ns": 1792831078215338206,
+            "seconds_after_native_verifier_end": 2.597355176,
+            "fd1_inode": 1825405,
+            "fd1_offset": 128000
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831078211511176,
+            "observation_finish_ns": 1792831078215338206,
+            "seconds_after_native_verifier_end": 2.597355176,
+            "fd1_inode": 1825405,
+            "fd1_offset": 66560
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831078855346172,
+            "observation_finish_ns": 1792831078859198241,
+            "seconds_after_native_verifier_end": 3.241190172,
+            "fd1_inode": 1825405,
+            "fd1_offset": 134144
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831078855346172,
+            "observation_finish_ns": 1792831078859198241,
+            "seconds_after_native_verifier_end": 3.241190172,
+            "fd1_inode": 1825405,
+            "fd1_offset": 72704
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831079515909106,
+            "observation_finish_ns": 1792831079519844926,
+            "seconds_after_native_verifier_end": 3.901753106,
+            "fd1_inode": 1825405,
+            "fd1_offset": 141312
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831079515909106,
+            "observation_finish_ns": 1792831079519844926,
+            "seconds_after_native_verifier_end": 3.901753106,
+            "fd1_inode": 1825405,
+            "fd1_offset": 79872
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831080155147052,
+            "observation_finish_ns": 1792831080159061542,
+            "seconds_after_native_verifier_end": 4.540991052,
+            "fd1_inode": 1825405,
+            "fd1_offset": 147456
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831080155147052,
+            "observation_finish_ns": 1792831080159061542,
+            "seconds_after_native_verifier_end": 4.540991052,
+            "fd1_inode": 1825405,
+            "fd1_offset": 86016
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831080802908167,
+            "observation_finish_ns": 1792831080806797857,
+            "seconds_after_native_verifier_end": 5.188752167,
+            "fd1_inode": 1825405,
+            "fd1_offset": 153600
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831080802908167,
+            "observation_finish_ns": 1792831080806797857,
+            "seconds_after_native_verifier_end": 5.188752167,
+            "fd1_inode": 1825405,
+            "fd1_offset": 93184
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831081443033094,
+            "observation_finish_ns": 1792831081446940823,
+            "seconds_after_native_verifier_end": 5.828877094,
+            "fd1_inode": 1825405,
+            "fd1_offset": 160768
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831081443033094,
+            "observation_finish_ns": 1792831081446940823,
+            "seconds_after_native_verifier_end": 5.828877094,
+            "fd1_inode": 1825405,
+            "fd1_offset": 99328
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831082094940098,
+            "observation_finish_ns": 1792831082098886698,
+            "seconds_after_native_verifier_end": 6.480784098,
+            "fd1_inode": 1825405,
+            "fd1_offset": 166912
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831082094940098,
+            "observation_finish_ns": 1792831082098886698,
+            "seconds_after_native_verifier_end": 6.480784098,
+            "fd1_inode": 1825405,
+            "fd1_offset": 106496
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831082718774415,
+            "observation_finish_ns": 1792831082722833765,
+            "seconds_after_native_verifier_end": 7.104618415,
+            "fd1_inode": 1825405,
+            "fd1_offset": 174080
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831082718774415,
+            "observation_finish_ns": 1792831082722833765,
+            "seconds_after_native_verifier_end": 7.104618415,
+            "fd1_inode": 1825405,
+            "fd1_offset": 112640
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831083374687330,
+            "observation_finish_ns": 1792831083378667980,
+            "seconds_after_native_verifier_end": 7.76053133,
+            "fd1_inode": 1825405,
+            "fd1_offset": 180224
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831083374687330,
+            "observation_finish_ns": 1792831083378667980,
+            "seconds_after_native_verifier_end": 7.76053133,
+            "fd1_inode": 1825405,
+            "fd1_offset": 118784
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831084014501306,
+            "observation_finish_ns": 1792831084018485766,
+            "seconds_after_native_verifier_end": 8.400345306,
+            "fd1_inode": 1825405,
+            "fd1_offset": 187392
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831084014501306,
+            "observation_finish_ns": 1792831084018485766,
+            "seconds_after_native_verifier_end": 8.400345306,
+            "fd1_inode": 1825405,
+            "fd1_offset": 125952
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831084658126182,
+            "observation_finish_ns": 1792831084661973511,
+            "seconds_after_native_verifier_end": 9.043970182,
+            "fd1_inode": 1825405,
+            "fd1_offset": 193536
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831084658126182,
+            "observation_finish_ns": 1792831084661973511,
+            "seconds_after_native_verifier_end": 9.043970182,
+            "fd1_inode": 1825405,
+            "fd1_offset": 132096
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831085306694717,
+            "observation_finish_ns": 1792831085310695917,
+            "seconds_after_native_verifier_end": 9.692538717,
+            "fd1_inode": 1825405,
+            "fd1_offset": 199680
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831085306694717,
+            "observation_finish_ns": 1792831085310695917,
+            "seconds_after_native_verifier_end": 9.692538717,
+            "fd1_inode": 1825405,
+            "fd1_offset": 139264
+          },
+          {
+            "pid": 51,
+            "start_ticks": 45962889,
+            "state": "S",
+            "observation_start_ns": 1792831085947880213,
+            "observation_finish_ns": 1792831085951997403,
+            "seconds_after_native_verifier_end": 10.333724213,
+            "fd1_inode": 1825405,
+            "fd1_offset": 206848
+          },
+          {
+            "pid": 119,
+            "start_ticks": 45963499,
+            "state": "S",
+            "observation_start_ns": 1792831085947880213,
+            "observation_finish_ns": 1792831085951997403,
+            "seconds_after_native_verifier_end": 10.333724213,
+            "fd1_inode": 1825405,
+            "fd1_offset": 145408
+          }
+        ],
+        "observer_successful_samples": 31,
+        "observer_unavailable_samples": 3,
+        "observer_hole_samples": 9,
+        "observer_maximum_nul_bytes": 55296,
+        "lifecycle_events": [
+          {
+            "action": "kill",
+            "time_ns": 1792831076171997755,
+            "seconds_after_native_verifier_end": 0.557841755,
+            "attributes": {
+              "biotasks.case": "066-timeout",
+              "biotasks.fixture": "066-timeout",
+              "biotasks.run": "biotasks43-compare-0cae81dff1",
+              "com.docker.compose.config-hash": "8a4eb17b84cd1c16c90cd5914e0cff847fc37f8053f104941923c7267b298130",
+              "com.docker.compose.container-number": "1",
+              "com.docker.compose.depends_on": "",
+              "com.docker.compose.image": "sha256:b1944e5d8e97fb4286945910a67df3c76a982db14757ef5845c31531fb47f437",
+              "com.docker.compose.oneoff": "False",
+              "com.docker.compose.project": "harbor-timeout-timeout__7jneuw2",
+              "com.docker.compose.project.config_files": "/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-base.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-prebuilt.yaml,/work/outputs/harbor_timeout_066/harbor-timeout-timeout/environment/docker-compose.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-no-network.yaml",
+              "com.docker.compose.project.working_dir": "/work/outputs/harbor_timeout_066/harbor-timeout-timeout/environment",
+              "com.docker.compose.service": "main",
+              "com.docker.compose.version": "2.30.3",
+              "image": "biotasks43-compare-0cae81dff1-066-timeout:fixture",
+              "name": "harbor-timeout-timeout__7jneuw2-main-1",
+              "signal": "15"
+            }
+          },
+          {
+            "action": "kill",
+            "time_ns": 1792831086187925890,
+            "seconds_after_native_verifier_end": 10.57376989,
+            "attributes": {
+              "biotasks.case": "066-timeout",
+              "biotasks.fixture": "066-timeout",
+              "biotasks.run": "biotasks43-compare-0cae81dff1",
+              "com.docker.compose.config-hash": "8a4eb17b84cd1c16c90cd5914e0cff847fc37f8053f104941923c7267b298130",
+              "com.docker.compose.container-number": "1",
+              "com.docker.compose.depends_on": "",
+              "com.docker.compose.image": "sha256:b1944e5d8e97fb4286945910a67df3c76a982db14757ef5845c31531fb47f437",
+              "com.docker.compose.oneoff": "False",
+              "com.docker.compose.project": "harbor-timeout-timeout__7jneuw2",
+              "com.docker.compose.project.config_files": "/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-base.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-prebuilt.yaml,/work/outputs/harbor_timeout_066/harbor-timeout-timeout/environment/docker-compose.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-no-network.yaml",
+              "com.docker.compose.project.working_dir": "/work/outputs/harbor_timeout_066/harbor-timeout-timeout/environment",
+              "com.docker.compose.service": "main",
+              "com.docker.compose.version": "2.30.3",
+              "image": "biotasks43-compare-0cae81dff1-066-timeout:fixture",
+              "name": "harbor-timeout-timeout__7jneuw2-main-1",
+              "signal": "9"
+            }
+          },
+          {
+            "action": "stop",
+            "time_ns": 1792831086238404538,
+            "seconds_after_native_verifier_end": 10.624248538,
+            "attributes": {
+              "biotasks.case": "066-timeout",
+              "biotasks.fixture": "066-timeout",
+              "biotasks.run": "biotasks43-compare-0cae81dff1",
+              "com.docker.compose.config-hash": "8a4eb17b84cd1c16c90cd5914e0cff847fc37f8053f104941923c7267b298130",
+              "com.docker.compose.container-number": "1",
+              "com.docker.compose.depends_on": "",
+              "com.docker.compose.image": "sha256:b1944e5d8e97fb4286945910a67df3c76a982db14757ef5845c31531fb47f437",
+              "com.docker.compose.oneoff": "False",
+              "com.docker.compose.project": "harbor-timeout-timeout__7jneuw2",
+              "com.docker.compose.project.config_files": "/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-base.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-prebuilt.yaml,/work/outputs/harbor_timeout_066/harbor-timeout-timeout/environment/docker-compose.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-no-network.yaml",
+              "com.docker.compose.project.working_dir": "/work/outputs/harbor_timeout_066/harbor-timeout-timeout/environment",
+              "com.docker.compose.service": "main",
+              "com.docker.compose.version": "2.30.3",
+              "image": "biotasks43-compare-0cae81dff1-066-timeout:fixture",
+              "name": "harbor-timeout-timeout__7jneuw2-main-1"
+            }
+          },
+          {
+            "action": "die",
+            "time_ns": 1792831086242549167,
+            "seconds_after_native_verifier_end": 10.628393167,
+            "attributes": {
+              "biotasks.case": "066-timeout",
+              "biotasks.fixture": "066-timeout",
+              "biotasks.run": "biotasks43-compare-0cae81dff1",
+              "com.docker.compose.config-hash": "8a4eb17b84cd1c16c90cd5914e0cff847fc37f8053f104941923c7267b298130",
+              "com.docker.compose.container-number": "1",
+              "com.docker.compose.depends_on": "",
+              "com.docker.compose.image": "sha256:b1944e5d8e97fb4286945910a67df3c76a982db14757ef5845c31531fb47f437",
+              "com.docker.compose.oneoff": "False",
+              "com.docker.compose.project": "harbor-timeout-timeout__7jneuw2",
+              "com.docker.compose.project.config_files": "/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-base.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-prebuilt.yaml,/work/outputs/harbor_timeout_066/harbor-timeout-timeout/environment/docker-compose.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-no-network.yaml",
+              "com.docker.compose.project.working_dir": "/work/outputs/harbor_timeout_066/harbor-timeout-timeout/environment",
+              "com.docker.compose.service": "main",
+              "com.docker.compose.version": "2.30.3",
+              "exitCode": "137",
+              "image": "biotasks43-compare-0cae81dff1-066-timeout:fixture",
+              "name": "harbor-timeout-timeout__7jneuw2-main-1"
+            }
+          },
+          {
+            "action": "destroy",
+            "time_ns": 1792831086249996877,
+            "seconds_after_native_verifier_end": 10.635840877,
+            "attributes": {
+              "biotasks.case": "066-timeout",
+              "biotasks.fixture": "066-timeout",
+              "biotasks.run": "biotasks43-compare-0cae81dff1",
+              "com.docker.compose.config-hash": "8a4eb17b84cd1c16c90cd5914e0cff847fc37f8053f104941923c7267b298130",
+              "com.docker.compose.container-number": "1",
+              "com.docker.compose.depends_on": "",
+              "com.docker.compose.image": "sha256:b1944e5d8e97fb4286945910a67df3c76a982db14757ef5845c31531fb47f437",
+              "com.docker.compose.oneoff": "False",
+              "com.docker.compose.project": "harbor-timeout-timeout__7jneuw2",
+              "com.docker.compose.project.config_files": "/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-base.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-prebuilt.yaml,/work/outputs/harbor_timeout_066/harbor-timeout-timeout/environment/docker-compose.yaml,/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-no-network.yaml",
+              "com.docker.compose.project.working_dir": "/work/outputs/harbor_timeout_066/harbor-timeout-timeout/environment",
+              "com.docker.compose.service": "main",
+              "com.docker.compose.version": "2.30.3",
+              "image": "biotasks43-compare-0cae81dff1-066-timeout:fixture",
+              "name": "harbor-timeout-timeout__7jneuw2-main-1"
+            }
+          }
+        ],
+        "absence_of_live_sample_proves_termination": false
+      },
+      "writer_starts": 2,
+      "writer_ends": 0,
+      "live_prior_writers": [
+        {
+          "observer_token": "a3054711ad974feb8e02bfb43eef6667",
+          "prior_token": "8ccee145397f42b2b5a85ca76900a300",
+          "observed_pid": 51,
+          "observed_state": "S",
+          "same_start_ticks": true,
+          "observer_wall_ns": 1792831071776528529,
+          "same_log_inode": true,
+          "prior_offset": 61440,
+          "new_offset": 0,
+          "prior_offset_exceeds_new_offset": true
+        }
+      ],
+      "native_container_sample_count": 34,
+      "in_container_hole_samples": 10,
+      "raw_log_nul_bytes": 0,
+      "raw_log_tokens": [
+        "8ccee145397f42b2b5a85ca76900a300",
+        "a3054711ad974feb8e02bfb43eef6667"
+      ],
+      "fixture_mechanism_observed": false,
+      "historical_scanpy_cause_proven": false
+    },
+    {
+      "id": "024-finite",
+      "version": "0.24.0",
+      "name": "finite",
+      "state": "native_returned",
+      "measured": true,
+      "wrapper_exit": 0,
+      "exception": {
+        "exception_type": "RuntimeError",
+        "exception_message": "Failed to build Docker image harbor-prebuilt:harbor-docker-egress-control-sidecar--9af3dc172792cee8, exit code 125, output: unknown flag: --file\nSee 'docker --help'.\n\nUsage:  docker [OPTIONS] COMMAND\n\nA self-sufficient runtime for containers\n\nCommon Commands:\n  run         Create and run a new container from an image\n  exec        Execute a command in a running container\n  ps          List containers\n  build       Build an image from a Dockerfile\n  pull        Download an image from a registry\n  push        Upload an image to a registry\n  images      List images\n  login       Log in to a registry\n  logout      Log out from a registry\n  search      Search Docker Hub for images\n  version     Show the Docker version information\n  info        Display system-wide information\n\nManagement Commands:\n  builder     Manage builds\n  compose*    Docker Compose (Docker Inc., v2.30.3)\n  container   Manage containers\n  context     Manage contexts\n  image       Manage images\n  manifest    Manage Docker image manifests and manifest lists\n  network     Manage networks\n  plugin      Manage plugins\n  system      Manage Docker\n  trust       Manage trust on Docker images\n  volume      Manage volumes\n\nSwarm Commands:\n  swarm       Manage Swarm\n\nCommands:\n  attach      Attach local standard input, output, and error streams to a running container\n  commit      Create a new image from a container's changes\n  cp          Copy files/folders between a container and the local filesystem\n  create      Create a new container\n  diff        Inspect changes to files or directories on a container's filesystem\n  events      Get real time events from the server\n  export      Export a container's filesystem as a tar archive\n  history     Show the history of an image\n  import      Import the contents from a tarball to create a filesystem image\n  inspect     Return low-level information on Docker objects\n  kill        Kill one or more running containers\n  load        Load an image from a tar archive or STDIN\n  logs        Fetch the logs of a container\n  pause       Pause all processes within one or more containers\n  port        List port mappings or a specific mapping for the container\n  rename      Rename a container\n  restart     Restart one or more containers\n  rm          Remove one or more containers\n  rmi         Remove one or more images\n  save        Save one or more images to a tar archive (streamed to STDOUT by default)\n  start       Start one or more stopped containers\n  stats       Display a live stream of container(s) resource usage statistics\n  stop        Stop one or more running containers\n  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE\n  top         Display the running processes of a container\n  unpause     Unpause all processes within one or more containers\n  update      Update configuration of one or more containers\n  wait        Block until one or more containers stop, then print their exit codes\n\nGlobal Options:\n      --config string      Location of client config files (default\n                           \"/work/docker-config\")\n  -c, --context string     Name of the context to use to connect to the\n                           daemon (overrides DOCKER_HOST env var and\n                           default context set with \"docker context use\")\n  -D, --debug              Enable debug mode\n  -H, --host list          Daemon socket(s) to connect to\n  -l, --log-level string   Set the logging level (\"debug\", \"info\",\n                           \"warn\", \"error\", \"fatal\") (default \"info\")\n      --tls                Use TLS; implied by --tlsverify\n      --tlscacert string   Trust certs signed only by this CA (default\n                           \"/work/docker-config/ca.pem\")\n      --tlscert string     Path to TLS certificate file (default\n                           \"/work/docker-config/cert.pem\")\n      --tlskey string      Path to TLS key file (default\n                           \"/work/docker-config/key.pem\")\n      --tlsverify          Use TLS and verify the remote\n  -v, --version            Print version information and quit\n\nRun 'docker COMMAND --help' for more information on a command.\n\nFor more help on how to use Docker, head to https://docs.docker.com/go/guides/\n\n",
+        "exception_traceback": "Traceback (most recent call last):\n  File \"/work/harbor024/lib/python3.12/site-packages/harbor/trial/trial.py\", line 497, in run\n    await self._prepare()\n  File \"/work/harbor024/lib/python3.12/site-packages/harbor/trial/trial.py\", line 536, in _prepare\n    await self._setup_agent_environment()\n  File \"/work/harbor024/lib/python3.12/site-packages/harbor/trial/trial.py\", line 1684, in _setup_agent_environment\n    await self._start_agent_environment()\n  File \"/work/harbor024/lib/python3.12/site-packages/harbor/trial/trial.py\", line 1690, in _start_agent_environment\n    await asyncio.wait_for(\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"/work/harbor024/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 1045, in start\n    await self._ensure_egress_control_sidecar_image_built()\n  File \"/work/harbor024/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 632, in _ensure_egress_control_sidecar_image_built\n    await ensure_docker_image_built(\n  File \"/work/harbor024/lib/python3.12/site-packages/harbor/environments/docker/utils.py\", line 230, in ensure_docker_image_built\n    await build_docker_image_with_buildx(\n  File \"/work/harbor024/lib/python3.12/site-packages/harbor/environments/docker/utils.py\", line 146, in build_docker_image_with_buildx\n    raise RuntimeError(\nRuntimeError: Failed to build Docker image harbor-prebuilt:harbor-docker-egress-control-sidecar--9af3dc172792cee8, exit code 125, output: unknown flag: --file\nSee 'docker --help'.\n\nUsage:  docker [OPTIONS] COMMAND\n\nA self-sufficient runtime for containers\n\nCommon Commands:\n  run         Create and run a new container from an image\n  exec        Execute a command in a running container\n  ps          List containers\n  build       Build an image from a Dockerfile\n  pull        Download an image from a registry\n  push        Upload an image to a registry\n  images      List images\n  login       Log in to a registry\n  logout      Log out from a registry\n  search      Search Docker Hub for images\n  version     Show the Docker version information\n  info        Display system-wide information\n\nManagement Commands:\n  builder     Manage builds\n  compose*    Docker Compose (Docker Inc., v2.30.3)\n  container   Manage containers\n  context     Manage contexts\n  image       Manage images\n  manifest    Manage Docker image manifests and manifest lists\n  network     Manage networks\n  plugin      Manage plugins\n  system      Manage Docker\n  trust       Manage trust on Docker images\n  volume      Manage volumes\n\nSwarm Commands:\n  swarm       Manage Swarm\n\nCommands:\n  attach      Attach local standard input, output, and error streams to a running container\n  commit      Create a new image from a container's changes\n  cp          Copy files/folders between a container and the local filesystem\n  create      Create a new container\n  diff        Inspect changes to files or directories on a container's filesystem\n  events      Get real time events from the server\n  export      Export a container's filesystem as a tar archive\n  history     Show the history of an image\n  import      Import the contents from a tarball to create a filesystem image\n  inspect     Return low-level information on Docker objects\n  kill        Kill one or more running containers\n  load        Load an image from a tar archive or STDIN\n  logs        Fetch the logs of a container\n  pause       Pause all processes within one or more containers\n  port        List port mappings or a specific mapping for the container\n  rename      Rename a container\n  restart     Restart one or more containers\n  rm          Remove one or more containers\n  rmi         Remove one or more images\n  save        Save one or more images to a tar archive (streamed to STDOUT by default)\n  start       Start one or more stopped containers\n  stats       Display a live stream of container(s) resource usage statistics\n  stop        Stop one or more running containers\n  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE\n  top         Display the running processes of a container\n  unpause     Unpause all processes within one or more containers\n  update      Update configuration of one or more containers\n  wait        Block until one or more containers stop, then print their exit codes\n\nGlobal Options:\n      --config string      Location of client config files (default\n                           \"/work/docker-config\")\n  -c, --context string     Name of the context to use to connect to the\n                           daemon (overrides DOCKER_HOST env var and\n                           default context set with \"docker context use\")\n  -D, --debug              Enable debug mode\n  -H, --host list          Daemon socket(s) to connect to\n  -l, --log-level string   Set the logging level (\"debug\", \"info\",\n                           \"warn\", \"error\", \"fatal\") (default \"info\")\n      --tls                Use TLS; implied by --tlsverify\n      --tlscacert string   Trust certs signed only by this CA (default\n                           \"/work/docker-config/ca.pem\")\n      --tlscert string     Path to TLS certificate file (default\n                           \"/work/docker-config/cert.pem\")\n      --tlskey string      Path to TLS key file (default\n                           \"/work/docker-config/key.pem\")\n      --tlsverify          Use TLS and verify the remote\n  -v, --version            Print version information and quit\n\nRun 'docker COMMAND --help' for more information on a command.\n\nFor more help on how to use Docker, head to https://docs.docker.com/go/guides/\n\n\n",
+        "occurred_at": "2026-10-24T08:38:14.245591Z"
+      },
+      "fixture_reward": null,
+      "resources_verified": false,
+      "events_path": null,
+      "writer_log_path": null,
+      "writer_log_sha256": null,
+      "events": [],
+      "observations": [],
+      "deadline_observations": {
+        "native_verifier_end_epoch_ns": 1792831094245591000,
+        "native_verifier_end_field": "exception_info.occurred_at",
+        "timestamp_policy": "Controller and task TZ=UTC; timezone-naive native exception timestamps interpreted as UTC.",
+        "live_writer_after_native_verifier_end_observed": false,
+        "post_deadline_live_samples": [],
+        "observer_successful_samples": 0,
+        "observer_unavailable_samples": 0,
+        "observer_hole_samples": 0,
+        "observer_maximum_nul_bytes": 0,
+        "lifecycle_events": [],
+        "absence_of_live_sample_proves_termination": false
+      },
+      "writer_starts": 0,
+      "writer_ends": 0,
+      "live_prior_writers": [],
+      "native_container_sample_count": 0,
+      "in_container_hole_samples": 0,
+      "raw_log_nul_bytes": 0,
+      "raw_log_tokens": [],
+      "fixture_mechanism_observed": false,
+      "historical_scanpy_cause_proven": false
+    },
+    {
+      "id": "024-timeout",
+      "version": "0.24.0",
+      "name": "timeout",
+      "state": "skipped_failed_finite_prerequisite",
+      "measured": false
+    }
+  ],
+  "native_source_parity": {
+    "packages": [
+      {
+        "version": "0.6.6",
+        "tenacity": "9.2.1",
+        "source_files_verified": 203,
+        "timezone": [
+          "UTC",
+          "UTC"
+        ],
+        "verified": true
+      },
+      {
+        "version": "0.24.0",
+        "tenacity": "9.2.1",
+        "source_files_verified": 369,
+        "timezone": [
+          "UTC",
+          "UTC"
+        ],
+        "verified": true
+      }
+    ],
+    "verified": true
+  },
+  "dependency_environments": {
+    "0.6.6": {
+      "file": "harbor066-freeze.txt",
+      "sha256": "38366d3394807843e43022bcbf99ca1e88da200aab2fe64e7053fabeb1e54e17",
+      "packages": {
+        "aiohappyeyeballs": "2.7.1",
+        "aiohttp": "3.14.5",
+        "aiosignal": "1.4.0",
+        "annotated-doc": "0.0.5",
+        "annotated-types": "0.8.0",
+        "anyio": "4.15.1",
+        "attrs": "26.1.0",
+        "boto3": "1.43.118",
+        "botocore": "1.43.118",
+        "certifi": "2026.10.23",
+        "cffi": "2.1.1",
+        "charset-normalizer": "3.5.2",
+        "claude-agent-sdk": "0.2.174",
+        "click": "8.5.0",
+        "cryptography": "50.0.2",
+        "datasets": "5.1.0",
+        "deprecation": "2.1.0",
+        "dill": "0.4.1",
+        "dirhash": "0.5.0",
+        "distro": "1.9.0",
+        "fastapi": "0.162.0",
+        "fastuuid": "0.14.0",
+        "filelock": "3.32.7",
+        "frozenlist": "1.8.0",
+        "fsspec": "2026.7.0",
+        "h11": "0.16.0",
+        "h2": "4.4.1",
+        "harbor": "file:///work/harbor-0.6.6-py3-none-any.whl",
+        "hf-xet": "1.7.0",
+        "hpack": "4.2.0",
+        "httpcore": "1.0.9",
+        "httpcore2": "2.16.0",
+        "httpx": "0.28.1",
+        "httpx2": "2.16.0",
+        "huggingface-hub": "1.33.0",
+        "hyperframe": "6.1.0",
+        "idna": "3.20",
+        "importlib-metadata": "8.9.0",
+        "jinja2": "3.1.6",
+        "jiter": "0.18.0",
+        "jmespath": "1.1.0",
+        "jsonschema": "4.26.0",
+        "jsonschema-specifications": "2025.9.1",
+        "litellm": "1.106.2",
+        "markdown-it-py": "4.2.0",
+        "markupsafe": "3.0.4",
+        "mcp": "2.3.0",
+        "mcp-types": "2.3.0",
+        "mdurl": "0.1.2",
+        "multidict": "7.1.0",
+        "multiprocess": "0.70.19",
+        "numpy": "2.5.4",
+        "openai": "2.54.0",
+        "opentelemetry-api": "1.45.1",
+        "packaging": "26.3",
+        "pandas": "3.1.0",
+        "pathspec": "1.1.1",
+        "postgrest": "2.33.0",
+        "propcache": "0.5.4",
+        "pyarrow": "26.0.0",
+        "pycparser": "3.12",
+        "pydantic": "2.14.1",
+        "pydantic-core": "2.50.1",
+        "pydantic-settings": "2.16.1",
+        "pygments": "2.21.0",
+        "pyjwt": "2.15.1",
+        "python-dateutil": "2.9.0.post0",
+        "python-dotenv": "1.2.4",
+        "python-multipart": "0.0.32",
+        "pyyaml": "6.0.3",
+        "realtime": "2.33.0",
+        "referencing": "0.37.0",
+        "regex": "2026.9.29",
+        "requests": "2.34.2",
+        "rich": "15.0.0",
+        "rpds-py": "2026.9.1",
+        "ruff": "0.17.2",
+        "s3transfer": "0.19.3",
+        "scantree": "0.0.4",
+        "shellingham": "1.5.4",
+        "shortuuid": "1.0.13",
+        "six": "1.17.0",
+        "sniffio": "1.3.1",
+        "sse-starlette": "3.5.0",
+        "starlette": "1.9.0",
+        "storage3": "2.33.0",
+        "strenum": "0.4.15",
+        "supabase": "2.33.0",
+        "supabase-auth": "2.33.0",
+        "supabase-functions": "2.33.0",
+        "tenacity": "file:///work/tenacity-9.2.1-py3-none-any.whl",
+        "tiktoken": "0.14.0",
+        "tokenizers": "0.23.3",
+        "toml": "0.10.2",
+        "tqdm": "4.70.1",
+        "truststore": "0.10.5",
+        "typer": "0.27.3",
+        "typing-extensions": "4.16.0",
+        "typing-inspection": "0.4.4",
+        "urllib3": "2.8.0",
+        "uvicorn": "0.54.0",
+        "websockets": "15.0.1",
+        "xxhash": "4.0.2",
+        "yarl": "1.25.1",
+        "zipp": "4.1.2"
+      }
+    },
+    "0.24.0": {
+      "file": "harbor024-freeze.txt",
+      "sha256": "e9e0db667ae803a469bc6016e4eab48491caa246e9b66597ec14ce49a271b1ea",
+      "packages": {
+        "aiohappyeyeballs": "2.7.1",
+        "aiohttp": "3.14.5",
+        "aiosignal": "1.4.0",
+        "annotated-doc": "0.0.5",
+        "annotated-types": "0.8.0",
+        "anyio": "4.15.1",
+        "attrs": "26.1.0",
+        "boto3": "1.43.118",
+        "botocore": "1.43.118",
+        "certifi": "2026.10.23",
+        "cffi": "2.1.1",
+        "charset-normalizer": "3.5.2",
+        "click": "8.5.0",
+        "cryptography": "50.0.2",
+        "deprecation": "2.1.0",
+        "dirhash": "0.5.0",
+        "distro": "1.9.0",
+        "fastapi": "0.162.0",
+        "fastuuid": "0.14.0",
+        "filelock": "3.32.7",
+        "frozenlist": "1.8.0",
+        "fsspec": "2026.9.0",
+        "h11": "0.16.0",
+        "h2": "4.4.1",
+        "harbor": "file:///work/harbor-0.24.0-py3-none-any.whl",
+        "hf-xet": "1.7.0",
+        "hpack": "4.2.0",
+        "httpcore": "1.0.9",
+        "httpx": "0.28.1",
+        "huggingface-hub": "1.33.0",
+        "hyperframe": "6.1.0",
+        "idna": "3.20",
+        "importlib-metadata": "8.9.0",
+        "jinja2": "3.1.6",
+        "jiter": "0.18.0",
+        "jmespath": "1.1.0",
+        "jsonschema": "4.26.0",
+        "jsonschema-specifications": "2025.9.1",
+        "litellm": "1.106.2",
+        "markdown-it-py": "4.2.0",
+        "markupsafe": "3.0.4",
+        "mdurl": "0.1.2",
+        "multidict": "7.1.0",
+        "openai": "2.54.0",
+        "opentelemetry-api": "1.45.1",
+        "packaging": "26.3",
+        "pathspec": "1.1.1",
+        "platformdirs": "4.13.5",
+        "postgrest": "2.33.0",
+        "propcache": "0.5.4",
+        "pycparser": "3.12",
+        "pydantic": "2.14.1",
+        "pydantic-core": "2.50.1",
+        "pydantic-settings": "2.16.1",
+        "pygments": "2.21.0",
+        "pyjwt": "2.15.1",
+        "python-dateutil": "2.9.0.post0",
+        "python-dotenv": "1.2.4",
+        "pyyaml": "6.0.3",
+        "realtime": "2.33.0",
+        "referencing": "0.37.0",
+        "regex": "2026.9.29",
+        "requests": "2.34.2",
+        "rich": "15.0.0",
+        "rpds-py": "2026.9.1",
+        "s3transfer": "0.19.3",
+        "scantree": "0.0.4",
+        "semver": "3.1.0",
+        "shellingham": "1.5.4",
+        "shortuuid": "1.0.13",
+        "six": "1.17.0",
+        "sniffio": "1.3.1",
+        "starlette": "1.9.0",
+        "storage3": "2.33.0",
+        "strenum": "0.4.15",
+        "supabase": "2.33.0",
+        "supabase-auth": "2.33.0",
+        "supabase-functions": "2.33.0",
+        "tenacity": "file:///work/tenacity-9.2.1-py3-none-any.whl",
+        "tiktoken": "0.14.0",
+        "tokenizers": "0.23.3",
+        "toml": "0.10.2",
+        "tqdm": "4.70.1",
+        "typer": "0.27.3",
+        "typing-extensions": "4.16.0",
+        "typing-inspection": "0.4.4",
+        "urllib3": "2.8.0",
+        "uvicorn": "0.54.0",
+        "websockets": "15.0.1",
+        "yarl": "1.25.1",
+        "zipp": "4.1.2"
+      }
+    }
+  },
+  "dependency_comparison": {
+    "baseline_constraints_match": true,
+    "missing_expected": {},
+    "changed_expected": {},
+    "candidate_changed_versions": {
+      "fsspec": {
+        "baseline": "2026.7.0",
+        "candidate": "2026.9.0"
+      },
+      "harbor": {
+        "baseline": "file:///work/harbor-0.6.6-py3-none-any.whl",
+        "candidate": "file:///work/harbor-0.24.0-py3-none-any.whl"
+      }
+    },
+    "candidate_added": {
+      "platformdirs": "4.13.5",
+      "semver": "3.1.0"
+    },
+    "candidate_removed": {
+      "claude-agent-sdk": "0.2.174",
+      "datasets": "5.1.0",
+      "dill": "0.4.1",
+      "httpcore2": "2.16.0",
+      "httpx2": "2.16.0",
+      "mcp": "2.3.0",
+      "mcp-types": "2.3.0",
+      "multiprocess": "0.70.19",
+      "numpy": "2.5.4",
+      "pandas": "3.1.0",
+      "pyarrow": "26.0.0",
+      "python-multipart": "0.0.32",
+      "ruff": "0.17.2",
+      "sse-starlette": "3.5.0",
+      "truststore": "0.10.5",
+      "xxhash": "4.0.2"
+    }
+  },
+  "allocated_cpu_hours": 0.09966722223493787,
+  "attempts": 1,
+  "raw_archive_sha256": "98b062dd8f4a3d9350b1ba5c336c08cff16f07fd7d1a8667fe091b49a2e2c20f",
+  "hf_prefix": "research/43-native-harbor-comparison/2026-10-24/68475d52b7608a42ee60973450834d8ddc5e20ba41005a5edc853aec3412d169",
+  "anonymous_download_verified": true,
+  "owned_cleanup_verified": true,
+  "shared_public_base_preserved": true,
+  "model_calls": 0,
+  "new_biological_tasks": 0,
+  "pipeline_dependency_upgraded": false,
+  "historical_scanpy_cause_proven": false,
+  "source_protocol_sha256": "85ee835408d313aa6646e7e1bf7c9c31acf438d3b0f58cc944585be599b2d616",
+  "comparison_classification": "candidate_environment_compatibility_failure"
+}

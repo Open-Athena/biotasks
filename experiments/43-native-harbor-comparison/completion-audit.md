@@ -1,0 +1,11 @@
+# Native package comparison audit
+
+The baseline finite prerequisite and timeout case are measured through unchanged Harbor 0.6.6, with all 203 source/metadata/license members and the 103 prior dependency-version constraints verified. The exact #41 writer and script, five-second verifier deadline and 1-CPU/6-GiB/no-network contract remain. External observations distinguish matching live PID/start ticks from reused PIDs and zombies.
+
+Both baseline writers survive past the final native verifier timeout and through Docker's stop grace period. Thirty-four matching PID observations extend to +10.333724 seconds; Docker events place SIGKILL at +10.573770, death at +10.628393 and destruction at +10.635841. Writer samples and the independent outside observer capture transient holes; final raw log NUL count is zero. Eventual owned teardown is verified, so this is not an indefinite leak after container destruction. Missing live samples never prove termination.
+
+All 369 candidate Harbor 0.24.0 source/metadata/license members match its wheel. Its finite case fails before a writer because the new environment's egress-sidecar image build calls Docker Buildx, absent from the old minimal runner. The candidate timeout case is correctly skipped. Thus native upgrade cancellation and compatibility remain unestablished; no successful source-only inference is promoted as a runtime result. The published package/dependency variant, failure and skipped case remain distinct. No automatic plugin, package source, biological task or grading repair occurred.
+
+One fixed managed attempt used 0.09966722223493787 allocated CPU-hours against a two-hour admission. Runtime archive/anonymous HF readback and primary owned cleanup are verified, public base image preserved and unused emergency cleanup reservation released. Completed invocation left all 14 stage/budget files unchanged. No model calls, new paid capacity, biological controls, new exports or original-cohort changes.
+
+Final summary/source archival, local duplicate cleanup and post-cleanup inert invocation remain separate gates. Keep the issue open for review and retain the permanent research branch. The package-upgrade comparison remains inconclusive; the measured baseline and exact compatibility prerequisite are useful outcomes.
