@@ -20,6 +20,19 @@ from biotasks.validation.files import (
 from biotasks.validation.planning import UPSTREAM
 
 
+def test_pinned_writer_inventory_is_portable_wheel_content_not_runtime_cache():
+    rows = source.writer_inventory()
+    assert len(rows) == 7
+    assert all(
+        "__pycache__" not in row["path"] and not row["path"].endswith(".pyc") for row in rows
+    )
+    assert {row["path"] for row in rows} >= {
+        "tomli_w/__init__.py",
+        "tomli_w/_writer.py",
+        "tomli_w-1.2.0.dist-info/LICENSE",
+    }
+
+
 @pytest.fixture
 def acquired(tmp_path, monkeypatch):
     raw = b"Synthetic source never imported\n"
