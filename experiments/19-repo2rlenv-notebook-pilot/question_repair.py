@@ -119,7 +119,7 @@ def semantic_question_context(candidate, execution, grading):
         "controls": controls,
         "independent_solution": read(grading / "independent-solution.json"),
         "independent_execution": read(grading / "independent-result.json"),
-        "semantic_question_review": review.model_dump(),
+        "semantic_question_review": review.model_dump(exclude_unset=True),
         "original_probes": read(grading / "probes.json"),
         "allowed_targets": ["public_question"],
     }

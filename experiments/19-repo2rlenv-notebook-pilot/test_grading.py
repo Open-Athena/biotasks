@@ -1037,6 +1037,24 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 "scientific_scope_changes": [],
                 "remaining_validation": [],
             }
+            scientific_admission = {
+                "comparisons": [
+                    {
+                        "output_paths": inputs["artifact_interface"]["output_paths"],
+                        "decision": "approve",
+                        "rationale": "Synthetic same-quantity comparison",
+                        "evidence": ["Synthetic source and executed controls"],
+                        "blockers": [],
+                    }
+                ],
+                "answer_isolation": {
+                    "output_paths": inputs["artifact_interface"]["output_paths"],
+                    "decision": "approve",
+                    "rationale": "Synthetic fixture has no installed answer assets",
+                    "evidence": ["Synthetic environment inventory"],
+                    "blockers": [],
+                },
+            }
             assert inputs["initial_probes"] == suite.model_dump()
             if name == "review-repair":
                 repair_reviews.append(inputs["candidate"])
@@ -1069,6 +1087,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                         issues=[],
                         source_coverage=source_coverage,
                         question_issues=[],
+                        scientific_admission=scientific_admission,
                     )
                 )
             controls[0]["passed_control"] = original
@@ -1080,6 +1099,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                         issues=["An acceptance boundary is not publicly defined"],
                         source_coverage=source_coverage,
                         question_issues=[],
+                        scientific_admission=scientific_admission,
                     )
                 )
             semantic_rejection = (
@@ -1098,6 +1118,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 if repair and name == "review"
                 else [],
                 source_coverage=source_coverage,
+                scientific_admission=scientific_admission,
                 question_issues=[
                     {
                         "quote": "Scientific question",

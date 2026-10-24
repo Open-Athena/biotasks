@@ -14,7 +14,6 @@ from grading_protocol import (
     Grader,
     GraderRepairSubmission,
     Probes,
-    Review,
     apply_contract_text,
     apply_probe_expectations,
     artifact_interface,
@@ -22,10 +21,12 @@ from grading_protocol import (
     check_coverage,
     check_probes,
     check_repair_inventory,
+    check_review_scientific_admission,
     check_review_source_coverage,
     control_summary,
     parse_report,
 )
+from grading_protocol import LiveReview as Review
 from model_profile import native_effort
 from openai import AsyncOpenAI
 from probe_coverage import prepare_supplement, unexercised_scientific_checks
@@ -1064,6 +1065,7 @@ async def run_grading(
 
             async def validate_review(value):
                 check_review_source_coverage(value)
+                check_review_scientific_admission(value, session.paths)
                 if inspection and "question_issues" not in value.model_fields_set:
                     raise ValueError("Explicitly assess question_issues in this review")
                 question = context["specification"]["task_brief"]

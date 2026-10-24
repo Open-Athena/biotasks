@@ -13,6 +13,24 @@ defects in `issues`. A false or ambiguous base question remains a defect even
 when all numerical controls pass; implementations may have ignored that prose.
 Acceptance requires both issue lists empty. Do not excuse a false explanatory
 claim as harmless merely because a particular library call produces correct data.
+
+Supply `scientific_admission` separately from numerical control results:
+
+- `comparisons`: one or more audits covering every final path in
+  `artifact_interface.output_paths` exactly once. For each, give `output_paths`,
+  `decision` (`approve`, `unresolved` or `defect`), `rationale`, concrete `evidence`
+  citations and `blockers`. Assess scientific equivalence and representation,
+  including dependencies between outputs, not just reference agreement.
+- `answer_isolation`: the same audit fields, with all final output paths.
+  Assess whether actual solver-visible inputs and installed assets disclose any
+  requested answers, including outputs recovered after setup. Cite inspected
+  evidence and state relevant uninspected coverage as a blocker. Do not infer
+  absence from filenames, a prior worker's assurance or passing controls.
+
+Approval requires no blockers. Missing evidence requires `unresolved`; a known
+defect requires `defect`. An overall acceptance requires both scientific
+admission audits approved. This record is the reviewer's reasoned assessment,
+not executable proof of scientific truth or a substitute for the controls.
 Check necessary logical quantifiers, conjunctions/disjunctions, conditionals and
 threshold meanings against source/input/package evidence. Prefer referring to
 an encoded rule over introducing an unsupported natural-language approximation.

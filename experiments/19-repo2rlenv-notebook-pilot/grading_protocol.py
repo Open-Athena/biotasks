@@ -115,6 +115,31 @@ class PublicQuestionIssue(StrictModel):
     evidence: str = Field(min_length=1)
 
 
+class ScientificAudit(StrictModel):
+    output_paths: list[str] = Field(min_length=1)
+    decision: Literal["approve", "unresolved", "defect"]
+    rationale: str = Field(min_length=1)
+    evidence: list[str] = Field(min_length=1)
+    blockers: list[str]
+
+    @model_validator(mode="after")
+    def consistent(self):
+        if len(set(self.output_paths)) != len(self.output_paths):
+            raise ValueError("An audit must not repeat output paths")
+        if any(not value.strip() for value in [self.rationale, *self.evidence]):
+            raise ValueError("Scientific audits require explicit reasoning and evidence")
+        if self.decision == "approve" and self.blockers:
+            raise ValueError("Scientific approval cannot retain blockers")
+        if self.decision != "approve" and not any(value.strip() for value in self.blockers):
+            raise ValueError("Explain unresolved scientific admission or a defect")
+        return self
+
+
+class ScientificAdmission(StrictModel):
+    comparisons: list[ScientificAudit] = Field(min_length=1)
+    answer_isolation: ScientificAudit
+
+
 class Review(StrictModel):
     decision: Literal["accept_for_packaging", "revise", "blocked"]
     rationale: str = Field(min_length=1)
@@ -124,6 +149,32 @@ class Review(StrictModel):
     # Historical records omit this field; new inspection-enabled reviews must
     # explicitly assess the base question separately from the grader addendum.
     question_issues: list[PublicQuestionIssue] = Field(default_factory=list)
+    # Historical reviews remain readable; the live controller requires this.
+    scientific_admission: ScientificAdmission | None = None
+
+
+class LiveReview(Review):
+    scientific_admission: ScientificAdmission
+
+
+def check_review_scientific_admission(review, output_paths):
+    """Require explicit final-output coverage, not infer scientific truth."""
+    admission = review.scientific_admission
+    if admission is None:
+        raise ValueError("Explicitly assess scientific_admission for the final outputs")
+    expected = set(output_paths)
+    if not expected or len(expected) != len(output_paths):
+        raise ValueError("Controller output inventory must be nonempty and unique")
+    covered = [path for audit in admission.comparisons for path in audit.output_paths]
+    if len(set(covered)) != len(covered) or set(covered) != expected:
+        raise ValueError("Comparison audits must cover each final output exactly once")
+    if set(admission.answer_isolation.output_paths) != expected:
+        raise ValueError("Answer-isolation review must assess the entire final output set")
+    audits = [*admission.comparisons, admission.answer_isolation]
+    if review.decision == "accept_for_packaging" and any(
+        audit.decision != "approve" for audit in audits
+    ):
+        raise ValueError("Acceptance requires scientific equivalence and answer isolation")
 
 
 def check_review_source_coverage(review):
