@@ -1,0 +1,41 @@
+{
+  "recorded_utc": "2026-10-24T00:07:12.781393+00:00",
+  "staging": [
+    {
+      "path": "experiments/33-unattended-validation/private/offline-snapshot",
+      "files": 15,
+      "bytes": 155170,
+      "public_receipt": "offline-evidence-receipt.json",
+      "why_retained": "Bounded offline audit inputs: existing completed-stage verifiers recheck these exact staged hashes, and the reviewed notice copies are inputs to the confirmation generator.",
+      "cleanup_condition": "Remove duplicate staging after completed-stage verification and notice inputs are independent of these paths; preserve original archives/manifests and verified HF receipts."
+    },
+    {
+      "path": "experiments/33-unattended-validation/private/offline-cleanup-snapshot",
+      "files": 5,
+      "bytes": 15218,
+      "public_receipt": "offline-cleanup-evidence-receipt.json",
+      "why_retained": "Bounded offline audit inputs: existing completed-stage verifiers recheck these exact staged hashes, and the reviewed notice copies are inputs to the confirmation generator.",
+      "cleanup_condition": "Remove duplicate staging after completed-stage verification and notice inputs are independent of these paths; preserve original archives/manifests and verified HF receipts."
+    },
+    {
+      "path": "experiments/33-unattended-validation/private/confirmation-snapshot",
+      "files": 9,
+      "bytes": 161471,
+      "public_receipt": "confirmation-evidence-receipt.json",
+      "why_retained": "Bounded offline audit inputs: existing completed-stage verifiers recheck these exact staged hashes, and the reviewed notice copies are inputs to the confirmation generator.",
+      "cleanup_condition": "Remove duplicate staging after completed-stage verification and notice inputs are independent of these paths; preserve original archives/manifests and verified HF receipts."
+    },
+    {
+      "path": "experiments/33-unattended-validation/private/confirmation-final-snapshot",
+      "files": 10,
+      "bytes": 35013,
+      "public_receipt": "confirmation-final-evidence-receipt.json",
+      "why_retained": "Bounded offline audit inputs: existing completed-stage verifiers recheck these exact staged hashes, and the reviewed notice copies are inputs to the confirmation generator.",
+      "cleanup_condition": "Remove duplicate staging after completed-stage verification and notice inputs are independent of these paths; preserve original archives/manifests and verified HF receipts."
+    }
+  ],
+  "total_staging_bytes": 366872,
+  "owned_transfer_caches_remaining": [],
+  "temporary_directory_evidence": false,
+  "protected_raw_retention": "See followup-retention-status.json and protected-retention-readback.json; do not publish or remove the five protected originals."
+}
