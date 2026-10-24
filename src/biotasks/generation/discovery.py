@@ -29,8 +29,11 @@ def freeze(native_config: Path, source_cache: Path, output: Path) -> dict[str, A
     owner, name = match.groups()
     options = config["pipeline"]["options"]
     require(
-        resources.option_policy().accepts(options)
-        and isinstance(options["limit"], int)
+        resources.option_policy().accepts(options),
+        "Only discovery fields and an optional boolean require_new_test_funcs are supported",
+    )
+    require(
+        isinstance(options["limit"], int)
         and not isinstance(options["limit"], bool)
         and 1 <= options["limit"] <= 100,
         "Discovery bound is 1..100",

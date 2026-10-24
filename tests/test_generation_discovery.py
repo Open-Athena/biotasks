@@ -102,6 +102,6 @@ def test_non_boolean_official_filter_rejected_before_discovery(listing, setting)
     value = read_json(config)
     value["pipeline"]["options"]["require_new_test_funcs"] = setting
     write_json(config, value)
-    with pytest.raises(ValidationError, match="Discovery bound"):
+    with pytest.raises(ValidationError, match="boolean require_new_test_funcs"):
         discovery.freeze(config, cache, output)
     assert not calls
