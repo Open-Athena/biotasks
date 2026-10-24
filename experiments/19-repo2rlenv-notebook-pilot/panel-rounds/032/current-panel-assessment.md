@@ -1,6 +1,6 @@
 # Current ten-source development assessment
 
-Latest independently archived completed outcome per source. This combines development versions; it is not a held-out success-rate estimate. Original failed attempts remain preserved. The active 149 repeat are excluded from the completed-outcome counts.
+Latest independently archived completed outcome per source. This combines development versions; it is not a held-out success-rate estimate. Original failed attempts remain preserved. The active 149 repeat is excluded from the completed-outcome counts.
 
 | Domain | Source | Campaign | Pipeline minutes | Accounted model requests | Outcome |
 | --- | --- | --- | ---: | ---: | --- |
@@ -17,7 +17,7 @@ Latest independently archived completed outcome per source. This combines develo
 
 Five completed native-control sets are distinct from scientific qualification: PyMC145 and Matchms147 are qualified/published in this table. Earlier qualified public tasks, including PyHMMER124, are retained separately rather than substituted for the latest outcomes. Four generated-candidate rejections expose remaining factory weaknesses. MDAnalysis148 additionally passed 18 scientific controls and its native reference, but provider deletion outlasted its bounded cleanup check; the empty control and solver did not run. Its complete original evidence and later five-owner absence are verified.
 
-Across these ten outcomes, measured pipeline time ranges from 4.48 to 111.96 minutes. The four cases completing native controls range from 37.30 to 111.96 minutes. These exclude bootstrap, archive verification and publication. Short failed setup attempts do not estimate successful generation throughput.
+Across these ten outcomes, measured pipeline time ranges from 4.48 to 111.96 minutes. The five cases completing native controls range from 37.30 to 111.96 minutes. These exclude bootstrap, archive verification and publication. Short failed setup attempts do not estimate successful generation throughput.
 
 149 is an active unchanged source-only autonomous retry after148 provider cleanup failure.147 passed the executed-negative coverage guard; its conditional supplementary-probe role was not needed. Do not claim the supplementary role live-tested from plans or synthetic checks. No case-specific scientific edits or diagnostic hints are supplied to those fresh workers.
 
