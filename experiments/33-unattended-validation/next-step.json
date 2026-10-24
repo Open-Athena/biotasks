@@ -1,39 +1,50 @@
 {
-  "next_child_issue": 37,
-  "state": "queued; no resource allocation or runtime submission",
-  "task": "OHIF__Viewers-5996",
-  "repo": "OHIF/Viewers",
-  "base_commit": "dc204f639c157851713f067ca2433b2657ffd49b",
-  "head_commit": "b8e0741323c6e2b44a2cc96cf87df61da14cb730",
-  "f2p_tests": 26,
-  "p2p_tests": 1189,
-  "source_candidate_archive": "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/36/experiments/36-inline-cache-identity/inputs-private/candidate-tasks.tar.gz",
-  "source_candidate_archive_sha256": "d6d86fe2457f6c866bb56fb5dc6ea748cb56fdd812830458c6614d48fc4ea6d4",
-  "source_candidate_archive_bytes": 823195,
-  "source_hf_prefix": "research/36-inline-cache-identity/2026-10-24/65a3d817965c72734c4c2b7833bc3a76d7af847ff2d99d72bba58668cd84872a",
-  "source_research_commit": "8fb2a8c9",
-  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
-  "original_cohort_ledger_sha256": "19295d776ba31861e605da2da13c9e364ade163ed2ac778d7a39b81b8af0d302",
-  "settings": {
-    "harbor": "0.6.6",
-    "task_cpus": 1,
-    "memory_gib": 6,
-    "verifier_seconds": 300,
-    "nop_oracle": true,
-    "retries": 0,
-    "model_calls": 0,
-    "new_capacity": false
+  "next_child_issue": 38,
+  "state": "filed and queued; no runtime allocation or submission",
+  "question": "Manifest-driven validation of the frozen public exports without per-repository Codex edits",
+  "public_exports": 25,
+  "native_inline_tasks": 13,
+  "lookup_candidate_tasks": 12,
+  "restricted_matchms_excluded": 58,
+  "source_issues": [
+    35,
+    36,
+    37
+  ],
+  "known_failure_reference": {
+    "child": 37,
+    "hf_prefix": "research/37-ohif-inline-runtime/2026-10-24/e058f9783c64b5148aae5f1f4392a3e7a3a0a670595bb29046d16c147c7f2316",
+    "archive_sha256": "a1fb358c4d1ec430e9919f459e15917d9bda5f70722507d4c78a973e4d3b592e",
+    "measured_tasks": [
+      "OHIF__Viewers-5996"
+    ],
+    "shared_bootstrap_tasks": 12,
+    "policy": "Import the sealed failure for its recorded environment and mark family not attempted; do not repeat builds or fabricate twelve measured failures"
   },
   "requirements": [
-    "Extract only the selected task and verify all files against #36 candidate inventory",
-    "Admit bounded runtime/cleanup reservation in epic ledger before submission",
-    "Exclude original OHIF and prior comparison workers; verify original image refs absent",
-    "One native recipe build; preserve first failure and skip controls if it cannot build",
-    "Language-neutral read-only provenance capture; do not require pip or Python under /usr/local/bin in Node image",
-    "No additional tooling install, bootstrap replay repair, task or timeout changes",
-    "Use reviewed append-only archive/readback and owned cleanup; keep children open for review"
+    "Inspect existing stage runner and native preparation/control interfaces before adding code",
+    "Freeze all task descriptors/lineage and separate native baseline from explicit lookup candidate",
+    "No per-task source, installation, verifier, timeout or oracle changes",
+    "One unattended invocation: admission, fixed-handle submission, observation, original conditional controls, archive/readback and owned cleanup",
+    "Test real controller restart without duplicate work and negative/unknown state paths",
+    "No new model calls or capacity; two serial native-family jobs only after separate admission"
   ],
-  "current_epic_allocated_cpu_hours": 4.715986666414473,
+  "proposed_resource_caps": {
+    "cpus": 2,
+    "memory_gib": 12,
+    "disk_gib": 24,
+    "controller_cpus": 0.5,
+    "build_cpus": 1.5,
+    "build_memory_gib": 6,
+    "task_cpus": 1,
+    "task_memory_gib": 6,
+    "task_verifier_seconds": 300,
+    "cobrapy_max_cpu_hours": 14,
+    "scanpy_max_cpu_hours": 3,
+    "emergency_cleanup_per_family_cpu_hours": 0.16666666666666666
+  },
+  "current_epic_allocated_cpu_hours": 4.785482221974267,
   "current_cpu_reservations": 0,
+  "epic_ceiling_cpu_hours": 32,
   "paid_model_execution_enabled": false
 }
