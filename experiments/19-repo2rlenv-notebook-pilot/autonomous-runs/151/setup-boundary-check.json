@@ -1,0 +1,116 @@
+{
+  "observed_at": "2026-10-24T18:35:06.081769+00:00",
+  "campaign": 151,
+  "source_claim_sha256": "d52bacf0a92e99f36e2cbb50a09fd50ad9034c2600751715070169b067e607ff",
+  "source_prefix": "s3://marin-us-east-02a/marin/evals/biotasks19/20261024-panel034/biotasks19-autonomous-panel-151/stages/setup/reference-setup/",
+  "source_stage_manifest_sha256": "9a2d8024468d73db8ffef5c89ac1a3aa503b2583c18f2264b553a67f17ee98d0",
+  "selected_files": [
+    {
+      "path": "outcome.json",
+      "bytes": 4432,
+      "sha256": "a0af69a683463e5d8608a17b945b7b67f7ffacfe3c342e15d644aa6e3cbe4573",
+      "mode": 384
+    },
+    {
+      "path": "result.json",
+      "bytes": 1133,
+      "sha256": "10545c2f709344d9f2de4ee69006173b2f1fb3623648ce02779f7ba72ea1ae29",
+      "mode": 384
+    },
+    {
+      "path": "setup/trials/2/candidate/dependency-exclusions.json",
+      "bytes": 1004,
+      "sha256": "af4ee1457842a4e62259211088b1cceb0ac69ab68d1f7d37cc24dfe90ba29cbb",
+      "mode": 420
+    },
+    {
+      "path": "setup/trials/1/result.json",
+      "bytes": 19681,
+      "sha256": "f8e7e87f099e20a48846f39102beb9b74e10fa5927ab6fde36b53d46ae0b9f5d",
+      "mode": 384
+    },
+    {
+      "path": "setup/trials/1/dependency-exclusions-applied.json",
+      "bytes": 51,
+      "sha256": "fb7d092cdbf8b106d9d9387e5cebd8eff6395c6c5d9a580f30970cc7f0612dc8",
+      "mode": 420
+    },
+    {
+      "path": "setup/trials/1/dependency-assets-summary.json",
+      "bytes": 12443,
+      "sha256": "a69d76d9c675dbc492c2c7a0f6df2c28c9990093565c36104a87198fd3e376b2",
+      "mode": 384
+    },
+    {
+      "path": "setup/trials/2/result.json",
+      "bytes": 18818,
+      "sha256": "702f588720da1f1d3df2382e609eb1d7c325cce18d103e678d7933f95ec33b2d",
+      "mode": 384
+    },
+    {
+      "path": "setup/trials/2/dependency-exclusions-applied.json",
+      "bytes": 244,
+      "sha256": "894141fb0f13ca86437533928d1203325538442c5d2212e373da696ed5cc3194",
+      "mode": 420
+    },
+    {
+      "path": "setup/trials/2/dependency-assets-summary.json",
+      "bytes": 12068,
+      "sha256": "a03afd39da85c16985bde6fd75c2674f9cc10fe9360cba141c3e03fc3241117e",
+      "mode": 384
+    }
+  ],
+  "all_selected_files_independently_download_hash_size_mode_verified": true,
+  "whole_stage_archive_verified": false,
+  "whole_campaign_complete": false,
+  "source_import_hint_observed_in_initial_actual_environment": {
+    "bytes": 20062,
+    "distribution": "MDAnalysisTests",
+    "eligible_for_declared_removal": true,
+    "matches": [],
+    "packaged_test_or_example": true,
+    "path": "MDAnalysisTests/analysis/test_rms.py",
+    "sha256": "2ec2810df7ff0141dc5b14fb1b91b7b7f294ebafcd30fa58b901115de2f8f60e",
+    "source_import_matches": [
+      "rms"
+    ]
+  },
+  "glm_declared_exclusions": {
+    "files": [
+      {
+        "distribution": "MDAnalysisTests",
+        "path": "MDAnalysisTests/analysis/test_rms.py",
+        "sha256": "2ec2810df7ff0141dc5b14fb1b91b7b7f294ebafcd30fa58b901115de2f8f60e",
+        "reason": "This packaged unit-test module for MDAnalysis.analysis.rms encodes expected RMSD values for the exact same AdK inputs used by this analysis (adk.psf + adk_dims.dcd via MDAnalysisTests.datafiles PSF/DCD). Its embedded reference constants directly match the exported scientific answers: 'correct_values' fixture value 4.68953 at line 179 equals mass_weighted_rmsd.csv frame 49 C-alpha RMSD 4.689532149658401, and 'single_frame' value 0.91544906 at line 249 equals mass_weighted_rmsd.csv frame 5 C-alpha RMSD 0.9154490678430646 (both computed by rms.RMSD(u, u, select='protein and name CA', weights='mass') / select='name CA' with step/single-frame sampling on the same trajectory). The module is packaged test code, never imported by the analysis (verified: imports MDAnalysisTests.datafiles)."
+      }
+    ]
+  },
+  "second_test_applied_exclusions": {
+    "files": [
+      {
+        "distribution": "MDAnalysisTests",
+        "path": "MDAnalysisTests/analysis/test_rms.py",
+        "sha256": "2ec2810df7ff0141dc5b14fb1b91b7b7f294ebafcd30fa58b901115de2f8f60e"
+      }
+    ],
+    "excluded_files_absent": true
+  },
+  "scope": "Selected original completed setup records, not whole-campaign scientific/native qualification. GLM declared the removal; this readback changes no task or environment and executes no science.",
+  "new_model_calls_jobs_sandboxes": 0,
+  "verification_scope": "Nine selected files from the original completed setup-stage export, independently hash/size/mode verified. Not the whole stage or whole campaign archive.",
+  "full_scientific_contract_qualified": false,
+  "native_trials_executed_from_this_evidence": false,
+  "first_reference_exit_code": 0,
+  "second_reference_exit_code": 0,
+  "reference_elapsed_seconds": [
+    4.331127405166626,
+    4.678441524505615
+  ],
+  "export_artifact_inventories_and_hashes_equal_across_tests": true,
+  "last_passing_reference_test": 2,
+  "last_passing_source_changed": false,
+  "installed_mdanalysis_version": "2.11.0",
+  "earlier149_installed_mdanalysis_version": "2.8.0",
+  "cross_run_causal_comparison": false,
+  "retained_limitations": "This proves the declared removal and successful retest of the initial exported endpoints. Complete task endpoint coverage, recovered endpoints, final solver-image answer isolation, scientific grading, native trials, rights review and publication remain unverified."
+}

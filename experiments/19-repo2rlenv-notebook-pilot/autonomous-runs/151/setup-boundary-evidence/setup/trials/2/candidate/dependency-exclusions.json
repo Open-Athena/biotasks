@@ -1,0 +1,8 @@
+{"files": [
+  {
+    "distribution": "MDAnalysisTests",
+    "path": "MDAnalysisTests/analysis/test_rms.py",
+    "sha256": "2ec2810df7ff0141dc5b14fb1b91b7b7f294ebafcd30fa58b901115de2f8f60e",
+    "reason": "This packaged unit-test module for MDAnalysis.analysis.rms encodes expected RMSD values for the exact same AdK inputs used by this analysis (adk.psf + adk_dims.dcd via MDAnalysisTests.datafiles PSF/DCD). Its embedded reference constants directly match the exported scientific answers: 'correct_values' fixture value 4.68953 at line 179 equals mass_weighted_rmsd.csv frame 49 C-alpha RMSD 4.689532149658401, and 'single_frame' value 0.91544906 at line 249 equals mass_weighted_rmsd.csv frame 5 C-alpha RMSD 0.9154490678430646 (both computed by rms.RMSD(u, u, select='protein and name CA', weights='mass') / select='name CA' with step/single-frame sampling on the same trajectory). The module is packaged test code, never imported by the analysis (verified: imports MDAnalysisTests.datafiles)."
+  }
+]}
