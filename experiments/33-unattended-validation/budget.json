@@ -10,7 +10,7 @@
   "admission_rule": "Before enabling paid model execution, verify model pricing and maximum request cost; atomically reserve a conservative bound, then reconcile provider-reported actual usage. Stop if accrued cost plus outstanding reservations plus the proposed bound exceeds 90 USD or cost is unknown.",
   "per_repository_settings": "Preserve official bootstrap settings: Sonnet 4.6 through OpenRouter, temperature 0.2, 2048 output-token cap, 20 calls, 5 USD estimated repository stop threshold; global admission remains required.",
   "additional_reserved_cpu_hour_ceiling": 32,
-  "additional_allocated_cpu_hours": 6.127669444216623,
+  "additional_allocated_cpu_hours": 6.13202833308114,
   "new_paid_capacity_allowed": false,
   "events": [
     {
@@ -170,7 +170,8 @@
       "child_issue": 41,
       "maximum_allocated_cpu_hours": 1,
       "new_paid_capacity": false,
-      "state": "reserved before submission"
+      "state": "terminal reconciled",
+      "actual_allocated_cpu_hours": 0.004358888864517212
     },
     {
       "kind": "reserved_cpu_admission",
@@ -178,9 +179,27 @@
       "child_issue": 41,
       "maximum_allocated_cpu_hours": 0.16666666666666666,
       "new_paid_capacity": false,
+      "state": "released unused",
+      "reason": "Primary cleanup or bound no-creation proof verified; no cleanup attempt submitted",
+      "proof_sha256": "2c2fb648541bbd1ff1efd64dca521916429ce6d04854bc3b0e1d4f9321f8c5e4"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks41-cancel-e206de2c48",
+      "child_issue": 41,
+      "maximum_allocated_cpu_hours": 0.9956411111354828,
+      "new_paid_capacity": false,
+      "state": "reserved before submission"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks41-cancel-e206de2c48-cleanup",
+      "child_issue": 41,
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
       "state": "reserved before submission"
     }
   ],
-  "outstanding_cpu_hour_reservations": 1.1666666666666667,
+  "outstanding_cpu_hour_reservations": 1.1623077778021496,
   "cpu_accounting_rule": "Sum terminal admission actuals and still-reserved admission maxima; normalize floating subtraction residue by recomputation."
 }
