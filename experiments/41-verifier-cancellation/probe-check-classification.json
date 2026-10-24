@@ -1,0 +1,10 @@
+{
+  "workload": "Entire bounded four-check fixture preflight",
+  "classification": "lightweight",
+  "estimated_peak_memory_mib": 100,
+  "estimated_cpu_seconds_below": 0.5,
+  "expected_writer_bytes_about": 20480,
+  "expected_wall_seconds_about": 2,
+  "rationale": "One small writer sleeps between 1 KiB writes, plus tiny in-memory detection/policy checks and a 1.2 MiB payload digest. No intensive CPU/memory/I/O workload; no split or remote displacement to bypass the heavy lock.",
+  "heavy_lock_required": false
+}
