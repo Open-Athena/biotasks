@@ -1,9 +1,9 @@
 {
   "next_child_issue": 41,
-  "state": "Source-first Harbor timeout/retry/log-integrity diagnosis; no runtime admission",
+  "state": "Pinned Harbor source and three fake-process checks passed; native fixture generation/verification next, no runtime admission",
   "question": "Do verifier processes stop on client timeout and do retries preserve reliable logs?",
-  "source_checkpoint": "def4065d",
-  "source_plan": "https://github.com/Open-Athena/biotasks/blob/def4065d/experiments/41-verifier-cancellation/source-plan.json",
+  "source_checkpoint": "b1720830",
+  "source_plan": "https://github.com/Open-Athena/biotasks/blob/b1720830/experiments/41-verifier-cancellation/source-plan.json",
   "completed_predecessor": {
     "issue": 40,
     "checkpoint": "1b69450e",
@@ -39,5 +39,15 @@
   "epic_ceiling_cpu_hours": 32,
   "paid_model_execution_enabled": false,
   "new_paid_capacity_allowed": false,
-  "existing_storage_reservation_unreconciled_usd": 10
+  "existing_storage_reservation_unreconciled_usd": 10,
+  "source_findings": {
+    "harbor_version": "0.6.6",
+    "wheel_sha256": "30477bf698d6853d6c4bb76d85aec85e1e95190ad3a6e4bf4730435926007652",
+    "source_files_verified": 203,
+    "checks_passed": 3,
+    "transport": "fake",
+    "native_docker_executed": false,
+    "historical_cause_proven": false
+  },
+  "fixture_design": "https://github.com/Open-Athena/biotasks/blob/b1720830/experiments/41-verifier-cancellation/runtime-design.md"
 }
