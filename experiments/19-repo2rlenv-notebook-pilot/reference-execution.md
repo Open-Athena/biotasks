@@ -231,3 +231,29 @@ no failed scientific challenge is silently replaced. Source, data, reference and
 scientific computations remain fixed. A remaining defect is a rejection; no second
 quality iteration or deadline reset is implied. Original candidates and failures
 remain separate from the derived revision.
+
+### Failure evidence transport
+
+The scientific worker normally exports each original file and writes its final
+manifest only after download verification. Case129 reached its campaign deadline
+while uploading thousands of files, so its surviving objects and three earlier
+stage manifests were recoverable but the whole scientific archive had no final
+seal. That remains an incomplete archival outcome, despite independently verified
+resource cleanup.
+
+The outer Iris launcher now has a failure-only backup: after its child has
+stopped, it packages the unchanged autonomous working directory, preserving file
+bytes and modes in a gzip tar plus a per-file manifest. It reuses the normal
+credential scan, streaming upload, complete download hash check and transport
+seal. Files containing a configured credential, symlinks or concurrent changes
+prevent a sealed backup. This runs only inside the existing cleanup allowance,
+reserving its last fifth for the smaller original diagnostic export. It does not
+extend model/scientific time, repeat any analysis or change the scientific result.
+A transport failure is recorded separately from the original pipeline error.
+
+For the remaining frozen cohort payloads, apply this **only to the outer
+`bootstrap.py`** and record a separate launcher freeze. Preserve the original
+payload and all198scientific-worker files/prompts, configuration and seed bytes.
+Do not claim whole-launcher identity across this variation. The offline transport
+check over2,272recovered files is a scale check of the backup mechanism, not a
+recovery of absent originals or live proof of remote storage reliability.

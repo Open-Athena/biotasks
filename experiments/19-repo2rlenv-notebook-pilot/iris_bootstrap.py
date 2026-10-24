@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import runpy
 import select
 import shutil
@@ -211,6 +212,117 @@ def export_on_host(root, prefix, *, deadline, log=None):
             print("Evidence export stalled; retrying once with a fresh storage client.", flush=True)
 
 
+def snapshot(root, prefix):
+    """Archive quiescent original evidence using few storage operations.
+
+    Individual scientific workers and their normal per-file exports are unchanged.
+    This transport is only a backup after the supervisor has stopped its child.
+    """
+    secrets = [os.environ[key].encode() for key in CREDENTIAL_ENV_NAMES if os.environ.get(key)]
+    overlap = max(map(len, secrets), default=0)
+    paths = []
+    for path in sorted(root.rglob("*")):
+        if path.is_symlink():
+            raise ValueError("Do not follow artifact symlinks")
+        if path.is_file():
+            paths.append(path)
+
+    class Reader:
+        def __init__(self, source):
+            self.source = source
+            self.digest = hashlib.sha256()
+            self.count = 0
+            self.tail = b""
+
+        def read(self, size):
+            chunk = self.source.read(size)
+            combined = self.tail + chunk
+            if any(secret in combined for secret in secrets):
+                raise ValueError("Credential detected in evidence; export requires redaction")
+            self.tail = combined[-overlap:] if overlap else b""
+            self.digest.update(chunk)
+            self.count += len(chunk)
+            export_progress()
+            return chunk
+
+    with tempfile.TemporaryDirectory(prefix="biotasks-evidence-snapshot-") as temporary:
+        output = Path(temporary)
+        receipts = []
+        with tarfile.open(output / "evidence.tar.gz", "w:gz", compresslevel=1) as archive:
+            for path in paths:
+                before = path.stat()
+                relative = path.relative_to(root).as_posix()
+                info = tarfile.TarInfo("files/" + relative)
+                info.size, info.mode = before.st_size, before.st_mode & 0o777
+                with path.open("rb") as source:
+                    reader = Reader(source)
+                    archive.addfile(info, reader)
+                    if source.read(1) or reader.count != before.st_size:
+                        raise ValueError("Evidence changed while creating snapshot")
+                after = path.stat()
+                changed = any(
+                    getattr(before, field) != getattr(after, field)
+                    for field in ("st_ino", "st_dev", "st_size", "st_mtime_ns", "st_mode")
+                )
+                if changed or digest(path) != reader.digest.hexdigest():
+                    raise ValueError("Evidence changed while creating snapshot")
+                receipts.append(
+                    dict(
+                        path=relative,
+                        sha256=reader.digest.hexdigest(),
+                        bytes=info.size,
+                        mode=info.mode,
+                    )
+                )
+        (output / "snapshot-files.json").write_text(
+            json.dumps({"files": receipts, "source_quiescent": True}, indent=2)
+        )
+        # Reuse the streaming credential guard, upload, full download hash check
+        # and final transport seal. A failed upload never writes that final seal.
+        export(output, prefix)
+
+
+def export_failure_snapshot(
+    inputs,
+    configuration,
+    evidence,
+    *,
+    deadline,
+    source_root=Path("/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/autonomous-work"),
+):
+    """Best-effort original-file backup; reserve final diagnostics within cleanup."""
+    if configuration.get("entrypoint") != "run_autonomous.py":
+        return
+    campaign = configuration["campaign"]
+    if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,55}", campaign):
+        raise ValueError("Invalid snapshot campaign")
+    source = source_root / campaign
+    if not source.is_dir():
+        return
+    # No extension: model/scientific work has already stopped. Keep the last
+    # fifth of the remaining cleanup allowance for the small diagnostic export.
+    snapshot_deadline = deadline - max(0, deadline - time.time()) * 0.2
+    status = json.loads((evidence / "bootstrap-status.json").read_text())
+    try:
+        command(
+            [
+                sys.executable,
+                str(inputs / "bootstrap.py"),
+                "--snapshot",
+                str(source),
+                os.environ["BIOTASKS_ARTIFACT_PREFIX"].rstrip("/") + "/autonomous-snapshot",
+            ],
+            cwd=inputs,
+            deadline=snapshot_deadline,
+            log=evidence / "snapshot.log",
+        )
+        status["failure_snapshot_download_checked"] = True
+    except Exception as error:
+        status["failure_snapshot_error_type"] = type(error).__name__
+    finally:
+        (evidence / "bootstrap-status.json").write_text(json.dumps(status, indent=2))
+
+
 def export_final_evidence(evidence, inputs, *, deadline):
     """Keep the active transport log outside the snapshot; always emit diagnostics."""
     try:
@@ -410,11 +522,15 @@ def main():
     finally:
         status["finished"] = time.time()
         (evidence / "bootstrap-status.json").write_text(json.dumps(status, indent=2))
+        if not status["completed"]:
+            export_failure_snapshot(inputs, configuration, evidence, deadline=cleanup_deadline)
         export_final_evidence(evidence, inputs, deadline=cleanup_deadline)
 
 
 if __name__ == "__main__":
     if len(sys.argv) == 4 and sys.argv[1] == "--export":
         export(Path(sys.argv[2]), sys.argv[3])
+    elif len(sys.argv) == 4 and sys.argv[1] == "--snapshot":
+        snapshot(Path(sys.argv[2]), sys.argv[3])
     else:
         main()
