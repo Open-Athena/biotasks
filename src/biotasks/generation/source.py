@@ -178,6 +178,8 @@ def acquire(
         )
         stage.mkdir(parents=True, mode=0o700)
         expected, writer = specification()
+        archive_input = str(archive.resolve()) if archive is not None else URL
+        dependency_input = str(dependency.resolve()) if dependency is not None else writer["source"]
         if archive is None:
             archive = stage / "source.tar.gz"
             _download(URL, archive, 20 * 1024**2)
@@ -194,7 +196,9 @@ def acquire(
         write_json(stage / "source-manifest.json", acquired)
         receipt = {
             "revision": UPSTREAM,
-            "source_url": URL,
+            "source_reference_url": URL,
+            "archive_input": archive_input,
+            "dependency_input": dependency_input,
             "archive_sha256": sha(archive),
             "archive_bytes": archive.stat().st_size,
             "reference_manifest_sha256": content_sha(

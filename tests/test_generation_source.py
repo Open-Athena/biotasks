@@ -60,6 +60,8 @@ def test_source_and_dependency_acquired_without_execution_and_resume_is_inert(ac
     archive, writer, output = acquired
     result = source.acquire(output, archive=archive, dependency=writer)
     assert not result["package_executed"] and result["model_calls"] == result["remote_jobs"] == 0
+    assert result["archive_input"] == str(archive.resolve())
+    assert result["dependency_input"] == str(writer.resolve())
     before = inventory(output)
     assert source.acquire(output) == result
     assert inventory(output) == before
