@@ -1012,7 +1012,7 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
     import run_reference_setup as runner
 
     events = []
-    fixture = prepared()
+    fixture = replace(prepared(), baseline="result = 1\noriginal_measurement(result)\n")
     fixture.context.update(
         limits={
             "gpu": False,
@@ -1059,6 +1059,11 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
     monkeypatch.setattr(runner, "Remote", remote)
 
     async def failed_stage(**kwargs):
+        original = kwargs["context"]["source_operations"]
+        assert original["source_sha256"] == hashlib.sha256(fixture.baseline.encode()).hexdigest()
+        assert [call["source"] for call in original["operations"]] == [
+            "original_measurement(result)"
+        ]
         if setup_exhausted:
             session = kwargs["validate"].__self__
             session.setup_remaining = -30.18

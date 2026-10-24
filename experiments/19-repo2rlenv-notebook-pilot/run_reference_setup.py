@@ -584,8 +584,10 @@ async def run(
                 )
                 await session.initialize()
                 from reference_setup import import_inventory
+                from source_operations import operation_inventory
 
                 context = {
+                    "source_operations": operation_inventory(prepared.baseline),
                     "source_imports": {
                         "analysis": import_inventory(prepared.baseline),
                         "exports": import_inventory(prepared.exports),

@@ -57,6 +57,14 @@ streaming all rows, arrays or mismatches into the conversation.
   clear the rest of the catalog. Limit negative claims to the content actually
   inspected, rather than inferring safety from filenames alone.
   Review against the whole original analysis, not only the initial export files.
+  `source_operations` lists the original source's literal call sites, with their
+  arguments and locations. Use it to check scientific computations whose values
+  are not in the initial exports, including overwritten or unnamed results.
+  The inventory is static evidence, not an execution trace or a classification
+  of scientific eligibility. A fixture's disagreement with one exported analysis
+  does not clear it against another source computation. Account for relevant
+  source-call identities and input/selection/reference-state differences in your
+  dependency-asset review.
   Preparation can save only surviving named results; construction may later
   recover other scientific endpoints from unchanged source computations. Inspect
   fixtures linked to those original computations and inputs too, even when no

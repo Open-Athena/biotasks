@@ -113,9 +113,18 @@ Independently executed outputs are a comparison attempt, not a second oracle.
 Successful execution proves neither scientific correctness nor agreement with the
 public question. Diagnose disagreements against the stated task, source evidence
 and inspected data. Do not broaden acceptance or change entity identity merely to
-make that control pass. If the independent program or the public contract needs
-repair beyond this grader stage, return `disposition: blocked` with the specific
-reason. The controller cannot repair those scientific artifacts for you.
+make that control pass. `disposition: ready` means a complete executable grader
+candidate for controller checks, not scientific approval of the task. If a
+defensible comparator can be constructed from the source/reference evidence,
+submit that candidate even when it exposes a disagreement with the independent
+program or public question. Explain the disagreement in the rationale and let
+the controller run its controls. A recorded independent-comparison conflict
+stops acceptance and can use the existing single quality-repair diagnosis;
+do not widen tolerances or change the grader to make that control pass.
+This stage cannot change the question, reference, scientific methods or inputs.
+Return `disposition: blocked` when the evidence cannot support a defensible
+comparator or another unresolved defect prevents constructing one. Explain that
+specific limitation, rather than treating candidate readiness as task acceptance.
 
 An equivalence rule must account for every accepted record and value. Retaining
 correct answers while appending unsupported values is not a valid alternative.
