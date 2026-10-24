@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -eu
 experiment=$(cd "$(dirname "$0")" && pwd)
-logs=$experiment/local-checks/fixture-001
+probe_id=${1:-001}
+case "$probe_id" in *[!0-9]*|'') exit 2 ;; esac
+test "${#probe_id}" -eq 3
+logs=$experiment/local-checks/fixture-$probe_id
 mkdir -p "$experiment/local-checks"
 mkdir "$logs"
 exec 9>/tmp/exe-codex-local-heavy.lock
@@ -21,33 +24,33 @@ set +e
 /usr/bin/time -v -o "$logs/resources.txt" nice -n 10 ionice -c 2 -n 7 timeout 120 bash -c '
 set -eu
 experiment=$1
-python -B "$experiment/prepare_fixture.py"
-fixture=$experiment/inputs-private/local-probe-001
+probe_id=$2
+python -B "$experiment/prepare_fixture.py" --id "$probe_id"
+fixture=$experiment/inputs-private/local-probe-$probe_id
 export TMPDIR="$fixture/tmp"
 for project in release companion; do
     (cd "$fixture/$project" && uv build --offline --no-sources --wheel --out-dir "$fixture/wheels")
 done
 uv venv --python "$experiment/../../../pipeline54/.venv/bin/python" "$fixture/venv"
 target_python=$fixture/venv/bin/python
-uv pip install --offline --python "$target_python" uv_build==0.12.21
 controller_python=/home/exedev/miniforge3/bin/python3.13
-"$controller_python" -m pip --python "$target_python" --version > "$experiment/fixture-pip-version.txt"
+"$controller_python" -m pip --python "$target_python" --version > "$experiment/fixture-pip-version-$probe_id.txt"
 "$controller_python" -m pip --python "$target_python" install --no-index --no-build-isolation --no-deps -e "$fixture/checkout"
-"$target_python" -B "$experiment/collect.py" --checkout "$fixture/checkout" --project biotasks56-target --module biotasks56_target > "$experiment/editable-report.json"
+"$target_python" -B "$experiment/collect.py" --checkout "$fixture/checkout" --project biotasks56-target --module biotasks56_target > "$experiment/editable-report-$probe_id.json"
 "$controller_python" -m pip --python "$target_python" install --no-index --find-links "$fixture/wheels" "$fixture/wheels/biotasks56_companion-1.0.0-py3-none-any.whl"
-"$target_python" -B "$experiment/collect.py" --checkout "$fixture/checkout" --project biotasks56-target --module biotasks56_target > "$experiment/replaced-report.json"
-python - <<'"'"'PY'"'"' "$experiment"
+"$target_python" -B "$experiment/collect.py" --checkout "$fixture/checkout" --project biotasks56-target --module biotasks56_target > "$experiment/replaced-report-$probe_id.json"
+python - <<'"'"'PY'"'"' "$experiment" "$probe_id"
 import json,sys
 from pathlib import Path
 p=Path(sys.argv[1])
-a=json.loads((p/'"'"'editable-report.json'"'"').read_text())
-b=json.loads((p/'"'"'replaced-report.json'"'"').read_text())
+a=json.loads((p/('"'"'editable-report-'"'"'+sys.argv[2]+'"'"'.json'"'"')).read_text())
+b=json.loads((p/('"'"'replaced-report-'"'"'+sys.argv[2]+'"'"'.json'"'"')).read_text())
 assert a['"'"'binding'"'"']=='"'"'checkout'"'"' and a['"'"'distribution'"'"']['"'"'version'"'"']=='"'"'0.0.0'"'"'
 assert b['"'"'binding'"'"']=='"'"'foreign'"'"' and b['"'"'distribution'"'"']['"'"'version'"'"']=='"'"'1.0.0'"'"'
 assert a['"'"'distribution'"'"']['"'"'direct_url'"'"']['"'"'dir_info'"'"']['"'"'editable'"'"'] is True
 print({'"'"'synthetic_actual_pip_mechanism_demonstrated'"'"':True,'"'"'anndata_mechanism_proven'"'"':False,'"'"'new_model_native_calls'"'"':0})
 PY
-' check "$experiment" > "$logs/output.txt" 2>&1
+' check "$experiment" "$probe_id" > "$logs/output.txt" 2>&1
 status=$?
 date -u +%FT%TZ > "$logs/end.txt"
 printf '%s\n' "$status" > "$logs/exit.txt"
