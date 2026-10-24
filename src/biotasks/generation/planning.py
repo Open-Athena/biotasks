@@ -412,6 +412,7 @@ def advance(path, output, *, allow_generation=False, allow_validation=False):
     runtime, finish, _ = adapter(manifest)
     from biotasks.generation import native
     from biotasks.generation.manifest_handoff import prepare_handoff
+    from biotasks.generation.scheduling import waiting
     from biotasks.validation import controller
 
     with lock(output / "advance.lock"):
@@ -441,7 +442,12 @@ def advance(path, output, *, allow_generation=False, allow_validation=False):
                     }
                 state = runtime.run(generation, once=True)
                 if state["state"] != "complete":
-                    return {"state": state["state"], "case": case["id"], "results": results}
+                    return {
+                        "state": state["state"],
+                        "case": case["id"],
+                        "results": results,
+                        "wait": waiting(generation / "runs/generation", state["state"]),
+                    }
             ready = finish.generation_ready(generation)
             if ready["state"] != "ready":
                 return {"state": ready["state"], "case": case["id"], "results": results}
@@ -477,7 +483,12 @@ def advance(path, output, *, allow_generation=False, allow_validation=False):
                 )
                 continue
             if state["state"] != "complete":
-                return {"state": state["state"], "case": case["id"], "results": results}
+                return {
+                    "state": state["state"],
+                    "case": case["id"],
+                    "results": results,
+                    "wait": state.get("wait", True),
+                }
             from biotasks.generation.outcomes import summarize
 
             results.append(

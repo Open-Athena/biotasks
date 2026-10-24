@@ -174,6 +174,43 @@ def test_native_budget_hold_is_preserved_after_regular_cleanup(lifecycle):
     assert calls == ["first"]
 
 
+@pytest.mark.parametrize("ready", [False, True])
+def test_native_wait_hint_tracks_original_stage_evidence(lifecycle, monkeypatch, ready):
+    validation, held, _, calls = lifecycle
+    held.unlink()
+
+    def observation(instance):
+        calls.append(instance.group["id"])
+        if ready:
+            write_json(
+                validation / "runs" / instance.group["id"] / "remote_terminal.json",
+                {"stage": "remote_terminal"},
+            )
+        return "recovering:remote_terminal"
+
+    monkeypatch.setattr(native.controller.Pipeline, "step", observation)
+    value = native.advance(validation)
+    assert value["state"] == "in_progress" and value["wait"] is (not ready)
+    assert calls == ["first"]
+
+
+@pytest.mark.parametrize("ready", [False, True])
+def test_retention_wait_hint_tracks_original_sidecar_stage(lifecycle, monkeypatch, ready):
+    validation, _, _, calls = lifecycle
+    output = native.retention_root(validation)
+    output.mkdir()
+    if ready:
+        write_json(output / "cases/first/cleanup_terminal.json", {"stage": "cleanup_terminal"})
+    monkeypatch.setattr(
+        actor,
+        "run",
+        lambda *a, **k: {"state": "recovering:cleanup_terminal", "task_id": "first", "results": []},
+    )
+    value = native.advance(validation)
+    assert value["state"] == "retaining" and value["wait"] is (not ready)
+    assert not calls
+
+
 def test_unsupported_hold_is_not_retention_completion_or_a_new_case(tmp_path, monkeypatch):
     original = tmp_path / "validation"
     original.mkdir()

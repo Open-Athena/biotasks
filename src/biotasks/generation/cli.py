@@ -205,4 +205,5 @@ def run(
         }:
             print(json.dumps(result, indent=2))
             return
-        time.sleep(300)
+        if result.get("wait") is not False:
+            time.sleep(300)
