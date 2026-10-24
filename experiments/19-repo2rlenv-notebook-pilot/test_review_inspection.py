@@ -62,6 +62,33 @@ def test_review_deadline_is_not_extended_by_inspection(tmp_path):
         asyncio.run(inspection.handlers["read_reference_file"](path="output.txt"))
 
 
+def test_input_samples_remain_bound_to_original_receipt_and_distinct_from_output(tmp_path):
+    from grading_session import source_input_observations
+
+    reference = tmp_path / "reference"
+    (reference / "trial").mkdir(parents=True)
+    path = reference / "trial/result.json"
+    samples = {"files": [{"sha256": "a" * 64, "input_preview": {"text": "row1\t12\n"}}]}
+    path.write_text(json.dumps({"input_observations": samples, "status": "reference_passed"}))
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    source = {"directory": reference, "hashes": {"trial/result.json": digest}}
+    observed = source_input_observations(source)
+    assert observed["status"] == "recorded" and observed["observations"] == samples
+    assert observed["source"]["sha256"] == digest
+    assert "not inferred schemas" in observed["scope"]
+    path.write_text(json.dumps({"input_observations": {"forged": True}}))
+    with pytest.raises(ValueError, match="identity changed"):
+        source_input_observations(source)
+
+
+def test_missing_input_samples_are_a_gap_not_a_schema_claim(tmp_path):
+    from grading_session import source_input_observations
+
+    observed = source_input_observations({"directory": tmp_path, "hashes": {}})
+    assert observed["status"] == "unavailable" and "observations" not in observed
+    assert "evidence gap" in observed["scope"]
+
+
 def test_new_autonomous_grading_enables_inspection_with_existing_bounds():
     from run_autonomous import Pipeline
 

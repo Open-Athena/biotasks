@@ -1,5 +1,6 @@
 """Pre-Harbor artifact grading through Tasksmith workers and the Daytona controller."""
 
+import hashlib
 import json
 import shlex
 import time
@@ -41,6 +42,31 @@ from biotasks.chat_author import ChatLimits
 from biotasks.inference_gate import Allowance, RequestLedger
 
 HERE = Path(__file__).parent
+
+
+def source_input_observations(snapshot):
+    """Forward controller-observed input samples, separately from worker claims."""
+    name = "trial/result.json"
+    expected = snapshot["hashes"].get(name)
+    result = {
+        "status": "unavailable",
+        "scope": (
+            "Recorded input-byte observations, not inferred schemas or full-file validation. "
+            "Missing samples are an evidence gap, not proof of input properties."
+        ),
+    }
+    if expected is not None:
+        raw = (snapshot["directory"] / name).read_bytes()
+        if hashlib.sha256(raw).hexdigest() != expected:
+            raise ValueError("Source input observation identity changed")
+        observations = json.loads(raw).get("input_observations")
+        result.update(
+            status="recorded" if observations is not None else "not_recorded",
+            source={"path": name, "sha256": expected},
+            observations=observations,
+        )
+    return result
+
 
 ISOLATION_PROBE = """import os
 from pathlib import Path
@@ -516,6 +542,7 @@ async def run_grading(
             )
         },
         "reference_observations": json.loads((reference / "output-audit.json").read_text()),
+        "input_observations": source_input_observations(snapshot),
         "repeatability": json.loads(
             (HERE / config["replay_directory"] / "result.json").read_text()
         ),

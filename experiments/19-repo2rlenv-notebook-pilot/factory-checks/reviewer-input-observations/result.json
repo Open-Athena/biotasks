@@ -1,0 +1,36 @@
+{
+  "recorded_at": "2026-10-24T09:28:09.119572+00:00",
+  "base_revision": "6f4e02fe",
+  "change": "Forward controller-recorded input observations from the original passing trial into grading/review context, with the original trial-result SHA checked before use. Keep samples distinct from output observations and worker claims. Absent observations are an explicit gap.",
+  "offline_verification": {
+    "passed": 134,
+    "pytest_seconds": 6.5,
+    "guarded_wall_seconds": 7.38,
+    "peak_rss_kib": 136680,
+    "junit_sha256": "edf447943327b09123f22c75f512a5944031541667914c1bfcfa3efeb87516b3",
+    "resource_report_sha256": "ce464c042dbf6d6080e64c1f346c01f9071ddcbc47f0e7cb0b6c769bc264c53d",
+    "ruff_check": "passed",
+    "ruff_format_check": "passed",
+    "coverage": [
+      "Initial and repair reviews receive the original input observation context.",
+      "Tampering with the original receipt prevents forwarding its changed contents.",
+      "Missing observations are not interpreted as data schemas or input guarantees.",
+      "Existing independent/probe/grader separation, control execution, review tools and autonomous terminal distinctions."
+    ]
+  },
+  "original_archive_readback": "archive-readback.json",
+  "source_sha256": {
+    "experiments/19-repo2rlenv-notebook-pilot/grading_session.py": "412d52665dda04b0a91444697bd9516982ea70ef8562ae6168c4cf6598c2dd60",
+    "experiments/19-repo2rlenv-notebook-pilot/test_review_inspection.py": "12d7032ab90416e9b02618154fe0a36cde8e7e0003675f60e465ab12222fe819",
+    "experiments/19-repo2rlenv-notebook-pilot/test_grading.py": "dc8a0a60ceab75b8687769eba09c804449258fb4338195171ca3e69ff693cc24",
+    "src/biotasks/prompts/notebook-grader-review.md": "ca4853ec5e8d889f89ef3b8694289aefbf7f82b86657926f8a6fa942a27f7c4a"
+  },
+  "prompt_change": "Require review of actual input parsing/population evidence; documenting an unsupported assumption in the public question is not a scientific justification. Sample prefixes do not establish full-file properties or final-output impact.",
+  "limits": [
+    "New model interpretation remains unvalidated.",
+    "No changes to original138task/source or native passes; source-population issue remains unresolved.",
+    "Current frozen campaigns keep original inputs, runtime and allowances."
+  ],
+  "live_model_validation": false,
+  "new_jobs_model_calls_or_sandboxes_for_checks": 0
+}

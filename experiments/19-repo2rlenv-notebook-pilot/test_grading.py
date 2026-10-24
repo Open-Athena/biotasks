@@ -895,6 +895,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         calls.append(name)
         if inspect_review and name in {"review", "review-repair"}:
             assert "package_inspection" in inputs and "reference_inspection" in inputs
+            assert inputs["input_observations"]["status"] == "recorded"
+            assert inputs["input_observations"]["observations"] == {"files": []}
             assert "execution_inspection" in inputs
             assert "search_execution_evidence" in kwargs["extra_handlers"]
             assert "read_execution_evidence" in kwargs["extra_handlers"]
@@ -1098,10 +1100,13 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         outputs.mkdir()
         (outputs / "value.txt").write_bytes(b"1")
         reference = HERE / config["reference_directory"]
+        (reference / "trial/result.json").write_text(
+            json.dumps({"input_observations": {"files": []}})
+        )
         inspection_snapshot = {
             "hashes": {
                 name: hashlib.sha256((reference / name).read_bytes()).hexdigest()
-                for name in ("trial/uv.lock", "trial/environment.txt")
+                for name in ("trial/uv.lock", "trial/environment.txt", "trial/result.json")
             },
             "restored_outputs_root": str(outputs),
             "outputs": [

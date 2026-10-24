@@ -145,6 +145,15 @@ for every scientific check. Repaired annotations require fresh execution of all
 controls; original failed records remain failures. A scientifically invalid probe
 script or an unsupported outcome correction remains a blocker for this repair path.
 
+Check input-parsing and population claims against supplied `input_observations`,
+not only output files or worker summaries. A source option does not establish
+that discarded records were metadata or that a selection has a scientific
+justification. Writing an unsupported source assumption into the public question
+does not resolve a source-fidelity defect. Report the observed contradiction or
+remaining uncertainty under the original scientific contract; do not edit source
+or require solvers to reproduce accidental data loss to make a task pass.
+Input samples do not establish full-file properties or the effect on final outputs.
+
 Distinguish executed effects from a script's self-reported diagnostics. A vacuous
 assertion or dead branch does not establish an effect, but the controller's actual
 before/after hashes and reports may establish it independently. Require accurate
