@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "issue": 41,
+  "epic": 33,
+  "baseline_main_commit": "2a1950d239f1ada467c35393991dac87debe35f7",
+  "question": "Does native verifier timeout/retry leave surviving writers or compromise output capture?",
+  "harbor_version": "0.6.6",
+  "package_hash": "not yet acquired",
+  "source_required": [
+    "Native verifier await/cancellation path",
+    "Docker compose exec cancellation and container lifetime",
+    "Default retry loop and result/log collection",
+    "Fixture and wrapper timeout/cancellation ownership"
+  ],
+  "predecessor": {
+    "issue": 40,
+    "checkpoint": "1b69450e",
+    "source_assessment_complete": true,
+    "hf_and_local_cleanup_verified": true
+  },
+  "observed_historical_trials": [
+    {
+      "agent": "nop",
+      "timeout_seconds": 300,
+      "exception_type": "VerifierTimeoutError",
+      "raw_log_path": "jobs/scanpy-controls/scverse__scanpy-4389-300s-nop/scverse__scanpy-4389__6HLwxCX/verifier/test_output.log",
+      "raw_log_sha256": "34fd0282c6624c76a284d625276abac3b9b9fffdbf482d3c7dccdf48bb10e02b",
+      "raw_log_bytes": 67854,
+      "raw_log_nul_bytes": 63659
+    },
+    {
+      "agent": "oracle",
+      "timeout_seconds": 300,
+      "exception_type": "VerifierTimeoutError",
+      "raw_log_path": "jobs/scanpy-controls/scverse__scanpy-4389-300s-oracle/scverse__scanpy-4389__xABE4a8/verifier/test_output.log",
+      "raw_log_sha256": "72b3b63185bc79adef9bce7769113ac99b16b7f268a4b96a4e88d12a096d85fd",
+      "raw_log_bytes": 68064,
+      "raw_log_nul_bytes": 63659
+    },
+    {
+      "agent": "nop",
+      "timeout_seconds": 1200,
+      "exception_type": "VerifierTimeoutError",
+      "raw_log_path": "jobs/scanpy-controls/scverse__scanpy-4389-1200s-nop/scverse__scanpy-4389__dnaKek6/verifier/test_output.log",
+      "raw_log_sha256": "ca55791eb0a934f8187234b8b0d17a39c57a5866bea6de87fc9e802f0322a6c2",
+      "raw_log_bytes": 91264,
+      "raw_log_nul_bytes": 3551
+    },
+    {
+      "agent": "oracle",
+      "timeout_seconds": 1200,
+      "exception_type": "VerifierTimeoutError",
+      "raw_log_path": "jobs/scanpy-controls/scverse__scanpy-4389-1200s-oracle/scverse__scanpy-4389__S6A8H7D/verifier/test_output.log",
+      "raw_log_sha256": "d25b9a7162808e4b855132cfd7dc7831dde57f1f99fd362ed0c65fb1135e0845",
+      "raw_log_bytes": 91264,
+      "raw_log_nul_bytes": 3318
+    }
+  ],
+  "hypothesis": "Residual writers after client timeout plus retry truncation; unproven. Other capture/copy causes remain possible.",
+  "conditions": [
+    "Audit exact pinned package source/checksum first",
+    "No original task/timeout/dependency/targeting changes",
+    "Only a separately declared no-model infrastructure fixture if native runtime evidence is needed",
+    "Record process/file identities and ordering before cleanup; never infer a cause from NUL holes alone",
+    "Checkpoint inputs/public eligibility and reserve the epic ledger before any submission",
+    "Fixed handle, one attempt, existing reserved worker only; archive/read back/clean owned resources"
+  ],
+  "proposed_resource_caps": {
+    "cpus": 2,
+    "memory_gib": 12,
+    "disk_gib": 8,
+    "maximum_cpu_hours": 1,
+    "emergency_cleanup_cpu_hours": 0.16666666666666666
+  },
+  "admission": {
+    "state": "not admitted",
+    "epic_cpu_ceiling": 32,
+    "model_calls_enabled": false,
+    "new_capacity_allowed": false
+  },
+  "scientific_scope": "Infrastructure diagnosis only; no new biological task, original-control recovery or solver score",
+  "retained_tmp_paths": []
+}
