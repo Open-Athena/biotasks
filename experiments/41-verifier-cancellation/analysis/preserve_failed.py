@@ -88,7 +88,9 @@ def prepare():
     write(tree / 'excluded-package-binaries.json', excluded)
     write(tree / 'disposition.json', proof)
     snapshot = DEST / 'snapshot'
-    (snapshot / 'evidence').mkdir(parents=True)
+    if snapshot.exists():
+        shutil.rmtree(snapshot)
+    (snapshot / 'evidence').mkdir(parents=True, exist_ok=True)
     archive_tree(tree, snapshot / 'evidence/failed-startup.tar.gz')
     write(snapshot / 'disposition.json', proof)
     files = []
