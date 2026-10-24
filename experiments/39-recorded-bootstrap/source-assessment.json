@@ -1,0 +1,133 @@
+{
+  "issue": 39,
+  "repo": "OHIF/Viewers",
+  "bootstrap_ref": "4965e280cada2202a99f9dd0212a8465865b49f7",
+  "actions": 18,
+  "original_invalid_actions_without_execution": 1,
+  "recorded_exit_codes": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "original_timeout_seconds": 300,
+  "source_phase_sha256": "324f865921439533867d507676baaa457a7200ae357ea4ac75750dc306a11836",
+  "source_transcript_sha256": "28c42ab4a5bebd6a97841239b8e24821b1eb478db785c8a998ee21c154a56bd8",
+  "source_bootstrap_sha256": "c53fe124a2e0b859e90c47c79ce54b221398fc3906253d96ef2dd7893960e82b",
+  "reconstruction_exactly_regenerated": true,
+  "actions_bytes_unchanged": true,
+  "original_checkout_COPY_required": true,
+  "recorded_base_tag": "node:22-slim",
+  "current_raw_phase_verified": true,
+  "inputs": [
+    {
+      "path": "inputs-private/native-baseline-task.tar.gz",
+      "bytes": 89054,
+      "sha256": "784087ccf675d592e31d1012439777c4800548e8805ffa5878582c850eaa49a0"
+    },
+    {
+      "path": "inputs-private/original-bootstrap.json",
+      "bytes": 2977,
+      "sha256": "c53fe124a2e0b859e90c47c79ce54b221398fc3906253d96ef2dd7893960e82b"
+    },
+    {
+      "path": "inputs-private/recorded-actions.json",
+      "bytes": 7580,
+      "sha256": "64fc31936710af94a03d83128e6fe65a0bf144c5cc13cb89beb08520dfa4fe4c"
+    }
+  ],
+  "previous_replay_evidence": {
+    "issue": 29,
+    "archive_sha256": "5a06cc2affd0decc127e6f31f11fafcc5cdff4b42896a14f36f6f47754d1bda5",
+    "control_archive_sha256": "1a37563bf72b86870034ac8427e355808171a4a8e94576d094c78fdde7d61c36",
+    "previous_control_tasks": [
+      "OHIF__Viewers-6334",
+      "OHIF__Viewers-6339",
+      "OHIF__Viewers-6346",
+      "OHIF__Viewers-6352"
+    ],
+    "selection_warning": "These historical four-task controls are not a fresh #5996 control pair or a current cold-worker result",
+    "raw_archive_independently_verified": true,
+    "action_count": 18,
+    "all_original_exits_matched": true,
+    "commands_edited": false,
+    "model_calls": 0,
+    "base_image_id": "sha256:58a96d9752cfedf3c4fcfcbe2dabbad725c147f7003caa9f7899a3f414ada3fc",
+    "smoke_passed": true,
+    "fresh_image_verify_passed": true,
+    "fresh_verify_detail": "exit=0; rn false for invalid DICOM UIDs\n\nTest Suites: 121 passed, 121 total\nTests:       1446 passed, 1446 total\nSnapshots:   0 total\nTime:        20.756 s, estimated 167 s\nRan all test suites in 9 projects.",
+    "image_id": "sha256:97437e1fef015e2767f7f27870ea72f0ec70b2e7db87996949b69ab8281ddc74",
+    "four_control_pairs_independently_parsed_from_raw_bytes": [
+      {
+        "task": "OHIF__Viewers-6334",
+        "complete_parseable_pair": true,
+        "positive_control_pair": true,
+        "clean_oracle_command": true,
+        "all_p2p_pass_both": true,
+        "expected_f2p": 6,
+        "expected_p2p": 1411
+      },
+      {
+        "task": "OHIF__Viewers-6339",
+        "complete_parseable_pair": true,
+        "positive_control_pair": true,
+        "clean_oracle_command": true,
+        "all_p2p_pass_both": true,
+        "expected_f2p": 3,
+        "expected_p2p": 1424
+      },
+      {
+        "task": "OHIF__Viewers-6346",
+        "complete_parseable_pair": true,
+        "positive_control_pair": true,
+        "clean_oracle_command": true,
+        "all_p2p_pass_both": true,
+        "expected_f2p": 5,
+        "expected_p2p": 1435
+      },
+      {
+        "task": "OHIF__Viewers-6352",
+        "complete_parseable_pair": true,
+        "positive_control_pair": true,
+        "clean_oracle_command": true,
+        "all_p2p_pass_both": true,
+        "expected_f2p": 2,
+        "expected_p2p": 1441
+      }
+    ]
+  },
+  "native_baseline": {
+    "issue": 37,
+    "task": "OHIF__Viewers-5996",
+    "exit_code": 127,
+    "controls": 0,
+    "failure": "pnpm: not found"
+  },
+  "candidate_runtime_executed": false,
+  "new_remote_cpu_reservations": 0,
+  "model_calls": 0,
+  "limits": [
+    "Original shell pipelines can mask failures; expected exit matching alone is not semantic success",
+    "Original replay used a mutable base tag and dependencies; new candidate must bind actual public base image and runtime identity",
+    "Action replay requires the complete pinned source checkout and original bash login-shell semantics",
+    "Candidate #5996 paired controls and post-cleanup artifact availability remain unproven"
+  ],
+  "same_public_base_image_verified": true,
+  "public_base_repo_digests": [
+    "node@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d"
+  ]
+}

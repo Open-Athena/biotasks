@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "issue": 39,
+  "baseline_main_commit": "2a1950d239f1ada467c35393991dac87debe35f7",
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "question": "Recorded bootstrap fidelity at the frozen standalone task boundary",
+  "repo": "OHIF/Viewers",
+  "task": "OHIF__Viewers-5996",
+  "bootstrap_ref": "4965e280cada2202a99f9dd0212a8465865b49f7",
+  "public_base_ref": "node@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d",
+  "expected_base_image_id": "sha256:58a96d9752cfedf3c4fcfcbe2dabbad725c147f7003caa9f7899a3f414ada3fc",
+  "original_task_identity": "3e2fefb6d0c5f69f6858a2263e74e7bceebe496fd879c833b8e149fca11ecdfe",
+  "native_prepared_identity": "b44dab7bf6a1a6881753b78c51b497b718bb5050c76ff394beade93f8f7e792c",
+  "expected_f2p": 26,
+  "expected_p2p": 1189,
+  "baseline_failure_archive_sha256": "a1fb358c4d1ec430e9919f459e15917d9bda5f70722507d4c78a973e4d3b592e",
+  "source_assessment_sha256": "93c1d61283fc15c4dc43f80e4d6dc63f3cdfa2d738731e4b1088d16656025fc8",
+  "candidate_interface": "Pending assessment; reuse existing replay and source checkout semantics before adapter changes",
+  "allowed_changes": [
+    "Explicit environment reconstruction procedure and provenance",
+    "Resource and ownership orchestration"
+  ],
+  "forbidden_changes": [
+    "Recorded command edits/additional dependency installation commands",
+    "Oracle, verifier, test, instruction or targeting changes",
+    "Additional LLM repair/generation calls"
+  ],
+  "task_contract": {
+    "cpus": 1,
+    "memory_gib": 6,
+    "verifier_seconds": 300
+  },
+  "proposed_scheduling": {
+    "cpus": 2,
+    "memory_gib": 12,
+    "disk_gib": 24,
+    "maximum_cpu_hours": 5,
+    "emergency_cleanup_cpu_hours": 0.16666666666666666
+  },
+  "admission": {
+    "state": "not admitted",
+    "required_predecessor": "#38 complete with verified HF archival and cleanup",
+    "epic_cpu_ceiling": 32,
+    "model_calls_enabled": false,
+    "new_capacity_allowed": false
+  },
+  "historical_controls_are_not_new_outcomes": true
+}
