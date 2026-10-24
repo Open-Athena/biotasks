@@ -1,0 +1,459 @@
+FFFFFFFFF................................                                [100%]
+=================================== FAILURES ===================================
+______ test_forwards_official_options_once_and_reuses_completed_snapshot _______
+
+listing = (PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_forwards_official_options0/native.json'), PosixPath('/tmp/pytest-of...official_options0/cache'), PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_forwards_official_options0/prs.json'), [])
+
+    def test_forwards_official_options_once_and_reuses_completed_snapshot(listing):
+        config, cache, output, calls = listing
+>       result = discovery.freeze(config, cache, output)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_generation_discovery.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/biotasks/generation/discovery.py:32: in freeze
+    resources.option_policy().accepts(options)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+src/biotasks/generation/resources.py:56: in option_policy
+    exec(compile(assets()["option_policy.py"], "bundled:option_policy.py", "exec"), module.__dict__)
+                 ^^^^^^^^
+src/biotasks/generation/resources.py:41: in assets
+    for name, raw in code_files().items()
+                     ^^^^^^^^^^^^
+src/biotasks/generation/resources.py:11: in code_files
+    root = files("biotasks.generation")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:46: in wrapper
+    return func(anchor)
+           ^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:56: in files
+    return from_package(resolve(anchor))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:116: in from_package
+    spec = wrap_spec(package)
+           ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+package = namespace(__file__='/tmp/pytest-of-exedev/pytest-1178/test_forwards_official_options0/cache/source/src/repo2rlenv/github.py', list_merged_prs=<function listing.<locals>.native at 0x7fc0faa5ad40>)
+
+    def wrap_spec(package):
+        """
+        Construct a package spec with traversable compatibility
+        on the spec/loader/reader.
+        """
+>       return SpecLoaderAdapter(package.__spec__, TraversableResourcesLoader)
+                                 ^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute '__spec__'. Did you mean: '__doc__'?
+
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_adapters.py:168: AttributeError
+_______ test_changed_completed_snapshot_does_not_trigger_another_listing _______
+
+listing = (PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_changed_completed_snapsho0/native.json'), PosixPath('/tmp/pytest-of...ompleted_snapsho0/cache'), PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_changed_completed_snapsho0/prs.json'), [])
+
+    def test_changed_completed_snapshot_does_not_trigger_another_listing(listing):
+        config, cache, output, calls = listing
+>       discovery.freeze(config, cache, output)
+
+tests/test_generation_discovery.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/biotasks/generation/discovery.py:32: in freeze
+    resources.option_policy().accepts(options)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+src/biotasks/generation/resources.py:56: in option_policy
+    exec(compile(assets()["option_policy.py"], "bundled:option_policy.py", "exec"), module.__dict__)
+                 ^^^^^^^^
+src/biotasks/generation/resources.py:41: in assets
+    for name, raw in code_files().items()
+                     ^^^^^^^^^^^^
+src/biotasks/generation/resources.py:11: in code_files
+    root = files("biotasks.generation")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:46: in wrapper
+    return func(anchor)
+           ^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:56: in files
+    return from_package(resolve(anchor))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:116: in from_package
+    spec = wrap_spec(package)
+           ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+package = namespace(__file__='/tmp/pytest-of-exedev/pytest-1178/test_changed_completed_snapsho0/cache/source/src/repo2rlenv/github.py', list_merged_prs=<function listing.<locals>.native at 0x7fc0faa59260>)
+
+    def wrap_spec(package):
+        """
+        Construct a package spec with traversable compatibility
+        on the spec/loader/reader.
+        """
+>       return SpecLoaderAdapter(package.__spec__, TraversableResourcesLoader)
+                                 ^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute '__spec__'. Did you mean: '__doc__'?
+
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_adapters.py:168: AttributeError
+_____________ test_overwide_discovery_rejected_before_native_call ______________
+
+listing = (PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_overwide_discovery_reject0/native.json'), PosixPath('/tmp/pytest-of...discovery_reject0/cache'), PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_overwide_discovery_reject0/prs.json'), [])
+
+    def test_overwide_discovery_rejected_before_native_call(listing):
+        config, cache, output, calls = listing
+        value = read_json(config)
+        value["pipeline"]["options"]["limit"] = 101
+        write_json(config, value)
+        with pytest.raises(ValidationError, match="Discovery bound"):
+>           discovery.freeze(config, cache, output)
+
+tests/test_generation_discovery.py:76: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/biotasks/generation/discovery.py:32: in freeze
+    resources.option_policy().accepts(options)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+src/biotasks/generation/resources.py:56: in option_policy
+    exec(compile(assets()["option_policy.py"], "bundled:option_policy.py", "exec"), module.__dict__)
+                 ^^^^^^^^
+src/biotasks/generation/resources.py:41: in assets
+    for name, raw in code_files().items()
+                     ^^^^^^^^^^^^
+src/biotasks/generation/resources.py:11: in code_files
+    root = files("biotasks.generation")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:46: in wrapper
+    return func(anchor)
+           ^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:56: in files
+    return from_package(resolve(anchor))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:116: in from_package
+    spec = wrap_spec(package)
+           ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+package = namespace(__file__='/tmp/pytest-of-exedev/pytest-1178/test_overwide_discovery_reject0/cache/source/src/repo2rlenv/github.py', list_merged_prs=<function listing.<locals>.native at 0x7fc0faa5b740>)
+
+    def wrap_spec(package):
+        """
+        Construct a package spec with traversable compatibility
+        on the spec/loader/reader.
+        """
+>       return SpecLoaderAdapter(package.__spec__, TraversableResourcesLoader)
+                                 ^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute '__spec__'. Did you mean: '__doc__'?
+
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_adapters.py:168: AttributeError
+_ test_optional_official_filter_is_frozen_without_becoming_listing_argument[False] _
+
+listing = (PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_optional_official_filter_0/native.json'), PosixPath('/tmp/pytest-of...official_filter_0/cache'), PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_optional_official_filter_0/prs.json'), [])
+setting = False
+
+    @pytest.mark.parametrize("setting", [False, True])
+    def test_optional_official_filter_is_frozen_without_becoming_listing_argument(listing, setting):
+        config, cache, output, calls = listing
+        value = read_json(config)
+        value["pipeline"]["options"]["require_new_test_funcs"] = setting
+        write_json(config, value)
+>       result = discovery.freeze(config, cache, output)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_generation_discovery.py:86: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/biotasks/generation/discovery.py:32: in freeze
+    resources.option_policy().accepts(options)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+src/biotasks/generation/resources.py:56: in option_policy
+    exec(compile(assets()["option_policy.py"], "bundled:option_policy.py", "exec"), module.__dict__)
+                 ^^^^^^^^
+src/biotasks/generation/resources.py:41: in assets
+    for name, raw in code_files().items()
+                     ^^^^^^^^^^^^
+src/biotasks/generation/resources.py:11: in code_files
+    root = files("biotasks.generation")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:46: in wrapper
+    return func(anchor)
+           ^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:56: in files
+    return from_package(resolve(anchor))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:116: in from_package
+    spec = wrap_spec(package)
+           ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+package = namespace(__file__='/tmp/pytest-of-exedev/pytest-1178/test_optional_official_filter_0/cache/source/src/repo2rlenv/github.py', list_merged_prs=<function listing.<locals>.native at 0x7fc0faa5bec0>)
+
+    def wrap_spec(package):
+        """
+        Construct a package spec with traversable compatibility
+        on the spec/loader/reader.
+        """
+>       return SpecLoaderAdapter(package.__spec__, TraversableResourcesLoader)
+                                 ^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute '__spec__'. Did you mean: '__doc__'?
+
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_adapters.py:168: AttributeError
+_ test_optional_official_filter_is_frozen_without_becoming_listing_argument[True] _
+
+listing = (PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_optional_official_filter_1/native.json'), PosixPath('/tmp/pytest-of...official_filter_1/cache'), PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_optional_official_filter_1/prs.json'), [])
+setting = True
+
+    @pytest.mark.parametrize("setting", [False, True])
+    def test_optional_official_filter_is_frozen_without_becoming_listing_argument(listing, setting):
+        config, cache, output, calls = listing
+        value = read_json(config)
+        value["pipeline"]["options"]["require_new_test_funcs"] = setting
+        write_json(config, value)
+>       result = discovery.freeze(config, cache, output)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_generation_discovery.py:86: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/biotasks/generation/discovery.py:32: in freeze
+    resources.option_policy().accepts(options)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+src/biotasks/generation/resources.py:56: in option_policy
+    exec(compile(assets()["option_policy.py"], "bundled:option_policy.py", "exec"), module.__dict__)
+                 ^^^^^^^^
+src/biotasks/generation/resources.py:41: in assets
+    for name, raw in code_files().items()
+                     ^^^^^^^^^^^^
+src/biotasks/generation/resources.py:11: in code_files
+    root = files("biotasks.generation")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:46: in wrapper
+    return func(anchor)
+           ^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:56: in files
+    return from_package(resolve(anchor))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:116: in from_package
+    spec = wrap_spec(package)
+           ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+package = namespace(__file__='/tmp/pytest-of-exedev/pytest-1178/test_optional_official_filter_1/cache/source/src/repo2rlenv/github.py', list_merged_prs=<function listing.<locals>.native at 0x7fc0faa545e0>)
+
+    def wrap_spec(package):
+        """
+        Construct a package spec with traversable compatibility
+        on the spec/loader/reader.
+        """
+>       return SpecLoaderAdapter(package.__spec__, TraversableResourcesLoader)
+                                 ^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute '__spec__'. Did you mean: '__doc__'?
+
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_adapters.py:168: AttributeError
+________ test_non_boolean_official_filter_rejected_before_discovery[0] _________
+
+listing = (PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_non_boolean_official_filt0/native.json'), PosixPath('/tmp/pytest-of...an_official_filt0/cache'), PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_non_boolean_official_filt0/prs.json'), [])
+setting = 0
+
+    @pytest.mark.parametrize("setting", [0, 1, "false", None])
+    def test_non_boolean_official_filter_rejected_before_discovery(listing, setting):
+        config, cache, output, calls = listing
+        value = read_json(config)
+        value["pipeline"]["options"]["require_new_test_funcs"] = setting
+        write_json(config, value)
+        with pytest.raises(ValidationError, match="Discovery bound"):
+>           discovery.freeze(config, cache, output)
+
+tests/test_generation_discovery.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/biotasks/generation/discovery.py:32: in freeze
+    resources.option_policy().accepts(options)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+src/biotasks/generation/resources.py:56: in option_policy
+    exec(compile(assets()["option_policy.py"], "bundled:option_policy.py", "exec"), module.__dict__)
+                 ^^^^^^^^
+src/biotasks/generation/resources.py:41: in assets
+    for name, raw in code_files().items()
+                     ^^^^^^^^^^^^
+src/biotasks/generation/resources.py:11: in code_files
+    root = files("biotasks.generation")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:46: in wrapper
+    return func(anchor)
+           ^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:56: in files
+    return from_package(resolve(anchor))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:116: in from_package
+    spec = wrap_spec(package)
+           ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+package = namespace(__file__='/tmp/pytest-of-exedev/pytest-1178/test_non_boolean_official_filt0/cache/source/src/repo2rlenv/github.py', list_merged_prs=<function listing.<locals>.native at 0x7fc0faa54180>)
+
+    def wrap_spec(package):
+        """
+        Construct a package spec with traversable compatibility
+        on the spec/loader/reader.
+        """
+>       return SpecLoaderAdapter(package.__spec__, TraversableResourcesLoader)
+                                 ^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute '__spec__'. Did you mean: '__doc__'?
+
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_adapters.py:168: AttributeError
+________ test_non_boolean_official_filter_rejected_before_discovery[1] _________
+
+listing = (PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_non_boolean_official_filt1/native.json'), PosixPath('/tmp/pytest-of...an_official_filt1/cache'), PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_non_boolean_official_filt1/prs.json'), [])
+setting = 1
+
+    @pytest.mark.parametrize("setting", [0, 1, "false", None])
+    def test_non_boolean_official_filter_rejected_before_discovery(listing, setting):
+        config, cache, output, calls = listing
+        value = read_json(config)
+        value["pipeline"]["options"]["require_new_test_funcs"] = setting
+        write_json(config, value)
+        with pytest.raises(ValidationError, match="Discovery bound"):
+>           discovery.freeze(config, cache, output)
+
+tests/test_generation_discovery.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/biotasks/generation/discovery.py:32: in freeze
+    resources.option_policy().accepts(options)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+src/biotasks/generation/resources.py:56: in option_policy
+    exec(compile(assets()["option_policy.py"], "bundled:option_policy.py", "exec"), module.__dict__)
+                 ^^^^^^^^
+src/biotasks/generation/resources.py:41: in assets
+    for name, raw in code_files().items()
+                     ^^^^^^^^^^^^
+src/biotasks/generation/resources.py:11: in code_files
+    root = files("biotasks.generation")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:46: in wrapper
+    return func(anchor)
+           ^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:56: in files
+    return from_package(resolve(anchor))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:116: in from_package
+    spec = wrap_spec(package)
+           ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+package = namespace(__file__='/tmp/pytest-of-exedev/pytest-1178/test_non_boolean_official_filt1/cache/source/src/repo2rlenv/github.py', list_merged_prs=<function listing.<locals>.native at 0x7fc0faa59800>)
+
+    def wrap_spec(package):
+        """
+        Construct a package spec with traversable compatibility
+        on the spec/loader/reader.
+        """
+>       return SpecLoaderAdapter(package.__spec__, TraversableResourcesLoader)
+                                 ^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute '__spec__'. Did you mean: '__doc__'?
+
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_adapters.py:168: AttributeError
+______ test_non_boolean_official_filter_rejected_before_discovery[false] _______
+
+listing = (PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_non_boolean_official_filt2/native.json'), PosixPath('/tmp/pytest-of...an_official_filt2/cache'), PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_non_boolean_official_filt2/prs.json'), [])
+setting = 'false'
+
+    @pytest.mark.parametrize("setting", [0, 1, "false", None])
+    def test_non_boolean_official_filter_rejected_before_discovery(listing, setting):
+        config, cache, output, calls = listing
+        value = read_json(config)
+        value["pipeline"]["options"]["require_new_test_funcs"] = setting
+        write_json(config, value)
+        with pytest.raises(ValidationError, match="Discovery bound"):
+>           discovery.freeze(config, cache, output)
+
+tests/test_generation_discovery.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/biotasks/generation/discovery.py:32: in freeze
+    resources.option_policy().accepts(options)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+src/biotasks/generation/resources.py:56: in option_policy
+    exec(compile(assets()["option_policy.py"], "bundled:option_policy.py", "exec"), module.__dict__)
+                 ^^^^^^^^
+src/biotasks/generation/resources.py:41: in assets
+    for name, raw in code_files().items()
+                     ^^^^^^^^^^^^
+src/biotasks/generation/resources.py:11: in code_files
+    root = files("biotasks.generation")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:46: in wrapper
+    return func(anchor)
+           ^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:56: in files
+    return from_package(resolve(anchor))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:116: in from_package
+    spec = wrap_spec(package)
+           ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+package = namespace(__file__='/tmp/pytest-of-exedev/pytest-1178/test_non_boolean_official_filt2/cache/source/src/repo2rlenv/github.py', list_merged_prs=<function listing.<locals>.native at 0x7fc0faa549a0>)
+
+    def wrap_spec(package):
+        """
+        Construct a package spec with traversable compatibility
+        on the spec/loader/reader.
+        """
+>       return SpecLoaderAdapter(package.__spec__, TraversableResourcesLoader)
+                                 ^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute '__spec__'. Did you mean: '__doc__'?
+
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_adapters.py:168: AttributeError
+_______ test_non_boolean_official_filter_rejected_before_discovery[None] _______
+
+listing = (PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_non_boolean_official_filt3/native.json'), PosixPath('/tmp/pytest-of...an_official_filt3/cache'), PosixPath('/tmp/pytest-of-exedev/pytest-1178/test_non_boolean_official_filt3/prs.json'), [])
+setting = None
+
+    @pytest.mark.parametrize("setting", [0, 1, "false", None])
+    def test_non_boolean_official_filter_rejected_before_discovery(listing, setting):
+        config, cache, output, calls = listing
+        value = read_json(config)
+        value["pipeline"]["options"]["require_new_test_funcs"] = setting
+        write_json(config, value)
+        with pytest.raises(ValidationError, match="Discovery bound"):
+>           discovery.freeze(config, cache, output)
+
+tests/test_generation_discovery.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/biotasks/generation/discovery.py:32: in freeze
+    resources.option_policy().accepts(options)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+src/biotasks/generation/resources.py:56: in option_policy
+    exec(compile(assets()["option_policy.py"], "bundled:option_policy.py", "exec"), module.__dict__)
+                 ^^^^^^^^
+src/biotasks/generation/resources.py:41: in assets
+    for name, raw in code_files().items()
+                     ^^^^^^^^^^^^
+src/biotasks/generation/resources.py:11: in code_files
+    root = files("biotasks.generation")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:46: in wrapper
+    return func(anchor)
+           ^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:56: in files
+    return from_package(resolve(anchor))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_common.py:116: in from_package
+    spec = wrap_spec(package)
+           ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+package = namespace(__file__='/tmp/pytest-of-exedev/pytest-1178/test_non_boolean_official_filt3/cache/source/src/repo2rlenv/github.py', list_merged_prs=<function listing.<locals>.native at 0x7fc0faa54f40>)
+
+    def wrap_spec(package):
+        """
+        Construct a package spec with traversable compatibility
+        on the spec/loader/reader.
+        """
+>       return SpecLoaderAdapter(package.__spec__, TraversableResourcesLoader)
+                                 ^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute '__spec__'. Did you mean: '__doc__'?
+
+/home/exedev/miniforge3/lib/python3.13/importlib/resources/_adapters.py:168: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_generation_discovery.py::test_forwards_official_options_once_and_reuses_completed_snapshot
+FAILED tests/test_generation_discovery.py::test_changed_completed_snapshot_does_not_trigger_another_listing
+FAILED tests/test_generation_discovery.py::test_overwide_discovery_rejected_before_native_call
+FAILED tests/test_generation_discovery.py::test_optional_official_filter_is_frozen_without_becoming_listing_argument[False]
+FAILED tests/test_generation_discovery.py::test_optional_official_filter_is_frozen_without_becoming_listing_argument[True]
+FAILED tests/test_generation_discovery.py::test_non_boolean_official_filter_rejected_before_discovery[0]
+FAILED tests/test_generation_discovery.py::test_non_boolean_official_filter_rejected_before_discovery[1]
+FAILED tests/test_generation_discovery.py::test_non_boolean_official_filter_rejected_before_discovery[false]
+FAILED tests/test_generation_discovery.py::test_non_boolean_official_filter_rejected_before_discovery[None]
+9 failed, 32 passed in 2.16s

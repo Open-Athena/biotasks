@@ -40,7 +40,14 @@ def listing(tmp_path, monkeypatch):
     module = SimpleNamespace(
         __file__=str(cache / "source/src/repo2rlenv/github.py"), list_merged_prs=native
     )
-    monkeypatch.setattr(discovery.importlib, "import_module", lambda name: module)
+    original_import = discovery.importlib.import_module
+
+    def import_native(name, package=None):
+        if name == "repo2rlenv.github":
+            return module
+        return original_import(name, package)
+
+    monkeypatch.setattr(discovery.importlib, "import_module", import_native)
     return config, cache, tmp_path / "prs.json", calls
 
 
