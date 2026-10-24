@@ -1,0 +1,268 @@
+{
+  "synthetic": true,
+  "real_pytest_processes": 16,
+  "cases": [
+    {
+      "case": "root",
+      "original": {
+        "route": "original",
+        "command": "cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/root && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml Tests/test_a.py",
+        "exit": 0,
+        "testcases_junit": [
+          [
+            "experiments.59-pytest-targeting.inputs-private.policy-001.root.Tests.test_a",
+            "test_value",
+            "passed"
+          ]
+        ],
+        "parsed_original_pytest": {
+          "Tests/test_a.py::test_value": "PASSED"
+        },
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 1 item\n\nTests/test_a.py::test_value PASSED                                       [100%]\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/root/out.xml -\n============================== 1 passed in 0.02s ===============================\n",
+        "stderr": ""
+      },
+      "candidate": {
+        "route": "candidate",
+        "command": "cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/root && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/root/Tests/test_a.py",
+        "exit": 0,
+        "testcases_junit": [
+          [
+            "experiments.59-pytest-targeting.inputs-private.policy-001.root.Tests.test_a",
+            "test_value",
+            "passed"
+          ]
+        ],
+        "parsed_original_pytest": {
+          "Tests/test_a.py::test_value": "PASSED"
+        },
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 1 item\n\nTests/test_a.py::test_value PASSED                                       [100%]\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/root/out.xml -\n============================== 1 passed in 0.02s ===============================\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "nested",
+      "original": {
+        "route": "original",
+        "command": "cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/nested/Tests && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml Tests/test_a.py",
+        "exit": 4,
+        "testcases_junit": [],
+        "parsed_original_pytest": {},
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 0 items\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/nested/Tests/out.xml -\n============================ no tests ran in 0.00s =============================\n",
+        "stderr": "ERROR: file or directory not found: Tests/test_a.py\n\n"
+      },
+      "candidate": {
+        "route": "candidate",
+        "command": "cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/nested/Tests && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/nested/Tests/test_a.py",
+        "exit": 0,
+        "testcases_junit": [
+          [
+            "experiments.59-pytest-targeting.inputs-private.policy-001.nested.Tests.test_a",
+            "test_value",
+            "passed"
+          ]
+        ],
+        "parsed_original_pytest": {
+          "test_a.py::test_value": "PASSED"
+        },
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 1 item\n\ntest_a.py::test_value PASSED                                             [100%]\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/nested/Tests/out.xml -\n============================== 1 passed in 0.01s ===============================\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "nested_multiple",
+      "original": {
+        "route": "original",
+        "command": "cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/nested_multiple/Tests && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml Tests/test_a.py Tests/test_b.py",
+        "exit": 4,
+        "testcases_junit": [],
+        "parsed_original_pytest": {},
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 0 items\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/nested_multiple/Tests/out.xml -\n============================ no tests ran in 0.00s =============================\n",
+        "stderr": "ERROR: file or directory not found: Tests/test_a.py\n\n"
+      },
+      "candidate": {
+        "route": "candidate",
+        "command": "cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/nested_multiple/Tests && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/nested_multiple/Tests/test_a.py /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/nested_multiple/Tests/test_b.py",
+        "exit": 0,
+        "testcases_junit": [
+          [
+            "experiments.59-pytest-targeting.inputs-private.policy-001.nested_multiple.Tests.test_a",
+            "test_value",
+            "passed"
+          ],
+          [
+            "experiments.59-pytest-targeting.inputs-private.policy-001.nested_multiple.Tests.test_b",
+            "test_value",
+            "passed"
+          ]
+        ],
+        "parsed_original_pytest": {
+          "test_a.py::test_value": "PASSED",
+          "test_b.py::test_value": "PASSED"
+        },
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 2 items\n\ntest_a.py::test_value PASSED                                             [ 50%]\ntest_b.py::test_value PASSED                                             [100%]\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/nested_multiple/Tests/out.xml -\n============================== 2 passed in 0.02s ===============================\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "quoted_new_target",
+      "original": {
+        "route": "original",
+        "command": "cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/quoted_new_target && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml Tests/test with space.py",
+        "exit": 4,
+        "testcases_junit": [],
+        "parsed_original_pytest": {},
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 0 items\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/quoted_new_target/out.xml -\n============================ no tests ran in 0.00s =============================\n",
+        "stderr": "ERROR: file or directory not found: Tests/test\n\n"
+      },
+      "candidate": {
+        "route": "candidate",
+        "command": "cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/quoted_new_target && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml '/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/quoted_new_target/Tests/test with space.py'",
+        "exit": 0,
+        "testcases_junit": [
+          [
+            "experiments.59-pytest-targeting.inputs-private.policy-001.quoted_new_target.Tests.test with space",
+            "test_value",
+            "passed"
+          ]
+        ],
+        "parsed_original_pytest": {},
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 1 item\n\nTests/test with space.py::test_value PASSED                              [100%]\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/quoted_new_target/out.xml -\n============================== 1 passed in 0.01s ===============================\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "quoted_cwd",
+      "original": {
+        "route": "original",
+        "command": "cd '/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/quoted_cwd/Tests with space' && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml Tests with space/test_a.py",
+        "exit": 4,
+        "testcases_junit": [],
+        "parsed_original_pytest": {},
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 0 items\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/quoted_cwd/Tests with space/out.xml -\n============================ no tests ran in 0.00s =============================\n",
+        "stderr": "ERROR: file or directory not found: Tests\n\n"
+      },
+      "candidate": {
+        "route": "candidate",
+        "command": "cd '/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/quoted_cwd/Tests with space' && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml '/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/quoted_cwd/Tests with space/test_a.py'",
+        "exit": 0,
+        "testcases_junit": [
+          [
+            "experiments.59-pytest-targeting.inputs-private.policy-001.quoted_cwd.Tests with space.test_a",
+            "test_value",
+            "passed"
+          ]
+        ],
+        "parsed_original_pytest": {
+          "test_a.py::test_value": "PASSED"
+        },
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 1 item\n\ntest_a.py::test_value PASSED                                             [100%]\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/quoted_cwd/Tests with space/out.xml -\n============================== 1 passed in 0.02s ===============================\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "existing_target",
+      "original": {
+        "route": "original",
+        "command": "cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/existing_target/Tests && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml test_a.py",
+        "exit": 0,
+        "testcases_junit": [
+          [
+            "experiments.59-pytest-targeting.inputs-private.policy-001.existing_target.Tests.test_a",
+            "test_value",
+            "passed"
+          ]
+        ],
+        "parsed_original_pytest": {
+          "test_a.py::test_value": "PASSED"
+        },
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 1 item\n\ntest_a.py::test_value PASSED                                             [100%]\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/existing_target/Tests/out.xml -\n============================== 1 passed in 0.01s ===============================\n",
+        "stderr": ""
+      },
+      "candidate": {
+        "route": "candidate",
+        "command": "cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/existing_target/Tests && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml test_a.py",
+        "exit": 0,
+        "testcases_junit": [
+          [
+            "experiments.59-pytest-targeting.inputs-private.policy-001.existing_target.Tests.test_a",
+            "test_value",
+            "passed"
+          ]
+        ],
+        "parsed_original_pytest": {
+          "test_a.py::test_value": "PASSED"
+        },
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 1 item\n\ntest_a.py::test_value PASSED                                             [100%]\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/existing_target/Tests/out.xml -\n============================== 1 passed in 0.01s ===============================\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "existing_quoted_target",
+      "original": {
+        "route": "original",
+        "command": "cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/existing_quoted_target/Tests && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml 'test with space.py' Tests/test_b.py",
+        "exit": 4,
+        "testcases_junit": [],
+        "parsed_original_pytest": {},
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 0 items\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/existing_quoted_target/Tests/out.xml -\n============================ no tests ran in 0.00s =============================\n",
+        "stderr": "ERROR: file or directory not found: Tests/test_b.py\n\n"
+      },
+      "candidate": {
+        "route": "candidate",
+        "command": "cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/existing_quoted_target/Tests && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml 'test with space.py'",
+        "exit": 0,
+        "testcases_junit": [
+          [
+            "experiments.59-pytest-targeting.inputs-private.policy-001.existing_quoted_target.Tests.test with space",
+            "test_value",
+            "passed"
+          ]
+        ],
+        "parsed_original_pytest": {},
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 1 item\n\ntest with space.py::test_value PASSED                                    [100%]\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/existing_quoted_target/Tests/out.xml -\n============================== 1 passed in 0.01s ===============================\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "existing_node_id",
+      "original": {
+        "route": "original",
+        "command": "cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/existing_node_id/Tests && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml test_a.py::test_value Tests/test_b.py",
+        "exit": 4,
+        "testcases_junit": [],
+        "parsed_original_pytest": {},
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 0 items\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/existing_node_id/Tests/out.xml -\n============================ no tests ran in 0.00s =============================\n",
+        "stderr": "ERROR: file or directory not found: Tests/test_b.py\n\n"
+      },
+      "candidate": {
+        "route": "candidate",
+        "command": "cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/existing_node_id/Tests && /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/../pipeline54/.venv/bin/python -B -m pytest -v -p no:cacheprovider --junitxml=out.xml test_a.py::test_value",
+        "exit": 0,
+        "testcases_junit": [
+          [
+            "experiments.59-pytest-targeting.inputs-private.policy-001.existing_node_id.Tests.test_a",
+            "test_value",
+            "passed"
+          ]
+        ],
+        "parsed_original_pytest": {
+          "test_a.py::test_value": "PASSED"
+        },
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59\nconfigfile: pyproject.toml\ncollecting ... collected 1 item\n\ntest_a.py::test_value PASSED                                             [100%]\n\n- generated xml file: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/59/experiments/59-pytest-targeting/inputs-private/policy-001/existing_node_id/Tests/out.xml -\n============================== 1 passed in 0.02s ===============================\n",
+        "stderr": ""
+      }
+    }
+  ],
+  "rejected_paths": [
+    "'../outside.py'",
+    "'Tests/../outside.py'",
+    "'/outside.py'",
+    "'bad\\x00.py'"
+  ],
+  "non_pytest_original_behavior_unchanged": true,
+  "changed_source_behavior_rejected": true,
+  "scratch_removed": true,
+  "native_jobs_or_model_calls": 0,
+  "native_deployed": false,
+  "limits": "Recognized Python targets only; original runner detection and option-value ambiguity remain. JUnit is an independent fixture observation, not a native reward or parser repair."
+}
