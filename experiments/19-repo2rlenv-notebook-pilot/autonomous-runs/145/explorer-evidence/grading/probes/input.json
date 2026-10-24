@@ -1,0 +1,97 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "analytic_marginal_posterior_grid.csv",
+      "analytic_summary.json",
+      "mcmc_posterior_means.json"
+    ],
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir"
+  },
+  "checks": [
+    {
+      "artifacts": [
+        "analytic_marginal_posterior_grid.csv"
+      ],
+      "id": "grid_structure",
+      "kind": "structural",
+      "public_requirement": "Output 1 must be a readable CSV exactly matching the required column order X,Z,alpha,beta,normed_exp_trans, containing exactly 40,000 finite numeric rows that map one-to-one to the 100 distinct x-values and 400 distinct z-values spec corresponds to: nominal grid points are identified by rounding each (X, Z) coordinate to the nearest 0.01, so a row's cell is (round(X,2), round(Z,2)). alpha, beta and normed_exp_trans must be strictly positive with no missing or non-finite values; any row order is acceptable; no duplicates, no extra cells."
+    },
+    {
+      "artifacts": [
+        "analytic_marginal_posterior_grid.csv"
+      ],
+      "id": "grid_alpha_beta",
+      "kind": "scientific",
+      "public_requirement": "For every grid cell (matched by nominal (X, Z) coordinates as defined in the grid-structure check), the back-transformed alpha and beta columns must agree with the reference within a relative tolerance of 1e-9, computed as |submission \u2212 reference| / |reference| per cell; the maximum relative deviation over all 40,000 cells must not exceed 1e-9."
+    },
+    {
+      "artifacts": [
+        "analytic_marginal_posterior_grid.csv"
+      ],
+      "id": "grid_weights",
+      "kind": "scientific",
+      "public_requirement": "For every grid cell (matched by nominal (X, Z) coordinates as defined in the grid-structure check), the normalized posterior weight normed_exp_trans must agree with the reference within a relative tolerance of 1e-8, computed as |submission \u2212 reference| / |reference| per cell (the maximum relative deviation over all 40,000 cells must not exceed 1e-8), and the sum of the 40,000 submission weights must equal 1 within an absolute tolerance of 1e-9."
+    },
+    {
+      "artifacts": [
+        "analytic_summary.json"
+      ],
+      "id": "analytic_summary_schema",
+      "kind": "structural",
+      "public_requirement": "Output 2 must be a valid JSON object with exactly the four keys mean_alpha, mean_beta, mode_x, mode_z (no extra keys, none missing), each an ordinary finite JSON number (booleans and non-finite values are rejected)."
+    },
+    {
+      "artifacts": [
+        "analytic_summary.json"
+      ],
+      "id": "analytic_means",
+      "kind": "scientific",
+      "public_requirement": "mean_alpha and mean_beta must equal the reference posterior means within a relative tolerance of 1e-7, computed as |submission \u2212 reference| / |reference| for each of the two quantities separately."
+    },
+    {
+      "artifacts": [
+        "analytic_summary.json",
+        "analytic_marginal_posterior_grid.csv"
+      ],
+      "id": "analytic_mode",
+      "kind": "scientific",
+      "public_requirement": "mode_x and mode_z must identify the same grid cell as the reference: |mode_x \u2212 reference mode_x| \u2264 0.005 and |mode_z \u2212 reference mode_z| \u2264 0.005 (half a grid step), which distinguishes the unique mode cell from every neighbouring cell. mode_x and mode_z must also be, to within 0.005, nomimal coordinates present in the submission's own Output 1 grid, i.e. (round(mode_x*100)/100, round(mode_z*100)/100) must appear among the submission grid's (X, Z) cells."
+    },
+    {
+      "artifacts": [
+        "mcmc_posterior_means.json"
+      ],
+      "id": "mcmc_config",
+      "kind": "structural",
+      "public_requirement": "Output 3 must be a valid JSON object with exactly the six keys mean_alpha, mean_beta, n_chains, draws_per_chain, target_accept, sampler (no extra keys, none missing). n_chains must equal 2 and draws_per_chain must equal 2000 exactly; target_accept must be 0.95 within an absolute tolerance of 1e-9; sampler must be a non-empty string; mean_alpha and mean_beta must be ordinary finite JSON numbers (booleans and non-finite values rejected)."
+    },
+    {
+      "artifacts": [
+        "mcmc_posterior_means.json"
+      ],
+      "id": "mcmc_means",
+      "kind": "scientific",
+      "public_requirement": "mean_alpha and mean_beta (pooled posterior means of a and b under the Part-2 hyperprior half-normal(10)_a \u00d7 half-normal(10)_b \u00d7 (a+b)^(\u22125/2)) must lie within 10% relative to the reference, computed as |submission \u2212 reference| / |reference| for each of the two quantities separately. This tolerance admits ordinary Monte-Carlo error attributable to the 2 \u00d7 2000-draw NUTS estimator; it is not an equivalence of posteriors and must not be read as accepting a different hyperprior, likelihood or sampler configuration, which produce deviations well outside this window."
+    }
+  ],
+  "output_paths": [
+    "analytic_marginal_posterior_grid.csv",
+    "analytic_summary.json",
+    "mcmc_posterior_means.json"
+  ],
+  "paths": {
+    "reference_outputs": "/work/reference",
+    "working_directory": "/work/probe"
+  },
+  "public_instruction": "# Hierarchical Bayesian inference for 71 historical rat-tumor experiments\n\n## Supplied input\n\n- `inputs/rat_tumor_counts.csv` \u2014 one row per historical experiment (71 rows), columns `y`, `n`:\n  - `y`: number of lab rats that developed endometrial stromal polyps in that experiment;\n  - `n`: number of rats at risk in that experiment.\n\nUse **all 71 rows exactly as supplied**; there is no filtering. The likelihood is exchangeable over experiments. These are historical observed counts (Bayesian Data Analysis, 3rd ed., ch. 5, p. 102 data), not simulated data.\n\nThe task has two independent parts. **The two parts use different hyperpriors on (\u03b1, \u03b2); they are different scientific quantities and must both be reported separately.**\n\n## Part 1 \u2014 Analytic marginal posterior of (\u03b1, \u03b2) on a grid\n\nModel: for experiment *i*, `y_i ~ Binomial(n_i, \u03b8_i)` and `\u03b8_i ~ Beta(\u03b1, \u03b2)`, with hyperprior density `p(\u03b1, \u03b2) \u221d (\u03b1 + \u03b2)^(\u22125/2)` for \u03b1, \u03b2 > 0 (improper; the posterior is proper for these data). Marginalize the \u03b8_i analytically (beta\u2013binomial collapse) to obtain the marginal posterior of (\u03b1, \u03b2).\n\nWork in the reparameterization `x = ln(\u03b1/\u03b2)`, `z = ln(\u03b1 + \u03b2)`:\n\n- Grid: `x` takes the values \u22122.30, \u22122.29, \u22122.28, \u2026 in steps of 0.01, **strictly less than \u22121.30** (100 values, last is \u22121.31); `z` takes the values 1.00, 1.01, \u2026 in steps of 0.01, **strictly less than 5.00** (400 values, last is 4.99). Use all 100 \u00d7 400 = 40,000 cells (half-open grid semantics: the stop endpoints \u22121.30 and 5.00 are excluded).\n- Per cell: `\u03b1 = e^(x+z) / (1 + e^x)` and `\u03b2 = e^z / (1 + e^x)`.\n- Per-cell log-weight, computed in log space throughout:\n\n  \u2113(x, z) = \u2212(5/2)\u00b7ln(\u03b1 + \u03b2)\n  + \u03a3_i [ ln \u0393(\u03b1 + \u03b2) + ln \u0393(\u03b1 + y_i) + ln \u0393(\u03b2 + n_i \u2212 y_i) \u2212 ln \u0393(\u03b1) \u2212 ln \u0393(\u03b2) \u2212 ln \u0393(\u03b1 + \u03b2 + n_i) ]\n  + ln \u03b1 + ln \u03b2   (log-Jacobian of the (\u03b1, \u03b2) \u2192 (x, z) change of variables)\n\n- Normalize numerically stably: subtract the maximum log-weight over the whole grid before exponentiating, then divide by the sum over all 40,000 cells, giving grid weights `w(x, z)` that sum to 1.\n\n### Output 1: `outputs/analytic_marginal_posterior_grid.csv`\n\nCSV with header (in this column order): `X,Z,alpha,beta,normed_exp_trans`. One row per grid cell; any row order is acceptable (rows are matched by their (X, Z) coordinates), but every cell must appear exactly once. Provide at least 10 significant digits of precision; no missing or non-finite values. `alpha`/`beta` must be the (X, Z) values transformed back as defined above, and `normed_exp_trans` the normalized weight `w`.\n\n### Output 2: `outputs/analytic_summary.json`\n\nJSON object with exactly these keys:\n- `mean_alpha`: E[\u03b1 | y] estimated as \u03a3_cells \u03b1\u00b7w (the posterior mean of \u03b1 under this grid).\n- `mean_beta`: E[\u03b2 | y] estimated as \u03a3_cells \u03b2\u00b7w.\n- `mode_x`, `mode_z`: the `x` and `z` grid values of the cell whose normalized weight `w` is maximal (the location of the posterior mode on this grid); these must be exactly grid coordinate values appearing in your Output 1.\n\n## Part 2 \u2014 Posterior means of the hyperparameters from MCMC (different prior!)\n\nFit the same hierarchical likelihood \u2014 `y_i ~ Binomial(n_i, \u03b8_i)` with `\u03b8_i ~ Beta(a, b)`, a = \u03b1, b = \u03b2 > 0 \u2014 but with this joint prior density on the hyperparameters:\n\n  p(a, b) \u221d [half-normal(\u03c3 = 10) density in a] \u00d7 [half-normal(\u03c3 = 10) density in b] \u00d7 (a + b)^(\u22125/2)\n\n**This half-normal factor is part of the model definition; do not replace it with the Part 1 hyperprior alone** \u2014 the two hyperpriors are intentionally different and yield different posteriors.\n\nSample the posterior with a gradient-based HMC/NUTS sampler configured as follows: exactly **2 chains**, each with **2000 warmup (tuning) iterations that are discarded**, **2000 retained draws per chain** (4000 pooled draws total), and step-size/dual-averaging adaptation targeting a mean acceptance statistic of **0.95**. Report the pooled posterior means of `a` and `b` (averaged over both chains and all retained draws).\n\n### Output 3: `outputs/mcmc_posterior_means.json`\n\nJSON object with exactly these keys:\n- `mean_alpha`, `mean_beta`: pooled posterior means of a and b (floats).\n- `n_chains`: 2; `draws_per_chain`: 2000 (retained); `target_accept`: 0.95.\n- `sampler`: free-text name of the sampler/software used.\n\n## Software and resources\n\nSoftware choice is open: any statistics environment that implements the models above is acceptable. Part 1 requires only standard numerical routines (log-gamma, exponentials); no MCMC is needed for it. Execution is fully offline (no network), with a wall-clock limit of 600 s, 4 CPU cores and 8 GiB memory.\n\n## Acceptance rules\n\nAcceptance addendum for the three declared outputs (`analytic_marginal_posterior_grid.csv`, `analytic_summary.json`, `mcmc_posterior_means.json`; each path relative to the supplied output root). The scientific question is as stated in the task: Part 1 is the analytic beta-binomial-collapsed marginal posterior of (\u03b1, \u03b2) on the specified (x, z) grid, Part 2 is the pooled NUTS posterior means of (a, b) under the half-normal(\u03c3=10)\u00b2 \u00d7 (a+b)^(\u22125/2) hyperprior; the two hyperpriors are different posteriors and are compared separately.\n\n**Grid CSV (Output 1).** Parsed with a standard CSV reader (`pandas.read_csv`); header must be exactly the columns `X,Z,alpha,beta,normed_exp_trans` in this order. Any row order is acceptable: rows are aligned by their nominal grid coordinates, defined as the (X, Z) values rounded to the nearest 0.01 (i.e. cell = (round(X\u00b7100), round(Z\u00b7100))). All 40,000 cells must appear exactly once (100 distinct x-values from \u22122.30 to \u22121.31 inclusive, 400 distinct z-values from 1.00 to 4.99 inclusive, nominal ends \u22121.30 and 5.00 excluded); duplicate or extra cells fail, as do out-of-range coordinates. All five columns must be finite numbers with \u03b1, \u03b2 > 0 and w > 0; missing, empty, non-numeric, non-finite or non-positive values fail. Per-cell comparison after alignment: `alpha`/`beta` within a relative tolerance of 1e-9 (|submission \u2212 reference| / |reference|), and `normed_exp_trans` within a relative tolerance of 1e-8, each maximised over all 40,000 cells with the reference as denominator; the 40,000 submitted weights must also sum to 1 within an absolute tolerance of 1e-9. At least 10 significant digits of precision are required so that these tolerances are well defined. These tolerances are calibrated as limits on observable output differences across independent correct implementations (including exact-arithmetic grid construction and \u226412-significant-digit serialization), not as detection guarantees for every wrong numerical method.\n\n**Analytic summary (Output 2).** Valid JSON object with exactly the four keys `mean_alpha`, `mean_beta`, `mode_x`, `mode_z`, each an ordinary finite numeric JSON value (booleans and non-finite values rejected). `mean_alpha`/`mean_beta` are compared to the reference with the relative tolerance 1e-7 (|submission \u2212 reference| / |reference|). For the mode, both coordinates must lie within 0.005 (half a grid step) of the reference mode cell, which uniquely identifies the mode cell against every neighbouring cell (the reference top-two cell weight ratio is \u22481.00014); the reported mode must also be a nominal coordinate present in the submission's own grid CSV.\n\n**MCMC means (Output 3).** Valid JSON object with exactly the six keys `mean_alpha`, `mean_beta`, `n_chains`, `draws_per_chain`, `target_accept`, `sampler`. `n_chains` must be exactly 2, `draws_per_chain` exactly 2000, `target_accept` 0.95 within 1e-9; `sampler` must be a non-empty string; both means must be finite numbers. `mean_alpha`/`mean_beta` are pooled over both chains and all retained draws and are compared to the reference with a relative tolerance of 0.10 (|submission \u2212 reference| / |reference|), which is calibrated to normal Monte-Carlo variation of the specified 2\u00d72000-draw NUTS estimator. It is a limit on observable output differences, not a claim that any 2\u00d72000-run of the correct model stays inside it, nor an equivalence of posteriors: a different hyperprior (e.g. dropping the half-normal factors or the (a+b)^(\u22125/2) factor) yields deviations of roughly 20% or more and is rejected.\n\n**Placement.** Files must exist at the declared paths relative to the supplied output root; the same filename nested under an additional `outputs/` subdirectory is at the wrong path and fails. Missing, malformed, duplicate, out-of-range or non-finite data counts as a failed check, not an uncaught error; the grader always exits 0 after writing the full per-check report.",
+  "reference_seconds": 600,
+  "verifier_seconds": 120
+}

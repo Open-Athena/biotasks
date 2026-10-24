@@ -1,0 +1,713 @@
+{
+  "original_inputs": {
+    "files": []
+  },
+  "paths": {
+    "reference_outputs": "/work/reference",
+    "working_directory": "/work/author"
+  },
+  "policy": {
+    "dependency_answers": "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "supplied_intermediates": "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  },
+  "reference_observations": {
+    "outputs": [
+      {
+        "bytes": 3871960,
+        "download_hash_verified": true,
+        "file": "analytic_marginal_posterior_grid.csv",
+        "sha256": "14cbefc7a942cdc407be6118ec341fb8914dd96b56a99b8545ca5382743010e4",
+        "structural_profile": {
+          "columns": [
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 100,
+              "empty": 0,
+              "examples": [
+                "-2.3",
+                "-2.29",
+                "-2.2800000000000002"
+              ],
+              "finite_numeric": 40000,
+              "maximum": -1.310000000000021,
+              "minimum": -2.3,
+              "name": "X",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "4899db9215abc3cf443ba0f5e454b9156148b59375e9efb0f3ad7da2da63c5d4",
+              "other": 0,
+              "position": 0
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 400,
+              "empty": 0,
+              "examples": [
+                "1.0",
+                "1.01",
+                "1.02"
+              ],
+              "finite_numeric": 40000,
+              "maximum": 4.990000000000004,
+              "minimum": 1.0,
+              "name": "Z",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "e3d4621ac33418df83b766a5e9e3c89f02b8313be4a7bd7c502da1e331716f51",
+              "other": 0,
+              "position": 1
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 40000,
+              "empty": 0,
+              "examples": [
+                "0.24769788908206547",
+                "0.249958382121579",
+                "0.2522373982674199"
+              ],
+              "finite_numeric": 40000,
+              "maximum": 31.222056915252708,
+              "minimum": 0.24769788908206547,
+              "name": "alpha",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "374878a6112603487e1dfa51c46cb16fb82bc69e9c69205216a4e40aa61a2a04",
+              "other": 0,
+              "position": 2
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 40000,
+              "empty": 0,
+              "examples": [
+                "2.4705839393769797",
+                "2.468323446337466",
+                "2.466044430191625"
+              ],
+              "finite_numeric": 40000,
+              "maximum": 133.5471415058347,
+              "minimum": 2.1406827012941467,
+              "name": "beta",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "79e1319cb42dc119572358e0f3d32f36403324cd4c7500e68893f988906a4bb3",
+              "other": 0,
+              "position": 3
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 40000,
+              "empty": 0,
+              "examples": [
+                "8.775273334523364e-18",
+                "1.2122139956454026e-17",
+                "1.6702919807575612e-17"
+              ],
+              "finite_numeric": 40000,
+              "maximum": 0.00044341176323713956,
+              "minimum": 4.529282211665897e-19,
+              "name": "normed_exp_trans",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "c9030d8b14a5ec47a45ec0b75c12f7221a4e9c70307c8884b54a771f46670212",
+              "other": 0,
+              "position": 4
+            }
+          ],
+          "distinct_limit_per_column": 100000,
+          "duplicate_header_names": false,
+          "format": "delimited",
+          "limitations": [
+            "Numeric ranges use float conversion, not semantic type inference.",
+            "Distinct values use SHA-256 identities and the declared cap.",
+            "Column fingerprints exclude ragged rows; empty fields are included.",
+            "Examples are limited to three values and 256 characters each."
+          ],
+          "ragged_rows": 0,
+          "row_count": 40000
+        }
+      },
+      {
+        "bytes": 136508,
+        "download_hash_verified": true,
+        "file": "pymc_posterior_ab_X_Z.nc",
+        "sha256": "c891d56181fe12578a4a82817e5075ada76647d3ce7340cd63e8d6afac942775",
+        "structural_profile": {
+          "format": "unsupported",
+          "limitations": [
+            "No structural reader for this file type."
+          ]
+        }
+      }
+    ],
+    "scope": "Structural observations only"
+  },
+  "reference_seconds": 600,
+  "repeatability": {
+    "all_output_differences_limited_to_table_serialization_or_row_order": false,
+    "all_outputs_byte_identical_to_original": false,
+    "cleanup_verified": true,
+    "comparison_rules_validated": false,
+    "construction_run": false,
+    "finished": 1792849979.4332175,
+    "limitations": "Finite repeated runs, not a grading contract or portability proof. Fresh processes/workspaces share the rebuilt environment and caches; base image tag is reused, not an immutable image digest.",
+    "model_calls": 0,
+    "output_observations": [
+      [
+        {
+          "baseline_sha256": "14cbefc7a942cdc407be6118ec341fb8914dd96b56a99b8545ca5382743010e4",
+          "byte_identical": true,
+          "path": "analytic_marginal_posterior_grid.csv",
+          "replay_sha256": "14cbefc7a942cdc407be6118ec341fb8914dd96b56a99b8545ca5382743010e4"
+        },
+        {
+          "baseline_sha256": "c891d56181fe12578a4a82817e5075ada76647d3ce7340cd63e8d6afac942775",
+          "byte_identical": false,
+          "path": "pymc_posterior_ab_X_Z.nc",
+          "replay_sha256": "adbfd082c534c6462c2cb6301a1689dd16759a368e0a61c31a35d25fe5dc7b55",
+          "table_observation": {
+            "baseline": null,
+            "replay": null,
+            "same_header_and_row_multiset": false,
+            "scientific_equivalence_established": false
+          }
+        }
+      ],
+      [
+        {
+          "baseline_sha256": "14cbefc7a942cdc407be6118ec341fb8914dd96b56a99b8545ca5382743010e4",
+          "byte_identical": true,
+          "path": "analytic_marginal_posterior_grid.csv",
+          "replay_sha256": "14cbefc7a942cdc407be6118ec341fb8914dd96b56a99b8545ca5382743010e4"
+        },
+        {
+          "baseline_sha256": "c891d56181fe12578a4a82817e5075ada76647d3ce7340cd63e8d6afac942775",
+          "byte_identical": false,
+          "path": "pymc_posterior_ab_X_Z.nc",
+          "replay_sha256": "2343cf8956b3d248ab09b40e254d1b842032788da25872bfe38e39596ceb00ee",
+          "table_observation": {
+            "baseline": null,
+            "replay": null,
+            "same_header_and_row_multiset": false,
+            "scientific_equivalence_established": false
+          }
+        }
+      ]
+    ],
+    "reference_tests": 2,
+    "semantic_fidelity_validated": false,
+    "solver_run": false,
+    "started": 1792849880.678852,
+    "status": "repeatability_observed_requires_comparison_review"
+  },
+  "source_evidence": {
+    "candidate/dependency-exclusions.json": "{\"files\": []}\n",
+    "candidate/pyproject.toml": "[project]\nname = \"pymc-rat-tumor-setup\"\nversion = \"0.1.0\"\nrequires-python = \">=3.13\"\ndependencies = [\n    \"pymc>=6.3.2\",\n    \"arviz>=1.3.0\",\n    \"matplotlib\",\n    \"pandas\",\n    \"numpy\",\n    \"scipy\",\n]\n",
+    "inputs/exports.py": "import os\n\n_export_out_dir = \"/work/outputs\"\nos.makedirs(_export_out_dir, exist_ok=True)\n\n# Endpoint 1: analytic marginal posterior density on the (X, Z) grid.\n# `df` holds the grid identifiers (X, Z), the back-transformed alpha/beta,\n# and the normalized posterior weight normed_exp_trans produced by the source.\nanalytic_posterior_grid = df[[\"X\", \"Z\", \"alpha\", \"beta\", \"normed_exp_trans\"]]\nanalytic_posterior_grid.to_csv(\n    os.path.join(_export_out_dir, \"analytic_marginal_posterior_grid.csv\"),\n    index=False,\n)\n\n# Endpoint 2: PyMC posterior samples for the hyperparameters (ab) and their\n# log-scale transforms (X, Z) from the existing `trace` InferenceData.\n# Variables are selected individually and merged, since list-style\n# multi-item indexing of the posterior group is unsupported here.\ntry:\n    import xarray as _xr\n\n    _post = trace.posterior\n    _export_ds = _xr.merge(\n        [_post[\"ab\"], _post[\"X\"], _post[\"Z\"]]\n    )\nexcept Exception:\n    raise\n\n_export_ds.to_netcdf(\n    os.path.join(_export_out_dir, \"pymc_posterior_ab_X_Z.nc\")\n)",
+    "inputs/original.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: arviz_1\n#     language: python\n#     name: python3\n# ---\n\n# # Hierarchical Binomial Model: Rat Tumor Example\n# :::{post} Jan 10, 2023\n# :tags: generalized linear model, hierarchical model \n# :category: intermediate\n# :author: Demetri Pananos, Junpeng Lao, Ra\u00fal Maldonado, Farhan Reynaldo\n# :::\n\nimport arviz as az\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\nimport pymc as pm\nimport pytensor.tensor as pt\n\nfrom scipy.special import gammaln\n\n# Notebook presentation directive: %config InlineBackend.figure_format = 'retina'\naz.style.use(\"arviz-variat\")\n\n# This short tutorial demonstrates how to use PyMC to do inference for the rat tumour example found in chapter 5 of *Bayesian Data Analysis 3rd Edition* {cite:p}`gelman2013bayesian`. Readers should already be familiar with the PyMC API.\n#\n# Suppose we are interested in the probability that a lab rat develops endometrial stromal polyps. We have data from 71 previously performed trials and would like to use this data to perform inference.\n#\n# The authors of BDA3 choose to model this problem hierarchically. Let $y_i$ be the number of lab rats which develop endometrial stromal polyps out of a possible $n_i$. We model the number rodents which develop endometrial stromal polyps as binomial\n#\n# $$ y_i \\sim \\operatorname{Bin}(\\theta_i;n_i)$$\n#\n# allowing the probability of developing an endometrial stromal polyp (i.e. $\\theta_i$) to be drawn from some population distribution. For analytical tractability, we assume that $\\theta_i$ has Beta distribution\n#\n# $$ \\theta_i \\sim \\operatorname{Beta}(\\alpha, \\beta)$$\n#\n# We are free to specify a prior distribution for $\\alpha, \\beta$. We choose a weakly informative prior distribution to reflect our ignorance about the true values of $\\alpha, \\beta$. The authors of BDA3 choose the joint hyperprior for $\\alpha, \\beta$ to be\n#\n# $$ p(\\alpha, \\beta) \\propto (\\alpha + \\beta) ^{-5/2}$$\n#\n# For more information, please see *Bayesian Data Analysis 3rd Edition* pg. 110.\n\n# ## A Directly Computed Solution\n#\n# Our joint posterior distribution is\n#\n# $$p(\\alpha,\\beta,\\theta \\lvert y) \n# \\propto \n# p(\\alpha, \\beta) \n# p(\\theta \\lvert \\alpha,\\beta)\n# p(y \\lvert \\theta)$$\n#\n# which can be rewritten in such a way so as to obtain the marginal posterior distribution for $\\alpha$ and $\\beta$, namely\n#\n# $$ p(\\alpha, \\beta, \\lvert y) = \n# p(\\alpha, \\beta) \n# \\prod_{i = 1}^{N} \\dfrac{\\Gamma(\\alpha+\\beta)}{\\Gamma(\\alpha)\\Gamma(\\beta)}\n# \\dfrac{\\Gamma(\\alpha+y_i)\\Gamma(\\beta+n_i - y_i)}{\\Gamma(\\alpha+\\beta+n_i)}$$\n#\n#\n# See BDA3 pg. 110 for a more information on the deriving the marginal posterior distribution. With a little determination, we can plot the marginal posterior and estimate the means of $\\alpha$ and $\\beta$ without having to resort to MCMC. We will see, however, that this requires considerable effort.\n#\n# The authors of BDA3 choose to plot the surface under the parameterization $(\\log(\\alpha/\\beta), \\log(\\alpha+\\beta))$.  We do so as well. Through the remainder of the example let $x = \\log(\\alpha/\\beta)$ and $z = \\log(\\alpha+\\beta)$.\n\n# rat data (BDA3, p. 102)\n# fmt: off\ny = np.array([\n    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,\n    1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  1,  5,  2,\n    5,  3,  2,  7,  7,  3,  3,  2,  9, 10,  4,  4,  4,  4,  4,  4,  4,\n    10,  4,  4,  4,  5, 11, 12,  5,  5,  6,  5,  6,  6,  6,  6, 16, 15,\n    15,  9,  4\n])\nn = np.array([\n    20, 20, 20, 20, 20, 20, 20, 19, 19, 19, 19, 18, 18, 17, 20, 20, 20,\n    20, 19, 19, 18, 18, 25, 24, 23, 20, 20, 20, 20, 20, 20, 10, 49, 19,\n    46, 27, 17, 49, 47, 20, 20, 13, 48, 50, 20, 20, 20, 20, 20, 20, 20,\n    48, 19, 19, 19, 22, 46, 49, 20, 20, 23, 19, 22, 20, 20, 20, 52, 46,\n    47, 24, 14\n])\n# fmt: on\n\nN = len(n)\n\n\n# Compute on log scale because products turn to sums\ndef log_likelihood(alpha, beta, y, n):\n    LL = 0\n\n    # Summing over data\n    for Y, N in zip(y, n):\n        LL += (\n            gammaln(alpha + beta)\n            - gammaln(alpha)\n            - gammaln(beta)\n            + gammaln(alpha + Y)\n            + gammaln(beta + N - Y)\n            - gammaln(alpha + beta + N)\n        )\n\n    return LL\n\n\ndef log_prior(A, B):\n    return -5 / 2 * np.log(A + B)\n\n\ndef trans_to_beta(x, y):\n    return np.exp(y) / (np.exp(x) + 1)\n\n\ndef trans_to_alpha(x, y):\n    return np.exp(x) * trans_to_beta(x, y)\n\n\n# Create space for the parameterization in which we wish to plot\nX, Z = np.meshgrid(np.arange(-2.3, -1.3, 0.01), np.arange(1, 5, 0.01))\nparam_space = np.c_[X.ravel(), Z.ravel()]\ndf = pd.DataFrame(param_space, columns=[\"X\", \"Z\"])\n\n# Transform the space back to alpha beta to compute the log-posterior\ndf[\"alpha\"] = trans_to_alpha(df.X, df.Z)\ndf[\"beta\"] = trans_to_beta(df.X, df.Z)\n\ndf[\"log_posterior\"] = log_prior(df.alpha, df.beta) + log_likelihood(df.alpha, df.beta, y, n)\ndf[\"log_jacobian\"] = np.log(df.alpha) + np.log(df.beta)\n\ndf[\"transformed\"] = df.log_posterior + df.log_jacobian\ndf[\"exp_trans\"] = np.exp(df.transformed - df.transformed.max())\n\n# This will ensure the density is normalized\ndf[\"normed_exp_trans\"] = df.exp_trans / df.exp_trans.sum()\n\n\nsurface = df.set_index([\"X\", \"Z\"]).exp_trans.unstack().values.T\n\nfig, ax = plt.subplots(figsize=(8, 8))\nax.contourf(X, Z, surface)\nax.set_xlabel(r\"$\\log(\\alpha/\\beta)$\", fontsize=16)\nax.set_ylabel(r\"$\\log(\\alpha+\\beta)$\", fontsize=16)\n\nix_z, ix_x = np.unravel_index(np.argmax(surface, axis=None), surface.shape)\nax.scatter([X[0, ix_x]], [Z[ix_z, 0]], color=\"red\")\n\ntext = rf\"$({np.round(X[0, ix_x], 2)},{np.round(Z[ix_z, 0], 2)})$\"\n\nax.annotate(\n    text,\n    xy=(X[0, ix_x], Z[ix_z, 0]),\n    xytext=(-1.6, 3.5),\n    ha=\"center\",\n    fontsize=16,\n    color=\"white\",\n    arrowprops={\"facecolor\": \"white\"},\n);\n\n# The plot shows that the posterior is roughly symmetric about the mode (-1.79, 2.74). This corresponds to $\\alpha = 2.21$ and $\\beta = 13.27$. We can compute the marginal means as the authors of BDA3 do, using\n#\n# $$ \\operatorname{E}(\\alpha \\lvert y) \\text{   is estimated by   }\n# \\sum_{x,z} \\alpha p(x,z\\lvert y) $$\n#\n# $$ \\operatorname{E}(\\beta \\lvert y) \\text{   is estimated by   }\n# \\sum_{x,z} \\beta p(x,z\\lvert y) $$\n\n# Estimated mean of alpha\n(df.alpha * df.normed_exp_trans).sum().round(3)\n\n# Estimated mean of beta\n(df.beta * df.normed_exp_trans).sum().round(3)\n\n# ## Computing the Posterior using PyMC\n#\n# Computing the marginal posterior directly is a lot of work, and is not always possible for sufficiently complex models. \n#\n# On the other hand, creating hierarchical models in PyMC is simple.  We can use the samples obtained from the posterior to estimate the means of $\\alpha$ and $\\beta$.\n\ncoords = {\n    \"obs_id\": np.arange(N),\n    \"param\": [\"alpha\", \"beta\"],\n}\n\n\ndef logp_ab(value):\n    \"\"\"prior density\"\"\"\n    return pt.log(pt.pow(pt.sum(value), -5 / 2))\n\n\nwith pm.Model(coords=coords) as model:\n    # Uninformative prior for alpha and beta\n    n_val = pm.Data(\"n_val\", n)\n    ab = pm.HalfNormal(\"ab\", sigma=10, dims=\"param\")\n    pm.Potential(\"p(a, b)\", logp_ab(ab))\n\n    X = pm.Deterministic(\"X\", pt.log(ab[0] / ab[1]))\n    Z = pm.Deterministic(\"Z\", pt.log(pt.sum(ab)))\n\n    theta = pm.Beta(\"theta\", alpha=ab[0], beta=ab[1], dims=\"obs_id\")\n\n    p = pm.Binomial(\"y\", p=theta, observed=y, n=n_val)\n    trace = pm.sample(draws=2000, tune=2000, target_accept=0.95)\n\n# Check the trace. Looks good!\naz.plot_rank_dist(trace, var_names=[\"ab\", \"X\", \"Z\"], compact=False);\n\n# We can plot a kernel density estimate for $x$ and $y$. It looks rather similar to our contour plot made from the analytic marginal posterior density.  That's a good sign, and required far less effort.\n\naz.plot_pair(trace, var_names=[\"X\", \"Z\"]);\n\n# From here, we could use the trace to compute the mean of the distribution.\n\naz.plot_dist(trace, var_names=[\"ab\"]);\n\n# estimate the means from the samples\ntrace.posterior[\"ab\"].mean((\"chain\", \"draw\"))\n\n# ## Conclusion\n#\n# Analytically calculating statistics for posterior distributions is difficult if not impossible for some models.  PyMC provides an easy way drawing samples from your model's posterior with only a few lines of code.  Here, we used PyMC to obtain estimates of the posterior mean for the rat tumor example in chapter 5 of BDA3. The estimates obtained from PyMC are encouragingly close to the estimates obtained from the analytical posterior density.\n\n# ## References\n#\n# :::{bibliography}\n# :filter: docname in docnames\n# :::\n\n# ## Authors\n#\n# * Adapted from chapter 5 of Bayesian Data Analysis 3rd Edition {cite:p}`gelman2013bayesian` by Demetri Pananos and Junpeng Lao ([pymc#3054](https://github.com/pymc-devs/pymc/pull/3054))\n# * Updated and reexecuted by Ra\u00fal Maldonado ([pymc-examples#24](https://github.com/pymc-devs/pymc-examples/pull/24), [pymc-examples#45](https://github.com/pymc-devs/pymc-examples/pull/45) and [pymc-examples#147](https://github.com/pymc-devs/pymc-examples/pull/147))\n# * Updated and reexecuted by Farhan Reynaldo in November 2021 ([pymc-examples#248](https://github.com/pymc-devs/pymc-examples/pull/248))\n# * Rerun with PyMC v5, by Reshama Shaikh, January 2023\n# * Updated by Osvaldo Martin, April 2026\n\n# ## Watermark\n\n# Notebook presentation directive: %load_ext watermark\n# Notebook presentation directive: %watermark -n -u -v -iv -w\n\n\n# :::{include} ../page_footer.md\n# :::\n",
+    "inputs/plan.json": "{\n  \"artifacts\": [\n    {\n      \"description\": \"Analytic marginal posterior of the Beta hyperparameters: the (log(alpha/beta), log(alpha+beta)) grid with the back-transformed alpha, beta values and the normalized posterior density (normed_exp_trans), from which the marginal means of alpha and beta and the posterior mode are recoverable.\",\n      \"path\": \"analytic_marginal_posterior_grid.csv\",\n      \"source_evidence\": \"The narrative (section 'A Directly Computed Solution') states the goal of plotting the marginal posterior and estimating the means of alpha and beta analytically, and interprets the contour/mode and weighted-sum means from this grid. The source builds it in the pandas DataFrame `df` via `df[alpha]=trans_to_alpha(...)`, `df[beta]=trans_to_beta(...)`, and `df[normed_exp_trans] = df.exp_trans / df.exp_trans.sum()`; `df` survives to script completion.\"\n    },\n    {\n      \"description\": \"MCMC posterior samples of the hyperparameters ab (alpha, beta) and their transforms X=log(alpha/beta), Z=log(alpha+beta) across chains and draws, exactly as produced by pm.sample.\",\n      \"path\": \"pymc_posterior_ab_X_Z.nc\",\n      \"source_evidence\": \"The conclusion states 'we used PyMC to obtain estimates of the posterior mean for the rat tumor example... The estimates obtained from PyMC are encouragingly close to the estimates obtained from the analytical posterior density'; the samples the narrative interprets (including the displayed `trace.posterior[ab].mean((chain, draw))`) come from `trace = pm.sample(...)`, which exists at completion. Only the variables the narrative interprets (ab, X, Z) are selected out of `trace.posterior`; the per-experiment latent `theta` is not an interpreted endpoint.\"\n    }\n  ],\n  \"disposition\": \"prepare\",\n  \"excluded_outputs\": [\n    \"Estimated marginal means of alpha and beta (analytic branch) and trace.posterior['ab'].mean((chain, draw)) (PyMC branch): these terminal summaries appear only as unassigned display expressions in the source; per export rules they cannot be captured or recomputed, but both are fully recoverable from the exported normalized grid and posterior samples respectively.\",\n    \"Contour plot with posterior-mode annotation: the mode coordinates are built inside the plotting section from the meshgrid arrays, and the names X and Z are subsequently reassigned to PyMC Deterministic objects inside the model context, so the original meshgrid values are out of scope; the exported grid permits locating the mode.\",\n    \"az.plot_rank_dist / plot_pair / plot_dist figures: MCMC diagnostic plots with no stored numeric results beyond `trace`; their role is model checking, not independent endpoints.\",\n    \"theta posterior samples (per-experiment latent probabilities): intermediate model parameters feeding the binomial likelihood, not interpreted as a standalone scientific outcome.\",\n    \"df columns log_posterior, log_jacobian, transformed, exp_trans: intermediate steps toward the normalized density that is exported.\",\n    \"surface (contour matrix): a plot-support reshaping of exp_trans already represented by the exported grid.\"\n  ],\n  \"explanation\": \"Runtime repair only: the previous export code failed because multi-item selection `trace.posterior[[...]]` is removed in the installed xarray version. The corrected export code selects the variables ab, X, Z individually and merges them with xarray before writing the same NetCDF endpoint. The analytic-grid CSV export is unchanged. Artifacts, endpoint selection, and all exclusions are preserved exactly; no science is modified or recomputed.\",\n  \"export_code\": \"import os\\n\\n_export_out_dir = \\\"/work/outputs\\\"\\nos.makedirs(_export_out_dir, exist_ok=True)\\n\\n# Endpoint 1: analytic marginal posterior density on the (X, Z) grid.\\n# `df` holds the grid identifiers (X, Z), the back-transformed alpha/beta,\\n# and the normalized posterior weight normed_exp_trans produced by the source.\\nanalytic_posterior_grid = df[[\\\"X\\\", \\\"Z\\\", \\\"alpha\\\", \\\"beta\\\", \\\"normed_exp_trans\\\"]]\\nanalytic_posterior_grid.to_csv(\\n    os.path.join(_export_out_dir, \\\"analytic_marginal_posterior_grid.csv\\\"),\\n    index=False,\\n)\\n\\n# Endpoint 2: PyMC posterior samples for the hyperparameters (ab) and their\\n# log-scale transforms (X, Z) from the existing `trace` InferenceData.\\n# Variables are selected individually and merged, since list-style\\n# multi-item indexing of the posterior group is unsupported here.\\ntry:\\n    import xarray as _xr\\n\\n    _post = trace.posterior\\n    _export_ds = _xr.merge(\\n        [_post[\\\"ab\\\"], _post[\\\"X\\\"], _post[\\\"Z\\\"]]\\n    )\\nexcept Exception:\\n    raise\\n\\n_export_ds.to_netcdf(\\n    os.path.join(_export_out_dir, \\\"pymc_posterior_ab_X_Z.nc\\\")\\n)\",\n  \"unresolved_assumptions\": [\n    \"NetCDF write via xarray's to_netcdf assumes a compatible engine (e.g. scipy, which the source already depends on, or h5netcdf/netcdf4) is installed in the execution environment; if unavailable, the execution stage may need to provide one.\",\n    \"The xarray version installed at execution time rejects list-style multi-item indexing of the posterior group; the repair selects ab, X, Z individually and merges them, which should be robust, but single-name indexing behavior should be confirmed if the environment changes.\",\n    \"Posterior sample counts and dtype of `trace.posterior` under the given CPU/time limits are unverified; the file size impact of the chain/draw dimensions should be confirmed at execution time.\"\n  ]\n}\n",
+    "outcome.json": "{\n  \"dependency_asset_review\": \"Reviewed the dependency-assets catalog from the successful reference run (8658 installed files inspected, 2940 candidates). `priority_matches` was empty. The only named-check candidates outside standard library/metadata noise were `arviz_base/example_data/data/centered_eight.nc` and `non_centered_eight.nc` (ArviZ \\\"eight schools\\\" example fixtures, unrelated to the rat-tumor endpoints and never read by the source). The scientific inputs (71 rat-tumor count pairs from BDA3 p.102) are embedded as arrays in the analysis source itself, so no distribution supplies the answer. All other candidate files are library code/tests of pymc/pymc-base/scipy/numpy/pandas/matplotlib/xarray/numba with no rat-tumor content. dependency-exclusions.json is {\\\"files\\\": []} with no removals declared; this passed with the final reference test.\",\n  \"disposition\": \"tested\",\n  \"explanation\": \"The reference executed to completion offline on Python 3.13 with pymc 6.3.2, arviz 1.3.0, arviz-base 1.3.1, xarray 2026.9.0, pytensor 3.3.4 (g++ declared for C compilation). NUTS sampling ran the full 2 chains x 2000 tune + 2000 draws (~5 s with the compile step), all analytic-grid, plotting, and PyMC steps ran unmodified, and both declared artifacts were produced and byte-verified (analytic_marginal_posterior_grid.csv, 3,871,960 bytes; pymc_posterior_ab_X_Z.nc, 136,508 bytes). The first controlled run failed only in the appended export code: `trace.posterior[[\\\"ab\\\",\\\"X\\\",\\\"Z\\\"]]` raised `NotImplementedError: Selecting via tags is deprecated...` on xarray 2026.9.0 DataTree (an upstream API removal, not an analysis failure; verified reproducible across xarray 2025.3.1\\u20132026.9.0 and unavoidable since az.plot_rank_dist requires arviz>=1). The controller applied the one-time unused-validation export repair and the retest passed with exit code 0. Dependencing suspicions aside, scientific fidelity was checked only as far as execution: the unmodified analysis source and staged file set were byte-identical, and no data reduction or parameter change was made.\",\n  \"source_adaptations\": [],\n  \"unresolved_assumptions\": [\n    \"Posterior sample values are stochastic; artifact hashes for the NetCDF file will vary between runs (chain/draw content), while the deterministic analytic grid CSV should be stable.\",\n    \"The controller-repaired export (sha256 d17957761a1c464bb476a1645fca7a1f8a704fc9fd178c10e9d1b672e6aa358a) is owned by the preparation worker; the runtime repair verified both endpoints are now written but not its semantic equivalence beyond the receipt.\",\n    \"Reference completed in ~15 s wall time, well within the 600 s limit; memory peaked ~360 MiB of the 8 GiB limit.\"\n  ]\n}\n",
+    "trial/dependency-assets-summary.json": "{\n  \"candidate_files\": 2940,\n  \"distribution_coverage\": [\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"arviz\",\n      \"installed_regular_files_inspected\": 7\n    },\n    {\n      \"candidate_files\": 2,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"arviz-base\",\n      \"installed_regular_files_inspected\": 55\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"arviz-plots\",\n      \"installed_regular_files_inspected\": 89\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"arviz-stats\",\n      \"installed_regular_files_inspected\": 55\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"cachetools\",\n      \"installed_regular_files_inspected\": 12\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"cloudpickle\",\n      \"installed_regular_files_inspected\": 9\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"contourpy\",\n      \"installed_regular_files_inspected\": 26\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"cycler\",\n      \"installed_regular_files_inspected\": 9\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"filelock\",\n      \"installed_regular_files_inspected\": 30\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"fonttools\",\n      \"installed_regular_files_inspected\": 365\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"kiwisolver\",\n      \"installed_regular_files_inspected\": 12\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"lazy-loader\",\n      \"installed_regular_files_inspected\": 8\n    },\n    {\n      \"candidate_files\": 8,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"llvmlite\",\n      \"installed_regular_files_inspected\": 47\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"markdown-it-py\",\n      \"installed_regular_files_inspected\": 76\n    },\n    {\n      \"candidate_files\": 112,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"matplotlib\",\n      \"installed_regular_files_inspected\": 603\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"mdurl\",\n      \"installed_regular_files_inspected\": 13\n    },\n    {\n      \"candidate_files\": 416,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"numba\",\n      \"installed_regular_files_inspected\": 824\n    },\n    {\n      \"candidate_files\": 493,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"numpy\",\n      \"installed_regular_files_inspected\": 928\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"packaging\",\n      \"installed_regular_files_inspected\": 31\n    },\n    {\n      \"candidate_files\": 1143,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pandas\",\n      \"installed_regular_files_inspected\": 1560\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pillow\",\n      \"installed_regular_files_inspected\": 141\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"Pygments\",\n      \"installed_regular_files_inspected\": 351\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pymc\",\n      \"installed_regular_files_inspected\": 136\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pyparsing\",\n      \"installed_regular_files_inspected\": 25\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pytensor\",\n      \"installed_regular_files_inspected\": 428\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"python-dateutil\",\n      \"installed_regular_files_inspected\": 29\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"rich\",\n      \"installed_regular_files_inspected\": 107\n    },\n    {\n      \"candidate_files\": 680,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"scipy\",\n      \"installed_regular_files_inspected\": 1434\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"setuptools\",\n      \"installed_regular_files_inspected\": 350\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"six\",\n      \"installed_regular_files_inspected\": 8\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"threadpoolctl\",\n      \"installed_regular_files_inspected\": 7\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"typing_extensions\",\n      \"installed_regular_files_inspected\": 7\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"tzdata\",\n      \"installed_regular_files_inspected\": 635\n    },\n    {\n      \"candidate_files\": 86,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"xarray\",\n      \"installed_regular_files_inspected\": 220\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"xarray-einstats\",\n      \"installed_regular_files_inspected\": 21\n    }\n  ],\n  \"installed_files_inspected\": 8658,\n  \"priority_matches\": [],\n  \"scope\": \"Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit.\"\n}\n",
+    "trial/dependency-exclusions-applied.json": "{\n  \"files\": [],\n  \"excluded_files_absent\": true\n}\n",
+    "trial/environment.txt": "arviz==1.3.0\narviz-base==1.3.1\narviz-plots==1.3.2\narviz-stats==1.3.3\ncachetools==6.2.6\ncloudpickle==3.1.2\ncontourpy==1.4.0\ncycler==0.12.1\nfilelock==4.2.4\nfonttools==4.67.0\nkiwisolver==1.5.1\nlazy-loader==0.6\nllvmlite==0.50.0\nmarkdown-it-py==4.2.0\nmatplotlib==3.11.2\nmdurl==0.1.2\nnumba==0.68.0\nnumpy==2.5.4\npackaging==26.3\npandas==3.1.0\npillow==13.0.0\npygments==2.21.0\npymc==6.3.2\npyparsing==3.3.3\npytensor==3.3.4\npython-dateutil==3.0.0\nrich==15.0.0\nscipy==1.18.1\nsetuptools==84.2.1\nsix==1.17.0\nthreadpoolctl==3.7.0\ntyping-extensions==4.16.0\ntzdata==2026.5\nxarray==2026.9.0\nxarray-einstats==0.11.0\n",
+    "trial/source.diff": ""
+  },
+  "source_operations": {
+    "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+    "operations": [
+      {
+        "column": 0,
+        "function": "az.style.use",
+        "id": "call-32-0",
+        "line": 32,
+        "source": "az.style.use(\"arviz-variat\")"
+      },
+      {
+        "column": 4,
+        "function": "np.array",
+        "id": "call-76-4",
+        "line": 76,
+        "source": "np.array([\n    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,\n    1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  1,  5,  2,\n    5,  3,  2,  7,  7,  3,  3,  2,  9, 10,  4,  4,  4,  4,  4,  4,  4,\n    10,  4,  4,  4,  5, 11, 12,  5,  5,  6,  5,  6,  6,  6,  6, 16, 15,\n    15,  9,  4\n])"
+      },
+      {
+        "column": 4,
+        "function": "np.array",
+        "id": "call-83-4",
+        "line": 83,
+        "source": "np.array([\n    20, 20, 20, 20, 20, 20, 20, 19, 19, 19, 19, 18, 18, 17, 20, 20, 20,\n    20, 19, 19, 18, 18, 25, 24, 23, 20, 20, 20, 20, 20, 20, 10, 49, 19,\n    46, 27, 17, 49, 47, 20, 20, 13, 48, 50, 20, 20, 20, 20, 20, 20, 20,\n    48, 19, 19, 19, 22, 46, 49, 20, 20, 23, 19, 22, 20, 20, 20, 52, 46,\n    47, 24, 14\n])"
+      },
+      {
+        "column": 4,
+        "function": "len",
+        "id": "call-92-4",
+        "line": 92,
+        "source": "len(n)"
+      },
+      {
+        "column": 16,
+        "function": "zip",
+        "id": "call-100-16",
+        "line": 100,
+        "source": "zip(y, n)"
+      },
+      {
+        "column": 12,
+        "function": "gammaln",
+        "id": "call-102-12",
+        "line": 102,
+        "source": "gammaln(alpha + beta)"
+      },
+      {
+        "column": 14,
+        "function": "gammaln",
+        "id": "call-103-14",
+        "line": 103,
+        "source": "gammaln(alpha)"
+      },
+      {
+        "column": 14,
+        "function": "gammaln",
+        "id": "call-104-14",
+        "line": 104,
+        "source": "gammaln(beta)"
+      },
+      {
+        "column": 14,
+        "function": "gammaln",
+        "id": "call-105-14",
+        "line": 105,
+        "source": "gammaln(alpha + Y)"
+      },
+      {
+        "column": 14,
+        "function": "gammaln",
+        "id": "call-106-14",
+        "line": 106,
+        "source": "gammaln(beta + N - Y)"
+      },
+      {
+        "column": 14,
+        "function": "gammaln",
+        "id": "call-107-14",
+        "line": 107,
+        "source": "gammaln(alpha + beta + N)"
+      },
+      {
+        "column": 20,
+        "function": "np.log",
+        "id": "call-114-20",
+        "line": 114,
+        "source": "np.log(A + B)"
+      },
+      {
+        "column": 11,
+        "function": "np.exp",
+        "id": "call-118-11",
+        "line": 118,
+        "source": "np.exp(y)"
+      },
+      {
+        "column": 24,
+        "function": "np.exp",
+        "id": "call-118-24",
+        "line": 118,
+        "source": "np.exp(x)"
+      },
+      {
+        "column": 11,
+        "function": "np.exp",
+        "id": "call-122-11",
+        "line": 122,
+        "source": "np.exp(x)"
+      },
+      {
+        "column": 23,
+        "function": "trans_to_beta",
+        "id": "call-122-23",
+        "line": 122,
+        "source": "trans_to_beta(x, y)"
+      },
+      {
+        "column": 7,
+        "function": "np.meshgrid",
+        "id": "call-126-7",
+        "line": 126,
+        "source": "np.meshgrid(np.arange(-2.3, -1.3, 0.01), np.arange(1, 5, 0.01))"
+      },
+      {
+        "column": 19,
+        "function": "np.arange",
+        "id": "call-126-19",
+        "line": 126,
+        "source": "np.arange(-2.3, -1.3, 0.01)"
+      },
+      {
+        "column": 48,
+        "function": "np.arange",
+        "id": "call-126-48",
+        "line": 126,
+        "source": "np.arange(1, 5, 0.01)"
+      },
+      {
+        "column": 20,
+        "function": "X.ravel",
+        "id": "call-127-20",
+        "line": 127,
+        "source": "X.ravel()"
+      },
+      {
+        "column": 31,
+        "function": "Z.ravel",
+        "id": "call-127-31",
+        "line": 127,
+        "source": "Z.ravel()"
+      },
+      {
+        "column": 5,
+        "function": "pd.DataFrame",
+        "id": "call-128-5",
+        "line": 128,
+        "source": "pd.DataFrame(param_space, columns=[\"X\", \"Z\"])"
+      },
+      {
+        "column": 14,
+        "function": "trans_to_alpha",
+        "id": "call-131-14",
+        "line": 131,
+        "source": "trans_to_alpha(df.X, df.Z)"
+      },
+      {
+        "column": 13,
+        "function": "trans_to_beta",
+        "id": "call-132-13",
+        "line": 132,
+        "source": "trans_to_beta(df.X, df.Z)"
+      },
+      {
+        "column": 22,
+        "function": "log_prior",
+        "id": "call-134-22",
+        "line": 134,
+        "source": "log_prior(df.alpha, df.beta)"
+      },
+      {
+        "column": 53,
+        "function": "log_likelihood",
+        "id": "call-134-53",
+        "line": 134,
+        "source": "log_likelihood(df.alpha, df.beta, y, n)"
+      },
+      {
+        "column": 21,
+        "function": "np.log",
+        "id": "call-135-21",
+        "line": 135,
+        "source": "np.log(df.alpha)"
+      },
+      {
+        "column": 40,
+        "function": "np.log",
+        "id": "call-135-40",
+        "line": 135,
+        "source": "np.log(df.beta)"
+      },
+      {
+        "column": 18,
+        "function": "np.exp",
+        "id": "call-138-18",
+        "line": 138,
+        "source": "np.exp(df.transformed - df.transformed.max())"
+      },
+      {
+        "column": 42,
+        "function": "df.transformed.max",
+        "id": "call-138-42",
+        "line": 138,
+        "source": "df.transformed.max()"
+      },
+      {
+        "column": 40,
+        "function": "df.exp_trans.sum",
+        "id": "call-141-40",
+        "line": 141,
+        "source": "df.exp_trans.sum()"
+      },
+      {
+        "column": 10,
+        "function": "df.set_index(['X', 'Z']).exp_trans.unstack",
+        "id": "call-144-10",
+        "line": 144,
+        "source": "df.set_index([\"X\", \"Z\"]).exp_trans.unstack()"
+      },
+      {
+        "column": 10,
+        "function": "df.set_index",
+        "id": "call-144-10",
+        "line": 144,
+        "source": "df.set_index([\"X\", \"Z\"])"
+      },
+      {
+        "column": 10,
+        "function": "plt.subplots",
+        "id": "call-146-10",
+        "line": 146,
+        "source": "plt.subplots(figsize=(8, 8))"
+      },
+      {
+        "column": 0,
+        "function": "ax.contourf",
+        "id": "call-147-0",
+        "line": 147,
+        "source": "ax.contourf(X, Z, surface)"
+      },
+      {
+        "column": 0,
+        "function": "ax.set_xlabel",
+        "id": "call-148-0",
+        "line": 148,
+        "source": "ax.set_xlabel(r\"$\\log(\\alpha/\\beta)$\", fontsize=16)"
+      },
+      {
+        "column": 0,
+        "function": "ax.set_ylabel",
+        "id": "call-149-0",
+        "line": 149,
+        "source": "ax.set_ylabel(r\"$\\log(\\alpha+\\beta)$\", fontsize=16)"
+      },
+      {
+        "column": 13,
+        "function": "np.unravel_index",
+        "id": "call-151-13",
+        "line": 151,
+        "source": "np.unravel_index(np.argmax(surface, axis=None), surface.shape)"
+      },
+      {
+        "column": 30,
+        "function": "np.argmax",
+        "id": "call-151-30",
+        "line": 151,
+        "source": "np.argmax(surface, axis=None)"
+      },
+      {
+        "column": 0,
+        "function": "ax.scatter",
+        "id": "call-152-0",
+        "line": 152,
+        "source": "ax.scatter([X[0, ix_x]], [Z[ix_z, 0]], color=\"red\")"
+      },
+      {
+        "column": 13,
+        "function": "np.round",
+        "id": "call-154-13",
+        "line": 154,
+        "source": "np.round(X[0, ix_x], 2)"
+      },
+      {
+        "column": 39,
+        "function": "np.round",
+        "id": "call-154-39",
+        "line": 154,
+        "source": "np.round(Z[ix_z, 0], 2)"
+      },
+      {
+        "column": 0,
+        "function": "ax.annotate",
+        "id": "call-156-0",
+        "line": 156,
+        "source": "ax.annotate(\n    text,\n    xy=(X[0, ix_x], Z[ix_z, 0]),\n    xytext=(-1.6, 3.5),\n    ha=\"center\",\n    fontsize=16,\n    color=\"white\",\n    arrowprops={\"facecolor\": \"white\"},\n)"
+      },
+      {
+        "column": 0,
+        "function": "(df.alpha * df.normed_exp_trans).sum().round",
+        "id": "call-175-0",
+        "line": 175,
+        "source": "(df.alpha * df.normed_exp_trans).sum().round(3)"
+      },
+      {
+        "column": 0,
+        "function": "(df.alpha * df.normed_exp_trans).sum",
+        "id": "call-175-0",
+        "line": 175,
+        "source": "(df.alpha * df.normed_exp_trans).sum()"
+      },
+      {
+        "column": 0,
+        "function": "(df.beta * df.normed_exp_trans).sum().round",
+        "id": "call-178-0",
+        "line": 178,
+        "source": "(df.beta * df.normed_exp_trans).sum().round(3)"
+      },
+      {
+        "column": 0,
+        "function": "(df.beta * df.normed_exp_trans).sum",
+        "id": "call-178-0",
+        "line": 178,
+        "source": "(df.beta * df.normed_exp_trans).sum()"
+      },
+      {
+        "column": 14,
+        "function": "np.arange",
+        "id": "call-187-14",
+        "line": 187,
+        "source": "np.arange(N)"
+      },
+      {
+        "column": 11,
+        "function": "pt.log",
+        "id": "call-194-11",
+        "line": 194,
+        "source": "pt.log(pt.pow(pt.sum(value), -5 / 2))"
+      },
+      {
+        "column": 18,
+        "function": "pt.pow",
+        "id": "call-194-18",
+        "line": 194,
+        "source": "pt.pow(pt.sum(value), -5 / 2)"
+      },
+      {
+        "column": 25,
+        "function": "pt.sum",
+        "id": "call-194-25",
+        "line": 194,
+        "source": "pt.sum(value)"
+      },
+      {
+        "column": 5,
+        "function": "pm.Model",
+        "id": "call-197-5",
+        "line": 197,
+        "source": "pm.Model(coords=coords)"
+      },
+      {
+        "column": 12,
+        "function": "pm.Data",
+        "id": "call-199-12",
+        "line": 199,
+        "source": "pm.Data(\"n_val\", n)"
+      },
+      {
+        "column": 9,
+        "function": "pm.HalfNormal",
+        "id": "call-200-9",
+        "line": 200,
+        "source": "pm.HalfNormal(\"ab\", sigma=10, dims=\"param\")"
+      },
+      {
+        "column": 4,
+        "function": "pm.Potential",
+        "id": "call-201-4",
+        "line": 201,
+        "source": "pm.Potential(\"p(a, b)\", logp_ab(ab))"
+      },
+      {
+        "column": 28,
+        "function": "logp_ab",
+        "id": "call-201-28",
+        "line": 201,
+        "source": "logp_ab(ab)"
+      },
+      {
+        "column": 8,
+        "function": "pm.Deterministic",
+        "id": "call-203-8",
+        "line": 203,
+        "source": "pm.Deterministic(\"X\", pt.log(ab[0] / ab[1]))"
+      },
+      {
+        "column": 30,
+        "function": "pt.log",
+        "id": "call-203-30",
+        "line": 203,
+        "source": "pt.log(ab[0] / ab[1])"
+      },
+      {
+        "column": 8,
+        "function": "pm.Deterministic",
+        "id": "call-204-8",
+        "line": 204,
+        "source": "pm.Deterministic(\"Z\", pt.log(pt.sum(ab)))"
+      },
+      {
+        "column": 30,
+        "function": "pt.log",
+        "id": "call-204-30",
+        "line": 204,
+        "source": "pt.log(pt.sum(ab))"
+      },
+      {
+        "column": 37,
+        "function": "pt.sum",
+        "id": "call-204-37",
+        "line": 204,
+        "source": "pt.sum(ab)"
+      },
+      {
+        "column": 12,
+        "function": "pm.Beta",
+        "id": "call-206-12",
+        "line": 206,
+        "source": "pm.Beta(\"theta\", alpha=ab[0], beta=ab[1], dims=\"obs_id\")"
+      },
+      {
+        "column": 8,
+        "function": "pm.Binomial",
+        "id": "call-208-8",
+        "line": 208,
+        "source": "pm.Binomial(\"y\", p=theta, observed=y, n=n_val)"
+      },
+      {
+        "column": 12,
+        "function": "pm.sample",
+        "id": "call-209-12",
+        "line": 209,
+        "source": "pm.sample(draws=2000, tune=2000, target_accept=0.95)"
+      },
+      {
+        "column": 0,
+        "function": "az.plot_rank_dist",
+        "id": "call-212-0",
+        "line": 212,
+        "source": "az.plot_rank_dist(trace, var_names=[\"ab\", \"X\", \"Z\"], compact=False)"
+      },
+      {
+        "column": 0,
+        "function": "az.plot_pair",
+        "id": "call-216-0",
+        "line": 216,
+        "source": "az.plot_pair(trace, var_names=[\"X\", \"Z\"])"
+      },
+      {
+        "column": 0,
+        "function": "az.plot_dist",
+        "id": "call-220-0",
+        "line": 220,
+        "source": "az.plot_dist(trace, var_names=[\"ab\"])"
+      },
+      {
+        "column": 0,
+        "function": "trace.posterior['ab'].mean",
+        "id": "call-223-0",
+        "line": 223,
+        "source": "trace.posterior[\"ab\"].mean((\"chain\", \"draw\"))"
+      }
+    ],
+    "source_sha256": "11637310cbf77714fcca876df1ddb8a195474d47edad73337de070c1c158a10c"
+  },
+  "specification": {
+    "review": "# Scope, fidelity and verifiability assessment\n\n## Endpoints preserved (source-operation coverage ledger)\n\nAll 71 count pairs are embedded in the source (original.py lines 76\u201395; no external data file), so the analysis is fully self-contained given that input.\n\n**Required scientific endpoints (mapped to public task outputs):**\n- `pd.DataFrame` grid construction, `trans_to_alpha/beta`, `log_prior`, `log_likelihood`, `log_jacobian`, `exp_trans`, `normed_exp_trans` (calls 118\u2013141) \u2192 Part 1 grid CSV (the exported artifact `analytic_marginal_posterior_grid.csv`, structurally audited: 40,000 rows, 100 distinct X, 400 distinct Z, 5 columns).\n- `(df.alpha * df.normed_exp_trans).sum()` / `(df.beta * ...).sum()` (calls 175, 178) \u2014 terminal scientific results appearing only as unassigned display expressions; excluded from exports by the plan under export rules, but preserved as required solver outputs computed from the same grid (no method change; policy permits faithful recomputation).\n- `np.argmax(surface)` + mode annotation (calls 151\u2013156) \u2014 scientific interpretation of the contour (narrative: \"posterior is roughly symmetric about the mode\"). Recovered as the `mode_x`/`mode_z` summary; the meshgrid values are exactly the exported grid coordinates, so this is fully determined by the exported artifact.\n- PyMC model (calls 194\u2013208) and `trace.posterior[\"ab\"].mean((\"chain\",\"draw\"))` (call 223) \u2014 the terminal interpreted result of the MCMC branch \u2192 Part 2 posterior-mean outputs.\n\n**Justified exclusions (with source-backed reasons):**\n- `az.style.use` (32) \u2014 presentation only.\n- `ax.contourf/scatter/annotate` figure (146\u2013156) \u2014 plot mechanics; its one scientific datum (mode coordinates) is captured as an endpoint above.\n- `az.plot_rank_dist/plot_pair/plot_dist` (212\u2013220) \u2014 MCMC diagnostic plots, no stored numeric results; role is model checking, not independent endpoints.\n- `theta` latent samples (206) \u2014 intermediate feeding the likelihood; not interpreted as a standalone outcome.\n- Intermediate df columns `log_posterior`, `log_jacobian`, `transformed`, `exp_trans` and the `surface` reshape (144) \u2014 intermediate steps/plot-support reshaping of the exported normalized grid.\n- NetCDF sample file: retained as recorded reference artifact; not a solver deliverable because replays show it is stochastic (3 distinct sha256s across baseline + 2 replays, no table-equivalence established), so byte or draw-level comparison is scientifically invalid. The projection to the pooled posterior mean retains the interpreted scientific result.\n\n## Fidelity assessment\n\n- Executed method (result.json log): NUTS via `pm.sample(draws=2000, tune=2000, target_accept=0.95)`, init `jitter+adapt_diag`, \"2 chains in 2 jobs\" on 4 CPUs. Because the chain count is a consequential default, the public brief mandates the executed configuration (2 chains \u00d7 2000 warmup + 2000 retained draws, target_accept 0.95) explicitly rather than relying on defaults.\n- The model is stated exactly as executed: `ab ~ HalfNormal(\u03c3=10)` (dims \"param\") plus `pm.Potential` equal to \u2212(5/2)\u00b7log(a+b); \u03b8 ~ Beta(a,b); y ~ Binomial(n, \u03b8). The effective Part 2 prior is half-normal(10)\u00b2 \u00d7 (a+b)^(\u22125/2), which **differs** from the Part 1 hyperprior (\u03b1+\u03b2)^(\u22125/2). The public brief states both priors explicitly and warns that the branches are different quantities; the grader never cross-compares them. This prior difference is the main correctness separator for Part 2 and must be tested by variant runs.\n- Analytic grid construction is fully pinned by the executed source (arange half-open semantics: X \u2208 {\u22122.30 \u2026 \u22121.31} step 0.01, 100 values; Z \u2208 {1.00 \u2026 4.99} step 0.01, 400 values; max-subtraction before exponentiation; Jacobian ln \u03b1 + ln \u03b2; beta-binomial collapsed log-likelihood via lgamma). Output-audit (100/400 distinct values, ranges) confirms this.\n- Replay observations: grid CSV byte-identical across all three runs (deterministic \u2014 supports tight numeric comparison); netCDF differs every run (stochastic \u2014 supports the mean-only projection). No claim of equivalence beyond this is made.\n\n## Representations / comparisons (proposals, not validated tolerances)\n\n- Grid: keyed by (X, Z) coordinates; row ORDER is representation, not science (row 1..N position encodes nothing beyond the (X,Z) key). Keying by exact float or nearest-coordinate matching, and the value comparison kind (relative for alpha/beta/weights, handling near-zero weights ~5e-19 with a hybrid rule), are proposed; numeric tolerance values are NOT yet calibrated and must be measured via cross-implementation recomputation before use.\n- Analytic means / mode: means are the same quantity as the reference's (computable directly from the recorded grid artifact, 40,000 rows, privately \u2014 no new science needed); mode is an exact grid-cell identity after keying.\n- Part 2 means: same scientific quantity as the reference's pooled `ab` mean (computable from the recorded netCDF). Numerical comparison must tolerate Monte Carlo error (not a rounding issue); tolerance must be calibrated from repeat-run spread AND separated from prior-modeling variants (dropping the potential, using the Part-1 prior alone, un-collapsed misfit). No tolerance number invented here.\n\n## Concrete unresolved items (handoff)\n\n1. Materialization of `rat_tumor_counts.csv` from the embedded arrays + redistribution review (flagged in provenance.json).\n2. Calibration of all numeric tolerances (grid, means, MCMC means) by measurement.\n3. Uniqueness/margin of the mode cell (if ambiguous, drop the mode endpoint, not the task).\n4. MCMC variant-separation measurement (does discarding the Potential or the half-normal factor shift the pooled means beyond measured MC spread?).\n\nNo source defects found; the only prior failure was the documented xarray export API repair (runtime-only, endpoints unchanged). Deterministic branch and stochastic branch are both fairly completable within the 600 s / 4 CPU / offline solver budget (reference ran in ~15 s).\n\nTask is draft-ready pending input materialization and executable grading validation; tolerance calibration outstanding is explicitly permitted at draft stage.",
+    "task_brief": "# Hierarchical Bayesian inference for 71 historical rat-tumor experiments\n\n## Supplied input\n\n- `rat_tumor_counts.csv` \u2014 one row per historical experiment, columns `y`, `n`:\n  - `y`: number of lab rats that developed endometrial stromal polyps in that experiment;\n  - `n`: number of rats at risk in that experiment.\n- Use **all rows exactly as supplied**; there is no filtering. The likelihood is exchangeable over experiments, but preserve the supplied row order in any per-experiment reporting. These are historical observed counts (Bayesian Data Analysis 3rd ed., ch. 5, p. 102 data), not simulated data.\n\nThe task has two independent parts. **The two parts use different hyperpriors on (\u03b1, \u03b2); they are different scientific quantities and must both be reported separately.**\n\n## Part 1 \u2014 Analytic marginal posterior of (\u03b1, \u03b2) on a grid\n\nModel: for experiment *i*, `y_i ~ Binomial(n_i, \u03b8_i)` and `\u03b8_i ~ Beta(\u03b1, \u03b2)`, with hyperprior density `p(\u03b1, \u03b2) \u221d (\u03b1 + \u03b2)^(\u22125/2)` for \u03b1, \u03b2 > 0 (improper; the posterior is proper for these data). Marginalize the \u03b8_i analytically (beta\u2013binomial collapse) to obtain the marginal posterior of (\u03b1, \u03b2).\n\nWork in the reparameterization `x = ln(\u03b1/\u03b2)`, `z = ln(\u03b1 + \u03b2)`:\n\n- Grid: `x` takes the values \u22122.30, \u22122.29, \u22122.28, \u2026 in steps of 0.01, **strictly less than \u22121.30** (100 values, last is \u22121.31); `z` takes the values 1.00, 1.01, \u2026 in steps of 0.01, **strictly less than 5.00** (400 values, last is 4.99). Use all 100 \u00d7 400 = 40,000 combinations (half-open grid semantics: the stop endpoints \u22121.30 and 5.00 are excluded).\n- Per cell: `\u03b1 = e^(x+z) / (1 + e^x)` and `\u03b2 = e^z / (1 + e^x)`.\n- Per cell log-weight (compute in log space throughout):\n\n  \u2113(x, z) = \u2212(5/2)\u00b7ln(\u03b1 + \u03b2)\n  + \u03a3_i [ ln \u0393(\u03b1 + \u03b2) + ln \u0393(\u03b1 + y_i) + ln \u0393(\u03b2 + n_i \u2212 y_i) \u2212 ln \u0393(\u03b1) \u2212 ln \u0393(\u03b2) \u2212 ln \u0393(\u03b1 + \u03b2 + n_i) ]\n  + ln \u03b1 + ln \u03b2   (log-Jacobian of the (\u03b1, \u03b2) \u2192 (x, z) change of variables)\n\n- Normalize numerically stably: subtract the maximum log-weight over the whole grid before exponentiating, then divide by the sum over all 40,000 cells, giving grid weights `w(x, z)` that sum to 1.\n\n### Output 1: `analytic_marginal_posterior_grid.csv`\n\nCSV with header (in this column order): `X,Z,alpha,beta,normed_exp_trans`. One row per grid cell; any row order is acceptable (the grader matches rows by their (X, Z) coordinates), but every cell must appear exactly once. At least 10 significant digits of precision; no missing or non-finite values. `alpha`/`beta` must be the (X, Z) values transformed back as defined above, and `normed_exp_trans` the normalized weight `w`.\n\n### Output 2: `analytic_summary.json`\n\nJSON object with exactly these keys:\n- `mean_alpha`: E[\u03b1 | y] estimated as \u03a3_cells \u03b1\u00b7w (the posterior mean of \u03b1 under this grid).\n- `mean_beta`: E[\u03b2 | y] estimated as \u03a3_cells \u03b2\u00b7w.\n- `mode_x`, `mode_z`: the `x` and `z` grid values of the single cell whose normalized weight `w` is maximal (i.e. the location of the posterior mode on this grid); these must be exactly grid coordinate values from your Output 1.\n\n## Part 2 \u2014 Posterior means of the hyperparameters from MCMC (different prior!)\n\nFit the same hierarchical likelihood but with this joint prior density on the hyperparameters (a = \u03b1, b = \u03b2 > 0):\n\n  p(a, b) \u221d [half-normal(\u03c3 = 10) density in a] \u00d7 [half-normal(\u03c3 = 10) density in b] \u00d7 (a + b)^(\u22125/2)\n\nwith `\u03b8_i ~ Beta(a, b)` and `y_i ~ Binomial(n_i, \u03b8_i)`. **This additional half-normal factor is part of the model definition; do not replace it with the Part 1 hyperprior alone** \u2014 the two hyperpriors are intentionally different and yield different posteriors.\n\nSample the posterior with a gradient-based HMC/NUTS sampler configured as follows: exactly **2 chains**, each with **2000 warmup (tuning) iterations that are discarded**, **2000 retained draws per chain** (4000 pooled draws total), and step-size/dual-averaging adaptation targeting a mean acceptance statistic of **0.95**. Report the pooled posterior means of `a` and `b` (averaged over both chains and all retained draws).\n\n### Output 3: `mcmc_posterior_means.json`\n\nJSON object with exactly these keys:\n- `mean_alpha`, `mean_beta`: pooled posterior means of a and b (floats).\n- `n_chains`: 2; `draws_per_chain`: 2000 (retained); `target_accept`: 0.95.\n- `sampler`: free-text name of the sampler/software used.\n\n## Comparison and validation notes (provisional)\n\n- Output 1 is compared cell-by-cell after matching rows by (X, Z); output precision is required to be high enough (\u2265 10 significant digits) that formatting does not limit the comparison.\n- Deterministic quantities (Part 1 and Output 2's statistics) are graded with tolerances that accommodate ordinary cross-library floating-point variation in log-gamma evaluations and summation order, calibrated by the grader.\n- Part 2 posterior means are graded with a tolerance that reflects the Monte Carlo error of the specified sampling configuration; a properly converged, correctly specified run will pass, while a run with the wrong prior (e.g. dropping the half-normal factor or the (a+b)^(\u22125/2) factor) or wrong likelihood will not.\n- Software choice is open: any statistics environment that implements the models above is acceptable. A pinned reference environment (PyMC 6.3.2 / NumPy 2.5.4 / SciPy 1.18.1, Python 3.13) can be provided for convenience, but is not required.\n\n## Resource limits\n\nExecution is fully offline (no network), with a wall-clock limit of 600 s, 4 CPU cores and 8 GiB memory."
+  }
+}

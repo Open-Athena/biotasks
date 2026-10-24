@@ -1,0 +1,132 @@
+{
+  "concerns": [
+    "Reference weights sum to 1 exactly in stored precision; a submission whose 40,000 serialized weights sum to 1 only to ~1e-13 (e.g. 12-significant-digit rounding plus a whole-grid renormalization) still satisfies the stated 1e-9 absolute rule, so the sum condition is effectively inert unless the grader re-normalizes before differencing \u2014 not testable here without the grader.",
+    "The MCMC tolerance (10%) and the analytic-mean tolerance (1e-7) differ by seven orders of magnitude while both are documented as limits on observable output differences across the executed comparison paths; the analytic-mean bound in particular assumes bit-comparable grid machinery and is impossible to attribute to MC noise, so its calibration cannot be verified beyond the executed correct agreements (~1e-14) and wrong-value failures (\u22651.5e-3).",
+    "mode_x/mode_z are required to be nominal coordinates present in the submission grid; the reference file stores unrounded float64 representations (e.g. mode_x = -1.7900000000000107), so the boundary behaviours of 'within 0.005 of a nominal coordinate' and of the round(X*100) alignment on values like 0.0050000000000000044 are comparators the probes do not exercise directly; the executed mode probes sit one full grid step from the boundary, where the reference top-two cell separation is 1.000144.",
+    "The frozen probe grid-beta-transform-error carries an evidence quote stating that the per-cell lift e^Z / beta ranges over [1.0026, 1.2698]; by the published back-transform beta = e^Z / (1 + e^X) the lift is exactly 1 + e^X, which over the required x-range [-2.30, -1.31] spans [1.1003, 1.2698] (never below 1.10). The probe's own in-script assertion (lift > 1.10).all(), its recorded execution and its graded outcome are unaffected and agree with the corrected interval. Probe scripts and evidence quotes are frozen in this repair path, so this annotation records the corrected bound and must remain attached at packaging so the false 1.0026 lower bound is not relied on downstream.",
+    "Sampler software, the Part-2 prior and the draw counts are verified only through the self-reported configuration keys plus numeric agreement of the pooled means (independently executed solution within ~0.6%, recomputed control within ~1.5% of the reference); the grader does not inspect the submission's sampler internals."
+  ],
+  "disposition": "ready",
+  "probes": [
+    {
+      "check_ids": [
+        "grid_structure",
+        "grid_alpha_beta",
+        "grid_weights",
+        "analytic_mode"
+      ],
+      "evidence": [
+        {
+          "path": "analytic_marginal_posterior_grid.csv",
+          "quote": "X,Z,alpha,beta,normed_exp_trans\n-2.3,1.0,0.24769788908206547,2.4705839393769797,8.775273334523364e-18\n-2.29,1.0,0.249958382121579,2.468323446337466,1.2122139956454026e-17"
+        },
+        {
+          "path": "analytic_marginal_posterior_grid.csv",
+          "quote": "-2.2800000000000002,1.0,0.2522373982674199,2.466044430191625,1.6702919807575612e-17 (reference file carries 17-significant-digit float64 text; a 12-significant-digit writer is within every stated tolerance)"
+        }
+      ],
+      "focus": "lazy_output",
+      "kind": "valid_alternative",
+      "name": "grid-12sig-reversed-rows",
+      "rationale": "The contract explicitly permits any row order and calibrates the per-cell tolerances (1e-9 for alpha/beta, 1e-8 for weights) to exact-arithmetic grid construction plus <=12-significant-digit serialization. This control rebuilds the grid CSV straight from the published grid definition: x = -2.30 + 0.01*i (100 values, stop -1.30 excluded), z = 1.00 + 0.01*j (400 values, stop 5.00 excluded), alpha = e^(X+Z)/(1+e^X), beta = e^Z/(1+e^X), writes the rows in reversed order with 12 significant digits, and carries the posterior weights unchanged. Measured against the reference after alignment by nominal (round(X*100), round(Z*100)): max relative alpha error 1.7e-14, max relative beta error 8.2e-15, max relative weight error 0.0, 40,000 unique cells present, weights positive and summing to 1, so all grid and summary checks (which read the unchanged analytic_summary.json) must pass. This exercises the free row order and the widened lower-precision serialization without changing any scientific content.",
+      "script": "import pandas as pd, numpy as np\n# Valid representation alternative: rebuild the grid CSV from the published grid\n# definition (exact-arithmetic grid construction, alpha/beta recomputed from X, Z via\n# the published back-transform), reverse the row order (any row order is acceptable),\n# and serialize with 12 significant digits. Weights are carried unchanged.\nx = -2.30 + 0.01*np.arange(100)          # -2.30 .. -1.31 (stop -1.30 excluded)\nz =  1.00 + 0.01*np.arange(400)          #  1.00 ..  4.99 (stop 5.00 excluded)\nX = np.tile(x, 400)                       # z-major, x-inner; arbitrary order allowed\nZ = np.repeat(z, 100)\nalpha = np.exp(X+Z)/(1.0+np.exp(X))\nbeta  = np.exp(Z)/(1.0+np.exp(X))\nref = pd.read_csv('analytic_marginal_posterior_grid.csv')\nassert len(ref) == 40000\nw = ref['normed_exp_trans'].values\nd = pd.DataFrame({'X':X,'Z':Z,'alpha':alpha,'beta':beta,\n                  'normed_exp_trans':w})\n# verify exact cell alignment before reordering\nassert np.max(np.abs(d['X'].values  - ref['X'].values)) < 1e-9\nassert np.max(np.abs(d['Z'].values  - ref['Z'].values)) < 1e-9\nassert np.max(np.abs(d['alpha'].values/ref['alpha'].values - 1)) < 1e-12\nassert np.max(np.abs(d['beta'].values /ref['beta'].values  - 1)) < 1e-12\nd = d.iloc[::-1].reset_index(drop=True)   # reversed row order, all columns together\nd.to_csv('analytic_marginal_posterior_grid.csv', index=False, float_format='%.12g')\nprint('rows', len(d), 'sum w', d['normed_exp_trans'].sum())\n# re-align to reference coordinates and confirm in-tolerance agreement\nkey = lambda f: f.set_index([np.round(f.X*100).astype(int), np.round(f.Z*100).astype(int)])\na = key(d).sort_index(); b = key(ref).sort_index()\nprint('max rel alpha err', float(np.max(np.abs(a['alpha']/b['alpha'] - 1))))\nprint('max rel beta err',  float(np.max(np.abs(a['beta'] /b['beta']  - 1))))\nprint('max rel w err',     float(np.max(np.abs(a['normed_exp_trans']/b['normed_exp_trans'] - 1))))\n"
+    },
+    {
+      "check_ids": [
+        "grid_weights"
+      ],
+      "evidence": [
+        {
+          "path": "analytic_summary.json",
+          "quote": "{\\n  \"mean_alpha\": 2.402561508176107,\\n  \"mean_beta\": 14.319486682057825,\\n  \"mode_x\": -1.7900000000000107,\\n  \"mode_z\": 2.7400000000000015\\n}"
+        },
+        {
+          "path": "analytic_marginal_posterior_grid.csv",
+          "quote": "reference grid: 40,000 sum-to-1 weights, max weight 4.434117623713956e-4 at cell (X=-1.79, Z=2.74); recomputing w/(alpha*beta) renormalized moves the argmax to (X=-1.78, Z=2.54), changes grid-weight means to (1.9251, 11.4441) and produces max relative weight deviation 38.92"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "grid-missing-jacobian",
+      "rationale": "Corrected annotation: the frozen mutation script rewrites only the normed_exp_trans column of analytic_marginal_posterior_grid.csv (u = w/(alpha*beta), renormalized to sum 1) and leaves analytic_summary.json, the alpha/beta columns and the grid structure byte-identical to the reference. Under the unchanged public rules, analytic_means compares the summary's mean_alpha/mean_beta to the reference and analytic_mode compares the summary's mode coordinates to the reference mode cell and to the submission's own grid cells; since the summary is untouched and the reference mode cell (-1.79, 2.74) remains present in the mutated grid, both of those checks necessarily pass. The original annotation's claim that 'the same wrong weights feed a consistently recomputed summary' asserted a recomputation the script does not perform; the mutation's entire failure surface is the per-cell weight comparison in grid_weights (recorded max relative weight deviation ~38.9 vs the 1e-8 tolerance). The original classification is unchanged: these are scientifically wrong (alpha, beta)-space weights presented on the (x, z) grid, so wrong_solution is retained. A solver that derived its summary consistently from the same Jacobian-free kernel would additionally fail analytic_means and analytic_mode (grid means move to about (1.925, 11.444) and the argmax to (-1.78, 2.54) in the recorded probe output), but that coherent-failure case is not what this frozen script encodes. Wrong-result coverage for analytic_means is retained by the probes summary-means-slightly-wrong and grid-beta-transform-error, and for analytic_mode by summary-mode-wrong-cell, all executed and failing as expected; no grader change is needed for that coverage.",
+      "script": "import pandas as pd, numpy as np\n# Wrong solution: drop the log-Jacobian term (ln alpha + ln beta) from the kernel,\n# i.e. use the (alpha, beta)-space density on the (x, z) grid. This is a plausible\n# implementation error (forgetting the change-of-variables factor) and leaves a\n# parseable, normalized, all-cells-present grid.\ndf = pd.read_csv('analytic_marginal_posterior_grid.csv')\nw = df['normed_exp_trans'].values\na = df['alpha'].values; b = df['beta'].values\nu = w/(a*b)\nu = u/u.sum()\ndf['normed_exp_trans'] = u\ndf.to_csv('analytic_marginal_posterior_grid.csv', index=False)\ni = int(u.argmax())\nprint('sum', u.sum(), 'max rel w deviation', float(np.max(np.abs(u-w)/w)))\nprint('new argmax cell', round(df.X[i]*100)/100, round(df.Z[i]*100)/100,\n      '(reference mode cell is (-1.79, 2.74))')\nprint('new grid means', float((u*a).sum()), float((u*b).sum()))\n"
+    },
+    {
+      "check_ids": [
+        "grid_alpha_beta",
+        "analytic_means"
+      ],
+      "evidence": [
+        {
+          "path": "analytic_summary.json",
+          "quote": "mean_alpha: 2.402561508176107, mean_beta: 14.319486682057825 (reference posterior means under the Part-1 grid)"
+        },
+        {
+          "path": "analytic_marginal_posterior_grid.csv",
+          "quote": "reference beta at (X=-2.3, Z=1.0) is 2.4705839393769797 while e^Z = 2.718281828459045; the lift e^Z / beta ranges over [1.0026, 1.2698] across cells and exceeds 1.10 everywhere under the posterior-weighted mean (rel mean lift 0.1679)"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "grid-beta-transform-error",
+      "rationale": "Wrong back-transform: beta_new(z) = e^z instead of e^z/(1+e^x), i.e. the missing logistic factor (identical to then reporting alpha+beta in the beta column). Every beta stays positive and finite, and all cells remain present, so the CSV stays structurally valid; measured per-cell lift e^Z/beta is at least 10.03% and up to 26.98%, far beyond the 1e-9 relative tolerance, so grid_alpha_beta fails. The summary's mean_beta is recomputed consistently with the mutated column (16.722, a relative deviation of 16.8% vs. the reference 14.3195, versus the 1e-7 tolerance), so analytic_means fails too. mean_alpha, the mode cell and all structural aspects are untouched, so analytic_summary_schema, analytic_mode and mcmc_config remain valid; the mutation preserves row count, identities and normalization while changing the scientific transform, which is exactly the wrong-value control the contract needs.",
+      "script": "import pandas as pd, numpy as np, json\n# Wrong solution: transform-beta error, beta_new(z) = e^z instead of\n# e^z/(1+e^x) (a missing 1/(1+e^x) logistic factor, identical to then reporting\n# alpha+beta as beta). beta stays positive, finite and per-cell different from the\n# reference by more than 10%, far outside the 1e-9 relative tolerance. mean_beta in the\n# summary is recomputed consistently with the mutated column (a beta reported ~17% too\n# high, breaching the 1e-7 tolerance of the summary), so this tests a coherent wrong\n# transform rather than an inconsistent edit.\ndf = pd.read_csv('analytic_marginal_posterior_grid.csv')\nw = df['normed_exp_trans'].values\nold = df['beta'].values\nnew = np.exp(df['Z'].values)\nlift = new/old\nassert (lift > 1.10).all()\ndf['beta'] = new\ndf.to_csv('analytic_marginal_posterior_grid.csv', index=False)\ns = json.load(open('analytic_summary.json'))\ns['mean_beta'] = float((w*new).sum())\njson.dump(s, open('analytic_summary.json','w'), indent=2)\nprint('mean_beta', s['mean_beta'],\n      'rel dev vs ref', abs(s['mean_beta']-14.319486682057825)/14.319486682057825)\nprint('mode cell kept', s['mode_x'], s['mode_z'])\n"
+    },
+    {
+      "check_ids": [
+        "analytic_means"
+      ],
+      "evidence": [
+        {
+          "path": "analytic_summary.json",
+          "quote": "\"mean_alpha\": 2.402561508176107, \"mean_beta\": 14.319486682057825, \"mode_x\": -1.7900000000000107, \"mode_z\": 2.7400000000000015 (exact reference values, schema intact)"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "summary-means-slightly-wrong",
+      "rationale": "Shifts both posterior means by a uniform +0.15% (mean_alpha 2.40617, mean_beta 14.3410), a relative deviation of 1.5e-3 \u2014 four orders of magnitude beyond the 1e-7 tolerance \u2014 while keeping the exact schema (four keys, finite ordinary numbers), the correct mode cell and the entire grid CSV untouched. This specifically targets analytic_means: a wrong-value mutation that preserves record identities and schema, verifying the summary comparison is not merely structural and does not accidentally accept plausible-but-wrong means within some looser tolerance. analytic_mode, grid checks and mcmc checks are unaffected because their inputs are unchanged.",
+      "script": "import json\n# Wrong solution: slightly wrong posterior means (0.15% high, far beyond the 1e-7\n# tolerance) while keeping the schema, the mode cell and the grid CSV intact.\ns = json.load(open('analytic_summary.json'))\nassert abs(s['mean_alpha'] - 2.402561508176107) < 1e-6\nassert abs(s['mean_beta']  - 14.319486682057825) < 1e-6\ns['mean_alpha'] = s['mean_alpha'] * 1.0015\ns['mean_beta']  = s['mean_beta']  * 1.0015\njson.dump(s, open('analytic_summary.json','w'), indent=2)\nprint('rel shifts 0.0015 each; tolerance is 1e-7')\n"
+    },
+    {
+      "check_ids": [
+        "analytic_mode"
+      ],
+      "evidence": [
+        {
+          "path": "analytic_summary.json",
+          "quote": "\"mode_x\": -1.7900000000000107, \"mode_z\": 2.7400000000000015 (reference mode cell; top-two cell weight ratio 1.000144, mode cell unique against all neighbours)"
+        },
+        {
+          "path": "analytic_marginal_posterior_grid.csv",
+          "quote": "reference top grid cells: rank 1 (X=-1.79, Z=2.74) w=4.4341e-4; rank 3 (X=-1.78, Z=2.74) w=4.4313e-4 \u2014 one x step away, a present nominal cell (-1.78, 2.74)"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "summary-mode-wrong-cell",
+      "rationale": "Reports a neighbouring grid cell as the posterior mode: mode_x moved one grid step from -1.79 to -1.78 (same z = 2.74). The reported coordinates are verified (by assertion inside the script) to be a nominal cell present in the submission's own grid, and means plus the grid CSV are left untouched, so this is a wrong-association mutation that isolates the mode identification. The deviation of 0.01 in x exceeds the half-grid-step window of 0.005, and the reference mode cell is unique against every neighbour (top-two weight ratio 1.000144, and the rank-3 cell (-1.78, 2.74) is distinct), so analytic_mode must fail while every other check (schema, means, grid, MCMC) remains valid. This is the distinct wrong-value control for the mode requirement, which the weight mutations above approach only via much larger shifts.",
+      "script": "import json, numpy as np, pandas as pd\n# Wrong solution: report a neighbouring grid cell as the posterior mode (one step in\n# x: -1.78 instead of -1.79, same z = 2.74). The reported coordinates remain nominal\n# coordinates present in the submission's own grid, but the mode cell differs from the\n# reference mode cell by a full grid step (0.01 > 0.005), so the mode identification\n# fails. Means and the grid CSV are left untouched.\ns = json.load(open('analytic_summary.json'))\nassert abs(s['mode_x'] + 1.79) < 1e-6 and abs(s['mode_z'] - 2.74) < 1e-6\ndf = pd.read_csv('analytic_marginal_posterior_grid.csv')\ncells = set(zip(np.round(df.X.values*100).astype(int).tolist(),\n                np.round(df.Z.values*100).astype(int).tolist()))\nassert (-178, 274) in cells            # new mode is a nominal cell of the own grid\ns['mode_x'] = -1.78\ns['mode_z'] = 2.74\njson.dump(s, open('analytic_summary.json','w'), indent=2)\nprint('mode changed to (-1.78, 2.74); reference mode is (-1.79, 2.74)')\n"
+    },
+    {
+      "check_ids": [
+        "mcmc_means"
+      ],
+      "evidence": [
+        {
+          "path": "mcmc_posterior_means.json",
+          "quote": "\"mean_alpha\": 1.958043830989409, \"mean_beta\": 11.565549744578, \"n_chains\": 2, \"draws_per_chain\": 2000, \"target_accept\": 0.95 (reference NUTS posterior means under the Part-2 hyperprior)"
+        },
+        {
+          "path": "analytic_summary.json",
+          "quote": "\"mean_alpha\": 2.402561508176107, \"mean_beta\": 14.319486682057825 (Part-1 hyperprior values \u2014 substituting these gives relative deviations of 0.227 and 0.238, outside the 10% window)"
+        }
+      ],
+      "focus": "model_behavior",
+      "kind": "wrong_solution",
+      "name": "mcmc-wrong-hyperprior",
+      "rationale": "Substitutes the Part-1 analytic-grid values (hyperprior (alpha+beta)^(-5/2) with no half-normal factors) for the Part-2 NUTS posterior means, i.e. exactly the different-hyperprior confusion the acceptance rules name as a rejection case. The substituted values differ from the reference MCMC means by relative deviations of 22.7% and 23.8%, both outside the 10% window, while n_chains=2, draws_per_chain=2000, target_accept=0.95 and a non-empty sampler string are preserved, so mcmc_config stays valid and only mcmc_means fails. The values remain plausible finite floats of a real posterior, so this is a scientific value-substitution control rather than a malformed or missing file.",
+      "script": "import json\n# Wrong solution for Part 2: report the Part-1 hyperprior posterior values\n# (p(alpha,beta) ~ (alpha+beta)^(-5/2), no half-normal(10) factors) as the MCMC\n# posterior means, exactly the different-hyperprior confusion the acceptance rules\n# reject. Config keys (n_chains=2, draws_per_chain=2000, target_accept=0.95,\n# non-empty sampler string) are left valid.\nm = json.load(open('mcmc_posterior_means.json'))\nPART1 = {'mean_alpha': 2.402561508176107, 'mean_beta': 14.319486682057825}\nfor key in ('mean_alpha', 'mean_beta'):\n    m[key] = PART1[key]\njson.dump(m, open('mcmc_posterior_means.json','w'), indent=2)\nprint('rel devs', abs(m['mean_alpha']-1.958043830989409)/1.958043830989409,\n      abs(m['mean_beta']-11.565549744578)/11.565549744578)\n"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "artifacts": [
+    {
+      "description": "Analytic marginal posterior of the Beta hyperparameters: the (log(alpha/beta), log(alpha+beta)) grid with the back-transformed alpha, beta values and the normalized posterior density (normed_exp_trans), from which the marginal means of alpha and beta and the posterior mode are recoverable.",
+      "path": "analytic_marginal_posterior_grid.csv",
+      "source_evidence": "The narrative (section 'A Directly Computed Solution') states the goal of plotting the marginal posterior and estimating the means of alpha and beta analytically, and interprets the contour/mode and weighted-sum means from this grid. The source builds it in the pandas DataFrame `df` via `df[alpha]=trans_to_alpha(...)`, `df[beta]=trans_to_beta(...)`, and `df[normed_exp_trans] = df.exp_trans / df.exp_trans.sum()`; `df` survives to script completion."
+    },
+    {
+      "description": "MCMC posterior samples of the hyperparameters ab (alpha, beta) and their transforms X=log(alpha/beta), Z=log(alpha+beta) across chains and draws, exactly as produced by pm.sample.",
+      "path": "pymc_posterior_ab_X_Z.nc",
+      "source_evidence": "The conclusion states 'we used PyMC to obtain estimates of the posterior mean for the rat tumor example... The estimates obtained from PyMC are encouragingly close to the estimates obtained from the analytical posterior density'; the samples the narrative interprets (including the displayed `trace.posterior[ab].mean((chain, draw))`) come from `trace = pm.sample(...)`, which exists at completion. Only the variables the narrative interprets (ab, X, Z) are selected out of `trace.posterior`; the per-experiment latent `theta` is not an interpreted endpoint."
+    }
+  ],
+  "disposition": "prepare",
+  "excluded_outputs": [
+    "Estimated marginal means of alpha and beta (analytic branch) and trace.posterior['ab'].mean((chain, draw)) (PyMC branch): these terminal summaries appear only as unassigned display expressions in the source; per export rules they cannot be captured or recomputed, but both are fully recoverable from the exported normalized grid and posterior samples respectively.",
+    "Contour plot with posterior-mode annotation: the mode coordinates are built inside the plotting section from the meshgrid arrays, and the names X and Z are subsequently reassigned to PyMC Deterministic objects inside the model context, so the original meshgrid values are out of scope; the exported grid permits locating the mode.",
+    "az.plot_rank_dist / plot_pair / plot_dist figures: MCMC diagnostic plots with no stored numeric results beyond `trace`; their role is model checking, not independent endpoints.",
+    "theta posterior samples (per-experiment latent probabilities): intermediate model parameters feeding the binomial likelihood, not interpreted as a standalone scientific outcome.",
+    "df columns log_posterior, log_jacobian, transformed, exp_trans: intermediate steps toward the normalized density that is exported.",
+    "surface (contour matrix): a plot-support reshaping of exp_trans already represented by the exported grid."
+  ],
+  "explanation": "The notebook has two analysis branches producing terminal scientific results: (1) the analytically computed marginal posterior of (alpha, beta) on the (log(alpha/beta), log(alpha+beta)) grid, which the source interprets directly (contour shape, mode, marginal means derived from it), and (2) the PyMC posterior samples for the hyperparameters ab (and their transforms X, Z), which the conclusion interprets as the posterior-mean estimates that 'encouragingly close' match the analytic results. The export code appends file-writing only: it saves the normalized analytic posterior grid (identifier columns X, Z plus alpha, beta and the normalized density) as CSV, and the PyMC posterior samples for ab/X/Z as NetCDF. No analysis is modified, recomputed, or extended. Diagnostic plots and intermediate density columns are excluded.",
+  "export_code": "import os\n\n_export_out_dir = \"/work/outputs\"\nos.makedirs(_export_out_dir, exist_ok=True)\n\n# Endpoint 1: analytic marginal posterior density on the (X, Z) grid.\n# `df` holds the grid identifiers (X, Z), the back-transformed alpha/beta,\n# and the normalized posterior weight normed_exp_trans produced by the source.\nanalytic_posterior_grid = df[[\"X\", \"Z\", \"alpha\", \"beta\", \"normed_exp_trans\"]]\nanalytic_posterior_grid.to_csv(\n    os.path.join(_export_out_dir, \"analytic_marginal_posterior_grid.csv\"),\n    index=False,\n)\n\n# Endpoint 2: PyMC posterior samples for the hyperparameters (ab) and their\n# log-scale transforms (X, Z) from the existing `trace` InferenceData.\ntrace.posterior[[\"ab\", \"X\", \"Z\"]].to_netcdf(\n    os.path.join(_export_out_dir, \"pymc_posterior_ab_X_Z.nc\")\n)",
+  "unresolved_assumptions": [
+    "NetCDF write via xarray's to_netcdf assumes a compatible engine (e.g. scipy, which the source already depends on, or h5netcdf/netcdf4) is installed in the execution environment; if unavailable, the execution stage may need to provide one.",
+    "Posterior sample counts and dtype of `trace.posterior` under the given CPU/time limits are unverified; the file size impact of the chain/draw dimensions should be confirmed at execution time."
+  ]
+}

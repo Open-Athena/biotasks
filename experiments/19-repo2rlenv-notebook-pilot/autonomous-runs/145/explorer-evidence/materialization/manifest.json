@@ -1,0 +1,68 @@
+{
+  "derivation": {
+    "exit_code": 0,
+    "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+    "role_process_cleanup_verified": true,
+    "stderr": "",
+    "stdout": "",
+    "timed_out": false
+  },
+  "inputs": [
+    {
+      "bytes": 438,
+      "path": "rat_tumor_counts.csv",
+      "sha256": "7f78c20f75ce29813efcd5415c243f9a30cc02ae3343ba037147a0df0e8007f6"
+    }
+  ],
+  "oracle": {
+    "exit_code": 0,
+    "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+    "role_process_cleanup_verified": true,
+    "stderr": "Initializing NUTS using jitter+adapt_diag...\nMultiprocess sampling (2 chains in 2 jobs)\nNUTS: [ab, theta]\nSampling 2 chains for 2_000 tune and 2_000 draw iterations (4_000 + 4_000 draws total) took 5 seconds.\nWe recommend running at least 4 chains for robust computation of convergence diagnostics\n",
+    "stdout": "                                                                                \n                                  Step    Grad                                  \n  Progress        Draw    Dive\u2026   size    evals   Speed          Elap\u2026   Rema\u2026  \n \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 \n  \u2501\u2501\u2501\u2501\u2501\u2501\u2009\u2501\u2501\u2501\u2501\u2501\u2501   2000    0       0.171   31      975.43 draw\u2026   0:00\u2026   0:00\u2026  \n  \u2501\u2501\u2501\u2501\u2501\u2501\u2009\u2501\u2501\u2501\u2501\u2501\u2501   2000    0       0.167   31      912.07 draw\u2026   0:00\u2026   0:00\u2026  \n                                                                                \n",
+    "timed_out": false
+  },
+  "oracle_isolation": {
+    "exit_code": 0,
+    "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+    "role_process_cleanup_verified": true,
+    "stderr": "",
+    "stdout": "isolated\n",
+    "timed_out": false
+  },
+  "oracle_outputs": [
+    {
+      "bytes": 3871960,
+      "path": "analytic_marginal_posterior_grid.csv",
+      "sha256": "14cbefc7a942cdc407be6118ec341fb8914dd96b56a99b8545ca5382743010e4"
+    },
+    {
+      "bytes": 137,
+      "path": "analytic_summary.json",
+      "sha256": "ef10396dea566be4d5dbf4bdc91fb826817bd789db7ba4c29e9b3a20a3653a4f"
+    },
+    {
+      "bytes": 181,
+      "path": "mcmc_posterior_means.json",
+      "sha256": "4bf4e7c94bd763b9606a382a6b6bf521af3627b5bfdeeea753f8da0ce0e80e47"
+    }
+  ],
+  "reference": [
+    {
+      "bytes": 3871960,
+      "path": "analytic_marginal_posterior_grid.csv",
+      "sha256": "14cbefc7a942cdc407be6118ec341fb8914dd96b56a99b8545ca5382743010e4"
+    },
+    {
+      "bytes": 137,
+      "path": "analytic_summary.json",
+      "sha256": "ef10396dea566be4d5dbf4bdc91fb826817bd789db7ba4c29e9b3a20a3653a4f"
+    },
+    {
+      "bytes": 248,
+      "path": "mcmc_posterior_means.json",
+      "sha256": "40b661573ec526587b3ec1302690b71caf3c530259dcff1da3ec5734f90350e3"
+    }
+  ],
+  "status": "executed_requires_scientific_validation"
+}

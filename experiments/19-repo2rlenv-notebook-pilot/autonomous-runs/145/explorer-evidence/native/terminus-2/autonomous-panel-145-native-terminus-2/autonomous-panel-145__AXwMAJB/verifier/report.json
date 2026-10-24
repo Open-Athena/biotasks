@@ -1,0 +1,45 @@
+{
+  "passed": false,
+  "checks": [
+    {
+      "id": "grid_structure",
+      "passed": false,
+      "message": "submission grid CSV rejected: alpha, beta and normed_exp_trans must be strictly positive"
+    },
+    {
+      "id": "grid_alpha_beta",
+      "passed": false,
+      "message": "grid values cannot be compared: alpha, beta and normed_exp_trans must be strictly positive"
+    },
+    {
+      "id": "grid_weights",
+      "passed": false,
+      "message": "grid weights cannot be compared: alpha, beta and normed_exp_trans must be strictly positive"
+    },
+    {
+      "id": "analytic_summary_schema",
+      "passed": true,
+      "message": "exact key set with four finite numeric values"
+    },
+    {
+      "id": "analytic_means",
+      "passed": true,
+      "message": "mean_alpha: relative deviation 4.547e-14 (tolerance 1.0e-07); mean_beta: relative deviation 4.652e-14 (tolerance 1.0e-07)"
+    },
+    {
+      "id": "analytic_mode",
+      "passed": false,
+      "message": "mode cannot be verified against the submission grid: None"
+    },
+    {
+      "id": "mcmc_config",
+      "passed": true,
+      "message": "exact key set; n_chains=2, draws_per_chain=2000, target_accept=0.95, sampler recorded as a non-empty string"
+    },
+    {
+      "id": "mcmc_means",
+      "passed": false,
+      "message": "mean_alpha: relative deviation 0.2047 (tolerance 0.10); mean_beta: relative deviation 0.1759 (tolerance 0.10)"
+    }
+  ]
+}

@@ -1,0 +1,181 @@
+{
+  "limits": {
+    "base_image": "python:3.13.13-slim-bookworm",
+    "campaign_seconds": 7200,
+    "gpu": false,
+    "max_requests": null,
+    "max_tests": 2,
+    "network": "Internet during setup only; reference is offline",
+    "reference_seconds": 600,
+    "request_timeout_seconds": 600,
+    "setup_seconds": 1800,
+    "task_cpus": 4,
+    "task_disk_gib": 10,
+    "task_memory_gib": 8
+  },
+  "paths": {
+    "exports.py": "/work/frozen/exports.py",
+    "original.py": "/work/frozen/original.py",
+    "plan.json": "/work/frozen/plan.json",
+    "reference_cwd": "/work/run",
+    "setup": "/work/setup"
+  },
+  "preparation": {
+    "conversion": {
+      "code_cells": 14,
+      "converter": "jupytext",
+      "converter_version": "1.19.6",
+      "directory_normalizations": [],
+      "documentation_execution_policy": {},
+      "equivalence_basis": "Python statements after recorded presentation and directory normalization",
+      "executable_ast_sha256": "5d518b0fdf2936fcada313027515cb46fcc5d81d61c2217fe1d8d68d0a17c82c",
+      "executed": false,
+      "format": "py:nomarker",
+      "ignored_cell_editor_metadata": [],
+      "ignored_editor_metadata": {},
+      "ignored_presentation_tags": [],
+      "markdown_cells": 12,
+      "markdown_representation": "line_comments",
+      "ordered_code_equivalence": true,
+      "presentation_normalizations": [
+        {
+          "cell_index": 2,
+          "directive": "%config InlineBackend.figure_format = 'retina'",
+          "kind": "inline_display_format",
+          "line": 1
+        },
+        {
+          "cell_index": 24,
+          "directive": "%load_ext watermark",
+          "kind": "environment_reporting",
+          "line": 1
+        },
+        {
+          "cell_index": 24,
+          "directive": "%watermark -n -u -v -iv -w",
+          "kind": "environment_reporting",
+          "line": 2
+        }
+      ],
+      "profile": "python-narrative-v6",
+      "script_sha256": "11637310cbf77714fcca876df1ddb8a195474d47edad73337de070c1c158a10c",
+      "source_sha256": "b1b2280ac15f9367c50ba7dde7793be23a49e7f858ef12a3713ce22f39b92c9e",
+      "stored_outputs_used_as_evidence": false
+    },
+    "plan": {
+      "artifacts": [
+        {
+          "description": "Analytic marginal posterior of the Beta hyperparameters: the (log(alpha/beta), log(alpha+beta)) grid with the back-transformed alpha, beta values and the normalized posterior density (normed_exp_trans), from which the marginal means of alpha and beta and the posterior mode are recoverable.",
+          "path": "analytic_marginal_posterior_grid.csv",
+          "source_evidence": "The narrative (section 'A Directly Computed Solution') states the goal of plotting the marginal posterior and estimating the means of alpha and beta analytically, and interprets the contour/mode and weighted-sum means from this grid. The source builds it in the pandas DataFrame `df` via `df[alpha]=trans_to_alpha(...)`, `df[beta]=trans_to_beta(...)`, and `df[normed_exp_trans] = df.exp_trans / df.exp_trans.sum()`; `df` survives to script completion."
+        },
+        {
+          "description": "MCMC posterior samples of the hyperparameters ab (alpha, beta) and their transforms X=log(alpha/beta), Z=log(alpha+beta) across chains and draws, exactly as produced by pm.sample.",
+          "path": "pymc_posterior_ab_X_Z.nc",
+          "source_evidence": "The conclusion states 'we used PyMC to obtain estimates of the posterior mean for the rat tumor example... The estimates obtained from PyMC are encouragingly close to the estimates obtained from the analytical posterior density'; the samples the narrative interprets (including the displayed `trace.posterior[ab].mean((chain, draw))`) come from `trace = pm.sample(...)`, which exists at completion. Only the variables the narrative interprets (ab, X, Z) are selected out of `trace.posterior`; the per-experiment latent `theta` is not an interpreted endpoint."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "Estimated marginal means of alpha and beta (analytic branch) and trace.posterior['ab'].mean((chain, draw)) (PyMC branch): these terminal summaries appear only as unassigned display expressions in the source; per export rules they cannot be captured or recomputed, but both are fully recoverable from the exported normalized grid and posterior samples respectively.",
+        "Contour plot with posterior-mode annotation: the mode coordinates are built inside the plotting section from the meshgrid arrays, and the names X and Z are subsequently reassigned to PyMC Deterministic objects inside the model context, so the original meshgrid values are out of scope; the exported grid permits locating the mode.",
+        "az.plot_rank_dist / plot_pair / plot_dist figures: MCMC diagnostic plots with no stored numeric results beyond `trace`; their role is model checking, not independent endpoints.",
+        "theta posterior samples (per-experiment latent probabilities): intermediate model parameters feeding the binomial likelihood, not interpreted as a standalone scientific outcome.",
+        "df columns log_posterior, log_jacobian, transformed, exp_trans: intermediate steps toward the normalized density that is exported.",
+        "surface (contour matrix): a plot-support reshaping of exp_trans already represented by the exported grid."
+      ],
+      "explanation": "The notebook has two analysis branches producing terminal scientific results: (1) the analytically computed marginal posterior of (alpha, beta) on the (log(alpha/beta), log(alpha+beta)) grid, which the source interprets directly (contour shape, mode, marginal means derived from it), and (2) the PyMC posterior samples for the hyperparameters ab (and their transforms X, Z), which the conclusion interprets as the posterior-mean estimates that 'encouragingly close' match the analytic results. The export code appends file-writing only: it saves the normalized analytic posterior grid (identifier columns X, Z plus alpha, beta and the normalized density) as CSV, and the PyMC posterior samples for ab/X/Z as NetCDF. No analysis is modified, recomputed, or extended. Diagnostic plots and intermediate density columns are excluded.",
+      "export_code": "import os\n\n_export_out_dir = \"/work/outputs\"\nos.makedirs(_export_out_dir, exist_ok=True)\n\n# Endpoint 1: analytic marginal posterior density on the (X, Z) grid.\n# `df` holds the grid identifiers (X, Z), the back-transformed alpha/beta,\n# and the normalized posterior weight normed_exp_trans produced by the source.\nanalytic_posterior_grid = df[[\"X\", \"Z\", \"alpha\", \"beta\", \"normed_exp_trans\"]]\nanalytic_posterior_grid.to_csv(\n    os.path.join(_export_out_dir, \"analytic_marginal_posterior_grid.csv\"),\n    index=False,\n)\n\n# Endpoint 2: PyMC posterior samples for the hyperparameters (ab) and their\n# log-scale transforms (X, Z) from the existing `trace` InferenceData.\ntrace.posterior[[\"ab\", \"X\", \"Z\"]].to_netcdf(\n    os.path.join(_export_out_dir, \"pymc_posterior_ab_X_Z.nc\")\n)",
+      "unresolved_assumptions": [
+        "NetCDF write via xarray's to_netcdf assumes a compatible engine (e.g. scipy, which the source already depends on, or h5netcdf/netcdf4) is installed in the execution environment; if unavailable, the execution stage may need to provide one.",
+        "Posterior sample counts and dtype of `trace.posterior` under the given CPU/time limits are unverified; the file size impact of the chain/draw dimensions should be confirmed at execution time."
+      ]
+    },
+    "source": {
+      "id": "pymc-rat-tumor",
+      "license": "MIT",
+      "provenance": {
+        "data_lineage": "Counts from71prior rat-tumor experiments embedded in the original notebook; it cites Bayesian Data Analysis3, page102. Observed historical counts, not newly simulated input data.",
+        "data_redistribution_review": "Notebook MIT notice retained; exact data lineage and any derived materialized inputs still need a separate redistribution review before publication. No automatic public task/data release.",
+        "input_preservation": "Original source bytes and complete source analysis. No operator-specified task, endpoint selection, input reduction or method change.",
+        "notebook": {
+          "git_blob_sha1": "03bc551e9f57aebd5e9633b8cd83db2f8351acbe",
+          "license": "MIT",
+          "license_sha256": "45dee27689bcc6c2618f1be74ef13decde2ac4bf1ae534d36eafe16cc9cb7065",
+          "license_text": "MIT License\n\nCopyright (c) 2020 PyMC\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n",
+          "license_url": "https://github.com/pymc-devs/pymc-examples/blob/17c8f90dc90691b41587dfdf477698d74cf5c18c/LICENSE",
+          "revision": "17c8f90dc90691b41587dfdf477698d74cf5c18c",
+          "sha256": "b1b2280ac15f9367c50ba7dde7793be23a49e7f858ef12a3713ce22f39b92c9e",
+          "url": "https://github.com/pymc-devs/pymc-examples/blob/17c8f90dc90691b41587dfdf477698d74cf5c18c/examples/generalized_linear_models/GLM-hierarchical-binomial-model.ipynb"
+        }
+      },
+      "source_revision": "17c8f90dc90691b41587dfdf477698d74cf5c18c",
+      "source_sha256": "b1b2280ac15f9367c50ba7dde7793be23a49e7f858ef12a3713ce22f39b92c9e",
+      "title": "PyMC: hierarchical binomial modeling of rat-tumor experiments",
+      "url": "https://github.com/pymc-devs/pymc-examples/blob/17c8f90dc90691b41587dfdf477698d74cf5c18c/examples/generalized_linear_models/GLM-hierarchical-binomial-model.ipynb"
+    }
+  },
+  "source_imports": {
+    "analysis": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 22,
+        "statement": "import arviz as az"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 23,
+        "statement": "import matplotlib.pyplot as plt"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 24,
+        "statement": "import numpy as np"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 25,
+        "statement": "import pandas as pd"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 26,
+        "statement": "import pymc as pm"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 27,
+        "statement": "import pytensor.tensor as pt"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 29,
+        "statement": "from scipy.special import gammaln"
+      }
+    ],
+    "exports": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 1,
+        "statement": "import os"
+      }
+    ],
+    "scope": "Literal source statements and locations only; dynamic imports, native libraries and availability remain unverified."
+  }
+}
