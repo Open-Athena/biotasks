@@ -27,7 +27,7 @@ admission ledger, not old launch snapshots. The model-enabled status is not an
 authorization gate. Every future runtime needs a declared source/input checkpoint,
 conservative atomic reservation, serial billing resolution and existing ceilings.
 
-Next: #57 fresh unchanged Biopython inputsd2430324/planf65be027, pending native submission/results. #56 source/offline results7a5f36c4 add eight paired pytest cases and four actual-installed process invocations without changing outcomes; not deployed into57. Separate origin observations, metadata
+Next: #57 fresh unchanged Biopython inputsd2430324/planf65be027, original reserved TRC job confirmed running at22:24:39UTC, native results/final billing pending. #56 source/offline results7a5f36c4 add eight paired pytest cases and four actual-installed process invocations without changing outcomes; not deployed into57. Separate origin observations, metadata
 mapping and actual native pytest-process identity. Any runtime instrumentation
 must be justified and recorded as a distinct candidate before execution; do not
 retry or repair53 or change the original verdict. Keep epic/children/PRs open for
