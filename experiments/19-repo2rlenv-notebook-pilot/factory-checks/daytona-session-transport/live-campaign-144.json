@@ -1,0 +1,66 @@
+{
+  "observed_at": "2026-10-24T12:19:59.480605+00:00",
+  "campaign": 144,
+  "source_claim_sha256": "75300425412e460b9ada5bcb9dc7b29f3ae005e2be157b65d1b096bec7fff638",
+  "authenticated_original_metadata_readback_sha256": "4acf01d0eace85c564db7f08913ce172f3097b2314e981602bcd827079d56db2",
+  "scope": "Live partial original controller metadata; no commands, advice or scientific changes sent to the worker. Final outcome and sealed archive still pending.",
+  "completed_commands": 159,
+  "total_operations_at_observation": 160,
+  "in_progress_operations": 1,
+  "completed_commands_with_one_session_submission": 159,
+  "max_controller_overhead_seconds": 5.504744,
+  "longest_completed_commands": [
+    {
+      "stage": "materialization-raw",
+      "path": "materialization-raw/operations/0021/operation.json",
+      "operation_sha256": "3891e8a1833538e62776aa747f53d7c5f7f0f92aecf914129b652dc42558a034",
+      "state": "returned",
+      "controller_elapsed_seconds": 178.632439,
+      "process_elapsed_seconds": 176.29322218894958,
+      "process_exit_code": 0,
+      "session_state": "completed",
+      "session_submissions": 1,
+      "session_command_reexecuted": false,
+      "transport_recovered": false,
+      "controller_overhead_seconds": 2.339217
+    },
+    {
+      "stage": "materialization-raw",
+      "path": "materialization-raw/operations/0005/operation.json",
+      "operation_sha256": "cd90b7255ee16ae0f0eb37157def72696b4ee5e353f704e00d6e2c5000a0cbe7",
+      "state": "returned",
+      "controller_elapsed_seconds": 144.51695,
+      "process_elapsed_seconds": 142.50257992744446,
+      "process_exit_code": 0,
+      "session_state": "completed",
+      "session_submissions": 1,
+      "session_command_reexecuted": false,
+      "transport_recovered": false,
+      "controller_overhead_seconds": 2.01437
+    },
+    {
+      "stage": "setup-raw",
+      "path": "setup-raw/operations/0050/operation.json",
+      "operation_sha256": "57b43fb2d5a1cac293e3431d2fedf685ee3b33fd84ba45cb1a1877461ba05971",
+      "state": "returned",
+      "controller_elapsed_seconds": 138.904657,
+      "process_elapsed_seconds": 136.78775763511658,
+      "process_exit_code": 0,
+      "session_state": "completed",
+      "session_submissions": 1,
+      "session_command_reexecuted": false,
+      "transport_recovered": false,
+      "controller_overhead_seconds": 2.116899
+    }
+  ],
+  "source_runtime_revision": "99c7eeaefc69152161f7606bc68611103ccf2693",
+  "source_scientific_methods_or_inputs_changed_by_operator": false,
+  "new_model_calls": 0,
+  "new_jobs": 0,
+  "limits": [
+    "Controller elapsed includes wrapper upload, session observation and verified log download; it is not pure SDK transport latency.",
+    "Completed operations only; one operation was still in progress.",
+    "This is not a same-command counterfactual comparison with prior135 and does not establish overall factory latency, final correctness or guaranteed absence of future stalls.",
+    "Original submission and active campaign limits remain unchanged."
+  ]
+}
