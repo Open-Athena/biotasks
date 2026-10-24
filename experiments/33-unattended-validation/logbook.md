@@ -226,3 +226,5 @@ Actual outcomes/billing/readback/cleanup pending. Persistent foreground controll
 session69136; expected original job/exedev/biotasks53-anndata-001. Resume original
 state/handles only, never replace an uncertain submission. Budget snapshot is
 historical admission evidence, not the live gate; live budget remains authoritative.
+
+2026-10-24:53 completed unchanged installed workflow, final326e8e6f/publication4baa3cac. Zero exports/zero independent controls;9 original calls0.313983USD,1.570262222CPUh. Primary+cleanup anonymousHF readback and terminal exact-worker cleanup verified, no ownedresources/publicbase preserved; completed CLI replay external-forbidden and byte-inert. Epic11.166263333CPUh/0CPUreservations,0.601629USD/20calls,$10storage reserve; allcontrollers stopped.54/55separate offline wait fix152checks+CI;56fadedb0c demonstrates syntheticpip replacement and8origin cases, not exactAnnDatatransaction or native provenance gate. Next56candidate design is source/offline, no new native/model admission. Issue28closed; epic/children/PRsopen, no merge/release.

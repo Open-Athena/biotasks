@@ -1,0 +1,11 @@
+Build an unattended official Repo2RLEnv PR-to-task workflow with reproducible exports, independent native controls, durable evidence and owned cleanup, without per-task human/LLM repairs.
+
+**Current result:** [#53](https://github.com/Open-Athena/biotasks/issues/53) completed the fresh installed pipeline through billing, anonymous HF readback, cleanup and byte-inert replay. **Zero exports and zero independent exported-task controls**: the backport was filtered; the original had no failing-to-passing tests. Both completed suites imported the old guard under `site-packages` after the workspace patch applied. [Final evidence](https://github.com/Open-Athena/biotasks/blob/326e8e6f/experiments/53-installed-native/results.md). No accepted fresh task or population-yield claim.
+
+**Implementation:** open/unmerged [#46](https://github.com/Open-Athena/biotasks/pull/46), drafts [#50](https://github.com/Open-Athena/biotasks/pull/50) / [#52](https://github.com/Open-Athena/biotasks/pull/52) supply validation, generation and held retention; [#55](https://github.com/Open-Athena/biotasks/pull/55) removes local-transition sleeps (152 checks/CI green). #53 kept its frozen runtime/settings. Earlier #45/#47 failures remain preserved, not repaired into accepted scores.
+
+**Next:** [#56](https://github.com/Open-Athena/biotasks/issues/56) investigates deterministic source provenance. Real offline synthetic pip resolution reproduced replacement of editable version 0.0.0; eight origin cases pass. The exact AnnData transaction and native same-process provenance gate remain unproven. No input retry, extra model repair or new runtime admission in that source/offline scope.
+
+**Budget/status:** settled **11.166263/32 allocated CPUh**, **$0.601629 / 20 original calls**, no active jobs or CPU/model reservations. Existing $10 archival reservation remains unreconciled. Same $90 operating ceiling, strictly below $100 extra, existing reserved CPUs only. Logs, manifests and accounting in comments.
+
+Keep epic/children/PRs open for review; main is unchanged, no automatic merge or dataset release. Original #28 stays closed at 83 exports / 82 ever-positive / 67 ever-clean, 25 public-eligible / 58 Matchms withheld. Scientific acceptance, workflow completion and release readiness remain separate.

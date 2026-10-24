@@ -1,26 +1,34 @@
 # Unattended pipeline acceptance audit
 
-Updated 2026-10-24. The full generation/validation objective remains active. Open/unmerged46 supplies validation,50 installed generation/handoff, and52 source-bound held-native retention and serial integration.52 passes129 locked tests/hooks and both CI jobs.51 has actual archived-source public/readback proof and an actual installed CLI proof; support is one pinned reward-disagreement family, not all failures. Fresh installed native regression53 is now running on two official-listed related AnnData PRs, with frozen inputs c07470ee and the original settings. No independently accepted fresh pair or release readiness is established. Main still offers prompt inspection; no research merge or automatic promotion.
+Updated 2026-10-24 after completed fresh installed experiment #53. The full
+scientific objective remains active; no accepted fresh task/control pair or
+release readiness is established. Main is unchanged. Open/unmerged PR46 provides
+validation; drafts50/52 add installed generation and held retention; draft55
+removes unnecessary local-transition waits without changing native deadlines.
 
 | Requirement | Current evidence | Limit |
 | --- | --- | --- |
-| Frozen source/settings and independent job identity | Manifest CLI, source/mode binding, fixed Iris names, per-task journals | Pinned native-inline initializer only |
-| Resume without duplicate submission | Seven effect-boundary tests, uncertain/missing handle tests; real completed reinvocations with transport forbidden | Native live completion, not exhaustive preemption fuzzing |
-| Original deterministic controls | Unchanged Cobrapy nop0/oracle1 clean; Scanpy original apt failure before controls | Existing reference cases, not new generation or broad task quality |
-| Durable evidence before cleanup | Six anonymous HF native readbacks; retained volume hash checked before exact-worker owned cleanup | Public eligible evidence only; Matchms stays withheld |
-| Safe failure/retention and budgeting | Attempted-empty stop-only hold, zero-attempt proof, overrun admission closure preserving reserved cleanup | Runtime/grader cancellation limits persist |
-| Installed supported entrypoint | PR46;41 offline tests, installed resources/SDK isolation, both GitHub checks success | POSIX controller/Linux x86-64 reserved Iris only; serial |
-| Official candidate-to-portable-export handoff | Fresh official PR1497 export, original local API, normal validator, archived pre-control recipe failure; child45 | Experimental complete lifecycle, not independently passing fresh task or supported main command |
-| Generic installed generation manifest |50candidatea3c7f83f/evidence8053eb2c:105checks+CI, actual installed CLI353source/7writer/8unchanged assets, archived handoff and actual SDKprofile | Draft/unmerged; fresh generation/control path and new scientific task remain unproven |
-| Inconsistent scientific outputs |49original recovery;51automatic source/public proof2796424c and installed52source88a02827: source-derived log bindings, raw readback, verified original cleanup, inert replay;129checks+CI | One pinned reward-disagreement family; original journal held; fresh installed cleanup/native evidence pending53; no score repair or main promotion |
-| Scientific/release claims | Original83 exports/82 ever-positive/67 ever-clean untouched | No production readiness, cohort portability, grader robustness or Harbor upgrade conclusion |
+| Frozen native source/settings | Pinned Repo2RLEnv source, worker/assets, original grading and model profile | Limited supported initializer/profile |
+| Submission/recovery/cleanup | Fault-boundary tests, original exact handles, actual terminal replay with external effects forbidden | Not exhaustive live-preemption coverage |
+| Historical controls | Unchanged Cobrapy clean nop0/oracle1, independently repeated | Not fresh task generation |
+| Fresh official generation |45 exported known Cobrapy1497;53 discovered AnnData2710/2641 and completed original bootstrap/validation |45 clean build failed;53 zero exports; windows intentionally selected |
+| Fresh installed negative lifecycle |53 source88a02827: complete billing, anonymous primary/cleanup HF readback, owned resources empty, protected base preserved, byte-inert replay | No export existed, so zero independent exported-task controls |
+| Held scientific disagreement |49/51 preserve original raw bytes and held journal; installed52 automatic retention,129 tests+CI | One declared disagreement family; no repaired reward |
+| Local wait scheduling |54/55 offline old/new comparison,152 tests+CI | Not installed into53; no native speed claim |
+| Actual patched source execution |56 original trace/source evidence plus real synthetic pip replacement and eight import-origin cases | AnnData exact transaction unproven; same-process native mapping/check not implemented |
+| Public evidence/cleanup |53 exact manifests/receipts in326e8e6f; both snapshots verified anonymous; actual original jobs terminal | Eligible evidence only; Matchms withheld |
+| Scientific/release claims | Original28 counts83/82/67 unchanged | No accepted fresh pair, population yield, price per valid task or production-readiness claim |
 
-Budget at53 launch: actual9.596001111004087/32 allocated CPUh and $0.287646 across11 original calls; generation now reserves6.333333CPUh and13.07USDmodel maximum, plus the existing10USDarchival reservation unreconciled. Reservations are not actual usage/spend. `admission53-budget-snapshot.json` records the checkpoint; live budget remains authoritative. Native generation/control outcomes pending. The same90USDoperating ceiling remains strictly below100USDextra, with no new capacity. The execution-status flag is not an approval gate; source/reservation/serial/ceiling controls remain. Keep epic/children/PRs open for user review; never automatically merge research branches or release a dataset.
+Settled epic totals:11.166263333029217/32 allocated CPUh;20 original model calls,
+provider actual0.601629USD. Zero CPU/model reservations or active controllers;
+existing10USD storage reservation remains unreconciled. Same90USD operating
+ceiling, strictly below100USD extra, no new capacity. `budget.json` is the live
+admission ledger, not old launch snapshots. The model-enabled status is not an
+authorization gate. Every future runtime needs a declared source/input checkpoint,
+conservative atomic reservation, serial billing resolution and existing ceilings.
 
-Fresh45 source/result checkpoint b092ef1f preserves original pipeline failure separately from successful orchestration. Both generation/validator primary and cleanup snapshots have anonymous readback, owned resources verified empty, protected public base preserved. Completed reinvocation with external effects forbidden leaves191generation files/192connector files and budget byte-identical. The new package is a knownPR1497 instance, not a changed historical cohort denominator. Child47 source checkpoint e9ffc341 reverified56members and explains saved-versus-executed APT state plus committed-image versus clean-recipe checks; no candidate, model call or remote admission there.
-
-Current47/49final checkpointsf7c469bb/991b287e preserve17policychecks,7archival-negativechecks, unchanged grading/modes, samebase native build recovery, original300-second control failures/nullrewards and unaccepted latefiles. Every owned job is terminal, raw/stop/cleanup evidence is anonymously archived, publicbase preserved. Source eligibility approval rejection was resolved through pinned dualLGPL/GPL metadata/fullnotices and byte-identical prior-public asset/member checks before retrying the same uploader. Zero new models/validation in retention. Native clean/positive fresh task remains unproven; do not mark the full goal complete from retention success. Installed50now implements the source-configurable handoff; meaningful fresh native evidence remains required.
-
-Child48actual offline handoff preserves all10members/modes and semantic grading versus45: only native TOML reproducibility metadata differs. Original191generationfiles and shared budget unchanged; no new models/jobs/spend or unique task. Synthetic tests cover two populated repositories, multiple/empty candidates and zero exports, not live coverage. Supported acquisition/packaging is now implemented in draft50; original APT/timeout/scientific limitations remain. No new native/model admission.
-
-Installed48proof8053eb2c preserves original191generationfiles/budget, assets/modes/grading and byte-inert completed replay. Portable acquisition fixes remove historical bytecode from the writer descriptor and canonicalize records; no original source/cache/task is repaired. CI50green, sourceartifact/privatecleanrunner retained, temporary test installations removed after verified receipts. Subsequent51/52proof2796424c implements source-bound retention without per-task log-hash inputs while leaving the scientific journal held; original jobs were not resubmitted or cleaned again.53 now exercises new inputs with the fixed installed candidate. Do not regenerate known1497solely to test the command. The53 official window includes original2641/backport2710 for one fix; do not infer two independent biological tasks or unbiased yield.
+Next: #56 source/offline resultsfadedb0c. Separate origin observations, metadata
+mapping and actual native pytest-process identity. Any runtime instrumentation
+must be justified and recorded as a distinct candidate before execution; do not
+retry or repair53 or change the original verdict. Keep epic/children/PRs open for
+review, #28 closed; no research merge or automatic release.
