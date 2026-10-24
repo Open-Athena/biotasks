@@ -1,0 +1,1019 @@
+{
+  "original_inputs": {
+    "files": [
+      {
+        "bytes": 38997460,
+        "input_preview": {
+          "byte_prefix_truncated": true,
+          "compression": "none",
+          "displayed_lines_truncated": true,
+          "sample_sha256": "507153c082f6661782f7a5368086f53b6931d5785288af79ace97873848bd51c",
+          "sampled_bytes": 4096,
+          "scope": "Byte prefix only; no inferred header, schema or record count.",
+          "status": "utf8_text_prefix",
+          "text": "BEGIN IONS\nPEPMASS=408.156\nCHARGE=1\nMSLEVEL=2\nSOURCE_INSTRUMENT=LC-ESI-qTof\n"
+        },
+        "local_path": "/inputs/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf",
+        "sha256": "9276602a818f91334e56f5bc7719c6924736a029d5e1a22026f52b18255d9f85",
+        "source": "GNPS NIH natural-products spectral library (MGF), originally from https://gnps-external.ucsd.edu/gnpslibrary/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf; downloaded as the byte-identical copy committed at the source notebook's pinned revision: https://raw.githubusercontent.com/matchms/matchms-docs/796f156c58d25adfb7e1528fcb24eb8c40c143a5/data/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf (sha256 9276602a818f91334e56f5bc7719c6924736a029d5e1a22026f52b18255d9f85, 38997460 bytes, 1267 spectra)"
+      }
+    ]
+  },
+  "paths": {
+    "reference_outputs": "/work/reference",
+    "working_directory": "/work/author"
+  },
+  "policy": {
+    "dependency_answers": "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "supplied_intermediates": "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  },
+  "reference_observations": {
+    "outputs": [
+      {
+        "bytes": 5972141,
+        "download_hash_verified": true,
+        "file": "processed_spectra.json",
+        "sha256": "72a436272130d0c9a1460cc72530dbd8ad819c34529600bcd195e11790801ec9",
+        "structural_profile": {
+          "format": "unsupported",
+          "limitations": [
+            "No structural reader for this file type."
+          ]
+        }
+      },
+      {
+        "bytes": 25685198,
+        "download_hash_verified": true,
+        "file": "modified_cosine_scores.npz",
+        "sha256": "6b5d3827f0ae3813a820c42f4fa27bd2120ed4d5c4f4aa7a63418da435a7c9be",
+        "structural_profile": {
+          "format": "unsupported",
+          "limitations": [
+            "No structural reader for this file type."
+          ]
+        }
+      },
+      {
+        "bytes": 188635,
+        "download_hash_verified": true,
+        "file": "spectrum_identifiers.csv",
+        "sha256": "bebeda59768ee27f7f6468366e16c3f34e601eacd2ecd60b43a49057c8fd0dcc",
+        "structural_profile": {
+          "columns": [
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1267,
+              "empty": 0,
+              "examples": [
+                "0",
+                "1",
+                "2"
+              ],
+              "finite_numeric": 1267,
+              "maximum": 1266.0,
+              "minimum": 0.0,
+              "name": "spectrum_index",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "4304c0526764645dc3bc7561effaf54adaef3d0b3b84415cf44603d7aabc02f7",
+              "other": 0,
+              "position": 0
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 822,
+              "empty": 441,
+              "examples": [
+                "(2R)-2-[3-[(10aS)-1,3-dioxo-10,10a-dihydro-5H-imidazo[1,5-b]isoquinolin-2-yl]propanoylamino]-2-phenylacetic acid\"",
+                "(2S)-3-benzoyl-2,7b-dihydro-1aH-oxireno[2,3-c]quinoline-2-carbonitrile\"",
+                "5-hydroxy-7-methoxy-2-phenylchromen-4-one"
+              ],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "compound_name",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "e56496968915a21c5aa642f716bc4ad0ffa09d9c892e2150d0a5dc7b1eeb74b3",
+              "other": 826,
+              "position": 1
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1255,
+              "empty": 0,
+              "examples": [
+                "XTJNPXYDTGJZSA-PKOBYXMFSA-N",
+                "VOYWJNWCKFCMPN-FHERZECASA-N",
+                "IRZVHDLBAYNPCT-UHFFFAOYSA-N"
+              ],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "inchikey",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "fb9de60808c97044ed94d0915c60972c0525fbd520077a11fc9fd5565da30c53",
+              "other": 1267,
+              "position": 2
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1255,
+              "empty": 0,
+              "examples": [
+                "OC(=O)[C@H](NC(=O)CCN1C(=O)[C@@H]2Cc3ccccc3CN2C1=O)c4ccccc4",
+                "O=C(N1[C@@H](C#N)C2OC2c3ccccc13)c4ccccc4",
+                "COc1cc(O)c2c(=O)cc(oc2c1)c3ccccc3"
+              ],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "smiles",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "839ab74d5c53b5dfa094684c37aaba48a7bc614d101fc5ea562269fec1e0f064",
+              "other": 1267,
+              "position": 3
+            }
+          ],
+          "distinct_limit_per_column": 100000,
+          "duplicate_header_names": false,
+          "format": "delimited",
+          "limitations": [
+            "Numeric ranges use float conversion, not semantic type inference.",
+            "Distinct values use SHA-256 identities and the declared cap.",
+            "Column fingerprints exclude ragged rows; empty fields are included.",
+            "Examples are limited to three values and 256 characters each."
+          ],
+          "ragged_rows": 0,
+          "row_count": 1267
+        }
+      },
+      {
+        "bytes": 2374,
+        "download_hash_verified": true,
+        "file": "best_matches_spectrum_97.csv",
+        "sha256": "0c70df4df3e519340b49d3ee298ad6fd4ad605a184ab1efc5cacf7f492ea0543",
+        "structural_profile": {
+          "columns": [
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "97"
+              ],
+              "finite_numeric": 10,
+              "maximum": 97.0,
+              "minimum": 97.0,
+              "name": "query_index",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "14f48e0630b673e41a7c77a465c2c1fd768902300d374f10340ad83e6edbddd9",
+              "other": 0,
+              "position": 0
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "CC(=O)O[C@@H]1/C/2=C(\\C)/[C@@H](O)C[C@@](O)([C@@H](OC(=O)c3ccccc3)C4[C@@]5(CO[C@@H]5C[C@@H](O)[C@@]4(C)C1=O)OC(=O)C)C2(C)C"
+              ],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "query_smiles",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "4d46d48f7aa01d6368a475a71de234b841d67493da70d7dd66162f3423c8b6f5",
+              "other": 10,
+              "position": 1
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 10,
+              "empty": 0,
+              "examples": [
+                "1",
+                "2",
+                "3"
+              ],
+              "finite_numeric": 10,
+              "maximum": 10.0,
+              "minimum": 1.0,
+              "name": "rank",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "14fd2feccb2cc07563c5f05c22bd59f0f4c7462e8b7bb4fbec7327eed174a04f",
+              "other": 0,
+              "position": 2
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 10,
+              "empty": 0,
+              "examples": [
+                "CC(=O)O[C@@H]1/C/2=C(\\C)/[C@@H](O)C[C@@](O)([C@@H](OC(=O)c3ccccc3)C4[C@@]5(CO[C@@H]5C[C@@H](O)[C@@]4(C)C1=O)OC(=O)C)C2(C)C",
+                "COC(=O)c1ccc2ccccc2n1",
+                "COc1cc2ccc(=O)oc2cc1O"
+              ],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "matched_smiles",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "82a39209841819e0a6271d4561f365ef09534323a3120723b836abd97724b384",
+              "other": 10,
+              "position": 3
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 10,
+              "empty": 0,
+              "examples": [
+                "OVMSOCFBDVBLFW-SSXYINQQSA-N",
+                "CILJSZLWPHTUIP-UHFFFAOYSA-N",
+                "RODXRVNMMDRFIK-UHFFFAOYSA-N"
+              ],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "matched_inchikey",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "719b8e45b48a9317d7b1af045028ed0c37d362405ee84f73889b4b6aaf5f8918",
+              "other": 10,
+              "position": 4
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 10,
+              "empty": 0,
+              "examples": [
+                "1.000000000000003",
+                "0.6523015316427301",
+                "0.40915412311047844"
+              ],
+              "finite_numeric": 10,
+              "maximum": 1.000000000000003,
+              "minimum": 0.3217394754730571,
+              "name": "modified_cosine_score",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "53b5052f87ce5623d0990da31900d8eab763344a23c6a4d533d557db51bdc04a",
+              "other": 0,
+              "position": 5
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 10,
+              "empty": 0,
+              "examples": [
+                "733",
+                "8",
+                "14"
+              ],
+              "finite_numeric": 10,
+              "maximum": 733.0,
+              "minimum": 5.0,
+              "name": "modified_cosine_matches",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "c1b3ab13d9c2b213a15025fd0786dc0d048da445a5b5df64ee1ae251ab5df662",
+              "other": 0,
+              "position": 6
+            }
+          ],
+          "distinct_limit_per_column": 100000,
+          "duplicate_header_names": false,
+          "format": "delimited",
+          "limitations": [
+            "Numeric ranges use float conversion, not semantic type inference.",
+            "Distinct values use SHA-256 identities and the declared cap.",
+            "Column fingerprints exclude ragged rows; empty fields are included.",
+            "Examples are limited to three values and 256 characters each."
+          ],
+          "ragged_rows": 0,
+          "row_count": 10
+        }
+      }
+    ],
+    "scope": "Structural observations only"
+  },
+  "reference_seconds": 600,
+  "repeatability": {
+    "all_output_differences_limited_to_table_serialization_or_row_order": true,
+    "all_outputs_byte_identical_to_original": true,
+    "cleanup_verified": true,
+    "comparison_rules_validated": false,
+    "construction_run": false,
+    "finished": 1792854854.6309032,
+    "limitations": "Finite repeated runs, not a grading contract or portability proof. Fresh processes/workspaces share the rebuilt environment and caches; base image tag is reused, not an immutable image digest.",
+    "model_calls": 0,
+    "output_observations": [
+      [
+        {
+          "baseline_sha256": "72a436272130d0c9a1460cc72530dbd8ad819c34529600bcd195e11790801ec9",
+          "byte_identical": true,
+          "path": "processed_spectra.json",
+          "replay_sha256": "72a436272130d0c9a1460cc72530dbd8ad819c34529600bcd195e11790801ec9"
+        },
+        {
+          "baseline_sha256": "6b5d3827f0ae3813a820c42f4fa27bd2120ed4d5c4f4aa7a63418da435a7c9be",
+          "byte_identical": true,
+          "path": "modified_cosine_scores.npz",
+          "replay_sha256": "6b5d3827f0ae3813a820c42f4fa27bd2120ed4d5c4f4aa7a63418da435a7c9be"
+        },
+        {
+          "baseline_sha256": "bebeda59768ee27f7f6468366e16c3f34e601eacd2ecd60b43a49057c8fd0dcc",
+          "byte_identical": true,
+          "path": "spectrum_identifiers.csv",
+          "replay_sha256": "bebeda59768ee27f7f6468366e16c3f34e601eacd2ecd60b43a49057c8fd0dcc"
+        },
+        {
+          "baseline_sha256": "0c70df4df3e519340b49d3ee298ad6fd4ad605a184ab1efc5cacf7f492ea0543",
+          "byte_identical": true,
+          "path": "best_matches_spectrum_97.csv",
+          "replay_sha256": "0c70df4df3e519340b49d3ee298ad6fd4ad605a184ab1efc5cacf7f492ea0543"
+        }
+      ],
+      [
+        {
+          "baseline_sha256": "72a436272130d0c9a1460cc72530dbd8ad819c34529600bcd195e11790801ec9",
+          "byte_identical": true,
+          "path": "processed_spectra.json",
+          "replay_sha256": "72a436272130d0c9a1460cc72530dbd8ad819c34529600bcd195e11790801ec9"
+        },
+        {
+          "baseline_sha256": "6b5d3827f0ae3813a820c42f4fa27bd2120ed4d5c4f4aa7a63418da435a7c9be",
+          "byte_identical": true,
+          "path": "modified_cosine_scores.npz",
+          "replay_sha256": "6b5d3827f0ae3813a820c42f4fa27bd2120ed4d5c4f4aa7a63418da435a7c9be"
+        },
+        {
+          "baseline_sha256": "bebeda59768ee27f7f6468366e16c3f34e601eacd2ecd60b43a49057c8fd0dcc",
+          "byte_identical": true,
+          "path": "spectrum_identifiers.csv",
+          "replay_sha256": "bebeda59768ee27f7f6468366e16c3f34e601eacd2ecd60b43a49057c8fd0dcc"
+        },
+        {
+          "baseline_sha256": "0c70df4df3e519340b49d3ee298ad6fd4ad605a184ab1efc5cacf7f492ea0543",
+          "byte_identical": true,
+          "path": "best_matches_spectrum_97.csv",
+          "replay_sha256": "0c70df4df3e519340b49d3ee298ad6fd4ad605a184ab1efc5cacf7f492ea0543"
+        }
+      ]
+    ],
+    "reference_tests": 2,
+    "semantic_fidelity_validated": false,
+    "solver_run": false,
+    "started": 1792854608.8618803,
+    "status": "repeatability_observed_requires_comparison_review"
+  },
+  "source_evidence": {
+    "candidate/dependency-exclusions.json": "{\"files\": []}\n",
+    "candidate/pyproject.toml": "[project]\nname = \"matchms-spectral-matching-setup\"\nversion = \"1.0\"\nrequires-python = \">=3.13,<3.14\"\ndependencies = [\n    \"matchms==0.30.2\",\n    \"matplotlib==3.11.2\",\n    \"rdkit==2024.9.6\",\n]\n",
+    "inputs/exports.py": "import csv as _exp_csv\nfrom matchms.exporting import save_as_json as _exp_save_as_json\n\n_exp_out_dir = \"/work/outputs\"\nos.makedirs(_exp_out_dir, exist_ok=True)\n\n# 1) Processed spectra library (end product of the metadata + peak pipelines)\n_exp_processed_json = os.path.join(_exp_out_dir, \"processed_spectra.json\")\n_exp_save_as_json(spectrums, _exp_processed_json)\n\n# 2) All-pairs Modified Cosine similarity: scores and matched peak counts\n_exp_scores_npz = os.path.join(_exp_out_dir, \"modified_cosine_scores.npz\")\nnp.savez(\n    _exp_scores_npz,\n    modified_cosine_score=scores_array[\"ModifiedCosine_score\"],\n    modified_cosine_matches=scores_array[\"ModifiedCosine_matches\"],\n)\n\n# 3) Spectrum identifiers (context for the similarity matrix and match lists)\n_exp_ids_csv = os.path.join(_exp_out_dir, \"spectrum_identifiers.csv\")\nwith open(_exp_ids_csv, \"w\", newline=\"\", encoding=\"utf-8\") as _exp_f:\n    _exp_w = _exp_csv.writer(_exp_f)\n    _exp_w.writerow([\"spectrum_index\", \"compound_name\", \"inchikey\", \"smiles\"])\n    for _exp_i, _exp_s in enumerate(spectrums):\n        _exp_w.writerow([\n            _exp_i,\n            _exp_s.get(\"compound_name\") or \"\",\n            _exp_s.get(\"inchikey\") or \"\",\n            _exp_s.get(\"smiles\") or \"\",\n        ])\n\n# 4) Top Modified Cosine matches (min_match >= 5) for the queried spectrum\n#    (query = spectrums[97] in the original script)\n_exp_matches_csv = os.path.join(_exp_out_dir, \"best_matches_spectrum_97.csv\")\nwith open(_exp_matches_csv, \"w\", newline=\"\", encoding=\"utf-8\") as _exp_f:\n    _exp_w = _exp_csv.writer(_exp_f)\n    _exp_w.writerow([\n        \"query_index\", \"query_smiles\", \"rank\",\n        \"matched_smiles\", \"matched_inchikey\",\n        \"modified_cosine_score\", \"modified_cosine_matches\",\n    ])\n    for _exp_r, _exp_entry in enumerate(best_matches, start=1):\n        _exp_ref = _exp_entry[0]\n        _exp_score_entry = _exp_entry[1]\n        _exp_w.writerow([\n            97,\n            spectrums[97].get(\"smiles\") or \"\",\n            _exp_r,\n            _exp_ref.get(\"smiles\") or \"\",\n            _exp_ref.get(\"inchikey\") or \"\",\n            float(_exp_score_entry[\"ModifiedCosine_score\"]),\n            int(_exp_score_entry[\"ModifiedCosine_matches\"]),\n        ])",
+    "inputs/original.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3 (ipykernel)\n#     language: python\n#     name: python3\n# ---\n\n# (part1)=\n# # part I - basics of matchms\n#\n# ## Requirements\n# For this notebook to work, `matchms` needs to be installed.\n# This can be done by running:\n#\n# ```\n# conda create --name matchms python=3.8\n# conda activate matchms\n# conda install --channel nlesc --channel bioconda --channel conda-forge matchms\n# ```\n\n# ## Import MS/MS data\n# - matchms has several importing options, e.g.: `load_from_json`, `load_from_mzml`, `load_from_mzxml` etc. Here we are going to use `load_from_mgf`\n# - Import spectrum from mgf file downloaded from GNPS (https://gnps-external.ucsd.edu/gnpslibrary, here using `GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf`)\n\nimport os\nimport numpy as np\nfrom matchms.importing import load_from_mgf\n\npath_data = os.path.join(os.path.dirname(os.getcwd()), \"data\") #\"...\" enter your pathname to the downloaded file\nfile_mgf = os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf\")\nspectrums = list(load_from_mgf(file_mgf))\n\nprint(f\"{len(spectrums)} spectrums found and imported\")\n\n# ## Inspect spectra\n# - Inspect the metadata: inchikey, inchi, smiles\n# - Inspect the number of peaks per spectrum\n\ninchikeys = [s.get(\"inchikey\") for s in spectrums]\nfound_inchikeys = np.sum([1 for x in inchikeys if x is not None])\nprint(f\"Found {int(found_inchikeys)} inchikeys in metadata\")\n\ninchi = [s.get(\"inchi\") for s in spectrums]\ninchi[:10]\n\nsmiles = [s.get(\"smiles\") for s in spectrums]\nsmiles[:10]\n\nnumbers_of_peaks = [len(s.peaks.mz) for s in spectrums]\n\nfrom matplotlib import pyplot as plt\nplt.figure(figsize=(5,4), dpi=150)\nplt.hist(numbers_of_peaks, 20, edgecolor=\"white\")\nplt.title(\"Peaks per spectrum (before filtering)\")\nplt.xlabel(\"Number of peaks in spectrum\")\nplt.ylabel(\"Number of spectra\")\n#plt.savefig(\"hist01.png\")\n\n# ## Build a data processing pipeline\n# Depending on the data that you import, in most cases you might want to further process the spectra. matchms offers numerous 'filters' to process Spectrum objects. They are designed in a way that allows to simply stack them to any processing pipeline you want. In general, `matchms.filtering` contains filters that either will\n#\n# - harmonize, clean, extend, and/or check the spectrum metadata\n# - process or filter spectrum peaks (e.g. remove low intensity peaks, or normalize peak intensities)\n\nfrom matchms.filtering import default_filters\nfrom matchms.filtering import repair_inchi_inchikey_smiles\nfrom matchms.filtering import derive_inchikey_from_inchi\nfrom matchms.filtering import derive_smiles_from_inchi\nfrom matchms.filtering import derive_inchi_from_smiles\nfrom matchms.filtering import harmonize_undefined_inchi\nfrom matchms.filtering import harmonize_undefined_inchikey\nfrom matchms.filtering import harmonize_undefined_smiles\nfrom matchms.filtering import add_precursor_mz\n\ndef metadata_processing(spectrum):\n    spectrum = default_filters(spectrum)\n    spectrum = repair_inchi_inchikey_smiles(spectrum)\n    spectrum = derive_inchi_from_smiles(spectrum)\n    spectrum = derive_smiles_from_inchi(spectrum)\n    spectrum = derive_inchikey_from_inchi(spectrum)\n    spectrum = harmonize_undefined_smiles(spectrum)\n    spectrum = harmonize_undefined_inchi(spectrum)\n    spectrum = harmonize_undefined_inchikey(spectrum)\n    spectrum = add_precursor_mz(spectrum)\n    return spectrum\n\n\n# Here we defined a sequence of filters to be applied to a spectrum, which will apply default filters (a bunch of standard operations to make metadata entries more consistent). Then we run a number of filters that look for inchi, inchikey, and smiles that ended up in wrong fields (`repair_inchi_inchikey_smiles`), and ultimately translate inchi, inchikey, and smiles into another wherever possible.\n#\n#\n# To process the peaks we define another pipeline:\n\n# ### Peak processing pipeline\n\nfrom matchms.filtering import normalize_intensities\nfrom matchms.filtering import select_by_intensity\nfrom matchms.filtering import select_by_mz\n\ndef peak_processing(spectrum):\n    spectrum = normalize_intensities(spectrum)\n    spectrum = select_by_intensity(spectrum, intensity_from=0.01)\n    spectrum = select_by_mz(spectrum, mz_from=10, mz_to=1000)\n    return spectrum\n\n\n# Here we defined a sequence of filters which will normalize the intensities to values between 0 and 1, and finally only keep peaks if they have a normalized intensity > 0.01 and if they have a m/z position between 10 and 1000 Da.\n#\n#\n# Once defined in this way, we can easily apply this processing sequence to all imported spectrums by doing:\n\nspectrums = [metadata_processing(s) for s in spectrums]\nspectrums = [peak_processing(s) for s in spectrums]\n\ninchikeys = [s.get(\"inchikey\") for s in spectrums]\ninchikeys[:10]\n\nnumbers_of_peaks = [len(s.peaks.mz) for s in spectrums]\n\nfrom matplotlib import pyplot as plt\nplt.figure(figsize=(5,4), dpi=150)\nplt.hist(numbers_of_peaks, 20, edgecolor=\"white\")\nplt.title(\"Peaks per spectrum (after filtering)\")\nplt.xlabel(\"Number of peaks in spectrum\")\nplt.ylabel(\"Number of spectra\")\n#plt.savefig(\"hist02.png\")\n\n# - the filtering did drastically reduce the (initially very high) number of peaks per spectrum\n# - this is mostly due to the removal of peaks < 0.01 of the max intensity\n\n# ## Export processed data\n# There are multiple options to export your data after processing. Using `save_as_json` or `save_as_mgf` the data can be written back to a `.json` or `.mgf` file.\n\nfrom matchms.exporting import save_as_json\n\nfile_export_json = os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.json\")\nsave_as_json(spectrums, file_export_json)\n\n# A alternative that is much faster for reading/writing is to use 'pickle'. Should data handling become an issue (e.g. many thousands spectrums), than this can be a way out.\n\nimport pickle\n\nfile_export_pickle = os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.pickle\")\npickle.dump(spectrums, \n            open(file_export_pickle, \"wb\"))\n\n# ## Compute spectra similarities\u00a0: Cosine\u00a0score\n# In the following part the Cosine similarity scores between all possible spectra pairs will be calculated.\n\nfrom matchms import calculate_scores\nfrom matchms.similarity import CosineGreedy\n\nsimilarity_measure = CosineGreedy(tolerance=0.005)\nscores = calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)\n\nscores.scores.shape\n\nscores_array = scores.scores.to_array()\nscores_array[:5, :5][\"CosineGreedy_score\"]\n\nscores_array = scores.scores.to_array()\nscores_array[:5, :5][\"CosineGreedy_matches\"]\n\n# ## Get highest scoring results for a spectrum of interest\n\nbest_matches = scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)[:10]\nprint([x[1] for x in best_matches])\n\n[x[0].get(\"smiles\") for x in best_matches]\n\nfrom rdkit import Chem\nfrom rdkit.Chem import Draw\n\nfor i, smiles in enumerate([x[0].get(\"smiles\") for x in best_matches]):\n    m = Chem.MolFromSmiles(smiles)\n    Draw.MolToFile(m, f\"compound_{i}.png\")\n\n# ## Alternative: Get highest scoring results above min_match criteria\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"CosineGreedy_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\n# ## Computing spectra similarities between all spectra - Modified Cosine score\n# In the following part the **Modified Cosine similarity** scores (Watrous et al., 2012) between all possible spectra pairs will be calculated.\n#\n# The modified cosine score aims at quantifying the similarity between two\n# mass spectra. The score is calculated by finding best possible matches between\n# peaks of two spectra. Two peaks are considered a potential match if their\n# m/z ratios lie within the given 'tolerance', or if their m/z ratios\n# lie within the tolerance once a mass-shift is applied. The mass shift is\n# simply the difference in precursor-m/z between the two spectra.\n# See Watrous et al. [PNAS, 2012, https://www.pnas.org/content/109/26/E1743]\n# for further details.\n\nfrom matchms.similarity import ModifiedCosine\n\nsimilarity_measure = ModifiedCosine(tolerance=0.005)\nscores = calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[5], name=\"ModifiedCosine_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"ModifiedCosine_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\nscores_array = scores.scores.to_array()\n\nplt.figure(figsize=(6,6), dpi=150)\nplt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"], cmap=\"viridis\")\nplt.colorbar(shrink=0.7)\nplt.title(\"Modified Cosine spectra similarities\")\nplt.xlabel(\"Spectrum #ID\")\nplt.ylabel(\"Spectrum #ID\")\n#plt.savefig(\"modified_cosine_scores.png\")\n\nmin_match = 5\n\nplt.figure(figsize=(6,6), dpi=150)\nplt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"] * (scores_array[:50, :50][\"ModifiedCosine_matches\"] >= min_match), cmap=\"viridis\")\nplt.colorbar(shrink=0.7)\nplt.title(\"Modified Cosine spectra similarities (min_match=5)\")\nplt.xlabel(\"Spectrum #ID\")\nplt.ylabel(\"Spectrum #ID\")\n#plt.savefig(\"modified_cosine_scores_min_match5.png\")\n\n# This suggests that -for instance- `spectrums[11]` seems to have several related other ones among the first 50 spectrums. Let's have a closer look at it.\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[11], name=\"ModifiedCosine_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"ModifiedCosine_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\n[x[0].get(\"smiles\") for x in best_matches]\n\n# ### Plot the compounds with the highest modified Cosine score\n\nfrom rdkit import Chem\nfrom rdkit.Chem import Draw\n\nfor i, smiles in enumerate([x[0].get(\"smiles\") for x in best_matches]):\n    m = Chem.MolFromSmiles(smiles)\n    Draw.MolToFile(m, f\"compound_{i}.png\")\n\n# ## Inspect a case that doesn't work that well...\n\nmasses = [s.get(\"precursor_mz\") for s in spectrums]\n\nnp.where(np.array(masses) > 600)\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[97], name=\"ModifiedCosine_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"ModifiedCosine_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\nfrom rdkit import Chem\nfrom rdkit.Chem import Draw\n\nfor i, smiles in enumerate([x[0].get(\"smiles\") for x in best_matches]):\n    m = Chem.MolFromSmiles(smiles)\n    Draw.MolToFile(m, f\"compound_{i}.png\")\n",
+    "inputs/plan.json": "{\n  \"artifacts\": [\n    {\n      \"description\": \"The processed spectra library after the metadata-processing and peak-processing pipelines (the notebook's 'Export processed data' end product).\",\n      \"path\": \"processed_spectra.json\",\n      \"source_evidence\": \"The narrative establishes 'Export processed data' as an outcome ('Using save_as_json or save_as_mgf the data can be written back...'), and the variable `spectrums` holds the fully processed library at completion (reassignments `spectrums = [metadata_processing(s) ...]` then `[peak_processing(s) ...]`, followed by the original `save_as_json` call). The export re-serializes this same existing object to /work/outputs.\"\n    },\n    {\n      \"description\": \"All-pairs Modified Cosine similarity matrix: per-pair scores and matched peak counts for the N x N spectrum comparisons.\",\n      \"path\": \"modified_cosine_scores.npz\",\n      \"source_evidence\": \"The 'Computing spectra similarities between all spectra - Modified Cosine score' section presents the full all-pairs ModifiedCosine computation as the final similarity result, visualized as a heatmap and used for the per-spectrum queries. It is produced by `scores = calculate_scores(spectrums, spectrums, ModifiedCosine(tolerance=0.005), is_symmetric=True)` and flattened to the named array `scores_array = scores.scores.to_array()`, which is the last assignment of `scores_array` (after ModifiedCosine) and survives to completion.\"\n    },\n    {\n      \"description\": \"Index, compound name, inchikey and smiles for each processed spectrum; the identifier context needed to interpret the similarity matrix and match lists.\",\n      \"path\": \"spectrum_identifiers.csv\",\n      \"source_evidence\": \"These are existing metadata values (post-`default_filters`, `repair_inchi_inchikey_smiles`) on the surviving `spectrums` objects; the narrative emphasizes compound identification (inchikey/inchi/smiles) and the structures drawn from `x[0].get('smiles')` for best matches, making these identifiers the interpretive context for the exported scores and matches.\"\n    },\n    {\n      \"description\": \"Top-10 Modified Cosine matches (min_match >= 5) for the queried spectrum spectrums[97], with matched compound identifiers, score and match count.\",\n      \"path\": \"best_matches_spectrum_97.csv\",\n      \"source_evidence\": \"The final branch 'Inspect a case that doesn't work that well...' queries `scores.scores_by_query(spectrums[97], name='ModifiedCosine_score', sort=True)` and filters to >= 5 matched peaks, taking the top 10; it is interpreted in its own right (scores inspected, compound structures drawn). The resulting tuples survive in `best_matches`/`sorted_matches` at script completion (last assignments in the script).\"\n    }\n  ],\n  \"disposition\": \"prepare\",\n  \"excluded_outputs\": [\n    \"All-pairs CosineGreedy scores and the spectrums[5] top-match listings: the analysis is genuinely presented as a result, but the variable `scores` is reassigned by the ModifiedCosine `calculate_scores` call and `best_matches` is reassigned by later branches, so no surviving object holds the CosineGreedy results at completion; recovery would require recomputing the analysis, which is not permitted for exports.\",\n    \"Modified Cosine top matches for spectrums[5] and spectrums[11] (the 'related compounds' whose structures are drawn): `best_matches` and `sorted_matches` are overwritten by the later spectrums[97] inspection, so only the final assignment is exportable.\",\n    \"Peaks-per-spectrum histograms before/after filtering: plot-only diagnostics of data quality and filtering effect; `numbers_of_peaks` currently holds only the after-filtering values and is a diagnostic rather than an endpoint.\",\n    \"RDKit compound_*.png structure depictions: images produced by the original Draw.MolToFile calls; the underlying smiles values are already exported in the identifier and match CSVs, and figure capture/plot changes are out of scope.\",\n    \"Metadata spot-checks (inchikey/inchi/smiles lists, precursor_mz mass inspection such as np.where(masses > 600)): diagnostics supporting the pipelines and the choice of inspected spectra, not independent endpoints.\"\n  ],\n  \"explanation\": \"The notebook's terminal products are: (1) the processed spectra library produced by the metadata/peak filtering pipelines (the 'Export processed data' end product), (2) the all-pairs Modified Cosine similarity matrix (the final similarity analysis, whose heatmap and per-spectrum queries are interpreted in the narrative), and (3) the top modified-cosine matches with min_match>=5 for the inspected query spectrum (the final state of `best_matches`/`sorted_matches` covers spectrums[97]). The appended code re-serializes these existing values (spectrums, scores_array, best_matches) plus identifier context (compound name, inchikey, smiles from the same spectrum objects) into /work/outputs. No analysis is recomputed or altered; CosineGreedy results and earlier best-match lists are excluded because the script overwrites the variables holding them.\",\n  \"export_code\": \"import csv as _exp_csv\\nfrom matchms.exporting import save_as_json as _exp_save_as_json\\n\\n_exp_out_dir = \\\"/work/outputs\\\"\\nos.makedirs(_exp_out_dir, exist_ok=True)\\n\\n# 1) Processed spectra library (end product of the metadata + peak pipelines)\\n_exp_processed_json = os.path.join(_exp_out_dir, \\\"processed_spectra.json\\\")\\n_exp_save_as_json(spectrums, _exp_processed_json)\\n\\n# 2) All-pairs Modified Cosine similarity: scores and matched peak counts\\n_exp_scores_npz = os.path.join(_exp_out_dir, \\\"modified_cosine_scores.npz\\\")\\nnp.savez(\\n    _exp_scores_npz,\\n    modified_cosine_score=scores_array[\\\"ModifiedCosine_score\\\"],\\n    modified_cosine_matches=scores_array[\\\"ModifiedCosine_matches\\\"],\\n)\\n\\n# 3) Spectrum identifiers (context for the similarity matrix and match lists)\\n_exp_ids_csv = os.path.join(_exp_out_dir, \\\"spectrum_identifiers.csv\\\")\\nwith open(_exp_ids_csv, \\\"w\\\", newline=\\\"\\\", encoding=\\\"utf-8\\\") as _exp_f:\\n    _exp_w = _exp_csv.writer(_exp_f)\\n    _exp_w.writerow([\\\"spectrum_index\\\", \\\"compound_name\\\", \\\"inchikey\\\", \\\"smiles\\\"])\\n    for _exp_i, _exp_s in enumerate(spectrums):\\n        _exp_w.writerow([\\n            _exp_i,\\n            _exp_s.get(\\\"compound_name\\\") or \\\"\\\",\\n            _exp_s.get(\\\"inchikey\\\") or \\\"\\\",\\n            _exp_s.get(\\\"smiles\\\") or \\\"\\\",\\n        ])\\n\\n# 4) Top Modified Cosine matches (min_match >= 5) for the queried spectrum\\n#    (query = spectrums[97] in the original script)\\n_exp_matches_csv = os.path.join(_exp_out_dir, \\\"best_matches_spectrum_97.csv\\\")\\nwith open(_exp_matches_csv, \\\"w\\\", newline=\\\"\\\", encoding=\\\"utf-8\\\") as _exp_f:\\n    _exp_w = _exp_csv.writer(_exp_f)\\n    _exp_w.writerow([\\n        \\\"query_index\\\", \\\"query_smiles\\\", \\\"rank\\\",\\n        \\\"matched_smiles\\\", \\\"matched_inchikey\\\",\\n        \\\"modified_cosine_score\\\", \\\"modified_cosine_matches\\\",\\n    ])\\n    for _exp_r, _exp_entry in enumerate(best_matches, start=1):\\n        _exp_ref = _exp_entry[0]\\n        _exp_score_entry = _exp_entry[1]\\n        _exp_w.writerow([\\n            97,\\n            spectrums[97].get(\\\"smiles\\\") or \\\"\\\",\\n            _exp_r,\\n            _exp_ref.get(\\\"smiles\\\") or \\\"\\\",\\n            _exp_ref.get(\\\"inchikey\\\") or \\\"\\\",\\n            float(_exp_score_entry[\\\"ModifiedCosine_score\\\"]),\\n            int(_exp_score_entry[\\\"ModifiedCosine_matches\\\"]),\\n        ])\",\n  \"unresolved_assumptions\": [\n    \"Whether the processed spectra carry a 'compound_name' metadata entry after default_filters (matchms typically adds it from 'name'/'title'); absent values are written as empty strings.\",\n    \"Whether the installed matchms version exposes scores_by_query entries as (spectrum, record) pairs supporting string-key access, as the baseline script itself assumes; the export reuses exactly those access patterns.\",\n    \"Size and write time of the processed-spectra JSON (~tens of MB for the ~39 MB source library) relative to the 600 s / 10 GiB limits is untested.\",\n    \"Staging of the GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf input at the path derived from `path_data` is owned by the execution stage.\"\n  ]\n}\n",
+    "outcome.json": "{\n  \"dependency_asset_review\": \"The controller's candidate scan (catalog sha256 3420bff4...) enumerated 10,758 installed regular files across 39 distributions, with 3,662 name-format candidates and an empty priority_matches list. I inspected the catalog per distribution. The matchms distribution ships only 4 data files (matchms/data/export_key_conversions.csv, known_adduct_conversions.csv, known_adducts_table.csv, known_key_conversions.csv) \\u2014 internal metadata-key/adduct lookup tables used by default_filters; they are runtime inputs of the analysis, not answer assets, and were left installed. No distribution bundles the GNPS-NIH library (the ~39 MB MGF input), any processed-spectra library, modified-cosine score matrices, or per-spectrum match tables matching the exported artifacts; the exported answers derive from 1,267 spectra whose byte-level results are not present in any wheel. The remaining candidates are generic test/example files of numpy/scipy/pandas/scikit-learn/networkx/numba/matplotlib/pytz/joblib/llvmlite/rdkit (name-based hits such as *test*.py or example data unrelated to mass-spectra cosine matching). This is a targeted catalog-based review plus the matchms data-directory inspection, not an exhaustive semantic audit of every file; residual uncertainty is low because the scientific outputs are functions of the 39 MB staged MGF input, which was verified by sha256 to be byte-identical to the notebook's committed data. dependency-exclusions.json declares {\\\"files\\\": []} (no removals) and no unused answer asset was established.\",\n  \"disposition\": \"tested\",\n  \"explanation\": \"Environment set up and the full offline reference executed successfully (exit 0, 94 s, peak RSS ~0.98 GiB, well within the 600 s / 8 GiB limits). Evidence: staged input verified byte-identical (38,997,460 bytes, sha256 9276602a818f91334e56f5bc7719c6924736a029d5e1a22026f52b18255d9f85, 1,267 spectra \\u2014 the script's own print confirms \\\"1267 spectrums found and imported\\\"); both 1,267x1,267 similarity computations (CosineGreedy and ModifiedCosine) completed (progress bars reached 1267/1267); all four declared artifacts were produced with recorded hashes (processed_spectra.json 5,972,141 B; modified_cosine_scores.npz 25,685,198 B; spectrum_identifiers.csv 188,635 B; best_matches_spectrum_97.csv 2,374 B). Version selection: the base image is Python 3.13.13, which the source-era matchms releases do not support, and current matchms 0.33.x removed the ModifiedCosine import the source requires. matchms 0.30.2 (>=3.10,<3.14, retains ModifiedCosine and all 16 required filter/similarity/export imports, and its Scores.scores_by_query fixed the numpy-2 scalar-conversion bug present in 0.21.1) was verified via wheel-source inspection and a subset smoke test in the setup shell before dispatch. rdkit's Debian runtime libraries (libxrender1, libxext6, libexpat1) are declared in system-packages.json, and the controller reported all three already present in the fresh environment. matplotlib selects the Agg backend headless with no DISPLAY, so all plot calls, pickle export and RDKit MolToFile depictions ran unchanged. The data-source fetch needed one workaround recorded below; the authoritative GNPS endpoint gnps-external.ucsd.edu was network-unreachable from this sandbox (verified timeouts), so the byte-identical copy committed in the matchms-docs repository at the notebook's pinned revision 796f156... is used and pinned by size and sha256 in stage-inputs.sh (which re-downloads and verifies it from recorded sources on each replay). dependency-exclusions.json declares no removals; the dependency-asset review found no bundled answer assets.\",\n  \"source_adaptations\": [\n    \"analysis.py line 36: `path_data = os.path.join(os.path.dirname(os.getcwd()), \\\"data\\\")` changed to `path_data = \\\"/inputs\\\"` \\u2014 a purely path-level adaptation so the unchanged script reads the staged input and writes its own json/pickle exports from the persistent /inputs directory (which survives the controller's /work/run recreation) instead of a sibling-of-cwd \\\"data\\\" directory that does not exist in the reference layout. This is the only source diff (verified single changed line). No algorithms, parameters, filters, spectra selection, or branches were modified.\",\n    \"stage-inputs.sh stages the GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf input to /inputs by downloading the byte-identical copy committed in the matchms-docs repository at the notebook's pinned revision (raw.githubusercontent.com/matchms/matchms-docs/796f156c58d25adfb7e1528fcb24eb8c40c143a5/data/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf) instead of the primary GNPS endpoint https://gnps-external.ucsd.edu/gnpslibrary/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf, which was network-unreachable during preparation. The staged file is verified against the expected size 38,997,460 and sha256 9276602a818f91334e56f5bc7719c6924736a029d5e1a22026f52b18255d9f85; bytes read by the analysis are identical to the original notebook data.\"\n  ],\n  \"unresolved_assumptions\": [\n    \"Byte-identity of the matchms-docs-committed MGF with the file the notebook originally downloaded from GNPS: the source's own narrative names the GNPS download and the matchms-docs repo (same project and pinned revision as the notebook) ships the file at the exact path/filename the notebook expects; the primary GNPS endpoint was unreachable, so direct original-vs-copy comparison could not be performed. The staged file (1,267 spectra, ~39 MB) matches the notebook's expected library scale.\",\n    \"matchms version equivalence: the notebook prescribes a conda install with no pinned version; the environment requires Python 3.13, where only 0.30.2 among releases satisfying the source's imports (including from matchms.similarity import ModifiedCosine) is installable. The executed pipeline produced the same API outputs the source's statements describe (scores_array fields ModifiedCosine_score/ModifiedCosine_matches, (spectrum, record) tuples from scores_by_query), but exact numerical identity with an older matchms build was not established.\",\n    \"compound_name metadata: confirmed non-empty after default_filters in the executed run (spectrum_identifiers.csv is 188,635 bytes, not empty strings), resolving the preparation assumption; scores_by_query (spectrum, record) access pattern also confirmed in the executed run.\"\n  ]\n}\n",
+    "trial/dependency-assets-summary.json": "{\n  \"candidate_files\": 3662,\n  \"distribution_coverage\": [\n    {\n      \"candidate_files\": 2,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"certifi\",\n      \"installed_regular_files_inspected\": 14\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"charset-normalizer\",\n      \"installed_regular_files_inspected\": 23\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"cloudpickle\",\n      \"installed_regular_files_inspected\": 9\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"contourpy\",\n      \"installed_regular_files_inspected\": 26\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"cycler\",\n      \"installed_regular_files_inspected\": 9\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"Deprecated\",\n      \"installed_regular_files_inspected\": 13\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"fonttools\",\n      \"installed_regular_files_inspected\": 365\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"idna\",\n      \"installed_regular_files_inspected\": 18\n    },\n    {\n      \"candidate_files\": 92,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"joblib\",\n      \"installed_regular_files_inspected\": 143\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"kiwisolver\",\n      \"installed_regular_files_inspected\": 12\n    },\n    {\n      \"candidate_files\": 8,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"llvmlite\",\n      \"installed_regular_files_inspected\": 48\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"lxml\",\n      \"installed_regular_files_inspected\": 174\n    },\n    {\n      \"candidate_files\": 4,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"matchms\",\n      \"installed_regular_files_inspected\": 138\n    },\n    {\n      \"candidate_files\": 115,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"matplotlib\",\n      \"installed_regular_files_inspected\": 603\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"narwhals\",\n      \"installed_regular_files_inspected\": 170\n    },\n    {\n      \"candidate_files\": 308,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"networkx\",\n      \"installed_regular_files_inspected\": 606\n    },\n    {\n      \"candidate_files\": 413,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"numba\",\n      \"installed_regular_files_inspected\": 823\n    },\n    {\n      \"candidate_files\": 487,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"numpy\",\n      \"installed_regular_files_inspected\": 878\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"packaging\",\n      \"installed_regular_files_inspected\": 31\n    },\n    {\n      \"candidate_files\": 1116,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pandas\",\n      \"installed_regular_files_inspected\": 1515\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pickydict\",\n      \"installed_regular_files_inspected\": 10\n    },\n    {\n      \"candidate_files\": 2,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pillow\",\n      \"installed_regular_files_inspected\": 141\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"PubChemPy\",\n      \"installed_regular_files_inspected\": 8\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pynndescent\",\n      \"installed_regular_files_inspected\": 17\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pyparsing\",\n      \"installed_regular_files_inspected\": 25\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pyteomics\",\n      \"installed_regular_files_inspected\": 46\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"python-dateutil\",\n      \"installed_regular_files_inspected\": 29\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pytz\",\n      \"installed_regular_files_inspected\": 618\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"PyYAML\",\n      \"installed_regular_files_inspected\": 26\n    },\n    {\n      \"candidate_files\": 26,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"rdkit\",\n      \"installed_regular_files_inspected\": 979\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"requests\",\n      \"installed_regular_files_inspected\": 28\n    },\n    {\n      \"candidate_files\": 407,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"scikit-learn\",\n      \"installed_regular_files_inspected\": 1010\n    },\n    {\n      \"candidate_files\": 682,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"scipy\",\n      \"installed_regular_files_inspected\": 1434\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"six\",\n      \"installed_regular_files_inspected\": 8\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"sparsestack\",\n      \"installed_regular_files_inspected\": 10\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"threadpoolctl\",\n      \"installed_regular_files_inspected\": 7\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"tqdm\",\n      \"installed_regular_files_inspected\": 41\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"tzdata\",\n      \"installed_regular_files_inspected\": 635\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"urllib3\",\n      \"installed_regular_files_inspected\": 44\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"wrapt\",\n      \"installed_regular_files_inspected\": 24\n    }\n  ],\n  \"installed_files_inspected\": 10758,\n  \"priority_matches\": [],\n  \"scope\": \"Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit.\"\n}\n",
+    "trial/dependency-exclusions-applied.json": "{\n  \"files\": [],\n  \"excluded_files_absent\": true\n}\n",
+    "trial/environment.txt": "certifi==2026.10.23\ncharset-normalizer==3.5.2\ncloudpickle==3.1.2\ncontourpy==1.4.0\ncycler==0.12.1\ndeprecated==3.0.0\nfonttools==4.67.0\nidna==3.20\njoblib==1.6.0\nkiwisolver==1.5.1\nllvmlite==0.44.0\nlxml==5.4.0\nmatchms==0.30.2\nmatplotlib==3.11.2\nnarwhals==2.27.1\nnetworkx==3.7\nnumba==0.61.2\nnumpy==2.2.6\npackaging==26.3\npandas==2.3.3\npickydict==0.5.0\npillow==13.0.0\npubchempy==1.0.5\npynndescent==0.6.0\npyparsing==3.3.3\npyteomics==5.0.1\npython-dateutil==3.0.0\npytz==2026.5\npyyaml==6.0.3\nrdkit==2024.9.6\nrequests==2.34.2\nscikit-learn==1.9.1\nscipy==1.18.1\nsix==1.17.0\nsparsestack==0.7.0\nthreadpoolctl==3.7.0\ntqdm==4.70.1\ntzdata==2026.5\nurllib3==2.8.0\nwrapt==2.5.1\n",
+    "trial/source.diff": "--- original.py\n+++ analysis.py\n@@ -33,7 +33,7 @@\n import numpy as np\n from matchms.importing import load_from_mgf\n \n-path_data = os.path.join(os.path.dirname(os.getcwd()), \"data\") #\"...\" enter your pathname to the downloaded file\n+path_data = \"/inputs\" #\"...\" enter your pathname to the downloaded file\n file_mgf = os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf\")\n spectrums = list(load_from_mgf(file_mgf))\n \n"
+  },
+  "source_operations": {
+    "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+    "operations": [
+      {
+        "column": 12,
+        "function": "os.path.join",
+        "id": "call-36-12",
+        "line": 36,
+        "source": "os.path.join(os.path.dirname(os.getcwd()), \"data\")"
+      },
+      {
+        "column": 25,
+        "function": "os.path.dirname",
+        "id": "call-36-25",
+        "line": 36,
+        "source": "os.path.dirname(os.getcwd())"
+      },
+      {
+        "column": 41,
+        "function": "os.getcwd",
+        "id": "call-36-41",
+        "line": 36,
+        "source": "os.getcwd()"
+      },
+      {
+        "column": 11,
+        "function": "os.path.join",
+        "id": "call-37-11",
+        "line": 37,
+        "source": "os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf\")"
+      },
+      {
+        "column": 12,
+        "function": "list",
+        "id": "call-38-12",
+        "line": 38,
+        "source": "list(load_from_mgf(file_mgf))"
+      },
+      {
+        "column": 17,
+        "function": "load_from_mgf",
+        "id": "call-38-17",
+        "line": 38,
+        "source": "load_from_mgf(file_mgf)"
+      },
+      {
+        "column": 0,
+        "function": "print",
+        "id": "call-40-0",
+        "line": 40,
+        "source": "print(f\"{len(spectrums)} spectrums found and imported\")"
+      },
+      {
+        "column": 9,
+        "function": "len",
+        "id": "call-40-9",
+        "line": 40,
+        "source": "len(spectrums)"
+      },
+      {
+        "column": 13,
+        "function": "s.get",
+        "id": "call-46-13",
+        "line": 46,
+        "source": "s.get(\"inchikey\")"
+      },
+      {
+        "column": 18,
+        "function": "np.sum",
+        "id": "call-47-18",
+        "line": 47,
+        "source": "np.sum([1 for x in inchikeys if x is not None])"
+      },
+      {
+        "column": 0,
+        "function": "print",
+        "id": "call-48-0",
+        "line": 48,
+        "source": "print(f\"Found {int(found_inchikeys)} inchikeys in metadata\")"
+      },
+      {
+        "column": 15,
+        "function": "int",
+        "id": "call-48-15",
+        "line": 48,
+        "source": "int(found_inchikeys)"
+      },
+      {
+        "column": 9,
+        "function": "s.get",
+        "id": "call-50-9",
+        "line": 50,
+        "source": "s.get(\"inchi\")"
+      },
+      {
+        "column": 10,
+        "function": "s.get",
+        "id": "call-53-10",
+        "line": 53,
+        "source": "s.get(\"smiles\")"
+      },
+      {
+        "column": 20,
+        "function": "len",
+        "id": "call-56-20",
+        "line": 56,
+        "source": "len(s.peaks.mz)"
+      },
+      {
+        "column": 0,
+        "function": "plt.figure",
+        "id": "call-59-0",
+        "line": 59,
+        "source": "plt.figure(figsize=(5,4), dpi=150)"
+      },
+      {
+        "column": 0,
+        "function": "plt.hist",
+        "id": "call-60-0",
+        "line": 60,
+        "source": "plt.hist(numbers_of_peaks, 20, edgecolor=\"white\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.title",
+        "id": "call-61-0",
+        "line": 61,
+        "source": "plt.title(\"Peaks per spectrum (before filtering)\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.xlabel",
+        "id": "call-62-0",
+        "line": 62,
+        "source": "plt.xlabel(\"Number of peaks in spectrum\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.ylabel",
+        "id": "call-63-0",
+        "line": 63,
+        "source": "plt.ylabel(\"Number of spectra\")"
+      },
+      {
+        "column": 15,
+        "function": "default_filters",
+        "id": "call-83-15",
+        "line": 83,
+        "source": "default_filters(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "repair_inchi_inchikey_smiles",
+        "id": "call-84-15",
+        "line": 84,
+        "source": "repair_inchi_inchikey_smiles(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "derive_inchi_from_smiles",
+        "id": "call-85-15",
+        "line": 85,
+        "source": "derive_inchi_from_smiles(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "derive_smiles_from_inchi",
+        "id": "call-86-15",
+        "line": 86,
+        "source": "derive_smiles_from_inchi(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "derive_inchikey_from_inchi",
+        "id": "call-87-15",
+        "line": 87,
+        "source": "derive_inchikey_from_inchi(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "harmonize_undefined_smiles",
+        "id": "call-88-15",
+        "line": 88,
+        "source": "harmonize_undefined_smiles(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "harmonize_undefined_inchi",
+        "id": "call-89-15",
+        "line": 89,
+        "source": "harmonize_undefined_inchi(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "harmonize_undefined_inchikey",
+        "id": "call-90-15",
+        "line": 90,
+        "source": "harmonize_undefined_inchikey(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "add_precursor_mz",
+        "id": "call-91-15",
+        "line": 91,
+        "source": "add_precursor_mz(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "normalize_intensities",
+        "id": "call-107-15",
+        "line": 107,
+        "source": "normalize_intensities(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "select_by_intensity",
+        "id": "call-108-15",
+        "line": 108,
+        "source": "select_by_intensity(spectrum, intensity_from=0.01)"
+      },
+      {
+        "column": 15,
+        "function": "select_by_mz",
+        "id": "call-109-15",
+        "line": 109,
+        "source": "select_by_mz(spectrum, mz_from=10, mz_to=1000)"
+      },
+      {
+        "column": 13,
+        "function": "metadata_processing",
+        "id": "call-118-13",
+        "line": 118,
+        "source": "metadata_processing(s)"
+      },
+      {
+        "column": 13,
+        "function": "peak_processing",
+        "id": "call-119-13",
+        "line": 119,
+        "source": "peak_processing(s)"
+      },
+      {
+        "column": 13,
+        "function": "s.get",
+        "id": "call-121-13",
+        "line": 121,
+        "source": "s.get(\"inchikey\")"
+      },
+      {
+        "column": 20,
+        "function": "len",
+        "id": "call-124-20",
+        "line": 124,
+        "source": "len(s.peaks.mz)"
+      },
+      {
+        "column": 0,
+        "function": "plt.figure",
+        "id": "call-127-0",
+        "line": 127,
+        "source": "plt.figure(figsize=(5,4), dpi=150)"
+      },
+      {
+        "column": 0,
+        "function": "plt.hist",
+        "id": "call-128-0",
+        "line": 128,
+        "source": "plt.hist(numbers_of_peaks, 20, edgecolor=\"white\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.title",
+        "id": "call-129-0",
+        "line": 129,
+        "source": "plt.title(\"Peaks per spectrum (after filtering)\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.xlabel",
+        "id": "call-130-0",
+        "line": 130,
+        "source": "plt.xlabel(\"Number of peaks in spectrum\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.ylabel",
+        "id": "call-131-0",
+        "line": 131,
+        "source": "plt.ylabel(\"Number of spectra\")"
+      },
+      {
+        "column": 19,
+        "function": "os.path.join",
+        "id": "call-142-19",
+        "line": 142,
+        "source": "os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.json\")"
+      },
+      {
+        "column": 0,
+        "function": "save_as_json",
+        "id": "call-143-0",
+        "line": 143,
+        "source": "save_as_json(spectrums, file_export_json)"
+      },
+      {
+        "column": 21,
+        "function": "os.path.join",
+        "id": "call-149-21",
+        "line": 149,
+        "source": "os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.pickle\")"
+      },
+      {
+        "column": 0,
+        "function": "pickle.dump",
+        "id": "call-150-0",
+        "line": 150,
+        "source": "pickle.dump(spectrums, \n            open(file_export_pickle, \"wb\"))"
+      },
+      {
+        "column": 12,
+        "function": "open",
+        "id": "call-151-12",
+        "line": 151,
+        "source": "open(file_export_pickle, \"wb\")"
+      },
+      {
+        "column": 21,
+        "function": "CosineGreedy",
+        "id": "call-159-21",
+        "line": 159,
+        "source": "CosineGreedy(tolerance=0.005)"
+      },
+      {
+        "column": 9,
+        "function": "calculate_scores",
+        "id": "call-160-9",
+        "line": 160,
+        "source": "calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)"
+      },
+      {
+        "column": 15,
+        "function": "scores.scores.to_array",
+        "id": "call-164-15",
+        "line": 164,
+        "source": "scores.scores.to_array()"
+      },
+      {
+        "column": 15,
+        "function": "scores.scores.to_array",
+        "id": "call-167-15",
+        "line": 167,
+        "source": "scores.scores.to_array()"
+      },
+      {
+        "column": 15,
+        "function": "scores.scores_by_query",
+        "id": "call-172-15",
+        "line": 172,
+        "source": "scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)"
+      },
+      {
+        "column": 0,
+        "function": "print",
+        "id": "call-173-0",
+        "line": 173,
+        "source": "print([x[1] for x in best_matches])"
+      },
+      {
+        "column": 1,
+        "function": "x[0].get",
+        "id": "call-175-1",
+        "line": 175,
+        "source": "x[0].get(\"smiles\")"
+      },
+      {
+        "column": 17,
+        "function": "enumerate",
+        "id": "call-180-17",
+        "line": 180,
+        "source": "enumerate([x[0].get(\"smiles\") for x in best_matches])"
+      },
+      {
+        "column": 28,
+        "function": "x[0].get",
+        "id": "call-180-28",
+        "line": 180,
+        "source": "x[0].get(\"smiles\")"
+      },
+      {
+        "column": 8,
+        "function": "Chem.MolFromSmiles",
+        "id": "call-181-8",
+        "line": 181,
+        "source": "Chem.MolFromSmiles(smiles)"
+      },
+      {
+        "column": 4,
+        "function": "Draw.MolToFile",
+        "id": "call-182-4",
+        "line": 182,
+        "source": "Draw.MolToFile(m, f\"compound_{i}.png\")"
+      },
+      {
+        "column": 17,
+        "function": "scores.scores_by_query",
+        "id": "call-187-17",
+        "line": 187,
+        "source": "scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)"
+      },
+      {
+        "column": 21,
+        "function": "ModifiedCosine",
+        "id": "call-205-21",
+        "line": 205,
+        "source": "ModifiedCosine(tolerance=0.005)"
+      },
+      {
+        "column": 9,
+        "function": "calculate_scores",
+        "id": "call-206-9",
+        "line": 206,
+        "source": "calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)"
+      },
+      {
+        "column": 17,
+        "function": "scores.scores_by_query",
+        "id": "call-209-17",
+        "line": 209,
+        "source": "scores.scores_by_query(spectrums[5], name=\"ModifiedCosine_score\", sort=True)"
+      },
+      {
+        "column": 15,
+        "function": "scores.scores.to_array",
+        "id": "call-213-15",
+        "line": 213,
+        "source": "scores.scores.to_array()"
+      },
+      {
+        "column": 0,
+        "function": "plt.figure",
+        "id": "call-215-0",
+        "line": 215,
+        "source": "plt.figure(figsize=(6,6), dpi=150)"
+      },
+      {
+        "column": 0,
+        "function": "plt.imshow",
+        "id": "call-216-0",
+        "line": 216,
+        "source": "plt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"], cmap=\"viridis\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.colorbar",
+        "id": "call-217-0",
+        "line": 217,
+        "source": "plt.colorbar(shrink=0.7)"
+      },
+      {
+        "column": 0,
+        "function": "plt.title",
+        "id": "call-218-0",
+        "line": 218,
+        "source": "plt.title(\"Modified Cosine spectra similarities\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.xlabel",
+        "id": "call-219-0",
+        "line": 219,
+        "source": "plt.xlabel(\"Spectrum #ID\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.ylabel",
+        "id": "call-220-0",
+        "line": 220,
+        "source": "plt.ylabel(\"Spectrum #ID\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.figure",
+        "id": "call-225-0",
+        "line": 225,
+        "source": "plt.figure(figsize=(6,6), dpi=150)"
+      },
+      {
+        "column": 0,
+        "function": "plt.imshow",
+        "id": "call-226-0",
+        "line": 226,
+        "source": "plt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"] * (scores_array[:50, :50][\"ModifiedCosine_matches\"] >= min_match), cmap=\"viridis\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.colorbar",
+        "id": "call-227-0",
+        "line": 227,
+        "source": "plt.colorbar(shrink=0.7)"
+      },
+      {
+        "column": 0,
+        "function": "plt.title",
+        "id": "call-228-0",
+        "line": 228,
+        "source": "plt.title(\"Modified Cosine spectra similarities (min_match=5)\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.xlabel",
+        "id": "call-229-0",
+        "line": 229,
+        "source": "plt.xlabel(\"Spectrum #ID\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.ylabel",
+        "id": "call-230-0",
+        "line": 230,
+        "source": "plt.ylabel(\"Spectrum #ID\")"
+      },
+      {
+        "column": 17,
+        "function": "scores.scores_by_query",
+        "id": "call-236-17",
+        "line": 236,
+        "source": "scores.scores_by_query(spectrums[11], name=\"ModifiedCosine_score\", sort=True)"
+      },
+      {
+        "column": 1,
+        "function": "x[0].get",
+        "id": "call-240-1",
+        "line": 240,
+        "source": "x[0].get(\"smiles\")"
+      },
+      {
+        "column": 17,
+        "function": "enumerate",
+        "id": "call-247-17",
+        "line": 247,
+        "source": "enumerate([x[0].get(\"smiles\") for x in best_matches])"
+      },
+      {
+        "column": 28,
+        "function": "x[0].get",
+        "id": "call-247-28",
+        "line": 247,
+        "source": "x[0].get(\"smiles\")"
+      },
+      {
+        "column": 8,
+        "function": "Chem.MolFromSmiles",
+        "id": "call-248-8",
+        "line": 248,
+        "source": "Chem.MolFromSmiles(smiles)"
+      },
+      {
+        "column": 4,
+        "function": "Draw.MolToFile",
+        "id": "call-249-4",
+        "line": 249,
+        "source": "Draw.MolToFile(m, f\"compound_{i}.png\")"
+      },
+      {
+        "column": 10,
+        "function": "s.get",
+        "id": "call-253-10",
+        "line": 253,
+        "source": "s.get(\"precursor_mz\")"
+      },
+      {
+        "column": 0,
+        "function": "np.where",
+        "id": "call-255-0",
+        "line": 255,
+        "source": "np.where(np.array(masses) > 600)"
+      },
+      {
+        "column": 9,
+        "function": "np.array",
+        "id": "call-255-9",
+        "line": 255,
+        "source": "np.array(masses)"
+      },
+      {
+        "column": 17,
+        "function": "scores.scores_by_query",
+        "id": "call-258-17",
+        "line": 258,
+        "source": "scores.scores_by_query(spectrums[97], name=\"ModifiedCosine_score\", sort=True)"
+      },
+      {
+        "column": 17,
+        "function": "enumerate",
+        "id": "call-265-17",
+        "line": 265,
+        "source": "enumerate([x[0].get(\"smiles\") for x in best_matches])"
+      },
+      {
+        "column": 28,
+        "function": "x[0].get",
+        "id": "call-265-28",
+        "line": 265,
+        "source": "x[0].get(\"smiles\")"
+      },
+      {
+        "column": 8,
+        "function": "Chem.MolFromSmiles",
+        "id": "call-266-8",
+        "line": 266,
+        "source": "Chem.MolFromSmiles(smiles)"
+      },
+      {
+        "column": 4,
+        "function": "Draw.MolToFile",
+        "id": "call-267-4",
+        "line": 267,
+        "source": "Draw.MolToFile(m, f\"compound_{i}.png\")"
+      }
+    ],
+    "source_sha256": "0524c9db731ca258d71e7af8fe0846312643b8ff1f02ce833162a6be4c5d6db0"
+  },
+  "specification": {
+    "review": "## Scope assessment\n\n**Scientific question.** The notebook runs a two-stage matchms processing pipeline over a GNPS natural-products MS/MS library, then computes two all-against-all spectral similarity families (CosineGreedy, ModifiedCosine; tolerance 0.005), and inspects ranked best-match lists for specific query spectra. All of these are presented as results in the narrative, so the task must cover: the processed library, both all-pairs similarity matrices, and all five ranked match listings.\n\n**Overruling of plan.json exclusions (source-backed).** The preparation inventory excluded the CosineGreedy matrix and the query-5/11 match listings *only* because the variables holding them are overwritten later in the script. That is export mechanics, not scientific ineligibility, and `task_policy.endpoint_recovery` permits faithful recomputation of unchanged original calls on the same inputs (`analysis.py` lines 159\u2013160, 172\u2013176, 187\u2013189, 209\u2013210, 236\u2013240 are unmodified from the original; the trial reference executed all of them \u2014 both \"Calculating similarities\" progressions to completion appear in the log). These endpoints are therefore included in the task. No supplied intermediates or scope reductions are proposed; the single MGF input is sufficient.\n\n**Source-operation coverage ledger.** Covered: input load (call-38) defines input order; both pipelines (118\u2013119) \u2192 Output 1 / Output 4 (peak counts capture the before/after histogram quantities, calls 56, 124); `save_as_json` (143) \u2192 Output 1 (its headline product); CosineGreedy all-pairs (159\u2013160, 164, 167) \u2192 Output 2; ranked [5]/CosineGreedy top-10 without filter (172\u2013176) \u2192 Output 3 branch A; [5]/CosineGreedy min_match\u22655 (187\u2013189) \u2192 branch B; ModifiedCosine all-pairs (205\u2013210, 213) \u2192 Output 2; [5]/ModifiedCosine (209\u2013210) \u2192 branch C; [11]/ModifiedCosine (236\u2013240) \u2192 branch D; [97]/ModifiedCosine (258\u2013259) \u2192 branch E; the exported identifier table is folded into Output 1. Excluded, with reasons: histogram figures (59\u201363, 127\u2013131) are plot-only consumers whose underlying quantities are fully captured by Output 4/Output 1; heatmaps (215\u2013230) consume a 50\u00d750 slice of the exported full matrix; RDKit depictions (180\u2013182, 247\u2013249, 265\u2013267) are renderings of SMILES already captured by index join; the pickle dump (150) is a redundant serialization of Output 1; metadata inspection prints (46\u201353) and `np.where(masses>600)` (253\u2013255) are preparatory diagnostics (the latter merely motivated the choice of query index 97).\n\n**Consequential methods traced to pinned source (matchms 0.30.2 wheel).**\n- `select_by_intensity` keeps peaks with `intensity_from <= i <= intensity_to` (`select_by_intensity.py:37`); with `intensity_from=0.01` and default `intensity_to=200`, on normalized intensities this is an **inclusive \u22650.01** threshold (the notebook narrative \">0.01\" is imprecise; the code is inclusive).\n- `select_by_mz` keeps `10 <= mz <= 1000` **inclusive** (`select_by_mz.py:35`).\n- `normalize_intensities` divides by the per-spectrum max; spectra with max intensity \u22640 retain no peaks (`normalize_intensities.py:35\u201345`).\n- Peak matching treats |\u0394m/z| \u2264 tolerance as a match, inclusively, and **assumes ascending m/z order** (`spectrum_similarity_functions.py:72\u201386`); the kernel is applied at shift 0 plus shift = precursor_mz(reference) \u2212 precursor_mz(query) for ModifiedCosine, unioned (`ModifiedCosine.py:108\u2013128`); candidate pairs are sorted by intensity product descending with a **stable mergesort** (`ModifiedCosine.py:127`, `CosineGreedy.py:94`); each peak is used at most once on each side; score = \u03a3(i_a\u00b7i_b)/(\u2016spec1\u2016\u00b7\u2016spec2\u2016) (`score_best_matches:95\u2013111`; defaults mz_power=0, intensity_power=1). The score kernel is compiled with `fastmath=True` (`spectrum_similarity_functions.py:89`) \u2014 cross-platform float drift is possible, so exact bitwise equality must not be required.\n- `scores_by_query(..., sort=True)` orders by `np.argsort(...)[::-1]`, descending, with numpy's default quicksort \u2014 **tie order is unspecified** (`Scores.py:290\u2013295`); the min_match filter uses `>=` (analysis.py line 259) and is applied **before** truncation to 10. Ranked lists include the query's own self-match.\n- ModifiedCosine asserts a valid positive `precursor_mz` on every spectrum (`ModifiedCosine.py:92\u2013104`); the offline reference run completed with no assertion failure, so every spectrum satisfies this after `add_precursor_mz` \u2014 execution-verified, and required for the brief's schema.\n- `harmonize_undefined_*` map empty aliases (\"\", \"N/A\", \"NA\", \"n/a\", \"no data\") to \"\" (`harmonize_undefined_inchikey.py:32\u201343`).\n\n**Measured facts (trial only; not claimed as validation).** 1267 spectra imported; run 94 s, peak RSS ~0.98 GiB (limits 600 s / 8 GiB); both similarity computations completed; all declared artifacts produced and byte-identical across two replays (serialization-level stability only, not a grading contract). `spectrum_identifiers.csv`: 1267 rows (no spectra dropped by the pipelines), 0 empty inchikey/smiles, 441 empty compound_name. `best_matches_spectrum_97.csv`: 10 rows, rank 1 is the self-match (score \u22481.0 with hundreds of matches), remaining scores spanning ~0.32\u20130.65 with 5\u201381 matches \u2014 sampled previews only, private. The processed-spectra JSON uses full metadata dicts plus `peaks_json` `[[mz, intensity], ...]` with normalized max = 1.0.\n\n**Fidelity concerns passed to executable validation:** (1) exact score ties inside or at the boundary (rank 10/11) of each ranked list \u2014 tie order is unspecified by `argsort`; (2) raw MGF peak lists assumed ascending by the kernel \u2014 probe the staged input; (3) spectra retaining zero peaks after filtering \u2014 probe (Output 1 must still emit a record); (4) float tolerance \u03c4 for scores (fastmath drift; observed self-scores slightly >1.0, e.g. 1.000000000000003) \u2014 calibrate against a repeat run in a second environment and against deliberately wrong variants; (5) inclusive-threshold sensitivity \u2014 count peaks at intensity exactly 0.01 and m/z exactly 10/1000 to confirm the boundary is discriminating.\n\nNo unresolved evidence gaps block the draft: the method is fully pinned by source inspection plus the executed reference.",
+    "task_brief": "# Spectral library processing and all-against-all similarity scoring of a GNPS natural-products MS/MS library\n\n## Objective\n\nA single MGF file of MS/MS reference spectra (GNPS NIH Natural Products Library) is supplied. You must (1) run the notebook's two-stage spectrum-processing pipeline over every spectrum, (2) compute all-against-all pairwise similarities for **both** the (standard) greedy cosine score and the modified cosine score, and (3) report the ranked best-match lists for a set of query spectra, exactly following the analysis protocol below. The final requested products are the processed library, the two similarity families (score and matched-peak count per pair), the ranked match lists, and per-spectrum peak-count summaries before and after peak filtering.\n\n## Supplied input\n\n- `inputs/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf` \u2014 MGF text file; one MS/MS spectrum per `BEGIN IONS`/`END IONS` block with metadata parameters (precursor/pepmass, charge, instrument, compound name, InChI, SMILES, library/spectrum identifiers) followed by `mz intensity` peak lines. All spectra in the file are used; the input order (order of blocks in the file) defines the **spectrum index** (0-based) used throughout the outputs.\n\n## Analysis protocol\n\nThe protocol below is stated scientifically; its precise operational semantics are those of **matchms 0.30.2** with default function arguments, in the notebook's order (an offline environment providing this build can be supplied for convenience; alternative software is permitted as long as it reproduces these semantics).\n\n### 1. Metadata pipeline (applied to every spectrum, in this order, default arguments)\n\n1. `default_filters`\n2. `repair_inchi_inchikey_smiles`\n3. `derive_inchi_from_smiles`\n4. `derive_smiles_from_inchi`\n5. `derive_inchikey_from_inchi`\n6. `harmonize_undefined_smiles`\n7. `harmonize_undefined_inchi`\n8. `harmonize_undefined_inchikey`\n9. `add_precursor_mz`\n\nUndefined-annotation harmonization replaces entries that are empty or one of the aliases `\"\"`, `\"N/A\"`, `\"NA\"`, `\"n/a\"`, `\"no data\"` with the empty string. The pipeline neither adds nor removes spectra: the number of spectra is unchanged, one output record per input spectrum in input order.\n\n### 2. Peak pipeline (applied to every spectrum after metadata processing, in this order)\n\n1. **Normalize intensities**: divide each peak intensity by the maximum intensity within that spectrum (so the maximum becomes exactly 1). A spectrum whose maximum intensity is \u2264 0 retains no peaks.\n2. **Intensity filter**: keep peaks whose normalized intensity is **at least 0.01** (boundary inclusive; peaks exactly at 0.01 are kept).\n3. **m/z filter**: keep peaks with **10 \u2264 m/z \u2264 1000** (both boundaries inclusive).\n\nPeak order within a spectrum (as it comes from the input file, ascending in m/z) is preserved.\n\n### 3. All-against-all similarity\n\nFor every ordered pair of processed spectra (reference `i`, query `j`), including the diagonal self-pairs, compute:\n\n- **Greedy cosine score** (peak matching at zero mass shift only), and\n- **Modified cosine score** (Watrous et al., PNAS 2012), in which two peaks may also match after shifting the query spectrum's peak m/z values by the difference in precursor m/z (reference precursor m/z minus query precursor m/z).\n\nMatching rule for both: two peaks are a candidate match if their (possibly shifted) m/z values differ by **at most 0.005** (inclusive). With the default weighting (m/z exponent 0, intensity exponent 1): candidate pairs (the union of zero-shift and mass-shift pairs for the modified score) are considered in order of decreasing intensity product `i_ref \u00b7 i_query` (stable ordering for equal products), each peak on each side being usable at most once; this greedily maximizes the summed intensity products of the chosen one-to-one peak pairing. The score is\n\n  `\u03a3_matched (i_ref \u00b7 i_query) / (sqrt(\u03a3_ref i_ref\u00b2) \u00b7 sqrt(\u03a3_query i_query\u00b2))`\n\nand `matches` is the number of peak pairs used. Both scores are reported as an N \u00d7 N pair of matrices (row = reference index `i`, column = query index `j`; the computation is symmetric, so the matrices are symmetric by construction). Every spectrum in this library carries a valid positive precursor m/z after the metadata pipeline, which the modified cosine score requires.\n\n### 4. Ranked best-match lists\n\nFor a query spectrum, rank **all** spectra in the library by similarity score, descending. The query spectrum itself is part of the ranking (its self-match ranks at or near the top with score 1). Then, per branch below, optionally drop spectra whose matched-peak count is **below 5** (spectra with exactly 5 matches are kept), and take the first (up to) 10 ranked spectra:\n\n| Branch | Query spectrum (index) | Measure          | Match-count filter |\n|--------|------------------------|------------------|--------------------|\n| A      | 5                      | Greedy cosine    | none               |\n| B      | 5                      | Greedy cosine    | \u2265 5 matches       |\n| C      | 5                      | Modified cosine  | \u2265 5 matches       |\n| D      | 11                     | Modified cosine  | \u2265 5 matches       |\n| E      | 97                     | Modified cosine  | \u2265 5 matches       |\n\n(Index 97 is the spectrum the original analysis singles out for having one of the highest precursor masses.)\n\nIf several spectra obtain exactly equal scores, their relative order within the tied group is unspecified; any ranking that is non-increasing in score and selects the same rows is acceptable (validation will measure whether ties in fact occur inside or at the boundary of the top-10 windows; if they do, tied groups will be compared as sets).\n\n## Required outputs\n\nWrite the following files. Floats must be serialized at full precision (shortest round-trip representation or better).\n\n### 1. `processed_spectra.json`\n\nA JSON array with one object per spectrum, **in input order** (array position = spectrum index):\n\n```json\n{\"spectrum_index\": 0, \"spectrum_id\": \"CCMSLIB00000079350\", \"compound_name\": \"(2R)-...\", \"inchikey\": \"XTJNPXYDTGJZSA-PKOBYXMFSA-N\", \"inchi\": \"InChI=1S/...\", \"smiles\": \"OC(=O)...\", \"precursor_mz\": 408.156, \"peaks\": [[103.050735, 0.012904279647174126], ...]}\n```\n\n- `spectrum_id`: the library spectrum identifier (e.g. `CCMSLIB\u2026`) from metadata; empty string if absent.\n- `compound_name`, `inchikey`, `inchi`, `smiles`: post-pipeline values; undefined entries are the empty string.\n- `precursor_mz`: post-`add_precursor_mz` numeric precursor m/z.\n- `peaks`: the retained (m/z, normalized intensity) pairs after the peak pipeline, ascending in m/z, as `[mz, intensity]` pairs.\n\nAdditional metadata keys may be included but are not required.\n\n### 2. `similarity_scores.npz`\n\nA single NumPy `.npz` archive with four N \u00d7 N arrays (`N` = number of spectra):\n\n- `cosine_greedy_score` (float64), `cosine_greedy_matches` (integer) \u2014 greedy cosine\n- `modified_cosine_score` (float64), `modified_cosine_matches` (integer) \u2014 modified cosine\n\nRow = reference index, column = query index; diagonal included.\n\n### 3. `best_matches.csv`\n\nCSV with header\n`query_index,similarity_measure,min_match_filter,rank,matched_spectrum_index,matched_smiles,matched_inchikey,score,matches`\nand one row per ranked entry of each branch A\u2013E above:\n\n- `query_index`: 5, 11 or 97; `similarity_measure`: `CosineGreedy` or `ModifiedCosine`; `min_match_filter`: `none` or `5`.\n- `rank`: 1-based rank within the branch's final (post-filter, truncated) list, starting at 1 after truncation; `matched_spectrum_index`: the index of the matched spectrum.\n- `matched_smiles`, `matched_inchikey`: the matched spectrum's post-pipeline values (empty string if undefined).\n- `score`: the pair's similarity score; `matches`: the matched-peak count.\n\n### 4. `peak_counts.csv`\n\nCSV with header `spectrum_index,n_peaks_before_filtering,n_peaks_after_filtering`, one row per spectrum: the number of peaks as imported (before any peak processing) and the number of peaks remaining after the peak pipeline.\n\n## Environment and limits\n\nSoftware choice is open; the reference semantics for the pipeline and similarity measures are those of matchms 0.30.2 as described above, and a compatible offline environment is available if you prefer to use it. Execution is offline. Limits: 4 CPUs, 8 GiB RAM, 10 GiB disk, 600 s wall-clock for the full analysis. Numerical comparison of scores will use a small (to-be-calibrated) absolute tolerance; match counts are integers and must agree exactly. Cross-output consistency is checked (e.g. the diagonal `matches` of each score matrix equals each spectrum's retained peak count, and `matched_spectrum_index` rows join to `processed_spectra.json`)."
+  }
+}

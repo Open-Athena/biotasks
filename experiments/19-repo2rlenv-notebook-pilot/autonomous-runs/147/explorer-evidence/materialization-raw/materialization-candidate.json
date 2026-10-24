@@ -1,0 +1,321 @@
+{
+  "derive_code": "#!/usr/bin/env python3\n\"\"\"Derivation CLI for the GNPS natural-products-library similarity task.\n\nLayout produced under <destination> (nothing else is created):\n  inputs/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf  (byte-identical original input, hash-verified)\n  reference/processed_spectra.json           (expected answer, public schema)\n  reference/similarity_scores.npz            (expected answer, public schema)\n  reference/best_matches.csv                 (expected answer, public schema)\n  reference/peak_counts.csv                  (expected answer, public schema)\n\nThe expected answers are built from two sources:\n  (a) Direct projection of the recorded reference terminal exports (read from\n      --reference-dir, never modified): the modified-cosine score/matches\n      matrices come verbatim from modified_cosine_scores.npz (renamed into\n      the public keys); the processed library (metadata fields and retained\n      peaks), the identifiers and branch E are cross-validated field-by-field\n      against processed_spectra.json, spectrum_identifiers.csv and\n      best_matches_spectrum_97.csv.\n  (b) Source-faithful recovery by rerunning the unchanged original source\n      computation on the staged input for the endpoints the preparation\n      exports omitted solely because their variables were overwritten later\n      in the script: the all-pairs CosineGreedy matrices, ranked branches A-D\n      and the before-filtering peak counts. The rerun uses the same\n      load_from_mgf, the same filter sequences/order/default arguments, the\n      same CosineGreedy/ModifiedCosine(tolerance=0.005) constructors, the same\n      calculate_scores(..., is_symmetric=True) and the same\n      scores_by_query(..., sort=True) + >=min_match + [:10] logic.\n\nValidation results are printed on stdout and documented in the task\nrationale; no provenance files are written under destination/reference/\n(the controller enforces an exact inventory there). Lineage: input file and\noriginal reference artifacts are sha256-verified against the recorded\nidentities before use.\n\"\"\"\nimport argparse\nimport csv\nimport hashlib\nimport json\nimport os\nimport shutil\n\nimport numpy as np\n\nEXPECTED_MGF_SHA256 = \"9276602a818f91334e56f5bc7719c6924736a029d5e1a22026f52b18255d9f85\"\nMGF_NAME = \"GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf\"\nREFERENCE_FILES = {\n    \"processed_spectra.json\": \"72a436272130d0c9a1460cc72530dbd8ad819c34529600bcd195e11790801ec9\",\n    \"modified_cosine_scores.npz\": \"6b5d3827f0ae3813a820c42f4fa27bd2120ed4d5c4f4aa7a63418da435a7c9be\",\n    \"spectrum_identifiers.csv\": \"bebeda59768ee27f7f6468366e16c3f34e601eacd2ecd60b43a49057c8fd0dcc\",\n    \"best_matches_spectrum_97.csv\": \"0c70df4df3e519340b49d3ee298ad6fd4ad605a184ab1efc5cacf7f492ea0543\",\n}\nBRANCHES = [\n    # (query_index, score_key, matches_key, min_match or None)\n    (5, \"CosineGreedy_score\", \"CosineGreedy_matches\", None),   # branch A\n    (5, \"CosineGreedy_score\", \"CosineGreedy_matches\", 5),      # branch B\n    (5, \"ModifiedCosine_score\", \"ModifiedCosine_matches\", 5),  # branch C\n    (11, \"ModifiedCosine_score\", \"ModifiedCosine_matches\", 5), # branch D\n    (97, \"ModifiedCosine_score\", \"ModifiedCosine_matches\", 5), # branch E\n]\nBEST_MATCHES_HEADER = [\"query_index\", \"similarity_measure\", \"min_match_filter\", \"rank\",\n                        \"matched_spectrum_index\", \"matched_smiles\", \"matched_inchikey\",\n                        \"score\", \"matches\"]\n\n\ndef sha256_of(path):\n    h = hashlib.sha256()\n    with open(path, \"rb\") as f:\n        for chunk in iter(lambda: f.read(1 << 20), b\"\"):\n            h.update(chunk)\n    return h.hexdigest()\n\n\ndef find_mgf_path(manifest):\n    \"\"\"Locate the original MGF path in the source-inputs manifest.\n\n    The manifest layout is not assumed: we walk any nesting of dicts/lists and\n    collect strings whose basename is the MGF filename.\"\"\"\n    found = []\n\n    def walk(node):\n        if isinstance(node, str):\n            if os.path.basename(node) == MGF_NAME:\n                found.append(node)\n        elif isinstance(node, dict):\n            for value in node.values():\n                walk(value)\n        elif isinstance(node, list):\n            for value in node:\n                walk(value)\n\n    walk(manifest)\n    found = sorted(set(found))\n    if len(found) != 1:\n        raise SystemExit(\"expected exactly one %s path in manifest, found: %r\" % (MGF_NAME, found))\n    return found[0]\n\n\ndef build_pipelines():\n    from matchms.filtering import (\n        default_filters,\n        repair_inchi_inchikey_smiles,\n        derive_inchi_from_smiles,\n        derive_smiles_from_inchi,\n        derive_inchikey_from_inchi,\n        harmonize_undefined_smiles,\n        harmonize_undefined_inchi,\n        harmonize_undefined_inchikey,\n        add_precursor_mz,\n        normalize_intensities,\n        select_by_intensity,\n        select_by_mz,\n    )\n\n    def metadata_processing(spectrum):\n        # Unchanged filter sequence from the source notebook.\n        spectrum = default_filters(spectrum)\n        spectrum = repair_inchi_inchikey_smiles(spectrum)\n        spectrum = derive_inchi_from_smiles(spectrum)\n        spectrum = derive_smiles_from_inchi(spectrum)\n        spectrum = derive_inchikey_from_inchi(spectrum)\n        spectrum = harmonize_undefined_smiles(spectrum)\n        spectrum = harmonize_undefined_inchi(spectrum)\n        spectrum = harmonize_undefined_inchikey(spectrum)\n        spectrum = add_precursor_mz(spectrum)\n        return spectrum\n\n    def peak_processing(spectrum):\n        spectrum = normalize_intensities(spectrum)\n        spectrum = select_by_intensity(spectrum, intensity_from=0.01)\n        spectrum = select_by_mz(spectrum, mz_from=10, mz_to=1000)\n        return spectrum\n\n    return metadata_processing, peak_processing\n\n\ndef spectrum_records(spectrums):\n    \"\"\"Public-schema records, in spectrum-index order (same convention as the oracle).\"\"\"\n    records = []\n    for i, s in enumerate(spectrums):\n        records.append({\n            \"spectrum_index\": i,\n            \"spectrum_id\": s.get(\"spectrum_id\") or \"\",\n            \"compound_name\": s.get(\"compound_name\") or \"\",\n            \"inchikey\": s.get(\"inchikey\") or \"\",\n            \"inchi\": s.get(\"inchi\") or \"\",\n            \"smiles\": s.get(\"smiles\") or \"\",\n            \"precursor_mz\": float(s.get(\"precursor_mz\")),\n            \"peaks\": [[float(m), float(v)]\n                      for m, v in zip(s.peaks.mz, s.peaks.intensities)],\n        })\n    return records\n\n\ndef build_ranked_rows(spectrums, scores_greedy, scores_modified):\n    \"\"\"Branch A-E rows using the source's ranked-list semantics (same as the oracle).\"\"\"\n    index_of = {id(s): i for i, s in enumerate(spectrums)}\n    rows = []\n    for query_idx, score_key, matches_key, min_match in BRANCHES:\n        measure = \"CosineGreedy\" if score_key.startswith(\"CosineGreedy\") else \"ModifiedCosine\"\n        scores_obj = scores_greedy if measure == \"CosineGreedy\" else scores_modified\n        sorted_matches = scores_obj.scores_by_query(spectrums[query_idx], name=score_key, sort=True)\n        if min_match is not None:\n            selected = [x for x in sorted_matches if x[1][matches_key] >= min_match]\n        else:\n            selected = sorted_matches\n        for rank, entry in enumerate(selected[:10], start=1):\n            ref, rec = entry[0], entry[1]\n            rows.append([\n                query_idx,\n                measure,\n                \"none\" if min_match is None else str(min_match),\n                rank,\n                index_of[id(ref)],\n                ref.get(\"smiles\") or \"\",\n                ref.get(\"inchikey\") or \"\",\n                repr(float(rec[score_key])),\n                int(rec[matches_key]),\n            ])\n    return rows\n\n\ndef extract_peaks(ref_record, meta):\n    \"\"\"Extract the ((mz, intensity), ...) pairs from a reference JSON record.\n\n    Robust to the record storing peaks under 'peaks_json' or 'peaks', at the\n    top level or nested under 'metadata', as a list of pairs or an\n    mz/intensities mapping, and to peaks being serialized as a JSON string.\"\"\"\n    raw = None\n    for source in (ref_record if isinstance(ref_record, dict) else {},\n                   meta if isinstance(meta, dict) else {}):\n        for key in (\"peaks_json\", \"peaks\"):\n            if key in source:\n                raw = source[key]\n                break\n        if raw is not None:\n            break\n    if isinstance(raw, str):\n        raw = json.loads(raw)\n    if raw is None:\n        raise SystemExit(\"reference spectrum record has no peaks field\")\n    if isinstance(raw, dict):\n        mzs = raw.get(\"mz\", raw.get(\"mzs\"))\n        ints = raw.get(\"intensities\", raw.get(\"intensity\"))\n        if mzs is None or ints is None:\n            raise SystemExit(\"reference peaks mapping lacks mz/intensities\")\n        return [(float(a), float(b)) for a, b in zip(mzs, ints)]\n    return [(float(p[0]), float(p[1])) for p in raw]\n\n\ndef normalize_list(ref_json):\n    if isinstance(ref_json, list):\n        return ref_json\n    if isinstance(ref_json, dict):\n        lists = [v for v in ref_json.values() if isinstance(v, list)]\n        if len(lists) == 1:\n            return lists[0]\n    raise SystemExit(\"unexpected processed_spectra.json structure\")\n\n\ndef validate_against_reference(spectrums, reference_dir, arr_modified, branch_rows):\n    \"\"\"Cross-validate the source-faithful rerun against the recorded reference exports.\"\"\"\n    checks = {}\n    n = len(spectrums)\n\n    # 1) processed_spectra.json (recorded export): peaks and metadata per spectrum.\n    with open(os.path.join(reference_dir, \"processed_spectra.json\"), encoding=\"utf-8\") as f:\n        ref_json = normalize_list(json.load(f))\n    if len(ref_json) != n:\n        raise SystemExit(\"reference processed_spectra.json has %d records, rerun has %d\"\n                         % (len(ref_json), n))\n    fields_found = {k: 0 for k in (\"spectrum_id\", \"compound_name\", \"inchikey\", \"inchi\", \"smiles\")}\n    for i, (rec, s) in enumerate(zip(ref_json, spectrums)):\n        if not isinstance(rec, dict):\n            raise SystemExit(\"reference spectrum record %d is not an object\" % i)\n        meta = rec.get(\"metadata\") if isinstance(rec.get(\"metadata\"), dict) else rec\n        peaks = extract_peaks(rec, meta)\n        mz, inten = s.peaks.mz, s.peaks.intensities\n        if len(peaks) != len(mz):\n            raise SystemExit(\"spectrum %d: reference has %d peaks, rerun retains %d\"\n                             % (i, len(peaks), len(mz)))\n        for k, ((pm, pi), m, v) in enumerate(zip(peaks, mz, inten)):\n            if pm != float(m) or pi != float(v):\n                raise SystemExit(\"spectrum %d peak %d: reference (%r, %r) != rerun (%r, %r)\"\n                                 % (i, k, pm, pi, float(m), float(v)))\n        pmz = meta.get(\"precursor_mz\")\n        if pmz is not None and float(pmz) != float(s.get(\"precursor_mz\")):\n            raise SystemExit(\"spectrum %d: precursor_mz reference %r != rerun %r\"\n                             % (i, pmz, s.get(\"precursor_mz\")))\n        for field in fields_found:\n            if field in meta:\n                fields_found[field] += 1\n                ref_val = meta[field] or \"\"\n                run_val = s.get(field) or \"\"\n                if str(ref_val) != str(run_val):\n                    raise SystemExit(\"spectrum %d: %s reference %r != rerun %r\"\n                                     % (i, field, ref_val, run_val))\n    checks[\"peaks_validated\"] = n\n    checks[\"metadata_fields_found\"] = fields_found\n\n    # 2) spectrum_identifiers.csv (recorded export): compound_name/inchikey/smiles.\n    with open(os.path.join(reference_dir, \"spectrum_identifiers.csv\"), newline=\"\", encoding=\"utf-8\") as f:\n        id_rows = list(csv.DictReader(f))\n    if len(id_rows) != n:\n        raise SystemExit(\"spectrum_identifiers.csv has %d rows, rerun has %d spectra\" % (len(id_rows), n))\n    for i, (row, s) in enumerate(zip(id_rows, spectrums)):\n        if int(row[\"spectrum_index\"]) != i:\n            raise SystemExit(\"spectrum_identifiers.csv row %d has index %s\" % (i, row[\"spectrum_index\"]))\n        for field in (\"compound_name\", \"inchikey\", \"smiles\"):\n            if (s.get(field) or \"\") != row[field]:\n                raise SystemExit(\"spectrum %d: %s reference %r != rerun %r\"\n                                 % (i, field, row[field], s.get(field)))\n    checks[\"identifiers_validated\"] = n\n\n    # 3) modified_cosine_scores.npz (recorded export): full matrices.\n    with np.load(os.path.join(reference_dir, \"modified_cosine_scores.npz\")) as ref_mod:\n        ref_score = np.asarray(ref_mod[\"modified_cosine_score\"], dtype=np.float64)\n        ref_matches = np.asarray(ref_mod[\"modified_cosine_matches\"], dtype=np.int64)\n    run_score = np.asarray(arr_modified[\"ModifiedCosine_score\"], dtype=np.float64)\n    run_matches = np.asarray(arr_modified[\"ModifiedCosine_matches\"], dtype=np.int64)\n    if ref_score.shape != run_score.shape or ref_matches.shape != run_matches.shape:\n        raise SystemExit(\"modified matrix shapes differ: %s/%s vs %s/%s\"\n                         % (ref_score.shape, ref_matches.shape, run_score.shape, run_matches.shape))\n    ds = float(np.max(np.abs(ref_score - run_score)))\n    dm = int(np.max(np.abs(ref_matches - run_matches))) if ref_matches.size else 0\n    if ds > 1e-9:\n        raise SystemExit(\"rerun modified scores differ from export: max abs diff %g\" % ds)\n    if dm != 0:\n        raise SystemExit(\"rerun modified matches differ from export: max diff %d\" % dm)\n    checks[\"modified_matrices\"] = {\"max_abs_score_diff\": ds, \"max_matches_diff\": dm}\n\n    # 4) best_matches_spectrum_97.csv (recorded export): branch E rows.\n    with open(os.path.join(reference_dir, \"best_matches_spectrum_97.csv\"), newline=\"\", encoding=\"utf-8\") as f:\n        ref_bm = list(csv.DictReader(f))\n    rows_e = [r for r in branch_rows if r[0] == 97]\n    if len(rows_e) != len(ref_bm):\n        raise SystemExit(\"branch E has %d rerun rows, export has %d\" % (len(rows_e), len(ref_bm)))\n    for k, (row, r) in enumerate(zip(ref_bm, rows_e)):\n        if int(row[\"rank\"]) != r[3]:\n            raise SystemExit(\"branch E position %d: export rank %s, rerun rank %d\" % (k, row[\"rank\"], r[3]))\n        if row[\"matched_smiles\"] != r[5]:\n            raise SystemExit(\"branch E rank %d: matched_smiles mismatch\" % r[3])\n        if row[\"matched_inchikey\"] != r[6]:\n            raise SystemExit(\"branch E rank %d: matched_inchikey mismatch\" % r[3])\n        if abs(float(row[\"modified_cosine_score\"]) - float(r[7])) > 1e-9:\n            raise SystemExit(\"branch E rank %d: score mismatch\" % r[3])\n        if int(row[\"modified_cosine_matches\"]) != r[8]:\n            raise SystemExit(\"branch E rank %d: matches mismatch\" % r[3])\n    checks[\"branch_e_rows_validated\"] = len(rows_e)\n    return checks\n\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument(\"--source-inputs\", required=True,\n                    help=\"JSON manifest of original absolute input paths\")\n    ap.add_argument(\"--reference-dir\", required=True,\n                    help=\"directory with the original terminal reference artifacts\")\n    ap.add_argument(\"--destination\", required=True)\n    args = ap.parse_args()\n\n    with open(args.source_inputs, \"r\", encoding=\"utf-8\") as f:\n        manifest = json.load(f)\n\n    # --- Stage the original input byte-for-byte (hash-enforced). ---\n    src_mgf = find_mgf_path(manifest)\n    if sha256_of(src_mgf) != EXPECTED_MGF_SHA256:\n        raise SystemExit(\"staged source %s does not match recorded original sha256\" % src_mgf)\n    inputs_dir = os.path.join(args.destination, \"inputs\")\n    os.makedirs(inputs_dir, exist_ok=True)\n    dst_mgf = os.path.join(inputs_dir, MGF_NAME)\n    shutil.copyfile(src_mgf, dst_mgf)\n    if sha256_of(dst_mgf) != EXPECTED_MGF_SHA256:\n        raise SystemExit(\"staged copy of %s is not byte-identical\" % MGF_NAME)\n\n    # --- Verify the recorded reference exports at their original location. ---\n    for name, expected in REFERENCE_FILES.items():\n        src = os.path.join(args.reference_dir, name)\n        if not os.path.isfile(src):\n            raise SystemExit(\"missing reference artifact: %s\" % src)\n        got = sha256_of(src)\n        if got != expected:\n            raise SystemExit(\"reference artifact %s sha256 %s does not match recorded %s\"\n                             % (name, got, expected))\n\n    # --- Source-faithful rerun (recovery of omitted endpoints + cross-check). ---\n    from matchms.importing import load_from_mgf\n    from matchms import calculate_scores\n    from matchms.similarity import CosineGreedy, ModifiedCosine\n\n    metadata_processing, peak_processing = build_pipelines()\n    spectrums = list(load_from_mgf(dst_mgf))                    # original.py line 38\n    n_before = [len(s.peaks.mz) for s in spectrums]              # original.py line 56\n    spectrums = [metadata_processing(s) for s in spectrums]      # original.py line 118\n    spectrums = [peak_processing(s) for s in spectrums]           # original.py line 119\n    n_after = [len(s.peaks.mz) for s in spectrums]                # original.py line 124\n\n    scores_greedy = calculate_scores(                            # original.py lines 159-160\n        spectrums, spectrums, CosineGreedy(tolerance=0.005), is_symmetric=True)\n    arr_greedy = scores_greedy.scores.to_array()                 # original.py lines 164/167\n\n    scores_modified = calculate_scores(                          # original.py lines 205-206\n        spectrums, spectrums, ModifiedCosine(tolerance=0.005), is_symmetric=True)\n    arr_modified = scores_modified.scores.to_array()             # original.py line 213\n\n    branch_rows = build_ranked_rows(                             # original.py lines 172-176,\n        spectrums, scores_greedy, scores_modified)                # 187-189, 209-210, 236-240, 258-259\n\n    # --- Validate the rerun against the recorded reference exports. ---\n    checks = validate_against_reference(spectrums, args.reference_dir, arr_modified, branch_rows)\n\n    # --- Write the expected-answer files in the public schema. ---\n    ref_dir = os.path.join(args.destination, \"reference\")\n    os.makedirs(ref_dir, exist_ok=True)\n\n    with open(os.path.join(ref_dir, \"processed_spectra.json\"), \"w\", encoding=\"utf-8\") as f:\n        json.dump(spectrum_records(spectrums), f)\n\n    # Modified family projected verbatim from the recorded export; greedy\n    # family from the validated source-faithful rerun.\n    with np.load(os.path.join(args.reference_dir, \"modified_cosine_scores.npz\")) as ref_mod:\n        ref_score = np.asarray(ref_mod[\"modified_cosine_score\"], dtype=np.float64)\n        ref_matches = np.asarray(ref_mod[\"modified_cosine_matches\"], dtype=np.int64)\n    np.savez(\n        os.path.join(ref_dir, \"similarity_scores.npz\"),\n        cosine_greedy_score=np.asarray(arr_greedy[\"CosineGreedy_score\"], dtype=np.float64),\n        cosine_greedy_matches=np.asarray(arr_greedy[\"CosineGreedy_matches\"], dtype=np.int64),\n        modified_cosine_score=ref_score,\n        modified_cosine_matches=ref_matches,\n    )\n\n    with open(os.path.join(ref_dir, \"best_matches.csv\"), \"w\", newline=\"\", encoding=\"utf-8\") as f:\n        w = csv.writer(f)\n        w.writerow(BEST_MATCHES_HEADER)\n        w.writerows(branch_rows)\n\n    with open(os.path.join(ref_dir, \"peak_counts.csv\"), \"w\", newline=\"\", encoding=\"utf-8\") as f:\n        w = csv.writer(f)\n        w.writerow([\"spectrum_index\", \"n_peaks_before_filtering\", \"n_peaks_after_filtering\"])\n        for i, (a, b) in enumerate(zip(n_before, n_after)):\n            w.writerow([i, a, b])\n\n    print(\"derivation complete: %d spectra; validations: %s\" % (len(spectrums), json.dumps(checks)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "disposition": "ready",
+  "input_paths": [
+    "GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf"
+  ],
+  "instruction": "# Spectral library processing and all-against-all similarity scoring of a GNPS natural-products MS/MS library\n\n## Objective\n\nA single MGF file of MS/MS reference spectra (GNPS NIH Natural Products Library) is supplied under `inputs/`. You must (1) run the two-stage spectrum-processing pipeline over every spectrum, (2) compute all-against-all pairwise similarities for **both** the (standard) greedy cosine score and the modified cosine score, and (3) report the ranked best-match lists for a set of query spectra. Write the requested products under `outputs/`: the processed library, the two similarity families (score and matched-peak count per pair), the ranked match lists, and per-spectrum peak-count summaries before and after peak filtering.\n\n## Supplied input\n\n- `inputs/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf` \u2014 MGF text file; one MS/MS spectrum per `BEGIN IONS`/`END IONS` block with metadata parameters (precursor/pepmass, charge, instrument, compound name, InChI, SMILES, library/spectrum identifiers) followed by `mz intensity` peak lines. All spectra in the file are used; the input order (order of blocks in the file) defines the **spectrum index** (0-based) used throughout the outputs.\n\n## Analysis protocol\n\nThe protocol is stated scientifically below; its precise operational semantics are those of **matchms 0.30.2** with default function arguments, in the order given (a compatible offline environment is available if you prefer to use it; alternative software is permitted as long as it reproduces these semantics).\n\n### 1. Metadata pipeline (applied to every spectrum, in this order, default arguments)\n\n1. `default_filters`\n2. `repair_inchi_inchikey_smiles`\n3. `derive_inchi_from_smiles`\n4. `derive_smiles_from_inchi`\n5. `derive_inchikey_from_inchi`\n6. `harmonize_undefined_smiles`\n7. `harmonize_undefined_inchi`\n8. `harmonize_undefined_inchikey`\n9. `add_precursor_mz`\n\nUndefined-annotation harmonization replaces entries that are empty or one of the aliases `\"N/A\"`, `\"NA\"`, `\"n/a\"`, `\"no data\"` with the empty string. The pipeline neither adds nor removes spectra: one output record per input spectrum, in input order.\n\n### 2. Peak pipeline (applied to every spectrum after metadata processing, in this order)\n\n1. **Normalize intensities**: divide each peak intensity by the maximum intensity within that spectrum (so the maximum becomes exactly 1). A spectrum whose maximum intensity is \u2264 0 retains no peaks.\n2. **Intensity filter**: keep peaks whose normalized intensity is **at least 0.01** (boundary inclusive).\n3. **m/z filter**: keep peaks with **10 \u2264 m/z \u2264 1000** (both boundaries inclusive).\n\nPeak order within a spectrum, as it comes from the input file, is preserved.\n\n### 3. All-against-all similarity\n\nFor every ordered pair of processed spectra (reference `i`, query `j`), including the diagonal self-pairs, compute:\n\n- **Greedy cosine score** (peak matching at zero mass shift only), and\n- **Modified cosine score** (Watrous et al., PNAS 2012), in which two peaks may also match after shifting the query spectrum's peak m/z values by the difference in precursor m/z (reference precursor m/z minus query precursor m/z).\n\nMatching rule for both: two peaks are a candidate match if their (possibly shifted) m/z values differ by **at most 0.005** (inclusive). With the default weighting (m/z exponent 0, intensity exponent 1), candidate pairs (the union of zero-shift and mass-shift pairs for the modified score) are considered in order of decreasing intensity product `i_ref \u00b7 i_query`, each peak on each side being usable at most once; this greedily maximizes the summed intensity products of the chosen one-to-one peak pairing. The score is\n\n`\u03a3_matched (i_ref \u00b7 i_query) / (sqrt(\u03a3_ref i_ref\u00b2) \u00b7 sqrt(\u03a3_query i_query\u00b2))`\n\nand `matches` is the number of peak pairs used. Both scores are reported as N \u00d7 N matrices (row = reference index `i`, column = query index `j`); the computation is symmetric, so the matrices are symmetric. Every spectrum in this library carries a valid positive precursor m/z after the metadata pipeline, which the modified cosine score requires.\n\n### 4. Ranked best-match lists\n\nFor a query spectrum, rank **all** spectra in the library by similarity score, descending. The query spectrum itself is part of the ranking (its self-match ranks at or near the top with score 1). Then, per branch below, optionally drop spectra whose matched-peak count is **below 5** (spectra with exactly 5 matches are kept), and take the first (up to) 10 ranked spectra:\n\n| Branch | Query spectrum (index) | Measure          | Match-count filter |\n|--------|------------------------|------------------|--------------------|\n| A      | 5                      | Greedy cosine    | none               |\n| B      | 5                      | Greedy cosine    | \u2265 5 matches       |\n| C      | 5                      | Modified cosine  | \u2265 5 matches       |\n| D      | 11                     | Modified cosine  | \u2265 5 matches       |\n| E      | 97                     | Modified cosine  | \u2265 5 matches       |\n\n(Index 97 is the spectrum the original analysis singles out for having one of the highest precursor masses.) If several spectra obtain exactly equal scores, their relative order within the tied group is unspecified; any ranking that is non-increasing in score and selects the same rows is acceptable.\n\n## Required outputs\n\nWrite the following files under `outputs/`. Floats must be serialized at full precision (shortest round-trip representation or better).\n\n### 1. `processed_spectra.json`\n\nA JSON array with one object per spectrum, **in input order** (array position = spectrum index):\n\n```json\n{\"spectrum_index\": 0, \"spectrum_id\": \"CCMSLIB00000079350\", \"compound_name\": \"(2R)-...\", \"inchikey\": \"XTJNPXYDTGJZSA-PKOBYXMFSA-N\", \"inchi\": \"InChI=1S/...\", \"smiles\": \"OC(=O)...\", \"precursor_mz\": 408.156, \"peaks\": [[103.050735, 0.012904279647174126], ...]}\n```\n\n- `spectrum_id`: the library spectrum identifier from the spectrum metadata (GNPS accessions of the form `CCMSLIB\u2026`); empty string if absent.\n- `compound_name`, `inchikey`, `inchi`, `smiles`: post-pipeline values; undefined entries are the empty string.\n- `precursor_mz`: post-`add_precursor_mz` numeric precursor m/z.\n- `peaks`: the retained (m/z, normalized intensity) pairs after the peak pipeline, in input-file peak order, as `[mz, intensity]` pairs.\n\nAdditional metadata keys may be included but are not required.\n\n### 2. `similarity_scores.npz`\n\nA single NumPy `.npz` archive with four N \u00d7 N arrays (`N` = number of spectra):\n\n- `cosine_greedy_score` (float64), `cosine_greedy_matches` (integer) \u2014 greedy cosine\n- `modified_cosine_score` (float64), `modified_cosine_matches` (integer) \u2014 modified cosine\n\nRow = reference index, column = query index; diagonal included.\n\n### 3. `best_matches.csv`\n\nCSV with header\n`query_index,similarity_measure,min_match_filter,rank,matched_spectrum_index,matched_smiles,matched_inchikey,score,matches`\nand one row per ranked entry of each branch A\u2013E above:\n\n- `query_index`: 5, 11 or 97; `similarity_measure`: `CosineGreedy` or `ModifiedCosine`; `min_match_filter`: `none` or `5`.\n- `rank`: 1-based rank within the branch's final (post-filter, truncated) list, starting at 1 after truncation; `matched_spectrum_index`: the index of the matched spectrum.\n- `matched_smiles`, `matched_inchikey`: the matched spectrum's post-pipeline values (empty string if undefined).\n- `score`: the pair's similarity score (full precision); `matches`: the matched-peak count.\n\n### 4. `peak_counts.csv`\n\nCSV with header `spectrum_index,n_peaks_before_filtering,n_peaks_after_filtering`, one row per spectrum, in spectrum-index order: the number of peaks as imported (before any peak processing) and the number of peaks remaining after the peak pipeline.\n\n## Environment and limits\n\nSoftware choice is open; the reference semantics for the pipeline and similarity measures are those of matchms 0.30.2 as described above. Execution is offline. Limits: 4 CPUs, 8 GiB RAM, 10 GiB disk, 600 s wall-clock for the full analysis. Numerical comparison of scores will use a small (to-be-calibrated) absolute tolerance; match counts are integers and must agree exactly. Cross-output consistency is checked (e.g. the diagonal `matches` of each score matrix equals each spectrum's retained peak count, and `matched_spectrum_index` rows join to `processed_spectra.json`).",
+  "operation_coverage": [
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-36-12",
+        "call-36-25",
+        "call-36-41",
+        "call-37-11"
+      ],
+      "rationale": "Path construction pointing the notebook at its data directory; the task supplies the MGF file directly, so these are pure path plumbing with no scientific output.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [
+        "processed_spectra.json",
+        "peak_counts.csv",
+        "similarity_scores.npz"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-38-12",
+        "call-38-17"
+      ],
+      "rationale": "load_from_mgf parses the supplied MGF: it fixes the spectrum population, the input order that defines the spectrum index, and the raw peaks measured by peak_counts.csv's before-filtering column; these same spectra are the subjects of the processed library (Output 1) and both all-pairs similarity families (Output 2).",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-40-0",
+        "call-40-9"
+      ],
+      "rationale": "Console print of the number of imported spectra; informational only \u2014 the population count itself is verifiable from every requested output's row count, so no separate retained quantity.",
+      "role": "diagnostic"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-46-13",
+        "call-47-18",
+        "call-48-0",
+        "call-48-15",
+        "call-50-9",
+        "call-53-10"
+      ],
+      "rationale": "Pre-pipeline metadata spot checks (inchikey/inchi/smiles presence); the post-pipeline identifier values requested in Output 1 come from the pipeline itself, not from this inspection.",
+      "role": "diagnostic"
+    },
+    {
+      "artifact_paths": [
+        "peak_counts.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-56-20"
+      ],
+      "rationale": "Measures peaks per spectrum before any peak processing \u2014 exactly the before-filtering column of peak_counts.csv.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-59-0",
+        "call-60-0",
+        "call-61-0",
+        "call-62-0",
+        "call-63-0",
+        "call-127-0",
+        "call-128-0",
+        "call-129-0",
+        "call-130-0",
+        "call-131-0"
+      ],
+      "rationale": "Matplotlib histograms of the before/after peak-count distributions; the underlying quantities are fully captured by peak_counts.csv, so the figures are presentation only.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [
+        "processed_spectra.json",
+        "peak_counts.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-83-15",
+        "call-84-15",
+        "call-85-15",
+        "call-86-15",
+        "call-87-15",
+        "call-88-15",
+        "call-89-15",
+        "call-90-15",
+        "call-91-15",
+        "call-107-15",
+        "call-108-15",
+        "call-109-15"
+      ],
+      "rationale": "The matchms metadata-filter and peak-filter definitions (bodies of metadata_processing/peak_processing): every requested post-pipeline metadata field, retained peak list and after-filtering peak count is produced by this exact sequence with default arguments.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "processed_spectra.json",
+        "peak_counts.csv",
+        "similarity_scores.npz",
+        "best_matches.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-118-13",
+        "call-119-13"
+      ],
+      "rationale": "Apply the two pipelines to every spectrum in input order; the outputs are the processed library, the after-filtering peak counts (no spectra added or dropped), and the processed spectra that are the subjects of both similarity families and every ranked-list branch.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-121-13"
+      ],
+      "rationale": "Recomputation of the inchikey list after processing for visual inspection; the identifier values themselves are supplied per spectrum by Output 1.",
+      "role": "diagnostic"
+    },
+    {
+      "artifact_paths": [
+        "processed_spectra.json",
+        "peak_counts.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-124-20"
+      ],
+      "rationale": "Measures peaks per spectrum after processing \u2014 the after-filtering column of peak_counts.csv; the retained peak lists are also the peaks field of Output 1.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-142-19",
+        "call-149-21",
+        "call-150-0",
+        "call-151-12"
+      ],
+      "rationale": "Path construction and the pickle-dump demo of the fully processed `spectrums` list (the notebook's suggested faster alternative for large libraries). Both are serialisation plumbing: the entire scientific content of the pickle is identical to the processed library already retained as processed_spectra.json via the same `spectrums` object, and the pickle file itself is never read downstream in the notebook. Because pickle.dump and save_as_json are different literal call targets, this is recorded as support rather than a formal redundancy claim.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [
+        "processed_spectra.json"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-143-0"
+      ],
+      "rationale": "save_as_json writes the processed spectra library \u2014 the notebook's dedicated export end product, corresponding to processed_spectra.json (the public task re-keys the same records into its documented schema).",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-159-21",
+        "call-205-21"
+      ],
+      "rationale": "CosineGreedy(tolerance=0.005)/ModifiedCosine(tolerance=0.005) constructors: configuration consumed by the calculate_scores calls that produce the four arrays of similarity_scores.npz and feed the ranked-list branches; no standalone output.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [
+        "similarity_scores.npz"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-160-9",
+        "call-164-15",
+        "call-167-15",
+        "call-206-9",
+        "call-213-15"
+      ],
+      "rationale": "calculate_scores over all spectrum pairs for both similarity families, and scores.scores.to_array() materialising the score and matched-peak-count matrices shown for the greedy 5x5 preview and the full modified matrices; these produce the four arrays of similarity_scores.npz and feed the ranked-list branches.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "best_matches.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-172-15",
+        "call-175-1"
+      ],
+      "rationale": "Branch A: scores_by_query(spectrums[5], CosineGreedy_score, sort=True)[:10] and retrieval of the matched spectra's SMILES \u2014 best_matches.csv, branch A rows (query 5, CosineGreedy, no filter).",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-173-0"
+      ],
+      "rationale": "Console print of the branch-A match records; the content is retained in best_matches.csv branch A.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-180-17",
+        "call-180-28",
+        "call-181-8",
+        "call-182-4",
+        "call-247-17",
+        "call-247-28",
+        "call-248-8",
+        "call-249-4",
+        "call-265-17",
+        "call-265-28",
+        "call-266-8",
+        "call-267-4"
+      ],
+      "rationale": "RDKit MolFromSmiles/Draw.MolToFile depictions of the best matches for branches A, D and E; renders of SMILES already supplied in best_matches.csv's matched_smiles column; images out of scope.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [
+        "best_matches.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-187-17"
+      ],
+      "rationale": "Branch B: scores_by_query(spectrums[5], CosineGreedy_score, sort=True) with >=5 matches before truncation to 10 \u2014 best_matches.csv, branch B rows (query 5, CosineGreedy, min_match 5).",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "best_matches.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-209-17"
+      ],
+      "rationale": "Branch C: scores_by_query(spectrums[5], ModifiedCosine_score, sort=True) with >=5 matches, top 10 \u2014 best_matches.csv, branch C rows (query 5, ModifiedCosine, min_match 5).",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-215-0",
+        "call-216-0",
+        "call-217-0",
+        "call-218-0",
+        "call-219-0",
+        "call-220-0",
+        "call-225-0",
+        "call-226-0",
+        "call-227-0",
+        "call-228-0",
+        "call-229-0",
+        "call-230-0"
+      ],
+      "rationale": "Heatmaps of a 50x50 slice of the exported ModifiedCosine matrices; presentation of data fully retained in similarity_scores.npz.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [
+        "best_matches.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-236-17",
+        "call-240-1"
+      ],
+      "rationale": "Branch D: scores_by_query(spectrums[11], ModifiedCosine_score, sort=True) with >=5 matches, top 10, and retrieval of the matched spectra's SMILES \u2014 best_matches.csv, branch D rows (query 11, ModifiedCosine, min_match 5).",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-253-10",
+        "call-255-0",
+        "call-255-9"
+      ],
+      "rationale": "precursor_mz mass inspection (np.where(masses > 600)) that motivated the choice of query index 97; a diagnostic, not an independent scientific endpoint.",
+      "role": "diagnostic"
+    },
+    {
+      "artifact_paths": [
+        "best_matches.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-258-17"
+      ],
+      "rationale": "Branch E: scores_by_query(spectrums[97], ModifiedCosine_score, sort=True) with >=5 matches, top 10 \u2014 best_matches.csv, branch E rows (query 97, ModifiedCosine, min_match 5); also the branch retained by the preparation export best_matches_spectrum_97.csv.",
+      "role": "result"
+    }
+  ],
+  "oracle_code": "#!/usr/bin/env python3\n\"\"\"Oracle for the GNPS natural-products-library similarity task.\n\nSolves the public question using only <input-dir>/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf\nand writes the four requested products into <output-dir>. The computation mirrors\nthe matchms 0.30.2 semantics pinned in the public question: the two filter\npipelines in the stated order with default arguments, all-against-all\nCosineGreedy and ModifiedCosine at tolerance 0.005, and the ranked best-match\nbranches via scores_by_query(..., sort=True) with >= min_match applied before\ntruncation to 10.\n\"\"\"\nimport argparse\nimport csv\nimport json\nimport os\nimport sys\n\nimport numpy as np\n\nMGF_NAME = \"GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf\"\nBRANCHES = [\n    # (query_index, score_key, matches_key, min_match or None)\n    (5, \"CosineGreedy_score\", \"CosineGreedy_matches\", None),   # branch A\n    (5, \"CosineGreedy_score\", \"CosineGreedy_matches\", 5),      # branch B\n    (5, \"ModifiedCosine_score\", \"ModifiedCosine_matches\", 5),  # branch C\n    (11, \"ModifiedCosine_score\", \"ModifiedCosine_matches\", 5), # branch D\n    (97, \"ModifiedCosine_score\", \"ModifiedCosine_matches\", 5), # branch E\n]\n\n\ndef build_pipelines():\n    from matchms.filtering import (\n        default_filters,\n        repair_inchi_inchikey_smiles,\n        derive_inchi_from_smiles,\n        derive_smiles_from_inchi,\n        derive_inchikey_from_inchi,\n        harmonize_undefined_smiles,\n        harmonize_undefined_inchi,\n        harmonize_undefined_inchikey,\n        add_precursor_mz,\n        normalize_intensities,\n        select_by_intensity,\n        select_by_mz,\n    )\n\n    def metadata_processing(spectrum):\n        # Order and default arguments fixed by the public question.\n        spectrum = default_filters(spectrum)\n        spectrum = repair_inchi_inchikey_smiles(spectrum)\n        spectrum = derive_inchi_from_smiles(spectrum)\n        spectrum = derive_smiles_from_inchi(spectrum)\n        spectrum = derive_inchikey_from_inchi(spectrum)\n        spectrum = harmonize_undefined_smiles(spectrum)\n        spectrum = harmonize_undefined_inchi(spectrum)\n        spectrum = harmonize_undefined_inchikey(spectrum)\n        spectrum = add_precursor_mz(spectrum)\n        return spectrum\n\n    def peak_processing(spectrum):\n        spectrum = normalize_intensities(spectrum)\n        spectrum = select_by_intensity(spectrum, intensity_from=0.01)\n        spectrum = select_by_mz(spectrum, mz_from=10, mz_to=1000)\n        return spectrum\n\n    return metadata_processing, peak_processing\n\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument(\"--input-dir\", required=True)\n    ap.add_argument(\"--output-dir\", required=True)\n    args = ap.parse_args()\n\n    from matchms.importing import load_from_mgf\n    from matchms import calculate_scores\n    from matchms.similarity import CosineGreedy, ModifiedCosine\n\n    mgf = os.path.join(args.input_dir, MGF_NAME)\n    out = args.output_dir\n    os.makedirs(out, exist_ok=True)\n\n    metadata_processing, peak_processing = build_pipelines()\n\n    # Import and pipelines. Input order defines the spectrum index.\n    spectrums = list(load_from_mgf(mgf))\n    n_before = [len(s.peaks.mz) for s in spectrums]\n    spectrums = [metadata_processing(s) for s in spectrums]\n    spectrums = [peak_processing(s) for s in spectrums]\n    n_after = [len(s.peaks.mz) for s in spectrums]\n\n    # Output 1: processed_spectra.json\n    records = []\n    for i, s in enumerate(spectrums):\n        records.append({\n            \"spectrum_index\": i,\n            \"spectrum_id\": s.get(\"spectrum_id\") or \"\",\n            \"compound_name\": s.get(\"compound_name\") or \"\",\n            \"inchikey\": s.get(\"inchikey\") or \"\",\n            \"inchi\": s.get(\"inchi\") or \"\",\n            \"smiles\": s.get(\"smiles\") or \"\",\n            \"precursor_mz\": float(s.get(\"precursor_mz\")),\n            \"peaks\": [[float(m), float(v)]\n                      for m, v in zip(s.peaks.mz, s.peaks.intensities)],\n        })\n    with open(os.path.join(out, \"processed_spectra.json\"), \"w\", encoding=\"utf-8\") as f:\n        json.dump(records, f)\n\n    # Output 2: similarity_scores.npz (both families, all pairs).\n    similarity_measure = CosineGreedy(tolerance=0.005)\n    scores_greedy = calculate_scores(spectrums, spectrums, similarity_measure,\n                                     is_symmetric=True)\n    arr_greedy = scores_greedy.scores.to_array()\n\n    similarity_measure = ModifiedCosine(tolerance=0.005)\n    scores_modified = calculate_scores(spectrums, spectrums, similarity_measure,\n                                       is_symmetric=True)\n    arr_modified = scores_modified.scores.to_array()\n\n    np.savez(\n        os.path.join(out, \"similarity_scores.npz\"),\n        cosine_greedy_score=np.asarray(arr_greedy[\"CosineGreedy_score\"], dtype=np.float64),\n        cosine_greedy_matches=np.asarray(arr_greedy[\"CosineGreedy_matches\"], dtype=np.int64),\n        modified_cosine_score=np.asarray(arr_modified[\"ModifiedCosine_score\"], dtype=np.float64),\n        modified_cosine_matches=np.asarray(arr_modified[\"ModifiedCosine_matches\"], dtype=np.int64),\n    )\n\n    # Output 3: best_matches.csv (branches A-E). Ranking semantics:\n    # scores_by_query(..., sort=True), >= min_match applied before truncation\n    # to the first 10 entries; the query's self-match is part of the ranking.\n    index_of = {id(s): i for i, s in enumerate(spectrums)}\n    rows = []\n    for query_idx, score_key, matches_key, min_match in BRANCHES:\n        measure = \"CosineGreedy\" if score_key.startswith(\"CosineGreedy\") else \"ModifiedCosine\"\n        scores_obj = scores_greedy if measure == \"CosineGreedy\" else scores_modified\n        sorted_matches = scores_obj.scores_by_query(spectrums[query_idx],\n                                                    name=score_key, sort=True)\n        if min_match is not None:\n            selected = [x for x in sorted_matches if x[1][matches_key] >= min_match]\n        else:\n            selected = sorted_matches\n        for rank, entry in enumerate(selected[:10], start=1):\n            ref, rec = entry[0], entry[1]\n            rows.append([\n                query_idx,\n                measure,\n                \"none\" if min_match is None else str(min_match),\n                rank,\n                index_of[id(ref)],\n                ref.get(\"smiles\") or \"\",\n                ref.get(\"inchikey\") or \"\",\n                repr(float(rec[score_key])),\n                int(rec[matches_key]),\n            ])\n    with open(os.path.join(out, \"best_matches.csv\"), \"w\", newline=\"\", encoding=\"utf-8\") as f:\n        w = csv.writer(f)\n        w.writerow([\"query_index\", \"similarity_measure\", \"min_match_filter\", \"rank\",\n                    \"matched_spectrum_index\", \"matched_smiles\", \"matched_inchikey\",\n                    \"score\", \"matches\"])\n        w.writerows(rows)\n\n    # Output 4: peak_counts.csv\n    with open(os.path.join(out, \"peak_counts.csv\"), \"w\", newline=\"\", encoding=\"utf-8\") as f:\n        w = csv.writer(f)\n        w.writerow([\"spectrum_index\", \"n_peaks_before_filtering\", \"n_peaks_after_filtering\"])\n        for i, (a, b) in enumerate(zip(n_before, n_after)):\n            w.writerow([i, a, b])\n\n    print(\"done: %d spectra; outputs written to %s\" % (len(spectrums), out))\n\n\nif __name__ == \"__main__\":\n    main()",
+  "output_paths": [
+    "processed_spectra.json",
+    "similarity_scores.npz",
+    "best_matches.csv",
+    "peak_counts.csv"
+  ],
+  "rationale": "Scope. The task preserves the full scientific content of the matchms \"part I\" notebook on the GNPS NIH natural-products library: the two-stage processing pipeline (metadata: default_filters, repair_inchi_inchikey_smiles, derive_*, harmonize_undefined_*, add_precursor_mz; peaks: normalize_intensities, select_by_intensity(intensity_from=0.01), select_by_mz(10, 1000)), the all-against-all similarity families CosineGreedy(tolerance=0.005) and ModifiedCosine(tolerance=0.005), and all five ranked best-match branches (query 5 greedy no-filter/min-match>=5; query 5, 11, 97 modified min-match>=5). The public question states the method scientifically, pins operational semantics to matchms 0.30.2 defaults, and discloses no measured answer values.\n\nDerivation layout (controller exact-inventory compliant). destination/inputs/ holds only the byte-identical MGF (sha256 9276602a..., verified before and after copying; the MGF path is located by walking the manifest without assuming its structure). destination/reference/ holds exactly the four declared expected-answer files in the public schema: processed_spectra.json, similarity_scores.npz, best_matches.csv, peak_counts.csv. Lineage/provenance is documented here and in the derivation code comments rather than in extra files, because the controller enforces an exact reference inventory; the recorded original reference exports are read from their original location (hash-verified) and left untouched.\n\nExpected-answer construction. (a) Direct projection of recorded exports: the modified-cosine score and matches matrices are taken verbatim from modified_cosine_scores.npz and written under the public keys; the processed library records, identifiers and branch E are built by the source-faithful rerun and then cross-validated against the exports (below). (b) Source-faithful recovery (permitted by task_policy.endpoint_recovery) for the endpoints the preparation exports omitted solely because their variables were overwritten later in the script (CosineGreedy matrices, branches A-D, before-filtering peak counts): the derivation reruns the unchanged source computation on the hash-verified staged input \u2014 same load_from_mgf, same filter sequences/order/default arguments, same CosineGreedy/ModifiedCosine(tolerance=0.005) constructors, same calculate_scores(..., is_symmetric=True), same scores_by_query(..., sort=True) with >=5 filter applied before [:10] truncation for all five branches. The previous materialization run confirmed this rerun executes fully (90 s, peak RSS ~0.95 GiB, well within limits).\n\nExport-vs-rerun validation enforced by the derivation (any conflict aborts with a specific message): per-spectrum retained peak lists and precursor_mz against processed_spectra.json (robust peaks extraction handling peaks_json/peaks, nested or flat, string or list, pair-list or mz/intensity mapping); compound_name/inchikey/smiles against spectrum_identifiers.csv; the full modified score matrix (max abs diff <= 1e-9) and matches matrix (exact) against modified_cosine_scores.npz; branch E rows (rank, matched_smiles, matched_inchikey, score, matches) against best_matches_spectrum_97.csv. Metadata fields, when present in the export records, are compared field-by-field (spectrum_id, compound_name, inchikey, inchi, smiles), which surfaces key-naming defects (e.g. if spectrum_id needs a different metadata key than assumed) rather than silently emitting empty strings. Validation results and field-coverage counts are printed to the controller-captured log.\n\nOracle. The oracle re-runs the same pinned matchms semantics from the supplied input only \u2014 it never reads the reference directory or original inputs \u2014 and writes the four public outputs with serialization conventions identical to the derivation (json.dump records, repr(float) scores in CSV, int64 match counts, float64 scores). It uses the installed reference packages rather than a reimplementation, per construction-stage guidance. Enumerated conventions shared by oracle and reference: spectrum index = block order in the MGF; matched_spectrum_index resolved via object identity of the reference entries returned by scores_by_query; ranking from scores_by_query semantics (ties unspecified by numpy quicksort; the public contract accepts any non-increasing permutation within tied groups).\n\nLeakage. The solver receives only the raw MGF; no reference-derived quantity is included in the supplied inputs (no supplied intermediates). The reference answer files live only in destination/reference/, which the oracle cannot access.\n\nKnown open questions passed to the comparison stage (not resolved here, per stage separation): (1) score tolerance calibration \u2014 the numba fastmath kernel can produce self-scores marginally above 1 (observed 1.000000000000003 in the exported branch E), so exact bitwise equality must not be required cross-platform; (2) tie handling within or at the boundary (ranks 10/11) of each ranked list; (3) boundary sensitivity of the inclusive 0.01 intensity and 10/1000 m/z thresholds; (4) MGF peak lists assumed ascending by the matching kernel. These are grading-rule questions, not construction blockers: the source method is pinned by source inspection plus the executed reference replay, and the derivation's export-vs-rerun checks give the strongest available fidelity evidence for the recovered endpoints."
+}

@@ -1,0 +1,2141 @@
+{
+  "evidence_boundary": "Passing reference and structural audit, plus the supplied finite replay observations. Row-multiset fingerprints describe serialization, not scientific equivalence: row order may encode rank, sequence or alignment. No independent reproduction or calibrated grader. No full data tables in context. Read-only package-source tools are available. Read-only reference-text inspection is available for the recorded output catalog.",
+  "file_sha256": {
+    "candidate/analysis.py": "a5ce8a9ca34d9a2de1bbfbc574829d610436acedde78d532b11ebcf7914c0bd7",
+    "candidate/dependency-exclusions.json": "de0d5c1d1a8e641b7b33343d6e48c1d5752d8f0f4f5a7fe82bb7035908f364ed",
+    "candidate/inputs.json": "e5892bdd7f3ad382752df058d0ed50f8f166844a139b2437ca15d89eeb8d710a",
+    "candidate/pyproject.toml": "283067ce42a4ebf61af7e8f3dd7ae0a1f8e43a9544cd2d237a0aedeb798aa874",
+    "inputs/exports.py": "8cf16859ba73b21e51496d877839a8a9ab53ae57ca7db286e2a12ea67ad37404",
+    "inputs/original.py": "0524c9db731ca258d71e7af8fe0846312643b8ff1f02ce833162a6be4c5d6db0",
+    "inputs/plan.json": "08aaf8c75ed5c0bfb8ddc0d69fb492b3bac2275b0fb977b76960a153fc68a59b",
+    "outcome.json": "01845ac0b6acd2f21be9754c3a11e1486f01d0b755df785cdcd28a260e558db7",
+    "output-audit.json": "ae8b102dd50ca52797ed69677790dbfd98ccb8db0a569052ed5e6ac6a17dcda6",
+    "provenance.json": "ec3b379b57cb6b21ba5e637400215b2da06f206f086c1125b1b9616f67e4701c",
+    "result.json": "ada65823b16e7020f7347f9ea35e1adf62341e33b4c3d1ac345da208c478e045",
+    "trial/dependency-assets-summary.json": "b06c7f59bd6d573b776b414251f592dc19313933245926bb3b3b067c29c55b26",
+    "trial/dependency-exclusions-applied.json": "fb7d092cdbf8b106d9d9387e5cebd8eff6395c6c5d9a580f30970cc7f0612dc8",
+    "trial/environment.txt": "c346b1338c5505e457909d92393270517e8ac254cf70883a80cbd2168022f307",
+    "trial/inputs-before.json": "bca9ca1b0f79004c0877b53736d592c1bfc353cc0dd2c8ddb5ad7dd742d99e1a",
+    "trial/reference.py": "8c192f2b49562db12a14a7bbfde58d2cc725fddde0e55a47c18f50af6da31bfc",
+    "trial/result.json": "b7ca745c41180aae4a7a11c7515325f04019f2b00ef4090f21c2a8d01bc5ed4a",
+    "trial/source.diff": "267339ecebe2d191ca8eb295bcee07b8d5be287efc56370086cfaf665c7ea513",
+    "trial/uv.lock": "31520af80e225312cd9817a5ab4306990e361440df04f6d74f56ac585d8025e9"
+  },
+  "files": {
+    "candidate/analysis.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3 (ipykernel)\n#     language: python\n#     name: python3\n# ---\n\n# (part1)=\n# # part I - basics of matchms\n#\n# ## Requirements\n# For this notebook to work, `matchms` needs to be installed.\n# This can be done by running:\n#\n# ```\n# conda create --name matchms python=3.8\n# conda activate matchms\n# conda install --channel nlesc --channel bioconda --channel conda-forge matchms\n# ```\n\n# ## Import MS/MS data\n# - matchms has several importing options, e.g.: `load_from_json`, `load_from_mzml`, `load_from_mzxml` etc. Here we are going to use `load_from_mgf`\n# - Import spectrum from mgf file downloaded from GNPS (https://gnps-external.ucsd.edu/gnpslibrary, here using `GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf`)\n\nimport os\nimport numpy as np\nfrom matchms.importing import load_from_mgf\n\npath_data = \"/inputs\" #\"...\" enter your pathname to the downloaded file\nfile_mgf = os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf\")\nspectrums = list(load_from_mgf(file_mgf))\n\nprint(f\"{len(spectrums)} spectrums found and imported\")\n\n# ## Inspect spectra\n# - Inspect the metadata: inchikey, inchi, smiles\n# - Inspect the number of peaks per spectrum\n\ninchikeys = [s.get(\"inchikey\") for s in spectrums]\nfound_inchikeys = np.sum([1 for x in inchikeys if x is not None])\nprint(f\"Found {int(found_inchikeys)} inchikeys in metadata\")\n\ninchi = [s.get(\"inchi\") for s in spectrums]\ninchi[:10]\n\nsmiles = [s.get(\"smiles\") for s in spectrums]\nsmiles[:10]\n\nnumbers_of_peaks = [len(s.peaks.mz) for s in spectrums]\n\nfrom matplotlib import pyplot as plt\nplt.figure(figsize=(5,4), dpi=150)\nplt.hist(numbers_of_peaks, 20, edgecolor=\"white\")\nplt.title(\"Peaks per spectrum (before filtering)\")\nplt.xlabel(\"Number of peaks in spectrum\")\nplt.ylabel(\"Number of spectra\")\n#plt.savefig(\"hist01.png\")\n\n# ## Build a data processing pipeline\n# Depending on the data that you import, in most cases you might want to further process the spectra. matchms offers numerous 'filters' to process Spectrum objects. They are designed in a way that allows to simply stack them to any processing pipeline you want. In general, `matchms.filtering` contains filters that either will\n#\n# - harmonize, clean, extend, and/or check the spectrum metadata\n# - process or filter spectrum peaks (e.g. remove low intensity peaks, or normalize peak intensities)\n\nfrom matchms.filtering import default_filters\nfrom matchms.filtering import repair_inchi_inchikey_smiles\nfrom matchms.filtering import derive_inchikey_from_inchi\nfrom matchms.filtering import derive_smiles_from_inchi\nfrom matchms.filtering import derive_inchi_from_smiles\nfrom matchms.filtering import harmonize_undefined_inchi\nfrom matchms.filtering import harmonize_undefined_inchikey\nfrom matchms.filtering import harmonize_undefined_smiles\nfrom matchms.filtering import add_precursor_mz\n\ndef metadata_processing(spectrum):\n    spectrum = default_filters(spectrum)\n    spectrum = repair_inchi_inchikey_smiles(spectrum)\n    spectrum = derive_inchi_from_smiles(spectrum)\n    spectrum = derive_smiles_from_inchi(spectrum)\n    spectrum = derive_inchikey_from_inchi(spectrum)\n    spectrum = harmonize_undefined_smiles(spectrum)\n    spectrum = harmonize_undefined_inchi(spectrum)\n    spectrum = harmonize_undefined_inchikey(spectrum)\n    spectrum = add_precursor_mz(spectrum)\n    return spectrum\n\n\n# Here we defined a sequence of filters to be applied to a spectrum, which will apply default filters (a bunch of standard operations to make metadata entries more consistent). Then we run a number of filters that look for inchi, inchikey, and smiles that ended up in wrong fields (`repair_inchi_inchikey_smiles`), and ultimately translate inchi, inchikey, and smiles into another wherever possible.\n#\n#\n# To process the peaks we define another pipeline:\n\n# ### Peak processing pipeline\n\nfrom matchms.filtering import normalize_intensities\nfrom matchms.filtering import select_by_intensity\nfrom matchms.filtering import select_by_mz\n\ndef peak_processing(spectrum):\n    spectrum = normalize_intensities(spectrum)\n    spectrum = select_by_intensity(spectrum, intensity_from=0.01)\n    spectrum = select_by_mz(spectrum, mz_from=10, mz_to=1000)\n    return spectrum\n\n\n# Here we defined a sequence of filters which will normalize the intensities to values between 0 and 1, and finally only keep peaks if they have a normalized intensity > 0.01 and if they have a m/z position between 10 and 1000 Da.\n#\n#\n# Once defined in this way, we can easily apply this processing sequence to all imported spectrums by doing:\n\nspectrums = [metadata_processing(s) for s in spectrums]\nspectrums = [peak_processing(s) for s in spectrums]\n\ninchikeys = [s.get(\"inchikey\") for s in spectrums]\ninchikeys[:10]\n\nnumbers_of_peaks = [len(s.peaks.mz) for s in spectrums]\n\nfrom matplotlib import pyplot as plt\nplt.figure(figsize=(5,4), dpi=150)\nplt.hist(numbers_of_peaks, 20, edgecolor=\"white\")\nplt.title(\"Peaks per spectrum (after filtering)\")\nplt.xlabel(\"Number of peaks in spectrum\")\nplt.ylabel(\"Number of spectra\")\n#plt.savefig(\"hist02.png\")\n\n# - the filtering did drastically reduce the (initially very high) number of peaks per spectrum\n# - this is mostly due to the removal of peaks < 0.01 of the max intensity\n\n# ## Export processed data\n# There are multiple options to export your data after processing. Using `save_as_json` or `save_as_mgf` the data can be written back to a `.json` or `.mgf` file.\n\nfrom matchms.exporting import save_as_json\n\nfile_export_json = os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.json\")\nsave_as_json(spectrums, file_export_json)\n\n# A alternative that is much faster for reading/writing is to use 'pickle'. Should data handling become an issue (e.g. many thousands spectrums), than this can be a way out.\n\nimport pickle\n\nfile_export_pickle = os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.pickle\")\npickle.dump(spectrums, \n            open(file_export_pickle, \"wb\"))\n\n# ## Compute spectra similarities\u00a0: Cosine\u00a0score\n# In the following part the Cosine similarity scores between all possible spectra pairs will be calculated.\n\nfrom matchms import calculate_scores\nfrom matchms.similarity import CosineGreedy\n\nsimilarity_measure = CosineGreedy(tolerance=0.005)\nscores = calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)\n\nscores.scores.shape\n\nscores_array = scores.scores.to_array()\nscores_array[:5, :5][\"CosineGreedy_score\"]\n\nscores_array = scores.scores.to_array()\nscores_array[:5, :5][\"CosineGreedy_matches\"]\n\n# ## Get highest scoring results for a spectrum of interest\n\nbest_matches = scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)[:10]\nprint([x[1] for x in best_matches])\n\n[x[0].get(\"smiles\") for x in best_matches]\n\nfrom rdkit import Chem\nfrom rdkit.Chem import Draw\n\nfor i, smiles in enumerate([x[0].get(\"smiles\") for x in best_matches]):\n    m = Chem.MolFromSmiles(smiles)\n    Draw.MolToFile(m, f\"compound_{i}.png\")\n\n# ## Alternative: Get highest scoring results above min_match criteria\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"CosineGreedy_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\n# ## Computing spectra similarities between all spectra - Modified Cosine score\n# In the following part the **Modified Cosine similarity** scores (Watrous et al., 2012) between all possible spectra pairs will be calculated.\n#\n# The modified cosine score aims at quantifying the similarity between two\n# mass spectra. The score is calculated by finding best possible matches between\n# peaks of two spectra. Two peaks are considered a potential match if their\n# m/z ratios lie within the given 'tolerance', or if their m/z ratios\n# lie within the tolerance once a mass-shift is applied. The mass shift is\n# simply the difference in precursor-m/z between the two spectra.\n# See Watrous et al. [PNAS, 2012, https://www.pnas.org/content/109/26/E1743]\n# for further details.\n\nfrom matchms.similarity import ModifiedCosine\n\nsimilarity_measure = ModifiedCosine(tolerance=0.005)\nscores = calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[5], name=\"ModifiedCosine_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"ModifiedCosine_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\nscores_array = scores.scores.to_array()\n\nplt.figure(figsize=(6,6), dpi=150)\nplt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"], cmap=\"viridis\")\nplt.colorbar(shrink=0.7)\nplt.title(\"Modified Cosine spectra similarities\")\nplt.xlabel(\"Spectrum #ID\")\nplt.ylabel(\"Spectrum #ID\")\n#plt.savefig(\"modified_cosine_scores.png\")\n\nmin_match = 5\n\nplt.figure(figsize=(6,6), dpi=150)\nplt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"] * (scores_array[:50, :50][\"ModifiedCosine_matches\"] >= min_match), cmap=\"viridis\")\nplt.colorbar(shrink=0.7)\nplt.title(\"Modified Cosine spectra similarities (min_match=5)\")\nplt.xlabel(\"Spectrum #ID\")\nplt.ylabel(\"Spectrum #ID\")\n#plt.savefig(\"modified_cosine_scores_min_match5.png\")\n\n# This suggests that -for instance- `spectrums[11]` seems to have several related other ones among the first 50 spectrums. Let's have a closer look at it.\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[11], name=\"ModifiedCosine_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"ModifiedCosine_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\n[x[0].get(\"smiles\") for x in best_matches]\n\n# ### Plot the compounds with the highest modified Cosine score\n\nfrom rdkit import Chem\nfrom rdkit.Chem import Draw\n\nfor i, smiles in enumerate([x[0].get(\"smiles\") for x in best_matches]):\n    m = Chem.MolFromSmiles(smiles)\n    Draw.MolToFile(m, f\"compound_{i}.png\")\n\n# ## Inspect a case that doesn't work that well...\n\nmasses = [s.get(\"precursor_mz\") for s in spectrums]\n\nnp.where(np.array(masses) > 600)\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[97], name=\"ModifiedCosine_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"ModifiedCosine_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\nfrom rdkit import Chem\nfrom rdkit.Chem import Draw\n\nfor i, smiles in enumerate([x[0].get(\"smiles\") for x in best_matches]):\n    m = Chem.MolFromSmiles(smiles)\n    Draw.MolToFile(m, f\"compound_{i}.png\")\n",
+    "candidate/dependency-exclusions.json": {
+      "files": []
+    },
+    "candidate/inputs.json": {
+      "files": [
+        {
+          "local_path": "/inputs/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf",
+          "source": "GNPS NIH natural-products spectral library (MGF), originally from https://gnps-external.ucsd.edu/gnpslibrary/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf; downloaded as the byte-identical copy committed at the source notebook's pinned revision: https://raw.githubusercontent.com/matchms/matchms-docs/796f156c58d25adfb7e1528fcb24eb8c40c143a5/data/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf (sha256 9276602a818f91334e56f5bc7719c6924736a029d5e1a22026f52b18255d9f85, 38997460 bytes, 1267 spectra)"
+        }
+      ]
+    },
+    "candidate/pyproject.toml": "[project]\nname = \"matchms-spectral-matching-setup\"\nversion = \"1.0\"\nrequires-python = \">=3.13,<3.14\"\ndependencies = [\n    \"matchms==0.30.2\",\n    \"matplotlib==3.11.2\",\n    \"rdkit==2024.9.6\",\n]\n",
+    "inputs/exports.py": "import csv as _exp_csv\nfrom matchms.exporting import save_as_json as _exp_save_as_json\n\n_exp_out_dir = \"/work/outputs\"\nos.makedirs(_exp_out_dir, exist_ok=True)\n\n# 1) Processed spectra library (end product of the metadata + peak pipelines)\n_exp_processed_json = os.path.join(_exp_out_dir, \"processed_spectra.json\")\n_exp_save_as_json(spectrums, _exp_processed_json)\n\n# 2) All-pairs Modified Cosine similarity: scores and matched peak counts\n_exp_scores_npz = os.path.join(_exp_out_dir, \"modified_cosine_scores.npz\")\nnp.savez(\n    _exp_scores_npz,\n    modified_cosine_score=scores_array[\"ModifiedCosine_score\"],\n    modified_cosine_matches=scores_array[\"ModifiedCosine_matches\"],\n)\n\n# 3) Spectrum identifiers (context for the similarity matrix and match lists)\n_exp_ids_csv = os.path.join(_exp_out_dir, \"spectrum_identifiers.csv\")\nwith open(_exp_ids_csv, \"w\", newline=\"\", encoding=\"utf-8\") as _exp_f:\n    _exp_w = _exp_csv.writer(_exp_f)\n    _exp_w.writerow([\"spectrum_index\", \"compound_name\", \"inchikey\", \"smiles\"])\n    for _exp_i, _exp_s in enumerate(spectrums):\n        _exp_w.writerow([\n            _exp_i,\n            _exp_s.get(\"compound_name\") or \"\",\n            _exp_s.get(\"inchikey\") or \"\",\n            _exp_s.get(\"smiles\") or \"\",\n        ])\n\n# 4) Top Modified Cosine matches (min_match >= 5) for the queried spectrum\n#    (query = spectrums[97] in the original script)\n_exp_matches_csv = os.path.join(_exp_out_dir, \"best_matches_spectrum_97.csv\")\nwith open(_exp_matches_csv, \"w\", newline=\"\", encoding=\"utf-8\") as _exp_f:\n    _exp_w = _exp_csv.writer(_exp_f)\n    _exp_w.writerow([\n        \"query_index\", \"query_smiles\", \"rank\",\n        \"matched_smiles\", \"matched_inchikey\",\n        \"modified_cosine_score\", \"modified_cosine_matches\",\n    ])\n    for _exp_r, _exp_entry in enumerate(best_matches, start=1):\n        _exp_ref = _exp_entry[0]\n        _exp_score_entry = _exp_entry[1]\n        _exp_w.writerow([\n            97,\n            spectrums[97].get(\"smiles\") or \"\",\n            _exp_r,\n            _exp_ref.get(\"smiles\") or \"\",\n            _exp_ref.get(\"inchikey\") or \"\",\n            float(_exp_score_entry[\"ModifiedCosine_score\"]),\n            int(_exp_score_entry[\"ModifiedCosine_matches\"]),\n        ])",
+    "inputs/original.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3 (ipykernel)\n#     language: python\n#     name: python3\n# ---\n\n# (part1)=\n# # part I - basics of matchms\n#\n# ## Requirements\n# For this notebook to work, `matchms` needs to be installed.\n# This can be done by running:\n#\n# ```\n# conda create --name matchms python=3.8\n# conda activate matchms\n# conda install --channel nlesc --channel bioconda --channel conda-forge matchms\n# ```\n\n# ## Import MS/MS data\n# - matchms has several importing options, e.g.: `load_from_json`, `load_from_mzml`, `load_from_mzxml` etc. Here we are going to use `load_from_mgf`\n# - Import spectrum from mgf file downloaded from GNPS (https://gnps-external.ucsd.edu/gnpslibrary, here using `GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf`)\n\nimport os\nimport numpy as np\nfrom matchms.importing import load_from_mgf\n\npath_data = os.path.join(os.path.dirname(os.getcwd()), \"data\") #\"...\" enter your pathname to the downloaded file\nfile_mgf = os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf\")\nspectrums = list(load_from_mgf(file_mgf))\n\nprint(f\"{len(spectrums)} spectrums found and imported\")\n\n# ## Inspect spectra\n# - Inspect the metadata: inchikey, inchi, smiles\n# - Inspect the number of peaks per spectrum\n\ninchikeys = [s.get(\"inchikey\") for s in spectrums]\nfound_inchikeys = np.sum([1 for x in inchikeys if x is not None])\nprint(f\"Found {int(found_inchikeys)} inchikeys in metadata\")\n\ninchi = [s.get(\"inchi\") for s in spectrums]\ninchi[:10]\n\nsmiles = [s.get(\"smiles\") for s in spectrums]\nsmiles[:10]\n\nnumbers_of_peaks = [len(s.peaks.mz) for s in spectrums]\n\nfrom matplotlib import pyplot as plt\nplt.figure(figsize=(5,4), dpi=150)\nplt.hist(numbers_of_peaks, 20, edgecolor=\"white\")\nplt.title(\"Peaks per spectrum (before filtering)\")\nplt.xlabel(\"Number of peaks in spectrum\")\nplt.ylabel(\"Number of spectra\")\n#plt.savefig(\"hist01.png\")\n\n# ## Build a data processing pipeline\n# Depending on the data that you import, in most cases you might want to further process the spectra. matchms offers numerous 'filters' to process Spectrum objects. They are designed in a way that allows to simply stack them to any processing pipeline you want. In general, `matchms.filtering` contains filters that either will\n#\n# - harmonize, clean, extend, and/or check the spectrum metadata\n# - process or filter spectrum peaks (e.g. remove low intensity peaks, or normalize peak intensities)\n\nfrom matchms.filtering import default_filters\nfrom matchms.filtering import repair_inchi_inchikey_smiles\nfrom matchms.filtering import derive_inchikey_from_inchi\nfrom matchms.filtering import derive_smiles_from_inchi\nfrom matchms.filtering import derive_inchi_from_smiles\nfrom matchms.filtering import harmonize_undefined_inchi\nfrom matchms.filtering import harmonize_undefined_inchikey\nfrom matchms.filtering import harmonize_undefined_smiles\nfrom matchms.filtering import add_precursor_mz\n\ndef metadata_processing(spectrum):\n    spectrum = default_filters(spectrum)\n    spectrum = repair_inchi_inchikey_smiles(spectrum)\n    spectrum = derive_inchi_from_smiles(spectrum)\n    spectrum = derive_smiles_from_inchi(spectrum)\n    spectrum = derive_inchikey_from_inchi(spectrum)\n    spectrum = harmonize_undefined_smiles(spectrum)\n    spectrum = harmonize_undefined_inchi(spectrum)\n    spectrum = harmonize_undefined_inchikey(spectrum)\n    spectrum = add_precursor_mz(spectrum)\n    return spectrum\n\n\n# Here we defined a sequence of filters to be applied to a spectrum, which will apply default filters (a bunch of standard operations to make metadata entries more consistent). Then we run a number of filters that look for inchi, inchikey, and smiles that ended up in wrong fields (`repair_inchi_inchikey_smiles`), and ultimately translate inchi, inchikey, and smiles into another wherever possible.\n#\n#\n# To process the peaks we define another pipeline:\n\n# ### Peak processing pipeline\n\nfrom matchms.filtering import normalize_intensities\nfrom matchms.filtering import select_by_intensity\nfrom matchms.filtering import select_by_mz\n\ndef peak_processing(spectrum):\n    spectrum = normalize_intensities(spectrum)\n    spectrum = select_by_intensity(spectrum, intensity_from=0.01)\n    spectrum = select_by_mz(spectrum, mz_from=10, mz_to=1000)\n    return spectrum\n\n\n# Here we defined a sequence of filters which will normalize the intensities to values between 0 and 1, and finally only keep peaks if they have a normalized intensity > 0.01 and if they have a m/z position between 10 and 1000 Da.\n#\n#\n# Once defined in this way, we can easily apply this processing sequence to all imported spectrums by doing:\n\nspectrums = [metadata_processing(s) for s in spectrums]\nspectrums = [peak_processing(s) for s in spectrums]\n\ninchikeys = [s.get(\"inchikey\") for s in spectrums]\ninchikeys[:10]\n\nnumbers_of_peaks = [len(s.peaks.mz) for s in spectrums]\n\nfrom matplotlib import pyplot as plt\nplt.figure(figsize=(5,4), dpi=150)\nplt.hist(numbers_of_peaks, 20, edgecolor=\"white\")\nplt.title(\"Peaks per spectrum (after filtering)\")\nplt.xlabel(\"Number of peaks in spectrum\")\nplt.ylabel(\"Number of spectra\")\n#plt.savefig(\"hist02.png\")\n\n# - the filtering did drastically reduce the (initially very high) number of peaks per spectrum\n# - this is mostly due to the removal of peaks < 0.01 of the max intensity\n\n# ## Export processed data\n# There are multiple options to export your data after processing. Using `save_as_json` or `save_as_mgf` the data can be written back to a `.json` or `.mgf` file.\n\nfrom matchms.exporting import save_as_json\n\nfile_export_json = os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.json\")\nsave_as_json(spectrums, file_export_json)\n\n# A alternative that is much faster for reading/writing is to use 'pickle'. Should data handling become an issue (e.g. many thousands spectrums), than this can be a way out.\n\nimport pickle\n\nfile_export_pickle = os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.pickle\")\npickle.dump(spectrums, \n            open(file_export_pickle, \"wb\"))\n\n# ## Compute spectra similarities\u00a0: Cosine\u00a0score\n# In the following part the Cosine similarity scores between all possible spectra pairs will be calculated.\n\nfrom matchms import calculate_scores\nfrom matchms.similarity import CosineGreedy\n\nsimilarity_measure = CosineGreedy(tolerance=0.005)\nscores = calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)\n\nscores.scores.shape\n\nscores_array = scores.scores.to_array()\nscores_array[:5, :5][\"CosineGreedy_score\"]\n\nscores_array = scores.scores.to_array()\nscores_array[:5, :5][\"CosineGreedy_matches\"]\n\n# ## Get highest scoring results for a spectrum of interest\n\nbest_matches = scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)[:10]\nprint([x[1] for x in best_matches])\n\n[x[0].get(\"smiles\") for x in best_matches]\n\nfrom rdkit import Chem\nfrom rdkit.Chem import Draw\n\nfor i, smiles in enumerate([x[0].get(\"smiles\") for x in best_matches]):\n    m = Chem.MolFromSmiles(smiles)\n    Draw.MolToFile(m, f\"compound_{i}.png\")\n\n# ## Alternative: Get highest scoring results above min_match criteria\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"CosineGreedy_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\n# ## Computing spectra similarities between all spectra - Modified Cosine score\n# In the following part the **Modified Cosine similarity** scores (Watrous et al., 2012) between all possible spectra pairs will be calculated.\n#\n# The modified cosine score aims at quantifying the similarity between two\n# mass spectra. The score is calculated by finding best possible matches between\n# peaks of two spectra. Two peaks are considered a potential match if their\n# m/z ratios lie within the given 'tolerance', or if their m/z ratios\n# lie within the tolerance once a mass-shift is applied. The mass shift is\n# simply the difference in precursor-m/z between the two spectra.\n# See Watrous et al. [PNAS, 2012, https://www.pnas.org/content/109/26/E1743]\n# for further details.\n\nfrom matchms.similarity import ModifiedCosine\n\nsimilarity_measure = ModifiedCosine(tolerance=0.005)\nscores = calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[5], name=\"ModifiedCosine_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"ModifiedCosine_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\nscores_array = scores.scores.to_array()\n\nplt.figure(figsize=(6,6), dpi=150)\nplt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"], cmap=\"viridis\")\nplt.colorbar(shrink=0.7)\nplt.title(\"Modified Cosine spectra similarities\")\nplt.xlabel(\"Spectrum #ID\")\nplt.ylabel(\"Spectrum #ID\")\n#plt.savefig(\"modified_cosine_scores.png\")\n\nmin_match = 5\n\nplt.figure(figsize=(6,6), dpi=150)\nplt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"] * (scores_array[:50, :50][\"ModifiedCosine_matches\"] >= min_match), cmap=\"viridis\")\nplt.colorbar(shrink=0.7)\nplt.title(\"Modified Cosine spectra similarities (min_match=5)\")\nplt.xlabel(\"Spectrum #ID\")\nplt.ylabel(\"Spectrum #ID\")\n#plt.savefig(\"modified_cosine_scores_min_match5.png\")\n\n# This suggests that -for instance- `spectrums[11]` seems to have several related other ones among the first 50 spectrums. Let's have a closer look at it.\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[11], name=\"ModifiedCosine_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"ModifiedCosine_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\n[x[0].get(\"smiles\") for x in best_matches]\n\n# ### Plot the compounds with the highest modified Cosine score\n\nfrom rdkit import Chem\nfrom rdkit.Chem import Draw\n\nfor i, smiles in enumerate([x[0].get(\"smiles\") for x in best_matches]):\n    m = Chem.MolFromSmiles(smiles)\n    Draw.MolToFile(m, f\"compound_{i}.png\")\n\n# ## Inspect a case that doesn't work that well...\n\nmasses = [s.get(\"precursor_mz\") for s in spectrums]\n\nnp.where(np.array(masses) > 600)\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[97], name=\"ModifiedCosine_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"ModifiedCosine_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\nfrom rdkit import Chem\nfrom rdkit.Chem import Draw\n\nfor i, smiles in enumerate([x[0].get(\"smiles\") for x in best_matches]):\n    m = Chem.MolFromSmiles(smiles)\n    Draw.MolToFile(m, f\"compound_{i}.png\")\n",
+    "inputs/plan.json": {
+      "artifacts": [
+        {
+          "description": "The processed spectra library after the metadata-processing and peak-processing pipelines (the notebook's 'Export processed data' end product).",
+          "path": "processed_spectra.json",
+          "source_evidence": "The narrative establishes 'Export processed data' as an outcome ('Using save_as_json or save_as_mgf the data can be written back...'), and the variable `spectrums` holds the fully processed library at completion (reassignments `spectrums = [metadata_processing(s) ...]` then `[peak_processing(s) ...]`, followed by the original `save_as_json` call). The export re-serializes this same existing object to /work/outputs."
+        },
+        {
+          "description": "All-pairs Modified Cosine similarity matrix: per-pair scores and matched peak counts for the N x N spectrum comparisons.",
+          "path": "modified_cosine_scores.npz",
+          "source_evidence": "The 'Computing spectra similarities between all spectra - Modified Cosine score' section presents the full all-pairs ModifiedCosine computation as the final similarity result, visualized as a heatmap and used for the per-spectrum queries. It is produced by `scores = calculate_scores(spectrums, spectrums, ModifiedCosine(tolerance=0.005), is_symmetric=True)` and flattened to the named array `scores_array = scores.scores.to_array()`, which is the last assignment of `scores_array` (after ModifiedCosine) and survives to completion."
+        },
+        {
+          "description": "Index, compound name, inchikey and smiles for each processed spectrum; the identifier context needed to interpret the similarity matrix and match lists.",
+          "path": "spectrum_identifiers.csv",
+          "source_evidence": "These are existing metadata values (post-`default_filters`, `repair_inchi_inchikey_smiles`) on the surviving `spectrums` objects; the narrative emphasizes compound identification (inchikey/inchi/smiles) and the structures drawn from `x[0].get('smiles')` for best matches, making these identifiers the interpretive context for the exported scores and matches."
+        },
+        {
+          "description": "Top-10 Modified Cosine matches (min_match >= 5) for the queried spectrum spectrums[97], with matched compound identifiers, score and match count.",
+          "path": "best_matches_spectrum_97.csv",
+          "source_evidence": "The final branch 'Inspect a case that doesn't work that well...' queries `scores.scores_by_query(spectrums[97], name='ModifiedCosine_score', sort=True)` and filters to >= 5 matched peaks, taking the top 10; it is interpreted in its own right (scores inspected, compound structures drawn). The resulting tuples survive in `best_matches`/`sorted_matches` at script completion (last assignments in the script)."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "All-pairs CosineGreedy scores and the spectrums[5] top-match listings: the analysis is genuinely presented as a result, but the variable `scores` is reassigned by the ModifiedCosine `calculate_scores` call and `best_matches` is reassigned by later branches, so no surviving object holds the CosineGreedy results at completion; recovery would require recomputing the analysis, which is not permitted for exports.",
+        "Modified Cosine top matches for spectrums[5] and spectrums[11] (the 'related compounds' whose structures are drawn): `best_matches` and `sorted_matches` are overwritten by the later spectrums[97] inspection, so only the final assignment is exportable.",
+        "Peaks-per-spectrum histograms before/after filtering: plot-only diagnostics of data quality and filtering effect; `numbers_of_peaks` currently holds only the after-filtering values and is a diagnostic rather than an endpoint.",
+        "RDKit compound_*.png structure depictions: images produced by the original Draw.MolToFile calls; the underlying smiles values are already exported in the identifier and match CSVs, and figure capture/plot changes are out of scope.",
+        "Metadata spot-checks (inchikey/inchi/smiles lists, precursor_mz mass inspection such as np.where(masses > 600)): diagnostics supporting the pipelines and the choice of inspected spectra, not independent endpoints."
+      ],
+      "explanation": "The notebook's terminal products are: (1) the processed spectra library produced by the metadata/peak filtering pipelines (the 'Export processed data' end product), (2) the all-pairs Modified Cosine similarity matrix (the final similarity analysis, whose heatmap and per-spectrum queries are interpreted in the narrative), and (3) the top modified-cosine matches with min_match>=5 for the inspected query spectrum (the final state of `best_matches`/`sorted_matches` covers spectrums[97]). The appended code re-serializes these existing values (spectrums, scores_array, best_matches) plus identifier context (compound name, inchikey, smiles from the same spectrum objects) into /work/outputs. No analysis is recomputed or altered; CosineGreedy results and earlier best-match lists are excluded because the script overwrites the variables holding them.",
+      "export_code": "import csv as _exp_csv\nfrom matchms.exporting import save_as_json as _exp_save_as_json\n\n_exp_out_dir = \"/work/outputs\"\nos.makedirs(_exp_out_dir, exist_ok=True)\n\n# 1) Processed spectra library (end product of the metadata + peak pipelines)\n_exp_processed_json = os.path.join(_exp_out_dir, \"processed_spectra.json\")\n_exp_save_as_json(spectrums, _exp_processed_json)\n\n# 2) All-pairs Modified Cosine similarity: scores and matched peak counts\n_exp_scores_npz = os.path.join(_exp_out_dir, \"modified_cosine_scores.npz\")\nnp.savez(\n    _exp_scores_npz,\n    modified_cosine_score=scores_array[\"ModifiedCosine_score\"],\n    modified_cosine_matches=scores_array[\"ModifiedCosine_matches\"],\n)\n\n# 3) Spectrum identifiers (context for the similarity matrix and match lists)\n_exp_ids_csv = os.path.join(_exp_out_dir, \"spectrum_identifiers.csv\")\nwith open(_exp_ids_csv, \"w\", newline=\"\", encoding=\"utf-8\") as _exp_f:\n    _exp_w = _exp_csv.writer(_exp_f)\n    _exp_w.writerow([\"spectrum_index\", \"compound_name\", \"inchikey\", \"smiles\"])\n    for _exp_i, _exp_s in enumerate(spectrums):\n        _exp_w.writerow([\n            _exp_i,\n            _exp_s.get(\"compound_name\") or \"\",\n            _exp_s.get(\"inchikey\") or \"\",\n            _exp_s.get(\"smiles\") or \"\",\n        ])\n\n# 4) Top Modified Cosine matches (min_match >= 5) for the queried spectrum\n#    (query = spectrums[97] in the original script)\n_exp_matches_csv = os.path.join(_exp_out_dir, \"best_matches_spectrum_97.csv\")\nwith open(_exp_matches_csv, \"w\", newline=\"\", encoding=\"utf-8\") as _exp_f:\n    _exp_w = _exp_csv.writer(_exp_f)\n    _exp_w.writerow([\n        \"query_index\", \"query_smiles\", \"rank\",\n        \"matched_smiles\", \"matched_inchikey\",\n        \"modified_cosine_score\", \"modified_cosine_matches\",\n    ])\n    for _exp_r, _exp_entry in enumerate(best_matches, start=1):\n        _exp_ref = _exp_entry[0]\n        _exp_score_entry = _exp_entry[1]\n        _exp_w.writerow([\n            97,\n            spectrums[97].get(\"smiles\") or \"\",\n            _exp_r,\n            _exp_ref.get(\"smiles\") or \"\",\n            _exp_ref.get(\"inchikey\") or \"\",\n            float(_exp_score_entry[\"ModifiedCosine_score\"]),\n            int(_exp_score_entry[\"ModifiedCosine_matches\"]),\n        ])",
+      "unresolved_assumptions": [
+        "Whether the processed spectra carry a 'compound_name' metadata entry after default_filters (matchms typically adds it from 'name'/'title'); absent values are written as empty strings.",
+        "Whether the installed matchms version exposes scores_by_query entries as (spectrum, record) pairs supporting string-key access, as the baseline script itself assumes; the export reuses exactly those access patterns.",
+        "Size and write time of the processed-spectra JSON (~tens of MB for the ~39 MB source library) relative to the 600 s / 10 GiB limits is untested.",
+        "Staging of the GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf input at the path derived from `path_data` is owned by the execution stage."
+      ]
+    },
+    "outcome.json": {
+      "dependency_asset_review": "The controller's candidate scan (catalog sha256 3420bff4...) enumerated 10,758 installed regular files across 39 distributions, with 3,662 name-format candidates and an empty priority_matches list. I inspected the catalog per distribution. The matchms distribution ships only 4 data files (matchms/data/export_key_conversions.csv, known_adduct_conversions.csv, known_adducts_table.csv, known_key_conversions.csv) \u2014 internal metadata-key/adduct lookup tables used by default_filters; they are runtime inputs of the analysis, not answer assets, and were left installed. No distribution bundles the GNPS-NIH library (the ~39 MB MGF input), any processed-spectra library, modified-cosine score matrices, or per-spectrum match tables matching the exported artifacts; the exported answers derive from 1,267 spectra whose byte-level results are not present in any wheel. The remaining candidates are generic test/example files of numpy/scipy/pandas/scikit-learn/networkx/numba/matplotlib/pytz/joblib/llvmlite/rdkit (name-based hits such as *test*.py or example data unrelated to mass-spectra cosine matching). This is a targeted catalog-based review plus the matchms data-directory inspection, not an exhaustive semantic audit of every file; residual uncertainty is low because the scientific outputs are functions of the 39 MB staged MGF input, which was verified by sha256 to be byte-identical to the notebook's committed data. dependency-exclusions.json declares {\"files\": []} (no removals) and no unused answer asset was established.",
+      "disposition": "tested",
+      "explanation": "Environment set up and the full offline reference executed successfully (exit 0, 94 s, peak RSS ~0.98 GiB, well within the 600 s / 8 GiB limits). Evidence: staged input verified byte-identical (38,997,460 bytes, sha256 9276602a818f91334e56f5bc7719c6924736a029d5e1a22026f52b18255d9f85, 1,267 spectra \u2014 the script's own print confirms \"1267 spectrums found and imported\"); both 1,267x1,267 similarity computations (CosineGreedy and ModifiedCosine) completed (progress bars reached 1267/1267); all four declared artifacts were produced with recorded hashes (processed_spectra.json 5,972,141 B; modified_cosine_scores.npz 25,685,198 B; spectrum_identifiers.csv 188,635 B; best_matches_spectrum_97.csv 2,374 B). Version selection: the base image is Python 3.13.13, which the source-era matchms releases do not support, and current matchms 0.33.x removed the ModifiedCosine import the source requires. matchms 0.30.2 (>=3.10,<3.14, retains ModifiedCosine and all 16 required filter/similarity/export imports, and its Scores.scores_by_query fixed the numpy-2 scalar-conversion bug present in 0.21.1) was verified via wheel-source inspection and a subset smoke test in the setup shell before dispatch. rdkit's Debian runtime libraries (libxrender1, libxext6, libexpat1) are declared in system-packages.json, and the controller reported all three already present in the fresh environment. matplotlib selects the Agg backend headless with no DISPLAY, so all plot calls, pickle export and RDKit MolToFile depictions ran unchanged. The data-source fetch needed one workaround recorded below; the authoritative GNPS endpoint gnps-external.ucsd.edu was network-unreachable from this sandbox (verified timeouts), so the byte-identical copy committed in the matchms-docs repository at the notebook's pinned revision 796f156... is used and pinned by size and sha256 in stage-inputs.sh (which re-downloads and verifies it from recorded sources on each replay). dependency-exclusions.json declares no removals; the dependency-asset review found no bundled answer assets.",
+      "source_adaptations": [
+        "analysis.py line 36: `path_data = os.path.join(os.path.dirname(os.getcwd()), \"data\")` changed to `path_data = \"/inputs\"` \u2014 a purely path-level adaptation so the unchanged script reads the staged input and writes its own json/pickle exports from the persistent /inputs directory (which survives the controller's /work/run recreation) instead of a sibling-of-cwd \"data\" directory that does not exist in the reference layout. This is the only source diff (verified single changed line). No algorithms, parameters, filters, spectra selection, or branches were modified.",
+        "stage-inputs.sh stages the GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf input to /inputs by downloading the byte-identical copy committed in the matchms-docs repository at the notebook's pinned revision (raw.githubusercontent.com/matchms/matchms-docs/796f156c58d25adfb7e1528fcb24eb8c40c143a5/data/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf) instead of the primary GNPS endpoint https://gnps-external.ucsd.edu/gnpslibrary/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf, which was network-unreachable during preparation. The staged file is verified against the expected size 38,997,460 and sha256 9276602a818f91334e56f5bc7719c6924736a029d5e1a22026f52b18255d9f85; bytes read by the analysis are identical to the original notebook data."
+      ],
+      "unresolved_assumptions": [
+        "Byte-identity of the matchms-docs-committed MGF with the file the notebook originally downloaded from GNPS: the source's own narrative names the GNPS download and the matchms-docs repo (same project and pinned revision as the notebook) ships the file at the exact path/filename the notebook expects; the primary GNPS endpoint was unreachable, so direct original-vs-copy comparison could not be performed. The staged file (1,267 spectra, ~39 MB) matches the notebook's expected library scale.",
+        "matchms version equivalence: the notebook prescribes a conda install with no pinned version; the environment requires Python 3.13, where only 0.30.2 among releases satisfying the source's imports (including from matchms.similarity import ModifiedCosine) is installable. The executed pipeline produced the same API outputs the source's statements describe (scores_array fields ModifiedCosine_score/ModifiedCosine_matches, (spectrum, record) tuples from scores_by_query), but exact numerical identity with an older matchms build was not established.",
+        "compound_name metadata: confirmed non-empty after default_filters in the executed run (spectrum_identifiers.csv is 188,635 bytes, not empty strings), resolving the preparation assumption; scores_by_query (spectrum, record) access pattern also confirmed in the executed run."
+      ]
+    },
+    "output-audit.json": {
+      "outputs": [
+        {
+          "bytes": 5972141,
+          "download_hash_verified": true,
+          "file": "processed_spectra.json",
+          "sha256": "72a436272130d0c9a1460cc72530dbd8ad819c34529600bcd195e11790801ec9",
+          "structural_profile": {
+            "format": "unsupported",
+            "limitations": [
+              "No structural reader for this file type."
+            ]
+          }
+        },
+        {
+          "bytes": 25685198,
+          "download_hash_verified": true,
+          "file": "modified_cosine_scores.npz",
+          "sha256": "6b5d3827f0ae3813a820c42f4fa27bd2120ed4d5c4f4aa7a63418da435a7c9be",
+          "structural_profile": {
+            "format": "unsupported",
+            "limitations": [
+              "No structural reader for this file type."
+            ]
+          }
+        },
+        {
+          "bytes": 188635,
+          "download_hash_verified": true,
+          "file": "spectrum_identifiers.csv",
+          "sha256": "bebeda59768ee27f7f6468366e16c3f34e601eacd2ecd60b43a49057c8fd0dcc",
+          "structural_profile": {
+            "columns": [
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1267,
+                "empty": 0,
+                "examples": [
+                  "0",
+                  "1",
+                  "2"
+                ],
+                "finite_numeric": 1267,
+                "maximum": 1266.0,
+                "minimum": 0.0,
+                "name": "spectrum_index",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "4304c0526764645dc3bc7561effaf54adaef3d0b3b84415cf44603d7aabc02f7",
+                "other": 0,
+                "position": 0
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 822,
+                "empty": 441,
+                "examples": [
+                  "(2R)-2-[3-[(10aS)-1,3-dioxo-10,10a-dihydro-5H-imidazo[1,5-b]isoquinolin-2-yl]propanoylamino]-2-phenylacetic acid\"",
+                  "(2S)-3-benzoyl-2,7b-dihydro-1aH-oxireno[2,3-c]quinoline-2-carbonitrile\"",
+                  "5-hydroxy-7-methoxy-2-phenylchromen-4-one"
+                ],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "compound_name",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "e56496968915a21c5aa642f716bc4ad0ffa09d9c892e2150d0a5dc7b1eeb74b3",
+                "other": 826,
+                "position": 1
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1255,
+                "empty": 0,
+                "examples": [
+                  "XTJNPXYDTGJZSA-PKOBYXMFSA-N",
+                  "VOYWJNWCKFCMPN-FHERZECASA-N",
+                  "IRZVHDLBAYNPCT-UHFFFAOYSA-N"
+                ],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "inchikey",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "fb9de60808c97044ed94d0915c60972c0525fbd520077a11fc9fd5565da30c53",
+                "other": 1267,
+                "position": 2
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1255,
+                "empty": 0,
+                "examples": [
+                  "OC(=O)[C@H](NC(=O)CCN1C(=O)[C@@H]2Cc3ccccc3CN2C1=O)c4ccccc4",
+                  "O=C(N1[C@@H](C#N)C2OC2c3ccccc13)c4ccccc4",
+                  "COc1cc(O)c2c(=O)cc(oc2c1)c3ccccc3"
+                ],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "smiles",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "839ab74d5c53b5dfa094684c37aaba48a7bc614d101fc5ea562269fec1e0f064",
+                "other": 1267,
+                "position": 3
+              }
+            ],
+            "distinct_limit_per_column": 100000,
+            "duplicate_header_names": false,
+            "format": "delimited",
+            "limitations": [
+              "Numeric ranges use float conversion, not semantic type inference.",
+              "Distinct values use SHA-256 identities and the declared cap.",
+              "Column fingerprints exclude ragged rows; empty fields are included.",
+              "Examples are limited to three values and 256 characters each."
+            ],
+            "ragged_rows": 0,
+            "row_count": 1267
+          }
+        },
+        {
+          "bytes": 2374,
+          "download_hash_verified": true,
+          "file": "best_matches_spectrum_97.csv",
+          "sha256": "0c70df4df3e519340b49d3ee298ad6fd4ad605a184ab1efc5cacf7f492ea0543",
+          "structural_profile": {
+            "columns": [
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "97"
+                ],
+                "finite_numeric": 10,
+                "maximum": 97.0,
+                "minimum": 97.0,
+                "name": "query_index",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "14f48e0630b673e41a7c77a465c2c1fd768902300d374f10340ad83e6edbddd9",
+                "other": 0,
+                "position": 0
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "CC(=O)O[C@@H]1/C/2=C(\\C)/[C@@H](O)C[C@@](O)([C@@H](OC(=O)c3ccccc3)C4[C@@]5(CO[C@@H]5C[C@@H](O)[C@@]4(C)C1=O)OC(=O)C)C2(C)C"
+                ],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "query_smiles",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "4d46d48f7aa01d6368a475a71de234b841d67493da70d7dd66162f3423c8b6f5",
+                "other": 10,
+                "position": 1
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 10,
+                "empty": 0,
+                "examples": [
+                  "1",
+                  "2",
+                  "3"
+                ],
+                "finite_numeric": 10,
+                "maximum": 10.0,
+                "minimum": 1.0,
+                "name": "rank",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "14fd2feccb2cc07563c5f05c22bd59f0f4c7462e8b7bb4fbec7327eed174a04f",
+                "other": 0,
+                "position": 2
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 10,
+                "empty": 0,
+                "examples": [
+                  "CC(=O)O[C@@H]1/C/2=C(\\C)/[C@@H](O)C[C@@](O)([C@@H](OC(=O)c3ccccc3)C4[C@@]5(CO[C@@H]5C[C@@H](O)[C@@]4(C)C1=O)OC(=O)C)C2(C)C",
+                  "COC(=O)c1ccc2ccccc2n1",
+                  "COc1cc2ccc(=O)oc2cc1O"
+                ],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "matched_smiles",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "82a39209841819e0a6271d4561f365ef09534323a3120723b836abd97724b384",
+                "other": 10,
+                "position": 3
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 10,
+                "empty": 0,
+                "examples": [
+                  "OVMSOCFBDVBLFW-SSXYINQQSA-N",
+                  "CILJSZLWPHTUIP-UHFFFAOYSA-N",
+                  "RODXRVNMMDRFIK-UHFFFAOYSA-N"
+                ],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "matched_inchikey",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "719b8e45b48a9317d7b1af045028ed0c37d362405ee84f73889b4b6aaf5f8918",
+                "other": 10,
+                "position": 4
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 10,
+                "empty": 0,
+                "examples": [
+                  "1.000000000000003",
+                  "0.6523015316427301",
+                  "0.40915412311047844"
+                ],
+                "finite_numeric": 10,
+                "maximum": 1.000000000000003,
+                "minimum": 0.3217394754730571,
+                "name": "modified_cosine_score",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "53b5052f87ce5623d0990da31900d8eab763344a23c6a4d533d557db51bdc04a",
+                "other": 0,
+                "position": 5
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 10,
+                "empty": 0,
+                "examples": [
+                  "733",
+                  "8",
+                  "14"
+                ],
+                "finite_numeric": 10,
+                "maximum": 733.0,
+                "minimum": 5.0,
+                "name": "modified_cosine_matches",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "c1b3ab13d9c2b213a15025fd0786dc0d048da445a5b5df64ee1ae251ab5df662",
+                "other": 0,
+                "position": 6
+              }
+            ],
+            "distinct_limit_per_column": 100000,
+            "duplicate_header_names": false,
+            "format": "delimited",
+            "limitations": [
+              "Numeric ranges use float conversion, not semantic type inference.",
+              "Distinct values use SHA-256 identities and the declared cap.",
+              "Column fingerprints exclude ragged rows; empty fields are included.",
+              "Examples are limited to three values and 256 characters each."
+            ],
+            "ragged_rows": 0,
+            "row_count": 10
+          }
+        }
+      ],
+      "scope": "Structural observations only"
+    },
+    "provenance.json": {
+      "id": "matchms-spectral-matching",
+      "license": "Mixed repository notices: MIT book-producing code; CC BY-NC-SA 4.0 rendered book/artwork. Notebook coverage requires review.",
+      "provenance": {
+        "data_lineage": "GNPS NIH natural-products spectral library; source data file is about 39 MB.",
+        "data_redistribution_review": "Not independently established; no automatic public release. Raw notebook and generated data/task bundles remain private pending source-specific review.",
+        "input_preservation": "Original notebook bytes; no cell edits, input reductions or task design supplied by the operator.",
+        "notebook": {
+          "git_blob_sha1": "89b87a1d0156a63e60d1dbaca1233b9041658add",
+          "license": "Mixed repository notices: MIT book-producing code; CC BY-NC-SA 4.0 rendered book/artwork. Notebook coverage requires review.",
+          "license_url": "https://github.com/matchms/matchms-docs/blob/796f156c58d25adfb7e1528fcb24eb8c40c143a5/LICENSE.txt",
+          "revision": "796f156c58d25adfb7e1528fcb24eb8c40c143a5",
+          "sha256": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d",
+          "url": "https://github.com/matchms/matchms-docs/blob/796f156c58d25adfb7e1528fcb24eb8c40c143a5/notebooks/matchms_tutorial_01_building_analysis_pipeline.ipynb"
+        }
+      },
+      "source_revision": "796f156c58d25adfb7e1528fcb24eb8c40c143a5",
+      "source_sha256": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d",
+      "title": "Spectral processing and cosine/modified-cosine comparisons",
+      "url": "https://github.com/matchms/matchms-docs/blob/796f156c58d25adfb7e1528fcb24eb8c40c143a5/notebooks/matchms_tutorial_01_building_analysis_pipeline.ipynb"
+    },
+    "result.json": {
+      "cleanup_verified": true,
+      "construction_run": false,
+      "effective_frozen_directory": "setup/frozen",
+      "effective_preparation_directory": null,
+      "finished": 1792854608.0233302,
+      "last_passing_test": {
+        "dependency_asset_candidates": 3662,
+        "hashes": {
+          "analysis.py": "a5ce8a9ca34d9a2de1bbfbc574829d610436acedde78d532b11ebcf7914c0bd7",
+          "dependency-exclusions.json": "de0d5c1d1a8e641b7b33343d6e48c1d5752d8f0f4f5a7fe82bb7035908f364ed",
+          "inputs.json": "e5892bdd7f3ad382752df058d0ed50f8f166844a139b2437ca15d89eeb8d710a",
+          "pyproject.toml": "283067ce42a4ebf61af7e8f3dd7ae0a1f8e43a9544cd2d237a0aedeb798aa874",
+          "stage-inputs.sh": "aedca4b31f0e4f5c0f085aed620e1232b49415bcb63f440f36f71d34049ce599",
+          "system-packages.json": "a7d84a0075c77fac34b1543172dffc55487c678a79bf36b0447145733fcd3ac6"
+        },
+        "source_changed": true,
+        "test": 1
+      },
+      "reference_test_requests": 1,
+      "reference_tests": 1,
+      "semantic_fidelity_validated": false,
+      "setup_seconds_remaining": 1204.1172607680783,
+      "solver_run": false,
+      "started": 1792853585.8219216,
+      "status": "reference_executed_requires_review"
+    },
+    "trial/dependency-assets-summary.json": {
+      "candidate_files": 3662,
+      "distribution_coverage": [
+        {
+          "candidate_files": 2,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "certifi",
+          "installed_regular_files_inspected": 14
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "charset-normalizer",
+          "installed_regular_files_inspected": 23
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "cloudpickle",
+          "installed_regular_files_inspected": 9
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "contourpy",
+          "installed_regular_files_inspected": 26
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "cycler",
+          "installed_regular_files_inspected": 9
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "Deprecated",
+          "installed_regular_files_inspected": 13
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "fonttools",
+          "installed_regular_files_inspected": 365
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "idna",
+          "installed_regular_files_inspected": 18
+        },
+        {
+          "candidate_files": 92,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "joblib",
+          "installed_regular_files_inspected": 143
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "kiwisolver",
+          "installed_regular_files_inspected": 12
+        },
+        {
+          "candidate_files": 8,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "llvmlite",
+          "installed_regular_files_inspected": 48
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "lxml",
+          "installed_regular_files_inspected": 174
+        },
+        {
+          "candidate_files": 4,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "matchms",
+          "installed_regular_files_inspected": 138
+        },
+        {
+          "candidate_files": 115,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "matplotlib",
+          "installed_regular_files_inspected": 603
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "narwhals",
+          "installed_regular_files_inspected": 170
+        },
+        {
+          "candidate_files": 308,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "networkx",
+          "installed_regular_files_inspected": 606
+        },
+        {
+          "candidate_files": 413,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "numba",
+          "installed_regular_files_inspected": 823
+        },
+        {
+          "candidate_files": 487,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "numpy",
+          "installed_regular_files_inspected": 878
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "packaging",
+          "installed_regular_files_inspected": 31
+        },
+        {
+          "candidate_files": 1116,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "pandas",
+          "installed_regular_files_inspected": 1515
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "pickydict",
+          "installed_regular_files_inspected": 10
+        },
+        {
+          "candidate_files": 2,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "pillow",
+          "installed_regular_files_inspected": 141
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "PubChemPy",
+          "installed_regular_files_inspected": 8
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "pynndescent",
+          "installed_regular_files_inspected": 17
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "pyparsing",
+          "installed_regular_files_inspected": 25
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "pyteomics",
+          "installed_regular_files_inspected": 46
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "python-dateutil",
+          "installed_regular_files_inspected": 29
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "pytz",
+          "installed_regular_files_inspected": 618
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "PyYAML",
+          "installed_regular_files_inspected": 26
+        },
+        {
+          "candidate_files": 26,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "rdkit",
+          "installed_regular_files_inspected": 979
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "requests",
+          "installed_regular_files_inspected": 28
+        },
+        {
+          "candidate_files": 407,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "scikit-learn",
+          "installed_regular_files_inspected": 1010
+        },
+        {
+          "candidate_files": 682,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "scipy",
+          "installed_regular_files_inspected": 1434
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "six",
+          "installed_regular_files_inspected": 8
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "sparsestack",
+          "installed_regular_files_inspected": 10
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "threadpoolctl",
+          "installed_regular_files_inspected": 7
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "tqdm",
+          "installed_regular_files_inspected": 41
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "tzdata",
+          "installed_regular_files_inspected": 635
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "urllib3",
+          "installed_regular_files_inspected": 44
+        },
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "wrapt",
+          "installed_regular_files_inspected": 24
+        }
+      ],
+      "installed_files_inspected": 10758,
+      "priority_matches": [],
+      "scope": "Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit."
+    },
+    "trial/dependency-exclusions-applied.json": {
+      "excluded_files_absent": true,
+      "files": []
+    },
+    "trial/environment.txt": "certifi==2026.10.23\ncharset-normalizer==3.5.2\ncloudpickle==3.1.2\ncontourpy==1.4.0\ncycler==0.12.1\ndeprecated==3.0.0\nfonttools==4.67.0\nidna==3.20\njoblib==1.6.0\nkiwisolver==1.5.1\nllvmlite==0.44.0\nlxml==5.4.0\nmatchms==0.30.2\nmatplotlib==3.11.2\nnarwhals==2.27.1\nnetworkx==3.7\nnumba==0.61.2\nnumpy==2.2.6\npackaging==26.3\npandas==2.3.3\npickydict==0.5.0\npillow==13.0.0\npubchempy==1.0.5\npynndescent==0.6.0\npyparsing==3.3.3\npyteomics==5.0.1\npython-dateutil==3.0.0\npytz==2026.5\npyyaml==6.0.3\nrdkit==2024.9.6\nrequests==2.34.2\nscikit-learn==1.9.1\nscipy==1.18.1\nsix==1.17.0\nsparsestack==0.7.0\nthreadpoolctl==3.7.0\ntqdm==4.70.1\ntzdata==2026.5\nurllib3==2.8.0\nwrapt==2.5.1\n",
+    "trial/inputs-before.json": {
+      "files": [
+        {
+          "bytes": 38997460,
+          "input_preview": {
+            "byte_prefix_truncated": true,
+            "compression": "none",
+            "displayed_lines_truncated": true,
+            "sample_sha256": "507153c082f6661782f7a5368086f53b6931d5785288af79ace97873848bd51c",
+            "sampled_bytes": 4096,
+            "scope": "Byte prefix only; no inferred header, schema or record count.",
+            "status": "utf8_text_prefix",
+            "text": "BEGIN IONS\nPEPMASS=408.156\nCHARGE=1\nMSLEVEL=2\nSOURCE_INSTRUMENT=LC-ESI-qTof\n"
+          },
+          "local_path": "/inputs/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf",
+          "sha256": "9276602a818f91334e56f5bc7719c6924736a029d5e1a22026f52b18255d9f85",
+          "source": "GNPS NIH natural-products spectral library (MGF), originally from https://gnps-external.ucsd.edu/gnpslibrary/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf; downloaded as the byte-identical copy committed at the source notebook's pinned revision: https://raw.githubusercontent.com/matchms/matchms-docs/796f156c58d25adfb7e1528fcb24eb8c40c143a5/data/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf (sha256 9276602a818f91334e56f5bc7719c6924736a029d5e1a22026f52b18255d9f85, 38997460 bytes, 1267 spectra)"
+        }
+      ]
+    },
+    "trial/reference.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3 (ipykernel)\n#     language: python\n#     name: python3\n# ---\n\n# (part1)=\n# # part I - basics of matchms\n#\n# ## Requirements\n# For this notebook to work, `matchms` needs to be installed.\n# This can be done by running:\n#\n# ```\n# conda create --name matchms python=3.8\n# conda activate matchms\n# conda install --channel nlesc --channel bioconda --channel conda-forge matchms\n# ```\n\n# ## Import MS/MS data\n# - matchms has several importing options, e.g.: `load_from_json`, `load_from_mzml`, `load_from_mzxml` etc. Here we are going to use `load_from_mgf`\n# - Import spectrum from mgf file downloaded from GNPS (https://gnps-external.ucsd.edu/gnpslibrary, here using `GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf`)\n\nimport os\nimport numpy as np\nfrom matchms.importing import load_from_mgf\n\npath_data = \"/inputs\" #\"...\" enter your pathname to the downloaded file\nfile_mgf = os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf\")\nspectrums = list(load_from_mgf(file_mgf))\n\nprint(f\"{len(spectrums)} spectrums found and imported\")\n\n# ## Inspect spectra\n# - Inspect the metadata: inchikey, inchi, smiles\n# - Inspect the number of peaks per spectrum\n\ninchikeys = [s.get(\"inchikey\") for s in spectrums]\nfound_inchikeys = np.sum([1 for x in inchikeys if x is not None])\nprint(f\"Found {int(found_inchikeys)} inchikeys in metadata\")\n\ninchi = [s.get(\"inchi\") for s in spectrums]\ninchi[:10]\n\nsmiles = [s.get(\"smiles\") for s in spectrums]\nsmiles[:10]\n\nnumbers_of_peaks = [len(s.peaks.mz) for s in spectrums]\n\nfrom matplotlib import pyplot as plt\nplt.figure(figsize=(5,4), dpi=150)\nplt.hist(numbers_of_peaks, 20, edgecolor=\"white\")\nplt.title(\"Peaks per spectrum (before filtering)\")\nplt.xlabel(\"Number of peaks in spectrum\")\nplt.ylabel(\"Number of spectra\")\n#plt.savefig(\"hist01.png\")\n\n# ## Build a data processing pipeline\n# Depending on the data that you import, in most cases you might want to further process the spectra. matchms offers numerous 'filters' to process Spectrum objects. They are designed in a way that allows to simply stack them to any processing pipeline you want. In general, `matchms.filtering` contains filters that either will\n#\n# - harmonize, clean, extend, and/or check the spectrum metadata\n# - process or filter spectrum peaks (e.g. remove low intensity peaks, or normalize peak intensities)\n\nfrom matchms.filtering import default_filters\nfrom matchms.filtering import repair_inchi_inchikey_smiles\nfrom matchms.filtering import derive_inchikey_from_inchi\nfrom matchms.filtering import derive_smiles_from_inchi\nfrom matchms.filtering import derive_inchi_from_smiles\nfrom matchms.filtering import harmonize_undefined_inchi\nfrom matchms.filtering import harmonize_undefined_inchikey\nfrom matchms.filtering import harmonize_undefined_smiles\nfrom matchms.filtering import add_precursor_mz\n\ndef metadata_processing(spectrum):\n    spectrum = default_filters(spectrum)\n    spectrum = repair_inchi_inchikey_smiles(spectrum)\n    spectrum = derive_inchi_from_smiles(spectrum)\n    spectrum = derive_smiles_from_inchi(spectrum)\n    spectrum = derive_inchikey_from_inchi(spectrum)\n    spectrum = harmonize_undefined_smiles(spectrum)\n    spectrum = harmonize_undefined_inchi(spectrum)\n    spectrum = harmonize_undefined_inchikey(spectrum)\n    spectrum = add_precursor_mz(spectrum)\n    return spectrum\n\n\n# Here we defined a sequence of filters to be applied to a spectrum, which will apply default filters (a bunch of standard operations to make metadata entries more consistent). Then we run a number of filters that look for inchi, inchikey, and smiles that ended up in wrong fields (`repair_inchi_inchikey_smiles`), and ultimately translate inchi, inchikey, and smiles into another wherever possible.\n#\n#\n# To process the peaks we define another pipeline:\n\n# ### Peak processing pipeline\n\nfrom matchms.filtering import normalize_intensities\nfrom matchms.filtering import select_by_intensity\nfrom matchms.filtering import select_by_mz\n\ndef peak_processing(spectrum):\n    spectrum = normalize_intensities(spectrum)\n    spectrum = select_by_intensity(spectrum, intensity_from=0.01)\n    spectrum = select_by_mz(spectrum, mz_from=10, mz_to=1000)\n    return spectrum\n\n\n# Here we defined a sequence of filters which will normalize the intensities to values between 0 and 1, and finally only keep peaks if they have a normalized intensity > 0.01 and if they have a m/z position between 10 and 1000 Da.\n#\n#\n# Once defined in this way, we can easily apply this processing sequence to all imported spectrums by doing:\n\nspectrums = [metadata_processing(s) for s in spectrums]\nspectrums = [peak_processing(s) for s in spectrums]\n\ninchikeys = [s.get(\"inchikey\") for s in spectrums]\ninchikeys[:10]\n\nnumbers_of_peaks = [len(s.peaks.mz) for s in spectrums]\n\nfrom matplotlib import pyplot as plt\nplt.figure(figsize=(5,4), dpi=150)\nplt.hist(numbers_of_peaks, 20, edgecolor=\"white\")\nplt.title(\"Peaks per spectrum (after filtering)\")\nplt.xlabel(\"Number of peaks in spectrum\")\nplt.ylabel(\"Number of spectra\")\n#plt.savefig(\"hist02.png\")\n\n# - the filtering did drastically reduce the (initially very high) number of peaks per spectrum\n# - this is mostly due to the removal of peaks < 0.01 of the max intensity\n\n# ## Export processed data\n# There are multiple options to export your data after processing. Using `save_as_json` or `save_as_mgf` the data can be written back to a `.json` or `.mgf` file.\n\nfrom matchms.exporting import save_as_json\n\nfile_export_json = os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.json\")\nsave_as_json(spectrums, file_export_json)\n\n# A alternative that is much faster for reading/writing is to use 'pickle'. Should data handling become an issue (e.g. many thousands spectrums), than this can be a way out.\n\nimport pickle\n\nfile_export_pickle = os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.pickle\")\npickle.dump(spectrums, \n            open(file_export_pickle, \"wb\"))\n\n# ## Compute spectra similarities\u00a0: Cosine\u00a0score\n# In the following part the Cosine similarity scores between all possible spectra pairs will be calculated.\n\nfrom matchms import calculate_scores\nfrom matchms.similarity import CosineGreedy\n\nsimilarity_measure = CosineGreedy(tolerance=0.005)\nscores = calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)\n\nscores.scores.shape\n\nscores_array = scores.scores.to_array()\nscores_array[:5, :5][\"CosineGreedy_score\"]\n\nscores_array = scores.scores.to_array()\nscores_array[:5, :5][\"CosineGreedy_matches\"]\n\n# ## Get highest scoring results for a spectrum of interest\n\nbest_matches = scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)[:10]\nprint([x[1] for x in best_matches])\n\n[x[0].get(\"smiles\") for x in best_matches]\n\nfrom rdkit import Chem\nfrom rdkit.Chem import Draw\n\nfor i, smiles in enumerate([x[0].get(\"smiles\") for x in best_matches]):\n    m = Chem.MolFromSmiles(smiles)\n    Draw.MolToFile(m, f\"compound_{i}.png\")\n\n# ## Alternative: Get highest scoring results above min_match criteria\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"CosineGreedy_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\n# ## Computing spectra similarities between all spectra - Modified Cosine score\n# In the following part the **Modified Cosine similarity** scores (Watrous et al., 2012) between all possible spectra pairs will be calculated.\n#\n# The modified cosine score aims at quantifying the similarity between two\n# mass spectra. The score is calculated by finding best possible matches between\n# peaks of two spectra. Two peaks are considered a potential match if their\n# m/z ratios lie within the given 'tolerance', or if their m/z ratios\n# lie within the tolerance once a mass-shift is applied. The mass shift is\n# simply the difference in precursor-m/z between the two spectra.\n# See Watrous et al. [PNAS, 2012, https://www.pnas.org/content/109/26/E1743]\n# for further details.\n\nfrom matchms.similarity import ModifiedCosine\n\nsimilarity_measure = ModifiedCosine(tolerance=0.005)\nscores = calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[5], name=\"ModifiedCosine_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"ModifiedCosine_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\nscores_array = scores.scores.to_array()\n\nplt.figure(figsize=(6,6), dpi=150)\nplt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"], cmap=\"viridis\")\nplt.colorbar(shrink=0.7)\nplt.title(\"Modified Cosine spectra similarities\")\nplt.xlabel(\"Spectrum #ID\")\nplt.ylabel(\"Spectrum #ID\")\n#plt.savefig(\"modified_cosine_scores.png\")\n\nmin_match = 5\n\nplt.figure(figsize=(6,6), dpi=150)\nplt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"] * (scores_array[:50, :50][\"ModifiedCosine_matches\"] >= min_match), cmap=\"viridis\")\nplt.colorbar(shrink=0.7)\nplt.title(\"Modified Cosine spectra similarities (min_match=5)\")\nplt.xlabel(\"Spectrum #ID\")\nplt.ylabel(\"Spectrum #ID\")\n#plt.savefig(\"modified_cosine_scores_min_match5.png\")\n\n# This suggests that -for instance- `spectrums[11]` seems to have several related other ones among the first 50 spectrums. Let's have a closer look at it.\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[11], name=\"ModifiedCosine_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"ModifiedCosine_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\n[x[0].get(\"smiles\") for x in best_matches]\n\n# ### Plot the compounds with the highest modified Cosine score\n\nfrom rdkit import Chem\nfrom rdkit.Chem import Draw\n\nfor i, smiles in enumerate([x[0].get(\"smiles\") for x in best_matches]):\n    m = Chem.MolFromSmiles(smiles)\n    Draw.MolToFile(m, f\"compound_{i}.png\")\n\n# ## Inspect a case that doesn't work that well...\n\nmasses = [s.get(\"precursor_mz\") for s in spectrums]\n\nnp.where(np.array(masses) > 600)\n\nmin_match = 5\nsorted_matches = scores.scores_by_query(spectrums[97], name=\"ModifiedCosine_score\", sort=True)\nbest_matches = [x for x in sorted_matches if x[1][\"ModifiedCosine_matches\"] >= min_match][:10]\n[x[1] for x in best_matches]\n\nfrom rdkit import Chem\nfrom rdkit.Chem import Draw\n\nfor i, smiles in enumerate([x[0].get(\"smiles\") for x in best_matches]):\n    m = Chem.MolFromSmiles(smiles)\n    Draw.MolToFile(m, f\"compound_{i}.png\")\n\n\nimport csv as _exp_csv\nfrom matchms.exporting import save_as_json as _exp_save_as_json\n\n_exp_out_dir = \"/work/outputs\"\nos.makedirs(_exp_out_dir, exist_ok=True)\n\n# 1) Processed spectra library (end product of the metadata + peak pipelines)\n_exp_processed_json = os.path.join(_exp_out_dir, \"processed_spectra.json\")\n_exp_save_as_json(spectrums, _exp_processed_json)\n\n# 2) All-pairs Modified Cosine similarity: scores and matched peak counts\n_exp_scores_npz = os.path.join(_exp_out_dir, \"modified_cosine_scores.npz\")\nnp.savez(\n    _exp_scores_npz,\n    modified_cosine_score=scores_array[\"ModifiedCosine_score\"],\n    modified_cosine_matches=scores_array[\"ModifiedCosine_matches\"],\n)\n\n# 3) Spectrum identifiers (context for the similarity matrix and match lists)\n_exp_ids_csv = os.path.join(_exp_out_dir, \"spectrum_identifiers.csv\")\nwith open(_exp_ids_csv, \"w\", newline=\"\", encoding=\"utf-8\") as _exp_f:\n    _exp_w = _exp_csv.writer(_exp_f)\n    _exp_w.writerow([\"spectrum_index\", \"compound_name\", \"inchikey\", \"smiles\"])\n    for _exp_i, _exp_s in enumerate(spectrums):\n        _exp_w.writerow([\n            _exp_i,\n            _exp_s.get(\"compound_name\") or \"\",\n            _exp_s.get(\"inchikey\") or \"\",\n            _exp_s.get(\"smiles\") or \"\",\n        ])\n\n# 4) Top Modified Cosine matches (min_match >= 5) for the queried spectrum\n#    (query = spectrums[97] in the original script)\n_exp_matches_csv = os.path.join(_exp_out_dir, \"best_matches_spectrum_97.csv\")\nwith open(_exp_matches_csv, \"w\", newline=\"\", encoding=\"utf-8\") as _exp_f:\n    _exp_w = _exp_csv.writer(_exp_f)\n    _exp_w.writerow([\n        \"query_index\", \"query_smiles\", \"rank\",\n        \"matched_smiles\", \"matched_inchikey\",\n        \"modified_cosine_score\", \"modified_cosine_matches\",\n    ])\n    for _exp_r, _exp_entry in enumerate(best_matches, start=1):\n        _exp_ref = _exp_entry[0]\n        _exp_score_entry = _exp_entry[1]\n        _exp_w.writerow([\n            97,\n            spectrums[97].get(\"smiles\") or \"\",\n            _exp_r,\n            _exp_ref.get(\"smiles\") or \"\",\n            _exp_ref.get(\"inchikey\") or \"\",\n            float(_exp_score_entry[\"ModifiedCosine_score\"]),\n            int(_exp_score_entry[\"ModifiedCosine_matches\"]),\n        ])",
+    "trial/result.json": {
+      "artifacts": {
+        "artifacts": [
+          {
+            "bytes": 5972141,
+            "exists": true,
+            "path": "processed_spectra.json",
+            "sha256": "72a436272130d0c9a1460cc72530dbd8ad819c34529600bcd195e11790801ec9"
+          },
+          {
+            "bytes": 25685198,
+            "exists": true,
+            "path": "modified_cosine_scores.npz",
+            "sha256": "6b5d3827f0ae3813a820c42f4fa27bd2120ed4d5c4f4aa7a63418da435a7c9be"
+          },
+          {
+            "bytes": 188635,
+            "exists": true,
+            "path": "spectrum_identifiers.csv",
+            "sha256": "bebeda59768ee27f7f6468366e16c3f34e601eacd2ecd60b43a49057c8fd0dcc"
+          },
+          {
+            "bytes": 2374,
+            "exists": true,
+            "path": "best_matches_spectrum_97.csv",
+            "sha256": "0c70df4df3e519340b49d3ee298ad6fd4ad605a184ab1efc5cacf7f492ea0543"
+          }
+        ],
+        "declared_artifacts_present": true,
+        "semantic_fidelity_validated": false
+      },
+      "candidate_sha256": {
+        "analysis.py": "a5ce8a9ca34d9a2de1bbfbc574829d610436acedde78d532b11ebcf7914c0bd7",
+        "dependency-exclusions.json": "de0d5c1d1a8e641b7b33343d6e48c1d5752d8f0f4f5a7fe82bb7035908f364ed",
+        "inputs.json": "e5892bdd7f3ad382752df058d0ed50f8f166844a139b2437ca15d89eeb8d710a",
+        "pyproject.toml": "283067ce42a4ebf61af7e8f3dd7ae0a1f8e43a9544cd2d237a0aedeb798aa874",
+        "stage-inputs.sh": "aedca4b31f0e4f5c0f085aed620e1232b49415bcb63f440f36f71d34049ce599",
+        "system-packages.json": "a7d84a0075c77fac34b1543172dffc55487c678a79bf36b0447145733fcd3ac6"
+      },
+      "dependency_assets": {
+        "candidate_files": 3662,
+        "catalog_sha256": "3420bff4ba313772775355e11bfd1cfcb55151c9f73f978be87b3b7cb4ac5ee2",
+        "distribution_coverage": [
+          {
+            "candidate_files": 2,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "certifi",
+            "installed_regular_files_inspected": 14
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "charset-normalizer",
+            "installed_regular_files_inspected": 23
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "cloudpickle",
+            "installed_regular_files_inspected": 9
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "contourpy",
+            "installed_regular_files_inspected": 26
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "cycler",
+            "installed_regular_files_inspected": 9
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "Deprecated",
+            "installed_regular_files_inspected": 13
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "fonttools",
+            "installed_regular_files_inspected": 365
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "idna",
+            "installed_regular_files_inspected": 18
+          },
+          {
+            "candidate_files": 92,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "joblib",
+            "installed_regular_files_inspected": 143
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "kiwisolver",
+            "installed_regular_files_inspected": 12
+          },
+          {
+            "candidate_files": 8,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "llvmlite",
+            "installed_regular_files_inspected": 48
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "lxml",
+            "installed_regular_files_inspected": 174
+          },
+          {
+            "candidate_files": 4,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "matchms",
+            "installed_regular_files_inspected": 138
+          },
+          {
+            "candidate_files": 115,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "matplotlib",
+            "installed_regular_files_inspected": 603
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "narwhals",
+            "installed_regular_files_inspected": 170
+          },
+          {
+            "candidate_files": 308,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "networkx",
+            "installed_regular_files_inspected": 606
+          },
+          {
+            "candidate_files": 413,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "numba",
+            "installed_regular_files_inspected": 823
+          },
+          {
+            "candidate_files": 487,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "numpy",
+            "installed_regular_files_inspected": 878
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "packaging",
+            "installed_regular_files_inspected": 31
+          },
+          {
+            "candidate_files": 1116,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "pandas",
+            "installed_regular_files_inspected": 1515
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "pickydict",
+            "installed_regular_files_inspected": 10
+          },
+          {
+            "candidate_files": 2,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "pillow",
+            "installed_regular_files_inspected": 141
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "PubChemPy",
+            "installed_regular_files_inspected": 8
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "pynndescent",
+            "installed_regular_files_inspected": 17
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "pyparsing",
+            "installed_regular_files_inspected": 25
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "pyteomics",
+            "installed_regular_files_inspected": 46
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "python-dateutil",
+            "installed_regular_files_inspected": 29
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "pytz",
+            "installed_regular_files_inspected": 618
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "PyYAML",
+            "installed_regular_files_inspected": 26
+          },
+          {
+            "candidate_files": 26,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "rdkit",
+            "installed_regular_files_inspected": 979
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "requests",
+            "installed_regular_files_inspected": 28
+          },
+          {
+            "candidate_files": 407,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "scikit-learn",
+            "installed_regular_files_inspected": 1010
+          },
+          {
+            "candidate_files": 682,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "scipy",
+            "installed_regular_files_inspected": 1434
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "six",
+            "installed_regular_files_inspected": 8
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "sparsestack",
+            "installed_regular_files_inspected": 10
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "threadpoolctl",
+            "installed_regular_files_inspected": 7
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "tqdm",
+            "installed_regular_files_inspected": 41
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "tzdata",
+            "installed_regular_files_inspected": 635
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "urllib3",
+            "installed_regular_files_inspected": 44
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "wrapt",
+            "installed_regular_files_inspected": 24
+          }
+        ],
+        "full_catalog": "/work/dependency-assets.json",
+        "installed_files_inspected": 10758,
+        "priority_matches": [],
+        "scope": "Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit."
+      },
+      "execution": {
+        "argv": [
+          "env",
+          "MPLBACKEND=Agg",
+          "/work/venv/bin/python",
+          "/work/reference.py"
+        ],
+        "directory": "/work/run",
+        "elapsed_seconds": 94.1932303905487,
+        "exit_code": 0,
+        "finished": 1792854509.1914644,
+        "label": "command-4828c326a902449393d947d1c60264e5",
+        "log": "1267 spectrums found and imported\nFound 0 inchikeys in metadata\n\nCalculating similarities:   0%|          | 0/1267 [00:00<?, ?it/s]\nCalculating similarities:   0%|          | 1/1267 [00:01<27:19,  1.29s/it]\nCalculating similarities:   0%|          | 4/1267 [00:01<05:50,  3.60it/s]\nCalculating similarities:   1%|          | 7/1267 [00:01<03:08,  6.69it/s]\nCalculating similarities:   1%|          | 10/1267 [00:01<02:46,  7.56it/s]\nCalculating similarities:   1%|          | 13/1267 [00:02<02:07,  9.87it/s]\nCalculating similarities:   1%|\u258f         | 17/1267 [00:02<01:31, 13.71it/s]\nCalculating similarities:   2%|\u258f         | 20/1267 [00:02<01:16, 16.31it/s]\nCalculating similarities:   2%|\u258f         | 23/1267 [00:02<01:11, 17.51it/s]\nCalculating similarities:   2%|\u258f         | 26/1267 [00:02<01:02, 19.72it/s]\nCalculating similarities:   2%|\u258f         | 29/1267 [00:02<01:01, 20.18it/s]\nCalculating similarities:   3%|\u258e         | 32/1267 [00:02<00:58, 21.08it/s]\nCalculating similarities:   3%|\u258e         | 35/1267 [00:02<00:58, 21.00it/s]\nCalculating similarities:   3%|\u258e         | 38/1267 [00:03<00:58, 21.16it/s]\nCalculating similarities:   3%|\u258e         | 41/1267 [00:03<00:54, 22.33it/s]\nCalculating similarities:   3%|\u258e         | 44/1267 [00:03<00:51, 23.73it/s]\nCalculating similarities:   4%|\u258d         | 48/1267 [00:03<00:48, 25.00it/s]\nCalculating similarities:   4%|\u258d         | 51/1267 [00:03<00:49, 24.65it/s]\nCalculating similarities:   4%|\u258d         | 54/1267 [00:03<00:47, 25.57it/s]\nCalculating similarities:   4%|\u258d         | 57/1267 [00:03<00:46, 26.18it/s]\nCalculating similarities:   5%|\u258d         | 60/1267 [00:03<00:47, 25.38it/s]\nCalculating similarities:   5%|\u258c         | 64/1267 [00:04<00:43, 27.37it/s]\nCalculating similarities:   5%|\u258c         | 67/1267 [00:04<00:42, 27.93it/s]\nCalculating similarities:   6%|\u258c         | 70/1267 [00:04<00:44, 26.73it/s]\nCalculating similarities:   6%|\u258c         | 73/1267 [00:04<00:44, 27.10it/s]\nCalculating similarities:   6%|\u258c         | 77/1267 [00:04<00:40, 29.28it/s]\nCalculating similarities:   6%|\u258b         | 80/1267 [00:04<00:49, 23.74it/s]\nCalculating similarities:   7%|\u258b         | 83/1267 [00:04<00:49, 23.88it/s]\nCalculating similarities:   7%|\u258b         | 86/1267 [00:04<00:49, 23.95it/s]\nCalculating similarities:   7%|\u258b         | 89/1267 [00:05<00:46, 25.10it/s]\nCalculating similarities:   7%|\u258b         | 92/1267 [00:05<00:53, 21.93it/s]\nCalculating similarities:   7%|\u258b         | 95/1267 [00:05<00:59, 19.60it/s]\nCalculating similarities:   8%|\u258a         | 98/1267 [00:05<01:10, 16.68it/s]\nCalculating similarities:   8%|\u258a         | 100/1267 [00:05<01:14, 15.76it/s]\nCalculating similarities:   8%|\u258a         | 102/1267 [00:05<01:10, 16.55it/s]\nCalculating similarities:   8%|\u258a         | 105/1267 [00:06<01:02, 18.45it/s]\nCalculating similarities:   9%|\u258a         | 108/1267 [00:06<00:56, 20.35it/s]\nCalculating similarities:   9%|\u2589         | 111/1267 [00:06<00:56, 20.57it/s]\nCalculating similarities:   9%|\u2589         | 114/1267 [00:06<00:53, 21.35it/s]\nCalculating similarities:   9%|\u2589         | 117/1267 [00:06<00:56, 20.47it/s]\nCalculating similarities:   9%|\u2589         | 120/1267 [00:06<00:56, 20.23it/s]\nCalculating similarities:  10%|\u2589         | 124/1267 [00:06<00:48, 23.70it/s]\nCalculating similarities:  10%|\u2588         | 128/1267 [00:06<00:45, 24.79it/s]\nCalculating similarities:  10%|\u2588         | 131/1267 [00:07<00:45, 25.13it/s]\nCalculating similarities:  11%|\u2588         | 134/1267 [00:07<00:44, 25.62it/s]\nCalculating similarities:  11%|\u2588         | 137/1267 [00:07<00:44, 25.48it/s]\nCalculating similarities:  11%|\u2588         | 140/1267 [00:07<01:06, 16.92it/s]\nCalculating similarities:  11%|\u2588\u258f        | 143/1267 [00:07<00:58, 19.17it/s]\nCalculating similarities:  12%|\u2588\u258f        | 146/1267 [00:07<00:54, 20.56it/s]\nCalculating similarities:  12%|\u2588\u258f        | 149/1267 [00:07<00:50, 22.19it/s]\nCalculating similarities:  12%|\u2588\u258f        | 152/1267 [00:08<00:49, 22.33it/s]\nCalculating similarities:  12%|\u2588\u258f        | 155/1267 [00:08<00:47, 23.53it/s]\nCalculating similarities:  13%|\u2588\u258e        | 159/1267 [00:08<00:42, 26.07it/s]\nCalculating similarities:  13%|\u2588\u258e        | 162/1267 [00:08<00:41, 26.63it/s]\nCalculating similarities:  13%|\u2588\u258e        | 166/1267 [00:08<00:38, 28.30it/s]\nCalculating similarities:  13%|\u2588\u258e        | 170/1267 [00:08<00:38, 28.44it/s]\nCalculating similarities:  14%|\u2588\u258e        | 173/1267 [00:08<00:38, 28.25it/s]\nCalculating similarities:  14%|\u2588\u258d        | 176/1267 [00:08<00:39, 27.89it/s]\nCalculating similarities:  14%|\u2588\u258d        | 180/1267 [00:09<00:38, 28.14it/s]\nCalculating similarities:  14%|\u2588\u258d        | 183/1267 [00:09<00:38, 28.12it/s]\nCalculating similarities:  15%|\u2588\u258d        | 186/1267 [00:09<00:41, 26.33it/s]\nCalculating similarities:  15%|\u2588\u258d        | 189/1267 [00:09<00:40, 26.65it/s]\nCalculating similarities:  15%|\u2588\u258c        | 192/1267 [00:09<00:40, 26.77it/s]\nCalculating similarities:  15%|\u2588\u258c        | 195/1267 [00:09<00:39, 27.05it/s]\nCalculating similarities:  16%|\u2588\u258c        | 199/1267 [00:09<00:37, 28.42it/s]\nCalculating similarities:  16%|\u2588\u258c        | 202/1267 [00:09<00:37, 28.50it/s]\nCalculating similarities:  16%|\u2588\u258b        | 206/1267 [00:09<00:35, 30.20it/s]\nCalculating similarities:  17%|\u2588\u258b        | 210/1267 [00:10<00:35, 29.97it/s]\nCalculating similarities:  17%|\u2588\u258b        | 214/1267 [00:10<00:34, 30.39it/s]\nCalculating similarities:  17%|\u2588\u258b        | 218/1267 [00:10<00:33, 31.48it/s]\nCalculating similarities:  18%|\u2588\u258a        | 222/1267 [00:10<00:31, 32.71it/s]\nCalculating similarities:  18%|\u2588\u258a        | 226/1267 [00:10<00:33, 30.69it/s]\nCalculating similarities:  18%|\u2588\u258a        | 230/1267 [00:10<00:33, 30.66it/s]\nCalculating similarities:  18%|\u2588\u258a        | 234/1267 [00:10<00:34, 29.90it/s]\nCalculating similarities:  19%|\u2588\u2589        | 238/1267 [00:11<00:33, 30.52it/s]\nCalculating similarities:  19%|\u2588\u2589        | 242/1267 [00:11<00:32, 32.01it/s]\nCalculating similarities:  19%|\u2588\u2589        | 246/1267 [00:11<00:32, 31.72it/s]\nCalculating similarities:  20%|\u2588\u2589        | 250/1267 [00:11<00:32, 31.16it/s]\nCalculating similarities:  20%|\u2588\u2588        | 254/1267 [00:11<00:33, 30.60it/s]\nCalculating similarities:  20%|\u2588\u2588        | 258/1267 [00:11<00:33, 30.32it/s]\nCalculating similarities:  21%|\u2588\u2588        | 262/1267 [00:11<00:31, 31.81it/s]\nCalculating similarities:  21%|\u2588\u2588        | 266/1267 [00:11<00:31, 31.38it/s]\nCalculating similarities:  21%|\u2588\u2588\u258f       | 270/1267 [00:12<00:30, 32.32it/s]\nCalculating similarities:  22%|\u2588\u2588\u258f       | 274/1267 [00:12<00:29, 33.54it/s]\nCalculating similarities:  22%|\u2588\u2588\u258f       | 278/1267 [00:12<00:30, 32.07it/s]\nCalculating similarities:  22%|\u2588\u2588\u258f       | 282/1267 [00:12<00:30, 32.40it/s]\nCalculating similarities:  23%|\u2588\u2588\u258e       | 286/1267 [00:12<00:30, 31.70it/s]\nCalculating similarities:  23%|\u2588\u2588\u258e       | 290/1267 [00:12<00:30, 32.25it/s]\nCalculating similarities:  23%|\u2588\u2588\u258e       | 294/1267 [00:12<00:45, 21.19it/s]\nCalculating similarities:  23%|\u2588\u2588\u258e       | 297/1267 [00:13<00:43, 22.37it/s]\nCalculating similarities:  24%|\u2588\u2588\u258d       | 301/1267 [00:13<00:39, 24.73it/s]\nCalculating similarities:  24%|\u2588\u2588\u258d       | 305/1267 [00:13<00:36, 26.29it/s]\nCalculating similarities:  24%|\u2588\u2588\u258d       | 309/1267 [00:13<00:34, 28.03it/s]\nCalculating similarities:  25%|\u2588\u2588\u258d       | 313/1267 [00:13<00:33, 28.59it/s]\nCalculating similarities:  25%|\u2588\u2588\u258c       | 317/1267 [00:13<00:33, 28.48it/s]\nCalculating similarities:  25%|\u2588\u2588\u258c       | 321/1267 [00:13<00:31, 30.00it/s]\nCalculating similarities:  26%|\u2588\u2588\u258c       | 325/1267 [00:13<00:29, 31.88it/s]\nCalculating similarities:  26%|\u2588\u2588\u258c       | 329/1267 [00:14<00:28, 33.22it/s]\nCalculating similarities:  26%|\u2588\u2588\u258b       | 334/1267 [00:14<00:26, 35.39it/s]\nCalculating similarities:  27%|\u2588\u2588\u258b       | 338/1267 [00:14<00:25, 35.80it/s]\nCalculating similarities:  27%|\u2588\u2588\u258b       | 342/1267 [00:14<00:25, 36.80it/s]\nCalculating similarities:  27%|\u2588\u2588\u258b       | 346/1267 [00:14<00:24, 37.26it/s]\nCalculating similarities:  28%|\u2588\u2588\u258a       | 351/1267 [00:14<00:23, 38.57it/s]\nCalculating similarities:  28%|\u2588\u2588\u258a       | 355/1267 [00:14<00:24, 37.83it/s]\nCalculating similarities:  28%|\u2588\u2588\u258a       | 360/1267 [00:14<00:23, 38.86it/s]\nCalculating similarities:  29%|\u2588\u2588\u258a       | 364/1267 [00:14<00:23, 39.04it/s]\nCalculating similarities:  29%|\u2588\u2588\u2589       | 368/1267 [00:15<00:23, 38.46it/s]\nCalculating similarities:  29%|\u2588\u2588\u2589       | 372/1267 [00:15<00:23, 38.06it/s]\nCalculating similarities:  30%|\u2588\u2588\u2589       | 376/1267 [00:15<00:23, 37.75it/s]\nCalculating similarities:  30%|\u2588\u2588\u2589       | 380/1267 [00:15<00:24, 36.50it/s]\nCalculating similarities:  30%|\u2588\u2588\u2588       | 384/1267 [00:15<00:24, 36.14it/s]\nCalculating similarities:  31%|\u2588\u2588\u2588       | 388/1267 [00:15<00:23, 36.81it/s]\nCalculating similarities:  31%|\u2588\u2588\u2588       | 392/1267 [00:15<00:25, 34.18it/s]\nCalculating similarities:  31%|\u2588\u2588\u2588\u258f      | 396/1267 [00:15<00:25, 34.00it/s]\nCalculating similarities:  32%|\u2588\u2588\u2588\u258f      | 400/1267 [00:16<00:25, 33.76it/s]\nCalculating similarities:  32%|\u2588\u2588\u2588\u258f      | 404/1267 [00:16<00:26, 32.14it/s]\nCalculating similarities:  32%|\u2588\u2588\u2588\u258f      | 408/1267 [00:16<00:26, 32.27it/s]\nCalculating similarities:  33%|\u2588\u2588\u2588\u258e      | 412/1267 [00:16<00:25, 32.98it/s]\nCalculating similarities:  33%|\u2588\u2588\u2588\u258e      | 416/1267 [00:16<00:25, 33.31it/s]\nCalculating similarities:  33%|\u2588\u2588\u2588\u258e      | 420/1267 [00:16<00:25, 33.72it/s]\nCalculating similarities:  33%|\u2588\u2588\u2588\u258e      | 424/1267 [00:16<00:24, 34.90it/s]\nCalculating similarities:  34%|\u2588\u2588\u2588\u258d      | 429/1267 [00:16<00:22, 37.12it/s]\nCalculating similarities:  34%|\u2588\u2588\u2588\u258d      | 433/1267 [00:16<00:22, 36.50it/s]\nCalculating similarities:  35%|\u2588\u2588\u2588\u258d      | 438/1267 [00:17<00:21, 38.94it/s]\nCalculating similarities:  35%|\u2588\u2588\u2588\u258d      | 442/1267 [00:17<00:22, 37.50it/s]\nCalculating similarities:  35%|\u2588\u2588\u2588\u258c      | 446/1267 [00:17<00:23, 35.02it/s]\nCalculating similarities:  36%|\u2588\u2588\u2588\u258c      | 451/1267 [00:17<00:21, 37.35it/s]\nCalculating similarities:  36%|\u2588\u2588\u2588\u258c      | 455/1267 [00:17<00:23, 35.12it/s]\nCalculating similarities:  36%|\u2588\u2588\u2588\u258c      | 459/1267 [00:17<00:22, 35.80it/s]\nCalculating similarities:  37%|\u2588\u2588\u2588\u258b      | 464/1267 [00:17<00:21, 37.64it/s]\nCalculating similarities:  37%|\u2588\u2588\u2588\u258b      | 469/1267 [00:17<00:20, 38.29it/s]\nCalculating similarities:  37%|\u2588\u2588\u2588\u258b      | 474/1267 [00:18<00:20, 39.19it/s]\nCalculating similarities:  38%|\u2588\u2588\u2588\u258a      | 479/1267 [00:18<00:20, 39.05it/s]\nCalculating similarities:  38%|\u2588\u2588\u2588\u258a      | 483/1267 [00:18<00:30, 25.67it/s]\nCalculating similarities:  38%|\u2588\u2588\u2588\u258a      | 487/1267 [00:18<00:27, 28.26it/s]\nCalculating similarities:  39%|\u2588\u2588\u2588\u2589      | 491/1267 [00:18<00:25, 30.21it/s]\nCalculating similarities:  39%|\u2588\u2588\u2588\u2589      | 496/1267 [00:18<00:22, 34.63it/s]\nCalculating similarities:  39%|\u2588\u2588\u2588\u2589      | 500/1267 [00:18<00:22, 34.16it/s]\nCalculating similarities:  40%|\u2588\u2588\u2588\u2589      | 505/1267 [00:19<00:21, 36.21it/s]\nCalculating similarities:  40%|\u2588\u2588\u2588\u2588      | 510/1267 [00:19<00:19, 38.45it/s]\nCalculating similarities:  41%|\u2588\u2588\u2588\u2588      | 516/1267 [00:19<00:17, 41.94it/s]\nCalculating similarities:  41%|\u2588\u2588\u2588\u2588      | 521/1267 [00:19<00:17, 42.71it/s]\nCalculating similarities:  42%|\u2588\u2588\u2588\u2588\u258f     | 526/1267 [00:19<00:17, 42.46it/s]\nCalculating similarities:  42%|\u2588\u2588\u2588\u2588\u258f     | 531/1267 [00:19<00:17, 41.55it/s]\nCalculating similarities:  42%|\u2588\u2588\u2588\u2588\u258f     | 536/1267 [00:19<00:17, 41.77it/s]\nCalculating similarities:  43%|\u2588\u2588\u2588\u2588\u258e     | 541/1267 [00:19<00:17, 42.67it/s]\nCalculating similarities:  43%|\u2588\u2588\u2588\u2588\u258e     | 546/1267 [00:19<00:17, 41.08it/s]\nCalculating similarities:  43%|\u2588\u2588\u2588\u2588\u258e     | 551/1267 [00:20<00:16, 42.15it/s]\nCalculating similarities:  44%|\u2588\u2588\u2588\u2588\u258d     | 556/1267 [00:20<00:16, 42.23it/s]\nCalculating similarities:  44%|\u2588\u2588\u2588\u2588\u258d     | 561/1267 [00:20<00:17, 39.73it/s]\nCalculating similarities:  45%|\u2588\u2588\u2588\u2588\u258d     | 567/1267 [00:20<00:16, 43.10it/s]\nCalculating similarities:  45%|\u2588\u2588\u2588\u2588\u258c     | 572/1267 [00:20<00:16, 43.42it/s]\nCalculating similarities:  46%|\u2588\u2588\u2588\u2588\u258c     | 577/1267 [00:20<00:15, 45.09it/s]\nCalculating similarities:  46%|\u2588\u2588\u2588\u2588\u258c     | 582/1267 [00:20<00:15, 44.27it/s]\nCalculating similarities:  46%|\u2588\u2588\u2588\u2588\u258b     | 588/1267 [00:20<00:14, 47.29it/s]\nCalculating similarities:  47%|\u2588\u2588\u2588\u2588\u258b     | 593/1267 [00:21<00:14, 46.89it/s]\nCalculating similarities:  47%|\u2588\u2588\u2588\u2588\u258b     | 599/1267 [00:21<00:13, 48.38it/s]\nCalculating similarities:  48%|\u2588\u2588\u2588\u2588\u258a     | 605/1267 [00:21<00:13, 49.99it/s]\nCalculating similarities:  48%|\u2588\u2588\u2588\u2588\u258a     | 611/1267 [00:21<00:12, 50.69it/s]\nCalculating similarities:  49%|\u2588\u2588\u2588\u2588\u258a     | 617/1267 [00:21<00:13, 48.66it/s]\nCalculating similarities:  49%|\u2588\u2588\u2588\u2588\u2589     | 622/1267 [00:21<00:13, 48.24it/s]\nCalculating similarities:  49%|\u2588\u2588\u2588\u2588\u2589     | 627/1267 [00:21<00:13, 46.84it/s]\nCalculating similarities:  50%|\u2588\u2588\u2588\u2588\u2589     | 632/1267 [00:21<00:14, 45.01it/s]\nCalculating similarities:  50%|\u2588\u2588\u2588\u2588\u2588     | 637/1267 [00:21<00:14, 44.25it/s]\nCalculating similarities:  51%|\u2588\u2588\u2588\u2588\u2588     | 642/1267 [00:22<00:13, 44.70it/s]\nCalculating similarities:  51%|\u2588\u2588\u2588\u2588\u2588     | 648/1267 [00:22<00:12, 47.65it/s]\nCalculating similarities:  52%|\u2588\u2588\u2588\u2588\u2588\u258f    | 653/1267 [00:22<00:12, 47.87it/s]\nCalculating similarities:  52%|\u2588\u2588\u2588\u2588\u2588\u258f    | 659/1267 [00:22<00:12, 49.69it/s]\nCalculating similarities:  53%|\u2588\u2588\u2588\u2588\u2588\u258e    | 666/1267 [00:22<00:11, 53.40it/s]\nCalculating similarities:  53%|\u2588\u2588\u2588\u2588\u2588\u258e    | 672/1267 [00:22<00:11, 50.72it/s]\nCalculating similarities:  54%|\u2588\u2588\u2588\u2588\u2588\u258e    | 678/1267 [00:22<00:11, 51.05it/s]\nCalculating similarities:  54%|\u2588\u2588\u2588\u2588\u2588\u258d    | 684/1267 [00:22<00:11, 49.88it/s]\nCalculating similarities:  54%|\u2588\u2588\u2588\u2588\u2588\u258d    | 690/1267 [00:23<00:12, 48.00it/s]\nCalculating similarities:  55%|\u2588\u2588\u2588\u2588\u2588\u258d    | 695/1267 [00:23<00:12, 45.86it/s]\nCalculating similarities:  55%|\u2588\u2588\u2588\u2588\u2588\u258c    | 700/1267 [00:23<00:12, 44.98it/s]\nCalculating similarities:  56%|\u2588\u2588\u2588\u2588\u2588\u258c    | 705/1267 [00:23<00:12, 44.25it/s]\nCalculating similarities:  56%|\u2588\u2588\u2588\u2588\u2588\u258c    | 710/1267 [00:23<00:12, 45.41it/s]\nCalculating similarities:  56%|\u2588\u2588\u2588\u2588\u2588\u258b    | 715/1267 [00:23<00:12, 45.90it/s]\nCalculating similarities:  57%|\u2588\u2588\u2588\u2588\u2588\u258b    | 720/1267 [00:23<00:11, 46.83it/s]\nCalculating similarities:  57%|\u2588\u2588\u2588\u2588\u2588\u258b    | 725/1267 [00:23<00:11, 46.23it/s]\nCalculating similarities:  58%|\u2588\u2588\u2588\u2588\u2588\u258a    | 730/1267 [00:24<00:18, 29.14it/s]\nCalculating similarities:  58%|\u2588\u2588\u2588\u2588\u2588\u258a    | 735/1267 [00:24<00:16, 32.74it/s]\nCalculating similarities:  58%|\u2588\u2588\u2588\u2588\u2588\u258a    | 740/1267 [00:24<00:14, 35.93it/s]\nCalculating similarities:  59%|\u2588\u2588\u2588\u2588\u2588\u2589    | 747/1267 [00:24<00:12, 41.82it/s]\nCalculating similarities:  59%|\u2588\u2588\u2588\u2588\u2588\u2589    | 753/1267 [00:24<00:11, 45.88it/s]\nCalculating similarities:  60%|\u2588\u2588\u2588\u2588\u2588\u2589    | 760/1267 [00:24<00:09, 50.97it/s]\nCalculating similarities:  61%|\u2588\u2588\u2588\u2588\u2588\u2588    | 767/1267 [00:24<00:09, 52.05it/s]\nCalculating similarities:  61%|\u2588\u2588\u2588\u2588\u2588\u2588    | 774/1267 [00:24<00:08, 55.95it/s]\nCalculating similarities:  62%|\u2588\u2588\u2588\u2588\u2588\u2588\u258f   | 780/1267 [00:25<00:08, 56.42it/s]\nCalculating similarities:  62%|\u2588\u2588\u2588\u2588\u2588\u2588\u258f   | 787/1267 [00:25<00:08, 57.81it/s]\nCalculating similarities:  63%|\u2588\u2588\u2588\u2588\u2588\u2588\u258e   | 794/1267 [00:25<00:07, 60.46it/s]\nCalculating similarities:  63%|\u2588\u2588\u2588\u2588\u2588\u2588\u258e   | 802/1267 [00:25<00:07, 63.52it/s]\nCalculating similarities:  64%|\u2588\u2588\u2588\u2588\u2588\u2588\u258d   | 809/1267 [00:25<00:07, 63.11it/s]\nCalculating similarities:  64%|\u2588\u2588\u2588\u2588\u2588\u2588\u258d   | 816/1267 [00:25<00:07, 61.43it/s]\nCalculating similarities:  65%|\u2588\u2588\u2588\u2588\u2588\u2588\u258d   | 823/1267 [00:25<00:07, 62.84it/s]\nCalculating similarities:  66%|\u2588\u2588\u2588\u2588\u2588\u2588\u258c   | 830/1267 [00:25<00:06, 63.84it/s]\nCalculating similarities:  66%|\u2588\u2588\u2588\u2588\u2588\u2588\u258c   | 838/1267 [00:25<00:06, 67.29it/s]\nCalculating similarities:  67%|\u2588\u2588\u2588\u2588\u2588\u2588\u258b   | 848/1267 [00:26<00:05, 74.51it/s]\nCalculating similarities:  68%|\u2588\u2588\u2588\u2588\u2588\u2588\u258a   | 856/1267 [00:26<00:05, 75.26it/s]\nCalculating similarities:  68%|\u2588\u2588\u2588\u2588\u2588\u2588\u258a   | 864/1267 [00:26<00:05, 74.24it/s]\nCalculating similarities:  69%|\u2588\u2588\u2588\u2588\u2588\u2588\u2589   | 872/1267 [00:26<00:05, 74.64it/s]\nCalculating similarities:  69%|\u2588\u2588\u2588\u2588\u2588\u2588\u2589   | 880/1267 [00:26<00:05, 75.65it/s]\nCalculating similarities:  70%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588   | 889/1267 [00:26<00:04, 79.35it/s]\nCalculating similarities:  71%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588   | 897/1267 [00:26<00:04, 78.97it/s]\nCalculating similarities:  72%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f  | 906/1267 [00:26<00:04, 81.32it/s]\nCalculating similarities:  72%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f  | 916/1267 [00:26<00:04, 86.70it/s]\nCalculating similarities:  73%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258e  | 926/1267 [00:26<00:03, 88.52it/s]\nCalculating similarities:  74%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d  | 935/1267 [00:27<00:03, 87.58it/s]\nCalculating similarities:  75%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d  | 946/1267 [00:27<00:03, 92.85it/s]\nCalculating similarities:  76%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258c  | 957/1267 [00:27<00:03, 96.32it/s]\nCalculating similarities:  76%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b  | 969/1267 [00:27<00:02, 101.36it/s]\nCalculating similarities:  77%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b  | 980/1267 [00:27<00:02, 101.66it/s]\nCalculating similarities:  78%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a  | 992/1267 [00:27<00:02, 106.06it/s]\nCalculating similarities:  79%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589  | 1005/1267 [00:27<00:02, 111.36it/s]\nCalculating similarities:  80%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588  | 1018/1267 [00:27<00:02, 115.37it/s]\nCalculating similarities:  81%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f | 1031/1267 [00:27<00:02, 117.87it/s]\nCalculating similarities:  82%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f | 1044/1267 [00:27<00:01, 121.27it/s]\nCalculating similarities:  84%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258e | 1058/1267 [00:28<00:01, 126.73it/s]\nCalculating similarities:  85%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d | 1073/1267 [00:28<00:01, 132.78it/s]\nCalculating similarities:  86%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258c | 1090/1267 [00:28<00:01, 143.61it/s]\nCalculating similarities:  87%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b | 1108/1267 [00:28<00:01, 153.78it/s]\nCalculating similarities:  89%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589 | 1129/1267 [00:28<00:00, 169.25it/s]\nCalculating similarities:  91%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588 | 1151/1267 [00:28<00:00, 183.54it/s]\nCalculating similarities:  93%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258e| 1177/1267 [00:28<00:00, 204.55it/s]\nCalculating similarities:  96%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258c| 1212/1267 [00:28<00:00, 246.97it/s]\nCalculating similarities: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 1267/1267 [00:28<00:00, 43.91it/s] \n[np.void((1.0000000000000002, 30), dtype=[('CosineGreedy_score', '<f8'), ('CosineGreedy_matches', '<i8')]), np.void((0.9971104911561329, 2), dtype=[('CosineGreedy_score', '<f8'), ('CosineGreedy_matches', '<i8')]), np.void((0.9953490145271826, 2), dtype=[('CosineGreedy_score', '<f8'), ('CosineGreedy_matches', '<i8')]), np.void((0.992145570265254, 2), dtype=[('CosineGreedy_score', '<f8'), ('CosineGreedy_matches', '<i8')]), np.void((0.987483812520639, 2), dtype=[('CosineGreedy_score', '<f8'), ('CosineGreedy_matches', '<i8')]), np.void((0.9846111069943921, 3), dtype=[('CosineGreedy_score', '<f8'), ('CosineGreedy_matches', '<i8')]), np.void((0.9840183302901656, 2), dtype=[('CosineGreedy_score', '<f8'), ('CosineGreedy_matches', '<i8')]), np.void((0.975984967311977, 2), dtype=[('CosineGreedy_score', '<f8'), ('CosineGreedy_matches', '<i8')]), np.void((0.9757457989499746, 2), dtype=[('CosineGreedy_score', '<f8'), ('CosineGreedy_matches', '<i8')]), np.void((0.9754777087576416, 2), dtype=[('CosineGreedy_score', '<f8'), ('CosineGreedy_matches', '<i8')])]\n\nCalculating similarities:   0%|          | 0/1267 [00:00<?, ?it/s]\nCalculating similarities:   0%|          | 2/1267 [00:00<01:10, 17.83it/s]\nCalculating similarities:   0%|          | 4/1267 [00:00<01:14, 17.04it/s]\nCalculating similarities:   0%|          | 6/1267 [00:00<01:11, 17.73it/s]\nCalculating similarities:   1%|          | 8/1267 [00:00<01:48, 11.61it/s]\nCalculating similarities:   1%|          | 11/1267 [00:00<01:30, 13.88it/s]\nCalculating similarities:   1%|          | 13/1267 [00:00<01:25, 14.67it/s]\nCalculating similarities:   1%|          | 15/1267 [00:00<01:20, 15.54it/s]\nCalculating similarities:   1%|\u258f         | 18/1267 [00:01<01:13, 17.10it/s]\nCalculating similarities:   2%|\u258f         | 21/1267 [00:01<01:09, 17.98it/s]\nCalculating similarities:   2%|\u258f         | 23/1267 [00:01<01:12, 17.11it/s]\nCalculating similarities:   2%|\u258f         | 26/1267 [00:01<01:08, 18.11it/s]\nCalculating similarities:   2%|\u258f         | 28/1267 [00:01<01:10, 17.46it/s]\nCalculating similarities:   2%|\u258f         | 31/1267 [00:01<01:03, 19.37it/s]\nCalculating similarities:   3%|\u258e         | 34/1267 [00:01<00:59, 20.80it/s]\nCalculating similarities:   3%|\u258e         | 37/1267 [00:02<01:02, 19.74it/s]\nCalculating similarities:   3%|\u258e         | 40/1267 [00:02<01:01, 19.86it/s]\nCalculating similarities:   3%|\u258e         | 43/1267 [00:02<00:59, 20.43it/s]\nCalculating similarities:   4%|\u258e         | 46/1267 [00:02<00:59, 20.60it/s]\nCalculating similarities:   4%|\u258d         | 49/1267 [00:02<01:06, 18.38it/s]\nCalculating similarities:   4%|\u258d         | 52/1267 [00:02<01:04, 18.93it/s]\nCalculating similarities:   4%|\u258d         | 55/1267 [00:03<01:00, 19.92it/s]\nCalculating similarities:   5%|\u258d         | 58/1267 [00:03<00:59, 20.29it/s]\nCalculating similarities:   5%|\u258d         | 61/1267 [00:03<01:00, 19.80it/s]\nCalculating similarities:   5%|\u258c         | 64/1267 [00:03<00:58, 20.51it/s]\nCalculating similarities:   5%|\u258c         | 67/1267 [00:03<00:58, 20.37it/s]\nCalculating similarities:   6%|\u258c         | 70/1267 [00:03<01:01, 19.60it/s]\nCalculating similarities:   6%|\u258c         | 73/1267 [00:03<01:00, 19.63it/s]\nCalculating similarities:   6%|\u258c         | 76/1267 [00:04<00:59, 20.00it/s]\nCalculating similarities:   6%|\u258c         | 79/1267 [00:04<01:06, 17.96it/s]\nCalculating similarities:   6%|\u258b         | 81/1267 [00:04<01:05, 18.20it/s]\nCalculating similarities:   7%|\u258b         | 84/1267 [00:04<01:01, 19.26it/s]\nCalculating similarities:   7%|\u258b         | 86/1267 [00:04<01:04, 18.18it/s]\nCalculating similarities:   7%|\u258b         | 89/1267 [00:04<01:00, 19.44it/s]\nCalculating similarities:   7%|\u258b         | 92/1267 [00:04<00:59, 19.72it/s]\nCalculating similarities:   7%|\u258b         | 95/1267 [00:05<01:04, 18.20it/s]\nCalculating similarities:   8%|\u258a         | 97/1267 [00:05<01:10, 16.52it/s]\nCalculating similarities:   8%|\u258a         | 99/1267 [00:05<01:16, 15.23it/s]\nCalculating similarities:   8%|\u258a         | 102/1267 [00:05<01:09, 16.83it/s]\nCalculating similarities:   8%|\u258a         | 105/1267 [00:05<01:03, 18.18it/s]\nCalculating similarities:   9%|\u258a         | 108/1267 [00:05<01:00, 19.26it/s]\nCalculating similarities:   9%|\u2589         | 111/1267 [00:06<00:58, 19.68it/s]\nCalculating similarities:   9%|\u2589         | 114/1267 [00:06<00:56, 20.39it/s]\nCalculating similarities:   9%|\u2589         | 117/1267 [00:06<01:22, 13.94it/s]\nCalculating similarities:   9%|\u2589         | 120/1267 [00:06<01:13, 15.58it/s]\nCalculating similarities:  10%|\u2589         | 123/1267 [00:06<01:05, 17.34it/s]\nCalculating similarities:  10%|\u2589         | 126/1267 [00:06<01:00, 18.99it/s]\nCalculating similarities:  10%|\u2588         | 129/1267 [00:07<01:00, 18.83it/s]\nCalculating similarities:  10%|\u2588         | 132/1267 [00:07<00:57, 19.65it/s]\nCalculating similarities:  11%|\u2588         | 135/1267 [00:07<00:55, 20.31it/s]\nCalculating similarities:  11%|\u2588         | 138/1267 [00:07<00:56, 19.99it/s]\nCalculating similarities:  11%|\u2588         | 141/1267 [00:07<00:54, 20.53it/s]\nCalculating similarities:  11%|\u2588\u258f        | 144/1267 [00:07<00:54, 20.79it/s]\nCalculating similarities:  12%|\u2588\u258f        | 147/1267 [00:07<00:54, 20.52it/s]\nCalculating similarities:  12%|\u2588\u258f        | 150/1267 [00:08<00:54, 20.58it/s]\nCalculating similarities:  12%|\u2588\u258f        | 153/1267 [00:08<00:54, 20.55it/s]\nCalculating similarities:  12%|\u2588\u258f        | 156/1267 [00:08<00:54, 20.56it/s]\nCalculating similarities:  13%|\u2588\u258e        | 159/1267 [00:08<00:52, 21.26it/s]\nCalculating similarities:  13%|\u2588\u258e        | 162/1267 [00:08<00:57, 19.18it/s]\nCalculating similarities:  13%|\u2588\u258e        | 165/1267 [00:08<00:57, 19.31it/s]\nCalculating similarities:  13%|\u2588\u258e        | 167/1267 [00:08<00:58, 18.88it/s]\nCalculating similarities:  13%|\u2588\u258e        | 170/1267 [00:09<00:59, 18.56it/s]\nCalculating similarities:  14%|\u2588\u258e        | 172/1267 [00:09<00:58, 18.82it/s]\nCalculating similarities:  14%|\u2588\u258e        | 174/1267 [00:09<01:00, 18.02it/s]\nCalculating similarities:  14%|\u2588\u258d        | 176/1267 [00:09<01:01, 17.65it/s]\nCalculating similarities:  14%|\u2588\u258d        | 179/1267 [00:09<00:56, 19.35it/s]\nCalculating similarities:  14%|\u2588\u258d        | 181/1267 [00:09<00:59, 18.24it/s]\nCalculating similarities:  15%|\u2588\u258d        | 184/1267 [00:09<00:55, 19.38it/s]\nCalculating similarities:  15%|\u2588\u258d        | 186/1267 [00:10<01:03, 17.02it/s]\nCalculating similarities:  15%|\u2588\u258d        | 188/1267 [00:10<01:02, 17.26it/s]\nCalculating similarities:  15%|\u2588\u258c        | 191/1267 [00:10<00:58, 18.37it/s]\nCalculating similarities:  15%|\u2588\u258c        | 193/1267 [00:10<01:00, 17.81it/s]\nCalculating similarities:  15%|\u2588\u258c        | 196/1267 [00:10<00:54, 19.49it/s]\nCalculating similarities:  16%|\u2588\u258c        | 199/1267 [00:10<00:51, 20.87it/s]\nCalculating similarities:  16%|\u2588\u258c        | 202/1267 [00:10<00:48, 21.77it/s]\nCalculating similarities:  16%|\u2588\u258c        | 205/1267 [00:10<00:46, 22.72it/s]\nCalculating similarities:  16%|\u2588\u258b        | 208/1267 [00:11<00:47, 22.36it/s]\nCalculating similarities:  17%|\u2588\u258b        | 211/1267 [00:11<00:45, 23.38it/s]\nCalculating similarities:  17%|\u2588\u258b        | 214/1267 [00:11<00:44, 23.87it/s]\nCalculating similarities:  17%|\u2588\u258b        | 217/1267 [00:11<00:44, 23.52it/s]\nCalculating similarities:  17%|\u2588\u258b        | 220/1267 [00:11<00:44, 23.78it/s]\nCalculating similarities:  18%|\u2588\u258a        | 223/1267 [00:11<00:42, 24.45it/s]\nCalculating similarities:  18%|\u2588\u258a        | 226/1267 [00:11<00:45, 22.89it/s]\nCalculating similarities:  18%|\u2588\u258a        | 229/1267 [00:11<00:46, 22.51it/s]\nCalculating similarities:  18%|\u2588\u258a        | 232/1267 [00:12<00:47, 21.74it/s]\nCalculating similarities:  19%|\u2588\u258a        | 235/1267 [00:12<01:14, 13.91it/s]\nCalculating similarities:  19%|\u2588\u258a        | 237/1267 [00:12<01:09, 14.87it/s]\nCalculating similarities:  19%|\u2588\u2589        | 239/1267 [00:12<01:05, 15.63it/s]\nCalculating similarities:  19%|\u2588\u2589        | 242/1267 [00:12<00:57, 17.75it/s]\nCalculating similarities:  19%|\u2588\u2589        | 245/1267 [00:12<00:58, 17.46it/s]\nCalculating similarities:  19%|\u2588\u2589        | 247/1267 [00:13<00:57, 17.81it/s]\nCalculating similarities:  20%|\u2588\u2589        | 249/1267 [00:13<00:57, 17.56it/s]\nCalculating similarities:  20%|\u2588\u2589        | 252/1267 [00:13<00:52, 19.38it/s]\nCalculating similarities:  20%|\u2588\u2588        | 255/1267 [00:13<00:49, 20.58it/s]\nCalculating similarities:  20%|\u2588\u2588        | 258/1267 [00:13<00:45, 21.96it/s]\nCalculating similarities:  21%|\u2588\u2588        | 262/1267 [00:13<00:40, 24.51it/s]\nCalculating similarities:  21%|\u2588\u2588        | 265/1267 [00:13<00:39, 25.51it/s]\nCalculating similarities:  21%|\u2588\u2588        | 268/1267 [00:13<00:39, 25.31it/s]\nCalculating similarities:  21%|\u2588\u2588\u258f       | 271/1267 [00:14<00:37, 26.39it/s]\nCalculating similarities:  22%|\u2588\u2588\u258f       | 274/1267 [00:14<00:37, 26.50it/s]\nCalculating similarities:  22%|\u2588\u2588\u258f       | 277/1267 [00:14<00:37, 26.16it/s]\nCalculating similarities:  22%|\u2588\u2588\u258f       | 280/1267 [00:14<00:36, 26.87it/s]\nCalculating similarities:  22%|\u2588\u2588\u258f       | 283/1267 [00:14<00:38, 25.74it/s]\nCalculating similarities:  23%|\u2588\u2588\u258e       | 286/1267 [00:14<00:38, 25.54it/s]\nCalculating similarities:  23%|\u2588\u2588\u258e       | 289/1267 [00:14<00:42, 23.02it/s]\nCalculating similarities:  23%|\u2588\u2588\u258e       | 292/1267 [00:14<00:43, 22.55it/s]\nCalculating similarities:  23%|\u2588\u2588\u258e       | 295/1267 [00:15<00:42, 23.14it/s]\nCalculating similarities:  24%|\u2588\u2588\u258e       | 298/1267 [00:15<00:40, 23.93it/s]\nCalculating similarities:  24%|\u2588\u2588\u258d       | 301/1267 [00:15<00:39, 24.65it/s]\nCalculating similarities:  24%|\u2588\u2588\u258d       | 304/1267 [00:15<00:37, 25.42it/s]\nCalculating similarities:  24%|\u2588\u2588\u258d       | 307/1267 [00:15<00:36, 26.55it/s]\nCalculating similarities:  25%|\u2588\u2588\u258d       | 311/1267 [00:15<00:33, 28.43it/s]\nCalculating similarities:  25%|\u2588\u2588\u258d       | 314/1267 [00:15<00:34, 27.68it/s]\nCalculating similarities:  25%|\u2588\u2588\u258c       | 317/1267 [00:15<00:37, 25.25it/s]\nCalculating similarities:  25%|\u2588\u2588\u258c       | 320/1267 [00:15<00:38, 24.81it/s]\nCalculating similarities:  25%|\u2588\u2588\u258c       | 323/1267 [00:16<00:36, 25.79it/s]\nCalculating similarities:  26%|\u2588\u2588\u258c       | 327/1267 [00:16<00:34, 27.30it/s]\nCalculating similarities:  26%|\u2588\u2588\u258c       | 330/1267 [00:16<00:35, 26.69it/s]\nCalculating similarities:  26%|\u2588\u2588\u258b       | 333/1267 [00:16<00:34, 27.46it/s]\nCalculating similarities:  27%|\u2588\u2588\u258b       | 336/1267 [00:16<00:34, 27.35it/s]\nCalculating similarities:  27%|\u2588\u2588\u258b       | 339/1267 [00:16<00:35, 25.88it/s]\nCalculating similarities:  27%|\u2588\u2588\u258b       | 342/1267 [00:16<00:36, 25.35it/s]\nCalculating similarities:  27%|\u2588\u2588\u258b       | 345/1267 [00:16<00:35, 26.32it/s]\nCalculating similarities:  28%|\u2588\u2588\u258a       | 349/1267 [00:17<00:32, 28.31it/s]\nCalculating similarities:  28%|\u2588\u2588\u258a       | 353/1267 [00:17<00:30, 29.58it/s]\nCalculating similarities:  28%|\u2588\u2588\u258a       | 356/1267 [00:17<00:32, 28.01it/s]\nCalculating similarities:  28%|\u2588\u2588\u258a       | 359/1267 [00:17<00:31, 28.53it/s]\nCalculating similarities:  29%|\u2588\u2588\u258a       | 363/1267 [00:17<00:30, 29.76it/s]\nCalculating similarities:  29%|\u2588\u2588\u2589       | 366/1267 [00:17<00:30, 29.47it/s]\nCalculating similarities:  29%|\u2588\u2588\u2589       | 370/1267 [00:17<00:30, 29.75it/s]\nCalculating similarities:  30%|\u2588\u2588\u2589       | 374/1267 [00:17<00:28, 31.28it/s]\nCalculating similarities:  30%|\u2588\u2588\u2589       | 378/1267 [00:18<00:29, 30.46it/s]\nCalculating similarities:  30%|\u2588\u2588\u2588       | 382/1267 [00:18<00:29, 30.33it/s]\nCalculating similarities:  30%|\u2588\u2588\u2588       | 386/1267 [00:18<00:43, 20.11it/s]\nCalculating similarities:  31%|\u2588\u2588\u2588       | 389/1267 [00:18<00:42, 20.77it/s]\nCalculating similarities:  31%|\u2588\u2588\u2588       | 392/1267 [00:18<00:39, 22.03it/s]\nCalculating similarities:  31%|\u2588\u2588\u2588       | 395/1267 [00:18<00:36, 23.72it/s]\nCalculating similarities:  31%|\u2588\u2588\u2588\u258f      | 398/1267 [00:18<00:37, 23.08it/s]\nCalculating similarities:  32%|\u2588\u2588\u2588\u258f      | 401/1267 [00:19<00:36, 23.57it/s]\nCalculating similarities:  32%|\u2588\u2588\u2588\u258f      | 404/1267 [00:19<00:36, 23.92it/s]\nCalculating similarities:  32%|\u2588\u2588\u2588\u258f      | 407/1267 [00:19<00:35, 24.18it/s]\nCalculating similarities:  32%|\u2588\u2588\u2588\u258f      | 410/1267 [00:19<00:35, 24.40it/s]\nCalculating similarities:  33%|\u2588\u2588\u2588\u258e      | 414/1267 [00:19<00:32, 26.29it/s]\nCalculating similarities:  33%|\u2588\u2588\u2588\u258e      | 417/1267 [00:19<00:34, 24.97it/s]\nCalculating similarities:  33%|\u2588\u2588\u2588\u258e      | 421/1267 [00:19<00:31, 27.03it/s]\nCalculating similarities:  33%|\u2588\u2588\u2588\u258e      | 424/1267 [00:19<00:30, 27.77it/s]\nCalculating similarities:  34%|\u2588\u2588\u2588\u258d      | 428/1267 [00:20<00:27, 29.97it/s]\nCalculating similarities:  34%|\u2588\u2588\u2588\u258d      | 432/1267 [00:20<00:29, 28.78it/s]\nCalculating similarities:  34%|\u2588\u2588\u2588\u258d      | 435/1267 [00:20<00:28, 29.00it/s]\nCalculating similarities:  35%|\u2588\u2588\u2588\u258d      | 439/1267 [00:20<00:27, 29.75it/s]\nCalculating similarities:  35%|\u2588\u2588\u2588\u258d      | 442/1267 [00:20<00:28, 28.70it/s]\nCalculating similarities:  35%|\u2588\u2588\u2588\u258c      | 445/1267 [00:20<00:30, 27.04it/s]\nCalculating similarities:  35%|\u2588\u2588\u2588\u258c      | 449/1267 [00:20<00:27, 29.83it/s]\nCalculating similarities:  36%|\u2588\u2588\u2588\u258c      | 453/1267 [00:20<00:28, 28.75it/s]\nCalculating similarities:  36%|\u2588\u2588\u2588\u258c      | 456/1267 [00:21<00:28, 28.18it/s]\nCalculating similarities:  36%|\u2588\u2588\u2588\u258b      | 460/1267 [00:21<00:27, 29.88it/s]\nCalculating similarities:  37%|\u2588\u2588\u2588\u258b      | 464/1267 [00:21<00:26, 30.27it/s]\nCalculating similarities:  37%|\u2588\u2588\u2588\u258b      | 468/1267 [00:21<00:25, 31.42it/s]\nCalculating similarities:  37%|\u2588\u2588\u2588\u258b      | 472/1267 [00:21<00:23, 33.15it/s]\nCalculating similarities:  38%|\u2588\u2588\u2588\u258a      | 476/1267 [00:21<00:23, 33.19it/s]\nCalculating similarities:  38%|\u2588\u2588\u2588\u258a      | 480/1267 [00:21<00:24, 31.73it/s]\nCalculating similarities:  38%|\u2588\u2588\u2588\u258a      | 484/1267 [00:21<00:24, 31.65it/s]\nCalculating similarities:  39%|\u2588\u2588\u2588\u258a      | 488/1267 [00:22<00:24, 31.23it/s]\nCalculating similarities:  39%|\u2588\u2588\u2588\u2589      | 492/1267 [00:22<00:25, 30.46it/s]\nCalculating similarities:  39%|\u2588\u2588\u2588\u2589      | 496/1267 [00:22<00:23, 32.23it/s]\nCalculating similarities:  39%|\u2588\u2588\u2588\u2589      | 500/1267 [00:22<00:24, 30.76it/s]\nCalculating similarities:  40%|\u2588\u2588\u2588\u2589      | 504/1267 [00:22<00:25, 30.03it/s]\nCalculating similarities:  40%|\u2588\u2588\u2588\u2588      | 508/1267 [00:22<00:25, 29.58it/s]\nCalculating similarities:  40%|\u2588\u2588\u2588\u2588      | 512/1267 [00:22<00:24, 30.79it/s]\nCalculating similarities:  41%|\u2588\u2588\u2588\u2588      | 516/1267 [00:22<00:24, 30.16it/s]\nCalculating similarities:  41%|\u2588\u2588\u2588\u2588      | 520/1267 [00:23<00:23, 31.14it/s]\nCalculating similarities:  41%|\u2588\u2588\u2588\u2588\u258f     | 524/1267 [00:23<00:23, 32.25it/s]\nCalculating similarities:  42%|\u2588\u2588\u2588\u2588\u258f     | 528/1267 [00:23<00:23, 31.71it/s]\nCalculating similarities:  42%|\u2588\u2588\u2588\u2588\u258f     | 532/1267 [00:23<00:23, 31.92it/s]\nCalculating similarities:  42%|\u2588\u2588\u2588\u2588\u258f     | 536/1267 [00:23<00:22, 32.01it/s]\nCalculating similarities:  43%|\u2588\u2588\u2588\u2588\u258e     | 541/1267 [00:23<00:21, 34.11it/s]\nCalculating similarities:  43%|\u2588\u2588\u2588\u2588\u258e     | 545/1267 [00:23<00:23, 30.97it/s]\nCalculating similarities:  43%|\u2588\u2588\u2588\u2588\u258e     | 549/1267 [00:23<00:22, 31.30it/s]\nCalculating similarities:  44%|\u2588\u2588\u2588\u2588\u258e     | 553/1267 [00:24<00:23, 30.97it/s]\nCalculating similarities:  44%|\u2588\u2588\u2588\u2588\u258d     | 557/1267 [00:24<00:22, 31.24it/s]\nCalculating similarities:  44%|\u2588\u2588\u2588\u2588\u258d     | 561/1267 [00:24<00:35, 20.14it/s]\nCalculating similarities:  45%|\u2588\u2588\u2588\u2588\u258d     | 564/1267 [00:24<00:32, 21.73it/s]\nCalculating similarities:  45%|\u2588\u2588\u2588\u2588\u258d     | 568/1267 [00:24<00:29, 23.40it/s]\nCalculating similarities:  45%|\u2588\u2588\u2588\u2588\u258c     | 572/1267 [00:24<00:27, 25.58it/s]\nCalculating similarities:  45%|\u2588\u2588\u2588\u2588\u258c     | 576/1267 [00:25<00:24, 28.35it/s]\nCalculating similarities:  46%|\u2588\u2588\u2588\u2588\u258c     | 580/1267 [00:25<00:22, 30.38it/s]\nCalculating similarities:  46%|\u2588\u2588\u2588\u2588\u258c     | 584/1267 [00:25<00:22, 30.76it/s]\nCalculating similarities:  46%|\u2588\u2588\u2588\u2588\u258b     | 588/1267 [00:25<00:22, 30.47it/s]\nCalculating similarities:  47%|\u2588\u2588\u2588\u2588\u258b     | 592/1267 [00:25<00:21, 31.16it/s]\nCalculating similarities:  47%|\u2588\u2588\u2588\u2588\u258b     | 596/1267 [00:25<00:22, 30.28it/s]\nCalculating similarities:  47%|\u2588\u2588\u2588\u2588\u258b     | 600/1267 [00:25<00:22, 29.44it/s]\nCalculating similarities:  48%|\u2588\u2588\u2588\u2588\u258a     | 604/1267 [00:25<00:22, 30.13it/s]\nCalculating similarities:  48%|\u2588\u2588\u2588\u2588\u258a     | 608/1267 [00:26<00:20, 31.42it/s]\nCalculating similarities:  48%|\u2588\u2588\u2588\u2588\u258a     | 613/1267 [00:26<00:19, 33.49it/s]\nCalculating similarities:  49%|\u2588\u2588\u2588\u2588\u258a     | 617/1267 [00:26<00:19, 32.61it/s]\nCalculating similarities:  49%|\u2588\u2588\u2588\u2588\u2589     | 621/1267 [00:26<00:19, 33.69it/s]\nCalculating similarities:  49%|\u2588\u2588\u2588\u2588\u2589     | 625/1267 [00:26<00:18, 35.13it/s]\nCalculating similarities:  50%|\u2588\u2588\u2588\u2588\u2589     | 629/1267 [00:26<00:18, 34.43it/s]\nCalculating similarities:  50%|\u2588\u2588\u2588\u2588\u2589     | 633/1267 [00:26<00:18, 34.55it/s]\nCalculating similarities:  50%|\u2588\u2588\u2588\u2588\u2588     | 637/1267 [00:26<00:17, 35.53it/s]\nCalculating similarities:  51%|\u2588\u2588\u2588\u2588\u2588     | 641/1267 [00:27<00:17, 35.98it/s]\nCalculating similarities:  51%|\u2588\u2588\u2588\u2588\u2588     | 646/1267 [00:27<00:16, 37.63it/s]\nCalculating similarities:  51%|\u2588\u2588\u2588\u2588\u2588\u258f    | 650/1267 [00:27<00:16, 38.07it/s]\nCalculating similarities:  52%|\u2588\u2588\u2588\u2588\u2588\u258f    | 655/1267 [00:27<00:15, 39.51it/s]\nCalculating similarities:  52%|\u2588\u2588\u2588\u2588\u2588\u258f    | 659/1267 [00:27<00:15, 38.94it/s]\nCalculating similarities:  52%|\u2588\u2588\u2588\u2588\u2588\u258f    | 663/1267 [00:27<00:15, 39.18it/s]\nCalculating similarities:  53%|\u2588\u2588\u2588\u2588\u2588\u258e    | 668/1267 [00:27<00:14, 40.38it/s]\nCalculating similarities:  53%|\u2588\u2588\u2588\u2588\u2588\u258e    | 673/1267 [00:27<00:15, 37.13it/s]\nCalculating similarities:  54%|\u2588\u2588\u2588\u2588\u2588\u258e    | 678/1267 [00:27<00:15, 38.50it/s]\nCalculating similarities:  54%|\u2588\u2588\u2588\u2588\u2588\u258d    | 682/1267 [00:28<00:15, 37.44it/s]\nCalculating similarities:  54%|\u2588\u2588\u2588\u2588\u2588\u258d    | 686/1267 [00:28<00:15, 37.15it/s]\nCalculating similarities:  54%|\u2588\u2588\u2588\u2588\u2588\u258d    | 690/1267 [00:28<00:16, 36.05it/s]\nCalculating similarities:  55%|\u2588\u2588\u2588\u2588\u2588\u258d    | 694/1267 [00:28<00:15, 36.79it/s]\nCalculating similarities:  55%|\u2588\u2588\u2588\u2588\u2588\u258c    | 698/1267 [00:28<00:15, 37.56it/s]\nCalculating similarities:  55%|\u2588\u2588\u2588\u2588\u2588\u258c    | 702/1267 [00:28<00:15, 36.33it/s]\nCalculating similarities:  56%|\u2588\u2588\u2588\u2588\u2588\u258c    | 706/1267 [00:28<00:15, 36.25it/s]\nCalculating similarities:  56%|\u2588\u2588\u2588\u2588\u2588\u258c    | 711/1267 [00:28<00:14, 38.00it/s]\nCalculating similarities:  56%|\u2588\u2588\u2588\u2588\u2588\u258b    | 715/1267 [00:28<00:14, 38.10it/s]\nCalculating similarities:  57%|\u2588\u2588\u2588\u2588\u2588\u258b    | 720/1267 [00:29<00:14, 39.07it/s]\nCalculating similarities:  57%|\u2588\u2588\u2588\u2588\u2588\u258b    | 725/1267 [00:29<00:13, 39.44it/s]\nCalculating similarities:  58%|\u2588\u2588\u2588\u2588\u2588\u258a    | 730/1267 [00:29<00:13, 41.21it/s]\nCalculating similarities:  58%|\u2588\u2588\u2588\u2588\u2588\u258a    | 735/1267 [00:29<00:12, 40.99it/s]\nCalculating similarities:  58%|\u2588\u2588\u2588\u2588\u2588\u258a    | 740/1267 [00:29<00:13, 40.06it/s]\nCalculating similarities:  59%|\u2588\u2588\u2588\u2588\u2588\u2589    | 745/1267 [00:29<00:12, 40.65it/s]\nCalculating similarities:  59%|\u2588\u2588\u2588\u2588\u2588\u2589    | 750/1267 [00:29<00:12, 41.41it/s]\nCalculating similarities:  60%|\u2588\u2588\u2588\u2588\u2588\u2589    | 755/1267 [00:29<00:11, 43.51it/s]\nCalculating similarities:  60%|\u2588\u2588\u2588\u2588\u2588\u2589    | 760/1267 [00:30<00:11, 43.28it/s]\nCalculating similarities:  60%|\u2588\u2588\u2588\u2588\u2588\u2588    | 765/1267 [00:30<00:11, 44.81it/s]\nCalculating similarities:  61%|\u2588\u2588\u2588\u2588\u2588\u2588    | 770/1267 [00:30<00:11, 44.56it/s]\nCalculating similarities:  61%|\u2588\u2588\u2588\u2588\u2588\u2588    | 776/1267 [00:30<00:10, 45.69it/s]\nCalculating similarities:  62%|\u2588\u2588\u2588\u2588\u2588\u2588\u258f   | 781/1267 [00:30<00:16, 29.74it/s]\nCalculating similarities:  62%|\u2588\u2588\u2588\u2588\u2588\u2588\u258f   | 786/1267 [00:30<00:14, 32.58it/s]\nCalculating similarities:  62%|\u2588\u2588\u2588\u2588\u2588\u2588\u258f   | 790/1267 [00:30<00:14, 34.04it/s]\nCalculating similarities:  63%|\u2588\u2588\u2588\u2588\u2588\u2588\u258e   | 795/1267 [00:31<00:13, 36.21it/s]\nCalculating similarities:  63%|\u2588\u2588\u2588\u2588\u2588\u2588\u258e   | 800/1267 [00:31<00:12, 37.69it/s]\nCalculating similarities:  64%|\u2588\u2588\u2588\u2588\u2588\u2588\u258e   | 805/1267 [00:31<00:11, 39.21it/s]\nCalculating similarities:  64%|\u2588\u2588\u2588\u2588\u2588\u2588\u258d   | 810/1267 [00:31<00:10, 41.79it/s]\nCalculating similarities:  64%|\u2588\u2588\u2588\u2588\u2588\u2588\u258d   | 816/1267 [00:31<00:10, 43.97it/s]\nCalculating similarities:  65%|\u2588\u2588\u2588\u2588\u2588\u2588\u258d   | 822/1267 [00:31<00:09, 47.84it/s]\nCalculating similarities:  65%|\u2588\u2588\u2588\u2588\u2588\u2588\u258c   | 828/1267 [00:31<00:08, 50.46it/s]\nCalculating similarities:  66%|\u2588\u2588\u2588\u2588\u2588\u2588\u258c   | 834/1267 [00:31<00:08, 52.72it/s]\nCalculating similarities:  66%|\u2588\u2588\u2588\u2588\u2588\u2588\u258b   | 840/1267 [00:31<00:07, 54.11it/s]\nCalculating similarities:  67%|\u2588\u2588\u2588\u2588\u2588\u2588\u258b   | 847/1267 [00:32<00:07, 58.27it/s]\nCalculating similarities:  67%|\u2588\u2588\u2588\u2588\u2588\u2588\u258b   | 853/1267 [00:32<00:07, 57.66it/s]\nCalculating similarities:  68%|\u2588\u2588\u2588\u2588\u2588\u2588\u258a   | 859/1267 [00:32<00:06, 58.29it/s]\nCalculating similarities:  68%|\u2588\u2588\u2588\u2588\u2588\u2588\u258a   | 865/1267 [00:32<00:07, 57.13it/s]\nCalculating similarities:  69%|\u2588\u2588\u2588\u2588\u2588\u2588\u258a   | 871/1267 [00:32<00:07, 50.54it/s]\nCalculating similarities:  69%|\u2588\u2588\u2588\u2588\u2588\u2588\u2589   | 877/1267 [00:32<00:08, 48.53it/s]\nCalculating similarities:  70%|\u2588\u2588\u2588\u2588\u2588\u2588\u2589   | 882/1267 [00:32<00:08, 45.29it/s]\nCalculating similarities:  70%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588   | 887/1267 [00:32<00:08, 44.81it/s]\nCalculating similarities:  70%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588   | 892/1267 [00:32<00:08, 44.60it/s]\nCalculating similarities:  71%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588   | 898/1267 [00:33<00:07, 47.32it/s]\nCalculating similarities:  71%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f  | 904/1267 [00:33<00:07, 50.34it/s]\nCalculating similarities:  72%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f  | 910/1267 [00:33<00:07, 50.39it/s]\nCalculating similarities:  72%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f  | 916/1267 [00:33<00:07, 45.35it/s]\nCalculating similarities:  73%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258e  | 923/1267 [00:33<00:06, 49.42it/s]\nCalculating similarities:  73%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258e  | 930/1267 [00:33<00:06, 53.78it/s]\nCalculating similarities:  74%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d  | 936/1267 [00:33<00:06, 53.02it/s]\nCalculating similarities:  74%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d  | 942/1267 [00:33<00:06, 53.86it/s]\nCalculating similarities:  75%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d  | 949/1267 [00:34<00:05, 56.97it/s]\nCalculating similarities:  76%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258c  | 957/1267 [00:34<00:05, 61.25it/s]\nCalculating similarities:  76%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258c  | 966/1267 [00:34<00:04, 68.42it/s]\nCalculating similarities:  77%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b  | 974/1267 [00:34<00:04, 68.97it/s]\nCalculating similarities:  77%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b  | 981/1267 [00:34<00:04, 63.76it/s]\nCalculating similarities:  78%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a  | 988/1267 [00:34<00:04, 62.06it/s]\nCalculating similarities:  79%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a  | 996/1267 [00:34<00:04, 65.54it/s]\nCalculating similarities:  79%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589  | 1006/1267 [00:34<00:03, 74.82it/s]\nCalculating similarities:  80%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588  | 1017/1267 [00:34<00:03, 82.91it/s]\nCalculating similarities:  81%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588  | 1026/1267 [00:35<00:02, 81.80it/s]\nCalculating similarities:  82%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f | 1037/1267 [00:35<00:02, 88.67it/s]\nCalculating similarities:  83%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258e | 1047/1267 [00:35<00:02, 89.64it/s]\nCalculating similarities:  84%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258e | 1059/1267 [00:35<00:02, 96.74it/s]\nCalculating similarities:  84%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d | 1069/1267 [00:35<00:02, 96.35it/s]\nCalculating similarities:  85%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258c | 1081/1267 [00:35<00:01, 102.02it/s]\nCalculating similarities:  86%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b | 1095/1267 [00:35<00:01, 111.55it/s]\nCalculating similarities:  88%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a | 1110/1267 [00:35<00:01, 121.22it/s]\nCalculating similarities:  89%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589 | 1126/1267 [00:35<00:01, 131.94it/s]\nCalculating similarities:  90%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588 | 1141/1267 [00:35<00:00, 136.64it/s]\nCalculating similarities:  91%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f| 1159/1267 [00:36<00:00, 146.98it/s]\nCalculating similarities:  93%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258e| 1182/1267 [00:36<00:00, 170.23it/s]\nCalculating similarities:  96%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258c| 1214/1267 [00:36<00:00, 212.55it/s]\nCalculating similarities: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 1267/1267 [00:36<00:00, 34.86it/s] \n",
+        "log_sha256": "69a35002e320385688255fb4a5fee05d462af8a6cfc34977804171ccbc73754d",
+        "peak_child_rss_kib": 979224,
+        "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+        "started": 1792854414.998234,
+        "timed_out": false,
+        "timeout_seconds": 600
+      },
+      "input_observations": {
+        "files": [
+          {
+            "bytes": 38997460,
+            "input_preview": {
+              "byte_prefix_truncated": true,
+              "compression": "none",
+              "displayed_lines_truncated": true,
+              "sample_sha256": "507153c082f6661782f7a5368086f53b6931d5785288af79ace97873848bd51c",
+              "sampled_bytes": 4096,
+              "scope": "Byte prefix only; no inferred header, schema or record count.",
+              "status": "utf8_text_prefix",
+              "text": "BEGIN IONS\nPEPMASS=408.156\nCHARGE=1\nMSLEVEL=2\nSOURCE_INSTRUMENT=LC-ESI-qTof\n"
+            },
+            "local_path": "/inputs/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf",
+            "sha256": "9276602a818f91334e56f5bc7719c6924736a029d5e1a22026f52b18255d9f85",
+            "source": "GNPS NIH natural-products spectral library (MGF), originally from https://gnps-external.ucsd.edu/gnpslibrary/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf; downloaded as the byte-identical copy committed at the source notebook's pinned revision: https://raw.githubusercontent.com/matchms/matchms-docs/796f156c58d25adfb7e1528fcb24eb8c40c143a5/data/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf (sha256 9276602a818f91334e56f5bc7719c6924736a029d5e1a22026f52b18255d9f85, 38997460 bytes, 1267 spectra)"
+          }
+        ]
+      },
+      "inputs_after": {
+        "files": 1,
+        "staged_inputs_verified": true
+      },
+      "reference_tests_remaining": 1,
+      "reference_tests_used": 1,
+      "semantic_fidelity_validated": false,
+      "setup": {
+        "argv": [
+          "sh",
+          "-eu",
+          "/work/setup.sh"
+        ],
+        "directory": "/work",
+        "elapsed_seconds": 7.753522157669067,
+        "exit_code": 0,
+        "finished": 1792854400.1132302,
+        "label": "command-a4382560d0d54c8f95787acdcb0d1b3b",
+        "log": "Hit:1 http://deb.debian.org/debian bookworm InRelease\nHit:2 http://deb.debian.org/debian bookworm-updates InRelease\nHit:3 http://deb.debian.org/debian-security bookworm-security InRelease\nReading package lists...\nReading package lists...\nBuilding dependency tree...\nReading state information...\nlibxrender1 is already the newest version (1:0.9.10-1.1).\nlibxext6 is already the newest version (2:1.3.4-1+b1).\nlibexpat1 is already the newest version (2.5.0-1+deb12u5).\n0 upgraded, 0 newly installed, 0 to remove and 10 not upgraded.\nCollecting uv==0.12.21\n  Downloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)\nDownloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (20.4 MB)\n   \u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501 20.4/20.4 MB 195.2 MB/s  0:00:00\nInstalling collected packages: uv\nSuccessfully installed uv-0.12.21\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nResolved 42 packages in 216ms\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nCreating virtual environment at: venv\nResolved 42 packages in 5ms\nDownloading numba (3.7MiB)\nDownloading pillow (6.8MiB)\nDownloading networkx (2.0MiB)\nDownloading kiwisolver (1.4MiB)\nDownloading fonttools (5.1MiB)\nDownloading scipy (33.7MiB)\nDownloading matplotlib (9.4MiB)\nDownloading pandas (11.7MiB)\nDownloading llvmlite (40.4MiB)\nDownloading numpy (15.8MiB)\nDownloading scikit-learn (8.7MiB)\nDownloading rdkit (32.7MiB)\nDownloading lxml (4.7MiB)\n Downloaded kiwisolver\n Downloaded fonttools\n Downloaded lxml\n Downloaded networkx\n Downloaded pillow\n Downloaded numba\n Downloaded matplotlib\n Downloaded scikit-learn\n Downloaded numpy\n Downloaded scipy\n Downloaded llvmlite\n Downloaded rdkit\n Downloaded pandas\nPrepared 40 packages in 1.60s\nInstalled 40 packages in 941ms\n + certifi==2026.10.23\n + charset-normalizer==3.5.2\n + cloudpickle==3.1.2\n + contourpy==1.4.0\n + cycler==0.12.1\n + deprecated==3.0.0\n + fonttools==4.67.0\n + idna==3.20\n + joblib==1.6.0\n + kiwisolver==1.5.1\n + llvmlite==0.44.0\n + lxml==5.4.0\n + matchms==0.30.2\n + matplotlib==3.11.2\n + narwhals==2.27.1\n + networkx==3.7\n + numba==0.61.2\n + numpy==2.2.6\n + packaging==26.3\n + pandas==2.3.3\n + pickydict==0.5.0\n + pillow==13.0.0\n + pubchempy==1.0.5\n + pynndescent==0.6.0\n + pyparsing==3.3.3\n + pyteomics==5.0.1\n + python-dateutil==3.0.0\n + pytz==2026.5\n + pyyaml==6.0.3\n + rdkit==2024.9.6\n + requests==2.34.2\n + scikit-learn==1.9.1\n + scipy==1.18.1\n + six==1.17.0\n + sparsestack==0.7.0\n + threadpoolctl==3.7.0\n + tqdm==4.70.1\n + tzdata==2026.5\n + urllib3==2.8.0\n + wrapt==2.5.1\nUsing Python 3.13.13 environment at: venv\nstaged /inputs/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf: size=38997460 sha256=9276602a818f91334e56f5bc7719c6924736a029d5e1a22026f52b18255d9f85\ninput staging verified\n{\"files_removed\": 0, \"excluded_files_absent\": true}\n",
+        "log_sha256": "7352572d9c469db9efa88ad2f55120d6cf75cd6f268535bb99ec43583d0c6094",
+        "peak_child_rss_kib": 93080,
+        "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+        "started": 1792854392.359708,
+        "timed_out": false,
+        "timeout_seconds": 1223
+      },
+      "status": "reference_executed",
+      "test": 1
+    },
+    "trial/source.diff": "--- original.py\n+++ analysis.py\n@@ -33,7 +33,7 @@\n import numpy as np\n from matchms.importing import load_from_mgf\n \n-path_data = os.path.join(os.path.dirname(os.getcwd()), \"data\") #\"...\" enter your pathname to the downloaded file\n+path_data = \"/inputs\" #\"...\" enter your pathname to the downloaded file\n file_mgf = os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf\")\n spectrums = list(load_from_mgf(file_mgf))\n \n"
+  },
+  "package_inspection": {
+    "boundary": "Read-only release-source inspection for recorded installed versions. Archives are hash-verified against the retained reference lock. No installation, imports, execution, shell, or arbitrary URLs. Universal wheels contain Python source; sdists are corresponding release source, not evidence of the exact installed binary or its build options. Direct-reference, editable, ambiguous or unparsed records do not authorize a registry fallback or arbitrary URL retrieval. Unavailable source remains an explicit evidence gap.",
+    "packages": {
+      "certifi": {
+        "distribution": {
+          "hash": "sha256:e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1",
+          "size": 135082,
+          "url": "https://files.pythonhosted.org/packages/32/d1/a3652fe2c19134d0d15922177821d863cbd7e842d53a21bbe7e8e3a1b5ac/certifi-2026.10.23-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2026.10.23"
+      },
+      "charset-normalizer": {
+        "distribution": {
+          "hash": "sha256:b6b751274acb69d77b3323d6b7dbaa3c7fdfc1eb829b7eb61d262f32e1af9685",
+          "size": 68872,
+          "url": "https://files.pythonhosted.org/packages/fc/ad/d07d7862a62ffa6d79d68074d14823243dd235a77c45262acbf6adeb28bf/charset_normalizer-3.5.2-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.5.2"
+      },
+      "cloudpickle": {
+        "distribution": {
+          "hash": "sha256:9acb47f6afd73f60dc1df93bb801b472f05ff42fa6c84167d25cb206be1fbf4a",
+          "size": 22228,
+          "url": "https://files.pythonhosted.org/packages/88/39/799be3f2f0f38cc727ee3b4f1445fe6d5e4133064ec2e4115069418a5bb6/cloudpickle-3.1.2-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.1.2"
+      },
+      "contourpy": {
+        "distribution": {
+          "hash": "sha256:20156f5a1ac4f8ce02656e39a61e82164a3d359796dc8026f75b062783d500e1",
+          "size": 13323726,
+          "url": "https://files.pythonhosted.org/packages/83/5a/a55177dd22553a277388e8a1b3220e92de91bacb28356cdc73caa240121d/contourpy-1.4.0.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "1.4.0"
+      },
+      "cycler": {
+        "distribution": {
+          "hash": "sha256:85cef7cff222d8644161529808465972e51340599459b8ac3ccbac5a854e0d30",
+          "size": 8321,
+          "url": "https://files.pythonhosted.org/packages/e7/05/c19819d5e3d95294a6f5947fb9b9629efb316b96de511b418c53d245aae6/cycler-0.12.1-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "0.12.1"
+      },
+      "deprecated": {
+        "distribution": {
+          "hash": "sha256:58204cf4a7f6270d547af5c278ee7a6bb56045a4b3d8441a1cd11660f41b7939",
+          "size": 21912,
+          "url": "https://files.pythonhosted.org/packages/83/ae/676feae8e4644a6d7169951a97f61c56f416c73f67bf1761f2461d75cc81/deprecated-3.0.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.0.0"
+      },
+      "fonttools": {
+        "distribution": {
+          "hash": "sha256:4304f03ed7f4ba000a8dcc941ad854bfa52e2f3b6112b8f099b6f431cf98e701",
+          "size": 1213142,
+          "url": "https://files.pythonhosted.org/packages/3d/61/4161946319472aaa9b897bd18ad5108a5b10f5ebaa503d921a001ac4fff9/fonttools-4.67.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "4.67.0"
+      },
+      "idna": {
+        "distribution": {
+          "hash": "sha256:ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+          "size": 69583,
+          "url": "https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.20"
+      },
+      "joblib": {
+        "distribution": {
+          "hash": "sha256:3dbbf9f6e4b592a2357b854608e980fe6390d131d7a82f011a377ef2ebef7aba",
+          "size": 306115,
+          "url": "https://files.pythonhosted.org/packages/18/53/84099323c2ec4be98d935f63c033ac4151ee83836ca1050ede3b3aadf155/joblib-1.6.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "1.6.0"
+      },
+      "kiwisolver": {
+        "distribution": {
+          "hash": "sha256:f1303ef2eec81262a4b708c3e858afe58d7c75ad91c1c05266eda7673369859a",
+          "size": 104395,
+          "url": "https://files.pythonhosted.org/packages/ba/07/bd78e6a8fae171ea041ef5bba3ed21a003522fa088834b069b1909981f30/kiwisolver-1.5.1.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "1.5.1"
+      },
+      "llvmlite": {
+        "distribution": {
+          "hash": "sha256:07667d66a5d150abed9157ab6c0b9393c9356f229784a4385c02f99e94fc94d4",
+          "size": 171880,
+          "url": "https://files.pythonhosted.org/packages/89/6a/95a3d3610d5c75293d5dbbb2a76480d5d4eeba641557b69fe90af6c5b84e/llvmlite-0.44.0.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "0.44.0"
+      },
+      "lxml": {
+        "distribution": {
+          "hash": "sha256:d12832e1dbea4be280b22fd0ea7c9b87f0d8fc51ba06e92dc62d52f804f78ebd",
+          "size": 3679479,
+          "url": "https://files.pythonhosted.org/packages/76/3d/14e82fc7c8fb1b7761f7e748fd47e2ec8276d137b6acfe5a4bb73853e08f/lxml-5.4.0.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "5.4.0"
+      },
+      "matchms": {
+        "distribution": {
+          "hash": "sha256:c47f2be9a9947f09166d44ebd5800518a9eed05add0c7a4f2a9e8ba2b9111fbb",
+          "size": 182800,
+          "url": "https://files.pythonhosted.org/packages/80/1b/6ba074c98564132b6dbac18b43b98e851a421ca32cd837f6d34d10f364b2/matchms-0.30.2-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "0.30.2"
+      },
+      "matplotlib": {
+        "distribution": {
+          "hash": "sha256:cec596316640f2b394b8f0daa0ea61a8eae82d017b620b9f202befb972a59ea4",
+          "size": 32660610,
+          "url": "https://files.pythonhosted.org/packages/e7/c8/9aa712a0afb882649424dd8de8ad9aa6235e796e84c6052e8f6dc1598d0d/matplotlib-3.11.2.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "3.11.2"
+      },
+      "narwhals": {
+        "distribution": {
+          "hash": "sha256:d057df13f5852b8e157596e82eb5e955fad267425df5e420e0ee9863da483b31",
+          "size": 483211,
+          "url": "https://files.pythonhosted.org/packages/d1/89/5d4c86da1130d9059681e5b6cd7645df5c10279a6a079c5c37dcb2cc6f3f/narwhals-2.27.1-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2.27.1"
+      },
+      "networkx": {
+        "distribution": {
+          "hash": "sha256:e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0",
+          "size": 2142205,
+          "url": "https://files.pythonhosted.org/packages/7e/cd/fe58041e9011f307c490e3e17dd48cc516448f7c698a3f2d9d9d65d7e6a8/networkx-3.7-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.7"
+      },
+      "numba": {
+        "distribution": {
+          "hash": "sha256:8750ee147940a6637b80ecf7f95062185ad8726c8c28a2295b8ec1160a196f7d",
+          "size": 2820615,
+          "url": "https://files.pythonhosted.org/packages/1c/a0/e21f57604304aa03ebb8e098429222722ad99176a4f979d34af1d1ee80da/numba-0.61.2.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "0.61.2"
+      },
+      "numpy": {
+        "distribution": {
+          "hash": "sha256:e29554e2bef54a90aa5cc07da6ce955accb83f21ab5de01a62c8478897b264fd",
+          "size": 20276440,
+          "url": "https://files.pythonhosted.org/packages/76/21/7d2a95e4bba9dc13d043ee156a356c0a8f0c6309dff6b21b4d71a073b8a8/numpy-2.2.6.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "2.2.6"
+      },
+      "packaging": {
+        "distribution": {
+          "hash": "sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+          "size": 129956,
+          "url": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "26.3"
+      },
+      "pandas": {
+        "distribution": {
+          "hash": "sha256:e05e1af93b977f7eafa636d043f9f94c7ee3ac81af99c13508215942e64c993b",
+          "size": 4495223,
+          "url": "https://files.pythonhosted.org/packages/33/01/d40b85317f86cf08d853a4f495195c73815fdf205eef3993821720274518/pandas-2.3.3.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "2.3.3"
+      },
+      "pickydict": {
+        "distribution": {
+          "hash": "sha256:a6614d2aacbe07d3d4b0b6e7c9e9834eae7b8c0127bad4b1127b6fdcebd5cd65",
+          "size": 6228,
+          "url": "https://files.pythonhosted.org/packages/02/ad/40ba18d3a88ccce689687a5b6b246f7c651823c48d2e3051d9cd53afafe5/pickydict-0.5.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "0.5.0"
+      },
+      "pillow": {
+        "distribution": {
+          "hash": "sha256:cdcd1ba258178f7356d74170c9a81ba4eab6a5d55748bc402a5a2a6fe6be3510",
+          "size": 47058631,
+          "url": "https://files.pythonhosted.org/packages/ce/a4/9cc30690a394a8305e8be4c9036aa16d0dfddadd09079860b582f562496d/pillow-13.0.0.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "13.0.0"
+      },
+      "pubchempy": {
+        "distribution": {
+          "hash": "sha256:e936cfed31fa194042ad463be3c803dde5b12ef2f795caf336e3114127c34fa0",
+          "size": 21355,
+          "url": "https://files.pythonhosted.org/packages/6b/e3/2c887645f21b94d992a16775bcf81cdf6dcc36cf1606782cb2a3c86e9a35/pubchempy-1.0.5-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "1.0.5"
+      },
+      "pynndescent": {
+        "distribution": {
+          "hash": "sha256:dc8c74844e4c7f5cbd1e0cd6909da86fdc789e6ff4997336e344779c3d5538ef",
+          "size": 73511,
+          "url": "https://files.pythonhosted.org/packages/b2/e6/94145d714402fd5ade00b5661f2d0ab981219e07f7db9bfa16786cdb9c04/pynndescent-0.6.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "0.6.0"
+      },
+      "pyparsing": {
+        "distribution": {
+          "hash": "sha256:ece8c00a69cf01b45d0b1dedabb469c90d8caf996d4fda40f147627a122849a4",
+          "size": 126420,
+          "url": "https://files.pythonhosted.org/packages/38/bb/d215ee7c73b61497b28a5503f9f53523f294fcc936762b7caf90e0c1c2b5/pyparsing-3.3.3-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.3.3"
+      },
+      "pyteomics": {
+        "distribution": {
+          "hash": "sha256:aaf85b4f3f64ef42b2c051d7d8b67d22c3a276fe029e5d5bbf17f3915a3bd286",
+          "size": 262426,
+          "url": "https://files.pythonhosted.org/packages/a5/33/4efd15ab9c41f20c107eef35aea6c92dedfb1f12003576ea2ec32766fdaf/pyteomics-5.0.1-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "5.0.1"
+      },
+      "python-dateutil": {
+        "distribution": {
+          "hash": "sha256:3c79630202e4152c6add678446984236efe4f57e84d8e892aab0637bab82e9fd",
+          "size": 94659,
+          "url": "https://files.pythonhosted.org/packages/5a/17/cebee01d1c0c1441174cf0456ddc91b280d79acb65340c05e41d77866ee8/python_dateutil-3.0.0-py2.py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.0.0"
+      },
+      "pytz": {
+        "distribution": {
+          "hash": "sha256:e658af3757f9e26a9d25dd2aff38335acd92bc9104f890a894b2c1ba28311b03",
+          "size": 506342,
+          "url": "https://files.pythonhosted.org/packages/4f/ef/c66110d46fb800dda0bf33164182dfadabe26a90e4476844d502a23dca8e/pytz-2026.5-py2.py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2026.5"
+      },
+      "pyyaml": {
+        "distribution": {
+          "hash": "sha256:d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f",
+          "size": 130960,
+          "url": "https://files.pythonhosted.org/packages/05/8e/961c0007c59b8dd7729d542c61a4d537767a59645b82a0b521206e1e25c2/pyyaml-6.0.3.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "6.0.3"
+      },
+      "rdkit": {
+        "distribution": null,
+        "version": "2024.9.6"
+      },
+      "requests": {
+        "distribution": {
+          "hash": "sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0",
+          "size": 73075,
+          "url": "https://files.pythonhosted.org/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2.34.2"
+      },
+      "scikit-learn": {
+        "distribution": {
+          "hash": "sha256:629cada3e33e2b9bf376cdc7614a47a4140b8aedc1d836579e359736fbd82977",
+          "size": 7786908,
+          "url": "https://files.pythonhosted.org/packages/d2/eb/eaf5e07fcc0da7149b0e084f24e54edd7441b9a89ce7e034032ae97fe3a0/scikit_learn-1.9.1.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "1.9.1"
+      },
+      "scipy": {
+        "distribution": {
+          "hash": "sha256:52c4b7422442aba924d03ad4019852b08a92e64ea187b933135687bfe2747307",
+          "size": 30781235,
+          "url": "https://files.pythonhosted.org/packages/7e/74/66de6258867beb2ef08f35f9f2ac017a52cacd5081714d239ff1a442d458/scipy-1.18.1.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "1.18.1"
+      },
+      "six": {
+        "distribution": {
+          "hash": "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274",
+          "size": 11050,
+          "url": "https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "1.17.0"
+      },
+      "sparsestack": {
+        "distribution": {
+          "hash": "sha256:6e63a9d549397bf8c0ae7df407fe91f40d0076191bdb5e4ff043d26e2fbfc0e3",
+          "size": 9776,
+          "url": "https://files.pythonhosted.org/packages/bd/06/1b8dc3021ec7139db7cfd99ecd3853d953f44cdab239ad79006111569335/sparsestack-0.7.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "0.7.0"
+      },
+      "threadpoolctl": {
+        "distribution": {
+          "hash": "sha256:cd8b60b5641b45c67bbf73c64c843235fc2d8a480c87389f52f5dbee893b86be",
+          "size": 26362,
+          "url": "https://files.pythonhosted.org/packages/43/3f/f88a53f60a472b46f4023f56d204dd7de33d34c5d2acbfa0d70a674e639e/threadpoolctl-3.7.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.7.0"
+      },
+      "tqdm": {
+        "distribution": {
+          "hash": "sha256:c293e525e6fef9c20e8728fd4612df02a0aa31bb5fe91ecd93e123b1b7bffa73",
+          "size": 80199,
+          "url": "https://files.pythonhosted.org/packages/a7/03/921a3d3c75785aca9ebfbfcabfbc3a1be12e2ab5265deb026d55a5a3f83e/tqdm-4.70.1-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "4.70.1"
+      },
+      "tzdata": {
+        "distribution": {
+          "hash": "sha256:b683bd1b6659ddcd810ff02ad09ba821d4bf1065072805063eb35c49617905ac",
+          "size": 347996,
+          "url": "https://files.pythonhosted.org/packages/94/21/1e5995a1c920cce14e4bffae20c665ec10e7ed03ab25e006cd741092b718/tzdata-2026.5-py2.py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2026.5"
+      },
+      "urllib3": {
+        "distribution": {
+          "hash": "sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3",
+          "size": 135717,
+          "url": "https://files.pythonhosted.org/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2.8.0"
+      },
+      "wrapt": {
+        "distribution": {
+          "hash": "sha256:c6e6c226b1ca5402d7ae5fb34a0d21f1b49124fe4200e5884d1e19e53c47ac1d",
+          "size": 81849,
+          "url": "https://files.pythonhosted.org/packages/bc/0c/7da7513ddcc8f1d831ec4bfbedc9f7f174ecb91042bc16916fc1e0d06b22/wrapt-2.5.1-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2.5.1"
+      }
+    },
+    "unparsed_environment_records": []
+  },
+  "reference_inspection": {
+    "boundary": "Read-only UTF-8 text inspection of these recorded reference outputs only. Every read verifies the complete file hash and size before returning text. No execution, imports, filesystem writes, arbitrary paths or input-file access. Binary content remains an explicit inspection gap. Observed text establishes file contents, not scientific correctness or portable comparison tolerances. Text reads default to columns 1\u20131000 of each selected line; reported slices are incomplete fragments. Explicit larger windows or end_column:null are allowed. Reference values are private evidence, not material to copy into solver instructions.",
+    "files": {
+      "best_matches_spectrum_97.csv": {
+        "bytes": 2374,
+        "sha256": "0c70df4df3e519340b49d3ee298ad6fd4ad605a184ab1efc5cacf7f492ea0543"
+      },
+      "modified_cosine_scores.npz": {
+        "bytes": 25685198,
+        "sha256": "6b5d3827f0ae3813a820c42f4fa27bd2120ed4d5c4f4aa7a63418da435a7c9be"
+      },
+      "processed_spectra.json": {
+        "bytes": 5972141,
+        "sha256": "72a436272130d0c9a1460cc72530dbd8ad819c34529600bcd195e11790801ec9"
+      },
+      "spectrum_identifiers.csv": {
+        "bytes": 188635,
+        "sha256": "bebeda59768ee27f7f6468366e16c3f34e601eacd2ecd60b43a49057c8fd0dcc"
+      }
+    }
+  },
+  "repeatability_observations": {
+    "all_output_differences_limited_to_table_serialization_or_row_order": true,
+    "all_outputs_byte_identical_to_original": true,
+    "cleanup_verified": true,
+    "comparison_rules_validated": false,
+    "construction_run": false,
+    "finished": 1792854854.6309032,
+    "limitations": "Finite repeated runs, not a grading contract or portability proof. Fresh processes/workspaces share the rebuilt environment and caches; base image tag is reused, not an immutable image digest.",
+    "model_calls": 0,
+    "output_observations": [
+      [
+        {
+          "baseline_sha256": "72a436272130d0c9a1460cc72530dbd8ad819c34529600bcd195e11790801ec9",
+          "byte_identical": true,
+          "path": "processed_spectra.json",
+          "replay_sha256": "72a436272130d0c9a1460cc72530dbd8ad819c34529600bcd195e11790801ec9"
+        },
+        {
+          "baseline_sha256": "6b5d3827f0ae3813a820c42f4fa27bd2120ed4d5c4f4aa7a63418da435a7c9be",
+          "byte_identical": true,
+          "path": "modified_cosine_scores.npz",
+          "replay_sha256": "6b5d3827f0ae3813a820c42f4fa27bd2120ed4d5c4f4aa7a63418da435a7c9be"
+        },
+        {
+          "baseline_sha256": "bebeda59768ee27f7f6468366e16c3f34e601eacd2ecd60b43a49057c8fd0dcc",
+          "byte_identical": true,
+          "path": "spectrum_identifiers.csv",
+          "replay_sha256": "bebeda59768ee27f7f6468366e16c3f34e601eacd2ecd60b43a49057c8fd0dcc"
+        },
+        {
+          "baseline_sha256": "0c70df4df3e519340b49d3ee298ad6fd4ad605a184ab1efc5cacf7f492ea0543",
+          "byte_identical": true,
+          "path": "best_matches_spectrum_97.csv",
+          "replay_sha256": "0c70df4df3e519340b49d3ee298ad6fd4ad605a184ab1efc5cacf7f492ea0543"
+        }
+      ],
+      [
+        {
+          "baseline_sha256": "72a436272130d0c9a1460cc72530dbd8ad819c34529600bcd195e11790801ec9",
+          "byte_identical": true,
+          "path": "processed_spectra.json",
+          "replay_sha256": "72a436272130d0c9a1460cc72530dbd8ad819c34529600bcd195e11790801ec9"
+        },
+        {
+          "baseline_sha256": "6b5d3827f0ae3813a820c42f4fa27bd2120ed4d5c4f4aa7a63418da435a7c9be",
+          "byte_identical": true,
+          "path": "modified_cosine_scores.npz",
+          "replay_sha256": "6b5d3827f0ae3813a820c42f4fa27bd2120ed4d5c4f4aa7a63418da435a7c9be"
+        },
+        {
+          "baseline_sha256": "bebeda59768ee27f7f6468366e16c3f34e601eacd2ecd60b43a49057c8fd0dcc",
+          "byte_identical": true,
+          "path": "spectrum_identifiers.csv",
+          "replay_sha256": "bebeda59768ee27f7f6468366e16c3f34e601eacd2ecd60b43a49057c8fd0dcc"
+        },
+        {
+          "baseline_sha256": "0c70df4df3e519340b49d3ee298ad6fd4ad605a184ab1efc5cacf7f492ea0543",
+          "byte_identical": true,
+          "path": "best_matches_spectrum_97.csv",
+          "replay_sha256": "0c70df4df3e519340b49d3ee298ad6fd4ad605a184ab1efc5cacf7f492ea0543"
+        }
+      ]
+    ],
+    "reference_tests": 2,
+    "semantic_fidelity_validated": false,
+    "solver_run": false,
+    "started": 1792854608.8618803,
+    "status": "repeatability_observed_requires_comparison_review"
+  },
+  "retained_evidence": {
+    "trial/uv.lock": {
+      "bytes": 90002,
+      "reason": "Full lock retained as evidence; exact resolved package versions are supplied in trial/environment.txt. Wheel URLs and hashes are omitted from model context.",
+      "sha256": "31520af80e225312cd9817a5ab4306990e361440df04f6d74f56ac585d8025e9"
+    }
+  },
+  "source_operations": {
+    "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+    "operations": [
+      {
+        "column": 12,
+        "function": "os.path.join",
+        "id": "call-36-12",
+        "line": 36,
+        "source": "os.path.join(os.path.dirname(os.getcwd()), \"data\")"
+      },
+      {
+        "column": 25,
+        "function": "os.path.dirname",
+        "id": "call-36-25",
+        "line": 36,
+        "source": "os.path.dirname(os.getcwd())"
+      },
+      {
+        "column": 41,
+        "function": "os.getcwd",
+        "id": "call-36-41",
+        "line": 36,
+        "source": "os.getcwd()"
+      },
+      {
+        "column": 11,
+        "function": "os.path.join",
+        "id": "call-37-11",
+        "line": 37,
+        "source": "os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf\")"
+      },
+      {
+        "column": 12,
+        "function": "list",
+        "id": "call-38-12",
+        "line": 38,
+        "source": "list(load_from_mgf(file_mgf))"
+      },
+      {
+        "column": 17,
+        "function": "load_from_mgf",
+        "id": "call-38-17",
+        "line": 38,
+        "source": "load_from_mgf(file_mgf)"
+      },
+      {
+        "column": 0,
+        "function": "print",
+        "id": "call-40-0",
+        "line": 40,
+        "source": "print(f\"{len(spectrums)} spectrums found and imported\")"
+      },
+      {
+        "column": 9,
+        "function": "len",
+        "id": "call-40-9",
+        "line": 40,
+        "source": "len(spectrums)"
+      },
+      {
+        "column": 13,
+        "function": "s.get",
+        "id": "call-46-13",
+        "line": 46,
+        "source": "s.get(\"inchikey\")"
+      },
+      {
+        "column": 18,
+        "function": "np.sum",
+        "id": "call-47-18",
+        "line": 47,
+        "source": "np.sum([1 for x in inchikeys if x is not None])"
+      },
+      {
+        "column": 0,
+        "function": "print",
+        "id": "call-48-0",
+        "line": 48,
+        "source": "print(f\"Found {int(found_inchikeys)} inchikeys in metadata\")"
+      },
+      {
+        "column": 15,
+        "function": "int",
+        "id": "call-48-15",
+        "line": 48,
+        "source": "int(found_inchikeys)"
+      },
+      {
+        "column": 9,
+        "function": "s.get",
+        "id": "call-50-9",
+        "line": 50,
+        "source": "s.get(\"inchi\")"
+      },
+      {
+        "column": 10,
+        "function": "s.get",
+        "id": "call-53-10",
+        "line": 53,
+        "source": "s.get(\"smiles\")"
+      },
+      {
+        "column": 20,
+        "function": "len",
+        "id": "call-56-20",
+        "line": 56,
+        "source": "len(s.peaks.mz)"
+      },
+      {
+        "column": 0,
+        "function": "plt.figure",
+        "id": "call-59-0",
+        "line": 59,
+        "source": "plt.figure(figsize=(5,4), dpi=150)"
+      },
+      {
+        "column": 0,
+        "function": "plt.hist",
+        "id": "call-60-0",
+        "line": 60,
+        "source": "plt.hist(numbers_of_peaks, 20, edgecolor=\"white\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.title",
+        "id": "call-61-0",
+        "line": 61,
+        "source": "plt.title(\"Peaks per spectrum (before filtering)\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.xlabel",
+        "id": "call-62-0",
+        "line": 62,
+        "source": "plt.xlabel(\"Number of peaks in spectrum\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.ylabel",
+        "id": "call-63-0",
+        "line": 63,
+        "source": "plt.ylabel(\"Number of spectra\")"
+      },
+      {
+        "column": 15,
+        "function": "default_filters",
+        "id": "call-83-15",
+        "line": 83,
+        "source": "default_filters(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "repair_inchi_inchikey_smiles",
+        "id": "call-84-15",
+        "line": 84,
+        "source": "repair_inchi_inchikey_smiles(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "derive_inchi_from_smiles",
+        "id": "call-85-15",
+        "line": 85,
+        "source": "derive_inchi_from_smiles(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "derive_smiles_from_inchi",
+        "id": "call-86-15",
+        "line": 86,
+        "source": "derive_smiles_from_inchi(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "derive_inchikey_from_inchi",
+        "id": "call-87-15",
+        "line": 87,
+        "source": "derive_inchikey_from_inchi(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "harmonize_undefined_smiles",
+        "id": "call-88-15",
+        "line": 88,
+        "source": "harmonize_undefined_smiles(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "harmonize_undefined_inchi",
+        "id": "call-89-15",
+        "line": 89,
+        "source": "harmonize_undefined_inchi(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "harmonize_undefined_inchikey",
+        "id": "call-90-15",
+        "line": 90,
+        "source": "harmonize_undefined_inchikey(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "add_precursor_mz",
+        "id": "call-91-15",
+        "line": 91,
+        "source": "add_precursor_mz(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "normalize_intensities",
+        "id": "call-107-15",
+        "line": 107,
+        "source": "normalize_intensities(spectrum)"
+      },
+      {
+        "column": 15,
+        "function": "select_by_intensity",
+        "id": "call-108-15",
+        "line": 108,
+        "source": "select_by_intensity(spectrum, intensity_from=0.01)"
+      },
+      {
+        "column": 15,
+        "function": "select_by_mz",
+        "id": "call-109-15",
+        "line": 109,
+        "source": "select_by_mz(spectrum, mz_from=10, mz_to=1000)"
+      },
+      {
+        "column": 13,
+        "function": "metadata_processing",
+        "id": "call-118-13",
+        "line": 118,
+        "source": "metadata_processing(s)"
+      },
+      {
+        "column": 13,
+        "function": "peak_processing",
+        "id": "call-119-13",
+        "line": 119,
+        "source": "peak_processing(s)"
+      },
+      {
+        "column": 13,
+        "function": "s.get",
+        "id": "call-121-13",
+        "line": 121,
+        "source": "s.get(\"inchikey\")"
+      },
+      {
+        "column": 20,
+        "function": "len",
+        "id": "call-124-20",
+        "line": 124,
+        "source": "len(s.peaks.mz)"
+      },
+      {
+        "column": 0,
+        "function": "plt.figure",
+        "id": "call-127-0",
+        "line": 127,
+        "source": "plt.figure(figsize=(5,4), dpi=150)"
+      },
+      {
+        "column": 0,
+        "function": "plt.hist",
+        "id": "call-128-0",
+        "line": 128,
+        "source": "plt.hist(numbers_of_peaks, 20, edgecolor=\"white\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.title",
+        "id": "call-129-0",
+        "line": 129,
+        "source": "plt.title(\"Peaks per spectrum (after filtering)\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.xlabel",
+        "id": "call-130-0",
+        "line": 130,
+        "source": "plt.xlabel(\"Number of peaks in spectrum\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.ylabel",
+        "id": "call-131-0",
+        "line": 131,
+        "source": "plt.ylabel(\"Number of spectra\")"
+      },
+      {
+        "column": 19,
+        "function": "os.path.join",
+        "id": "call-142-19",
+        "line": 142,
+        "source": "os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.json\")"
+      },
+      {
+        "column": 0,
+        "function": "save_as_json",
+        "id": "call-143-0",
+        "line": 143,
+        "source": "save_as_json(spectrums, file_export_json)"
+      },
+      {
+        "column": 21,
+        "function": "os.path.join",
+        "id": "call-149-21",
+        "line": 149,
+        "source": "os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.pickle\")"
+      },
+      {
+        "column": 0,
+        "function": "pickle.dump",
+        "id": "call-150-0",
+        "line": 150,
+        "source": "pickle.dump(spectrums, \n            open(file_export_pickle, \"wb\"))"
+      },
+      {
+        "column": 12,
+        "function": "open",
+        "id": "call-151-12",
+        "line": 151,
+        "source": "open(file_export_pickle, \"wb\")"
+      },
+      {
+        "column": 21,
+        "function": "CosineGreedy",
+        "id": "call-159-21",
+        "line": 159,
+        "source": "CosineGreedy(tolerance=0.005)"
+      },
+      {
+        "column": 9,
+        "function": "calculate_scores",
+        "id": "call-160-9",
+        "line": 160,
+        "source": "calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)"
+      },
+      {
+        "column": 15,
+        "function": "scores.scores.to_array",
+        "id": "call-164-15",
+        "line": 164,
+        "source": "scores.scores.to_array()"
+      },
+      {
+        "column": 15,
+        "function": "scores.scores.to_array",
+        "id": "call-167-15",
+        "line": 167,
+        "source": "scores.scores.to_array()"
+      },
+      {
+        "column": 15,
+        "function": "scores.scores_by_query",
+        "id": "call-172-15",
+        "line": 172,
+        "source": "scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)"
+      },
+      {
+        "column": 0,
+        "function": "print",
+        "id": "call-173-0",
+        "line": 173,
+        "source": "print([x[1] for x in best_matches])"
+      },
+      {
+        "column": 1,
+        "function": "x[0].get",
+        "id": "call-175-1",
+        "line": 175,
+        "source": "x[0].get(\"smiles\")"
+      },
+      {
+        "column": 17,
+        "function": "enumerate",
+        "id": "call-180-17",
+        "line": 180,
+        "source": "enumerate([x[0].get(\"smiles\") for x in best_matches])"
+      },
+      {
+        "column": 28,
+        "function": "x[0].get",
+        "id": "call-180-28",
+        "line": 180,
+        "source": "x[0].get(\"smiles\")"
+      },
+      {
+        "column": 8,
+        "function": "Chem.MolFromSmiles",
+        "id": "call-181-8",
+        "line": 181,
+        "source": "Chem.MolFromSmiles(smiles)"
+      },
+      {
+        "column": 4,
+        "function": "Draw.MolToFile",
+        "id": "call-182-4",
+        "line": 182,
+        "source": "Draw.MolToFile(m, f\"compound_{i}.png\")"
+      },
+      {
+        "column": 17,
+        "function": "scores.scores_by_query",
+        "id": "call-187-17",
+        "line": 187,
+        "source": "scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)"
+      },
+      {
+        "column": 21,
+        "function": "ModifiedCosine",
+        "id": "call-205-21",
+        "line": 205,
+        "source": "ModifiedCosine(tolerance=0.005)"
+      },
+      {
+        "column": 9,
+        "function": "calculate_scores",
+        "id": "call-206-9",
+        "line": 206,
+        "source": "calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)"
+      },
+      {
+        "column": 17,
+        "function": "scores.scores_by_query",
+        "id": "call-209-17",
+        "line": 209,
+        "source": "scores.scores_by_query(spectrums[5], name=\"ModifiedCosine_score\", sort=True)"
+      },
+      {
+        "column": 15,
+        "function": "scores.scores.to_array",
+        "id": "call-213-15",
+        "line": 213,
+        "source": "scores.scores.to_array()"
+      },
+      {
+        "column": 0,
+        "function": "plt.figure",
+        "id": "call-215-0",
+        "line": 215,
+        "source": "plt.figure(figsize=(6,6), dpi=150)"
+      },
+      {
+        "column": 0,
+        "function": "plt.imshow",
+        "id": "call-216-0",
+        "line": 216,
+        "source": "plt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"], cmap=\"viridis\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.colorbar",
+        "id": "call-217-0",
+        "line": 217,
+        "source": "plt.colorbar(shrink=0.7)"
+      },
+      {
+        "column": 0,
+        "function": "plt.title",
+        "id": "call-218-0",
+        "line": 218,
+        "source": "plt.title(\"Modified Cosine spectra similarities\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.xlabel",
+        "id": "call-219-0",
+        "line": 219,
+        "source": "plt.xlabel(\"Spectrum #ID\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.ylabel",
+        "id": "call-220-0",
+        "line": 220,
+        "source": "plt.ylabel(\"Spectrum #ID\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.figure",
+        "id": "call-225-0",
+        "line": 225,
+        "source": "plt.figure(figsize=(6,6), dpi=150)"
+      },
+      {
+        "column": 0,
+        "function": "plt.imshow",
+        "id": "call-226-0",
+        "line": 226,
+        "source": "plt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"] * (scores_array[:50, :50][\"ModifiedCosine_matches\"] >= min_match), cmap=\"viridis\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.colorbar",
+        "id": "call-227-0",
+        "line": 227,
+        "source": "plt.colorbar(shrink=0.7)"
+      },
+      {
+        "column": 0,
+        "function": "plt.title",
+        "id": "call-228-0",
+        "line": 228,
+        "source": "plt.title(\"Modified Cosine spectra similarities (min_match=5)\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.xlabel",
+        "id": "call-229-0",
+        "line": 229,
+        "source": "plt.xlabel(\"Spectrum #ID\")"
+      },
+      {
+        "column": 0,
+        "function": "plt.ylabel",
+        "id": "call-230-0",
+        "line": 230,
+        "source": "plt.ylabel(\"Spectrum #ID\")"
+      },
+      {
+        "column": 17,
+        "function": "scores.scores_by_query",
+        "id": "call-236-17",
+        "line": 236,
+        "source": "scores.scores_by_query(spectrums[11], name=\"ModifiedCosine_score\", sort=True)"
+      },
+      {
+        "column": 1,
+        "function": "x[0].get",
+        "id": "call-240-1",
+        "line": 240,
+        "source": "x[0].get(\"smiles\")"
+      },
+      {
+        "column": 17,
+        "function": "enumerate",
+        "id": "call-247-17",
+        "line": 247,
+        "source": "enumerate([x[0].get(\"smiles\") for x in best_matches])"
+      },
+      {
+        "column": 28,
+        "function": "x[0].get",
+        "id": "call-247-28",
+        "line": 247,
+        "source": "x[0].get(\"smiles\")"
+      },
+      {
+        "column": 8,
+        "function": "Chem.MolFromSmiles",
+        "id": "call-248-8",
+        "line": 248,
+        "source": "Chem.MolFromSmiles(smiles)"
+      },
+      {
+        "column": 4,
+        "function": "Draw.MolToFile",
+        "id": "call-249-4",
+        "line": 249,
+        "source": "Draw.MolToFile(m, f\"compound_{i}.png\")"
+      },
+      {
+        "column": 10,
+        "function": "s.get",
+        "id": "call-253-10",
+        "line": 253,
+        "source": "s.get(\"precursor_mz\")"
+      },
+      {
+        "column": 0,
+        "function": "np.where",
+        "id": "call-255-0",
+        "line": 255,
+        "source": "np.where(np.array(masses) > 600)"
+      },
+      {
+        "column": 9,
+        "function": "np.array",
+        "id": "call-255-9",
+        "line": 255,
+        "source": "np.array(masses)"
+      },
+      {
+        "column": 17,
+        "function": "scores.scores_by_query",
+        "id": "call-258-17",
+        "line": 258,
+        "source": "scores.scores_by_query(spectrums[97], name=\"ModifiedCosine_score\", sort=True)"
+      },
+      {
+        "column": 17,
+        "function": "enumerate",
+        "id": "call-265-17",
+        "line": 265,
+        "source": "enumerate([x[0].get(\"smiles\") for x in best_matches])"
+      },
+      {
+        "column": 28,
+        "function": "x[0].get",
+        "id": "call-265-28",
+        "line": 265,
+        "source": "x[0].get(\"smiles\")"
+      },
+      {
+        "column": 8,
+        "function": "Chem.MolFromSmiles",
+        "id": "call-266-8",
+        "line": 266,
+        "source": "Chem.MolFromSmiles(smiles)"
+      },
+      {
+        "column": 4,
+        "function": "Draw.MolToFile",
+        "id": "call-267-4",
+        "line": 267,
+        "source": "Draw.MolToFile(m, f\"compound_{i}.png\")"
+      }
+    ],
+    "source_sha256": "0524c9db731ca258d71e7af8fe0846312643b8ff1f02ce833162a6be4c5d6db0"
+  },
+  "task_policy": {
+    "dependency_answers": "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "supplied_intermediates": "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  }
+}

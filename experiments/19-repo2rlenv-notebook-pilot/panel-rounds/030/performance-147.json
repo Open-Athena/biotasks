@@ -1,0 +1,135 @@
+{
+  "source_archive_manifest_sha256": "c40a85a9b281702ad44dc53d3c02586b118ece69376419efc57b51be746c50cb",
+  "pipeline_status": "validated",
+  "source_id": "matchms-spectral-matching",
+  "elapsed_pipeline_seconds": 6717.709,
+  "stage_elapsed_seconds": {
+    "preparation": 54.808,
+    "setup": 1023.007,
+    "replay": 245.807,
+    "specification": 670.993,
+    "construction": 859.722,
+    "grading": 3239.77,
+    "native": 617.979
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "completed",
+    "replay": "completed",
+    "specification": "completed",
+    "construction": "completed",
+    "grading": "completed",
+    "native": "completed"
+  },
+  "accounted_model_request_attempts": 169,
+  "request_ledgers": [
+    {
+      "path": "grading/requests.sqlite",
+      "sha256": "f1137afe0da55e292c731d2f0f591dd9fa730d9e0256b1e14e8ed5f5736674a3",
+      "count": 85,
+      "calls": [
+        {
+          "scope": "grader",
+          "state": "response_received",
+          "count": 11
+        },
+        {
+          "scope": "independent",
+          "state": "response_received",
+          "count": 31
+        },
+        {
+          "scope": "probes",
+          "state": "response_received",
+          "count": 32
+        },
+        {
+          "scope": "repair",
+          "state": "response_received",
+          "count": 1
+        },
+        {
+          "scope": "review",
+          "state": "response_received",
+          "count": 3
+        },
+        {
+          "scope": "review-repair",
+          "state": "response_received",
+          "count": 7
+        }
+      ]
+    },
+    {
+      "path": "materialization-raw/requests.sqlite",
+      "sha256": "cc2e5fe5c0a90d9740e672e59132c644534cf74545bb266c7bb2a26bebb56b28",
+      "count": 7,
+      "calls": [
+        {
+          "scope": "materialize",
+          "state": "response_received",
+          "count": 7
+        }
+      ]
+    },
+    {
+      "path": "native/requests.sqlite",
+      "sha256": "80844a4d31764f7bcb5673d011e4417a3fdc9854534e7a9fee5701ac0f7f4dab",
+      "count": 15,
+      "calls": [
+        {
+          "scope": "solver",
+          "state": "http_200",
+          "count": 15
+        }
+      ]
+    },
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "9833d3fd906adb244cd48f49016c3ef5d6ed6f460721538232674137b2e93726",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "replay/requests.sqlite",
+      "sha256": "e2f280d7b17f832639376556a77f40ca2dc283bfd9df736e7768584274fcf1fa",
+      "count": 0,
+      "calls": []
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "119c016febe4978bb3c17b09886cf8dd1f0829ec5fb7f9c200ac8423ce1c13b5",
+      "count": 38,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 38
+        }
+      ]
+    },
+    {
+      "path": "specification/requests.sqlite",
+      "sha256": "558d7fdf3bfafaa18b0612ba2a422ba1c4d7c71b8507cfb1ee4eb9de3ddcbf95",
+      "count": 23,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 23
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 154,
+  "distinct_author_response_operations_within_stage": 154,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 1
+}

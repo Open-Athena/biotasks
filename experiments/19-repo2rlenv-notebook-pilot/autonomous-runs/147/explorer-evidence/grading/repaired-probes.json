@@ -1,0 +1,232 @@
+{
+  "concerns": [
+    "Branch D rank-10 substitution uses spectrum 1182 (the reference 11th-ranked entry, matches 12, so it still passes the >=5-match filter); the row also carries the score of spectrum 1182, so the ranking and the value comparison of that row both fail rather than only one.",
+    "The reference does not specify what would happen for an off-diagonal symmetric pair whose scores were originally asymmetric; since both directions are always written with the same value in this suite, symmetry is never a source of failure here and a hypothetical grader bug that only checks symmetry but not values is not exposed.",
+    "The public tolerance for normalized peak intensities (1e-9) is tighter than the tolerance for m/z (1e-6); a native writer that emits decimal floats at less than full precision (e.g. repr with fewer digits) could decode within 1e-6 for m/z but break the 1e-9 intensity bound, a wider-dtype/serialization freedom the contract accepts in principle but that no such probe here fully exercises for scores."
+  ],
+  "disposition": "ready",
+  "probes": [
+    {
+      "check_ids": [
+        "spectra_content"
+      ],
+      "evidence": [
+        {
+          "path": "processed_spectra.json",
+          "quote": "\"spectrum_index\": 15, \"spectrum_id\": \"CCMSLIB00000079365\", \"compound_name\": \"\", \"inchikey\": \"DGHIPRZJHFKOMO-MQJDWESPSA-N\""
+        },
+        {
+          "path": "processed_spectra.json",
+          "quote": "\"inchikey\": \"JDZNIWUNOASRIK-UHFFFAOYSA-N\""
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "swap-spectrum-annotations",
+      "rationale": "The mutation swaps the smiles/inchikey strings of spectra 7 and 15 in processed_spectra.json only; the script itself asserts that neither index is a query (5, 11, 97), and neither index appears in any best_matches.csv row (the top-10 branch targets are different indices such as 771, 391, 1100, 123, 1182, 1010). The cross_output_consistency check compares retained-peak counts across processed_spectra.json, peak_counts.csv and the two matrix diagonals, and joins each best_matches.csv row to the identifiers of the spectrum it references \u2014 since neither corrupted spectrum is referenced by any best_matches row and all counts, peaks and matrices are untouched, no cross-output relation changes and that check correctly passes. The original annotation mistakenly assumed the corrupted identifiers propagate to the cross-output join; they do not, because the join only covers spectra referenced in best_matches.csv. The wrong per-spectrum identifier values are caught exactly by spectra_content (exact string comparison per spectrum index, branch A-E rows unaffected), which is therefore the single failing check.",
+      "script": "import json\n\npath = \"processed_spectra.json\"\ndata = json.load(open(path))\nassert isinstance(data, list) and len(data) == 1267\n\na, b = data[7], data[15]\nassert a[\"spectrum_index\"] == 7 and b[\"spectrum_index\"] == 15\nassert a[\"smiles\"] and b[\"smiles\"] and a[\"smiles\"] != b[\"smiles\"]\nassert a[\"inchikey\"] and b[\"inchikey\"] and a[\"inchikey\"] != b[\"inchikey\"]\n\n# neither spectrum is a queried index or a best-match target (verified against reference)\nfor i in (7, 15):\n    assert i not in (5, 11, 97)\n\na[\"smiles\"], b[\"smiles\"] = b[\"smiles\"], a[\"smiles\"]\na[\"inchikey\"], b[\"inchikey\"] = b[\"inchikey\"], a[\"inchikey\"]\n\njson.dump(data, open(path, \"w\"))\nprint(\"swapped smiles/inchikey between spectra 7 and 15\")\n"
+    },
+    {
+      "check_ids": [
+        "spectra_content",
+        "cross_output_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "processed_spectra.json",
+          "quote": "[[131.073563, 0.010103092783505154], [143.073013, 0.01043298969072165]]"
+        },
+        {
+          "path": "processed_spectra.json",
+          "quote": "\"spectrum_index\": 15, \"spectrum_id\": \"CCMSLIB00000079365\", \"compound_name\": \"\", \"inchikey\": \"DGHIPRZJHFKOMO-MQJDWESPSA-N\""
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "perturb-peak-list-values",
+      "rationale": "Perturbs selected m/z (by 0.02 Da, far beyond the 1e-6 tolerance) and selected normalized intensities (beyond the 1e-9 tolerance) of spectrum 15, and drops its two lowest-intensity retained peaks, keeping every value inside the stated [10,1000] m/z and [0.01,1.0] intensity ranges, keeping max intensity exactly 1, and keeping record count and identifiers intact. Spectrum 15 is not a query and not a best-match target (verified), so the wrong peak list itself constitutes a per-spectrum value error in processed_spectra.json; the retained peak count for index 15 also no longer matches the untouched diagonal of the similarity matrices and the peak_counts row, exercising cross-output consistency.",
+      "script": "import json, math\n\npath = \"processed_spectra.json\"\ndata = json.load(open(path))\nassert isinstance(data, list) and len(data) == 1267\n\nrec = data[15]\nassert rec[\"spectrum_index\"] == 15\nassert 15 not in (5, 11, 97)  # neither query nor best-match target\n\npeaks = [list(p) for p in rec[\"peaks\"]]\nn = len(peaks)\nassert n >= 10\nfor mz, inten in peaks:\n    assert math.isfinite(mz) and math.isfinite(inten)\n    assert 10.0 <= mz <= 1000.0 and 0.01 <= inten <= 1.0\n\nmaxidx = max(range(n), key=lambda k: peaks[k][1])\nassert peaks[maxidx][1] == 1.0  # retained maximum after normalization\n\n# drop the two lowest-intensity peaks (never the maximum peak)\ndrop = set(sorted(range(n), key=lambda k: peaks[k][1])[:2])\nassert maxidx not in drop\n\nkept = []\nfor k, (mz, inten) in enumerate(peaks):\n    if k in drop:\n        continue\n    if k == maxidx:\n        inten = 1.0\n    elif k % 4 == 1:\n        s = inten / 2.0 if inten > 0.1 else min(1.0, inten * 1.9)\n        inten = min(max(s, 0.0101), 0.99)\n    elif k % 4 == 3:\n        mz = mz + 0.02 if mz <= 950.0 else mz - 0.02\n    kept.append([mz, inten])\n\nassert len(kept) == n - 2\nfor mz, inten in kept:\n    assert 10.0 <= mz <= 1000.0 and 0.0101 <= inten <= 1.0\nassert max(p[1] for p in kept) == 1.0\n\nrec[\"peaks\"] = kept\ndata[15] = rec\njson.dump(data, open(path, \"w\"))\nprint(\"spectrum 15: 2 peaks dropped, selected intensities and m/z values perturbed\")\n"
+    },
+    {
+      "check_ids": [
+        "similarity_matrices",
+        "cross_output_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "similarity_scores.npz",
+          "quote": "cosine_greedy_score"
+        },
+        {
+          "path": "similarity_scores.npz",
+          "quote": "modified_cosine_matches"
+        },
+        {
+          "path": "peak_counts.csv",
+          "quote": "63,3364,14"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "matrix-values-and-diagonal-counts",
+      "rationale": "Perturbs off-diagonal greedy and modified cosine scores by 10% on two verified non-query index pairs, changes two off-diagonal match counts, and reduces both matrices' diagonal self-match counts by one at three spectra (63, 218, 1200; verified non-query, non-target, with diagonal > 1). Symmetry is preserved (equal writes to (i,j) and (j,i)), all entries remain finite, so the failure modes isolated are exactly the per-entry 1e-9 score comparison, the exact integer match comparison, and the diagonal-to-retained-count inconsistency with processed_spectra.json/peak_counts.csv (which are left untouched).",
+      "script": "import numpy as np\n\npath = \"similarity_scores.npz\"\nz = np.load(path)\ng = np.array(z[\"cosine_greedy_score\"], dtype=np.float64)\nm = np.array(z[\"modified_cosine_score\"], dtype=np.float64)\ngm = np.array(z[\"cosine_greedy_matches\"])\nmm = np.array(z[\"modified_cosine_matches\"])\nassert g.shape == (1267, 1267)\nqueries = {5, 11, 97}\n\nfor i, j in [(299, 812), (1043, 17)]:\n    assert i not in queries and j not in queries\n    for mat in (g, m):\n        old = float(mat[i, j])\n        assert 0.0 < old < 1.0\n        new = old * 1.1\n        mat[i, j] = mat[j, i] = new\n\nfor i, j in [(299, 812), (12, 515)]:\n    assert i not in queries and j not in queries\n    for mat in (gm, mm):\n        v = int(mat[i, j])\n        mat[i, j] = mat[j, i] = v + 1\n\nfor i in (63, 218, 1200):\n    assert i not in queries\n    assert gm[i, i] > 1 and mm[i, i] > 1\n    gm[i, i] -= 1\n    mm[i, i] -= 1\n\nassert np.isfinite(g).all() and np.isfinite(m).all()\nnp.savez(path, cosine_greedy_score=g, modified_cosine_score=m,\n         cosine_greedy_matches=gm, modified_cosine_matches=mm)\nprint(\"perturbed selected cosine scores, match counts and diagonal self-match counts\")\n"
+    },
+    {
+      "check_ids": [
+        "best_matches_ranked_lists",
+        "cross_output_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "best_matches.csv",
+          "quote": "11,ModifiedCosine,5,10,391,CCC(C)[C@H](NS(=O)(=O)c1ccc(C)cc1)C(=O)N2CCC(CC2)C(=O)N3CCC(CC3)C(=O)OC"
+        },
+        {
+          "path": "best_matches.csv",
+          "quote": "5,CosineGreedy,none,2,1100,Cc1cc(=O)oc2cc(OC(=O)c3ccccc3)ccc12,JPNMSSAADBXSRO-UHFFFAOYSA-N,0.9971104911561329,2"
+        },
+        {
+          "path": "best_matches.csv",
+          "quote": "97,ModifiedCosine,5,10,123,COc1cc(C)c(C(=O)Oc2cc(C)c(C(=O)O)c(O)c2C)c(O)c1C,NMKBRSYSHBPUPY-UHFFFAOYSA-N,0.3217394754730571,5"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "best-match-substitutions",
+      "rationale": "four independent branch defects, each keeping row counts, rank numbering (1..10), branch labels and header intact: (1) branch D rank 10 replaces the reference 10th spectrum (391, matches 9) with the reference 11th-ranked spectrum 1182 (score 0.47163171705258594, matches 12, its own consistent annotations copied from processed_spectra.json) \u2014 the exact 11th-for-10th substitution the contract rejects, and its matches value still passes the >=5 filter so this is a ranking error, not a filter error; (2) branch B rank 2 score inflated by 0.05 (kept between rank 1 and rank 3 values so ordering stays coherent); (3) branch E rank 10 match count incremented (still >= 5, so filtered membership is unchanged); (4) branch A rank 2 smiles replaced by 'C', an annotation string not equal to the post-pipeline value of spectrum 1100.",
+      "script": "import csv, json\n\nbm_path = \"best_matches.csv\"\nspec = json.load(open(\"processed_spectra.json\"))\nassert len(spec) == 1267\nrows = list(csv.DictReader(open(bm_path)))\nassert len(rows) == 50\n\ndef hit(r, q, meas, filt, rank):\n    return (r[\"query_index\"] == q and r[\"similarity_measure\"] == meas\n            and r[\"min_match_filter\"] == filt and int(r[\"rank\"]) == rank)\n\nn_sub = n_score = n_match = n_annot = 0\nfor r in rows:\n    # branch D rank 10: substitute the reference 11th-ranked spectrum (1182, m[1182,11]\n    # = 0.47163171705258594, matches 12) for the reference 10th (391)\n    if hit(r, \"11\", \"ModifiedCosine\", \"5\", 10):\n        assert int(r[\"matched_spectrum_index\"]) == 391\n        r[\"matched_spectrum_index\"] = \"1182\"\n        r[\"score\"] = \"0.47163171705258594\"\n        r[\"matches\"] = \"12\"\n        r[\"matched_smiles\"] = spec[1182][\"smiles\"] or \"\"\n        r[\"matched_inchikey\"] = spec[1182][\"inchikey\"] or \"\"\n        n_sub += 1\n    # branch B rank 2: wrong score value (kept below the rank-1 value, so ordering holds)\n    if hit(r, \"5\", \"CosineGreedy\", \"5\", 2):\n        assert int(r[\"matched_spectrum_index\"]) == 1010\n        r[\"score\"] = repr(float(r[\"score\"]) + 0.05)\n        n_score += 1\n    # branch E rank 10: wrong matched-peak count (still >= the 5-match filter)\n    if hit(r, \"97\", \"ModifiedCosine\", \"5\", 10):\n        assert int(r[\"matched_spectrum_index\"]) == 123\n        r[\"matches\"] = str(int(r[\"matches\"]) + 1)\n        n_match += 1\n    # branch A rank 2: annotation string not belonging to the matched spectrum 1100\n    if hit(r, \"5\", \"CosineGreedy\", \"none\", 2):\n        assert int(r[\"matched_spectrum_index\"]) == 1100\n        r[\"matched_smiles\"] = \"C\"\n        n_annot += 1\nassert n_sub == n_score == n_match == n_annot == 1\n\nwith open(bm_path, \"w\", newline=\"\") as f:\n    w = csv.DictWriter(f, fieldnames=list(rows[0].keys()), lineterminator=\"\\r\\n\")\n    w.writeheader()\n    w.writerows(rows)\nprint(\"best_matches: 11th-for-10th substitution, wrong score, wrong match count, wrong smiles\")\n"
+    },
+    {
+      "check_ids": [
+        "peak_counts_summary",
+        "cross_output_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "peak_counts.csv",
+          "quote": "63,3364,14"
+        },
+        {
+          "path": "peak_counts.csv",
+          "quote": "97,969,733"
+        },
+        {
+          "path": "peak_counts.csv",
+          "quote": "5,180,30"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "peak-counts-wrong-values",
+      "rationale": "Increments the as-imported count by 5 and decrements the retained count by 2 for spectra 63, 218, 800 and 1200, and decrements the retained counts of the three query spectra (5, 11, 97) by one. Counts stay non-negative integers, the header, row count and spectrum-index order are preserved, so this isolates the exact per-spectrum integer comparison of both count columns (peak_counts_summary) and, via the queries' retained counts, the cross-output retained-count equality with processed_spectra.json and the untouched matrix diagonals.",
+      "script": "import csv\n\npath = \"peak_counts.csv\"\nrows = list(csv.DictReader(open(path)))\nassert len(rows) == 1267\n\ntargets = {63, 218, 800, 1200}\nfor i, r in enumerate(rows):\n    assert int(r[\"spectrum_index\"]) == i\n    if i in targets:\n        r[\"n_peaks_before_filtering\"] = str(int(r[\"n_peaks_before_filtering\"]) + 5)\n        r[\"n_peaks_after_filtering\"] = str(max(0, int(r[\"n_peaks_after_filtering\"]) - 2))\n    if i in (5, 11, 97):\n        r[\"n_peaks_after_filtering\"] = str(int(r[\"n_peaks_after_filtering\"]) - 1)\n\nwith open(path, \"w\", newline=\"\") as f:\n    w = csv.DictWriter(f, fieldnames=list(rows[0].keys()), lineterminator=\"\\n\")\n    w.writeheader()\n    w.writerows(rows)\nprint(\"peak_counts: wrong before/after counts at 7 spectra (incl. the three queries)\")\n"
+    },
+    {
+      "check_ids": [
+        "similarity_matrices"
+      ],
+      "evidence": [
+        {
+          "path": "similarity_scores.npz",
+          "quote": "cosine_greedy_score"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "score-tolerance-out-of-bound",
+      "rationale": "Shifts four score entries (greedy and modified, pairs (200,900) and (300,900), verified non-query indices with scores in (0,1), outside query columns 5/11/97 and outside all best-match rows) by exactly 2e-9 each, just above the stated 1e-9 absolute tolerance. Matches, symmetry and finiteness are untouched, so the only defect is a value just outside the explicit numeric bound.",
+      "script": "import numpy as np\n\npath = \"similarity_scores.npz\"\nz = np.load(path)\ng = np.array(z[\"cosine_greedy_score\"], dtype=np.float64)\nm = np.array(z[\"modified_cosine_score\"], dtype=np.float64)\ngm = z[\"cosine_greedy_matches\"]\nmm = z[\"modified_cosine_matches\"]\nassert g.shape == (1267, 1267)\nqueries = {5, 11, 97}\n\nEPS = 2e-9  # just above the 1e-9 absolute tolerance\nfor i, j in [(200, 900), (300, 900)]:\n    assert i not in queries and j not in queries and i != j\n    for mat in (g, m):\n        old = float(mat[i, j])\n        assert 0.0 < old < 1.0\n        new = old + EPS\n        assert abs(new - old) > 1e-9\n        mat[i, j] = mat[j, i] = new  # symmetry preserved\n\nassert np.isfinite(g).all() and np.isfinite(m).all()\nnp.savez(path, cosine_greedy_score=g, modified_cosine_score=m,\n         cosine_greedy_matches=gm, modified_cosine_matches=mm)\nprint(\"four score entries shifted by exactly 2e-9 (just outside the 1e-9 tolerance)\")\n"
+    },
+    {
+      "check_ids": [
+        "spectra_content"
+      ],
+      "evidence": [
+        {
+          "path": "processed_spectra.json",
+          "quote": "[110.033531, 0.13025210084033614]"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "intensity-tolerance-out-of-bound",
+      "rationale": "Shifts 137 normalized intensities of spectrum 999 (verified non-query, no best-match row) by exactly 2e-9, just above the stated 1e-9 absolute tolerance for normalized intensities. Boundary peaks are untouched, the maximum stays exactly 1, values stay within [0.01, 1.0], and m/z values and peak count are unchanged, so only the per-peak intensity tolerance is violated while shape, ordering, range and cross-output count constraints pass.",
+      "script": "import json\n\npath = \"processed_spectra.json\"\ndata = json.load(open(path))\nassert len(data) == 1267\n\nrec = data[999]\nassert rec[\"spectrum_index\"] == 999 and 999 not in (5, 11, 97)\npeaks = [list(p) for p in rec[\"peaks\"]]\nassert len(peaks) > 100\nassert max(p[1] for p in peaks) == 1.0\n\nEPS = 2e-9  # just above the 1e-9 tolerance for normalized intensities\nchanged = 0\nfor p in peaks:\n    if 0.05 <= p[1] <= 0.9:  # stay clear of the 0.01 and 1.0 boundaries\n        p[1] = p[1] + EPS\n        changed += 1\nassert changed >= 20\nassert max(p[1] for p in peaks) == 1.0\nassert all(0.01 <= p[1] <= 1.0 for p in peaks)\n\nrec[\"peaks\"] = peaks\ndata[999] = rec\njson.dump(data, open(path, \"w\"))\nprint(\"spectrum 999: %d normalized intensities shifted by exactly 2e-9\" % changed)\n"
+    },
+    {
+      "check_ids": [
+        "similarity_matrices"
+      ],
+      "evidence": [
+        {
+          "path": "similarity_scores.npz",
+          "quote": "cosine_greedy_score"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "scores-float32-precision-loss",
+      "rationale": "Stores both score matrices as float32, a plausible reduced-precision serialization. Casting the reference float64 values to float32 perturbs entries by up to ~3e-8 (measured max difference 2.98e-8 over the whole matrix), which is above the stated 1e-9 absolute tolerance, so under the public contract this is a wrong result, not a permitted representation change (the contract accepts 'any floating dtype' only for the container, while values must still be within 1e-9 of the reference entry). Match-count matrices are left untouched. This probes whether the value comparison is genuinely enforced per entry rather than by dtype.",
+      "script": "import numpy as np\n\npath = \"similarity_scores.npz\"\nz = np.load(path)\ng = np.asarray(z[\"cosine_greedy_score\"], dtype=np.float32)\nm = np.asarray(z[\"modified_cosine_score\"], dtype=np.float32)\ngm = np.asarray(z[\"cosine_greedy_matches\"])\nmm = np.asarray(z[\"modified_cosine_matches\"])\n\nassert np.isfinite(g).all() and np.isfinite(m).all()\nassert g.dtype == np.float32 and m.dtype == np.float32\nnp.savez(path, cosine_greedy_score=g, modified_cosine_score=m,\n         cosine_greedy_matches=gm, modified_cosine_matches=mm)\nprint(\"score matrices stored as float32 (reduced-precision serialization)\")\n"
+    },
+    {
+      "check_ids": [
+        "spectra_schema",
+        "spectra_content",
+        "reference_load",
+        "files_present",
+        "similarity_matrices",
+        "best_matches_ranked_lists",
+        "peak_counts_summary",
+        "cross_output_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "processed_spectra.json",
+          "quote": "{\"spectrum_index\": 0, \"spectrum_id\": \"CCMSLIB00000079350\", \"compound_name\""
+        }
+      ],
+      "focus": "lazy_output",
+      "kind": "valid_alternative",
+      "name": "json-pretty-print-valid",
+      "rationale": "Pretty-prints processed_spectra.json (indent=1) with Python's native shortest round-trip float serialization. Every decoded value is bit-identical to the reference (verified by reading the rewritten file back with json.load and comparing the entire parsed structure for equality, which succeeded for all 1267 records), so this is a pure representation change that the contract explicitly permits ('equality at the decoded value, not at the printed decimal count'). All other files are untouched, so every scientific check must still pass.",
+      "script": "import json\n\npath = \"processed_spectra.json\"\ndata = json.load(open(path))\nassert len(data) == 1267 and data[0][\"spectrum_index\"] == 0\n\nwith open(path, \"w\") as f:\n    json.dump(data, f, indent=1)\n\nback = json.load(open(path))\nassert back == data\nprint(\"processed_spectra.json rewritten with indent=1 and native float repr (values unchanged)\")\n"
+    },
+    {
+      "check_ids": [
+        "similarity_matrices",
+        "reference_load",
+        "cross_output_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "similarity_scores.npz",
+          "quote": "modified_cosine_matches"
+        }
+      ],
+      "focus": "lazy_output",
+      "kind": "valid_alternative",
+      "name": "npz-int32-match-matrices",
+      "rationale": "Re-serializes the two match-count matrices as int32 while keeping both score matrices bit-identical. The contract permits 'any integer dtype' for the match matrices; it is verified that all values fit in int32 (max count 969 << 2^31) and that the int32 arrays compare equal to the originals when widened back, so this is a pure dtype/representation change with all values and all cross-output relations unchanged.",
+      "script": "import numpy as np\n\npath = \"similarity_scores.npz\"\nz = np.load(path)\ng = np.asarray(z[\"cosine_greedy_score\"], dtype=np.float64)\nm = np.asarray(z[\"modified_cosine_score\"], dtype=np.float64)\ngm = np.asarray(z[\"cosine_greedy_matches\"]).astype(np.int32)\nmm = np.asarray(z[\"modified_cosine_matches\"]).astype(np.int32)\n\nassert int(gm.max()) < 2**31 and int(mm.max()) < 2**31\nassert gm.dtype == np.int32 and mm.dtype == np.int32\nassert np.array_equal(gm.astype(np.int64), z[\"cosine_greedy_matches\"])\nassert np.array_equal(mm.astype(np.int64), z[\"modified_cosine_matches\"])\nnp.savez(path, cosine_greedy_score=g, modified_cosine_score=m,\n         cosine_greedy_matches=gm, modified_cosine_matches=mm)\nprint(\"match-count matrices stored as int32 (permitted integer dtype), scores unchanged\")\n"
+    },
+    {
+      "check_ids": [
+        "spectra_content",
+        "spectra_schema"
+      ],
+      "evidence": [
+        {
+          "path": "processed_spectra.json",
+          "quote": "[110.033531, 0.13025210084033614]"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "valid_alternative",
+      "name": "intensity-within-tolerance",
+      "rationale": "Shifts 137 normalized intensities of spectrum 999 by exactly 4e-10, strictly inside the stated 1e-9 absolute tolerance for normalized intensities. Boundary peaks are untouched, the maximum remains exactly 1, values stay within [0.01, 1.0], and no peak count changes, so all per-element comparisons remain within the declared tolerance. The contract permits any value within the tolerance (a tolerance-permitted value change is a valid alternative, not a wrong result), so all checks should still pass.",
+      "script": "import json\n\npath = \"processed_spectra.json\"\ndata = json.load(open(path))\nassert len(data) == 1267\n\nrec = data[999]\nassert rec[\"spectrum_index\"] == 999 and 999 not in (5, 11, 97)\npeaks = [list(p) for p in rec[\"peaks\"]]\nassert max(p[1] for p in peaks) == 1.0\n\nEPS = 4e-10  # inside the 1e-9 tolerance for normalized intensities\nchanged = 0\nfor p in peaks:\n    if 0.05 <= p[1] <= 0.9:\n        p[1] = p[1] + EPS\n        changed += 1\nassert changed >= 20\nassert max(p[1] for p in peaks) == 1.0\nassert all(0.01 <= p[1] <= 1.0 for p in peaks)\n\nrec[\"peaks\"] = peaks\ndata[999] = rec\njson.dump(data, open(path, \"w\"))\nprint(\"spectrum 999: %d intensities shifted by 4e-10, within the stated 1e-9 tolerance\" % changed)\n"
+    }
+  ]
+}

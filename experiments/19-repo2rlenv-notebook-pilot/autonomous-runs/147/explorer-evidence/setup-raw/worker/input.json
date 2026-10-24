@@ -1,0 +1,325 @@
+{
+  "limits": {
+    "base_image": "python:3.13.13-slim-bookworm",
+    "campaign_seconds": 7200,
+    "gpu": false,
+    "max_requests": null,
+    "max_tests": 2,
+    "network": "Internet during setup only; reference is offline",
+    "reference_seconds": 600,
+    "request_timeout_seconds": 600,
+    "setup_seconds": 1800,
+    "task_cpus": 4,
+    "task_disk_gib": 10,
+    "task_memory_gib": 8
+  },
+  "paths": {
+    "exports.py": "/work/frozen/exports.py",
+    "original.py": "/work/frozen/original.py",
+    "plan.json": "/work/frozen/plan.json",
+    "reference_cwd": "/work/run",
+    "setup": "/work/setup"
+  },
+  "preparation": {
+    "conversion": {
+      "code_cells": 32,
+      "converter": "jupytext",
+      "converter_version": "1.19.6",
+      "directory_normalizations": [],
+      "documentation_execution_policy": {},
+      "equivalence_basis": "Python statements after recorded presentation and directory normalization",
+      "executable_ast_sha256": "cdde50302eba381de78b5b3b744915a2e86164f6f18540e4fe57418a0fd349bb",
+      "executed": false,
+      "format": "py:nomarker",
+      "ignored_cell_editor_metadata": [],
+      "ignored_editor_metadata": {},
+      "ignored_presentation_tags": [],
+      "markdown_cells": 17,
+      "markdown_representation": "line_comments",
+      "ordered_code_equivalence": true,
+      "presentation_normalizations": [],
+      "profile": "python-narrative-v6",
+      "script_sha256": "0524c9db731ca258d71e7af8fe0846312643b8ff1f02ce833162a6be4c5d6db0",
+      "source_sha256": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d",
+      "stored_outputs_used_as_evidence": false
+    },
+    "plan": {
+      "artifacts": [
+        {
+          "description": "The processed spectra library after the metadata-processing and peak-processing pipelines (the notebook's 'Export processed data' end product).",
+          "path": "processed_spectra.json",
+          "source_evidence": "The narrative establishes 'Export processed data' as an outcome ('Using save_as_json or save_as_mgf the data can be written back...'), and the variable `spectrums` holds the fully processed library at completion (reassignments `spectrums = [metadata_processing(s) ...]` then `[peak_processing(s) ...]`, followed by the original `save_as_json` call). The export re-serializes this same existing object to /work/outputs."
+        },
+        {
+          "description": "All-pairs Modified Cosine similarity matrix: per-pair scores and matched peak counts for the N x N spectrum comparisons.",
+          "path": "modified_cosine_scores.npz",
+          "source_evidence": "The 'Computing spectra similarities between all spectra - Modified Cosine score' section presents the full all-pairs ModifiedCosine computation as the final similarity result, visualized as a heatmap and used for the per-spectrum queries. It is produced by `scores = calculate_scores(spectrums, spectrums, ModifiedCosine(tolerance=0.005), is_symmetric=True)` and flattened to the named array `scores_array = scores.scores.to_array()`, which is the last assignment of `scores_array` (after ModifiedCosine) and survives to completion."
+        },
+        {
+          "description": "Index, compound name, inchikey and smiles for each processed spectrum; the identifier context needed to interpret the similarity matrix and match lists.",
+          "path": "spectrum_identifiers.csv",
+          "source_evidence": "These are existing metadata values (post-`default_filters`, `repair_inchi_inchikey_smiles`) on the surviving `spectrums` objects; the narrative emphasizes compound identification (inchikey/inchi/smiles) and the structures drawn from `x[0].get('smiles')` for best matches, making these identifiers the interpretive context for the exported scores and matches."
+        },
+        {
+          "description": "Top-10 Modified Cosine matches (min_match >= 5) for the queried spectrum spectrums[97], with matched compound identifiers, score and match count.",
+          "path": "best_matches_spectrum_97.csv",
+          "source_evidence": "The final branch 'Inspect a case that doesn't work that well...' queries `scores.scores_by_query(spectrums[97], name='ModifiedCosine_score', sort=True)` and filters to >= 5 matched peaks, taking the top 10; it is interpreted in its own right (scores inspected, compound structures drawn). The resulting tuples survive in `best_matches`/`sorted_matches` at script completion (last assignments in the script)."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "All-pairs CosineGreedy scores and the spectrums[5] top-match listings: the analysis is genuinely presented as a result, but the variable `scores` is reassigned by the ModifiedCosine `calculate_scores` call and `best_matches` is reassigned by later branches, so no surviving object holds the CosineGreedy results at completion; recovery would require recomputing the analysis, which is not permitted for exports.",
+        "Modified Cosine top matches for spectrums[5] and spectrums[11] (the 'related compounds' whose structures are drawn): `best_matches` and `sorted_matches` are overwritten by the later spectrums[97] inspection, so only the final assignment is exportable.",
+        "Peaks-per-spectrum histograms before/after filtering: plot-only diagnostics of data quality and filtering effect; `numbers_of_peaks` currently holds only the after-filtering values and is a diagnostic rather than an endpoint.",
+        "RDKit compound_*.png structure depictions: images produced by the original Draw.MolToFile calls; the underlying smiles values are already exported in the identifier and match CSVs, and figure capture/plot changes are out of scope.",
+        "Metadata spot-checks (inchikey/inchi/smiles lists, precursor_mz mass inspection such as np.where(masses > 600)): diagnostics supporting the pipelines and the choice of inspected spectra, not independent endpoints."
+      ],
+      "explanation": "The notebook's terminal products are: (1) the processed spectra library produced by the metadata/peak filtering pipelines (the 'Export processed data' end product), (2) the all-pairs Modified Cosine similarity matrix (the final similarity analysis, whose heatmap and per-spectrum queries are interpreted in the narrative), and (3) the top modified-cosine matches with min_match>=5 for the inspected query spectrum (the final state of `best_matches`/`sorted_matches` covers spectrums[97]). The appended code re-serializes these existing values (spectrums, scores_array, best_matches) plus identifier context (compound name, inchikey, smiles from the same spectrum objects) into /work/outputs. No analysis is recomputed or altered; CosineGreedy results and earlier best-match lists are excluded because the script overwrites the variables holding them.",
+      "export_code": "import csv as _exp_csv\nfrom matchms.exporting import save_as_json as _exp_save_as_json\n\n_exp_out_dir = \"/work/outputs\"\nos.makedirs(_exp_out_dir, exist_ok=True)\n\n# 1) Processed spectra library (end product of the metadata + peak pipelines)\n_exp_processed_json = os.path.join(_exp_out_dir, \"processed_spectra.json\")\n_exp_save_as_json(spectrums, _exp_processed_json)\n\n# 2) All-pairs Modified Cosine similarity: scores and matched peak counts\n_exp_scores_npz = os.path.join(_exp_out_dir, \"modified_cosine_scores.npz\")\nnp.savez(\n    _exp_scores_npz,\n    modified_cosine_score=scores_array[\"ModifiedCosine_score\"],\n    modified_cosine_matches=scores_array[\"ModifiedCosine_matches\"],\n)\n\n# 3) Spectrum identifiers (context for the similarity matrix and match lists)\n_exp_ids_csv = os.path.join(_exp_out_dir, \"spectrum_identifiers.csv\")\nwith open(_exp_ids_csv, \"w\", newline=\"\", encoding=\"utf-8\") as _exp_f:\n    _exp_w = _exp_csv.writer(_exp_f)\n    _exp_w.writerow([\"spectrum_index\", \"compound_name\", \"inchikey\", \"smiles\"])\n    for _exp_i, _exp_s in enumerate(spectrums):\n        _exp_w.writerow([\n            _exp_i,\n            _exp_s.get(\"compound_name\") or \"\",\n            _exp_s.get(\"inchikey\") or \"\",\n            _exp_s.get(\"smiles\") or \"\",\n        ])\n\n# 4) Top Modified Cosine matches (min_match >= 5) for the queried spectrum\n#    (query = spectrums[97] in the original script)\n_exp_matches_csv = os.path.join(_exp_out_dir, \"best_matches_spectrum_97.csv\")\nwith open(_exp_matches_csv, \"w\", newline=\"\", encoding=\"utf-8\") as _exp_f:\n    _exp_w = _exp_csv.writer(_exp_f)\n    _exp_w.writerow([\n        \"query_index\", \"query_smiles\", \"rank\",\n        \"matched_smiles\", \"matched_inchikey\",\n        \"modified_cosine_score\", \"modified_cosine_matches\",\n    ])\n    for _exp_r, _exp_entry in enumerate(best_matches, start=1):\n        _exp_ref = _exp_entry[0]\n        _exp_score_entry = _exp_entry[1]\n        _exp_w.writerow([\n            97,\n            spectrums[97].get(\"smiles\") or \"\",\n            _exp_r,\n            _exp_ref.get(\"smiles\") or \"\",\n            _exp_ref.get(\"inchikey\") or \"\",\n            float(_exp_score_entry[\"ModifiedCosine_score\"]),\n            int(_exp_score_entry[\"ModifiedCosine_matches\"]),\n        ])",
+      "unresolved_assumptions": [
+        "Whether the processed spectra carry a 'compound_name' metadata entry after default_filters (matchms typically adds it from 'name'/'title'); absent values are written as empty strings.",
+        "Whether the installed matchms version exposes scores_by_query entries as (spectrum, record) pairs supporting string-key access, as the baseline script itself assumes; the export reuses exactly those access patterns.",
+        "Size and write time of the processed-spectra JSON (~tens of MB for the ~39 MB source library) relative to the 600 s / 10 GiB limits is untested.",
+        "Staging of the GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf input at the path derived from `path_data` is owned by the execution stage."
+      ]
+    },
+    "source": {
+      "id": "matchms-spectral-matching",
+      "license": "Mixed repository notices: MIT book-producing code; CC BY-NC-SA 4.0 rendered book/artwork. Notebook coverage requires review.",
+      "provenance": {
+        "data_lineage": "GNPS NIH natural-products spectral library; source data file is about 39 MB.",
+        "data_redistribution_review": "Not independently established; no automatic public release. Raw notebook and generated data/task bundles remain private pending source-specific review.",
+        "input_preservation": "Original notebook bytes; no cell edits, input reductions or task design supplied by the operator.",
+        "notebook": {
+          "git_blob_sha1": "89b87a1d0156a63e60d1dbaca1233b9041658add",
+          "license": "Mixed repository notices: MIT book-producing code; CC BY-NC-SA 4.0 rendered book/artwork. Notebook coverage requires review.",
+          "license_url": "https://github.com/matchms/matchms-docs/blob/796f156c58d25adfb7e1528fcb24eb8c40c143a5/LICENSE.txt",
+          "revision": "796f156c58d25adfb7e1528fcb24eb8c40c143a5",
+          "sha256": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d",
+          "url": "https://github.com/matchms/matchms-docs/blob/796f156c58d25adfb7e1528fcb24eb8c40c143a5/notebooks/matchms_tutorial_01_building_analysis_pipeline.ipynb"
+        }
+      },
+      "source_revision": "796f156c58d25adfb7e1528fcb24eb8c40c143a5",
+      "source_sha256": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d",
+      "title": "Spectral processing and cosine/modified-cosine comparisons",
+      "url": "https://github.com/matchms/matchms-docs/blob/796f156c58d25adfb7e1528fcb24eb8c40c143a5/notebooks/matchms_tutorial_01_building_analysis_pipeline.ipynb"
+    }
+  },
+  "source_imports": {
+    "analysis": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 32,
+        "statement": "import os"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 33,
+        "statement": "import numpy as np"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 34,
+        "statement": "from matchms.importing import load_from_mgf"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 58,
+        "statement": "from matplotlib import pyplot as plt"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 72,
+        "statement": "from matchms.filtering import default_filters"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 73,
+        "statement": "from matchms.filtering import repair_inchi_inchikey_smiles"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 74,
+        "statement": "from matchms.filtering import derive_inchikey_from_inchi"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 75,
+        "statement": "from matchms.filtering import derive_smiles_from_inchi"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 76,
+        "statement": "from matchms.filtering import derive_inchi_from_smiles"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 77,
+        "statement": "from matchms.filtering import harmonize_undefined_inchi"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 78,
+        "statement": "from matchms.filtering import harmonize_undefined_inchikey"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 79,
+        "statement": "from matchms.filtering import harmonize_undefined_smiles"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 80,
+        "statement": "from matchms.filtering import add_precursor_mz"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 102,
+        "statement": "from matchms.filtering import normalize_intensities"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 103,
+        "statement": "from matchms.filtering import select_by_intensity"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 104,
+        "statement": "from matchms.filtering import select_by_mz"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 126,
+        "statement": "from matplotlib import pyplot as plt"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 140,
+        "statement": "from matchms.exporting import save_as_json"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 147,
+        "statement": "import pickle"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 156,
+        "statement": "from matchms import calculate_scores"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 157,
+        "statement": "from matchms.similarity import CosineGreedy"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 177,
+        "statement": "from rdkit import Chem"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 178,
+        "statement": "from rdkit.Chem import Draw"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 203,
+        "statement": "from matchms.similarity import ModifiedCosine"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 244,
+        "statement": "from rdkit import Chem"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 245,
+        "statement": "from rdkit.Chem import Draw"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 262,
+        "statement": "from rdkit import Chem"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 263,
+        "statement": "from rdkit.Chem import Draw"
+      }
+    ],
+    "exports": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 1,
+        "statement": "import csv as _exp_csv"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 2,
+        "statement": "from matchms.exporting import save_as_json as _exp_save_as_json"
+      }
+    ],
+    "scope": "Literal source statements and locations only; dynamic imports, native libraries and availability remain unverified."
+  }
+}

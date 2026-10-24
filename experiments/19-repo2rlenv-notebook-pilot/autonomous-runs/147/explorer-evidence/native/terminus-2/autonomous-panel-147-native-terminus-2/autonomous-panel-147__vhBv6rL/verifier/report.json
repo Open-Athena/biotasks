@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "reference_load",
+      "passed": true,
+      "message": "reference loaded: 1267 spectra"
+    },
+    {
+      "id": "files_present",
+      "passed": true,
+      "message": "all four required files are present"
+    },
+    {
+      "id": "spectra_schema",
+      "passed": true,
+      "message": "parsed 1267 spectrum records with required keys, in spectrum-index order"
+    },
+    {
+      "id": "spectra_content",
+      "passed": true,
+      "message": "all 1267 spectra match reference metadata, precursor m/z and peak lists (max |dmz|=0.000e+00 Da, max |dintensity|=0.000e+00)"
+    },
+    {
+      "id": "similarity_matrices",
+      "passed": true,
+      "message": "four N x N matrices match the reference (score tolerance 1e-09, match counts exact)"
+    },
+    {
+      "id": "best_matches_ranked_lists",
+      "passed": true,
+      "message": "all five ranked branches A-E match the reference selection, ordering, scores, match counts and matched identifiers"
+    },
+    {
+      "id": "peak_counts_summary",
+      "passed": true,
+      "message": "peak counts before/after filtering match the reference exactly for all 1267 spectra"
+    },
+    {
+      "id": "cross_output_consistency",
+      "passed": true,
+      "message": "diagonal match counts equal each spectrum's retained peak count in processed_spectra.json and peak_counts.csv for all 1267 spectra, and every best_matches.csv row joins to the identifiers of its matched spectrum in processed_spectra.json"
+    }
+  ]
+}

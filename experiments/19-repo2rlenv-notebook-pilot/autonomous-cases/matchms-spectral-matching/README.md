@@ -1,5 +1,5 @@
-# Original-source input checkpoint
+# Pinned Matchms source
 
-The original notebook is not committed to this public branch. `seed.json` pins its upstream revision and exact source SHA-256; `config.json` keeps the common execution policy and supplies no scientific task design. The original bytes are retained in the separately recorded local-only input checkpoint. Build from that input revision, not this public metadata-only revision.
+The source notebook and its repository data are pinned by the original seed. The latest audited result is [autonomous147](../../panel-rounds/030/result-147.json), with exact publication and anonymous download evidence under [autonomous-runs/147](../../autonomous-runs/147/). The source-only viewer copy retains its original hash and the source notices; it is not newly executed notebook output.
 
-This seed is prepared, not reserved, submitted or scientifically executed. Model workers must choose its task scope and outputs. The private input checkpoint does not establish data-redistribution permission or a publication-ready task. No source code or cells were repaired or reduced.
+Source code producing the book uses MIT terms, while rendered book text, illustrations and artwork retain CC BY-NC-SA4.0 terms where applicable. Full original notices and the later exact-input review are retained with the release evidence; no blanket commercial-training grant is asserted. The original seed retains its earlier intake-review state. Scientific methods and all branches were preserved by the recorded GLM pipeline; no operator supplied a task design or edited generated science.

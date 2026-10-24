@@ -1,0 +1,40 @@
+{
+  "artifacts": [
+    {
+      "description": "The processed spectra library after the metadata-processing and peak-processing pipelines (the notebook's 'Export processed data' end product).",
+      "path": "processed_spectra.json",
+      "source_evidence": "The narrative establishes 'Export processed data' as an outcome ('Using save_as_json or save_as_mgf the data can be written back...'), and the variable `spectrums` holds the fully processed library at completion (reassignments `spectrums = [metadata_processing(s) ...]` then `[peak_processing(s) ...]`, followed by the original `save_as_json` call). The export re-serializes this same existing object to /work/outputs."
+    },
+    {
+      "description": "All-pairs Modified Cosine similarity matrix: per-pair scores and matched peak counts for the N x N spectrum comparisons.",
+      "path": "modified_cosine_scores.npz",
+      "source_evidence": "The 'Computing spectra similarities between all spectra - Modified Cosine score' section presents the full all-pairs ModifiedCosine computation as the final similarity result, visualized as a heatmap and used for the per-spectrum queries. It is produced by `scores = calculate_scores(spectrums, spectrums, ModifiedCosine(tolerance=0.005), is_symmetric=True)` and flattened to the named array `scores_array = scores.scores.to_array()`, which is the last assignment of `scores_array` (after ModifiedCosine) and survives to completion."
+    },
+    {
+      "description": "Index, compound name, inchikey and smiles for each processed spectrum; the identifier context needed to interpret the similarity matrix and match lists.",
+      "path": "spectrum_identifiers.csv",
+      "source_evidence": "These are existing metadata values (post-`default_filters`, `repair_inchi_inchikey_smiles`) on the surviving `spectrums` objects; the narrative emphasizes compound identification (inchikey/inchi/smiles) and the structures drawn from `x[0].get('smiles')` for best matches, making these identifiers the interpretive context for the exported scores and matches."
+    },
+    {
+      "description": "Top-10 Modified Cosine matches (min_match >= 5) for the queried spectrum spectrums[97], with matched compound identifiers, score and match count.",
+      "path": "best_matches_spectrum_97.csv",
+      "source_evidence": "The final branch 'Inspect a case that doesn't work that well...' queries `scores.scores_by_query(spectrums[97], name='ModifiedCosine_score', sort=True)` and filters to >= 5 matched peaks, taking the top 10; it is interpreted in its own right (scores inspected, compound structures drawn). The resulting tuples survive in `best_matches`/`sorted_matches` at script completion (last assignments in the script)."
+    }
+  ],
+  "disposition": "prepare",
+  "excluded_outputs": [
+    "All-pairs CosineGreedy scores and the spectrums[5] top-match listings: the analysis is genuinely presented as a result, but the variable `scores` is reassigned by the ModifiedCosine `calculate_scores` call and `best_matches` is reassigned by later branches, so no surviving object holds the CosineGreedy results at completion; recovery would require recomputing the analysis, which is not permitted for exports.",
+    "Modified Cosine top matches for spectrums[5] and spectrums[11] (the 'related compounds' whose structures are drawn): `best_matches` and `sorted_matches` are overwritten by the later spectrums[97] inspection, so only the final assignment is exportable.",
+    "Peaks-per-spectrum histograms before/after filtering: plot-only diagnostics of data quality and filtering effect; `numbers_of_peaks` currently holds only the after-filtering values and is a diagnostic rather than an endpoint.",
+    "RDKit compound_*.png structure depictions: images produced by the original Draw.MolToFile calls; the underlying smiles values are already exported in the identifier and match CSVs, and figure capture/plot changes are out of scope.",
+    "Metadata spot-checks (inchikey/inchi/smiles lists, precursor_mz mass inspection such as np.where(masses > 600)): diagnostics supporting the pipelines and the choice of inspected spectra, not independent endpoints."
+  ],
+  "explanation": "The notebook's terminal products are: (1) the processed spectra library produced by the metadata/peak filtering pipelines (the 'Export processed data' end product), (2) the all-pairs Modified Cosine similarity matrix (the final similarity analysis, whose heatmap and per-spectrum queries are interpreted in the narrative), and (3) the top modified-cosine matches with min_match>=5 for the inspected query spectrum (the final state of `best_matches`/`sorted_matches` covers spectrums[97]). The appended code re-serializes these existing values (spectrums, scores_array, best_matches) plus identifier context (compound name, inchikey, smiles from the same spectrum objects) into /work/outputs. No analysis is recomputed or altered; CosineGreedy results and earlier best-match lists are excluded because the script overwrites the variables holding them.",
+  "export_code": "import csv as _exp_csv\nfrom matchms.exporting import save_as_json as _exp_save_as_json\n\n_exp_out_dir = \"/work/outputs\"\nos.makedirs(_exp_out_dir, exist_ok=True)\n\n# 1) Processed spectra library (end product of the metadata + peak pipelines)\n_exp_processed_json = os.path.join(_exp_out_dir, \"processed_spectra.json\")\n_exp_save_as_json(spectrums, _exp_processed_json)\n\n# 2) All-pairs Modified Cosine similarity: scores and matched peak counts\n_exp_scores_npz = os.path.join(_exp_out_dir, \"modified_cosine_scores.npz\")\nnp.savez(\n    _exp_scores_npz,\n    modified_cosine_score=scores_array[\"ModifiedCosine_score\"],\n    modified_cosine_matches=scores_array[\"ModifiedCosine_matches\"],\n)\n\n# 3) Spectrum identifiers (context for the similarity matrix and match lists)\n_exp_ids_csv = os.path.join(_exp_out_dir, \"spectrum_identifiers.csv\")\nwith open(_exp_ids_csv, \"w\", newline=\"\", encoding=\"utf-8\") as _exp_f:\n    _exp_w = _exp_csv.writer(_exp_f)\n    _exp_w.writerow([\"spectrum_index\", \"compound_name\", \"inchikey\", \"smiles\"])\n    for _exp_i, _exp_s in enumerate(spectrums):\n        _exp_w.writerow([\n            _exp_i,\n            _exp_s.get(\"compound_name\") or \"\",\n            _exp_s.get(\"inchikey\") or \"\",\n            _exp_s.get(\"smiles\") or \"\",\n        ])\n\n# 4) Top Modified Cosine matches (min_match >= 5) for the queried spectrum\n#    (query = spectrums[97] in the original script)\n_exp_matches_csv = os.path.join(_exp_out_dir, \"best_matches_spectrum_97.csv\")\nwith open(_exp_matches_csv, \"w\", newline=\"\", encoding=\"utf-8\") as _exp_f:\n    _exp_w = _exp_csv.writer(_exp_f)\n    _exp_w.writerow([\n        \"query_index\", \"query_smiles\", \"rank\",\n        \"matched_smiles\", \"matched_inchikey\",\n        \"modified_cosine_score\", \"modified_cosine_matches\",\n    ])\n    for _exp_r, _exp_entry in enumerate(best_matches, start=1):\n        _exp_ref = _exp_entry[0]\n        _exp_score_entry = _exp_entry[1]\n        _exp_w.writerow([\n            97,\n            spectrums[97].get(\"smiles\") or \"\",\n            _exp_r,\n            _exp_ref.get(\"smiles\") or \"\",\n            _exp_ref.get(\"inchikey\") or \"\",\n            float(_exp_score_entry[\"ModifiedCosine_score\"]),\n            int(_exp_score_entry[\"ModifiedCosine_matches\"]),\n        ])",
+  "unresolved_assumptions": [
+    "Whether the processed spectra carry a 'compound_name' metadata entry after default_filters (matchms typically adds it from 'name'/'title'); absent values are written as empty strings.",
+    "Whether the installed matchms version exposes scores_by_query entries as (spectrum, record) pairs supporting string-key access, as the baseline script itself assumes; the export reuses exactly those access patterns.",
+    "Size and write time of the processed-spectra JSON (~tens of MB for the ~39 MB source library) relative to the 600 s / 10 GiB limits is untested.",
+    "Staging of the GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf input at the path derived from `path_data` is owned by the execution stage."
+  ]
+}
