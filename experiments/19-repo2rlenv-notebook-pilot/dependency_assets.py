@@ -20,9 +20,15 @@ def inspect_assets(outputs, *, distributions=importlib.metadata.distributions, r
     hash does not establish that a fixture lacks the requested scientific answer.
     """
     roots = roots or [Path(sysconfig.get_path(key)).resolve() for key in ("purelib", "platlib")]
-    candidates, inspected = [], 0
+    candidates, inspected, coverage = [], 0, []
     for installed in distributions():
         distribution = installed.metadata["Name"]
+        normalized = re.sub(r"[-_.]+", "-", distribution).casefold()
+        # A dedicated test distribution often stores fixtures directly under
+        # its package/data directory, with no separate "tests" path segment.
+        # This is a discovery hint, never evidence of an answer or unused file.
+        dedicated_tests = normalized.endswith(("tests", "testsuite", "test-suite"))
+        package_inspected, package_candidates = 0, 0
         for relative in installed.files or []:
             name = str(relative)
             path = Path(installed.locate_file(relative))
@@ -31,6 +37,7 @@ def inspect_assets(outputs, *, distributions=importlib.metadata.distributions, r
             if path.is_symlink() or path.resolve() != path or not path.is_file():
                 continue
             inspected += 1
+            package_inspected += 1
             parts = PurePosixPath(name).parts[:-1]
             if (
                 parts
@@ -38,7 +45,7 @@ def inspect_assets(outputs, *, distributions=importlib.metadata.distributions, r
                 == re.sub(r"[-_.]+", "-", distribution).casefold()
             ):
                 parts = parts[1:]  # A package named "example" is not an examples directory.
-            packaged_test = any(
+            packaged_test = dedicated_tests or any(
                 part.lower() in {"test", "tests", "example", "examples"} for part in parts
             )
             matches = []
@@ -53,13 +60,22 @@ def inspect_assets(outputs, *, distributions=importlib.metadata.distributions, r
                     reasons.append("same_suffix")
                 if reasons:
                     matches.append({"output": output["path"], "reasons": reasons})
-            if not packaged_test and not matches:
+            # Exact answer copies can use unrelated names and formats. Size
+            # is only a cheap hash prefilter; it is not an answer match itself.
+            same_size = any(
+                type(output.get("bytes")) is int and output["bytes"] == path.stat().st_size
+                for output in outputs
+            )
+            if not packaged_test and not matches and not same_size:
                 continue
             with path.open("rb") as stream:
                 identity = hashlib.file_digest(stream, "sha256").hexdigest()
             for output in outputs:
                 if output["sha256"] == identity:
                     matches.append({"output": output["path"], "reasons": ["identical_bytes"]})
+            if not packaged_test and not matches:
+                continue
+            package_candidates += 1
             entry = {"distribution": distribution, "path": name, "sha256": identity}
             try:
                 validate_manifest({"files": [entry]})
@@ -75,11 +91,20 @@ def inspect_assets(outputs, *, distributions=importlib.metadata.distributions, r
                     "eligible_for_declared_removal": removable,
                 }
             )
+        coverage.append(
+            {
+                "distribution": distribution,
+                "installed_regular_files_inspected": package_inspected,
+                "candidate_files": package_candidates,
+                "dedicated_test_distribution_hint": dedicated_tests,
+            }
+        )
     candidates.sort(key=lambda row: (row["distribution"].casefold(), row["path"]))
     summary = {
         "scope": "Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit.",
         "installed_files_inspected": inspected,
         "candidate_files": len(candidates),
+        "distribution_coverage": sorted(coverage, key=lambda row: row["distribution"].casefold()),
         "priority_matches": [
             row
             for row in candidates

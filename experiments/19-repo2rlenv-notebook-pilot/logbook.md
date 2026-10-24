@@ -4363,3 +4363,10 @@ Reserve campaign144(5USD) for the unchanged original source-only Matchms noteboo
 
 
 144is confirmed submitted on the approved reserved CPU route after fresh typed admission found only142nonterminal. All204runtime files and unchanged source assets were verified against its freeze; one exclusive original submission claim exists. No prior generated artifacts were supplied. Conservative holds remain162/200with38unallocated. Submission is not completion or validation; original135remains preserved. See panel-rounds/027/submission-144.json.
+
+
+## 2026-10-24 UTC: correct MDAnalysis qualification and fix general fixture discovery
+
+The140operator audit incorrectly relied on the historical seed rights flag. Its original pre-native attribution already contains a separate review superseding that flag, with exact unmodified identities for all three inputs and full distribution notices in the tested bundle. Primary release README/LICENSE readback now matches the original hashes. Preserve the seed and original native results; qualification-review-140.json records this correction. Release remains held for a different, narrower audit gap: a dedicated test-distribution data directory can escape the candidate filter. No actual complete answer leak is established.
+
+General discovery now catalogs dedicated test-distribution assets, checks size-compatible renamed files for exact reference hashes, and reports per-distribution coverage including zero-candidate packages. These are hints only; GLM still establishes scientific answer relevance/unused status and declares any removal. Strict manifest ownership/hash/notice protection is unchanged.108offline checks passed,159524KiB peakRSS. Frozen142/144remain unchanged; live validation of this new discovery change is pending. See factory-checks/dependency-discovery/result.json.

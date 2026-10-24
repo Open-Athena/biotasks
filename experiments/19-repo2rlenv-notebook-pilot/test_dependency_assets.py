@@ -150,3 +150,68 @@ def test_frozen_removal_evidence_requires_matching_manifest_and_receipt(tmp_path
         load_dependency_exclusions(tmp_path, records)
     with pytest.raises(ValueError, match="Unrecorded"):
         load_dependency_exclusions(tmp_path, {})
+
+
+@pytest.mark.parametrize("name", ["ToolkitTests", "toolkit-tests", "toolkit_testsuite"])
+def test_dedicated_test_distribution_data_is_visible_without_matching_output_name(tmp_path, name):
+    root = tmp_path / "site-packages"
+    relative = name.replace("-", "_") + "/data/known_values.bin"
+    path = root / relative
+    path.parent.mkdir(parents=True)
+    path.write_bytes(b"scientific fixture; not presumed an unused answer")
+    package = SimpleNamespace(
+        metadata={"Name": name}, files=[relative], locate_file=lambda p: root / p
+    )
+    result = inspect_assets(
+        [{"path": "table.csv", "sha256": "0" * 64, "bytes": 100}],
+        distributions=lambda: [package],
+        roots=[root],
+    )
+    assert [item["path"] for item in result["files"]] == [relative]
+    assert result["files"][0]["packaged_test_or_example"]
+    assert result["files"][0]["matches"] == []
+    assert result["summary"]["distribution_coverage"] == [
+        {
+            "distribution": name,
+            "installed_regular_files_inspected": 1,
+            "candidate_files": 1,
+            "dedicated_test_distribution_hint": True,
+        }
+    ]
+    assert path.exists()  # Discovery never selects or removes a fixture.
+
+
+def test_renamed_exact_answer_is_detected_without_a_filename_or_test_directory_hint(tmp_path):
+    root = tmp_path / "site-packages"
+    for name, data in [
+        ("library/cache/opaque.dat", b"complete answer"),
+        ("library/cache/other.dat", b"unrelated bytes"),
+    ]:
+        path = root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
+    assert len(b"complete answer") == len(b"unrelated bytes")
+    package = SimpleNamespace(
+        metadata={"Name": "library"},
+        files=["library/cache/opaque.dat", "library/cache/other.dat"],
+        locate_file=lambda p: root / p,
+    )
+    result = inspect_assets(
+        [
+            {
+                "path": "result.csv",
+                "sha256": hashlib.sha256(b"complete answer").hexdigest(),
+                "bytes": len(b"complete answer"),
+            }
+        ],
+        distributions=lambda: [package],
+        roots=[root],
+    )
+    assert [row["path"] for row in result["files"]] == ["library/cache/opaque.dat"]
+    assert result["summary"]["priority_matches"] == result["files"]
+    assert result["files"][0]["matches"] == [
+        {"output": "result.csv", "reasons": ["identical_bytes"]}
+    ]
+    assert not result["files"][0]["packaged_test_or_example"]
+    assert result["summary"]["distribution_coverage"][0]["installed_regular_files_inspected"] == 2
+    assert all((root / name).exists() for name in package.files)
