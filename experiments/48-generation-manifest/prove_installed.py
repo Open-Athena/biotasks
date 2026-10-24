@@ -30,7 +30,10 @@ def reference(path):
 def call(args):
     stream = io.StringIO()
     with redirect_stdout(stream):
-        cli(args)
+        try:
+            cli(args)
+        except SystemExit as error:
+            require(error.code in (None, 0), "Installed CLI command held: " + " ".join(args[:2]))
     return json.loads(stream.getvalue())
 
 
