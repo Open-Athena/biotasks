@@ -207,6 +207,9 @@ def test_specification_worker_reads_recorded_reference_then_submits(
 
     async def complete(payload):
         calls.append(deepcopy(payload))
+        assert payload["messages"][-1]["role"] == "user"
+        assert payload["messages"][-1]["content"].startswith("Controller timing snapshot:")
+        history = payload["messages"][:-1]
         names = {item["function"]["name"] for item in payload["tools"]}
         expected = {"read_reference_file", "submit_artifact", "revise_artifact"}
         if inspect_packages:
@@ -223,7 +226,7 @@ def test_specification_worker_reads_recorded_reference_then_submits(
             )
         else:
             if len(calls) == 2:
-                reply = json.loads(payload["messages"][-1]["content"])
+                reply = json.loads(history[-1]["content"])
                 assert reply["sha256"] == output["sha256"]
                 assert reply["lines"] == [{"line": 1, "text": content.splitlines()[0].decode()}]
                 if recover_context:
@@ -234,9 +237,9 @@ def test_specification_worker_reads_recorded_reference_then_submits(
 
                     raise Rejected()
             else:
-                assert payload["messages"][:2] == calls[0]["messages"]
-                assert "read-only inspection stage" in payload["messages"][-1]["content"]
-                assert not any(message.get("tool_calls") for message in payload["messages"])
+                assert history[:2] == calls[0]["messages"][:2]
+                assert "read-only inspection stage" in history[-1]["content"]
+                assert not any(message.get("tool_calls") for message in history)
             name, args = (
                 "submit_artifact",
                 {

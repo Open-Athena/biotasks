@@ -161,6 +161,19 @@ Upstream's final-report tool schema/size limits still apply; scripts and logs
 are files rather than fields in that report. Session 001 made 93 model calls and
 one complete reference test; its owned sandbox was cleaned up.
 
+### Next-version timing notice
+
+The tool-enabled authoring controller now has a candidate informational
+[timing notice](../../src/biotasks/prompts/worker-runtime-budget.md). Each request
+includes the time remaining before its existing controller deadline and the
+existing per-request timeout. The notice is recorded with the exact model input;
+older countdowns do not accumulate in the conversation. Pure text-only
+preparation retains its existing input interface. No deadline, call allowance,
+validation requirement or retry is added or reset.
+
+This is an offline-tested candidate. The ten-case cohort remains frozen on
+`501fbc2f` without this notice; its effect on live worker behavior is unverified.
+
 ## Historical single-case preparation/setup evidence
 
 Runs 009 and 010 select explicit cell-result fields, UMAP and full ranked marker

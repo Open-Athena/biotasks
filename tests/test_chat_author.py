@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import json
 import sqlite3
 import time
@@ -13,6 +14,7 @@ from biotasks.chat_author import (
     ModelConnectionError,
 )
 from biotasks.inference_gate import Allowance, RequestLedger
+from biotasks.prompts import load_prompt
 
 
 def reply(name="submit_artifact", arguments=None, *, finish="tool_calls", call_id="call-1"):
@@ -65,6 +67,7 @@ def make_author(
     empty_response_retry_notice=None,
     generation_retry_notice=None,
     missing_tool_retry_notice=None,
+    runtime_budget_notice=None,
     **limits,
 ):
     def save(path, value):
@@ -86,6 +89,7 @@ def make_author(
         empty_response_retry_notice=empty_response_retry_notice,
         generation_retry_notice=generation_retry_notice,
         missing_tool_retry_notice=missing_tool_retry_notice,
+        runtime_budget_notice=runtime_budget_notice,
     )
     return author, ledger
 
@@ -944,6 +948,94 @@ def test_uncapped_session_still_stops_at_deadline(tmp_path):
                 )
             )
         )
+
+
+@pytest.mark.parametrize("tool_seconds", [9, 31])
+def test_runtime_notice_tracks_clock_without_growing_history_or_resetting_bounds(
+    tmp_path, monkeypatch, tool_seconds
+):
+    clock = [1000.0]
+    monkeypatch.setattr("biotasks.chat_author.time.time", lambda: clock[0])
+    payloads = []
+    template = load_prompt("worker-runtime-budget")
+
+    async def complete(payload):
+        payloads.append(deepcopy(payload))
+        if len(payloads) == 1:
+            return reply("shell", {"command": "inspect"})
+        return reply(call_id="call-2")
+
+    async def shell(command):
+        assert command == "inspect"
+        clock[0] += tool_seconds
+        return "observed"
+
+    author, ledger = make_author(
+        tmp_path,
+        complete,
+        requests=2,
+        token_allowance=None,
+        runtime_budget_notice=template,
+        request_timeout_sec=45,
+        max_output_tokens=None,
+        max_input_bytes=None,
+        max_response_bytes=None,
+        tool_output_chars=None,
+    )
+    author.deadline = 1030.0
+    args = options(
+        tmp_path,
+        {"shell": shell, "submit_artifact": committed, "revise_artifact": committed},
+        turns=None,
+    )
+    if tool_seconds > 30:
+        with pytest.raises(TimeoutError, match="deadline exhausted"):
+            asyncio.run(author(**args))
+        assert len(payloads) == 1
+    else:
+        assert asyncio.run(author(**args))["turns"] == 2
+        assert len(payloads[1]["messages"]) == 5
+        assert payloads[1]["messages"][-2]["role"] == "tool"
+        assert payloads[1]["messages"][-2]["content"] == "observed"
+    assert author.deadline == 1030.0 and author.limits.request_timeout_sec == 45
+    for number, payload in enumerate(payloads, 1):
+        assert payload["messages"][1] == {"role": "user", "content": "Source material"}
+        remaining = "30" if number == 1 else "21"
+        assert payload["messages"][-1] == {
+            "role": "user",
+            "content": template.replace("{{REMAINING_SECONDS}}", remaining).replace(
+                "{{REQUEST_TIMEOUT_SECONDS}}", "45"
+            ),
+        }
+        assert (
+            sum(
+                "Controller timing snapshot:" in str(message.get("content"))
+                for message in payload["messages"]
+            )
+            == 1
+        )
+        assert "max_tokens" not in payload
+        assert json.loads((tmp_path / f"trace/{number}/request.json").read_text()) == payload
+    with sqlite3.connect(ledger.path) as db:
+        assert db.execute("SELECT digest FROM calls ORDER BY id").fetchall() == [
+            (
+                hashlib.sha256(
+                    json.dumps(p, ensure_ascii=False, allow_nan=False).encode()
+                ).hexdigest(),
+            )
+            for p in payloads
+        ]
+
+
+@pytest.mark.parametrize("notice", ["", "Fixed text", "{{REMAINING_SECONDS}} only"])
+def test_incomplete_runtime_notice_is_rejected_before_a_model_call(tmp_path, notice):
+    async def complete(_payload):
+        pytest.fail("Invalid timing configuration must not call a model")
+
+    with pytest.raises(ValueError, match="both timing placeholders"):
+        make_author(tmp_path, complete, runtime_budget_notice=notice)
+    with sqlite3.connect(tmp_path / "requests.sqlite") as db:
+        assert db.execute("SELECT COUNT(*) FROM calls").fetchone()[0] == 0
 
 
 def test_received_provider_rejection_is_classified_without_private_body_or_retry(tmp_path):

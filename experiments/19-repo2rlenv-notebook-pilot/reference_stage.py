@@ -51,6 +51,11 @@ async def stage(
         if shell is not None or extra_tools
         else None
     )
+    runtime_budget_notice = (
+        files("biotasks.prompts").joinpath("worker-runtime-budget.md").read_text()
+        if shell is not None or extra_tools
+        else None
+    )
     empty_retry_notice = (
         files("biotasks.prompts").joinpath("worker-empty-response-retry.md").read_text()
         if response_recovery
@@ -73,6 +78,9 @@ async def stage(
         "output_format": output_format,
         "context_recovery_sha256": hashlib.sha256(recovery_notice.encode()).hexdigest()
         if recovery_notice is not None
+        else None,
+        "runtime_budget_notice_sha256": hashlib.sha256(runtime_budget_notice.encode()).hexdigest()
+        if runtime_budget_notice is not None
         else None,
         "empty_response_retry_sha256": hashlib.sha256(empty_retry_notice.encode()).hexdigest()
         if empty_retry_notice is not None
@@ -102,6 +110,7 @@ async def stage(
         empty_response_retry_notice=empty_retry_notice,
         generation_retry_notice=generation_retry_notice,
         missing_tool_retry_notice=missing_tool_retry_notice,
+        runtime_budget_notice=runtime_budget_notice,
     )
 
     async def run_author(**kwargs):

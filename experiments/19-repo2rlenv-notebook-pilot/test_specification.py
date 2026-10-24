@@ -208,13 +208,15 @@ def test_read_only_session_inspects_then_submits_with_local_validation(tmp_path,
             "read_package_file",
         }
         assert "response_format" not in payload and "max_tokens" not in payload
+        assert payload["messages"][-1]["role"] == "user"
+        assert payload["messages"][-1]["content"].startswith("Controller timing snapshot:")
         if len(calls) == 1:
             name, args = "list_package_files", {"package": "scanpy"}
         elif len(calls) == 2:
-            assert "example.py" in payload["messages"][-1]["content"]
+            assert "example.py" in payload["messages"][-2]["content"]
             name, args = "submit_artifact", {**artifact, "task_brief": "Invalid blocked brief"}
         else:
-            assert "Artifact committed." not in payload["messages"][-1]["content"]
+            assert "Artifact committed." not in payload["messages"][-2]["content"]
             name, args = "submit_artifact", artifact
         return {
             "choices": [

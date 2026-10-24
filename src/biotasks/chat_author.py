@@ -160,6 +160,7 @@ class GLMChatAuthor:
         empty_response_retry_notice: str | None = None,
         generation_retry_notice: str | None = None,
         missing_tool_retry_notice: str | None = None,
+        runtime_budget_notice: str | None = None,
     ):
         if not math.isfinite(deadline) or deadline <= time.time():
             raise ValueError("A finite future deadline is required")
@@ -178,10 +179,16 @@ class GLMChatAuthor:
             raise ValueError("Generation retry requires an explicit notice")
         if missing_tool_retry_notice is not None and not missing_tool_retry_notice.strip():
             raise ValueError("Missing-tool recovery requires an explicit notice")
+        if runtime_budget_notice is not None and not all(
+            placeholder in runtime_budget_notice
+            for placeholder in ("{{REMAINING_SECONDS}}", "{{REQUEST_TIMEOUT_SECONDS}}")
+        ):
+            raise ValueError("Runtime budget notice requires both timing placeholders")
         self.context_recovery_notice = context_recovery_notice
         self.empty_response_retry_notice = empty_response_retry_notice
         self.generation_retry_notice = generation_retry_notice
         self.missing_tool_retry_notice = missing_tool_retry_notice
+        self.runtime_budget_notice = runtime_budget_notice
         # One allowance for this stage instance, including upstream resubmissions.
         self.empty_response_retries_used = 0
         self.generation_retries_used = 0
@@ -251,9 +258,18 @@ class GLMChatAuthor:
                 or tool["function"]["name"] in {"submit_artifact", "revise_artifact"}
             ]
             permitted = {tool["function"]["name"] for tool in available_tools}
+            request_messages = messages
+            if self.runtime_budget_notice is not None:
+                notice = self.runtime_budget_notice.replace(
+                    "{{REMAINING_SECONDS}}", str(math.floor(remaining))
+                ).replace("{{REQUEST_TIMEOUT_SECONDS}}", str(self.limits.request_timeout_sec))
+                # Keep the current snapshot at the end of the request, without
+                # accumulating obsolete countdowns in the conversation history.
+                # The exact sent notice is preserved in the request receipt.
+                request_messages = [*messages, {"role": "user", "content": notice}]
             payload = {
                 "model": model,
-                "messages": messages,
+                "messages": request_messages,
                 "tools": available_tools,
                 "tool_choice": "required",
                 "parallel_tool_calls": False,

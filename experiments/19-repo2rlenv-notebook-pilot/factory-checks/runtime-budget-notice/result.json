@@ -1,0 +1,70 @@
+{
+  "recorded_at": "2026-10-24T02:04:08.742072+00:00",
+  "base_revision": "897f2471c1a6c0cd648769d2af67a3c637170f3f",
+  "change": "Expose an informational remaining-deadline snapshot to tool-enabled authoring workers at each model request. Keep one current notice at the end without accumulating stale notices in history; preserve original source/context and exact request/ledger identity.",
+  "new_limits": false,
+  "new_stages": false,
+  "additional_model_calls": false,
+  "pure_preparation_prompt_unchanged": true,
+  "frozen_cohort_unchanged": true,
+  "frozen_worker_revision": "501fbc2fa3f65df09ee5cd2bd8b05967d22e04c9",
+  "scope": "Next-version candidate only; no live effectiveness or improved yield claim.",
+  "source_sha256": {
+    "src/biotasks/chat_author.py": "fd26f3d87942779853a21babe70e04dbf3d5770293389982c01b75da9eed518c",
+    "src/biotasks/prompts/worker-runtime-budget.md": "c3829366ba2983914cced5f61958ea7b945d22d3192822406c0c8600751a0c9b",
+    "tests/test_chat_author.py": "d6f8b58eddb1e6ef3c20e1e6b42f20d7e9bdd5602b09aa35802a3b757c70a4c7",
+    "experiments/19-repo2rlenv-notebook-pilot/reference_stage.py": "0f566ae769d9f6288b9da1cd0b12e3e6049b8df5f0fd6d2399a8a75201d413b9",
+    "experiments/19-repo2rlenv-notebook-pilot/test_reference_inspection.py": "4ad671f93b37aa6935d51f79e4cca02bc4e62963b5c2a96447a46862d71b692a",
+    "experiments/19-repo2rlenv-notebook-pilot/test_specification.py": "5a13c75cdf73501d90289dc0613fccb5a8c51a0f833a333d0a4be762b4f634f1"
+  },
+  "offline_verification": {
+    "focused_passed": 181,
+    "focused_seconds": 6.84,
+    "focused_peak_rss_kib": 159212,
+    "full_available_passed": 912,
+    "full_deselected": 1,
+    "full_seconds": 44.95,
+    "full_peak_rss_kib": 337348,
+    "unchanged_optional_unverified": [
+      "test_artifact_shell_timeout.py: optional pytest-asyncio case",
+      "test_hdf5_profile.py: two optional h5py cases",
+      "test_native_inference.py: full Harbor optional dependencies",
+      "test_coverage.py::test_hdf5_shapes_only_and_external_links_are_not_followed: optional h5py case"
+    ],
+    "quality": "Ruff lint/format and ty pre-commit hooks passed; experiment files manually linted/formatted.",
+    "initial_failures_preserved": "First broad attempt stopped collection without the existing Harbor wheel; second had seven missing-dirhash failures and five fixtures assuming a tool result must be last. The fixtures now preserve/assert original feedback before the current timing notice. The isolated test dependency is dirhash0.5.0; no project lock/runtime changed. Final full selection passed.",
+    "junit_reports": {
+      "focused": {
+        "sha256": "c5265c05236db39fd5bbd9600dfcb2a1602b71e564b730997d58508aa3b88f71",
+        "bytes": 28852
+      },
+      "full": {
+        "sha256": "d6fd5fce20439f0c112a822b0e41beab00f300af2e448ea60f7e4f8696b6a133",
+        "bytes": 832
+      },
+      "full-002": {
+        "sha256": "cb7bc13a98551d3f0beed81e0bb2e5abb427daf4a8acb661d1dc57a5b5446d69",
+        "bytes": 253799
+      },
+      "full-003": {
+        "sha256": "3b17fef9b2ccfebfdbae9d4f364e81fa7a6fc943cab6e37d42e13e7d9e3c5b5d",
+        "bytes": 154331
+      }
+    },
+    "isolated_test_support_resolved": {
+      "dirhash": "0.5.0",
+      "scantree": "0.0.4",
+      "attrs": "26.1.0",
+      "pathspec": "1.1.1"
+    },
+    "dependency_scope": "Supplemental test-only directory; production/project lockfile and frozen worker environments unchanged."
+  },
+  "regressions": [
+    "Countdown decreases with actual tool time without resetting the deadline or configured request timeout.",
+    "Expired sessions claim no extra request; uncapped workers still retain their existing deadline.",
+    "No accumulated countdown messages or replaced source input; exact transmitted payload matches request receipt and ledger hash.",
+    "Read-only inspection and context recovery preserve their original tool feedback before the timing notice.",
+    "New packaged prompt remains readable outside the checkout."
+  ],
+  "live_validation": "Not run. Current ten-case payloads are frozen on prior worker code; assess combined baseline before adopting this candidate."
+}
