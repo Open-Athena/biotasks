@@ -1,0 +1,30 @@
+{
+  "observed_at": "2026-10-24T10:04:50.648174+00:00",
+  "sdk": "daytona0.211.2/generatedasyncclient",
+  "mutating_methods": [
+    {
+      "method": "_create_session_serialize",
+      "http_method": "POST"
+    },
+    {
+      "method": "_session_execute_command_serialize",
+      "http_method": "POST"
+    }
+  ],
+  "generated_client_retry_methods": [
+    "DELETE",
+    "GET",
+    "HEAD",
+    "OPTIONS",
+    "PUT",
+    "TRACE"
+  ],
+  "session_creation_and_execution_posts_excluded_from_generated_retry_client": true,
+  "configuration_default_retries": "None (source-inspected)",
+  "source_sha256": {
+    "rest.py": "a69e0b44ab241082db760b630a42eb979693dba0a77058a35d519078e252e546",
+    "configuration.py": "45b94f99da3f3edb8d4bc1166bdf2310cde858e77748a6bd794f7981c95c06bf",
+    "api/process_api.py": "b59948df4c308676efdbc1a230bc50cd23f5634067b869b3ee8a92825667ed4e"
+  },
+  "limits": "Static inspection of the pinned client retry boundary, not a packet trace or a platform-wide exactly-once guarantee. Prototype submits once and does not retry an uncertain mutating call. Does not establish that no upstream proxy/server retry can occur. No HTTP request or model/science execution."
+}
