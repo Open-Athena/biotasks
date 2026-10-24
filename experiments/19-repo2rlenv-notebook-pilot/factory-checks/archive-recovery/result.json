@@ -1,5 +1,5 @@
 {
-  "status": "offline_validated_live_readback_pending",
+  "status": "live_original_readback_verified",
   "source_sha256": {
     "readback_cache.py": "03ce845574458a65f2d2492bc28afc48c8955b62af01c72e672cee6b02079a77",
     "test_readback_cache.py": "fd251ba832510e3ef3e7a05d14a6ddc5f004158a74ac9d54f8f9e32125540077"
@@ -16,5 +16,17 @@
     "A changed local copy cannot be linked as verified evidence.",
     "Interrupted first materialization remains preserved and cannot be silently overwritten."
   ],
-  "limits": "Immutable local evidence cache must not be used as an editable working directory; source objects remain unchanged. Live original readback still pending."
+  "limits": "Task-owned immutable evidence cache uses hardlinks; never edit it as a working directory. Source objects remain unchanged. No scientific computation was executed for recovery.",
+  "actual_readback": {
+    "campaign": 142,
+    "files": 1901,
+    "all_original_object_bytes_independently_read": 7202439010,
+    "unique_local_content_mode_bytes": 1869717520,
+    "source_manifest_sha256": "1602dbc86f3bc6f2566e8aa40349233e6f098fd6207c974df00e10b20a780531",
+    "all_paths_and_modes_preserved": true,
+    "peak_rss_kib": 103616,
+    "wall_seconds": 194.71,
+    "new_model_calls": 0,
+    "new_jobs": 0
+  }
 }
