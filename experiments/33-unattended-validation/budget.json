@@ -4,9 +4,9 @@
   "operating_ceiling_usd": 90,
   "unused_margin_usd": 10,
   "recorded_paid_cost_usd": 0.601629,
-  "outstanding_reservations_usd": 10.0,
+  "outstanding_reservations_usd": 23.07,
   "new_model_calls": 20,
-  "paid_model_execution_enabled": false,
+  "paid_model_execution_enabled": true,
   "admission_rule": "Before enabling paid model execution, verify model pricing and maximum request cost; atomically reserve a conservative bound, then reconcile provider-reported actual usage. Stop if accrued cost plus outstanding reservations plus the proposed bound exceeds 90 USD or cost is unknown.",
   "per_repository_settings": "Preserve official bootstrap settings: Sonnet 4.6 through OpenRouter, temperature 0.2, 2048 output-token cap, 20 calls, 5 USD estimated repository stop threshold; global admission remains required.",
   "additional_reserved_cpu_hour_ceiling": 32,
@@ -536,8 +536,50 @@
           "proof_sha256": "01a3f326d8f85e410f163dc88f7cf834e990c449c461f634a7f678c2ad184a53"
         }
       ]
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks57-biopython-001",
+      "maximum_allocated_cpu_hours": 6,
+      "new_paid_capacity": false,
+      "state": "reserved before submission",
+      "controller": "biotasks.validation.v1",
+      "role": "primary"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks57-biopython-001-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "reserved before submission",
+      "controller": "biotasks.validation.v1",
+      "role": "stop"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks57-biopython-001-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "reserved before submission",
+      "controller": "biotasks.validation.v1",
+      "role": "cleanup"
+    },
+    {
+      "kind": "model_run_reservation",
+      "run_id": "biotasks57-biopython-001",
+      "maximum_usd": "13.07",
+      "outstanding_usd": "13.07",
+      "known_actual_usd": "0",
+      "known_calls": 0,
+      "call_count_complete": false,
+      "state": "reserved before submission",
+      "quote_sha256": "8e6daeb000e420c8452ed2ba0a58e9c2f29d44a34df31aa51afbbd5b84bcd481",
+      "plan_identity": "a38c2f49c3940c7f1477ef9a9a8d21248a2662abfa7bb7982d6e45dc4e5cf1a3",
+      "model": "openrouter/anthropic/claude-sonnet-4.6",
+      "scope": "Only the original upstream bootstrap calls; no repairs/fallback/retries",
+      "observations": []
     }
   ],
-  "outstanding_cpu_hour_reservations": 0,
+  "outstanding_cpu_hour_reservations": 6.333333333333334,
   "cpu_accounting_rule": "Sum terminal admission actuals and still-reserved admission maxima; normalize floating subtraction residue by recomputation."
 }
