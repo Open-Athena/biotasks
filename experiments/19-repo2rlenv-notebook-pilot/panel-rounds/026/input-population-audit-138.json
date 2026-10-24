@@ -1,0 +1,30 @@
+{
+  "number": 138,
+  "finding": "The original source skips the first physical line of a staged motif table whose first line is a valid seven-field genomic record, not a header. The generated question promotes that deletion as part of the method; no scientific justification is established by the recorded review.",
+  "observed_input_sha256": "b1bbdac330cfc78c9ac9a826d1ca2bfdb22ec2cc21c789404adc0c11acbd4510",
+  "original_source_path": "intake/baseline.py",
+  "original_source_sha256": "aa6ed21d92a4d0a295c904d6d00c39a2cc7dad864e53f60e83ba187572569753",
+  "statement": "bioframe.read_table(..., schema=\"jaspar\", skiprows=1)",
+  "input_sample_evidence": {
+    "path": "reference/trial/result.json",
+    "sha256": "63b1c014c9ffce0a09c624c1a8c70aa5865624a607ce958ad75597732d2e17f6",
+    "declared_input": "/inputs/MA0139.1.tsv.gz",
+    "prefix_is_valid_data_record": true,
+    "header_observed": false,
+    "same_prefix_independently_read_from_staged_input": true
+  },
+  "review_evidence_boundary": {
+    "input_path": "grading/review/input.json",
+    "sha256": "47196a0a7836ef603e203be3eb67b4e3ab3ddf07a8436b19a4b14aa4d4f98bc7",
+    "raw_input_observations_supplied": false,
+    "output_observations_supplied": true,
+    "worker_outcome_claims_supplied": true,
+    "specification_received_trial_result": true
+  },
+  "status": "held_for_source_population_review",
+  "no_scientific_reexecution": true,
+  "originals_modified": false,
+  "manual_task_repair": false,
+  "source_rejected_as_broken": false,
+  "limits": "This establishes the skipped record and missing scientific justification, not its effect on the final peak table. Do not edit the source, reclassify the original native pass as a failure, or count an independent scientific source rejection. A later worker must assess the unsupported source parsing under the general policy."
+}
