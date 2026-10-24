@@ -31,6 +31,13 @@ cover several related checks only when it actually changes each corresponding
 result. Include valid representation controls for the freedoms the public
 contract permits. Test numerical tolerance boundaries and nonfinite inputs where
 applicable. Identify ambiguity or an unjustified acceptance rule in `concerns`.
+For numeric fields, check whether the demonstrated source precision admits
+different faithful decimal encodings, including a native writer and promotion to
+a wider dtype. Establish that precision from evidence; do not round arbitrary
+values or unrelated fields and call them equivalent. If a valid encoding lies
+outside the public bound, report a contract concern rather than relabeling it
+wrong merely to match the grader. This is a representation check, not another
+independent scientific implementation.
 
 When a claimed equivalence permits multiple records or values for one entity,
 challenge it by retaining correct answers and adding a plausible but unsupported

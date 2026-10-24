@@ -1,0 +1,57 @@
+{
+  "number": 137,
+  "observed_at": "2026-10-24T10:17:17.451658+00:00",
+  "registered_source_id": "scanpy-clustering",
+  "recorded_pipeline_source_id": null,
+  "original_pipeline_status": "rejected",
+  "terminal_host_state": "SUCCEEDED",
+  "audited_state": "generated_comparison_rejection_with_precision_failure",
+  "scientific_acceptance": false,
+  "fully_qualified_task": false,
+  "source_rejected_as_broken": false,
+  "operator_interventions": 0,
+  "operator_scientific_edits": 0,
+  "elapsed_pipeline_seconds": 5367.548,
+  "initial_basic_controls": {
+    "executed": 8,
+    "passed": 7,
+    "independent_comparison_resolved": false
+  },
+  "fresh_repaired_basic_controls": {
+    "executed": 8,
+    "passed": 7,
+    "failed_scientific_checks": [
+      "de_values"
+    ],
+    "passed_scientific_checks": [
+      "row_geometry",
+      "annotation_labels",
+      "umap_coordinates",
+      "de_coverage",
+      "de_ordering"
+    ]
+  },
+  "logical_quality_repair_allowances_used": 1,
+  "repair_target": "public_question",
+  "repair_description": "GLM inspected actual packages and clarified omitted clustering/thread conventions; this was not observed repeated schema rejection. The subsequent fresh independent comparison improved from all6scientific checks failing to5passing/1failing.",
+  "remaining_failure": "Sampled native-precision-equivalent decimal encodings exceed the generated1e-8absolute bound. Original numerical contract remains unvalidated; no manual relaxation or second repair.",
+  "native_executed": false,
+  "solver_executed": false,
+  "published": false,
+  "original_archive_files": 1307,
+  "original_archive_bytes": 571896171,
+  "original_archive_manifest_sha256": "245712f0827df20b824e19bcab352b0d61c1b513a77a7f0d5aadaf860f48f57c",
+  "all_original_files_hash_size_mode_verified": true,
+  "original_root_files": 63,
+  "original_root_bytes": 1319496,
+  "complete_root_export_verified": true,
+  "original_and_fresh_cleanup_verified": true,
+  "cleanup_owners": 5,
+  "frozen_worker_revision": "37a82b5e86c860df1ee2db92cdf8fa24ae7bf177",
+  "runtime_file_count": 199,
+  "accounted_model_request_attempts": 134,
+  "author_provider_response_receipts": 134,
+  "precision_audit": "precision-audit-137.json",
+  "future_general_improvement": "Test legitimate numeric encodings against demonstrated source precision and the reference writer, not only parsed decimals or byte-identical replays. Field-specific evidence is required; no blanket rounding/tolerance.",
+  "limits": "A generated-task comparison rejection, not a broken-source or infrastructure outcome. No claim the entire independent solution is correct; original outcome unchanged."
+}

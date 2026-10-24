@@ -1,0 +1,75 @@
+{
+  "number": 137,
+  "original_source_archive_manifest_sha256": "245712f0827df20b824e19bcab352b0d61c1b513a77a7f0d5aadaf860f48f57c",
+  "finding": "After the one question repair, fresh independent labels, embedding, DE coverage and ordering pass; DE values alone fail. Six sampled score/log-fold-change decimal pairs differ beyond the stated1e-8absolute bound yet encode the same binary32 value.",
+  "reference_csv": {
+    "path": "materialization-question-repair/reference/de_markers_leiden_res_0.50.csv",
+    "sha256": "9c1bb8010685c004a69e1705526b244c053073856c2668e1982b375214691a56"
+  },
+  "independent_csv": {
+    "path": "grading-comparison-repair/independent-outputs/de_markers_leiden_res_0.50.csv",
+    "sha256": "5ca32149eb8c671e21ddd2861a675374d6f4504c6b9137dcf27919e07a20ea83"
+  },
+  "precision_source": {
+    "wheel_sha256": "a12a7ca9500e4b247fbb5fb9318fb204907125e411183bad3e9c62e5b988f37c",
+    "package": "scanpy",
+    "version": "1.12.4",
+    "path": "scanpy/tools/_rank_genes_groups.py",
+    "source_sha256": "afbd4e6d2aedf5192856296bfc7f9f54a7459ff6669555d47ea2de870f7dbc63",
+    "declared_field_dtypes": {
+      "scores": "float32",
+      "logfoldchanges": "float32"
+    }
+  },
+  "sample_scope": "First3aligned rows,2fields each; streaming reads and stdlib floating-point encoding only. No original scientific computation was reexecuted.",
+  "sampled_representation_checks": [
+    {
+      "sample_index": 0,
+      "field": "scores",
+      "absolute_decimal_difference": 2.13378906721573e-06,
+      "same_float32_encoding": true,
+      "within_declared_1e-8": false
+    },
+    {
+      "sample_index": 0,
+      "field": "logfoldchanges",
+      "absolute_decimal_difference": 3.29711915547648e-08,
+      "same_float32_encoding": true,
+      "within_declared_1e-8": false
+    },
+    {
+      "sample_index": 1,
+      "field": "scores",
+      "absolute_decimal_difference": 8.154296864404387e-07,
+      "same_float32_encoding": true,
+      "within_declared_1e-8": false
+    },
+    {
+      "sample_index": 1,
+      "field": "logfoldchanges",
+      "absolute_decimal_difference": 2.3333740273301373e-08,
+      "same_float32_encoding": true,
+      "within_declared_1e-8": false
+    },
+    {
+      "sample_index": 2,
+      "field": "scores",
+      "absolute_decimal_difference": 3.181152337106141e-06,
+      "same_float32_encoding": true,
+      "within_declared_1e-8": false
+    },
+    {
+      "sample_index": 2,
+      "field": "logfoldchanges",
+      "absolute_decimal_difference": 3.105773904721332e-08,
+      "same_float32_encoding": true,
+      "within_declared_1e-8": false
+    }
+  ],
+  "source_export": "sc.get.rank_genes_groups_df(...), pandas concatenation and default CSV writer.",
+  "independent_export": "Explicit promotion of structured score/log-fold-change arrays to dtype=float before default CSV writing.",
+  "limits": "This demonstrates an overly fine bound for these observed encodings and a general calibration risk. It is not a full regrade, proof that the whole independent answer is valid, a universal float32 tolerance or an acceptance override. Original rejection and all failed records remain unchanged.",
+  "originals_modified": false,
+  "manual_task_repair": false,
+  "new_model_calls": 0
+}

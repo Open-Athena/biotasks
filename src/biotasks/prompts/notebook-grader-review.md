@@ -109,6 +109,12 @@ matches executable checks, numerical comparisons have a defensible
 precision/serialization basis, identities and cross-file relations are correct,
 and meaningful wrong outputs fail without relying on crashes or malformed files.
 Check missing values, duplicates, nonfinite values and tolerance boundaries.
+Check the demonstrated precision of computed fields and the reference's writer,
+not just parsed decimal values or byte-identical replays. Native serialization
+and faithful promotion to a wider dtype may print different decimals for the
+same computed value. A tighter bound needs evidence that it reflects meaningful
+scientific distinctions. Do not infer equivalence merely from closeness, widen
+every field together, or treat a representation probe as independent science.
 Use the host-supplied `artifact_interface` for directory semantics. The grader's
 submission argument already names the output root; a declared path is resolved
 directly beneath it. In Harbor that root is `/workspace/outputs`. Do not confuse

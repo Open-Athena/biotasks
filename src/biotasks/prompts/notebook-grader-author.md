@@ -123,6 +123,14 @@ do not invent a generous threshold, round away meaningful errors, or copy a
 universal epsilon onto unrelated quantities. Exact comparison is permissible
 where justified and publicly stated. Reject nonfinite/invalid values explicitly;
 never let NaN make a numerical failure disappear. Preserve meaningful zero values.
+Check the demonstrated source precision and the reference writer's formatting,
+not only the dtype obtained by parsing its text. Promoting a value to a wider
+floating-point type adds no scientific precision but can change its printed
+decimals. Where justified by the observed field types, exercise ordinary native
+serialization and faithful value promotion as representation controls. A bound
+must not reject scientifically equivalent encodings simply because one writer
+prints fewer digits. These controls do not establish independent recomputation
+or justify reducing precision in unrelated fields.
 When a requested artifact can also be a normal hand-off between analysis steps,
 check whether a valid write/read round trip changes downstream numeric results.
 Matching implementations that share an in-memory precision path do not establish
