@@ -613,6 +613,7 @@ class SetupSession:
                             "inspect",
                             "/work/output-inventory.json",
                             "/work/dependency-assets.json",
+                            "/work/frozen/original.py",
                         ],
                         120,
                         f"dependency-assets-{self.test_requests}",

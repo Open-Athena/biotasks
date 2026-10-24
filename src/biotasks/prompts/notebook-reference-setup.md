@@ -43,6 +43,13 @@ streaming all rows, arrays or mismatches into the conversation.
   with names, distribution ownership and content identities. Read its
   `priority_matches` and inspect the full catalog at the supplied sandbox path.
   These are discovery hints, not automatic answer/unused classifications.
+  `source_import_matches` highlights candidates whose filename refers to a
+  literal imported module or member in the original source. Inspect relevant
+  test code as well as data files: expected scientific values may be embedded
+  as constants or assertions. An import-name match does not prove exposure,
+  unused status or that the import executed; an empty priority list does not
+  clear the rest of the catalog. Limit negative claims to the content actually
+  inspected, rather than inferring safety from filenames alone.
   Check whether a bundled fixture supplies a full or partial requested answer;
   differing timestamps, comments, headers, precision or serialization do not
   establish absence of scientific answer exposure. Do not use a bundled answer

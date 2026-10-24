@@ -5,7 +5,12 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
-from dependency_assets import apply_manifest, inspect_assets, validate_manifest
+from dependency_assets import (
+    apply_manifest,
+    imported_module_terms,
+    inspect_assets,
+    validate_manifest,
+)
 from reference_replay import load_dependency_exclusions
 
 
@@ -215,3 +220,81 @@ def test_renamed_exact_answer_is_detected_without_a_filename_or_test_directory_h
     assert not result["files"][0]["packaged_test_or_example"]
     assert result["summary"]["distribution_coverage"][0]["installed_regular_files_inspected"] == 2
     assert all((root / name).exists() for name in package.files)
+
+
+@pytest.mark.parametrize("module", ["trends", "sample_stats"])
+def test_imported_analysis_module_prioritizes_test_source_without_output_name_match(
+    tmp_path, module
+):
+    root = tmp_path / "site-packages"
+    entries = [f"toolkit/tests/test_{module}.py", f"toolkit/tests/test_de{module}.py"]
+    for name in entries:
+        path = root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("expected_measurement = 1.234567\n")
+    package = SimpleNamespace(
+        metadata={"Name": "toolkit"}, files=entries, locate_file=lambda name: root / name
+    )
+    source = f"from toolkit.analysis import {module} as t\nraise RuntimeError('never execute')\n"
+    result = inspect_assets(
+        [{"path": "measurements.csv", "sha256": "0" * 64}],
+        distributions=lambda: [package],
+        roots=[root],
+        source=source,
+    )
+    priority = result["summary"]["priority_matches"]
+    assert len(priority) == 1 and priority[0]["path"] == entries[0]
+    assert priority[0]["source_import_matches"] == [module]
+    assert priority[0]["matches"] == []  # No claim of an output-content match.
+    assert result["summary"]["source_import_terms"] == ["analysis", module]
+    assert len(result["files"]) == 2  # Nonpriority candidates remain inspectable.
+    assert all((root / name).read_text() == "expected_measurement = 1.234567\n" for name in entries)
+
+
+def test_import_hints_preserve_literal_names_without_alias_or_execution_claims():
+    source = """import toolkit.metrics as m
+from toolkit.other import *
+if False:
+    from toolkit.helpers import dormant as alias
+"""
+    assert imported_module_terms(source) == ["dormant", "helpers", "metrics", "other"]
+    with pytest.raises(SyntaxError):
+        imported_module_terms("from broken import")
+
+
+def test_inspection_command_reads_the_supplied_source_without_executing_it(
+    tmp_path, monkeypatch, capsys
+):
+    import importlib.metadata
+    import json
+    import runpy
+    import sys
+    import sysconfig
+
+    root = tmp_path / "site-packages"
+    name = "toolkit/tests/test_trends.py"
+    asset = root / name
+    asset.parent.mkdir(parents=True)
+    asset.write_text("known_value = 12.345\n")
+    package = SimpleNamespace(
+        metadata={"Name": "toolkit"}, files=[name], locate_file=lambda path: root / path
+    )
+    source = tmp_path / "source.py"
+    source.write_text("from toolkit.analysis import trends\nraise RuntimeError('not executed')\n")
+    inventory = tmp_path / "outputs.json"
+    inventory.write_text(json.dumps([{"path": "results.csv", "sha256": "0" * 64}]))
+    destination = tmp_path / "catalog.json"
+    script = Path(__file__).with_name("dependency_assets.py")
+    monkeypatch.setattr(importlib.metadata, "distributions", lambda: [package])
+    monkeypatch.setattr(sysconfig, "get_path", lambda key: str(root))
+    monkeypatch.setattr(sys, "prefix", "fixture-task-venv")
+    monkeypatch.setattr(
+        sys, "argv", [str(script), "inspect", str(inventory), str(destination), str(source)]
+    )
+    runpy.run_path(str(script), run_name="__main__")
+    saved = json.loads(destination.read_text())
+    reported = json.loads(capsys.readouterr().out)
+    assert reported == saved["summary"]
+    assert reported["priority_matches"][0]["path"] == name
+    assert reported["priority_matches"][0]["source_import_matches"] == ["trends"]
+    assert asset.read_text() == "known_value = 12.345\n"

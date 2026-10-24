@@ -81,6 +81,8 @@ class FakeRemote:
         if argv == ["apt-mark", "showmanual"]:
             return {"exit_code": 0, "log": "\n".join(sorted(self.manual_packages)) + "\n"}
         if label.startswith("dependency-assets-"):
+            assert argv[-1] == "/work/frozen/original.py"
+            assert argv[-1] in self.files
             self.files["/work/dependency-assets.json"] = json.dumps(
                 {
                     "files": [],

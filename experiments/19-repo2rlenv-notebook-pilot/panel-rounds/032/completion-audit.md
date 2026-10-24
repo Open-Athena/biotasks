@@ -20,16 +20,28 @@ draft and unmerged.
 | Bounded repairs and honest failure | One preparation repair is shared across static/runtime export feedback; one coherent quality revision preserves original probes and failed evidence. Current setup code raises an incomplete outcome if transport/setup time is exhausted before any controlled reference dispatch. The original [135 misclassification](../026/result-135.json) is preserved rather than rewritten. |
 | Executable binary grading with scientific controls | Matchms147 has 20 final controls; PyMC145 has 14. They include independently computed answers, missing/empty and consequential wrong submissions. Reward is executable, not an LLM opinion. These tested comparisons do not establish universal software portability or biological validity. |
 | Every claimed scientific check has an executed negative | The [147 release audit](../../autonomous-runs/147/release-audit.json) records full executed coverage. The conditional independent supplementary-probe worker was not needed, so its live execution is not claimed. |
-| Native Harbor reference, no-op and blind solver attempt | Rewards are 1/0/1 for147 and 1/0/0 for145. The PyMC solver's timeout is retained. Solver success is informative, not an acceptance requirement. MDAnalysis149 is still pending;148 reached only its native reference before cleanup infrastructure failed. |
+| Native Harbor reference, no-op and blind solver attempt | Rewards are 1/0/1 for147 and 1/0/0 for145. The PyMC solver's timeout is retained. Solver success is informative, not an acceptance requirement. MDAnalysis149 was rejected before native trials because installed test sources retained partial expected answers;148 reached only its native reference before cleanup infrastructure failed. |
 | Exact public release plus independent download | Matchms147 and PyMC145 have immutable Hub revisions and forced anonymous hash/mode readback. Original source/data notices remain attached; mixed or unverified permissions are not silently replaced with a blanket license. The older139 rights hold remains blocking. |
 | Inspect notebook, task, attempt, steps, prompts, inputs and outputs | The latest Matchms explorer has five views, fourteen stages and a sixteen-step solver attempt. [Browser checks](../../autonomous-runs/147/explorer-check.json) cover anchors, trajectory expansion, JavaScript errors and mobile overflow. Large arrays link to the immutable release. |
 | Preserve evidence and remove resources | Every completed panel outcome has original science/root archival verification and provider cleanup evidence. Original148's failed cleanup receipt is retained alongside later exact-ID/five-owner absence. An active campaign is not counted as cleaned or completed. |
 | Budget and GitHub status | $200 authorized, $197 conservative reservations and $3 unallocated after reserving150, not measured invoices. The issue body is a concise current summary; dated logs remain in comments. PR23 promotes tested helpers only and remains draft/unmerged. |
 
-The unresolved work is substantive: finish and audit149, retain the scientific
+The unresolved work is substantive: finish and audit150, retain the scientific
 and redistribution holds, and assess the remaining generated failures against
 the current general factory. In particular,137's numeric-encoding failure has
 general source-precision guidance in later prompts; a fresh source-only150 run
 is reserved to test that improvement. A successful run on a different numeric task
 does not establish that this original failure is fixed. Neither the two public
 outcomes nor green helper tests prove broad ten-domain reliability.
+
+149's complete originals and four-owner cleanup are now verified. Its last
+executed candidate passed 22 controls, but that does not clear answer exposure:
+three archived reference cells independently match constants reported by the
+worker's executed inspection. The worker could identify the unused files but
+could not modify the root-owned environment from grading, so it correctly
+blocked. The newer general source-import discovery hints prioritize relevant
+test-source names before the environment is frozen; 102 offline checks pass.
+They neither classify assets nor remove them, and are not live-validated or
+applied to the already frozen 150 worker. A late environment-rebuild repair route
+remains unsupported; rejecting that candidate is preferable to claiming a clean
+environment without executing the removal and revalidation.

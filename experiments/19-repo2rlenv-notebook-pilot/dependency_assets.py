@@ -4,6 +4,7 @@ The worker establishes answer relevance and unused status; this helper checks
 exact installed ownership/content and records deletion. It never selects files.
 """
 
+import ast
 import hashlib
 import importlib.metadata
 import json
@@ -13,13 +14,33 @@ import sysconfig
 from pathlib import Path, PurePosixPath
 
 
-def inspect_assets(outputs, *, distributions=importlib.metadata.distributions, roots=None):
+def imported_module_terms(source):
+    """Literal import names are discovery hints, never execution evidence."""
+    names = set()
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, ast.Import):
+            names.update(alias.name.rsplit(".", 1)[-1].casefold() for alias in node.names)
+        elif isinstance(node, ast.ImportFrom):
+            if node.module:
+                names.add(node.module.rsplit(".", 1)[-1].casefold())
+            names.update(alias.name.casefold() for alias in node.names if alias.name != "*")
+    return sorted(names)
+
+
+def inspect_assets(
+    outputs, *, distributions=importlib.metadata.distributions, roots=None, source=None
+):
     """Expose actual installed answer candidates; do not judge or remove them.
 
     Names/formats and test/example locations are discovery hints. A differing
     hash does not establish that a fixture lacks the requested scientific answer.
     """
     roots = roots or [Path(sysconfig.get_path(key)).resolve() for key in ("purelib", "platlib")]
+    source_terms = imported_module_terms(source) if source is not None else []
+    source_patterns = [
+        (term, re.compile(r"(?<![a-z0-9])" + re.escape(term) + r"(?![a-z0-9])"))
+        for term in source_terms
+    ]
     candidates, inspected, coverage = [], 0, []
     for installed in distributions():
         distribution = installed.metadata["Name"]
@@ -82,15 +103,23 @@ def inspect_assets(outputs, *, distributions=importlib.metadata.distributions, r
                 removable = True
             except ValueError:
                 removable = False
-            candidates.append(
-                {
-                    **entry,
-                    "bytes": path.stat().st_size,
-                    "matches": matches,
-                    "packaged_test_or_example": packaged_test,
-                    "eligible_for_declared_removal": removable,
-                }
-            )
+            candidate = {
+                **entry,
+                "bytes": path.stat().st_size,
+                "matches": matches,
+                "packaged_test_or_example": packaged_test,
+                "eligible_for_declared_removal": removable,
+            }
+            if source is not None:
+                # Test sources can hold answer constants despite having no
+                # filename/hash relationship to an exported data artifact.
+                # Keep their source relationship separate from output matches.
+                candidate["source_import_matches"] = [
+                    term
+                    for term, pattern in source_patterns
+                    if pattern.search(path.stem.casefold())
+                ]
+            candidates.append(candidate)
         coverage.append(
             {
                 "distribution": distribution,
@@ -108,13 +137,16 @@ def inspect_assets(outputs, *, distributions=importlib.metadata.distributions, r
         "priority_matches": [
             row
             for row in candidates
-            if any(
+            if row.get("source_import_matches")
+            or any(
                 reason in {"same_basename", "same_stem", "identical_bytes"}
                 for match in row["matches"]
                 for reason in match["reasons"]
             )
         ],
     }
+    if source is not None:
+        summary["source_import_terms"] = source_terms
     return {"files": candidates, "summary": summary}
 
 
@@ -198,7 +230,10 @@ if __name__ == "__main__":
     if sys.prefix == sys.base_prefix:
         raise RuntimeError("Apply dependency exclusions using the task virtual environment")
     if sys.argv[1] == "inspect":
-        result = inspect_assets(json.loads(Path(sys.argv[2]).read_text()))
+        result = inspect_assets(
+            json.loads(Path(sys.argv[2]).read_text()),
+            source=Path(sys.argv[4]).read_text() if len(sys.argv) > 4 else None,
+        )
         Path(sys.argv[3]).write_text(json.dumps(result, indent=2) + "\n")
         print(json.dumps(result["summary"]))
     else:
