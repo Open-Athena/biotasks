@@ -1,45 +1,18 @@
-# Source assessment
+# Generic package-index policy result
 
-The frozen native source and all56 extracted generation members were reverified
-against their original acquisition/readback hashes, byte sizes and file modes.
-`assess.py` performs only bounded local reads; it executes no saved command and
-uses no model, subprocess, remote job or credential. `source-assessment.json`
-preserves the exact selected evidence and native function ranges.
+The generic policy recovered the frozen export's clean build without changing package arguments, source/grading assets or validation settings. Original native controls then timed out; no independently accepted pair or clean oracle command is established.
 
-The first live `apt-get install libexpat1` could not locate its package. A later
-recorded action successfully executed `apt-get update -q && apt-get install -y
-libexpat1-dev ...`. The saved rebuild list retains the install but omits the
-update. This omission is already present in the bootstrap agent's saved result;
-it was not introduced by our local handoff. The original inline emitter adds a
-git/CA prelude that deletes package indexes, then appends saved commands verbatim.
-Independent clean reconstruction consequently fails at the install, as the
-unchanged baseline archive records. Merely preserving the prelude's indexes is
-not a general guarantee: when git/CA already exist, that prelude may skip update.
+| Variant of the same known PR1497 | Reconstruction | Original native controls | Accepted native rewards |
+| --- | --- | --- | --- |
+| Official inline export45 | APT install cannot locate libexpat1-dev | Unattempted | None |
+| Explicit apt-index-refresh-v1 | Bootstrap and task images build | Both VerifierTimeoutError at300seconds | Null/null; unaccepted |
 
-There are two different verification boundaries. The native bootstrap smoke
-check executes saved test commands inside the live environment. The fresh-image
-check starts a new container **from the committed live image**. Neither rebuilds
-the clean inline Dockerfile from saved commands. Both are soft flags in the
-native runner, and the recipe reader does not enforce them. The observed fresh
-flag was false because of a300-second test deadline; it is not evidence that
-that fresh-image check encountered the later APT reconstruction error.
+Seventeen policy checks pass. The real local comparison verifies all56generation members,10task modes and grading/resource/deadline contracts; only the declared generic Dockerfile marker/update prefix and original-exporter reproducibility fields differ. No repository/package-specific dependency, generation/model repair or grader change. The same original worker and protected public base image were used.
 
-The ten transcript rows contain one format-invalid response;11 provider calls
-are fully billed. The successful SAVE_SETUP returns before appending its own
-transcript turn, explaining the count difference without inventing missing
-calls. The existing parser remains unchanged.
+The sealed primary has one attempt1436.915seconds/0.7982861112223731allocatedCPUh. Original nop/oracle invocations took633.53/627.35seconds. Native results report null rewards with300-second VerifierTimeoutError; later files contain0/0.942529 and492/522P2P. Each of four original verifier logs has3154NULbytes. Pytest summaries separately show18/1failures and522/539passes in573.90/566.84seconds. Those later statistics are not substitute native rewards, not a regrade and not proof of biological regressions. The unmodified collector correctly rejects Native reward disagreement and completes its safety stop.
 
-The narrow candidate worth testing is an explicit generic package-index policy
-at recipe emission, preserving saved commands and limiting any normalization to
-unambiguous APT install forms. A separate build-acceptance gate would detect
-incomplete recipes instead of silently calling them portable. These are proposed
-policies, not applied repairs or native successes. A general shell parser,
-dependency inference, model repair, timeout change and replacement grader are
-outside this comparison.
+Source lineage independently verifies generation's600-second cap for each pre/post test exec versus the exporter’s hardcoded300-second verifier. The task declares no resource section: approved baseline/candidate validation overrides are1CPU/6GiB, whereas generation uses1.5CPU/6GiB per native sandbox. These differences are recorded; the runtime comparison does not isolate a CPU-only causal effect and no deadline/resource change was made here.
 
-Before execution, define supported syntax, meaningful negative fixtures,
-candidate provenance and exact raw/candidate grading/resource equality. Keep
-the failed official baseline untouched. A build recovery would still leave the
-original300-second verifier versus over430-second native-suite duration, and
-the existing remote-model-load failure, to measure separately. No new remote
-admission or model call has occurred in child47.
+Recovery49 then preserved the entire contradictory archive byte-for-byte, including NUL logs, with explicit scientific_acceptance=false. Source/task/build/image/wheel/stop integrity and exact source terms/notices were checked;13primary objects and the cleanup snapshot passed fresh anonymous HF readback. Existing pre-reserved exact-worker cleanup ran once, verified all owned resources empty and preserved the public base. The original held journal remains unchanged; recovery completion is separate from scientific acceptance. Full source/code/receipts are linked in49at991b287e; `retention-outcome.json` records exact prefixes.
+
+Epic total after primary, safety stop and cleanup is9.596001111004087/32CPUh with zeroCPUreservations. No additional model calls/capacity: total OpenRouter actual remains0.287646USD/11originalbootstrapcalls; existing10USD storage reservation unreconciled. This is one known PR's package variant, not new unique tasks or unbiased yield. All historical83/82/67counts remain untouched. The policy stays experimental; keep47/49/33open for review. Manifest interface48 remains incomplete and no later native admission is taken by this report.
