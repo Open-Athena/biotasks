@@ -13,7 +13,7 @@ def main():
     files=[p for p in ROOT.iterdir() if p.is_file() and p.suffix in ['.py','.json','.md','.txt'] and not p.name.startswith(('final-evidence-','local-cleanup'))]
     files+=list((ROOT/'runs').rglob('*.json'))
     files+=[p for p in (ROOT/'private').glob('controller-*.log') if p.is_file()]
-    files+=[ROOT/'analysis/summarize.py',ROOT/'analysis/preserve_final.py',ROOT/'analysis/cleanup_local.py',Path(__file__).resolve()]
+    files+=list((ROOT/'analysis').glob('*.py'))
     rows=[]
     for path in sorted(set(files)):
         raw=path.read_bytes();inspect(raw)
