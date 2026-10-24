@@ -1,0 +1,29 @@
+{
+  "observed_at": "2026-10-24T16:02:35.830730+00:00",
+  "campaign": 148,
+  "source_claim_sha256": "fe19487ccd0f21b8ab0519edbdf8090a3d2d73a56465b53306bb395fd9e537d8",
+  "read_only_live_construction_observation": true,
+  "worker_or_task_modified": false,
+  "documents": [
+    {
+      "path": "materialization/instruction.md",
+      "sha256": "f1996914dbe95141b710392db8c7e2be3074b84232c7d4aac6de0813f4426038",
+      "bytes": 7472
+    },
+    {
+      "path": "materialization/rationale.md",
+      "sha256": "cd7a376ac945aa868cd98a7ba809a49bb7c0b7766fdf85b4b833f9ce3424c9d8",
+      "bytes": 7091
+    }
+  ],
+  "observation": "The generated construction question requests all five RMSD analyses keyed by frame, labels RMSD in angstrom, and explicitly excludes per-frame time. The rationale records the original misleading time heading and preserves original reference bytes separately. This removes the earlier requirement to submit unconverted values under a wrong time unit without altering the requested RMSD science.",
+  "acceptance_claim": false,
+  "limits": "Construction-stage text only. Final repaired public contract, executable controls, native trials, complete original archive and provider cleanup remain to be verified.",
+  "operator_scientific_edits": 0,
+  "notebook_specific_diagnostic_hints_supplied": false,
+  "general_prompt_rules_under_test": [
+    "source quantity identity",
+    "producer unit/conversion provenance",
+    "truthful representation labels"
+  ]
+}
