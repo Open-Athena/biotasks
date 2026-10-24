@@ -58,6 +58,12 @@ source and script hashes, conversion policy and each supported normalization.
 The supported normalizations are standalone `%matplotlib inline` lines and an
 argument-free `%%time` on the first line of a code cell. Timing-cell bodies remain
 in order and execute once. Identical text inside Python strings is preserved.
+Profile v6 also records and comments standalone inline-display format settings
+with literal supported formats, and standard `watermark` environment-reporting
+extension/flags. Arbitrary extensions, package-import/check-latest options,
+computed settings and additional statements remain unsupported. These
+normalizations change no scientific statements or variables; actual resolved
+package versions are captured by execution independently of notebook reporting.
 Editor metadata for the cell toolbar and VS Code is recorded and ignored.
 Empty code-cell tag lists and the documentation tag `remove-input` are recorded
 without hiding source or skipping its execution. Unknown tags remain unsupported.

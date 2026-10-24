@@ -44,8 +44,10 @@ for identifier, domain, number in selection:
         "language": "Python",
         "data_lineage": seed.get("provenance", {}).get("data_lineage"),
     }
-    result = experiment / f"panel-rounds/026/result-{number}.json"
-    if result.exists():
+    results = list(experiment.glob(f"panel-rounds/*/result-{number}.json"))
+    assert len(results) <= 1
+    result = results[0] if results else None
+    if result is not None:
         data = json.loads(result.read_text())
         assert data["original_and_fresh_cleanup_verified"]
         row.update(
@@ -66,14 +68,14 @@ for identifier, domain, number in selection:
             key=lambda path: path.stat().st_mtime,
         )
         data = json.loads(observed.read_text())
-        assert data["state"] == "RUNNING"
+        assert data["state"] == "RUNNING" or data["terminal"] is True
         assert data["claim_sha256"] == hashlib.sha256(claim.read_bytes()).hexdigest()
         freezes = list(experiment.glob(f"panel-rounds/*/freeze-{number}.json"))
         assert len(freezes) == 1
         freeze = json.loads(freezes[0].read_text())
         live.append(data)
         row.update(
-            state="running",
+            state="terminal_awaiting_original_audit" if data["terminal"] else "running",
             terminal_original_audited=False,
             native_controls_passed=None,
             fully_qualified_task=None,
@@ -113,7 +115,13 @@ counts = {
     "selected_python_domains": len(records),
     "terminal_original_audits": sum(row["terminal_original_audited"] for row in records),
     "native_control_passes": sum(row["native_controls_passed"] is True for row in records),
+    "unsupported_conversion_profile": sum(
+        row["state"] == "unsupported_conversion_profile" for row in records
+    ),
     "running": sum(row["state"] == "running" for row in records),
+    "terminal_awaiting_original_audit": sum(
+        row["state"] == "terminal_awaiting_original_audit" for row in records
+    ),
     "queued_not_submitted": sum(row["state"] == "frozen_queued_not_submitted" for row in records),
     "fully_qualified_latest_tasks": sum(row["fully_qualified_task"] is True for row in records),
 }
@@ -148,7 +156,8 @@ text += (
     f"\n{counts['terminal_original_audits']} latest cases have terminal original-evidence audits, "
     f"running: {counts['running']}; frozen but unsubmitted: {counts['queued_not_submitted']}. "
     f"{counts['native_control_passes']} passed native controls; qualification holds remain. "
-    "The other terminal cases reject generated setup/tasks, not demonstrated broken source notebooks. "
+    "Five terminal cases reject generated setup/tasks; one stops at unsupported notebook conversion. "
+    "These are not demonstrated broken source notebooks. "
     "Earlier Matchms135 infrastructure failure is preserved;144 is a fresh run. "
     "Earlier PyHMMER124 remains the latest qualified public release and is not substituted for134 here.\n\n"
     "PyRadiomics141 remains on its execution/access hold and is not counted as a tested tenth notebook. "

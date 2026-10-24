@@ -4386,3 +4386,10 @@ SGkit142original audit is complete:1901science files/7,202,439,010bytes independ
 
 
 143is confirmed submitted after142fulloriginalreadbackandfreshcleanup. The originalPyMCnotebook remains unchanged in the204-file3635b410worker; no hand-selectedtaskorendpoints.144was the solepreexistingnonterminal at admission. No additionalreservationwasadded:167/200conservativeholds,33unallocated.143and144nowoccupybothplannedslots. See panel-rounds/028/submission-143.json.
+
+
+## 2026-10-24 UTC: completed fresh Matchms and PyMC outcomes
+
+144completed its source/reference/replay/construction path but rejected after a probe-coverage defect:18of19control expectations met, while a peaks-only mutation did not change metadata despite declaring that metadata check as failing. The GLM repair correctly blocked rather than modifying a correct comparator or weakening coverage. Original1940files/558,856,630bytes and59rootfiles verified; four owners clean.79.58minutes,152requests; no native/solver.
+
+143rejected at v5intake before any LLM/science/Sandbox because presentation/version-reporting magics were unsupported. All3originalscience-tree files/2,290,030bytes and7rootfiles verified; no sandboxcreation. Generalv6conversion now records/comments only documented literal inline-format and standard watermark metadata directives; arbitrary/executable options remain unsupported.80syntheticchecks passed, and the exactunchanged realPyMCsource converts with all14codecells/12Markdowncells and ordered executable ASTequivalence. No scientific execution or task acceptance is inferred from conversion. Both original negative outcomes remain preserved.
