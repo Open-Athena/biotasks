@@ -31,6 +31,19 @@ Approval requires no blockers. Missing evidence requires `unresolved`; a known
 defect requires `defect`. An overall acceptance requires both scientific
 admission audits approved. This record is the reviewer's reasoned assessment,
 not executable proof of scientific truth or a substitute for the controls.
+Scientific equivalence needs both valid-answer acceptance and consequential
+wrong-answer rejection. A known permissive rule is a comparison defect even if
+it cannot reject a correct answer. Do not approve an invented entity or relation
+merely because its shape, type or coarse numerical properties match a reference
+row. When `artifact_interface.trusted_inputs` is available, the grader can check
+the original inputs through `BIOTASKS_TRUSTED_INPUT_DIR` in both controller and
+Harbor execution. Verify that it uses that immutable evidence rather than a
+solver-controlled copy or the incomplete set of entities selected by one
+reference output. If the necessary check remains unsupported, record a blocker
+instead of deferring a known scientific acceptance defect to a future candidate.
+For a claimed scientific negative, check that the executed mutation reaches the
+intended scientific rule. A parsing failure does not demonstrate rejection of a
+well-formed scientific error, even when the report marks dependent checks false.
 Check necessary logical quantifiers, conjunctions/disjunctions, conditionals and
 threshold meanings against source/input/package evidence. Prefer referring to
 an encoded rule over introducing an unsupported natural-language approximation.

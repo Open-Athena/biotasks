@@ -10,9 +10,9 @@ from reference_protocol import StrictModel
 from repo2rlenv.quality.loop.models import SemanticProbe
 
 
-def artifact_interface(output_paths):
+def artifact_interface(output_paths, *, input_paths=None):
     """Describe the controller's directory arguments, independently of a task's prose."""
-    return {
+    interface = {
         "output_paths": list(output_paths),
         "path_rule": (
             "Each declared output path is relative to the supplied output root. "
@@ -29,6 +29,19 @@ def artifact_interface(output_paths):
             "actual supplied submission root; use those records to establish placement."
         ),
     }
+    if input_paths is not None:
+        interface["trusted_inputs"] = {
+            "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+            "input_paths": list(input_paths),
+            "usage": (
+                "The grader may read original task inputs beneath the directory named by "
+                "this environment variable. The controller supplies a separate immutable "
+                "copy in factory controls and native Harbor verification and checks its "
+                "original hashes before and after grading. Never use solver-workspace "
+                "copies or hardcode a sandbox-specific input directory."
+            ),
+        }
+    return interface
 
 
 def control_summary(controls):

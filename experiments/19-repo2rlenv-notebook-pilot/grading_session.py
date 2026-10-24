@@ -314,6 +314,10 @@ class GradingSession:
             )
             if sealed["exit_code"]:
                 raise RuntimeError("Cannot freeze derived inputs")
+            input_manifest = self.root / "expected-inputs.json"
+            save_record(input_manifest, {p["path"]: p["sha256"] for p in derived["inputs"]})
+            await self.remote.upload(input_manifest, "/work/grading-private/expected-inputs.json")
+            await self.helper(["seal-inputs"], 60, "seal-verifier-inputs")
         expected = self.root / "expected.json"
         save_record(expected, {p["path"]: p["sha256"] for p in self.snapshot["outputs"]})
         await self.remote.upload(expected, "/work/grading-private/expected.json")
@@ -552,7 +556,12 @@ async def run_grading(
             (HERE / config.get("policy_file", "specification-reference-policy.json")).read_text()
         ),
         "paths": {"reference_outputs": "/work/reference", "working_directory": "/work/author"},
-        "artifact_interface": artifact_interface(session.paths),
+        "artifact_interface": artifact_interface(
+            session.paths,
+            input_paths=snapshot["materialization"]["candidate"]["input_paths"]
+            if "materialization" in snapshot
+            else None,
+        ),
         "verifier_seconds": config["verifier_seconds"],
         "reference_seconds": config["reference_seconds"],
     }

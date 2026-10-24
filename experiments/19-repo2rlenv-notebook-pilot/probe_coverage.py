@@ -34,6 +34,11 @@ def unexercised_scientific_checks(candidate, controls):
             report = parse_report(execution.get("report"), candidate)
         except ValueError:
             continue
+        structural = {check.id for check in candidate.checks if check.kind == "structural"}
+        if any(row["id"] in structural and not row["passed"] for row in report["checks"]):
+            # A parser/structure rejection can cascade into every scientific
+            # check without exercising any scientific acceptance rule.
+            continue
         failed = {row["id"] for row in report["checks"] if row["passed"] is False}
         covered.update(set(probe.get("check_ids", [])) & failed)
     return sorted({c.id for c in candidate.checks if c.kind == "scientific"} - covered)

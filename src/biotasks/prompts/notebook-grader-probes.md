@@ -27,6 +27,9 @@ Return a suite using the supplied schema. Each probe has a stable name, kind
 (`wrong_solution` or `valid_alternative`), focus, rationale, source citations,
 Python `script`, and `check_ids` identifying its intended checks. Cover every
 scientific check with at least one meaningful wrong-result probe. A probe may
+establish scientific rejection coverage only when the mutated outputs also pass
+the declared structural/parsing checks; a parse failure cascading into failed
+scientific checks does not exercise the intended scientific rule. A probe may
 cover several related checks only when it actually changes each corresponding
 result. Include valid representation controls for the freedoms the public
 contract permits. Test numerical tolerance boundaries and nonfinite inputs where

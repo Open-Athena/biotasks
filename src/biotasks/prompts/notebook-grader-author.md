@@ -28,6 +28,16 @@ can inspect those output files and installed package sources, and experiment in
 your writable working directory. You cannot modify the controller's reference
 copies. When `paths` supplies task inputs and recomputed outputs, inspect those
 as recorded evidence too. Otherwise raw biological inputs are not available.
+When `artifact_interface.trusted_inputs` is supplied, the executable grader can
+read a separate, original-hash-checked copy of those task inputs from the directory
+named by `BIOTASKS_TRUSTED_INPUT_DIR`. Use this environment variable rather than
+hardcoding an authoring path or trusting mutable solver-workspace files. It is
+available in both controller controls and native Harbor grading. Reference output
+rows need not enumerate every valid input entity or permissible alternative. If
+acceptance depends on membership or an input-grounded relation, establish it from
+the trusted inputs instead of accepting an invented entity that merely matches
+coarse reference properties. This access supplies evidence, not a new method or
+permission to weaken a comparison.
 For a native scientific file, ground the comparison in its documented encoding
 or the installed parser's behavior. Distinguish stored values from decoded
 quantities, including transformations, units and special tokens. Do not infer

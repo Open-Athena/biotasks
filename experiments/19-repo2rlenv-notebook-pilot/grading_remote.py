@@ -12,6 +12,7 @@ import time
 from pathlib import Path
 
 PRIVATE = Path("/work/grading-private")
+TRUSTED_INPUTS = Path("/work/grader-inputs")
 CASE = Path("/case")
 AUTHOR, GRADER, PROBE, ORACLE = 18001, 18002, 18003, 18004
 WORKER_ROLES = frozenset({AUTHOR, GRADER, PROBE, ORACLE})
@@ -73,6 +74,31 @@ def owned(path, uid, mode):
     path.chmod(mode)
 
 
+def trusted_input_directory():
+    """Check the controller's original input identities, never submission copies."""
+    manifest = PRIVATE / "expected-inputs.json"
+    if not manifest.exists():
+        return None
+    expected = json.loads(manifest.read_text())
+    if TRUSTED_INPUTS.is_symlink() or not TRUSTED_INPUTS.is_dir():
+        raise ValueError("Trusted task input directory is missing or unsafe")
+    if hashes(TRUSTED_INPUTS) != expected:
+        raise ValueError("Trusted task inputs differ from their original identities")
+    return TRUSTED_INPUTS
+
+
+def seal_inputs(source):
+    """Give only the grader role read access to a separately sealed input copy."""
+    expected = json.loads((PRIVATE / "expected-inputs.json").read_text())
+    if hashes(source) != expected:
+        raise ValueError("Task inputs changed before verifier staging")
+    shutil.copytree(source, TRUSTED_INPUTS)
+    for path in [TRUSTED_INPUTS, *TRUSTED_INPUTS.rglob("*")]:
+        os.chown(path, 0, GRADER)
+        path.chmod(0o550 if path.is_dir() else 0o440)
+    trusted_input_directory()
+
+
 def run_as(uid, argv, cwd, seconds):
     if uid not in WORKER_ROLES or os.geteuid() != 0:
         raise RuntimeError("Generated execution requires a dedicated sandbox worker role")
@@ -102,6 +128,9 @@ def run_as(uid, argv, cwd, seconds):
             )
         },
     }
+    trusted = trusted_input_directory() if uid == GRADER else None
+    if trusted is not None:
+        env["BIOTASKS_TRUSTED_INPUT_DIR"] = str(trusted)
 
     def interrupted(_signal, _frame):
         raise TimeoutError("Outer controller interrupted generated execution")
@@ -136,6 +165,8 @@ def run_as(uid, argv, cwd, seconds):
                 process.wait(timeout=2)
             finally:
                 signal.signal(signal.SIGTERM, previous_handler)
+        if trusted is not None:
+            trusted_input_directory()
         stdout_file.seek(0)
         stderr_file.seek(0)
         stderr = stderr_file.read().decode("utf-8", errors="replace")
@@ -180,6 +211,12 @@ def prepare(kind, omitted=None):
 
 def main():
     mode = sys.argv[1]
+    if mode == "seal-inputs":
+        if os.geteuid() != 0:
+            raise RuntimeError("Only the disposable sandbox controller may seal inputs")
+        seal_inputs(Path("/work/task-inputs"))
+        print(json.dumps({"status": "trusted_inputs_sealed"}))
+        return
     if mode == "initialize":
         PRIVATE.mkdir(exist_ok=True)
         PRIVATE.chmod(0o700)

@@ -143,6 +143,11 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(
     )
     task = package(**options)
     assert (task / "tests/reference/y.txt").read_bytes() == b"1"
+    assert (task / "tests/inputs/x.txt").read_bytes() == b"1"
+    assert json.loads((task / "tests/inputs-manifest.json").read_text()) == {
+        "x.txt": hashlib.sha256(b"1").hexdigest()
+    }
+    assert not (task / "environment/inputs/y.txt").exists()
     assert not (task / "environment/reference").exists()
     assert "COPY inputs/" in (task / "environment/Dockerfile").read_text()
     instruction = (task / "instruction.md").read_text()

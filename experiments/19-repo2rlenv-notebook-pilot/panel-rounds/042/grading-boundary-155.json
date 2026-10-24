@@ -1,0 +1,91 @@
+{
+  "campaign": 155,
+  "claim_sha256": "701dd247efe9ef5baa881e5854dd6e051a3a555eca0ce0eaf66fcdf73c0f60e1",
+  "observation": "Completed grading boundary, before final whole-campaign archive and native result",
+  "source_artifacts": {
+    "grading/result.json": {
+      "sha256": "38fec1ba98c1b441497a09055e3ea4d5c757ed51984b8a9d5c6e87ef0ca20dcb",
+      "bytes": 449
+    },
+    "grading/review-repair.json": {
+      "sha256": "fb858fe74494b438b61a7ef1acb137291c6d4467ac4b4f5c75e9efc9bd922d82",
+      "bytes": 18725
+    },
+    "grading/final-candidate.json": {
+      "sha256": "dd43a7ec58f288ddb472617c3b61ebce18839aa57b8498235f43b562c2de6067",
+      "bytes": 33660
+    },
+    "grading/final-controls.json": {
+      "sha256": "961379582c66177176b5c65fed921c9e5e4f1978673399187d57047cd0790d5d",
+      "bytes": 58263
+    },
+    "grading/repaired-probes.json": {
+      "sha256": "97c24cae4a19e7e5cf3275a6a414ebdb3877d20b87d2665234659f4fe550d0d3",
+      "bytes": 14134
+    },
+    "native/oracle/trial.json": {
+      "sha256": "1b08b7475f6be97eece478f76b18f19cb988d11676ec13fc4eb5d0493adeb74f",
+      "bytes": 1683
+    },
+    "native/nop/trial.json": {
+      "sha256": "3967b365d1a82dbe2e8841b342e7bac174692980aa368b8ce9c926952a460118",
+      "bytes": 1659
+    }
+  },
+  "grading_status": "grader_candidate_validated",
+  "review_decision": "accept_for_packaging",
+  "final_controls": 15,
+  "all_final_controls_passed": true,
+  "cumulative_control_cases": 45,
+  "review_remaining_validation": [
+    "The base question's descriptive claim that all 15 shared coordinate triples carry different fc values could not be re-verified within this catalog's recorded execution evidence (the reviewer found the author-verified concrete example chr12:53746631-53747014 with fc 13.09923 vs 460.50830 but no controller record); it is non-consequential because the earliest-record rule, the oracle implementation and the byte-identical reference-expected values are identical whether or not the fc values agree.",
+    "Controller-executed negative coverage for the per-key fc-equality and weaker-motif clauses of the strongest-motif table check exists currently only via author-side executions of the identical grader code (op 0127: weaker motif, strand flip, cross-peak swap, width-20 substitution all rejected), because the upstream p2 probe's script misindexing caused its recorded controller rejection to fire at the structural parse layer; the clauses are simple deterministic comparisons and the gap is disclosed in the candidate's probe concerns, but a future probe-supplement cycle could add controller-level coverage.",
+    "The residual tie-freedom permissiveness (substitute motif coordinates absent from all reference-reported assignments cannot be checked against the immutable motif track from the grader's two-directory interface) is disclosed; a reference-side motif-identity index would close it in a future candidate."
+  ],
+  "qualification": "held_pending_final_audit",
+  "scientific_acceptance": false,
+  "publication": false,
+  "static_comparison_gap": "The submitted grader validates alternative entity coordinates only against a reference-selected subset plus coarse properties, not against the immutable original input. The reviewer explicitly discloses this residual permissiveness. This is a missing scientific membership check, not an executed counterfeit probe.",
+  "probe_limitation": [
+    {
+      "name": "p2-weaker-motif-and-altered-fc",
+      "targets": [
+        "strongest_motif_blacklist_filtered_table"
+      ],
+      "checks": [
+        {
+          "id": "files_present_and_parseable",
+          "message": "peaks_with_strongest_motif_blacklist_filtered.tsv line 53: motif chromosome 'chr8' differs from peak chromosome 'chr19'",
+          "passed": false
+        },
+        {
+          "id": "strongest_motif_blacklist_filtered_table",
+          "message": "peaks_with_strongest_motif_blacklist_filtered.tsv line 53: motif chromosome 'chr8' differs from peak chromosome 'chr19'",
+          "passed": false
+        },
+        {
+          "id": "peaks_without_motifs_counts",
+          "message": "peak-record counts and exact quotient match the reference",
+          "passed": true
+        },
+        {
+          "id": "pearson_corr_fc_vs_motif_strength",
+          "message": "pearson correlation within 1e-06 of the reference value",
+          "passed": true
+        },
+        {
+          "id": "motif_peak_association_by_strength",
+          "message": "per-strength association-row counts match the reference exactly",
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "grader_code_sha256": "36ffbfd4aacf8121756cbea09ba9f0fa24c11d960424b2bbbe5710d000e30542",
+  "no_new_models_jobs_sandboxes": true,
+  "limits": [
+    "Read-only boundary evidence; complete original archive/readback still pending.",
+    "All controls passing and review acceptance do not resolve a disclosed scientific comparator gap.",
+    "Source-record exclusion policy remains pending independently."
+  ]
+}

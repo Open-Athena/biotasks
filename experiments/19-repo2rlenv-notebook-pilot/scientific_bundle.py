@@ -8,14 +8,31 @@ from materialization_protocol import Materialization
 from reference_environment import UV_VERSION, validate_environment
 from repo2rlenv.emitter.bundle import TaskBundle, TaskFile, write_bundle
 
-VERIFY = """import json, subprocess
+VERIFY = """import hashlib, json, os, subprocess
 from pathlib import Path
 root = Path('/workspace/outputs')
 report = Path('/logs/verifier/report.json')
 reward = Path('/logs/verifier/reward.txt')
 report.parent.mkdir(parents=True, exist_ok=True)
+reward.unlink(missing_ok=True)
+report.unlink(missing_ok=True)
 checks = json.loads(Path('/tests/checks.json').read_text())
 required = json.loads(Path('/tests/outputs.json').read_text())
+trusted_inputs = Path('/tests/inputs')
+expected_inputs = json.loads(Path('/tests/inputs-manifest.json').read_text())
+def verify_inputs():
+    if trusted_inputs.is_symlink() or not trusted_inputs.is_dir():
+        raise ValueError('Unsafe verifier input directory')
+    actual = {}
+    for path in trusted_inputs.rglob('*'):
+        if path.is_symlink() or not (path.is_file() or path.is_dir()):
+            raise ValueError('Unsafe verifier input')
+        if path.is_file():
+            with path.open('rb') as stream:
+                actual[path.relative_to(trusted_inputs).as_posix()] = hashlib.file_digest(stream, 'sha256').hexdigest()
+    if actual != expected_inputs:
+        raise ValueError('Verifier input identities changed')
+verify_inputs()
 unsafe = root.is_symlink()
 for name in required:
     path = root
@@ -31,7 +48,9 @@ if unsafe:
     report.write_text(json.dumps(value))
 else:
     subprocess.run(['python','/tests/grade.py','--reference-dir','/tests/reference',
-                    '--submission-dir',str(root),'--report',str(report)], check=True)
+                    '--submission-dir',str(root),'--report',str(report)], check=True,
+                   env={**os.environ, 'BIOTASKS_TRUSTED_INPUT_DIR': str(trusted_inputs)})
+    verify_inputs()
     value = json.loads(report.read_text())
     assert type(value['passed']) is bool
     assert {x['id'] for x in value['checks']} == {x['id'] for x in checks}
@@ -180,6 +199,9 @@ def package(
         if source_license.get("text"):
             assets["environment/LICENSE.source"] = TaskFile.text(source_license["text"])
     manifest = json.loads((materialization / "manifest.json").read_text())
+    assets["tests/inputs-manifest.json"] = TaskFile.text(
+        json.dumps({item["path"]: item["sha256"] for item in manifest["inputs"]}) + "\n"
+    )
     for kind, names, prefix in [
         ("inputs", candidate.input_paths, "environment/inputs"),
         ("reference", candidate.output_paths, "tests/reference"),
@@ -194,6 +216,8 @@ def package(
             ):
                 raise ValueError("Materialized bundle bytes differ from evidence")
             assets[prefix + "/" + relative] = TaskFile(path.read_bytes())
+            if kind == "inputs":
+                assets["tests/inputs/" + relative] = TaskFile(path.read_bytes())
     return write_bundle(
         TaskBundle(
             name=name,

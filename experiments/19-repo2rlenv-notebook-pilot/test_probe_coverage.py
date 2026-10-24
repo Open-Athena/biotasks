@@ -11,7 +11,7 @@ from unittest.mock import AsyncMock
 
 import grading_remote
 import pytest
-from grading_protocol import GraderRepair, apply_probe_expectations
+from grading_protocol import Check, GraderRepair, apply_probe_expectations
 from grading_session import GradingSession
 from probe_coverage import (
     ProbeSupplement,
@@ -64,6 +64,31 @@ def test_executed_coverage_does_not_credit_overdeclared_annotations():
     record = negative_record(candidate, original)
     before = copy.deepcopy(record)
     assert unexercised_scientific_checks(candidate, [record]) == ["agreement"]
+    assert record == before
+
+
+@pytest.mark.parametrize("parse_passes", [False, True])
+def test_parse_failure_cannot_stand_in_for_a_scientific_negative(parse_passes):
+    candidate, original, _, _ = fixture_with_gap()
+    candidate = candidate.model_copy(
+        update={
+            "checks": [
+                Check(
+                    id="parseable",
+                    kind="structural",
+                    artifacts=["a.txt"],
+                    public_requirement="Outputs parse as the declared scientific format.",
+                ),
+                *candidate.checks,
+            ]
+        }
+    )
+    record = negative_record(candidate, original)
+    record["execution"]["report"]["checks"][0]["passed"] = parse_passes
+    before = copy.deepcopy(record)
+    assert unexercised_scientific_checks(candidate, [record]) == (
+        ["agreement"] if parse_passes else ["agreement", "value"]
+    )
     assert record == before
 
 

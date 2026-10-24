@@ -963,7 +963,9 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             assert "reference_inspection" not in inputs and "package_inspection" not in inputs
             assert "execution_inspection" not in inputs
         if name != "independent":
-            assert inputs["artifact_interface"] == module.artifact_interface(["value.txt"])
+            assert inputs["artifact_interface"] == module.artifact_interface(
+                ["value.txt"], input_paths=["input.txt"] if derived else None
+            )
         if derived and name not in {"independent", "probes", "probe-supplement"}:
             assert inputs["specification"] == {"task_brief": "Scientific question"}
             assert "operator_handoff" not in inputs
