@@ -1,0 +1,36 @@
+{
+  "recorded_at": "2026-10-24T09:12:21.560834+00:00",
+  "base_revision": "6e38c4b8",
+  "change": "Preserve the blocked worker outcome and setup accounting, then raise SetupBudgetExceeded when the cumulative setup allowance is exhausted before any controlled reference dispatch. The existing orchestrator records infrastructure_failed, not a seed rejection.",
+  "classification_criteria": {
+    "worker_disposition": "blocked",
+    "controlled_reference_dispatches": 0,
+    "setup_seconds_remaining": "less than1; no whole-second command can be admitted"
+  },
+  "offline_verification": {
+    "passed": 130,
+    "pytest_seconds": 3.15,
+    "guarded_wall_seconds": 3.95,
+    "peak_rss_kib": 135884,
+    "junit_sha256": "74b8f4d217cb0fe17e1fb06225c2a36921b048bdc68f0f8283af0cd0d506c0ef",
+    "resource_report_sha256": "c565fa3b7ba1122b7cfde4a736060fa17976eff194ef681d058014fdbb4f423d",
+    "ruff_check": "passed",
+    "ruff_format_check": "passed",
+    "coverage": [
+      "Actual setup runner preserves blocked outcome, zero dispatches and exhausted allowance in incomplete result.",
+      "Original error and accounting survive evidence export and owned-sandbox cleanup, including export-failure path.",
+      "Existing failed/uncertain computation accounting, source-import policy, offline networking and autonomous terminal distinctions."
+    ],
+    "initial_failures": "First run128passed/2failed due a test fixture passing duplicate disposition keywords. Fixed fixture; initial report and fixtures preserved."
+  },
+  "source_sha256": {
+    "experiments/19-repo2rlenv-notebook-pilot/run_reference_setup.py": "e373d1c00517011b4cb4046eadfad7aed938f447e4fcf6928fb3ebe8d14e091d",
+    "experiments/19-repo2rlenv-notebook-pilot/test_reference_setup.py": "a5d56e5b2e2b531fa925c3af8386a62282c54ab3e7224470fec4f702f769f2b7"
+  },
+  "limits": [
+    "This changes outcome classification, not the underlying transport stall.",
+    "Original135outcome and archive unchanged; no scientific rerun or manual task repair.",
+    "Frozen round026payloads unchanged; no new model calls, sandbox, time, test or repair allowance."
+  ],
+  "live_validation": false
+}

@@ -20,7 +20,13 @@ from design_stage import completion_transport
 from model_profile import native_effort
 from openai import AsyncOpenAI
 from preflight import PROBE, TARGETS
-from reference_setup import TEST_TOOL, PreparedReference, SetupOutcome, SetupSession
+from reference_setup import (
+    TEST_TOOL,
+    PreparedReference,
+    SetupBudgetExceeded,
+    SetupOutcome,
+    SetupSession,
+)
 from reference_stage import stage
 from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.execution.daytona import DaytonaWorker
@@ -635,6 +641,18 @@ async def run(
                 if session.effective_preparation is not None
                 else None,
             )
+            if (
+                outcome.disposition == "blocked"
+                and session.tests == 0
+                and session.setup_remaining < 1
+            ):
+                # A setup/tool transport stall can spend the whole allowance
+                # before scientific dispatch. Preserve the worker's outcome,
+                # but never turn that lack of execution into a seed rejection.
+                result["incomplete_reason"] = "setup_budget_exhausted_before_reference"
+                raise SetupBudgetExceeded(
+                    "Setup allowance exhausted before any controlled reference dispatch"
+                )
     except BaseException as error:
         result.update(status="incomplete", error_type=type(error).__name__)
         raise

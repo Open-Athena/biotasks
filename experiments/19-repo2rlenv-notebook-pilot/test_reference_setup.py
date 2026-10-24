@@ -999,8 +999,9 @@ def test_failed_offline_policy_prevents_analysis(tmp_path):
 
 
 @pytest.mark.parametrize("export_failure", [False, True])
+@pytest.mark.parametrize("setup_exhausted", [False, True])
 def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
-    tmp_path, monkeypatch, export_failure
+    tmp_path, monkeypatch, export_failure, setup_exhausted
 ):
     from types import SimpleNamespace
 
@@ -1035,6 +1036,11 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
     monkeypatch.setattr(runner, "Remote", lambda *a: FakeRemote())
 
     async def failed_stage(**kwargs):
+        if setup_exhausted:
+            session = kwargs["validate"].__self__
+            session.setup_remaining = -30.18
+            assert session.tests == 0
+            return successful_outcome().model_copy(update={"disposition": "blocked"})
         raise RuntimeError("fixture stage failure")
 
     monkeypatch.setattr(runner, "stage", failed_stage)
@@ -1053,7 +1059,13 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
         "max_requests": None,
         "max_tests": 1,
     }
-    with pytest.raises(RuntimeError, match="fixture (stage|export) failure"):
+    error = runner.SetupBudgetExceeded if setup_exhausted and not export_failure else RuntimeError
+    message = (
+        "before any controlled reference dispatch"
+        if setup_exhausted and not export_failure
+        else "fixture (stage|export) failure"
+    )
+    with pytest.raises(error, match=message):
         asyncio.run(
             runner.run(
                 config,
@@ -1069,3 +1081,9 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
     result = json.loads((tmp_path / "run/result.json").read_text())
     assert result["status"] == "incomplete" and result["cleanup_verified"]
     assert result["construction_run"] is False and result["solver_run"] is False
+    if setup_exhausted:
+        assert result["incomplete_reason"] == "setup_budget_exhausted_before_reference"
+        assert result["error_type"] == "SetupBudgetExceeded"
+        assert result["reference_tests"] == 0
+        assert result["setup_seconds_remaining"] == -30.18
+        assert json.loads((tmp_path / "run/outcome.json").read_text())["disposition"] == "blocked"
