@@ -13,6 +13,13 @@ from rigging.secrets import SecretBehavior
 from rigging.timing import Duration
 
 ROOT = Path(__file__).resolve().parent
+
+
+def worker_allowed(worker_id,tpu_name,excluded):
+    return (worker_id not in excluded['excluded_worker_ids']
+        and worker_id.rsplit('-worker-',1)[0] not in excluded['excluded_tpu_names']
+        and tpu_name not in excluded['excluded_tpu_names'])
+
 parser = argparse.ArgumentParser()
 parser.add_argument('action', choices=['preflight', 'submit', 'observe'])
 parser.add_argument('--config', type=Path, required=True)
@@ -44,7 +51,7 @@ with connect_controller(config_file=args.config) as endpoint:
             workers=client.list_workers(query=controller_pb2.Controller.WorkerQuery(limit=500))
             eligible=[w for w in workers if w.healthy and 'v4-reserved' in w.scale_group and w.metadata.tpu_name and not w.metadata.provenance.dirty]
             excluded=json.loads((ROOT/'inputs-private/original-workers.json').read_text())
-            eligible=[w for w in eligible if w.worker_id not in excluded['excluded_worker_ids'] and w.metadata.tpu_name not in excluded['excluded_tpu_names'] and w.metadata.provenance.base_commit.startswith('c7c14a252d')]
+            eligible=[w for w in eligible if worker_allowed(w.worker_id,w.metadata.tpu_name,excluded) and w.metadata.provenance.base_commit.startswith('c7c14a252d')]
             chosen=None
             for w in sorted(eligible,key=lambda x:(len(x.running_job_ids),x.worker_id)):
                 allocations=[client.describe_task(JobName.from_string(t)).resources for t in w.running_job_ids]
@@ -63,7 +70,7 @@ with connect_controller(config_file=args.config) as endpoint:
             assert budget['run_id']==NAME and budget['maximum_cpu_hours']==6
             assert budget['reservation_state']=='booked in epic 33 budget before submission'
             assert budget['prior_child_allocated_cpu_hours']+6+budget['cleanup_allowance_cpu_hours']<=8
-            evidence={'job_id':str(job_id),'worker_id':chosen.worker_id,'worker_base':chosen.metadata.provenance.base_commit,
+            evidence={'job_id':str(job_id),'worker_id':chosen.worker_id,'worker_base':chosen.metadata.provenance.base_commit,'worker_tpu_name':chosen.metadata.tpu_name,
                       'different_worker_constraint_verified':True,'new_capacity':False,'cpu':4,'memory_gib':16,'disk_gib':24,'timeout_seconds':5400,
                       'max_allocated_cpu_hours':6,'campaign_ceiling_cpu_hours':8,'epic_ceiling_cpu_hours':32,'model_calls':0,'attempts_allowed':1,
                       'payload_sha256':{k:hashlib.sha256(v).hexdigest() for k,v in files.items()},
