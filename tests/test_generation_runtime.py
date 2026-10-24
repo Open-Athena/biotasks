@@ -246,9 +246,9 @@ def test_targeting_override_restores_callback_after_native_exit(monkeypatch, int
     pipelines.__path__ = []
     runtime = types.ModuleType("repo2rlenv.pipelines.pr_runtime")
     original = lambda commands, files: commands  # noqa: E731
-    runtime.targeted_test_cmds_for_pr = original
-    pipelines.pr_runtime = runtime
-    root.pipelines = pipelines
+    vars(runtime)["targeted_test_cmds_for_pr"] = original
+    vars(pipelines)["pr_runtime"] = runtime
+    vars(root)["pipelines"] = pipelines
     for name, module in (
         ("repo2rlenv", root),
         ("repo2rlenv.pipelines", pipelines),
@@ -259,12 +259,12 @@ def test_targeting_override_restores_callback_after_native_exit(monkeypatch, int
     state = {}
     try:
         with entry.targeting_policy({"targeting_policy": "workspace-python-v1"}, state):
-            assert runtime.targeted_test_cmds_for_pr is not original
+            assert vars(runtime)["targeted_test_cmds_for_pr"] is not original
             if interrupted:
                 raise SystemExit(1)
     except SystemExit:
         assert interrupted
-    assert runtime.targeted_test_cmds_for_pr is original
+    assert vars(runtime)["targeted_test_cmds_for_pr"] is original
     assert state == {"targeting_policy": "workspace-python-v1", "targeting_policy_restored": True}
 
 
