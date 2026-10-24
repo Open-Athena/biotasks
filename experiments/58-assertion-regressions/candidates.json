@@ -1,0 +1,53 @@
+{
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "kind": "Unchanged official merged-PR descriptors; not all-history coverage",
+  "repo": "biopython/biopython",
+  "limit": 50,
+  "since": "2026-10-18",
+  "until": "2026-10-19",
+  "require_new_test_funcs": false,
+  "candidates": [
+    {
+      "number": 5382,
+      "title": "Remove the \"importing Biopython from inside the source tree\" warning",
+      "body": "- [X] I hereby agree to dual licence this and any previous contributions under both\r\nthe _Biopython License Agreement_ **AND** the _BSD 3-Clause License_.\r\n\r\n- [X] I have read the ``CONTRIBUTING.rst`` file, have run ``pre-commit``\r\nlocally, and understand that continuous integration checks will be used to\r\nconfirm the Biopython unit tests and style checks pass with these changes.\r\n\r\n- [x] I have added my name to the alphabetical contributors listings in the files\r\n``NEWS.rst`` and ``CONTRIB.rst`` as part of this pull request, am listed\r\nalready, or do not wish to be listed. (*This acknowledgement is optional.*)\r\n\r\nCloses #5294.\r\n\r\n### What this does\r\n\r\nRemoves the \"You may be importing Biopython from inside the source tree.\"\r\n`BiopythonWarning` that was emitted at import time, together with the now\r\nunused `import os` / `import warnings` and the `_parent_dir` detection block.\r\nAll exception classes (`BiopythonWarning`, `BiopythonExperimentalWarning`,\r\n`BiopythonParserWarning`, `BiopythonDeprecationWarning`, ...) are unchanged.\r\n\r\n### Why the warning fires\r\n\r\nThe check decided \"am I running from the source tree?\" by testing for a\r\n`pyproject.toml` next to the `Bio` package directory, and then confirming\r\ndevelopment mode by looking for a `biopython.egg-link` in `site-packages`.\r\n\r\nThat second step no longer matches reality: modern `pip install -e .`\r\n(PEP 660) writes an `__editable__.biopython-*.pth` file plus an\r\n`__editable___biopython_*_finder.py`, and no `biopython.egg-link`. Therefore\r\n`_dev_mode` is always `False`, and any `pyproject.toml` sitting one level above\r\nthe importable `Bio` package triggers the warning on *every* import - whether\r\nor not the user is actually inside the source tree.\r\n\r\n### Reproduction\r\n\r\n```python\r\n# no editable install involved, just a pyproject.toml next to the package:\r\n#   tmp/Bio/__init__.py  +  tmp/pyproject.toml  on sys.path\r\nPYTHONPATH=tmp python -c \"import Bio\"\r\n# Bio/__init__.py:138: BiopythonWarning: You may be importing Biopython\r\n# from inside the source tree. ... you have a pyproject.toml file in an\r\n# unexpected directory: tmp\r\n```\r\n\r\nWith this change the same command prints nothing.\r\n\r\n### Testing\r\n\r\nFull local suite on Windows / CPython 3.12.15:\r\n\r\n```\r\nRan 515 tests in 87.899 seconds\r\n```\r\n\r\n0 failures, 0 errors (61 modules skipped: optional dependencies such as\r\n`reportlab` and `PAML`, BioSQL without a `biosql.ini`, and online tests via\r\n`--offline`). `Bio.codonalign` still raises its own\r\n`BiopythonExperimentalWarning` as before.\r\n",
+      "state": "MERGED",
+      "merged_at": "2026-10-19T19:44:09Z",
+      "base_ref": "master",
+      "base_sha": "3c6f1357248184ef45e39f98fc3fd823c172ab87",
+      "head_sha": "f459dd33f2d8f596618c077e8133823626a61bc1",
+      "is_draft": false,
+      "url": "https://github.com/biopython/biopython/pull/5382",
+      "changed_files": [
+        "Bio/__init__.py",
+        "CONTRIB.rst",
+        "NEWS.rst"
+      ]
+    },
+    {
+      "number": 5372,
+      "title": "Raise PDBIOException when residue name exceeds 3 characters (#5370)",
+      "body": "- [x] I hereby agree to dual licence this and any previous contributions under both the _Biopython License Agreement_ **AND** the _BSD 3-Clause License_.\n- [x] I have read the ``CONTRIBUTING.rst`` file, have run ``pre-commit`` locally, and understand that continuous integration checks will be used to confirm the Biopython unit tests and style checks pass with these changes.\n- [x] I have added my name to the alphabetical contributors listings in the files ``NEWS.rst`` and ``CONTRIB.rst`` as part of this pull request, am listed already, or do not wish to be listed. (*This acknowledgement is optional.*)\n\nCloses #5370\n\nThis PR adds a validation check in `PDBIO._write_structure()` to ensure that residue names do not exceed the legacy PDB format limit of 3 characters. If a residue name exceeds 3 characters (such as modern 5-character CCD codes like `A1AJ1`), it cleans up the file handle using `self._revert_write()` and raises a `PDBIOException`, preventing corrupted files from being silently written. A regression test has also been added.",
+      "state": "MERGED",
+      "merged_at": "2026-10-18T17:56:44Z",
+      "base_ref": "master",
+      "base_sha": "fc0c156786e86862112a05a720b6f4f47023f36a",
+      "head_sha": "837dd33718783b2e69ddfded07b4a0007a2fb1a4",
+      "is_draft": false,
+      "url": "https://github.com/biopython/biopython/pull/5372",
+      "changed_files": [
+        "Bio/PDB/PDBIO.py",
+        "CONTRIB.rst",
+        "NEWS.rst",
+        "Tests/test_PDB_PDBIO.py"
+      ]
+    }
+  ],
+  "discovery_binding": {
+    "native_config_sha256": "b3116443815fa2e6fd4b1c2a012f777abe5133bb6eedefa4e87cb5601a52a1c8",
+    "source_receipt_sha256": "43ca4ea817de43204e6fc09d9f9da7e09bf959104a0926b847aab9eae5676a2c"
+  },
+  "model_calls": 0,
+  "remote_jobs": 0,
+  "snapshot_identity": "a7421c24e6385266d9aa742df50683cf8307fcda3fdf15ee6e0de3e05e431684"
+}
