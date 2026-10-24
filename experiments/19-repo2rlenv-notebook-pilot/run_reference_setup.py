@@ -53,6 +53,23 @@ def check_config(config):
     }:
         raise ValueError("Use the separate reference-setup entry point")
     grading = config["entrypoint"] == "run_notebook_grader.py"
+    if "review_observation_directories" in config:
+        roots = config["review_observation_directories"]
+        if (
+            not grading
+            or config.get("inspect_review_evidence") is not True
+            or not isinstance(roots, list)
+            or any(
+                not isinstance(name, str)
+                or not name
+                or name == "."
+                or Path(name).is_absolute()
+                or ".." in Path(name).parts
+                or Path(name).as_posix() != name
+                for name in roots
+            )
+        ):
+            raise ValueError("Review observation directories require explicit local reviewer roots")
     recovery_keys = (
         "resume_grading_directory",
         "resume_grader_draft_directory",

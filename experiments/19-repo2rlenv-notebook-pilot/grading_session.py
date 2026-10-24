@@ -996,10 +996,23 @@ async def run_grading(
             else []
         )
         inspection = None
+        observation_roots = {"current": root}
         if config.get("inspect_review_evidence", False):
             from review_inspection import ReviewInspection
 
             inspection = ReviewInspection(snapshot, root / "review-inspection", deadline)
+            for index, name in enumerate(config.get("review_observation_directories", []), 1):
+                relative = Path(name)
+                prior = HERE / relative
+                if (
+                    relative.is_absolute()
+                    or ".." in relative.parts
+                    or not prior.resolve().is_relative_to(HERE.resolve())
+                ):
+                    raise ValueError(
+                        "Prior reviewer observations must be controller-selected local stages"
+                    )
+                observation_roots[f"prior{index}"] = prior
 
         async def review(
             name,
@@ -1009,6 +1022,9 @@ async def run_grading(
             descriptions=None,
             record_name=None,
         ):
+            if inspection:
+                inspection.refresh_execution_evidence(observation_roots)
+
             async def validate_review(value):
                 check_review_source_coverage(value)
                 if inspection and "question_issues" not in value.model_fields_set:

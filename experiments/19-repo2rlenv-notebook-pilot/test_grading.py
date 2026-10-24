@@ -895,6 +895,9 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         calls.append(name)
         if inspect_review and name in {"review", "review-repair"}:
             assert "package_inspection" in inputs and "reference_inspection" in inputs
+            assert "execution_inspection" in inputs
+            assert "search_execution_evidence" in kwargs["extra_handlers"]
+            assert "read_execution_evidence" in kwargs["extra_handlers"]
             assert "shell" not in kwargs or kwargs["shell"] is None
             response = json.loads(
                 await kwargs["extra_handlers"]["read_reference_file"](path="value.txt")
@@ -906,6 +909,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         else:
             assert not kwargs.get("extra_tools") and not kwargs.get("extra_handlers")
             assert "reference_inspection" not in inputs and "package_inspection" not in inputs
+            assert "execution_inspection" not in inputs
         if name != "independent":
             assert inputs["artifact_interface"] == module.artifact_interface(["value.txt"])
         if derived and name not in {"independent", "probes"}:

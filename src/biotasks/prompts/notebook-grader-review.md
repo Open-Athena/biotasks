@@ -155,6 +155,12 @@ Actual invalid mutations or unsupported intended outcomes still block acceptance
 Treat the candidate's prose as claims to check, not as additional experimental
 evidence. Verify numerical explanations and margins against the actual controls
 and recorded measurements. An arbitrary safety factor is not a precision argument.
+When execution inspection is supplied, search and read the recorded command and
+output behind a calibration claim before declaring that it never ran. Author
+diagnostics can establish a recorded observation without becoming independent or
+fresh acceptance controls. Keep those categories distinct. If a claimed record
+is outside the catalog or unavailable, report that evidence gap rather than
+asserting global absence. Earlier reviewers' claims are not execution records.
 Check consequential methodology against the executed source, including omitted
 arguments and inherited options. Earlier calls and recommended defaults do not
 establish what a later invocation actually used. A public requirement that

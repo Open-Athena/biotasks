@@ -208,6 +208,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
                 return m.read(root / "result.json")
             assert root.name == "grading-comparison-repair"
             assert config["allow_quality_repair"] is False
+            assert config["review_observation_directories"] == ["run/grading"]
             assert not any(key.startswith("resume_") for key in config)
             if failure.startswith("independent-repair"):
                 assert config["materialization_directory"].endswith("/materialization")

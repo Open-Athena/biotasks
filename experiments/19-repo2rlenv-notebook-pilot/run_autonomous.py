@@ -595,6 +595,9 @@ class Pipeline:
                         "run_notebook_grader.py",
                         **base,
                         allow_quality_repair=False,
+                        review_observation_directories=[
+                            self.receipt["quality_repair"]["original_grading"]
+                        ],
                         frozen_grader_file=self.relative(
                             self.root / "comparison-repair-frozen-grader.json"
                         ),
