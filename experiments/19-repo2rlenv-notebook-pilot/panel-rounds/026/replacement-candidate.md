@@ -1,6 +1,6 @@
 # Candidate replacement: rat-tumor inference with PyMC
 
-**Candidate only; not selected, funded, submitted or scientifically executed.** The imaging repeat141 remains held while the user clarifies applicable access/grant evidence or replacement. The other nine frozen payloads are unchanged.
+**Selected and reserved as campaign 143; frozen but not submitted or scientifically executed.** This is an operator source choice within the agreed ten-domain Python panel. The imaging repeat 141 remains held. [Current execution plan](../028/plan.json) records the existing budget and two-slot admission requirements; original cohort payloads remain unchanged.
 
 The official [PyMC example](<https://github.com/pymc-devs/pymc-examples/blob/17c8f90dc90691b41587dfdf477698d74cf5c18c/examples/generalized_linear_models/GLM-hierarchical-binomial-model.ipynb>) analyzes observed tumor counts from 71 earlier animal experiments, citing chapter 5 of Bayesian Data Analysis. It adds biological toxicology and probabilistic inference to the development panel. The original notebook contains both a direct numerical calculation and MCMC; the factory must assess the full source rather than manually retaining the easier branch.
 
