@@ -4383,3 +4383,6 @@ SGkit142host is terminal SUCCEEDED with a recorded generated-task rejection afte
 
 
 SGkit142original audit is complete:1901science files/7,202,439,010bytes independently read and verified;1,869,717,520unique local content/mode bytes preserve every path through hardlinks. Seventy separate root files/1,557,471bytes also verified; all five original sandbox owners passed fresh cleanup checks. Pipeline rejected after one question repair:21controls passed but review still found an unsupported empirical precision assertion. No native/solver attempt or manual task repair occurred.180accounted requests,109.15minutes; this is a generated-contract rejection, not a broken-source claim. The slot can now admit the already-funded/frozen143. See panel-rounds/026/result-142.json.
+
+
+143is confirmed submitted after142fulloriginalreadbackandfreshcleanup. The originalPyMCnotebook remains unchanged in the204-file3635b410worker; no hand-selectedtaskorendpoints.144was the solepreexistingnonterminal at admission. No additionalreservationwasadded:167/200conservativeholds,33unallocated.143and144nowoccupybothplannedslots. See panel-rounds/028/submission-143.json.

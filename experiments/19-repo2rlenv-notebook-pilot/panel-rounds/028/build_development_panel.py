@@ -59,7 +59,7 @@ for identifier, domain, number in selection:
             factory_revision=data["frozen_worker_revision"],
             operator_scientific_edits=data["operator_scientific_edits"],
         )
-    elif number in (142, 144):
+    elif (args.launch_root / f"{number:03}-submission.json").exists():
         claim = args.launch_root / f"{number:03}-submission.json"
         observed = max(
             (args.launch_root / "typed-observations").glob(f"{number:03}-*.json"),
@@ -68,10 +68,9 @@ for identifier, domain, number in selection:
         data = json.loads(observed.read_text())
         assert data["state"] == "RUNNING"
         assert data["claim_sha256"] == hashlib.sha256(claim.read_bytes()).hexdigest()
-        round_number = 26 if number == 142 else 27
-        freeze = json.loads(
-            (experiment / f"panel-rounds/{round_number:03}/freeze-{number}.json").read_text()
-        )
+        freezes = list(experiment.glob(f"panel-rounds/*/freeze-{number}.json"))
+        assert len(freezes) == 1
+        freeze = json.loads(freezes[0].read_text())
         live.append(data)
         row.update(
             state="running",
@@ -147,7 +146,7 @@ for row in records:
     )
 text += (
     f"\n{counts['terminal_original_audits']} latest cases have terminal original-evidence audits, "
-    f"{counts['running']} are running, and {counts['queued_not_submitted']} is frozen but unsubmitted. "
+    f"running: {counts['running']}; frozen but unsubmitted: {counts['queued_not_submitted']}. "
     f"{counts['native_control_passes']} passed native controls; qualification holds remain. "
     "The other terminal cases reject generated setup/tasks, not demonstrated broken source notebooks. "
     "Earlier Matchms135 infrastructure failure is preserved;144 is a fresh run. "
