@@ -7,7 +7,6 @@ from pathlib import Path
 
 from biotasks.validation import controller, planning
 from biotasks.validation.files import inventory, json_sha, read_json, require, sha, write_json
-
 from index_policy import MARKER, POLICY, emitter, normalize
 
 ROOT = Path(__file__).resolve().parent
