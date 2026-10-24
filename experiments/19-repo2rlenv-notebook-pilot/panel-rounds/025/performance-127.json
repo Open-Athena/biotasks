@@ -1,0 +1,42 @@
+{
+  "source_archive_manifest_sha256": "5c9da3f7f3ffcd7881408b68b2c0cdfda1177d06f4c36c2c552c6598db3e351f",
+  "pipeline_status": "infrastructure_failed",
+  "source_id": null,
+  "elapsed_pipeline_seconds": 1278.871,
+  "completed_stage_seconds": {
+    "preparation": 25.502,
+    "setup": 1249.631
+  },
+  "accounted_model_request_attempts": 67,
+  "request_ledgers": [
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "f06f59255fb177b13c1f04e406ca45f243dbd31810035e53683ddb009e5b637c",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "ac36f78338499a5bea997fbd59808ea928bd2fd7713bb04fa006b90c5f6ab90b",
+      "count": 66,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 66
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 67,
+  "distinct_author_response_operations_within_stage": 67,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. No live run or model call.",
+  "logical_quality_repair_allowances_used": 0
+}
