@@ -1,0 +1,83 @@
+{
+  "issue": 39,
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "source_files": [
+    {
+      "path": "src/repo2rlenv/auth.py",
+      "sha256": "085688bcb72ce28f793e382fb605b64907e0c9d26e671e11712fa4f6142caa0a"
+    },
+    {
+      "path": "src/repo2rlenv/bootstrap/docker.py",
+      "sha256": "1247d545142f7f61fb410b2728c4e86e0037360aab9d873ef30c01ed83a7be59"
+    },
+    {
+      "path": "src/repo2rlenv/bootstrap/runner.py",
+      "sha256": "353027eb87f37881e12ba66a0ee6bb1c82e7cab32670552b5bac849c7dab5ee3"
+    },
+    {
+      "path": "src/repo2rlenv/registry/integration.py",
+      "sha256": "dc2947685479c1d3c093371a3a233ce78a0fc5e334514c58ed817fc8b9ebaf2d"
+    }
+  ],
+  "selected_function_sha256": {
+    "_build_clean_recipe": "1b262a7463091507f2e30cda2895a5934b6e96d8ffec6272ef3c2b0091a60e90",
+    "_rewrite_dockerfile_from": "f00bc975f2fbccbc02891dc16b0a910eb25d21d474fb871fc9855ffe4aba44da",
+    "_update_task_toml_reproducibility": "f57b7da16ee6089951c6de77b7cf010b3bc103a8f1c92ad2cad5aec9dc4f7489"
+  },
+  "existing_interfaces": {
+    "replay": "Byte-identical recorded_replay.py plus original DockerSandbox, clone/ref helpers, original smoke/git checks and committed-image verification",
+    "sandbox": "Standard-library Docker CLI interface; docker cp of complete pinned checkout; each action uses bash -lc",
+    "resource_evidence": "Executed #29 driver already caps both bootstrap and fresh-check sandboxes at 1.5 CPU / 6 GiB",
+    "native_inline": "Synthesizes from rebuild_cmds and emits metadata source agent_replay; does not replay full recorded actions",
+    "native_reference_writer": "Unmodified _rewrite_dockerfile_from and _update_task_toml_reproducibility support explicit image refs and local_only/private metadata",
+    "native_distribution": "No recorded-action initializer artifact is supplied by prepare_dataset_for_push; native inline/registry routes remain distinct"
+  },
+  "chosen_candidate": {
+    "environment_procedure": "Reconstruct bootstrap from immutable original actions, then build the unchanged original per-task overlay from that dependency",
+    "task_source": "Restore original #5996 environment overlay from the verified original phase; bind it and all other inputs to original/native task identities",
+    "recipe_change": "Only candidate bootstrap FROM ref and environment provenance may differ; original source/test/oracle/instruction bytes and overlay commands stay unchanged",
+    "bootstrap_ref": "Use an experiment-specific local/r2e-replay dependency ref, without creating/overwriting the original shared bootstrap alias",
+    "metadata": "Keep candidate image local_only/private with an explicit public initialization descriptor; no claim that the task Dockerfile alone is standalone",
+    "artifact": "Public source bundle: task, original action plan, pinned source/base/dependency descriptor and initializer code; no image-layer release"
+  },
+  "justified_infrastructure_adaptations": [
+    "Parameterize the existing replay driver and compose it with the already validated control/archive/cleanup lifecycle; no LLM or installation-command changes",
+    "Pin node public digest to the exact observed base image ID shared by #29 and #37",
+    "Remove the source bootstrap sandbox after committing, before fresh-image verification, so only one 1.5-CPU/6-GiB bootstrap sandbox is active; the original fresh-check function consumes only the committed image and unchanged test commands",
+    "Use a unique owned dependency ref rather than the old original-tag alias; rewrite only the declared environment ref/provenance with native source helpers",
+    "Capture effective tool/source/dependency identities using the recorded test PATH; do not invoke an absent package-manager shim to install tooling"
+  ],
+  "preserved": {
+    "action_bytes": true,
+    "recorded_exits": true,
+    "action_timeouts_seconds": 300,
+    "smoke_and_fresh_check_timeouts_seconds": 300,
+    "task_cpu": 1,
+    "task_memory_gib": 6,
+    "task_verifier_seconds": 300,
+    "grading_assets": 8,
+    "extra_dependency_commands": false,
+    "extra_model_calls": false
+  },
+  "proposed_envelope": {
+    "cpus": 2,
+    "memory_gib": 12,
+    "disk_gib": 24,
+    "maximum_cpu_hours": 5,
+    "emergency_cleanup_cpu_hours": 0.16666666666666666
+  },
+  "prerequisite_completion": {
+    "issue38": "998d7f06",
+    "raw_and_final_archives_verified": true,
+    "remote_and_redundant_local_cleanup_complete": true
+  },
+  "limits": [
+    "Interface assessment is source evidence, not a candidate build or new #5996 control result",
+    "Candidate generation must prove exact allowed file/metadata differences and unchanged grading contract before runtime",
+    "Public action/task bundle requires its initializer; no supported production loader or native standalone-image release is established",
+    "Dependency versions can drift; record actual image/tool/lock identities and stop on any original exit divergence"
+  ],
+  "runtime_admission": false,
+  "model_calls": 0,
+  "new_capacity": false
+}
