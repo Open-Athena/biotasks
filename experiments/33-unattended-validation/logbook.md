@@ -165,3 +165,7 @@ Filed #42 as an actual epic subissue for source-first assessment of upstream can
 ## 2026-10-24: upstream source comparison complete
 
 #42 identifies an upstream candidate without changing our pin: published Harbor 0.24.0 removes the single-step inner verifier retry; ten inspected runtime modules match the published wheel. Pinned main is a separate comparator. Buffered cancellation cleanup remains absent and streamed cleanup targets the CLI; daemon containment/native compatibility remain unmeasured. Twenty-five structural source checks, no package install/upstream execution or runtime reservation. Eligible source/notices HF snapshot has three anonymously verified objects/69 members; 4,958,823 local duplicate bytes removed. Original cohort hash and epic budget remain unchanged. Keep research issues open for review; no upgrade promoted.
+
+## 2026-10-24: paired native package comparison prepared
+
+#43 is a verified epic child. Pair published 0.6.6/0.24.0 serially on one reserved worker, same additional external observer, original 2/30-second writer and five-second verifier deadlines. Baseline dependency versions are constrained from #41; candidate closure is distinct and recorded. Five lightweight constructor/fixture/policy/deadline/real-observer checks pass; exact inputs/policy at 0f47217e. Read-only worker compatibility passed. Reserve two CPU-hours plus 1/6 cleanup within the existing ceiling before submission; zero models/new capacity. Replaced stale next-step metadata that still described #41 as pending. Original cohort hash unchanged.

@@ -1,54 +1,33 @@
 {
-  "next_child_issue": 41,
-  "state": "One bounded native Harbor cancellation fixture acknowledged; terminal evidence, archival and cleanup pending",
-  "question": "Do verifier processes stop on client timeout and do retries preserve reliable logs?",
-  "source_checkpoint": "2a723b3b",
-  "source_plan": "https://github.com/Open-Athena/biotasks/blob/03e70ece/experiments/41-verifier-cancellation/runtime-plan.json",
-  "completed_predecessor": {
-    "issue": 40,
-    "checkpoint": "1b69450e",
-    "outcome": "Unsupported unmodified transfer by source/historical evidence; no new runtime",
-    "historical_trials_reverified": 4,
-    "hf_prefix": "research/40-recorded-bootstrap-transfer/2026-10-24/9ebd68fb24c7a5565a31e0cb5a23f0ba85bd96ad9e3b8a874fa817fe02b9face",
-    "hf_objects": 4,
-    "source_readback_and_local_cleanup_complete": true,
-    "redundant_local_bytes_removed": 818232
-  },
-  "source_issues": [
-    29,
-    38,
-    39,
-    40
-  ],
-  "requirements": [
-    "Pin and inspect exact Harbor 0.6.6 package/source before fixture design",
-    "Keep residual-writer/truncation causes hypothetical until source/runtime evidence distinguishes them",
-    "Use an explicitly separate no-model infrastructure fixture only if needed; never change original tasks or claim a new biological score",
-    "Checkpoint payload/public policy and admit budget before submission; fixed handle, existing reserved worker, no retries/new capacity",
-    "Capture process/file identity and timeout ordering, preserve raw logs, anonymously verify HF archival and owned cleanup"
+  "next_child_issue": 43,
+  "state": "Paired native inputs/checks and read-only worker compatibility checkpointed; two CPU-hours plus cleanup admitted, not submitted",
+  "question": "Does published 0.24.0 avoid overlap and stop timed-out writers, with the same outside observer as 0.6.6?",
+  "source_checkpoint": "0f47217e",
+  "source_plan": "https://github.com/Open-Athena/biotasks/blob/0f47217e/experiments/43-native-harbor-comparison/protocol.json",
+  "completed_predecessors": [
+    {
+      "issue": 41,
+      "commit": "b5533ced",
+      "outcome": "Native survival into retry and transient holes observed; final raw NULs zero; original full criterion false; archival/cleanup verified"
+    },
+    {
+      "issue": 42,
+      "commit": "6d359949",
+      "outcome": "Published single-step retry removed; source does not establish daemon containment or upgrade compatibility; source archival/cleanup verified"
+    }
   ],
   "proposed_resource_caps": {
     "cpus": 2,
     "memory_gib": 12,
-    "disk_gib": 8,
-    "maximum_cpu_hours": 1,
-    "emergency_cleanup_cpu_hours": 0.16666666666666666
+    "disk_gib": 12,
+    "maximum_cpu_hours": 2,
+    "cleanup_cpu_hours": 0.16666666666666666
   },
-  "current_epic_allocated_cpu_hours": 6.127669444216623,
-  "current_cpu_reservations": 1.1666666666666667,
+  "current_epic_allocated_cpu_hours": 6.265328888628218,
+  "current_cpu_reservations": 2.1666666666666665,
   "epic_ceiling_cpu_hours": 32,
   "paid_model_execution_enabled": false,
   "new_paid_capacity_allowed": false,
   "existing_storage_reservation_unreconciled_usd": 10,
-  "source_findings": {
-    "harbor_version": "0.6.6",
-    "wheel_sha256": "30477bf698d6853d6c4bb76d85aec85e1e95190ad3a6e4bf4730435926007652",
-    "source_files_verified": 203,
-    "checks_passed": 3,
-    "transport": "fake",
-    "native_docker_executed": false,
-    "historical_cause_proven": false
-  },
-  "fixture_design": "https://github.com/Open-Athena/biotasks/blob/b1720830/experiments/41-verifier-cancellation/runtime-design.md",
-  "native_submission": "https://github.com/Open-Athena/biotasks/blob/2a723b3b/experiments/41-verifier-cancellation/runs/harbor_timeout/submission.json"
+  "old_next_step_obsolete": true
 }
