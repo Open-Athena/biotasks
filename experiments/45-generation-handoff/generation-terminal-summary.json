@@ -1,0 +1,386 @@
+{
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "generation_handle": "/exedev/biotasks45-cobrapy-generation-002",
+  "kind": "Fresh official generation and unchanged independent rebuild; validation cleanup pending",
+  "native_exit": 0,
+  "exported_tasks": [
+    "opencobra__cobrapy-1497"
+  ],
+  "model_billing": {
+    "known_actual_usd": "0.287646",
+    "calls": 11,
+    "complete": true,
+    "reason": "Original upstream observed request/charge events"
+  },
+  "primary_allocated_cpu_hours": 1.9834211111068725,
+  "bootstrap_records": [
+    {
+      "repo": "opencobra/cobrapy",
+      "ref": "a9c5ced29670bed5035fb19e87e7b0b588adb62d",
+      "language": "python",
+      "smoke_passed": false,
+      "verify_passed": false,
+      "iterations": 11,
+      "build_time_sec": 807.81,
+      "test_cmds": [
+        "python -m pytest -v /workspace/tests/"
+      ],
+      "rebuild_cmds": [
+        "apt-get install -y libexpat1-dev",
+        "pip install -e /workspace/.[development]",
+        "pip install pytest pytest-xdist pytest-mock pytest-benchmark"
+      ],
+      "verify_detail": "exit=124; on PASSED [ 51%]\ntests/test_flux_analysis/test_deletion.py::test_deletion_accessor PASSED [ 52%]\ntests/test_flux_analysis/test_fastcc.py::test_fastcc_against_nonblocked_rxns_large [timeout after 300s]"
+    }
+  ],
+  "native_validation_records": [
+    {
+      "file": "validation-001-pr-1497.json.gz",
+      "keys": [
+        "status",
+        "fail_to_pass",
+        "pass_to_pass",
+        "pre_log",
+        "post_log",
+        "reason"
+      ],
+      "status": "verified",
+      "fail_to_pass_count": 17,
+      "pass_to_pass_count": 522
+    }
+  ],
+  "primary_publication": {
+    "bucket": "open-athena/biotasks",
+    "prefix": "research/45-generation-handoff/2026-10-24/e0a60f25746278ddfa806f82e03324dc61d31e0402bd5ab2f76041d8025688c7",
+    "manifest_sha256": "e0a60f25746278ddfa806f82e03324dc61d31e0402bd5ab2f76041d8025688c7",
+    "kind": "hf-public",
+    "anonymous_download_verified": true,
+    "objects": [
+      {
+        "path": "research/45-generation-handoff/2026-10-24/e0a60f25746278ddfa806f82e03324dc61d31e0402bd5ab2f76041d8025688c7/manifest.json",
+        "bytes": 2732,
+        "sha256": "e0a60f25746278ddfa806f82e03324dc61d31e0402bd5ab2f76041d8025688c7"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/e0a60f25746278ddfa806f82e03324dc61d31e0402bd5ab2f76041d8025688c7/execution/accounting.json",
+        "bytes": 701,
+        "sha256": "3175b4846678d43c9d722a4d6997b22b0338cf9c2dd9c559b86e91fdf2d1d0f6"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/e0a60f25746278ddfa806f82e03324dc61d31e0402bd5ab2f76041d8025688c7/execution/model-accounting.json",
+        "bytes": 789,
+        "sha256": "2f7ad53e77cc56179386d3905425fb3fad51f054e98c51681165b6b4c6433b97"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/e0a60f25746278ddfa806f82e03324dc61d31e0402bd5ab2f76041d8025688c7/execution/readback.json",
+        "bytes": 12050,
+        "sha256": "c27822611c3c0e30f09c64a207eddcb9b11622062c177910d035c6aebad364e2"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/e0a60f25746278ddfa806f82e03324dc61d31e0402bd5ab2f76041d8025688c7/execution/runtime.tar.zst",
+        "bytes": 191045,
+        "sha256": "3fcd538506125d972a0581c019edf2f681aed1539f5aa967454e142908249893"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/e0a60f25746278ddfa806f82e03324dc61d31e0402bd5ab2f76041d8025688c7/execution/submission.json",
+        "bytes": 4367,
+        "sha256": "27ff7da161dfec04512116aa5564ef7ae46b8d70882231ce6bccb46cc2c43eef"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/e0a60f25746278ddfa806f82e03324dc61d31e0402bd5ab2f76041d8025688c7/source/native-config.json",
+        "bytes": 814,
+        "sha256": "af76e201b2e52b24e94384e3eac35030a7e95c17f44b28ca3641336eddc5f04b"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/e0a60f25746278ddfa806f82e03324dc61d31e0402bd5ab2f76041d8025688c7/source/notices.tar.gz",
+        "bytes": 170823,
+        "sha256": "5ca95e185b174d4193c93304479c73141fa76af49a80f13337704ff63e5cab9b"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/e0a60f25746278ddfa806f82e03324dc61d31e0402bd5ab2f76041d8025688c7/source/plan.json",
+        "bytes": 15160,
+        "sha256": "84c38ce5caeed7ee2e8a8184e2e7a1d317d09fb9909c60de06f80fd5335f1fea"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/e0a60f25746278ddfa806f82e03324dc61d31e0402bd5ab2f76041d8025688c7/source/reference-candidates.json",
+        "bytes": 1949,
+        "sha256": "67a7f86c5f9b1bc351baf509c78f247d2f0d80d8b301957cdcbc220e0ea73c8a"
+      }
+    ],
+    "overwrites": false,
+    "retention": "Retain while cited; no automatic deletion",
+    "transfer_limits": {
+      "HF_HUB_DISABLE_PROGRESS_BARS": "1",
+      "HF_XET_HIGH_PERFORMANCE": "0",
+      "HF_XET_CLIENT_ENABLE_ADAPTIVE_CONCURRENCY": "false",
+      "HF_XET_CLIENT_AC_INITIAL_UPLOAD_CONCURRENCY": "1",
+      "HF_XET_CLIENT_AC_MIN_UPLOAD_CONCURRENCY": "1",
+      "HF_XET_CLIENT_AC_MAX_UPLOAD_CONCURRENCY": "1",
+      "HF_XET_CLIENT_AC_INITIAL_DOWNLOAD_CONCURRENCY": "1",
+      "HF_XET_CLIENT_AC_MIN_DOWNLOAD_CONCURRENCY": "1",
+      "HF_XET_CLIENT_AC_MAX_DOWNLOAD_CONCURRENCY": "1",
+      "HF_XET_DATA_MAX_CONCURRENT_FILE_INGESTION": "1",
+      "HF_XET_DATA_MAX_CONCURRENT_FILE_DOWNLOADS": "1",
+      "HF_XET_DATA_INGESTION_BLOCK_SIZE": "1mb",
+      "HF_XET_RECONSTRUCTION_MIN_RECONSTRUCTION_FETCH_SIZE": "1mb",
+      "HF_XET_RECONSTRUCTION_MAX_RECONSTRUCTION_FETCH_SIZE": "16mb",
+      "HF_XET_RECONSTRUCTION_DOWNLOAD_BUFFER_SIZE": "32mb",
+      "HF_XET_RECONSTRUCTION_DOWNLOAD_BUFFER_PERFILE_SIZE": "16mb",
+      "HF_XET_RECONSTRUCTION_DOWNLOAD_BUFFER_LIMIT": "64mb",
+      "HF_XET_RECONSTRUCTION_MIN_PREFETCH_BUFFER": "1mb",
+      "HF_XET_SHARD_CHUNK_INDEX_TABLE_MAX_SIZE": "8388608",
+      "HF_XET_SHARD_CACHE_SIZE_LIMIT": "16mb",
+      "HF_XET_CHUNK_CACHE_SIZE_BYTES": "0",
+      "TOKIO_WORKER_THREADS": "1"
+    }
+  },
+  "generation_cleanup_complete": true,
+  "no_regeneration_or_manual_task_repairs": true,
+  "generation_cleanup_proof": {
+    "run_id": "biotasks45-cobrapy-generation-002",
+    "removal_attempts": [
+      {
+        "pass": 0,
+        "image": "sha256:e4ae269e88bb191adda2b7437a686b21bbc18f62d4d8d4e3260db625422b8511",
+        "exit_code": 0
+      }
+    ],
+    "remaining": {
+      "containers": [],
+      "controllers": [],
+      "images": [],
+      "volumes": []
+    },
+    "verified_empty": true,
+    "protected_public_base": {
+      "ref": "python:3.12-slim",
+      "present_before": true,
+      "image_id_after": "sha256:a33c10a97f11005523814c6eee013986119fe41f3122f444518117536675c8e1",
+      "preserved": true
+    }
+  },
+  "generation_cleanup_publication": {
+    "bucket": "open-athena/biotasks",
+    "prefix": "research/45-generation-handoff/2026-10-24/b98b9c50537d5262f54a40494f7612ca4ca490d73d94083f33305a67a7973c09",
+    "manifest_sha256": "b98b9c50537d5262f54a40494f7612ca4ca490d73d94083f33305a67a7973c09",
+    "kind": "hf-public",
+    "anonymous_download_verified": true,
+    "objects": [
+      {
+        "path": "research/45-generation-handoff/2026-10-24/b98b9c50537d5262f54a40494f7612ca4ca490d73d94083f33305a67a7973c09/manifest.json",
+        "bytes": 2069,
+        "sha256": "b98b9c50537d5262f54a40494f7612ca4ca490d73d94083f33305a67a7973c09"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/b98b9c50537d5262f54a40494f7612ca4ca490d73d94083f33305a67a7973c09/cleanup-proof.json",
+        "bytes": 562,
+        "sha256": "285064d76558820f4f642ab9dc12b6ed6e21f34d6345d08d2e61d8a0aea69410"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/b98b9c50537d5262f54a40494f7612ca4ca490d73d94083f33305a67a7973c09/execution/accounting.json",
+        "bytes": 703,
+        "sha256": "287d837b83b68c408af643e5b07b048309dd256aa070dcef2f5015511ee8c917"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/b98b9c50537d5262f54a40494f7612ca4ca490d73d94083f33305a67a7973c09/execution/runtime.tar.zst",
+        "bytes": 2320,
+        "sha256": "0869565ded9983f0d04af2cdaa858f890dd1c7d01bf77b76ca12f04422f50f37"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/b98b9c50537d5262f54a40494f7612ca4ca490d73d94083f33305a67a7973c09/execution/submission.json",
+        "bytes": 4194,
+        "sha256": "23d75b6361060bf3d10083ba611fdc5948434ea33fc3e134cdec9ac0f44e0942"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/b98b9c50537d5262f54a40494f7612ca4ca490d73d94083f33305a67a7973c09/primary-manifest.json",
+        "bytes": 2732,
+        "sha256": "e0a60f25746278ddfa806f82e03324dc61d31e0402bd5ab2f76041d8025688c7"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/b98b9c50537d5262f54a40494f7612ca4ca490d73d94083f33305a67a7973c09/primary-publication.json",
+        "bytes": 4266,
+        "sha256": "21c5aa1a8d7a661879d54322a49f2b2695a5cadc0730f49651cb01e5de2ecf02"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/b98b9c50537d5262f54a40494f7612ca4ca490d73d94083f33305a67a7973c09/source/native-config.json",
+        "bytes": 814,
+        "sha256": "af76e201b2e52b24e94384e3eac35030a7e95c17f44b28ca3641336eddc5f04b"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/b98b9c50537d5262f54a40494f7612ca4ca490d73d94083f33305a67a7973c09/source/notices.tar.gz",
+        "bytes": 170823,
+        "sha256": "5ca95e185b174d4193c93304479c73141fa76af49a80f13337704ff63e5cab9b"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/b98b9c50537d5262f54a40494f7612ca4ca490d73d94083f33305a67a7973c09/source/plan.json",
+        "bytes": 15160,
+        "sha256": "84c38ce5caeed7ee2e8a8184e2e7a1d317d09fb9909c60de06f80fd5335f1fea"
+      },
+      {
+        "path": "research/45-generation-handoff/2026-10-24/b98b9c50537d5262f54a40494f7612ca4ca490d73d94083f33305a67a7973c09/source/reference-candidates.json",
+        "bytes": 1949,
+        "sha256": "67a7f86c5f9b1bc351baf509c78f247d2f0d80d8b301957cdcbc220e0ea73c8a"
+      }
+    ],
+    "overwrites": false,
+    "retention": "Retain while cited; no automatic deletion",
+    "transfer_limits": {
+      "HF_HUB_DISABLE_PROGRESS_BARS": "1",
+      "HF_XET_HIGH_PERFORMANCE": "0",
+      "HF_XET_CLIENT_ENABLE_ADAPTIVE_CONCURRENCY": "false",
+      "HF_XET_CLIENT_AC_INITIAL_UPLOAD_CONCURRENCY": "1",
+      "HF_XET_CLIENT_AC_MIN_UPLOAD_CONCURRENCY": "1",
+      "HF_XET_CLIENT_AC_MAX_UPLOAD_CONCURRENCY": "1",
+      "HF_XET_CLIENT_AC_INITIAL_DOWNLOAD_CONCURRENCY": "1",
+      "HF_XET_CLIENT_AC_MIN_DOWNLOAD_CONCURRENCY": "1",
+      "HF_XET_CLIENT_AC_MAX_DOWNLOAD_CONCURRENCY": "1",
+      "HF_XET_DATA_MAX_CONCURRENT_FILE_INGESTION": "1",
+      "HF_XET_DATA_MAX_CONCURRENT_FILE_DOWNLOADS": "1",
+      "HF_XET_DATA_INGESTION_BLOCK_SIZE": "1mb",
+      "HF_XET_RECONSTRUCTION_MIN_RECONSTRUCTION_FETCH_SIZE": "1mb",
+      "HF_XET_RECONSTRUCTION_MAX_RECONSTRUCTION_FETCH_SIZE": "16mb",
+      "HF_XET_RECONSTRUCTION_DOWNLOAD_BUFFER_SIZE": "32mb",
+      "HF_XET_RECONSTRUCTION_DOWNLOAD_BUFFER_PERFILE_SIZE": "16mb",
+      "HF_XET_RECONSTRUCTION_DOWNLOAD_BUFFER_LIMIT": "64mb",
+      "HF_XET_RECONSTRUCTION_MIN_PREFETCH_BUFFER": "1mb",
+      "HF_XET_SHARD_CHUNK_INDEX_TABLE_MAX_SIZE": "8388608",
+      "HF_XET_SHARD_CACHE_SIZE_LIMIT": "16mb",
+      "HF_XET_CHUNK_CACHE_SIZE_BYTES": "0",
+      "TOKIO_WORKER_THREADS": "1"
+    }
+  },
+  "independent_validation": {
+    "job_id": "/exedev/biotasks-val-issue45-fresh-c1b5f6371606",
+    "readback": {
+      "stage": "bootstrap_build_failed",
+      "error": null,
+      "input_package_verified": true,
+      "task_package_verified": true,
+      "controls": [],
+      "complete_parseable_pair": false,
+      "positive_control_pair": false,
+      "clean_oracle_command": false,
+      "all_p2p_pass_both": false,
+      "verified_no_creation": false,
+      "control_archive_sha256": "7300656f107c991ea27826f920ef43b684c42959d716ee0c11ad64a7a87b64c3",
+      "protected_base": {
+        "run_id": "biotasks-val-issue45-fresh-c1b5f6371606",
+        "ref": "python:3.12-slim",
+        "image_id": "sha256:a33c10a97f11005523814c6eee013986119fe41f3122f444518117536675c8e1",
+        "repo_digests": [
+          "python@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704"
+        ]
+      },
+      "verified_stopped": true,
+      "model_calls": 0,
+      "task_repairs": 0,
+      "durable_readback_verified": true
+    },
+    "accounting": {
+      "job_id": "/exedev/biotasks-val-issue45-fresh-c1b5f6371606",
+      "state": "succeeded",
+      "terminal": true,
+      "attempts": 1,
+      "exit_code": 0,
+      "attempt_seconds": 48.3289999961853,
+      "allocated_cpu": 2.0,
+      "allocated_cpu_hours": 0.02684944444232517,
+      "output_archive": {
+        "state": "uploaded",
+        "uri": "gs://marin-us-central2/tmp/ttl=7d/iris/task-outputs/exedev/biotasks-val-issue45-fresh-c1b5f6371606/0/ff04f06cd9ec3cc9/outputs.tar.zst",
+        "size_bytes": 56312,
+        "sha256": "83529850d4bcacd38937e87b2da0cc479d25b5804d684225f464feefdfdc7542",
+        "error_message": "",
+        "retention": "ttl",
+        "ttl_days": 7,
+        "skipped_count": 0,
+        "skipped_sample": []
+      },
+      "model_calls": 0
+    },
+    "primary_publication": {
+      "bucket": "open-athena/biotasks",
+      "prefix": "research/45-generation-handoff/2026-10-24/a8f3e062f36a20a248c7275eea7996ff238cd28b10c0ef16893a889427be8870",
+      "manifest_sha256": "a8f3e062f36a20a248c7275eea7996ff238cd28b10c0ef16893a889427be8870",
+      "kind": "hf-public",
+      "anonymous_download_verified": true,
+      "objects": [
+        {
+          "path": "research/45-generation-handoff/2026-10-24/a8f3e062f36a20a248c7275eea7996ff238cd28b10c0ef16893a889427be8870/manifest.json",
+          "bytes": 5115,
+          "sha256": "a8f3e062f36a20a248c7275eea7996ff238cd28b10c0ef16893a889427be8870"
+        },
+        {
+          "path": "research/45-generation-handoff/2026-10-24/a8f3e062f36a20a248c7275eea7996ff238cd28b10c0ef16893a889427be8870/execution/accounting.json",
+          "bytes": 698,
+          "sha256": "0698ba80e7663395e878d173e680b2db230a7b9fa76add46ed28d4c9634a9b35"
+        },
+        {
+          "path": "research/45-generation-handoff/2026-10-24/a8f3e062f36a20a248c7275eea7996ff238cd28b10c0ef16893a889427be8870/execution/readback.json",
+          "bytes": 831,
+          "sha256": "31ddef773fd49047f632ebce134d52540563716cf0b6431ddfe8aa23f031a11f"
+        },
+        {
+          "path": "research/45-generation-handoff/2026-10-24/a8f3e062f36a20a248c7275eea7996ff238cd28b10c0ef16893a889427be8870/execution/runtime.tar.zst",
+          "bytes": 56312,
+          "sha256": "83529850d4bcacd38937e87b2da0cc479d25b5804d684225f464feefdfdc7542"
+        },
+        {
+          "path": "research/45-generation-handoff/2026-10-24/a8f3e062f36a20a248c7275eea7996ff238cd28b10c0ef16893a889427be8870/execution/submission.json",
+          "bytes": 3734,
+          "sha256": "589a72dbec10565121e43e0919961287493a00f45118a9ce373b4ca59720442b"
+        },
+        {
+          "path": "research/45-generation-handoff/2026-10-24/a8f3e062f36a20a248c7275eea7996ff238cd28b10c0ef16893a889427be8870/source/notices.tar.gz",
+          "bytes": 170226,
+          "sha256": "e9edb0b245cab39d79051d7d4c1dce47df988ca86c19aabbe2af64b0eac40529"
+        },
+        {
+          "path": "research/45-generation-handoff/2026-10-24/a8f3e062f36a20a248c7275eea7996ff238cd28b10c0ef16893a889427be8870/source/tasks.tar.gz",
+          "bytes": 23345,
+          "sha256": "a0cd02951c20b145ed48f74f3e3a3f2ad1ebb3464f53c346d8e13543fca52396"
+        }
+      ],
+      "overwrites": false,
+      "retention": "Retain while cited; no automatic deletion",
+      "transfer_limits": {
+        "HF_HUB_DISABLE_PROGRESS_BARS": "1",
+        "HF_XET_HIGH_PERFORMANCE": "0",
+        "HF_XET_CLIENT_ENABLE_ADAPTIVE_CONCURRENCY": "false",
+        "HF_XET_CLIENT_AC_INITIAL_UPLOAD_CONCURRENCY": "1",
+        "HF_XET_CLIENT_AC_MIN_UPLOAD_CONCURRENCY": "1",
+        "HF_XET_CLIENT_AC_MAX_UPLOAD_CONCURRENCY": "1",
+        "HF_XET_CLIENT_AC_INITIAL_DOWNLOAD_CONCURRENCY": "1",
+        "HF_XET_CLIENT_AC_MIN_DOWNLOAD_CONCURRENCY": "1",
+        "HF_XET_CLIENT_AC_MAX_DOWNLOAD_CONCURRENCY": "1",
+        "HF_XET_DATA_MAX_CONCURRENT_FILE_INGESTION": "1",
+        "HF_XET_DATA_MAX_CONCURRENT_FILE_DOWNLOADS": "1",
+        "HF_XET_DATA_INGESTION_BLOCK_SIZE": "1mb",
+        "HF_XET_RECONSTRUCTION_MIN_RECONSTRUCTION_FETCH_SIZE": "1mb",
+        "HF_XET_RECONSTRUCTION_MAX_RECONSTRUCTION_FETCH_SIZE": "16mb",
+        "HF_XET_RECONSTRUCTION_DOWNLOAD_BUFFER_SIZE": "32mb",
+        "HF_XET_RECONSTRUCTION_DOWNLOAD_BUFFER_PERFILE_SIZE": "16mb",
+        "HF_XET_RECONSTRUCTION_DOWNLOAD_BUFFER_LIMIT": "64mb",
+        "HF_XET_RECONSTRUCTION_MIN_PREFETCH_BUFFER": "1mb",
+        "HF_XET_SHARD_CHUNK_INDEX_TABLE_MAX_SIZE": "8388608",
+        "HF_XET_SHARD_CACHE_SIZE_LIMIT": "16mb",
+        "HF_XET_CHUNK_CACHE_SIZE_BYTES": "0",
+        "TOKIO_WORKER_THREADS": "1"
+      }
+    }
+  },
+  "independent_build_failure": {
+    "log_sha256": "8851a68e9401a0b0c32c56650e392c5bced7efaf3927e66a87ff03bc26f7736a",
+    "failed_command": "apt-get install -y libexpat1-dev",
+    "exit_code": 100,
+    "message": "E: Unable to locate package libexpat1-dev",
+    "controls_started": 0,
+    "diagnosis": "The original native inline prelude clears apt indexes; the saved rebuild_cmds assumes indexes remain. No recipe or task repair applied."
+  },
+  "native_generation_log_summaries": {
+    "pre_suite": "18 failed, 522 passed, 50 skipped, 9 xfailed in 435.21s",
+    "post_suite": "1 failed, 539 passed, 50 skipped, 9 xfailed in 431.68s",
+    "remaining_failure": "tests/test_io/test_web/test_load.py::test_remote_load[BIOMD0000000633-50-35]",
+    "note": "These are original generation-time outputs, not independent validation rewards; no independent nop/oracle trial began."
+  }
+}
