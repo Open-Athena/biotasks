@@ -16,4 +16,4 @@ if [ -z "${CW_KEY_ID:-}" ] || [ -z "${CW_KEY_SECRET:-}" ]; then
     fi
     unset biotasks57_saved_cw_key_id biotasks57_saved_cw_key_secret
 fi
-exec "$experiment/../../../51/experiments/51-held-retention/inputs-private/candidate-runner/bin/python" -B "$experiment/observe.py"
+exec "$experiment/../../../51/experiments/51-held-retention/inputs-private/candidate-runner/bin/python" -B "$experiment/observe.py" "$@"

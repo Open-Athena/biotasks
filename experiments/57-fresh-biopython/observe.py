@@ -1,12 +1,17 @@
 """Observe the original fixed generation handle; never submit or repair."""
 
+import argparse
 import json
 from datetime import UTC, datetime
 from pathlib import Path
 
 from biotasks.generation import generation_bridge, run_generation
+from biotasks.validation import preservation
 from biotasks.validation.files import require, sha
 
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--logs", action="store_true")
+args = parser.parse_args()
 root = Path(__file__).parent.resolve()
 work = root / "inputs-private/run-001/biopython"
 plan = run_generation.verify(work)
@@ -27,7 +32,7 @@ require(
 )
 result = generation_bridge.call(
     plan["backend"],
-    {"action": "observe", "group": plan["group"]},
+    {"action": "logs" if args.logs else "observe", "group": plan["group"]},
     root / "inputs-private/observer-status.log",
 )
 value = {
@@ -38,6 +43,25 @@ value = {
     "job_model_usage": "Not measured by job status; await original recorded billing",
     "plan_identity": plan["plan_identity"],
 }
+raw = json.dumps(value).encode()
+require(len(raw) <= 512 * 1024, "Bounded observation exceeded")
+preservation.inspect(raw, "original-job-observation.json")
 stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-(root / ("observation-" + stamp + ".json")).write_text(json.dumps(value, indent=2) + "\n")
-print(json.dumps(value, indent=2))
+target = (
+    root
+    / ("inputs-private" if args.logs else ".")
+    / (("logs-" if args.logs else "observation-") + stamp + ".json")
+)
+target.write_text(json.dumps(value, indent=2) + "\n")
+print(
+    json.dumps(
+        {
+            "path": str(target),
+            "rows": len(result.get("logs", [])),
+            "read_only": True,
+            "observer_new_model_calls": 0,
+        }
+    )
+    if args.logs
+    else json.dumps(value, indent=2)
+)
