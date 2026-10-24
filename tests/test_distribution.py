@@ -30,12 +30,19 @@ def test_installed_distribution_contains_and_loads_prompts(tmp_path: Path) -> No
 
     validation = code_files()
     assert "worker/setup_controller.sh" in validation
+    from biotasks.generation.resources import code_files as generation_files
+
+    generation = generation_files()
+    assert "worker/generation_entry.py.txt" in generation
+    assert "package-acquisition.json" in generation
 
     with zipfile.ZipFile(wheel) as archive:
         for name, content in expected.items():
             assert archive.read(f"biotasks/prompts/{name}.md") == content
         for name, content in validation.items():
             assert archive.read("biotasks/validation/" + name) == content
+        for name, content in generation.items():
+            assert archive.read("biotasks/generation/" + name) == content
     with tarfile.open(sdist) as archive:
         prefix = sdist.name.removesuffix(".tar.gz")
         for name, content in expected.items():
@@ -45,6 +52,10 @@ def test_installed_distribution_contains_and_loads_prompts(tmp_path: Path) -> No
                 assert member.read() == content
         for name, content in validation.items():
             member = archive.extractfile(f"{prefix}/src/biotasks/validation/" + name)
+            assert member is not None
+            assert member.read() == content
+        for name, content in generation.items():
+            member = archive.extractfile(f"{prefix}/src/biotasks/generation/{name}")
             assert member is not None
             assert member.read() == content
 
@@ -97,6 +108,26 @@ def test_installed_distribution_contains_and_loads_prompts(tmp_path: Path) -> No
     from biotasks.validation.files import content_sha
 
     assert json.loads(worker_resources) == {n: content_sha(v) for n, v in validation.items()}
+    generation_resources = subprocess.check_output(
+        [
+            str(python),
+            "-I",
+            "-c",
+            "import json; from biotasks.generation.resources import code_files; from biotasks.validation.files import content_sha; print(json.dumps({n:content_sha(v) for n,v in code_files().items()}))",
+        ],
+        cwd=outside,
+        env=environment,
+        timeout=10,
+    )
+    assert json.loads(generation_resources) == {n: content_sha(v) for n, v in generation.items()}
+    identities = json.loads(
+        subprocess.check_output(
+            [str(cli), "generate", "identities"], cwd=outside, env=environment, timeout=10
+        )
+    )
+    from biotasks.generation.resources import code_identity as generation_identity
+
+    assert identities["generation_code_identity"] == generation_identity()
     # A real wheel lives beside its own dependencies. Only its BioTasks
     # namespace may enter the separately configured SDK interpreter.
     site = Path(
@@ -121,6 +152,22 @@ def test_installed_distribution_contains_and_loads_prompts(tmp_path: Path) -> No
     probe = "import sys;from pathlib import Path;from biotasks.validation.bridge import call;v=call({'python':sys.executable},{'action':'fingerprint'},Path(sys.argv[1]));assert set(v['source'])=={'iris','rigging'}"
     subprocess.run(
         [str(python), "-I", "-c", probe, str(tmp_path / "installed-bridge.log")],
+        cwd=outside,
+        env=environment | {"PYTHONPATH": str(sdk)},
+        check=True,
+        timeout=30,
+    )
+    generation_probe = probe.replace(
+        "biotasks.validation.bridge", "biotasks.generation.generation_bridge"
+    )
+    subprocess.run(
+        [
+            str(python),
+            "-I",
+            "-c",
+            generation_probe,
+            str(tmp_path / "installed-generation-bridge.log"),
+        ],
         cwd=outside,
         env=environment | {"PYTHONPATH": str(sdk)},
         check=True,
