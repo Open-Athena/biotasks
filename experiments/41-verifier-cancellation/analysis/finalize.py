@@ -82,7 +82,7 @@ def prepare():
     sources = sorted(ROOT.glob('*.json')) + sorted(ROOT.glob('*.md')) + sorted(ROOT.glob('*.sh'))
     sources += [p for p in ROOT.glob('*.py') if p.name != 'artifact_policy.py']
     sources += sorted((ROOT / 'runs').rglob('*.json'))
-    sources += [Path(__file__).resolve(), ROOT / 'analysis/preserve_failed.py']
+    sources += sorted((ROOT / 'analysis').glob('*.py'))
     inputs = []
     for source in sources:
         raw = source.read_bytes()
@@ -117,7 +117,8 @@ if __name__ == '__main__':
     if sys.argv[1] == 'summarize':
         summarize()
     elif sys.argv[1] == 'prepare':
-        print(json.dumps(dict(manifest_sha256=sha(DIRECTORY / 'manifest.json')))) if (DIRECTORY / 'manifest.json').exists() else print(json.dumps(dict(files=len(prepare()['files']))))
+        manifest = prepare()
+        print(json.dumps(dict(manifest_sha256=sha(DIRECTORY / 'manifest.json'), files=len(manifest['files']))))
     elif sys.argv[1] == 'publish':
         print(json.dumps(preserve.publish(DIRECTORY, verifier=verify)))
     else:
