@@ -17,8 +17,12 @@ def main():
     source=json.loads((ROOT/'package-acquisition.json').read_text());dep=json.loads((ROOT/'test-dependency-acquisition.json').read_text())
     pins=json.loads((ROOT/'control-pins.json').read_text());pins.update(tenacity_version='9.2.1',tenacity_wheel_sha256=dep['wheel_sha256'])
     write(ROOT/'control-pins.json',pins)
+    allowance=json.loads((ROOT/'retry-allowance.json').read_text())
+    maximum=allowance['remaining_main_cpu_hours']
+    assert 0<maximum<1 and maximum+allowance['prior_actual_cpu_hours']==1
+    timeout=int(maximum*3600/2)-300
     r=dict(cpus=2,memory_gib=12,disk_gib=8,controller_cpus=0.5,task_cpus=1,task_memory_gib=6,
-        setup_timeout_seconds=600,timeout_seconds=1500,work_deadline_seconds=1200,maximum_cpu_hours=1,cleanup_allowance_cpu_hours=1/6)
+        setup_timeout_seconds=600,timeout_seconds=timeout,work_deadline_seconds=timeout-300,maximum_cpu_hours=maximum,cleanup_allowance_cpu_hours=1/6)
     seed=dict(worker_code={n:sha(ROOT/n) for n in WORKER},cleanup_code={n:sha(ROOT/n) for n in CLEANUP},
         writer_sha256=sha(ROOT/'fixture_writer.py'),source_pins_sha256=sha(ROOT/'package-acquisition.json'),
         dependency_pins_sha256=sha(ROOT/'test-dependency-acquisition.json'),pins=pins,resources=r,
@@ -63,7 +67,7 @@ def main():
     row=dict(id=family['id'],mode=family['mode'],run_id=run,resources=r,payload_directory=str(target.relative_to(ROOT)),payload_manifest=manifest,
         payload_sha256={p.name:sha(p) for p in target.iterdir()},source_family_sha256=json_sha(family),
         cleanup_payload_directory=str(cleanup.relative_to(ROOT)),cleanup_payload_sha256={p.name:sha(p) for p in cleanup.iterdir()})
-    write(ROOT/'runtime-plan.json',dict(issue=41,cohort_sha256=sha(ROOT/'cohort.json'),families=[row],model_calls_enabled=False,new_capacity_allowed=False,planned_cpu_hours=1+1/6))
+    write(ROOT/'runtime-plan.json',dict(issue=41,cohort_sha256=sha(ROOT/'cohort.json'),families=[row],model_calls_enabled=False,new_capacity_allowed=False,planned_cpu_hours=maximum+1/6))
     print(json.dumps(dict(run_id=run,cases=2,fixture_files=len(bundle['files']),payload_files=len(row['payload_sha256']),model_calls=0,admitted=False)))
 
 

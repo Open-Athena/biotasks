@@ -12,11 +12,27 @@ import unittest
 from artifact_policy import inspect
 from collect import event_findings
 from common import sha
+from worker_job import Diagnostic
 
 ROOT=Path(__file__).resolve().parent
 
 
 class Checks(unittest.TestCase):
+    def test_actual_diagnostic_constructor_accepts_cases_without_tasks(self):
+        family=json.loads((ROOT/'runtime-plan.json').read_text())['families'][0]
+        config=json.loads((ROOT/family['payload_directory']/'family.json').read_text())
+        self.assertNotIn('tasks',config)
+        before=copy.deepcopy(config)
+        with tempfile.TemporaryDirectory(prefix='constructor-check-',dir=ROOT/'private') as temporary:
+            directory=Path(temporary)
+            diagnostic=Diagnostic(directory/'uncreated-root',directory/'uncreated-output',config)
+            self.assertEqual(list(directory.iterdir()),[])
+            self.assertEqual(config,before)
+            self.assertEqual(diagnostic.config['cases'],config['cases'])
+            self.assertNotIn('tasks',diagnostic.report)
+            self.assertFalse(diagnostic.created)
+            self.assertEqual(diagnostic.run,family['run_id'])
+
     def test_real_finite_writer_records_inode_and_complete_events(self):
         (ROOT/'private').mkdir(exist_ok=True)
         with tempfile.TemporaryDirectory(prefix='finite-writer-check-',dir=ROOT/'private') as temporary:
@@ -57,7 +73,8 @@ class Checks(unittest.TestCase):
 
     def test_frozen_fixture_resource_and_payload_contract(self):
         plan=json.loads((ROOT/'runtime-plan.json').read_text());family=plan['families'][0]
-        self.assertEqual(family['resources']['maximum_cpu_hours'],1)
+        allowance=json.loads((ROOT/'retry-allowance.json').read_text())
+        self.assertEqual(family['resources']['maximum_cpu_hours']+allowance['prior_actual_cpu_hours'],1)
         payload=ROOT/family['payload_directory']
         for name,digest in family['payload_sha256'].items():self.assertEqual(sha(payload/name),digest)
         config=json.loads((payload/'family.json').read_text())

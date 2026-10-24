@@ -12,6 +12,12 @@ from supervisor_base import Supervisor
 
 
 class Diagnostic(Supervisor):
+    def __init__(self,root,out,config):
+        # The generic supervisor initializes biological task statuses. This
+        # infrastructure probe has cases instead; its driver records outcomes.
+        super().__init__(root,out,dict(config,tasks=[]))
+        self.report.pop('tasks')
+
     def validate(self):
         assert self.config['mode']=='harbor_timeout_diagnostic'
         assert os.environ['BIOTASKS_RUN_ID']==self.run and os.environ['IRIS_WORKER_ID']==os.environ['BIOTASKS_EXPECTED_WORKER']
