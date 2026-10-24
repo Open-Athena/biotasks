@@ -10,7 +10,7 @@ The actual proof used installed draft50wheel with unchanged original47
 validation code/plan/backend/publication policy. It first stopped at the
 publication gate with network, credentials, subprocesses and SDK transport
 forbidden, then used the declared HF path. Thirteen primary files plus manifest
-and eleven cleanup files plus manifest were anonymously downloaded and checked
+and ten cleanup files plus manifest were anonymously downloaded and checked
 against exact SHA/size receipts. The original journal, all original source files
 and global budget are byte-identical. Completed replay is byte-inert and invokes
 no publication, reconciliation or native/model transport. No new native job,
