@@ -1,0 +1,59 @@
+{
+  "issue": 41,
+  "kind": "native_harbor_infrastructure_fixture",
+  "run_id": "biotasks41-cancel-e206de2c48",
+  "finite_control_passed": false,
+  "native_timeout_observed": false,
+  "fixture_mechanism_observed": false,
+  "historical_scanpy_cause_proven": false,
+  "cases": [
+    {
+      "name": "finite",
+      "state": "native_returned",
+      "wrapper_exit": 0,
+      "trial_present": true,
+      "exception": {
+        "exception_type": "RuntimeError",
+        "exception_message": "Docker compose command failed for environment harbor-timeout-finite. Command: docker compose --project-name harbor-timeout-finite__yhmrhju --project-directory /work/outputs/harbor_timeout/harbor-timeout-finite/environment -f /work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-base.yaml -f /work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-prebuilt.yaml -f /work/outputs/harbor_timeout/harbor-timeout-finite/environment/docker-compose.yaml -f /work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-no-network.yaml up --detach --wait. Return code: 15. Stdout: validating /work/outputs/harbor_timeout/harbor-timeout-finite/environment/docker-compose.yaml: services.main.build must be a string\n. Stderr: None. ",
+        "exception_traceback": "Traceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 951, in run\n    await self._setup_environment()\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 313, in _setup_environment\n    await self._start_environment_with_retry()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 232, in async_wrapped\n    return await copy(fn, *args, **kwargs)  # type: ignore[type-var]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 126, in __call__\n    do = await self.iter(retry_state=retry_state)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 171, in iter\n    result = await action(retry_state)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/_utils.py\", line 130, in inner\n    return call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 462, in <lambda>\n    self._add_action_func(lambda rs: rs.outcome.result())\n                                     ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 449, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 401, in __get_result\n    raise self._exception\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 130, in __call__\n    result = await fn(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 325, in _start_environment_with_retry\n    await asyncio.wait_for(\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 495, in start\n    await self._run_docker_compose_command([\"up\", \"--detach\", \"--wait\"])\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 382, in _run_docker_compose_command\n    raise RuntimeError(\nRuntimeError: Docker compose command failed for environment harbor-timeout-finite. Command: docker compose --project-name harbor-timeout-finite__yhmrhju --project-directory /work/outputs/harbor_timeout/harbor-timeout-finite/environment -f /work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-base.yaml -f /work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-prebuilt.yaml -f /work/outputs/harbor_timeout/harbor-timeout-finite/environment/docker-compose.yaml -f /work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker-compose-no-network.yaml up --detach --wait. Return code: 15. Stdout: validating /work/outputs/harbor_timeout/harbor-timeout-finite/environment/docker-compose.yaml: services.main.build must be a string\n. Stderr: None. \n",
+        "occurred_at": "2026-10-24T07:40:08.267003"
+      },
+      "fixture_reward": null,
+      "resources_verified": false,
+      "events_path": null,
+      "writer_log_path": null,
+      "writer_log_sha256": null,
+      "events": [],
+      "writer_starts": 0,
+      "writer_ends": 0,
+      "live_prior_writers": [],
+      "native_container_sample_count": 0,
+      "in_container_hole_samples": 0,
+      "raw_log_nul_bytes": 0,
+      "raw_log_tokens": [],
+      "fixture_mechanism_observed": false,
+      "historical_scanpy_cause_proven": false
+    }
+  ],
+  "native_source_parity": {
+    "source_files_verified": 203,
+    "harbor": "0.6.6",
+    "tenacity": "9.2.1",
+    "verified": true
+  },
+  "stage": "native_probe_returned",
+  "error_type": null,
+  "error_phase": null,
+  "shared_public_base_preserved": true,
+  "allocated_cpu_hours": 0.056236666705873274,
+  "prior_startup_cpu_hours": 0.004358888864517212,
+  "total_main_cpu_hours": 0.06059555557039049,
+  "raw_archive_sha256": "c48412c8f557dded0448489a6a34920c82cb3e96fd878379072dc65aa26d1476",
+  "hf_prefix": "research/41-verifier-cancellation/2026-10-24/8ce7ed30f3abc57ab536b9bf5d4896ec664f470b6096bc3108889c90c6f49ec9",
+  "anonymous_download_verified": true,
+  "cleanup_verified": true,
+  "cleanup_route": "primary",
+  "original_tasks_changed": false,
+  "new_biological_tasks": 0,
+  "model_calls": 0
+}

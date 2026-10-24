@@ -33,6 +33,11 @@ def main():
     final=verify(DIRECTORY);receipt_matches(DIRECTORY,final)
     receipt_matches(DEST,verify_failed(DEST))
     preserve.verified_receipt(ROOT/'private/harbor_timeout')
+    # Earlier completed native infrastructure failure was archived before rerendering.
+    old=ROOT/'private/compose-failure-1/harbor_timeout'
+    old_manifest=json.loads((old/'manifest.json').read_text())
+    receipt_matches(old,old_manifest)
+    assert json.loads((old/'cleanup-proof.json').read_text())['cleanup']['verified_empty']
     complete=json.loads((ROOT/'private/harbor_timeout/complete.json').read_text())
     assert complete['model_calls']==0
     for acq_name,directory in [('package-acquisition.json','inputs-private/source'),('test-dependency-acquisition.json','inputs-private/check-dependency/source')]:
@@ -41,7 +46,7 @@ def main():
     # Fixture bundles and all source/configuration are in verified runtime/final snapshots.
     # Public package binaries are intentionally excluded: their pinned URLs/hashes survive.
     names=['inputs-private/source','inputs-private/check-dependency','inputs-private/harbor-0.6.6-py3-none-any.whl',
-        'inputs-private/probe','private/failed-attempt-1','private/failed-startup-archive/tree','private/final-summary-archive/tree']
+        'inputs-private/probe','private/failed-attempt-1','private/compose-failure-1','private/failed-startup-archive/tree','private/final-summary-archive/tree']
     removed=[dict(path=name,**stats(ROOT/name)) for name in names if (ROOT/name).exists()]
     write(ROOT/'private/local-cleanup-intent.json',dict(removed=removed,verified_before_deletion=True,final_manifest_sha256=sha(DIRECTORY/'manifest.json')))
     for row in removed:

@@ -23,7 +23,7 @@ def main():
     timeout=int(maximum*3600/2)-300
     r=dict(cpus=2,memory_gib=12,disk_gib=8,controller_cpus=0.5,task_cpus=1,task_memory_gib=6,
         setup_timeout_seconds=600,timeout_seconds=timeout,work_deadline_seconds=timeout-300,maximum_cpu_hours=maximum,cleanup_allowance_cpu_hours=1/6)
-    seed=dict(worker_code={n:sha(ROOT/n) for n in WORKER},cleanup_code={n:sha(ROOT/n) for n in CLEANUP},
+    seed=dict(compiler_sha256=sha(Path(__file__)),worker_code={n:sha(ROOT/n) for n in WORKER},cleanup_code={n:sha(ROOT/n) for n in CLEANUP},
         writer_sha256=sha(ROOT/'fixture_writer.py'),source_pins_sha256=sha(ROOT/'package-acquisition.json'),
         dependency_pins_sha256=sha(ROOT/'test-dependency-acquisition.json'),pins=pins,resources=r,
         cases=[dict(name='finite',seconds=2,verifier=5),dict(name='timeout',seconds=30,verifier=5)])
@@ -35,7 +35,7 @@ def main():
         image=run+'-'+name+':fixture'
         (target/'task.toml').write_text('version = "1.0"\n\n[metadata]\nname = "'+task+'"\ndescription = "Self-authored infrastructure fixture, not biological evaluation"\n\n[agent]\ntimeout_sec = 30\n\n[verifier]\ntimeout_sec = 5\n\n[verifier.env]\nFIXTURE_WRITER_SECONDS = "'+str(seconds)+'"\n\n[environment]\nbuild_timeout_sec = 120\ndocker_image = "'+image+'"\ncpus = 1\nmemory_mb = 6144\nstorage_mb = 1024\nallow_internet = false\n')
         (target/'instruction.md').write_text('Infrastructure-only nop fixture. Do not modify files or call a model. The verifier is a timed synthetic writer.\n')
-        (target/'environment/docker-compose.yaml').write_text('services:\n  main:\n    image: '+image+'\n    build: null\n    pull_policy: never\n    cpus: 1.0\n    mem_limit: 6g\n    memswap_limit: 6g\n    network_mode: none\n    labels:\n      biotasks.run: "'+run+'"\n    environment:\n      BIOTASKS_RUN_ID: "'+run+'"\n')
+        (target/'environment/docker-compose.yaml').write_text('services:\n  main:\n    image: '+image+'\n    pull_policy: never\n    cpus: 1.0\n    mem_limit: 6g\n    memswap_limit: 6g\n    network_mode: none\n    labels:\n      biotasks.run: "'+run+'"\n    environment:\n      BIOTASKS_RUN_ID: "'+run+'"\n')
         (target/'tests/test.sh').write_text('#!/usr/bin/env bash\nset -eu\npython3 /tests/writer.py > /logs/verifier/writer.log 2>&1\necho 0 > /logs/verifier/reward.txt\n')
         (target/'tests/test.sh').chmod(0o755);shutil.copyfile(ROOT/'fixture_writer.py',target/'tests/writer.py')
         cases.append(dict(name=name,task=task,writer_seconds=seconds,verifier_seconds=5,image_ref=image))

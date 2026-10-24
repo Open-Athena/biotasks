@@ -83,6 +83,11 @@ class Checks(unittest.TestCase):
             value=tomllib.loads(path.read_text());self.assertEqual(value['verifier']['timeout_sec'],5)
             self.assertEqual((value['environment']['cpus'],value['environment']['memory_mb']),(1,6144))
             self.assertFalse(value['environment']['allow_internet']);self.assertTrue(value['environment']['docker_image'].startswith(family['run_id']+'-'))
+            import yaml
+            compose=yaml.safe_load((path.parent/'environment/docker-compose.yaml').read_text())['services']['main']
+            self.assertNotIn('build',compose)
+            self.assertEqual(compose['image'],value['environment']['docker_image'])
+            self.assertEqual(compose['network_mode'],'none')
         self.assertEqual(config['mode'],'harbor_timeout_diagnostic')
 
 

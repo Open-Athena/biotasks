@@ -31,7 +31,7 @@ def summarize():
         stage=read['stage'], error_type=read['error_type'], error_phase=read['error_phase'],
         shared_public_base_preserved=read['shared_public_base_preserved'],
         allocated_cpu_hours=read['allocated_cpu_hours'],
-        prior_startup_cpu_hours=allowance['prior_actual_cpu_hours'],
+        prior_attempt_cpu_hours=allowance['prior_actual_cpu_hours'],
         total_main_cpu_hours=read['allocated_cpu_hours'] + allowance['prior_actual_cpu_hours'],
         raw_archive_sha256=read['archive_sha256'], hf_prefix=receipt['prefix'],
         anonymous_download_verified=True, cleanup_verified=True, cleanup_route=proof['route'],
@@ -50,7 +50,7 @@ def summarize():
     lines += ['',
         'This is a self-authored infrastructure fixture through unchanged Harbor 0.6.6, not a biological control rerun, task export or solver score. Five-second verifier deadlines deliberately expose native cancellation/retry behavior; finite and timeout writers run for two and thirty seconds respectively. The trial must both establish its finite control and preserve independent resource/process observations before the mechanism is counted.', '',
         'Historical Scanpy causation remains unproven. Its missing rewards, old NUL holes, dependency failures and task validity are separate questions. PID/start-time identity, non-zombie state, matching log inode, independently reset offset and in-container hole samples are required here; missing events alone are not survival proof.', '',
-        f"One prior adapter startup failed before native execution and used {allowance['prior_actual_cpu_hours']:.9f} CPU-hours; the corrected attempt used {read['allocated_cpu_hours']:.9f}. Total main allocation {results['total_main_cpu_hours']:.9f} / 1 CPU-hour. Zero model calls/new paid capacity. Raw evidence, anonymous HF readback and owned cleanup are verified; keep issue open for user review.", '',
+        f"Prior preparation attempts used {allowance['prior_actual_cpu_hours']:.9f} CPU-hours; this attempt used {read['allocated_cpu_hours']:.9f}. Total main allocation {results['total_main_cpu_hours']:.9f} / 1 CPU-hour. The constructor failure and Compose rejection are separately archived, not negative mechanism results. Zero model calls/new paid capacity. Raw evidence, anonymous HF readback and owned cleanup are verified; keep issue open for user review.", '',
         f"Runtime snapshot: `hf://buckets/open-athena/biotasks/{receipt['prefix']}`.", '']
     (ROOT / 'results.md').write_text('\n'.join(lines))
     records = ROOT / 'runs/harbor_timeout'
