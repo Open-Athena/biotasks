@@ -58,8 +58,10 @@ for inspection. Completed planning is byte-inert. `advance` defaults to stopping
 before fresh generation and controls; it can prepare a local export from an
 already completed generation. Explicit `--allow-generation` and/or
 `--allow-validation` enter the unchanged admitted lifecycles. These flags do not
-override campaign gates, authorize spending, create capacity or enable models
-in a disabled ledger. An incomplete, uncertain or held case prevents admission
+override campaign admission closure, authorize spending or create capacity.
+The ledger's `paid_model_execution_enabled` is an execution-status field, not an
+operator approval gate: the original reservation code sets it when admitting an
+authorized run. An incomplete, uncertain or held case prevents admission
 of later cases. The command advances one pass; an external scheduler must use
 bounded/event-driven waits instead of tight polling.
 
