@@ -1,33 +1,31 @@
 {
-  "next_child_issue": 43,
-  "state": "Paired native inputs/checks and read-only worker compatibility checkpointed; two CPU-hours plus cleanup admitted, not submitted",
-  "question": "Does published 0.24.0 avoid overlap and stop timed-out writers, with the same outside observer as 0.6.6?",
-  "source_checkpoint": "0f47217e",
-  "source_plan": "https://github.com/Open-Athena/biotasks/blob/0f47217e/experiments/43-native-harbor-comparison/protocol.json",
-  "completed_predecessors": [
-    {
-      "issue": 41,
-      "commit": "b5533ced",
-      "outcome": "Native survival into retry and transient holes observed; final raw NULs zero; original full criterion false; archival/cleanup verified"
-    },
-    {
-      "issue": 42,
-      "commit": "6d359949",
-      "outcome": "Published single-step retry removed; source does not establish daemon containment or upgrade compatibility; source archival/cleanup verified"
-    }
-  ],
-  "proposed_resource_caps": {
-    "cpus": 2,
-    "memory_gib": 12,
-    "disk_gib": 12,
-    "maximum_cpu_hours": 2,
-    "cleanup_cpu_hours": 0.16666666666666666
+  "next_child_issue": 44,
+  "state": "Reusable validation entrypoint filed; implementation/inspection next, no runtime admission",
+  "question": "Extract established manifest/controller behavior into a supported validation entrypoint without per-repository code or task repair",
+  "source_main_commit": "2a1950d239f1ada467c35393991dac87debe35f7",
+  "scope": "Validation stage of full PR-to-task goal; official upstream generation remains separate and no model repairs allowed",
+  "completed_predecessor": {
+    "issue": 43,
+    "checkpoint": "52cb13c5",
+    "outcome": "Baseline writers survive final timeout into Docker stop grace; eventual teardown verified. Candidate 0.24.0 blocked by Buildx before writer; upgrade cancellation unmeasured.",
+    "runtime_hf_prefix": "research/43-native-harbor-comparison/2026-10-24/68475d52b7608a42ee60973450834d8ddc5e20ba41005a5edc853aec3412d169",
+    "final_hf_prefix": "research/43-native-harbor-comparison/2026-10-24/7bc6cb3903d47630453f0e4ebab6dc22b91e9e5a05bd120618b4763dc661cfc1",
+    "archival_and_cleanup_complete": true,
+    "local_duplicate_bytes_removed": 12079827
   },
-  "current_epic_allocated_cpu_hours": 6.265328888628218,
-  "current_cpu_reservations": 2.1666666666666665,
+  "requirements": [
+    "Inspect #38/#39/#43 reusable controller contracts and existing CLI before extraction",
+    "Use fresh codex/pipeline branch from verified main; never merge research branches",
+    "Provide meaningful interruption/recovery, changed-input, negative/empty-output and retention/cleanup tests",
+    "Preserve official native package settings, source/assets/resource contracts and explicit unsupported variants",
+    "Expose a documented supported entrypoint; distinguish preparation, native execution and release readiness",
+    "Checkpoint/admit any needed native regression within existing global budgets before execution",
+    "Keep full generation/validation goal intact; this is a component of that pipeline, not a completion claim"
+  ],
+  "current_epic_allocated_cpu_hours": 6.364996110863156,
+  "current_cpu_reservations": 0,
   "epic_ceiling_cpu_hours": 32,
   "paid_model_execution_enabled": false,
   "new_paid_capacity_allowed": false,
-  "existing_storage_reservation_unreconciled_usd": 10,
-  "old_next_step_obsolete": true
+  "existing_storage_reservation_unreconciled_usd": 10
 }
