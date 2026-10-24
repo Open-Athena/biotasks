@@ -19,7 +19,7 @@ print({'one_minute_load': load, 'mem_available_bytes': mem, 'estimated_peak_byte
 PY
 date -u +%FT%TZ > "$logs/start.txt"
 set +e
-/usr/bin/time -v -o "$logs/resources.txt" nice -n 10 ionice -c 2 -n 7 timeout 90 /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline44-final/.venv/bin/python -B -m pytest -q "$experiment/test_model_budget.py" "$experiment/test_generation.py" "$experiment/test_generation_pipeline.py" --basetemp "$experiment/local-scratch/$check_id" > "$logs/output.txt" 2>&1
+/usr/bin/time -v -o "$logs/resources.txt" nice -n 10 ionice -c 2 -n 7 timeout 90 /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline44-final/.venv/bin/python -B -m pytest -q "$experiment/test_model_budget.py" "$experiment/test_generation.py" "$experiment/test_generation_pipeline.py" "$experiment/test_finish_generation.py" --basetemp "$experiment/local-scratch/$check_id" > "$logs/output.txt" 2>&1
 status=$?
 date -u +%FT%TZ > "$logs/end.txt"
 printf '%s\n' "$status" > "$logs/exit.txt"
