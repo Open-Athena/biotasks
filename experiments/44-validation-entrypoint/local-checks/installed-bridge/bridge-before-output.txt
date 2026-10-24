@@ -1,0 +1,34 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______ test_installed_bridge_does_not_shadow_configured_sdk_dependencies _______
+
+tmp_path = PosixPath('/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline44-final/.checks/pytest-bridge-before/test_installed_bridge_does_not0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd500ec0050>
+
+    def test_installed_bridge_does_not_shadow_configured_sdk_dependencies(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        import sys
+    
+        installed = tmp_path / "foreign-site-packages"
+        package = installed / "biotasks/validation"
+        package.mkdir(parents=True)
+        (package.parent / "__init__.py").write_text("")
+        (package / "__init__.py").write_text("")
+        (package / "iris_client.py").write_text("import json, sdk_dependency\nprint('BIOTASKS_VALIDATION_RESULT='+json.dumps({'origin':sdk_dependency.origin}))\n")
+        (installed / "sdk_dependency.py").write_text("origin='wrong-main-environment'\n")
+        sdk = tmp_path / "configured-sdk"
+        sdk.mkdir()
+        (sdk / "sdk_dependency.py").write_text("origin='configured-sdk'\n")
+        monkeypatch.setenv("PYTHONPATH", str(sdk))
+        monkeypatch.setattr(bridge, "__file__", str(package / "bridge.py"))
+        value = bridge.call({"python": sys.executable}, {}, tmp_path / "bridge.log")
+>       assert value == {"origin": "configured-sdk"}
+E       AssertionError: assert {'origin': 'w...-environment'} == {'origin': 'configured-sdk'}
+E         
+E         Differing items:
+E         {'origin': 'wrong-main-environment'} != {'origin': 'configured-sdk'}
+E         Use -v to get more diff
+
+tests/test_validation.py:705: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_validation.py::test_installed_bridge_does_not_shadow_configured_sdk_dependencies
+1 failed, 35 deselected in 0.09s
