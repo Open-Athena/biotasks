@@ -3,14 +3,14 @@
   "user_limit_exclusive_usd": 100,
   "operating_ceiling_usd": 90,
   "unused_margin_usd": 10,
-  "recorded_paid_cost_usd": 0,
-  "outstanding_reservations_usd": 10,
-  "new_model_calls": 0,
+  "recorded_paid_cost_usd": 0.287646,
+  "outstanding_reservations_usd": 10.0,
+  "new_model_calls": 11,
   "paid_model_execution_enabled": false,
   "admission_rule": "Before enabling paid model execution, verify model pricing and maximum request cost; atomically reserve a conservative bound, then reconcile provider-reported actual usage. Stop if accrued cost plus outstanding reservations plus the proposed bound exceeds 90 USD or cost is unknown.",
   "per_repository_settings": "Preserve official bootstrap settings: Sonnet 4.6 through OpenRouter, temperature 0.2, 2048 output-token cap, 20 calls, 5 USD estimated repository stop threshold; global admission remains required.",
   "additional_reserved_cpu_hour_ceiling": 32,
-  "additional_allocated_cpu_hours": 6.764818888770209,
+  "additional_allocated_cpu_hours": 8.785054444207086,
   "new_paid_capacity_allowed": false,
   "events": [
     {
@@ -320,6 +320,140 @@
       "state": "terminal reconciled",
       "controller": "biotasks.validation.v1",
       "actual_allocated_cpu_hours": 0.008461111121707492
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks45-cobrapy-generation-001",
+      "maximum_allocated_cpu_hours": 6,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "primary",
+      "actual_allocated_cpu_hours": 0
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks45-cobrapy-generation-001-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "controller": "biotasks.validation.v1",
+      "role": "stop",
+      "reason": "Verified empty/no-creation; no cleanup job"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks45-cobrapy-generation-001-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "controller": "biotasks.validation.v1",
+      "role": "cleanup",
+      "reason": "Verified empty/no-creation; no cleanup job"
+    },
+    {
+      "kind": "model_run_reservation",
+      "run_id": "biotasks45-cobrapy-generation-001",
+      "maximum_usd": "13.07",
+      "outstanding_usd": "0",
+      "known_actual_usd": "0",
+      "known_calls": 0,
+      "call_count_complete": true,
+      "state": "terminal reconciled",
+      "quote_sha256": "3f97cfd21a8d34a24a1200110a9ac9e57daadbd35c2a50163e13b8b19e170592",
+      "plan_identity": "af17b1c1338211906a8a9e9f278ba23e2a8c9b8877cfec433522da673b3c39ff",
+      "model": "openrouter/anthropic/claude-sonnet-4.6",
+      "scope": "Only the original upstream bootstrap calls; no repairs/fallback/retries",
+      "observations": [
+        {
+          "known_actual_usd": "0",
+          "known_calls": 0,
+          "cost_complete": true,
+          "proof_sha256": "66badd45678da2d00853a9f1887a5f1033e97522e972e9b669c8445b2140c368"
+        }
+      ]
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks45-cobrapy-generation-002",
+      "maximum_allocated_cpu_hours": 6,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "primary",
+      "actual_allocated_cpu_hours": 1.9834211111068725
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks45-cobrapy-generation-002-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "controller": "biotasks.validation.v1",
+      "role": "stop",
+      "reason": "Verified empty/no-creation; no cleanup job"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks45-cobrapy-generation-002-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "cleanup",
+      "actual_allocated_cpu_hours": 0.004797777732213338
+    },
+    {
+      "kind": "model_run_reservation",
+      "run_id": "biotasks45-cobrapy-generation-002",
+      "maximum_usd": "13.07",
+      "outstanding_usd": "0",
+      "known_actual_usd": "0.287646",
+      "known_calls": 11,
+      "call_count_complete": true,
+      "state": "terminal reconciled",
+      "quote_sha256": "3f97cfd21a8d34a24a1200110a9ac9e57daadbd35c2a50163e13b8b19e170592",
+      "plan_identity": "839ce3f989876c3e46f7466183008e7e438870ea61f518efb9a0900e001769bb",
+      "model": "openrouter/anthropic/claude-sonnet-4.6",
+      "scope": "Only the original upstream bootstrap calls; no repairs/fallback/retries",
+      "observations": [
+        {
+          "known_actual_usd": "0.287646",
+          "known_calls": 11,
+          "cost_complete": true,
+          "proof_sha256": "3fcd538506125d972a0581c019edf2f681aed1539f5aa967454e142908249893"
+        }
+      ]
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue45-fresh-c1b5f6371606",
+      "maximum_allocated_cpu_hours": 6.0,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "primary",
+      "actual_allocated_cpu_hours": 0.02684944444232517
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue45-fresh-c1b5f6371606-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "controller": "biotasks.validation.v1",
+      "role": "stop",
+      "reason": "Verified empty/no-creation; no cleanup job"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue45-fresh-c1b5f6371606-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "cleanup",
+      "actual_allocated_cpu_hours": 0.00516722215546502
     }
   ],
   "outstanding_cpu_hour_reservations": 0,
