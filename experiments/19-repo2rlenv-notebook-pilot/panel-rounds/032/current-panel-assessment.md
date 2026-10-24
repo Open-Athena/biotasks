@@ -1,6 +1,6 @@
 # Current ten-source development assessment
 
-Latest independently archived completed outcome per source. These are development versions, not a common-version holdout or a success-rate estimate. Original failures and superseded runs remain preserved. Active source-only repeat154 is excluded from completed-outcome counts.
+Latest independently archived completed outcome per source. These are development versions, not a common-version holdout or a success-rate estimate. Original failures and superseded runs remain preserved. Active source-only repeats154/155 are excluded from completed-outcome counts.
 
 | Domain | Source | Campaign | Pipeline minutes | Accounted model requests | Outcome |
 | --- | --- | --- | ---: | ---: | --- |
@@ -27,4 +27,4 @@ The required scientific-admission review was live in [153](../036/qualification-
 
 The earlier [152 operator launch failure](../035/result-152.json) remains preserved separately. It stopped before grading because a $3 ceiling could not cover five $1 stage reservations. It did not reject the notebook or test scientific review. Launch and runtime preflight now reject that configuration, with 121 affected offline checks.
 
-See [machine-readable identities](current-panel-summary.json) and [the requirement audit](completion-audit.md). The factory demonstrates autonomous execution across diverse inputs; reliable scientific acceptance/rejection without operator qualification is still incomplete. R remains deferred. Source-only [154](../038/submission-154.json) is running with the general shared-input discovery and scientific-scope changes. The unchanged full asset/setup suites passed104checks outside the restrictive local sandbox; earlier sandbox stalls remain recorded as incomplete attempts. Conservative reservations now equal the $200 authorization, with $0 unallocated. These are allowances, not measured invoices or credits.
+See [machine-readable identities](current-panel-summary.json) and [the requirement audit](completion-audit.md). The factory demonstrates autonomous execution across diverse inputs; reliable scientific acceptance/rejection without operator qualification is still incomplete. R remains deferred. Source-only [154](../038/submission-154.json) and [155](../040/submission-155.json) are running on MDAnalysis and Bioframe respectively, with identical runtime maps and the general shared-input discovery/scientific-scope changes. The unchanged full asset/setup suites passed104checks outside the restrictive local sandbox; earlier sandbox stalls remain recorded as incomplete attempts. Conservative reservations now equal the $200 authorization, with $0 unallocated. These are allowances, not measured invoices or credits.
