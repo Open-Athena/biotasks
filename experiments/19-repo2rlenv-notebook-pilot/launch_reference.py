@@ -7,6 +7,7 @@ import json
 import subprocess
 from pathlib import Path, PurePosixPath
 
+from campaign_budget import require_full_pipeline_budget
 from launch_iris import EXPERIMENT, frozen_file
 from run_reference import EXECUTION_PENDING
 
@@ -77,6 +78,8 @@ def frozen_payload(
     repo: Path, *, revision: str, upstream_archive: Path, config
 ) -> dict[str, bytes]:
     """Common frozen inputs; each stage wrapper validates its own configuration."""
+    if config["entrypoint"] == "run_autonomous.py":
+        require_full_pipeline_budget(config)
     if config["entrypoint"] == "run_reference.py":
         raise NotImplementedError(EXECUTION_PENDING)
     if config["entrypoint"] in {

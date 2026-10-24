@@ -8,6 +8,8 @@ import os
 import subprocess
 from pathlib import Path
 
+from campaign_budget import require_full_pipeline_budget
+
 EXPERIMENT = "experiments/19-repo2rlenv-notebook-pilot"
 
 
@@ -143,6 +145,8 @@ def submit_prepared(
 ):
     """Shared one-job launcher for a frozen, separately validated experiment payload."""
     config = json.loads(files["campaign-config.json"])
+    if config.get("entrypoint") == "run_autonomous.py":
+        require_full_pipeline_budget(config)
     replay_only = config.get("entrypoint") == "run_reference_replay.py"
     if replay_only and (token or endpoint_job):
         raise ValueError("Programmatic replay must not receive model credentials or routes")

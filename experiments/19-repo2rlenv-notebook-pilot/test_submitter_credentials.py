@@ -38,7 +38,11 @@ def sdk_fixture(monkeypatch):
 def inputs():
     return {
         "campaign-config.json": json.dumps(
-            {"entrypoint": "run_autonomous.py", "campaign": "synthetic"}
+            {
+                "entrypoint": "run_autonomous.py",
+                "campaign": "synthetic",
+                "daytona_budget_usd": "5.00",
+            }
         ).encode(),
         "inputs.json": json.dumps({"files": {"seed.json": "synthetic-hash"}}).encode(),
     }

@@ -48,6 +48,7 @@ def fixture(monkeypatch, tmp_path):
     return (
         {
             "entrypoint": "run_autonomous.py",
+            "daytona_budget_usd": "5.00",
             "seed_file": "case/seed.json",
             "notebook_file": "case/source.ipynb",
         },
@@ -73,6 +74,50 @@ def test_payload_selects_pinned_seed_and_hashes_it(monkeypatch, tmp_path):
         )
 
 
+@pytest.mark.parametrize("budget", [None, "0", "3.00", "4.99", "5.01", "NaN", "Infinity"])
+def test_unfundable_payload_fails_before_any_source_archive_or_submission(
+    monkeypatch, tmp_path, budget
+):
+    config, _, upstream = fixture(monkeypatch, tmp_path)
+    config["daytona_budget_usd"] = budget
+
+    def unexpected_archive(*args, **kwargs):
+        pytest.fail("Insufficient reservation must fail before creating payloads")
+
+    monkeypatch.setattr(launcher, "source_archive", unexpected_archive)
+    with pytest.raises(ValueError, match="reservation"):
+        launcher.frozen_payload(
+            tmp_path, revision="frozen", upstream_archive=upstream, config=config
+        )
+
+
+def test_prebuilt_unfundable_payload_cannot_create_an_iris_claim(tmp_path):
+    from launch_iris import submit_prepared
+
+    class NoSubmission:
+        def submit(self, **kwargs):
+            pytest.fail("An unfundable prebuilt payload must not reach Iris")
+
+    receipt = tmp_path / "must-not-create.json"
+    with pytest.raises(ValueError, match="stage reservations"):
+        submit_prepared(
+            NoSubmission(),
+            files={
+                "campaign-config.json": json.dumps(
+                    {"entrypoint": "run_autonomous.py", "daytona_budget_usd": "3.00"}
+                ).encode()
+            },
+            revision="unused",
+            receipt=receipt,
+            token="unused",
+            daytona_key="unused",
+            artifact_prefix="s3://unused/",
+            endpoint_job="unused",
+            cluster="unused",
+        )
+    assert not receipt.exists()
+
+
 @pytest.mark.parametrize("bad", ["../seed.json", "/seed.json", "case//seed.json"])
 def test_seed_path_cannot_escape_pinned_experiment(monkeypatch, tmp_path, bad):
     config, _, upstream = fixture(monkeypatch, tmp_path)
@@ -94,7 +139,9 @@ def test_payload_requires_one_seed(monkeypatch, tmp_path, seeds):
 
 
 @pytest.mark.parametrize("entrypoint", ["run_autonomous.py", "run_roundtrip_diagnostic.py"])
-def test_real_archive_contains_runtime_and_selected_seed_without_past_artifacts(tmp_path, entrypoint):
+def test_real_archive_contains_runtime_and_selected_seed_without_past_artifacts(
+    tmp_path, entrypoint
+):
     prefix = launcher.EXPERIMENT + "/"
     contents = {
         "pyproject.toml": "fixture",

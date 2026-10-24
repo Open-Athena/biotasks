@@ -16,6 +16,25 @@ m = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(m)
 
 
+@pytest.mark.parametrize("budget", ["3.00", "4.99", "NaN", "Infinity"])
+def test_unfundable_campaign_fails_before_worker_or_output_creation(tmp_path, budget):
+    root = tmp_path / "must-not-exist"
+    with pytest.raises(ValueError, match="reservation"):
+        m.Pipeline(
+            {
+                "campaign": "budget-check",
+                "notebook_file": "source.ipynb",
+                "daytona_budget_usd": budget,
+            },
+            root=root,
+            seed={},
+            deadline=time.time() + 7200,
+            endpoint="must-not-contact",
+            credential="unused",
+        )
+    assert not root.exists()
+
+
 def test_worker_rejection_requires_explicit_disposition(tmp_path):
     path = tmp_path / "plan.json"
     m.write(path, {"disposition": "blocked", "reason": "No terminal result"})
