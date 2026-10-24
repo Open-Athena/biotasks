@@ -21,6 +21,11 @@ parser.add_argument("--proof", type=Path, required=True)
 parser.add_argument("--apply", action="store_true")
 args = parser.parse_args()
 assert len(set(args.numbers)) == len(args.numbers) and not args.proof.exists()
+proof_reference = (
+    args.proof.relative_to(args.ledger.parent).as_posix()
+    if args.proof.is_relative_to(args.ledger.parent)
+    else args.proof.name
+)
 before = args.ledger.read_bytes()
 ledger = json.loads(before)
 ceiling = Decimal(ledger["ceiling_before_credits"])
@@ -135,7 +140,9 @@ for number in args.numbers:
     row.update(
         ceiling_usd=f"{reserved:.2f}",
         state="unused_stage_allowances_released_used_holds_unchanged",
-        reconciliation="Retain1USDfor every original dispatched sandbox stage; release only mandatory stages never dispatched. Full original archives, exact frozen reservation code, typed terminal state and fresh original-ID/owner cleanup verified. Not an invoice, credits or used-provider cost audit. See panel-rounds/037/reconciliation.json.",
+        reconciliation="Retain1USDfor every original dispatched sandbox stage; release only mandatory stages never dispatched. Full original archives, exact frozen reservation code, typed terminal state and fresh original-ID/owner cleanup verified. Not an invoice, credits or used-provider cost audit. See "
+        + proof_reference
+        + ".",
     )
 released = sum(Decimal(row["released_unused_stage_allowance_usd"]) for row in records)
 after_held = sum(Decimal(row["ceiling_usd"]) for row in ledger["reservations"])
@@ -146,6 +153,7 @@ ledger.update(
 after = (json.dumps(ledger, indent=2) + "\n").encode()
 proof = {
     "observed_at": datetime.now(UTC).isoformat(),
+    "reconciliation_helper_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
     "applied": args.apply,
     "source_ledger_sha256": hashlib.sha256(before).hexdigest(),
     "result_ledger_sha256": hashlib.sha256(after).hexdigest(),
