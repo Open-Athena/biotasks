@@ -1,0 +1,61 @@
+{
+  "original_runtime_archive_sha256": "26358f3a88524f96c49007ab87424a6ff29a289d87eafa8cfb6be987bef6cd88",
+  "original_validation_path": "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/experiments/58-assertion-regressions/inputs-private/run-001/biopython/runs/generation/generation-source/native-observations/validation-001-pr-5372.json.gz",
+  "original_validation_sha256": "531ae54e0d18cce88b63ed20182ca52430e4a880c639f9a99e1a888565a450ce",
+  "policy_applied_and_restored": true,
+  "official_filter_false_reached_native_validation": true,
+  "pr": 5372,
+  "base_commit": "fc0c156786e86862112a05a720b6f4f47023f36a",
+  "actual_targeted_commands": [
+    "cd /workspace && python -m pytest -v /workspace/Tests/test_PDB_PDBIO.py"
+  ],
+  "original_native_validation_timeout_seconds": 600,
+  "validation_status": "failed",
+  "validation_reason": "no fail-to-pass tests after validation",
+  "f2p_count": 0,
+  "p2p_count": 0,
+  "both_stages_collection_failed_before_test_execution": true,
+  "parsed_error_is_not_an_unparsed_test_or_timeout": true,
+  "removed_inplace_extensions_before_pre": [
+    "Bio/Align/_aligncore.cpython-312-x86_64-linux-gnu.so",
+    "Bio/Align/_alignmentcounts.cpython-312-x86_64-linux-gnu.so",
+    "Bio/Align/_codonaligner.cpython-312-x86_64-linux-gnu.so",
+    "Bio/Align/_pairwisealigner.cpython-312-x86_64-linux-gnu.so",
+    "Bio/Align/substitution_matrices/_arraycore.cpython-312-x86_64-linux-gnu.so",
+    "Bio/Cluster/_cluster.cpython-312-x86_64-linux-gnu.so",
+    "Bio/Nexus/cnexus.cpython-312-x86_64-linux-gnu.so",
+    "Bio/PDB/_bcif_helper.cpython-312-x86_64-linux-gnu.so",
+    "Bio/PDB/ccealign.cpython-312-x86_64-linux-gnu.so",
+    "Bio/PDB/kdtrees.cpython-312-x86_64-linux-gnu.so",
+    "Bio/SeqIO/_twoBitIO.cpython-312-x86_64-linux-gnu.so",
+    "Bio/cpairwise2.cpython-312-x86_64-linux-gnu.so",
+    "Bio/motifs/_pwm.cpython-312-x86_64-linux-gnu.so"
+  ],
+  "missing_import_both_stages": "Bio.PDB.ccealign",
+  "gold_and_test_patch_applied_cleanly": true,
+  "bootstrap": {
+    "source_path": "upstream/workspace/bootstrap/biopython__biopython/2fbe8755bb44__74ba7084/bootstrap.json",
+    "sha256": "d3f5460ea480674e9539ddd3c35e0bcf25372f70e587d93d672ba220df369c0c",
+    "test_cmds": [
+      "cd /workspace && python -m pytest -v"
+    ],
+    "rebuild_cmds": [
+      "apt-get update -qq && apt-get install -y build-essential python3-dev",
+      "pip install numpy",
+      "cd /workspace && pip install -e .",
+      "pip install pytest"
+    ],
+    "smoke_passed": false,
+    "verify_passed": false
+  },
+  "baseline57_recorded_test_cmds": [
+    "cd /workspace/Tests && python -m pytest -v"
+  ],
+  "bootstrap_stochastic_environment_and_cwd_differed": true,
+  "zero_exports": true,
+  "independent_exported_task_controls": 0,
+  "input_retried_or_repaired_by_inspector": false,
+  "new_model_native_calls_by_inspector": 0,
+  "scientific_acceptance": false,
+  "next_question": "Revision-aware deterministic replay of original recorded build commands, rather than preserving potentially stale compiled binaries; source/offline only"
+}
