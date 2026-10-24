@@ -52,6 +52,7 @@ def check_candidates(values, expected):
 
 def main():
     import cost_guard
+    import option_policy
     from observed_cli import Recorder, install_hooks
 
     recorder = Recorder("/work/native-observations")
@@ -113,8 +114,7 @@ def main():
         expected = json.loads(Path("/work/reference-candidates.json").read_text())
         options = config["pipeline"]["options"]
         require(
-            options
-            == {"limit": expected["limit"], "since": expected["since"], "until": expected["until"]},
+            option_policy.matches(options, expected),
             "Frozen listing options changed",
         )
         owner, name = expected["repo"].split("/")

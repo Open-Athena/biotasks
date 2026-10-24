@@ -75,3 +75,26 @@ def test_overwide_discovery_rejected_before_native_call(listing):
     with pytest.raises(ValidationError, match="Discovery bound"):
         discovery.freeze(config, cache, output)
     assert not calls
+
+
+@pytest.mark.parametrize("setting", [False, True])
+def test_optional_official_filter_is_frozen_without_becoming_listing_argument(listing, setting):
+    config, cache, output, calls = listing
+    value = read_json(config)
+    value["pipeline"]["options"]["require_new_test_funcs"] = setting
+    write_json(config, value)
+    result = discovery.freeze(config, cache, output)
+    assert result["require_new_test_funcs"] is setting
+    assert set(calls[0][1]) == {"limit", "since", "until"}
+    assert discovery.freeze(config, cache, output) == result and len(calls) == 1
+
+
+@pytest.mark.parametrize("setting", [0, 1, "false", None])
+def test_non_boolean_official_filter_rejected_before_discovery(listing, setting):
+    config, cache, output, calls = listing
+    value = read_json(config)
+    value["pipeline"]["options"]["require_new_test_funcs"] = setting
+    write_json(config, value)
+    with pytest.raises(ValidationError, match="Discovery bound"):
+        discovery.freeze(config, cache, output)
+    assert not calls

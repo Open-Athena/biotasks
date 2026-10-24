@@ -8,7 +8,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
-from biotasks.generation import source
+from biotasks.generation import resources, source
 from biotasks.generation.handoff import local_only
 from biotasks.validation.files import json_sha, read_json, require, sha, write_json
 from biotasks.validation.planning import UPSTREAM
@@ -29,7 +29,7 @@ def freeze(native_config: Path, source_cache: Path, output: Path) -> dict[str, A
     owner, name = match.groups()
     options = config["pipeline"]["options"]
     require(
-        set(options) == {"limit", "since", "until"}
+        resources.option_policy().accepts(options)
         and isinstance(options["limit"], int)
         and not isinstance(options["limit"], bool)
         and 1 <= options["limit"] <= 100,

@@ -48,3 +48,10 @@ def cost_policy() -> Any:
     module = ModuleType("biotasks_original_cost_guard")
     exec(compile(assets()["cost_guard.py"], "bundled:cost_guard.py", "exec"), module.__dict__)
     return module
+
+
+def option_policy() -> Any:
+    """Load the one canonical native-option guard for host and worker."""
+    module = ModuleType("biotasks_native_option_policy")
+    exec(compile(assets()["option_policy.py"], "bundled:option_policy.py", "exec"), module.__dict__)
+    return module

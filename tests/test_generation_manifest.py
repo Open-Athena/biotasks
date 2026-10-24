@@ -298,3 +298,37 @@ def test_manifest_wait_hint_uses_actual_generation_stage_evidence(cohort, monkey
     result = flow.advance(path, output, allow_generation=True)
     assert result["state"] == "recovering:submission_recorded"
     assert result["wait"] is (not ready)
+
+
+@pytest.mark.parametrize("setting", [False, True])
+def test_official_filter_survives_manifest_and_worker_guard_with_caps_unchanged(cohort, setting):
+    from biotasks.generation import resources
+
+    path, output, manifest = cohort
+    case = manifest["cases"][0]
+    config_path = Path(case["native_config"]["path"])
+    candidates_path = Path(case["candidates"]["path"])
+    config = read_json(config_path)
+    candidates = read_json(candidates_path)
+    config["pipeline"]["options"]["require_new_test_funcs"] = setting
+    candidates["require_new_test_funcs"] = setting
+    write_json(config_path, config)
+    write_json(candidates_path, candidates)
+    case["native_config"] = ref(config_path)
+    case["candidates"] = ref(candidates_path)
+    write_json(path, manifest)
+    flow.prepare(path, output)
+    planned = read_json(output / "metabolism/plan.json")
+    assert planned["group"]["resources"] == flow.RESOURCES
+    assert planned["model_budget"]["actual_stop_usd"] == "5"
+    payload = output / "metabolism/payload"
+    frozen = read_json(payload / "native-config.json")
+    expected = read_json(payload / "reference-candidates.json")
+    assert frozen["pipeline"]["options"]["require_new_test_funcs"] is setting
+    # The exact same bundled module is used by the actual worker before GH or model calls.
+    worker_guard = resources.option_policy()
+    assert worker_guard.matches(frozen["pipeline"]["options"], expected)
+    expected["require_new_test_funcs"] = not setting
+    assert not worker_guard.matches(frozen["pipeline"]["options"], expected)
+    expected["require_new_test_funcs"] = int(setting)
+    assert not worker_guard.matches(frozen["pipeline"]["options"], expected)

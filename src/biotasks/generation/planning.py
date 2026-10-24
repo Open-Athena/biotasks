@@ -189,8 +189,7 @@ def load(path):
             candidates["upstream_revision"] == planning.UPSTREAM, "Candidate listing source changed"
         )
         require(
-            native["pipeline"]["options"]
-            == {key: candidates[key] for key in ("limit", "since", "until")},
+            resources.option_policy().matches(native["pipeline"]["options"], candidates),
             "Frozen discovery options differ",
         )
         rows = candidates["candidates"]
