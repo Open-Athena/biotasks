@@ -1,0 +1,13 @@
+# Exact quarantine snapshot eligibility review
+
+This review addresses the automatic approval rejection before any public upload. The proposed operation remains the same12-file380,011-byte snapshot, manifest `45c690c5c802a05257c6606dc51807d337e20187595ff6f9a74016117de126e2`; no workaround, alternative uploader or scope expansion is proposed.
+
+The user explicitly authorized research logs in issues/HF, and project guidance names this public research bucket. This exact snapshot contains an existing public open-source task variant, its full source notices, and source-verified native execution records. It is not a task release and does not relicense upstream assets.
+
+Pinned `opencobra/cobrapy` base6f83a534569557f6a10bfdf6909522016985e47f setup.cfg declares `LGPL-2.0-or-later OR GPL-2.0-or-later`. Both base and bootstrapped heada9c5ced29670bed5035fb19e87e7b0b588adb62d LICENSE blobs were fetched read-only from GitHub and Git-blob/SHA256 verified; both equal f545869994ddac0ef10e761fe5d2c061e483c040216d29dd81ab5ce1d2a41645. Their complete GPL/LGPL terms are included in the26-member source/notices.tar.gz, alongside Repo2RLEnv’s complete Apache2.0 licensec71d239d... . Original source terms/attribution remain; no overall license override is asserted.
+
+The prior publicly retained45 baseline task and notices were freshly downloaded anonymously and SHA/member verified. All8 source/grading/instruction assets are byte-identical, all10modes and semantic grading contracts identical. Only Dockerfile and exporter metadata differ: our declared generic update prefix/marker and reproducibility fields. No new third-party code is introduced. The26notice members are exactly the same as the prior public source object.
+
+Every runtime member is inventoried in public-eligibility-review.json: the10same task files,3generated build/metadata files, native result/config/exception records and pytest/traceback/benchmark logs. The outer archive adds only build/setup text, hashes/versions, source-parity checks and the same input package. There are no biological input files, model transcripts, installed environments/images, Matchms assets, credentials or unclassified file types. Four exact source-hash-bound UTF8verifier logs contain3154NULbytes each; no log or reward is repaired. Original credential/embedded-data inspection still applies through the narrow temporary view. Scientific acceptance remainsfalse.
+
+Top-level allowlist and complete nested hashes, source URLs/Git blobs, original terms and baseline comparisons are in public-eligibility-review.json. The raw bytes, target and append-only/no-overwrite/readback behavior are unchanged. The original held journal remains held; cleanup cannot occur until the publication/readback gate succeeds.
