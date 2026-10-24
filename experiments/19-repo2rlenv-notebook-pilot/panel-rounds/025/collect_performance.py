@@ -64,13 +64,14 @@ result = {
     "pipeline_status": pipeline["status"],
     "source_id": (pipeline.get("source") or {}).get("id"),
     "elapsed_pipeline_seconds": round(pipeline["finished"] - pipeline["started"], 3),
-    "completed_stage_seconds": stages,
+    "stage_elapsed_seconds": stages,
+    "stage_status": {stage["name"]: stage["status"] for stage in pipeline["stages"]},
     "accounted_model_request_attempts": sum(ledger["count"] for ledger in ledgers),
     "request_ledgers": ledgers,
     "author_provider_response_receipts": len(charges),
     "distinct_author_response_operations_within_stage": len(author_operations),
     "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
-    "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. No live run or model call.",
+    "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
     "logical_quality_repair_allowances_used": int(
         bool(pipeline.get("quality_repair"))
         or any(name.endswith("/repair.json") for name in rows if name.startswith("grading/"))

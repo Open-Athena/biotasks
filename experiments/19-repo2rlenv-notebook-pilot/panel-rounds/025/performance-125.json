@@ -3,13 +3,21 @@
   "pipeline_status": "infrastructure_failed",
   "source_id": "matchms-spectral-matching",
   "elapsed_pipeline_seconds": 6894.32,
-  "completed_stage_seconds": {
+  "stage_elapsed_seconds": {
     "preparation": 62.435,
     "setup": 678.399,
     "replay": 288.899,
     "specification": 568.456,
     "construction": 1350.059,
     "grading": 3941.763
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "completed",
+    "replay": "completed",
+    "specification": "completed",
+    "construction": "completed",
+    "grading": "incomplete"
   },
   "accounted_model_request_attempts": 177,
   "request_ledgers": [
@@ -110,6 +118,6 @@
   "author_provider_response_receipts": 175,
   "distinct_author_response_operations_within_stage": 175,
   "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
-  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. No live run or model call.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
   "logical_quality_repair_allowances_used": 1
 }
