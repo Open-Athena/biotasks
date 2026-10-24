@@ -50,3 +50,16 @@ the exact boundaries. Removed only disposable local-scratch test copies; retaine
 actual sidecar underHOME for installed extraction. No owned/tmp paths. Next:
 extract into a fresh supported pipeline branch and integrate held outcomes into
 the serial generation loop without advancing scientific acceptance.
+
+2026-10-24: Supported extraction9feed8eb plus final test-only88a02827 is on a
+fresh pipeline branch from current main2a1950d2 with supported50dependency only.
+No research merge. Added retain CLI and native multi-group coordinator; retained
+failures stay ineligible, unknown/pending/budget-held cases cannot admit later
+work. Preserved original validation identity and frozen worker assets. All129
+locked tests/lint/types/hooks pass (13.32s tests). Additional observation-loss and
+missing-handle tests exercise the real original ensure_submission boundary.
+Installed exact-wheel actual CLI source/preservation proof passes with all
+transport/credentials blocked. Full public source proof remains separately
+bound; no repeated upload/cleanup/models/jobs just to exercise packaging. Source
+receipt/results record distinctions. Next: draft supported PR and meaningful
+fresh native input checkpoint within the existing cumulative limits.
