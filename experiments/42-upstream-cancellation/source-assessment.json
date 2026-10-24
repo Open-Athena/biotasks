@@ -1,0 +1,250 @@
+{
+  "issue": 42,
+  "baseline_retry_decorator": {
+    "path": "inputs-private/baseline/harbor/trial/trial.py",
+    "function": "_verify_with_retry",
+    "line_start": 401,
+    "line_end": 419,
+    "file_sha256": "3cd6cd879c2ccda62c283aa85951f372480e1ada616c57a679bfd4f08bff0515",
+    "ast_sha256": "1f5ec73088be53c5fc2f0a9bd93f43d967d0642ad5310db2fbed23706b65eba7"
+  },
+  "baseline_native_evidence_issue": 41,
+  "records": [
+    {
+      "label": "release",
+      "claims": {
+        "single_step_automatic_inner_verifier_retry": false,
+        "one_verifier_branch_invocation": true,
+        "outer_wait_for_still_used": true,
+        "verifier_passes_inner_exec_timeout": false,
+        "buffered_outer_cancellation_handler": false,
+        "streamed_base_exception_handler": true,
+        "termination_helper_targets_cli_subprocess": true,
+        "daemon_process_termination_proven": false,
+        "streaming_opt_in": true,
+        "fixed_per_trial_stdout_truncation": true,
+        "error_recovery_stops_environment": true
+      },
+      "source_spans": [
+        {
+          "path": "inputs-private/release/src/harbor/trial/single_step.py",
+          "function": "_run_verifier",
+          "line_start": 88,
+          "line_end": 110,
+          "file_sha256": "ea318d64387014169a54b73f6aa7aa588c7095256d02a3cb518f2d4d8fa9e73e",
+          "ast_sha256": "1a7996e7a6c6cfd637f65c99306ff2cc150d5e87d9bf80a45e8c648a3316f146"
+        },
+        {
+          "path": "inputs-private/release/src/harbor/trial/single_step.py",
+          "function": "_run",
+          "line_start": 37,
+          "line_end": 54,
+          "file_sha256": "ea318d64387014169a54b73f6aa7aa588c7095256d02a3cb518f2d4d8fa9e73e",
+          "ast_sha256": "66cb04ed54fd14b27b05c31892f8e05f9b2b6a935f95a9093e6970044543f661"
+        },
+        {
+          "path": "inputs-private/release/src/harbor/trial/trial.py",
+          "function": "_verify_with_timeout",
+          "line_start": 855,
+          "line_end": 865,
+          "file_sha256": "3bb2c0b9dd7553022ba98da96ef5188abc27e2c8475ac949d541f47c5d86ecc6",
+          "ast_sha256": "8f329c67529338015db2c208a571227e84822b88487876b53b31c85ccd328f7c"
+        },
+        {
+          "path": "inputs-private/release/src/harbor/environments/docker/docker.py",
+          "function": "_collect_buffered_output",
+          "line_start": 767,
+          "line_end": 790,
+          "file_sha256": "77911f4df7fe29850d006ec969786a920302668fa7cdf35ff7c31cc96337bf65",
+          "ast_sha256": "7e36f64a6789ccf436715dbfe9684c7db3b262d4586c64ac9cf536f2110dd296"
+        },
+        {
+          "path": "inputs-private/release/src/harbor/environments/docker/docker.py",
+          "function": "_collect_streamed_output",
+          "line_start": 828,
+          "line_end": 886,
+          "file_sha256": "77911f4df7fe29850d006ec969786a920302668fa7cdf35ff7c31cc96337bf65",
+          "ast_sha256": "31bf61597b7215f78200d9716fb610bf632f70bdfcb58a3e8dc5a242e0ff9eed"
+        },
+        {
+          "path": "inputs-private/release/src/harbor/environments/docker/docker.py",
+          "function": "_terminate_process",
+          "line_start": 889,
+          "line_end": 897,
+          "file_sha256": "77911f4df7fe29850d006ec969786a920302668fa7cdf35ff7c31cc96337bf65",
+          "ast_sha256": "779f18dc09913fb0f818389c66714d1c896b4ffc0816b035c7c622e9e4021e25"
+        },
+        {
+          "path": "inputs-private/release/src/harbor/verifier/verifier.py",
+          "function": "verify",
+          "line_start": 166,
+          "line_end": 268,
+          "file_sha256": "6d3d9ed8882c5e07bae4aa6449732b096166fb9bbabc685b39c0e25f57b20aa9",
+          "ast_sha256": "28195e04bd01aedcdff336b12ad7e695dc109a777828ae74e9941fa8b6bc4819"
+        },
+        {
+          "path": "inputs-private/release/src/harbor/trial/trial.py",
+          "function": "_log_context",
+          "line_start": 453,
+          "line_end": 479,
+          "file_sha256": "3bb2c0b9dd7553022ba98da96ef5188abc27e2c8475ac949d541f47c5d86ecc6",
+          "ast_sha256": "6e4b32406644aa8db4fc06436fe8ce05956ba57ca05ac2d54589d99782b85d4d"
+        },
+        {
+          "path": "inputs-private/release/src/harbor/utils/scripts.py",
+          "function": "build_execution_command",
+          "line_start": 122,
+          "line_end": 160,
+          "file_sha256": "494313097da228db23d81e267b537894f8aa61bf500f7c6ef96552322ec87660",
+          "ast_sha256": "63a46f3652c250097b02827d6dc0da61878bd72c0570bbd9096099e6c202eeb0"
+        },
+        {
+          "path": "inputs-private/release/src/harbor/models/trial/paths.py",
+          "function": "test_stdout_path",
+          "line_start": 260,
+          "line_end": 264,
+          "file_sha256": "bc985600249f9113739ebc3a83724912d455dd30f9c062398d92e309673c64b8",
+          "ast_sha256": "e52f57c1913769ec50bb2d0321072d9aa9aaf681c8f9e0350bc418229fae5069"
+        },
+        {
+          "path": "inputs-private/release/src/harbor/trial/single_step.py",
+          "function": "_recover_outputs",
+          "line_start": 57,
+          "line_end": 60,
+          "file_sha256": "ea318d64387014169a54b73f6aa7aa588c7095256d02a3cb518f2d4d8fa9e73e",
+          "ast_sha256": "5daf8d7fcc7770e00a06912cc046bae19411df7b01f5021d303dfd0834b78b47"
+        },
+        {
+          "path": "inputs-private/release/src/harbor/trial/trial.py",
+          "function": "_stop_agent_environment",
+          "line_start": 1871,
+          "line_end": 1892,
+          "file_sha256": "3bb2c0b9dd7553022ba98da96ef5188abc27e2c8475ac949d541f47c5d86ecc6",
+          "ast_sha256": "6096c24b57362ea23ce7cc2e861b945e72d12b0e1c2a54b548a2d5e2585cf5dd"
+        }
+      ]
+    },
+    {
+      "label": "main",
+      "claims": {
+        "single_step_automatic_inner_verifier_retry": false,
+        "one_verifier_branch_invocation": true,
+        "outer_wait_for_still_used": true,
+        "verifier_passes_inner_exec_timeout": false,
+        "buffered_outer_cancellation_handler": false,
+        "streamed_base_exception_handler": true,
+        "termination_helper_targets_cli_subprocess": true,
+        "daemon_process_termination_proven": false,
+        "streaming_opt_in": true,
+        "fixed_per_trial_stdout_truncation": true,
+        "error_recovery_stops_environment": true
+      },
+      "source_spans": [
+        {
+          "path": "inputs-private/main/src/harbor/trial/single_step.py",
+          "function": "_run_verifier",
+          "line_start": 88,
+          "line_end": 110,
+          "file_sha256": "ea318d64387014169a54b73f6aa7aa588c7095256d02a3cb518f2d4d8fa9e73e",
+          "ast_sha256": "1a7996e7a6c6cfd637f65c99306ff2cc150d5e87d9bf80a45e8c648a3316f146"
+        },
+        {
+          "path": "inputs-private/main/src/harbor/trial/single_step.py",
+          "function": "_run",
+          "line_start": 37,
+          "line_end": 54,
+          "file_sha256": "ea318d64387014169a54b73f6aa7aa588c7095256d02a3cb518f2d4d8fa9e73e",
+          "ast_sha256": "66cb04ed54fd14b27b05c31892f8e05f9b2b6a935f95a9093e6970044543f661"
+        },
+        {
+          "path": "inputs-private/main/src/harbor/trial/trial.py",
+          "function": "_verify_with_timeout",
+          "line_start": 970,
+          "line_end": 980,
+          "file_sha256": "d6ab11b45f5d90d5cb898c5eaf1fb5aec113860c041f35034109ad464939ca96",
+          "ast_sha256": "8f329c67529338015db2c208a571227e84822b88487876b53b31c85ccd328f7c"
+        },
+        {
+          "path": "inputs-private/main/src/harbor/environments/docker/docker.py",
+          "function": "_collect_buffered_output",
+          "line_start": 776,
+          "line_end": 799,
+          "file_sha256": "4f74e08941b3534864643405dd6ff43543597248539d7f5de7208ec5c2f5b511",
+          "ast_sha256": "7e36f64a6789ccf436715dbfe9684c7db3b262d4586c64ac9cf536f2110dd296"
+        },
+        {
+          "path": "inputs-private/main/src/harbor/environments/docker/docker.py",
+          "function": "_collect_streamed_output",
+          "line_start": 837,
+          "line_end": 895,
+          "file_sha256": "4f74e08941b3534864643405dd6ff43543597248539d7f5de7208ec5c2f5b511",
+          "ast_sha256": "31bf61597b7215f78200d9716fb610bf632f70bdfcb58a3e8dc5a242e0ff9eed"
+        },
+        {
+          "path": "inputs-private/main/src/harbor/environments/docker/docker.py",
+          "function": "_terminate_process",
+          "line_start": 898,
+          "line_end": 906,
+          "file_sha256": "4f74e08941b3534864643405dd6ff43543597248539d7f5de7208ec5c2f5b511",
+          "ast_sha256": "779f18dc09913fb0f818389c66714d1c896b4ffc0816b035c7c622e9e4021e25"
+        },
+        {
+          "path": "inputs-private/main/src/harbor/verifier/verifier.py",
+          "function": "verify",
+          "line_start": 198,
+          "line_end": 310,
+          "file_sha256": "fc5d9fc6d27ac6eca57a3504f6853e094b0c50f4d965708e72d9c237ad30da34",
+          "ast_sha256": "5bd73aabb4d377093d0ed153701504c2ad3f39bf54983d6cf93045cae2da7089"
+        },
+        {
+          "path": "inputs-private/main/src/harbor/trial/trial.py",
+          "function": "_log_context",
+          "line_start": 562,
+          "line_end": 588,
+          "file_sha256": "d6ab11b45f5d90d5cb898c5eaf1fb5aec113860c041f35034109ad464939ca96",
+          "ast_sha256": "6e4b32406644aa8db4fc06436fe8ce05956ba57ca05ac2d54589d99782b85d4d"
+        },
+        {
+          "path": "inputs-private/main/src/harbor/utils/scripts.py",
+          "function": "build_execution_command",
+          "line_start": 122,
+          "line_end": 160,
+          "file_sha256": "494313097da228db23d81e267b537894f8aa61bf500f7c6ef96552322ec87660",
+          "ast_sha256": "63a46f3652c250097b02827d6dc0da61878bd72c0570bbd9096099e6c202eeb0"
+        },
+        {
+          "path": "inputs-private/main/src/harbor/models/trial/paths.py",
+          "function": "test_stdout_path",
+          "line_start": 260,
+          "line_end": 264,
+          "file_sha256": "9a6ac7597e93133910a5669f37f70c1d78cab0623d428023e47d6cc0814db584",
+          "ast_sha256": "e52f57c1913769ec50bb2d0321072d9aa9aaf681c8f9e0350bc418229fae5069"
+        },
+        {
+          "path": "inputs-private/main/src/harbor/trial/single_step.py",
+          "function": "_recover_outputs",
+          "line_start": 57,
+          "line_end": 60,
+          "file_sha256": "ea318d64387014169a54b73f6aa7aa588c7095256d02a3cb518f2d4d8fa9e73e",
+          "ast_sha256": "5daf8d7fcc7770e00a06912cc046bae19411df7b01f5021d303dfd0834b78b47"
+        },
+        {
+          "path": "inputs-private/main/src/harbor/trial/trial.py",
+          "function": "_stop_agent_environment",
+          "line_start": 2039,
+          "line_end": 2060,
+          "file_sha256": "d6ab11b45f5d90d5cb898c5eaf1fb5aec113860c041f35034109ad464939ca96",
+          "ast_sha256": "6096c24b57362ea23ce7cc2e861b945e72d12b0e1c2a54b548a2d5e2585cf5dd"
+        }
+      ]
+    }
+  ],
+  "source_only": true,
+  "upstream_imported_or_executed": false,
+  "selected_upstream_tests_run": false,
+  "native_runtime_cpu_hours": 0,
+  "model_calls": 0,
+  "new_biological_tasks": 0,
+  "conclusion": "Published 0.24.0 and pinned main remove the old single-step inner retry, but source does not establish daemon-side cancellation or universal per-attempt log isolation. Candidate for a separate native comparison, not an approved production upgrade.",
+  "limits": "Structural assertions establish inspected call paths, not Docker daemon outcomes. Selected test review is bounded, not exhaustive. Package runtime-source parity is recorded separately; current main is unreleased source."
+}
