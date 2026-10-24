@@ -1,0 +1,940 @@
+{
+  "issue": 41,
+  "kind": "native_harbor_infrastructure_fixture",
+  "run_id": "biotasks41-cancel-9789693f9b",
+  "finite_control_passed": true,
+  "native_timeout_observed": true,
+  "fixture_mechanism_observed": false,
+  "historical_scanpy_cause_proven": false,
+  "live_prior_writer_confirmed": true,
+  "transient_in_container_holes_observed": true,
+  "in_container_hole_sample_count": 11,
+  "maximum_observed_nul_bytes": 59392,
+  "final_saved_log_nul_bytes": 0,
+  "component_analysis_is_post_run": true,
+  "preregistered_metric_unchanged": true,
+  "cases": [
+    {
+      "name": "finite",
+      "state": "native_returned",
+      "wrapper_exit": 0,
+      "trial_present": true,
+      "exception": null,
+      "fixture_reward": 0.0,
+      "resources_verified": true,
+      "events_path": "jobs/biotasks41-cancel-9789693f9b-finite/harbor-timeout-finite__biCvSh5/verifier/process-events.jsonl",
+      "writer_log_path": "jobs/biotasks41-cancel-9789693f9b-finite/harbor-timeout-finite__biCvSh5/verifier/writer.log",
+      "writer_log_sha256": "aded4a8b60f79b48bcc05e800637651147a23b3ea77b96bec2c7feebf99f1fc1",
+      "events": [
+        {
+          "event": "start",
+          "token": "231804350b344488b9f853a507f9cfd7",
+          "pid": 33,
+          "ppid": 32,
+          "pgrp": 26,
+          "session": 26,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45665691,
+            "fd1_inode": 1811321,
+            "fd1_size": 0,
+            "fd1_offset": 0,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "writer_seconds": 2.0,
+          "cgroup": {
+            "cpu.max": "100000 100000",
+            "memory.max": "6442450944"
+          },
+          "monotonic_ns": 456657067509939,
+          "wall_ns": 1792828093810933692,
+          "previous": []
+        },
+        {
+          "event": "sample",
+          "token": "231804350b344488b9f853a507f9cfd7",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45665691,
+            "fd1_inode": 1811321,
+            "fd1_size": 10240,
+            "fd1_offset": 10240,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 10240,
+          "log_nul_bytes": 0,
+          "log_sha256": "458e8e0224f3344b831165007afbdcbaf353c6e7f902d7fccdcbf82e80d32004",
+          "monotonic_ns": 456657968542552,
+          "wall_ns": 1792828094711965315
+        },
+        {
+          "event": "sample",
+          "token": "231804350b344488b9f853a507f9cfd7",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45665691,
+            "fd1_inode": 1811321,
+            "fd1_size": 20480,
+            "fd1_offset": 20480,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "aded4a8b60f79b48bcc05e800637651147a23b3ea77b96bec2c7feebf99f1fc1",
+          "monotonic_ns": 456658969572379,
+          "wall_ns": 1792828095712995041
+        },
+        {
+          "event": "end",
+          "token": "231804350b344488b9f853a507f9cfd7",
+          "pid": 33,
+          "records": 20,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45665691,
+            "fd1_inode": 1811321,
+            "fd1_size": 20480,
+            "fd1_offset": 20480,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "monotonic_ns": 456659069815762,
+          "wall_ns": 1792828095813238435
+        }
+      ],
+      "writer_starts": 1,
+      "writer_ends": 1,
+      "live_prior_writers": [],
+      "native_container_sample_count": 2,
+      "in_container_hole_samples": 0,
+      "raw_log_nul_bytes": 0,
+      "raw_log_tokens": [
+        "231804350b344488b9f853a507f9cfd7"
+      ],
+      "fixture_mechanism_observed": false,
+      "historical_scanpy_cause_proven": false
+    },
+    {
+      "name": "timeout",
+      "state": "native_returned",
+      "wrapper_exit": 0,
+      "trial_present": true,
+      "exception": {
+        "exception_type": "VerifierTimeoutError",
+        "exception_message": "Verifier execution timed out after 5.0 seconds",
+        "exception_traceback": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/verifier/verifier.py\", line 185, in verify\n    await self._environment.exec(\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 599, in exec\n    return await self._run_docker_compose_command(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 360, in _run_docker_compose_command\n    stdout_bytes, stderr_bytes = await process.communicate()\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 201, in communicate\n    stdin, stdout, stderr = await tasks.gather(stdin, stdout, stderr)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 181, in _read_stream\n    output = await stream.read()\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 706, in read\n    block = await self.read(self._limit)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 713, in read\n    await self._wait_for_data('read')\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 545, in _wait_for_data\n    await self._waiter\nasyncio.exceptions.CancelledError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 410, in _verify_with_retry\n    self.result.verifier_result = await asyncio.wait_for(\n                                  ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 519, in wait_for\n    async with timeouts.timeout(timeout):\n               ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/timeouts.py\", line 115, in __aexit__\n    raise TimeoutError from exc_val\nTimeoutError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 986, in run\n    await self._run_verification()\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 391, in _run_verification\n    await self._verify_with_retry()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 232, in async_wrapped\n    return await copy(fn, *args, **kwargs)  # type: ignore[type-var]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 126, in __call__\n    do = await self.iter(retry_state=retry_state)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 171, in iter\n    result = await action(retry_state)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/_utils.py\", line 130, in inner\n    return call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 482, in exc_check\n    retry_exc.reraise()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 216, in reraise\n    raise self.last_attempt.result()\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 449, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 401, in __get_result\n    raise self._exception\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 130, in __call__\n    result = await fn(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 415, in _verify_with_retry\n    raise VerifierTimeoutError(\nharbor.trial.trial.VerifierTimeoutError: Verifier execution timed out after 5.0 seconds\n",
+        "occurred_at": "2026-10-24T07:48:49.462003"
+      },
+      "fixture_reward": null,
+      "resources_verified": true,
+      "events_path": "jobs/biotasks41-cancel-9789693f9b-timeout/harbor-timeout-timeout__vhJsghq/verifier/process-events.jsonl",
+      "writer_log_path": "jobs/biotasks41-cancel-9789693f9b-timeout/harbor-timeout-timeout__vhJsghq/verifier/writer.log",
+      "writer_log_sha256": "52df7b4912eee3849bd7323d83baadbd1deecb8408b8836c16c230ec9da38117",
+      "events": [
+        {
+          "event": "start",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "ppid": 32,
+          "pgrp": 26,
+          "session": 26,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 0,
+            "fd1_offset": 0,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "writer_seconds": 30.0,
+          "cgroup": {
+            "cpu.max": "100000 100000",
+            "memory.max": "6442450944"
+          },
+          "monotonic_ns": 456682780684353,
+          "wall_ns": 1792828119524107626,
+          "previous": []
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 10240,
+            "fd1_offset": 10240,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 10240,
+          "log_nul_bytes": 0,
+          "log_sha256": "6aff629c0f9249a79b11598e2e97bf69c585e6eaa608883635cca183abd76567",
+          "monotonic_ns": 456683681765136,
+          "wall_ns": 1792828120425187969
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 20480,
+            "fd1_offset": 20480,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 20480,
+          "log_nul_bytes": 0,
+          "log_sha256": "5e5ca150b8baa3542db9ca8fdd39646d1ab9a0e563973727c8175fa48406f705",
+          "monotonic_ns": 456684682833602,
+          "wall_ns": 1792828121426256275
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 30720,
+            "fd1_offset": 30720,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 30720,
+          "log_nul_bytes": 0,
+          "log_sha256": "303c8b1d70f30e4d2b26c688a11f3544a8ec9b908f52155056b584ba1dadf65a",
+          "monotonic_ns": 456685683870629,
+          "wall_ns": 1792828122427293262
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 40960,
+            "fd1_offset": 40960,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 40960,
+          "log_nul_bytes": 0,
+          "log_sha256": "85fd031305abd2392a1451ac87cf64baa70eb4509a462c2d487dbda4a08d91f9",
+          "monotonic_ns": 456686684928106,
+          "wall_ns": 1792828123428350769
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 51200,
+            "fd1_offset": 51200,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 51200,
+          "log_nul_bytes": 0,
+          "log_sha256": "335916677817833b9e7086f99983f672346de82e06b444951142d742816b7c3c",
+          "monotonic_ns": 456687686010653,
+          "wall_ns": 1792828124429433296
+        },
+        {
+          "event": "start",
+          "token": "3df3a32d225e466aadb652cdc42eb571",
+          "pid": 47,
+          "ppid": 46,
+          "pgrp": 40,
+          "session": 40,
+          "self": {
+            "pid": 47,
+            "state": "R",
+            "start_ticks": 45668860,
+            "fd1_inode": 1811337,
+            "fd1_size": 0,
+            "fd1_offset": 0,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "writer_seconds": 30.0,
+          "cgroup": {
+            "cpu.max": "100000 100000",
+            "memory.max": "6442450944"
+          },
+          "monotonic_ns": 456688640450212,
+          "wall_ns": 1792828125383873295,
+          "previous": [
+            {
+              "expected_pid": 33,
+              "expected_start_ticks": 45668263,
+              "expected_token": "ae4d7fb7be164b1384c89e128bbdd37e",
+              "observed": {
+                "pid": 33,
+                "state": "S",
+                "start_ticks": 45668263,
+                "fd1_inode": 1811337,
+                "fd1_size": 0,
+                "fd1_offset": 60416,
+                "writer_command": true,
+                "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+              }
+            }
+          ]
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 61440,
+            "fd1_offset": 61440,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 61440,
+          "log_nul_bytes": 59392,
+          "log_sha256": "3bf8db6442044af6d52a4932128e19e16dacadc4524f4fc3bc8ffc80b695ee83",
+          "monotonic_ns": 456688687435839,
+          "wall_ns": 1792828125430858592
+        },
+        {
+          "event": "sample",
+          "token": "3df3a32d225e466aadb652cdc42eb571",
+          "pid": 47,
+          "self": {
+            "pid": 47,
+            "state": "R",
+            "start_ticks": 45668860,
+            "fd1_inode": 1811337,
+            "fd1_size": 69632,
+            "fd1_offset": 10240,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 69632,
+          "log_nul_bytes": 50176,
+          "log_sha256": "e5973b4ccb47fece4c2fc28671496900711baa403bffd32d31cb982c7417036b",
+          "monotonic_ns": 456689541894505,
+          "wall_ns": 1792828126285317328
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 71680,
+            "fd1_offset": 71680,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 71680,
+          "log_nul_bytes": 49152,
+          "log_sha256": "d47e1ef894caa952e1465614d996bb406d6a3529daed3b46e5a13d029739da7d",
+          "monotonic_ns": 456689688575116,
+          "wall_ns": 1792828126431997729
+        },
+        {
+          "event": "sample",
+          "token": "3df3a32d225e466aadb652cdc42eb571",
+          "pid": 47,
+          "self": {
+            "pid": 47,
+            "state": "R",
+            "start_ticks": 45668860,
+            "fd1_inode": 1811337,
+            "fd1_size": 79872,
+            "fd1_offset": 20480,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 79872,
+          "log_nul_bytes": 39936,
+          "log_sha256": "2c1fc455b982b21238a75103e4a4d939b5c22883f6e985c3b47406971615befc",
+          "monotonic_ns": 456690543050162,
+          "wall_ns": 1792828127286472805
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 81920,
+            "fd1_offset": 81920,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 81920,
+          "log_nul_bytes": 38912,
+          "log_sha256": "0aae15192fc982a2f693f5686b24b52909e011cf82dd80e059b53c7e4bc89cf6",
+          "monotonic_ns": 456690689718453,
+          "wall_ns": 1792828127433141086
+        },
+        {
+          "event": "sample",
+          "token": "3df3a32d225e466aadb652cdc42eb571",
+          "pid": 47,
+          "self": {
+            "pid": 47,
+            "state": "R",
+            "start_ticks": 45668860,
+            "fd1_inode": 1811337,
+            "fd1_size": 90112,
+            "fd1_offset": 30720,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 90112,
+          "log_nul_bytes": 29696,
+          "log_sha256": "f299a9fb97b014c679853b3124bb1c8928fce0e10b28753de402e595be219d7c",
+          "monotonic_ns": 456691544250289,
+          "wall_ns": 1792828128287672952
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 92160,
+            "fd1_offset": 92160,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 92160,
+          "log_nul_bytes": 28672,
+          "log_sha256": "80fc82a0110e5c0383a9085a99a7892617bc75e64564819bec9ade01eaeffdac",
+          "monotonic_ns": 456691690952420,
+          "wall_ns": 1792828128434375073
+        },
+        {
+          "event": "sample",
+          "token": "3df3a32d225e466aadb652cdc42eb571",
+          "pid": 47,
+          "self": {
+            "pid": 47,
+            "state": "R",
+            "start_ticks": 45668860,
+            "fd1_inode": 1811337,
+            "fd1_size": 100352,
+            "fd1_offset": 40960,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 100352,
+          "log_nul_bytes": 19456,
+          "log_sha256": "624b0c9ba66cf4ff12193246ef6be489995bd673dc53fe2e062fb157b3a918fb",
+          "monotonic_ns": 456692545527445,
+          "wall_ns": 1792828129288950078
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 102400,
+            "fd1_offset": 102400,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 102400,
+          "log_nul_bytes": 18432,
+          "log_sha256": "a52896b280c847396dd1ce22e61ab97d69291088874705d0a54825366e84296c",
+          "monotonic_ns": 456692692210296,
+          "wall_ns": 1792828129435632949
+        },
+        {
+          "event": "sample",
+          "token": "3df3a32d225e466aadb652cdc42eb571",
+          "pid": 47,
+          "self": {
+            "pid": 47,
+            "state": "R",
+            "start_ticks": 45668860,
+            "fd1_inode": 1811337,
+            "fd1_size": 110592,
+            "fd1_offset": 51200,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 110592,
+          "log_nul_bytes": 9216,
+          "log_sha256": "6ac115ad98cc03e2b5573238813601d5f5193c09d961fd8e053cc84345efbc0d",
+          "monotonic_ns": 456693546917162,
+          "wall_ns": 1792828130290339925
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 112640,
+            "fd1_offset": 112640,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 112640,
+          "log_nul_bytes": 8192,
+          "log_sha256": "8c7bafa9c5c5d611194ccecd2e63747960221567e831b17ada0e4d3cc6c3ae4d",
+          "monotonic_ns": 456693693617053,
+          "wall_ns": 1792828130437039686
+        },
+        {
+          "event": "sample",
+          "token": "3df3a32d225e466aadb652cdc42eb571",
+          "pid": 47,
+          "self": {
+            "pid": 47,
+            "state": "R",
+            "start_ticks": 45668860,
+            "fd1_inode": 1811337,
+            "fd1_size": 120832,
+            "fd1_offset": 61440,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 120832,
+          "log_nul_bytes": 0,
+          "log_sha256": "be4fafea3fd02dadbac346d70377167e0dfcf01039f951caf0c6940013924c4d",
+          "monotonic_ns": 456694548131078,
+          "wall_ns": 1792828131291553902
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 122880,
+            "fd1_offset": 122880,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 122880,
+          "log_nul_bytes": 0,
+          "log_sha256": "4d8b627aa56f613d3bf53ede3d614c71d6d2128eb9c782478be8d8584b05addf",
+          "monotonic_ns": 456694694885299,
+          "wall_ns": 1792828131438308122
+        },
+        {
+          "event": "sample",
+          "token": "3df3a32d225e466aadb652cdc42eb571",
+          "pid": 47,
+          "self": {
+            "pid": 47,
+            "state": "R",
+            "start_ticks": 45668860,
+            "fd1_inode": 1811337,
+            "fd1_size": 131072,
+            "fd1_offset": 71680,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 131072,
+          "log_nul_bytes": 0,
+          "log_sha256": "8b93c77089f2721055588721aeeaad7548b7b018237850653ec7b38fe9f24820",
+          "monotonic_ns": 456695549404736,
+          "wall_ns": 1792828132292827369
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 133120,
+            "fd1_offset": 133120,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 133120,
+          "log_nul_bytes": 0,
+          "log_sha256": "bd186e85f05583f706190a65f972004c42cbf46b447a5a64bc1d65152141ece9",
+          "monotonic_ns": 456695696127617,
+          "wall_ns": 1792828132439550259
+        },
+        {
+          "event": "sample",
+          "token": "3df3a32d225e466aadb652cdc42eb571",
+          "pid": 47,
+          "self": {
+            "pid": 47,
+            "state": "R",
+            "start_ticks": 45668860,
+            "fd1_inode": 1811337,
+            "fd1_size": 141312,
+            "fd1_offset": 81920,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 141312,
+          "log_nul_bytes": 0,
+          "log_sha256": "4c67ba0d8d2acf96480612ea42df1929834335bebe452299f8555ac8f2901280",
+          "monotonic_ns": 456696550722952,
+          "wall_ns": 1792828133294145635
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 143360,
+            "fd1_offset": 143360,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 143360,
+          "log_nul_bytes": 0,
+          "log_sha256": "fa926be52893fe5792df00ff304fb00a202ba931549e96b79300d917c329d7ec",
+          "monotonic_ns": 456696697361623,
+          "wall_ns": 1792828133440784236
+        },
+        {
+          "event": "sample",
+          "token": "3df3a32d225e466aadb652cdc42eb571",
+          "pid": 47,
+          "self": {
+            "pid": 47,
+            "state": "R",
+            "start_ticks": 45668860,
+            "fd1_inode": 1811337,
+            "fd1_size": 151552,
+            "fd1_offset": 92160,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 151552,
+          "log_nul_bytes": 0,
+          "log_sha256": "0f38f5a8d8aab777e412481564d81dec808515612eaec8ba477c925df20c2faf",
+          "monotonic_ns": 456697552048359,
+          "wall_ns": 1792828134295471082
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 153600,
+            "fd1_offset": 153600,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 153600,
+          "log_nul_bytes": 0,
+          "log_sha256": "fc13fd2bacc53a0b5206465e5a764ae8ad5e14a829e511617dc0749f500a14fa",
+          "monotonic_ns": 456697698657790,
+          "wall_ns": 1792828134442080492
+        },
+        {
+          "event": "sample",
+          "token": "3df3a32d225e466aadb652cdc42eb571",
+          "pid": 47,
+          "self": {
+            "pid": 47,
+            "state": "R",
+            "start_ticks": 45668860,
+            "fd1_inode": 1811337,
+            "fd1_size": 161792,
+            "fd1_offset": 102400,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 161792,
+          "log_nul_bytes": 0,
+          "log_sha256": "a9fb83c36bfed5a084d0110e4fe414fc0b1a94fe055d62528844a6b39e219949",
+          "monotonic_ns": 456698553415715,
+          "wall_ns": 1792828135296838468
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 163840,
+            "fd1_offset": 163840,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 163840,
+          "log_nul_bytes": 0,
+          "log_sha256": "c77f112f0cf7dd6ee225adfb1a398a27c285c1050716bcb80f8d0b02e723a905",
+          "monotonic_ns": 456698699977486,
+          "wall_ns": 1792828135443400109
+        },
+        {
+          "event": "sample",
+          "token": "3df3a32d225e466aadb652cdc42eb571",
+          "pid": 47,
+          "self": {
+            "pid": 47,
+            "state": "R",
+            "start_ticks": 45668860,
+            "fd1_inode": 1811337,
+            "fd1_size": 172032,
+            "fd1_offset": 112640,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 172032,
+          "log_nul_bytes": 0,
+          "log_sha256": "6a77d9696d06fa2a55d1f1bc095124098f7350a01775d0b36a9a0f5927fae7e8",
+          "monotonic_ns": 456699554793842,
+          "wall_ns": 1792828136298216545
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 174080,
+            "fd1_offset": 174080,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 174080,
+          "log_nul_bytes": 0,
+          "log_sha256": "27682988a3ab8a7f84a2d53f596939bd5aa896fddcc2db461d97b90207d6d092",
+          "monotonic_ns": 456699701276763,
+          "wall_ns": 1792828136444699396
+        },
+        {
+          "event": "sample",
+          "token": "3df3a32d225e466aadb652cdc42eb571",
+          "pid": 47,
+          "self": {
+            "pid": 47,
+            "state": "R",
+            "start_ticks": 45668860,
+            "fd1_inode": 1811337,
+            "fd1_size": 182272,
+            "fd1_offset": 122880,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 182272,
+          "log_nul_bytes": 0,
+          "log_sha256": "1abf11541884d36f22999b314f4f9ef885c0952090255461bd08236bc0f97e84",
+          "monotonic_ns": 456700556171399,
+          "wall_ns": 1792828137299594072
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 184320,
+            "fd1_offset": 184320,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 184320,
+          "log_nul_bytes": 0,
+          "log_sha256": "d18d6afbc914fa1f2e1dec88408ed90ace6d6096bd3b901cc380d277e4eb207a",
+          "monotonic_ns": 456700702672000,
+          "wall_ns": 1792828137446094693
+        },
+        {
+          "event": "sample",
+          "token": "3df3a32d225e466aadb652cdc42eb571",
+          "pid": 47,
+          "self": {
+            "pid": 47,
+            "state": "R",
+            "start_ticks": 45668860,
+            "fd1_inode": 1811337,
+            "fd1_size": 192512,
+            "fd1_offset": 133120,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 192512,
+          "log_nul_bytes": 0,
+          "log_sha256": "0b40c46ff97004a4913db0e545ba88d04406592009d7203fd546de82491361ab",
+          "monotonic_ns": 456701557570695,
+          "wall_ns": 1792828138300993479
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 194560,
+            "fd1_offset": 194560,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 194560,
+          "log_nul_bytes": 0,
+          "log_sha256": "eb1abdaf57ae63e8c66429b6606ddf80e649f99f22368dd4df5ca13df58cdf3c",
+          "monotonic_ns": 456701704106716,
+          "wall_ns": 1792828138447529329
+        },
+        {
+          "event": "sample",
+          "token": "3df3a32d225e466aadb652cdc42eb571",
+          "pid": 47,
+          "self": {
+            "pid": 47,
+            "state": "R",
+            "start_ticks": 45668860,
+            "fd1_inode": 1811337,
+            "fd1_size": 202752,
+            "fd1_offset": 143360,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 202752,
+          "log_nul_bytes": 0,
+          "log_sha256": "3aa3babc1618873066e8129a6a05b9e3c9d5ad24ab76201c9a6ebdf9c8d85d2e",
+          "monotonic_ns": 456702559038192,
+          "wall_ns": 1792828139302460885
+        },
+        {
+          "event": "sample",
+          "token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "pid": 33,
+          "self": {
+            "pid": 33,
+            "state": "R",
+            "start_ticks": 45668263,
+            "fd1_inode": 1811337,
+            "fd1_size": 204800,
+            "fd1_offset": 204800,
+            "writer_command": true,
+            "command_sha256": "14f05d863be31a9a4128b78dad7e8db16f9459be6df128e70b25e28087ca27bb"
+          },
+          "log_bytes": 204800,
+          "log_nul_bytes": 0,
+          "log_sha256": "97c7a7baa12475406860a9683a6da5ed0e5bf5c98ac384f888e6c7c3c3f11db3",
+          "monotonic_ns": 456702705545233,
+          "wall_ns": 1792828139448967886
+        }
+      ],
+      "writer_starts": 2,
+      "writer_ends": 0,
+      "live_prior_writers": [
+        {
+          "observer_token": "3df3a32d225e466aadb652cdc42eb571",
+          "prior_token": "ae4d7fb7be164b1384c89e128bbdd37e",
+          "observed_pid": 33,
+          "observed_state": "S",
+          "same_start_ticks": true,
+          "observer_wall_ns": 1792828125383873295,
+          "same_log_inode": true,
+          "prior_offset": 60416,
+          "new_offset": 0,
+          "prior_offset_exceeds_new_offset": true
+        }
+      ],
+      "native_container_sample_count": 34,
+      "in_container_hole_samples": 11,
+      "raw_log_nul_bytes": 0,
+      "raw_log_tokens": [
+        "3df3a32d225e466aadb652cdc42eb571",
+        "ae4d7fb7be164b1384c89e128bbdd37e"
+      ],
+      "fixture_mechanism_observed": false,
+      "historical_scanpy_cause_proven": false
+    }
+  ],
+  "native_source_parity": {
+    "source_files_verified": 203,
+    "harbor": "0.6.6",
+    "tenacity": "9.2.1",
+    "verified": true
+  },
+  "stage": "native_probe_returned",
+  "error_type": null,
+  "error_phase": null,
+  "shared_public_base_preserved": true,
+  "allocated_cpu_hours": 0.07706388884120517,
+  "prior_attempt_cpu_hours": 0.06059555557039049,
+  "total_main_cpu_hours": 0.13765944441159567,
+  "raw_archive_sha256": "838b394585b1dd3a4be67fbba890e5ab7934e8b4427d2b32290efbff8817c87a",
+  "hf_prefix": "research/41-verifier-cancellation/2026-10-24/60c0b5ad39dcd11ff20ab5ca98d0520af1eb4998404aee7618ad922bc3a8b4c9",
+  "anonymous_download_verified": true,
+  "cleanup_verified": true,
+  "cleanup_route": "primary",
+  "original_tasks_changed": false,
+  "new_biological_tasks": 0,
+  "model_calls": 0
+}

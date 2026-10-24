@@ -21,12 +21,20 @@ def summarize():
     complete = json.loads((directory / 'complete.json').read_text())
     assert complete['hf_manifest_sha256'] == receipt['manifest_sha256']
     read = json.loads((directory / 'readback.json').read_text())
+    observations = json.loads((ROOT / 'component-observations.json').read_text())
+    assert observations['readback_sha256'] == sha(directory / 'readback.json')
     proof = json.loads((directory / 'cleanup-proof.json').read_text())
     assert proof['cleanup'].get('verified_empty') or proof['cleanup'].get('verified_no_creation')
     allowance = json.loads((ROOT / 'retry-allowance.json').read_text())
     results = dict(issue=41, kind=read['kind'], run_id=read['run_id'],
         finite_control_passed=read['finite_control_passed'], native_timeout_observed=read['native_timeout_observed'],
         fixture_mechanism_observed=read['fixture_mechanism_observed'], historical_scanpy_cause_proven=False,
+        live_prior_writer_confirmed=observations['live_prior_writer_confirmed'],
+        transient_in_container_holes_observed=observations['transient_in_container_holes_observed'],
+        in_container_hole_sample_count=observations['hole_sample_count'],
+        maximum_observed_nul_bytes=observations['maximum_observed_nul_bytes'],
+        final_saved_log_nul_bytes=observations['final_saved_log_nul_bytes'],
+        component_analysis_is_post_run=True, preregistered_metric_unchanged=True,
         cases=read['cases'], native_source_parity=read['native_source_parity'],
         stage=read['stage'], error_type=read['error_type'], error_phase=read['error_phase'],
         shared_public_base_preserved=read['shared_public_base_preserved'],
@@ -49,7 +57,8 @@ def summarize():
         lines.append('| ' + ' | '.join(str(v) for v in values) + ' |')
     lines += ['',
         'This is a self-authored infrastructure fixture through unchanged Harbor 0.6.6, not a biological control rerun, task export or solver score. Five-second verifier deadlines deliberately expose native cancellation/retry behavior; finite and timeout writers run for two and thirty seconds respectively. The trial must both establish its finite control and preserve independent resource/process observations before the mechanism is counted.', '',
-        'Historical Scanpy causation remains unproven. Its missing rewards, old NUL holes, dependency failures and task validity are separate questions. PID/start-time identity, non-zombie state, matching log inode, independently reset offset and in-container hole samples are required here; missing events alone are not survival proof.', '',
+        'The timeout retry began 5.859766 seconds after the first writer. That first PID was still sleeping, with matching start ticks and the same log inode: old descriptor offset 60,416 bytes, new offset zero. Eleven samples measured transient NUL holes inside the task container (maximum 59,392 bytes, from 5.906751 through 10.912932 seconds). The final archived log has zero NULs. Fixed-size writes and measured offsets are consistent with the new writer filling the initial gap. The predeclared conjunction additionally requires final saved NULs, so it remains false; component observations are reported separately as post-run analysis without changing that metric.', '',
+        'Historical Scanpy causation remains unproven. Its missing rewards, old NUL holes, dependency failures and task validity are separate questions. This fixture demonstrates live process survival into retry and transient in-container holes on one worker; it does not reproduce persistent holes in the final saved log. Intermediate snapshots were sampled as counts/hashes, not retained as complete raw files.', '',
         f"Prior preparation attempts used {allowance['prior_actual_cpu_hours']:.9f} CPU-hours; this attempt used {read['allocated_cpu_hours']:.9f}. Total main allocation {results['total_main_cpu_hours']:.9f} / 1 CPU-hour. The constructor failure and Compose rejection are separately archived, not negative mechanism results. Zero model calls/new paid capacity. Raw evidence, anonymous HF readback and owned cleanup are verified; keep issue open for user review.", '',
         f"Runtime snapshot: `hf://buckets/open-athena/biotasks/{receipt['prefix']}`.", '']
     (ROOT / 'results.md').write_text('\n'.join(lines))

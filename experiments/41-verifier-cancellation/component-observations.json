@@ -1,0 +1,320 @@
+{
+  "issue": 41,
+  "analysis_kind": "post_run_component_observations",
+  "readback_sha256": "25c6c6b9ed998a98ca1dc989915622aad0f8b4ba718a5fdd5119e27297b06c5d",
+  "finite_control_passed": true,
+  "native_timeout_observed": true,
+  "live_prior_writer_confirmed": true,
+  "live_prior_writer": [
+    {
+      "observer_token": "3df3a32d225e466aadb652cdc42eb571",
+      "prior_token": "ae4d7fb7be164b1384c89e128bbdd37e",
+      "observed_pid": 33,
+      "observed_state": "S",
+      "same_start_ticks": true,
+      "observer_wall_ns": 1792828125383873295,
+      "same_log_inode": true,
+      "prior_offset": 60416,
+      "new_offset": 0,
+      "prior_offset_exceeds_new_offset": true
+    }
+  ],
+  "retry_writer_started_seconds": 5.859765669,
+  "transient_in_container_holes_observed": true,
+  "hole_sample_count": 11,
+  "maximum_observed_nul_bytes": 59392,
+  "first_hole_sample_seconds": 5.906750966,
+  "last_hole_sample_seconds": 10.91293206,
+  "final_saved_log_nul_bytes": 0,
+  "preregistered_full_mechanism_observed": false,
+  "original_metric_unchanged": true,
+  "historical_scanpy_cause_proven": false,
+  "interpretation": "Live first writer survives into native retry; truncation on the same inode resets only the new descriptor. In-container samples observe transient holes. The new writer later fills the initial gap, so the final archive has no NULs and the predeclared conjunction requiring final NULs remains false.",
+  "limitation": "Synthetic fixed-record fixture on one worker; sampled counts/hashes and raw final log, not retained full intermediate file snapshots. Does not identify historical Scanpy cause or validate that task.",
+  "timeline": [
+    {
+      "seconds_since_first_writer_start": 0.0,
+      "writer_index": 0,
+      "event": "start"
+    },
+    {
+      "seconds_since_first_writer_start": 0.901080343,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 10240,
+      "nul_bytes": 0,
+      "writer_offset": 10240
+    },
+    {
+      "seconds_since_first_writer_start": 1.902148649,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 20480,
+      "nul_bytes": 0,
+      "writer_offset": 20480
+    },
+    {
+      "seconds_since_first_writer_start": 2.903185636,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 30720,
+      "nul_bytes": 0,
+      "writer_offset": 30720
+    },
+    {
+      "seconds_since_first_writer_start": 3.904243143,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 40960,
+      "nul_bytes": 0,
+      "writer_offset": 40960
+    },
+    {
+      "seconds_since_first_writer_start": 4.90532567,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 51200,
+      "nul_bytes": 0,
+      "writer_offset": 51200
+    },
+    {
+      "seconds_since_first_writer_start": 5.859765669,
+      "writer_index": 1,
+      "event": "start"
+    },
+    {
+      "seconds_since_first_writer_start": 5.906750966,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 61440,
+      "nul_bytes": 59392,
+      "writer_offset": 61440
+    },
+    {
+      "seconds_since_first_writer_start": 6.761209702,
+      "writer_index": 1,
+      "event": "sample",
+      "log_bytes": 69632,
+      "nul_bytes": 50176,
+      "writer_offset": 10240
+    },
+    {
+      "seconds_since_first_writer_start": 6.907890103,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 71680,
+      "nul_bytes": 49152,
+      "writer_offset": 71680
+    },
+    {
+      "seconds_since_first_writer_start": 7.762365179,
+      "writer_index": 1,
+      "event": "sample",
+      "log_bytes": 79872,
+      "nul_bytes": 39936,
+      "writer_offset": 20480
+    },
+    {
+      "seconds_since_first_writer_start": 7.90903346,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 81920,
+      "nul_bytes": 38912,
+      "writer_offset": 81920
+    },
+    {
+      "seconds_since_first_writer_start": 8.763565326,
+      "writer_index": 1,
+      "event": "sample",
+      "log_bytes": 90112,
+      "nul_bytes": 29696,
+      "writer_offset": 30720
+    },
+    {
+      "seconds_since_first_writer_start": 8.910267447,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 92160,
+      "nul_bytes": 28672,
+      "writer_offset": 92160
+    },
+    {
+      "seconds_since_first_writer_start": 9.764842452,
+      "writer_index": 1,
+      "event": "sample",
+      "log_bytes": 100352,
+      "nul_bytes": 19456,
+      "writer_offset": 40960
+    },
+    {
+      "seconds_since_first_writer_start": 9.911525323,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 102400,
+      "nul_bytes": 18432,
+      "writer_offset": 102400
+    },
+    {
+      "seconds_since_first_writer_start": 10.766232299,
+      "writer_index": 1,
+      "event": "sample",
+      "log_bytes": 110592,
+      "nul_bytes": 9216,
+      "writer_offset": 51200
+    },
+    {
+      "seconds_since_first_writer_start": 10.91293206,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 112640,
+      "nul_bytes": 8192,
+      "writer_offset": 112640
+    },
+    {
+      "seconds_since_first_writer_start": 11.767446276,
+      "writer_index": 1,
+      "event": "sample",
+      "log_bytes": 120832,
+      "nul_bytes": 0,
+      "writer_offset": 61440
+    },
+    {
+      "seconds_since_first_writer_start": 11.914200496,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 122880,
+      "nul_bytes": 0,
+      "writer_offset": 122880
+    },
+    {
+      "seconds_since_first_writer_start": 12.768719743,
+      "writer_index": 1,
+      "event": "sample",
+      "log_bytes": 131072,
+      "nul_bytes": 0,
+      "writer_offset": 71680
+    },
+    {
+      "seconds_since_first_writer_start": 12.915442633,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 133120,
+      "nul_bytes": 0,
+      "writer_offset": 133120
+    },
+    {
+      "seconds_since_first_writer_start": 13.770038009,
+      "writer_index": 1,
+      "event": "sample",
+      "log_bytes": 141312,
+      "nul_bytes": 0,
+      "writer_offset": 81920
+    },
+    {
+      "seconds_since_first_writer_start": 13.91667661,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 143360,
+      "nul_bytes": 0,
+      "writer_offset": 143360
+    },
+    {
+      "seconds_since_first_writer_start": 14.771363456,
+      "writer_index": 1,
+      "event": "sample",
+      "log_bytes": 151552,
+      "nul_bytes": 0,
+      "writer_offset": 92160
+    },
+    {
+      "seconds_since_first_writer_start": 14.917972866,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 153600,
+      "nul_bytes": 0,
+      "writer_offset": 153600
+    },
+    {
+      "seconds_since_first_writer_start": 15.772730842,
+      "writer_index": 1,
+      "event": "sample",
+      "log_bytes": 161792,
+      "nul_bytes": 0,
+      "writer_offset": 102400
+    },
+    {
+      "seconds_since_first_writer_start": 15.919292483,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 163840,
+      "nul_bytes": 0,
+      "writer_offset": 163840
+    },
+    {
+      "seconds_since_first_writer_start": 16.774108919,
+      "writer_index": 1,
+      "event": "sample",
+      "log_bytes": 172032,
+      "nul_bytes": 0,
+      "writer_offset": 112640
+    },
+    {
+      "seconds_since_first_writer_start": 16.92059177,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 174080,
+      "nul_bytes": 0,
+      "writer_offset": 174080
+    },
+    {
+      "seconds_since_first_writer_start": 17.775486446,
+      "writer_index": 1,
+      "event": "sample",
+      "log_bytes": 182272,
+      "nul_bytes": 0,
+      "writer_offset": 122880
+    },
+    {
+      "seconds_since_first_writer_start": 17.921987067,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 184320,
+      "nul_bytes": 0,
+      "writer_offset": 184320
+    },
+    {
+      "seconds_since_first_writer_start": 18.776885853,
+      "writer_index": 1,
+      "event": "sample",
+      "log_bytes": 192512,
+      "nul_bytes": 0,
+      "writer_offset": 133120
+    },
+    {
+      "seconds_since_first_writer_start": 18.923421703,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 194560,
+      "nul_bytes": 0,
+      "writer_offset": 194560
+    },
+    {
+      "seconds_since_first_writer_start": 19.778353259,
+      "writer_index": 1,
+      "event": "sample",
+      "log_bytes": 202752,
+      "nul_bytes": 0,
+      "writer_offset": 143360
+    },
+    {
+      "seconds_since_first_writer_start": 19.92486026,
+      "writer_index": 0,
+      "event": "sample",
+      "log_bytes": 204800,
+      "nul_bytes": 0,
+      "writer_offset": 204800
+    }
+  ],
+  "model_calls": 0,
+  "new_biological_tasks": 0
+}
