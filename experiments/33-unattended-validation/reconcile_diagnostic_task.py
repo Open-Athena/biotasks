@@ -24,7 +24,7 @@ def content_id(files):
 
 def main():
     cohort = json.loads((ROOT/'task-execution-ledger.json').read_text())
-    assert 'macs3-project__MACS-742' not in cohort['tasks']
+    assert 'macs3-project__MACS-742' not in {task['task'] for task in cohort['tasks']}
     inputs = [ROOT/'task-execution-ledger.json', OLD/'macs-742-export-manifest.json',
         OLD/'macs-native-742-manifest.json', OLD/'macs-742-control-results.json',
         NEW/'offline-export-manifest.json', NEW/'macs-742-control-results.json']
