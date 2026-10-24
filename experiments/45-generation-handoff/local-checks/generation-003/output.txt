@@ -1,0 +1,157 @@
+...................F.FF                                                  [100%]
+=================================== FAILURES ===================================
+_ test_generation_lifecycle_finishes_preservation_cleanup_without_extra_calls __
+
+pipeline = (<generation_pipeline.GenerationPipeline object at 0x7fdc9084a900>, {'submitted': ['fixture-generation'], 'archives': ...h/generation-003/test_generation_lifecycle_fini0/fixture-generation.tar.zst')}, 'fault': False, 'missing': False, ...})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdc908b9c70>
+
+    def test_generation_lifecycle_finishes_preservation_cleanup_without_extra_calls(
+        pipeline, monkeypatch
+    ):
+        p, remote = pipeline
+>       assert finish(p) == "complete"
+               ^^^^^^^^^
+
+experiments/45-generation-handoff/test_generation_pipeline.py:242: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+experiments/45-generation-handoff/test_generation_pipeline.py:232: in finish
+    state = pipeline.step()
+            ^^^^^^^^^^^^^^^
+../pipeline44-final/src/biotasks/validation/controller.py:470: in step
+    return advance(self.group["run_id"], inputs, self.directory / "journal.json", self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../pipeline44-final/src/biotasks/validation/journal.py:114: in advance
+    adapter.perform(stage)
+../pipeline44-final/src/biotasks/validation/controller.py:138: in perform
+    {
+../pipeline44-final/src/biotasks/validation/controller.py:185: in submission
+    receipt = self.ensure_submission(self.group, self.directory)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <generation_pipeline.GenerationPipeline object at 0x7fdc9084a900>
+group = {'id': 'generation', 'run_id': 'fixture-generation', 'payload_directory': 'payload', 'payload_sha256': {'family.json':...e31710326591b9642810dce51d6', 'payload.json': 'db5019fd6a01e18e5369bc17cbf88fd0a500885435dc077cb6070abea885b684'}, ...}
+directory = PosixPath('/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/45/experiments/45-generation-handoff/local-scratch/generation-003/test_generation_lifecycle_fini0/runs/generation')
+extra = {}
+
+    def ensure_submission(
+        self, group: dict[str, Any], directory: Path, **extra: Any
+    ) -> dict[str, Any] | None:
+        file = directory / "submission.json"
+        directory.mkdir(parents=True, exist_ok=True)
+        if not file.exists():
+            budget.verify_reserved(self.ledger, group["run_id"])
+            self.client("submit", group, directory, **extra)
+        receipt = read_json(file)
+        require(
+            receipt["job_id"] == "/exedev/" + group["run_id"]
+            and receipt["payload_sha256"] == group["payload_sha256"],
+            "Submission identity changed",
+        )
+        if receipt["state"] == "submission_pending":
+            observed = self.client("observe", group, directory)
+>           if observed["state"] == "handle_missing":
+               ^^^^^^^^^^^^^^^^^
+E           KeyError: 'state'
+
+../pipeline44-final/src/biotasks/validation/controller.py:180: KeyError
+__________ test_scheduler_zero_attempts_releases_model_and_cpu_bounds __________
+
+pipeline = (<generation_pipeline.GenerationPipeline object at 0x7fdc908a51d0>, {'submitted': ['fixture-generation'], 'archives': {}, 'fault': False, 'missing': False, ...})
+
+    def test_scheduler_zero_attempts_releases_model_and_cpu_bounds(pipeline):
+        p, remote = pipeline
+        remote["zero_attempts"] = True
+>       assert finish(p) == "complete"
+               ^^^^^^^^^
+
+experiments/45-generation-handoff/test_generation_pipeline.py:269: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+experiments/45-generation-handoff/test_generation_pipeline.py:232: in finish
+    state = pipeline.step()
+            ^^^^^^^^^^^^^^^
+../pipeline44-final/src/biotasks/validation/controller.py:470: in step
+    return advance(self.group["run_id"], inputs, self.directory / "journal.json", self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../pipeline44-final/src/biotasks/validation/journal.py:114: in advance
+    adapter.perform(stage)
+../pipeline44-final/src/biotasks/validation/controller.py:138: in perform
+    {
+../pipeline44-final/src/biotasks/validation/controller.py:185: in submission
+    receipt = self.ensure_submission(self.group, self.directory)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <generation_pipeline.GenerationPipeline object at 0x7fdc908a51d0>
+group = {'id': 'generation', 'run_id': 'fixture-generation', 'payload_directory': 'payload', 'payload_sha256': {'family.json':...e31710326591b9642810dce51d6', 'payload.json': 'db5019fd6a01e18e5369bc17cbf88fd0a500885435dc077cb6070abea885b684'}, ...}
+directory = PosixPath('/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/45/experiments/45-generation-handoff/local-scratch/generation-003/test_scheduler_zero_attempts_r0/runs/generation')
+extra = {}
+
+    def ensure_submission(
+        self, group: dict[str, Any], directory: Path, **extra: Any
+    ) -> dict[str, Any] | None:
+        file = directory / "submission.json"
+        directory.mkdir(parents=True, exist_ok=True)
+        if not file.exists():
+            budget.verify_reserved(self.ledger, group["run_id"])
+            self.client("submit", group, directory, **extra)
+        receipt = read_json(file)
+        require(
+            receipt["job_id"] == "/exedev/" + group["run_id"]
+            and receipt["payload_sha256"] == group["payload_sha256"],
+            "Submission identity changed",
+        )
+        if receipt["state"] == "submission_pending":
+            observed = self.client("observe", group, directory)
+>           if observed["state"] == "handle_missing":
+               ^^^^^^^^^^^^^^^^^
+E           KeyError: 'state'
+
+../pipeline44-final/src/biotasks/validation/controller.py:180: KeyError
+________ test_empty_attempted_archive_stops_and_retains_uncertain_cost _________
+
+pipeline = (<generation_pipeline.GenerationPipeline object at 0x7fdc9091cb00>, {'submitted': ['fixture-generation'], 'archives': ...h/generation-003/test_empty_attempted_archive_s0/fixture-generation.tar.zst')}, 'fault': False, 'missing': False, ...})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdc90853650>
+
+    def test_empty_attempted_archive_stops_and_retains_uncertain_cost(pipeline, monkeypatch):
+        p, remote = pipeline
+        remote["empty"] = True
+        held = []
+        monkeypatch.setattr(p, "stop_and_hold", lambda reason: held.append(reason))
+        p.candidate()
+>       p.ensure_submission(p.group, p.directory)
+
+experiments/45-generation-handoff/test_generation_pipeline.py:285: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <generation_pipeline.GenerationPipeline object at 0x7fdc9091cb00>
+group = {'id': 'generation', 'run_id': 'fixture-generation', 'payload_directory': 'payload', 'payload_sha256': {'family.json':...e31710326591b9642810dce51d6', 'payload.json': 'db5019fd6a01e18e5369bc17cbf88fd0a500885435dc077cb6070abea885b684'}, ...}
+directory = PosixPath('/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/45/experiments/45-generation-handoff/local-scratch/generation-003/test_empty_attempted_archive_s0/runs/generation')
+extra = {}
+
+    def ensure_submission(
+        self, group: dict[str, Any], directory: Path, **extra: Any
+    ) -> dict[str, Any] | None:
+        file = directory / "submission.json"
+        directory.mkdir(parents=True, exist_ok=True)
+        if not file.exists():
+            budget.verify_reserved(self.ledger, group["run_id"])
+            self.client("submit", group, directory, **extra)
+        receipt = read_json(file)
+        require(
+            receipt["job_id"] == "/exedev/" + group["run_id"]
+            and receipt["payload_sha256"] == group["payload_sha256"],
+            "Submission identity changed",
+        )
+        if receipt["state"] == "submission_pending":
+            observed = self.client("observe", group, directory)
+>           if observed["state"] == "handle_missing":
+               ^^^^^^^^^^^^^^^^^
+E           KeyError: 'state'
+
+../pipeline44-final/src/biotasks/validation/controller.py:180: KeyError
+=========================== short test summary info ============================
+FAILED experiments/45-generation-handoff/test_generation_pipeline.py::test_generation_lifecycle_finishes_preservation_cleanup_without_extra_calls
+FAILED experiments/45-generation-handoff/test_generation_pipeline.py::test_scheduler_zero_attempts_releases_model_and_cpu_bounds
+FAILED experiments/45-generation-handoff/test_generation_pipeline.py::test_empty_attempted_archive_stops_and_retains_uncertain_cost
+3 failed, 20 passed in 0.54s

@@ -1,0 +1,34 @@
+...............F.                                                        [100%]
+=================================== FAILURES ===================================
+_______________ test_stop_precedes_seal_and_cleanup_is_deferred ________________
+
+tmp_path = PosixPath('/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/45/experiments/45-generation-handoff/local-scratch/generation-001/test_stop_precedes_seal_and_cl0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f016141ed70>
+capsys = <_pytest.capture.CaptureFixture object at 0x7f0161491be0>
+
+    def test_stop_precedes_seal_and_cleanup_is_deferred(tmp_path, monkeypatch, capsys):
+        out, root = tmp_path / "out", tmp_path / "root"
+        root.mkdir()
+        out.mkdir()
+>       runner = worker.Generation(root, out, {"run_id": "fixture", "operation": "generate"})
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+experiments/45-generation-handoff/test_generation.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+experiments/45-generation-handoff/generation_worker.py:17: in __init__
+    super().__init__(root, out, config)
+../pipeline44-final/src/biotasks/validation/worker/job.py:33: in __init__
+    "worker_id": os.environ["IRIS_WORKER_ID"],
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'SHELL': '/bin/bash', 'COLORTERM': '', 'CONDA_EXE': '/home/exedev/miniforge3/bin/conda', '_CE_M': '', 'NUMEXP...TEST': 'experiments/45-generation-handoff/test_generation.py::test_stop_precedes_seal_and_cleanup_is_deferred (call)'})
+key = 'IRIS_WORKER_ID'
+
+>   ???
+E   KeyError: 'IRIS_WORKER_ID'
+
+<frozen os>:717: KeyError
+=========================== short test summary info ============================
+FAILED experiments/45-generation-handoff/test_generation.py::test_stop_precedes_seal_and_cleanup_is_deferred
+1 failed, 16 passed in 0.17s
