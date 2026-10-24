@@ -28,24 +28,22 @@
   ],
   "retained_local_paths": [
     {
-      "path": "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/36/experiments/36-inline-cache-identity/inputs-private/candidate-tasks.tar.gz",
-      "bytes": 823195,
-      "reason": "Bounded deterministic archive verification and possible subsequent selected-task readback",
-      "cleanup_condition": "Remove after the next runtime comparison consumes its frozen selected package or when no deterministic publication/readback check requires this copy; restore from verified HF snapshot if needed."
-    },
-    {
-      "path": "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/36/experiments/36-inline-cache-identity/inputs-private/source-evidence.tar.gz",
-      "bytes": 25760,
-      "reason": "Bounded deterministic archive verification and possible subsequent selected-task readback",
-      "cleanup_condition": "Remove after the next runtime comparison consumes its frozen selected package or when no deterministic publication/readback check requires this copy; restore from verified HF snapshot if needed."
-    },
-    {
       "path": "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/36/experiments/36-inline-cache-identity/private/identity-snapshot",
       "bytes": 963760,
       "reason": "Bounded deterministic archive verification and possible subsequent selected-task readback",
-      "cleanup_condition": "Remove after the next runtime comparison consumes its frozen selected package or when no deterministic publication/readback check requires this copy; restore from verified HF snapshot if needed."
+      "cleanup_condition": "Retain immutable publication verification staging while cited and needed by #38 input preparation; restore exact objects from verified HF snapshot if removed later."
     }
   ],
   "no_owned_remote_jobs": true,
-  "no_task_owned_tmp_evidence": true
+  "no_task_owned_tmp_evidence": true,
+  "removed_duplicate_bundles_after_issue37": [
+    {
+      "path": "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/36/experiments/36-inline-cache-identity/inputs-private/candidate-tasks.tar.gz",
+      "bytes": 823195
+    },
+    {
+      "path": "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/36/experiments/36-inline-cache-identity/inputs-private/source-evidence.tar.gz",
+      "bytes": 25760
+    }
+  ]
 }
