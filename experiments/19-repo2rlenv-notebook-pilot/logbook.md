@@ -4355,3 +4355,8 @@ The actual standalone compatibility check passed all three cases in12.299seconds
 
 
 Future autonomous setup/replay/grading configs now select the live-checked async session client. Each stage owns one client, checks the exact existing sandbox ID, closes it on lookup/work failure, and preserves the original failure if close also fails. Direct legacy stages remain blocking unless explicitly configured.272combined offline checks passed; a final identity guard was followed by91focused passes. Scientific/test/request/time/resource allowances and frozen142are unchanged. Fresh integrated notebook/model validation remains pending; see factory-checks/daytona-session-transport/integration-result.json.
+
+
+## 2026-10-24 UTC: fresh integrated Matchms validation
+
+Reserve campaign144(5USD) for the unchanged original source-only Matchms notebook. The previous135transport/setup exhaustion remains an incomplete result. This fresh campaign will test the general async-session integration and intervening reviewer/input/precision/error improvements, with no previous generated artifacts supplied. Existing high/CPU/offline/10-minute/two-reference-test/one-quality-repair policy is unchanged. Shared pool still includes142; the synthetic compatibility sandbox is independently clean. Aggregate conservative holds162/200,38unallocated. Prepared/reserved is not submitted.
