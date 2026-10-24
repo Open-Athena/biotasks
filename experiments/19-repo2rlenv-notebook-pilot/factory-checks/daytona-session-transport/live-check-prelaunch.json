@@ -1,0 +1,46 @@
+{
+  "prepared_at": "2026-10-24T11:05:48.783000+00:00",
+  "status": "prepared_unfunded_unlaunched",
+  "scope": "One standalone controller-transport compatibility check using synthetic commands only. No notebook or model, no original campaign continuation.",
+  "execution_configuration": "live-check-configuration.json",
+  "three_cases": [
+    "Successful one-second synthetic command with atomic append counter.",
+    "One-second synthetic command returning nonzero7, retaining verified original receipt.",
+    "One SDK submit whose completed acknowledgement is intentionally hidden; verify original nonce/log recovery and observed execution count1. This is injected client-side loss, not a claim of reproducing natural135failure."
+  ],
+  "admission_requirements": [
+    "Reserve1USD within aggregate200ceiling and44currently unallocated before resource creation; prepared is not funded.",
+    "Fresh typed current-campaign state plus full original audit and freshcleanup must establish one free sharedpoolslot. Both140/142nonterminal occupies both slots even if a phase temporarily has no sandbox.",
+    "Use an exclusive persistent operator claim and fresh owner identity; never duplicate unknown create/submit.",
+    "Freeze exact script/config/runtime/SDK identities, preserve original private records, verify cleanup independently after the check."
+  ],
+  "offline_verification": {
+    "combined_transport_and_lifecycle_tests": 194,
+    "combined_pytest_seconds": 14.62,
+    "combined_peak_rss_kib": 162044,
+    "combined_junit_sha256": "a78ac860137970b15b1b342122ed960ab941baf3a131163e7f8c8998ac60363f",
+    "final_lifecycle_checks": 4,
+    "final_lifecycle_pytest_seconds": 2.96,
+    "final_lifecycle_peak_rss_kib": 156440,
+    "final_junit_sha256": "d0f2cf9fb061f08c595c72ef9b2015c8648e678b263669a73a288595fd082199",
+    "meaning": "Wrong observed resource profile or lost create acknowledgement never starts a command or another creation. Client-close/cleanup errors do not mask the primary error; unknown creation cannot claim cleanup. Final completion status requires all cases and verified cleanup.",
+    "ruff": "passed",
+    "static_compile": "passed"
+  },
+  "source_sha256": {
+    "experiments/19-repo2rlenv-notebook-pilot/factory-checks/daytona-session-transport/run_live_check.py": "a6a880d9225c567936cfb43d485486762fa27f7f0104b0ab751521d0914781e4",
+    "experiments/19-repo2rlenv-notebook-pilot/factory-checks/daytona-session-transport/test_live_check_lifecycle.py": "791d47773764ec5accf61cc017b169272bcfb1f7b5c5b68ee1b400d5832702fa",
+    "experiments/19-repo2rlenv-notebook-pilot/factory-checks/daytona-session-transport/live-check-configuration.json": "617a5589b2a2a27bbf303a81a9466a59ab88b460cc5e5575f37430b86caecc02",
+    "experiments/19-repo2rlenv-notebook-pilot/run_reference_setup.py": "b3811346fcc4dcf4788389ecff7689dd0e0428bd902bb72af181a14d05481107",
+    "experiments/19-repo2rlenv-notebook-pilot/daytona_session.py": "acc1dd969fe58de830fe4000b367c7707a6eae5c77cead33a60080eadb28409e",
+    "experiments/19-repo2rlenv-notebook-pilot/reference_remote.py": "d67a80a9e11000e3861c7741b90bc501956f49064db321177aae116fe9d0bee1"
+  },
+  "new_model_calls": 0,
+  "new_sandboxes_created": 0,
+  "limits": [
+    "This is only prelaunch validation; the positive live path is not yet measured.",
+    "Atomic append counters record observed executions during this check; they do not prove platform-wide exactly-once delivery.",
+    "The standard pipeline remains on its original command client until live compatibility and lifecycle integration are validated.",
+    "Current frozen source-only campaigns and their policy/input/runtime remain unchanged."
+  ]
+}
