@@ -42,6 +42,9 @@ An accessible fixture usable to check a requested answer is exposure even if
 the solver could also recompute the answer. Empty exclusions or passing controls
 do not override a known remaining fixture. Report unresolved exposure; do not
 treat a fixture-assisted solver result as clean evidence of task difficulty.
+Use per-distribution coverage to assess the scope of the catalog. Ground claims
+about solver-visible assets in the actual resolved environment and installed-file
+evidence; the supplied input list alone does not inventory package contents.
 When supplied, use the read-only package-source and hash-bound reference-file
 tools to resolve consequential format or API claims. The catalogs identify the
 recorded versions and output bytes; tools do not run code or modify the task.

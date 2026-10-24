@@ -139,6 +139,10 @@ Keep one small setup directory with these files:
   applies the same removals without retaining installer-cache or backup copies.
   Report unresolved exposure or exhausted validation allowance honestly; do not
   claim an exhaustive audit of every package from a limited inspection.
+  Use `distribution_coverage` to see which installed distributions were
+  enumerated and which yielded candidates. A dedicated test distribution may
+  store fixtures directly under its data directory. Zero candidates do not
+  establish that a package has no scientific answers.
 - `stage-inputs.sh`: a POSIX shell recipe that stages the original inputs and
   needed caches. It runs with the resolved Python environment on PATH. It must
   not rewrite the submitted setup files. An empty
