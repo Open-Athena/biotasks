@@ -150,6 +150,13 @@ exclusion after faithful source recomputation is permitted. Audit diagnostic or
 API-demonstration exclusions from their scientific role, without relying on those
 invalid grounds or dismissing a false coverage claim as loose wording.
 
+The generated question cannot redefine notebook scope to discard another
+scientific question. A quantitative comparison of biological observations may
+remain an endpoint even when introductory, scalar or unnamed. A claim that it
+answers a different scientific question identifies a possible additional branch;
+it does not justify exclusion. Require source evidence of a solely mechanical
+or diagnostic role before accepting a teaching-example exclusion.
+
 Check that all eligible scientific outputs are covered, the public contract
 matches executable checks, numerical comparisons have a defensible
 precision/serialization basis, identities and cross-file relations are correct,

@@ -27,6 +27,43 @@ def imported_module_terms(source):
     return sorted(names)
 
 
+def imported_member_groups(source):
+    """Collect literal from-imports without executing or resolving the modules."""
+    groups = {}
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, ast.ImportFrom) and node.module:
+            module = "." * node.level + node.module
+            groups.setdefault(module, set()).update(
+                alias.name for alias in node.names if alias.name != "*"
+            )
+    return groups
+
+
+def shared_import_groups(source_groups, candidate_source):
+    """Surface shared input-name groups, including differently named test modules.
+
+    A common module leaf and at least two literal members are only a discovery
+    relationship. Namespace shims, dormant imports and matching names do not
+    establish identical inputs, execution, an answer, or safe removal.
+    """
+    matches = []
+    for candidate_module, members in imported_member_groups(candidate_source).items():
+        for source_module, source_members in source_groups.items():
+            shared = sorted(members & source_members)
+            if (
+                candidate_module.rsplit(".", 1)[-1] == source_module.rsplit(".", 1)[-1]
+                and len(shared) >= 2
+            ):
+                matches.append(
+                    {
+                        "source_module": source_module,
+                        "candidate_module": candidate_module,
+                        "members": shared,
+                    }
+                )
+    return sorted(matches, key=lambda row: (row["source_module"], row["candidate_module"]))
+
+
 def inspect_assets(
     outputs, *, distributions=importlib.metadata.distributions, roots=None, source=None
 ):
@@ -37,6 +74,7 @@ def inspect_assets(
     """
     roots = roots or [Path(sysconfig.get_path(key)).resolve() for key in ("purelib", "platlib")]
     source_terms = imported_module_terms(source) if source is not None else []
+    source_groups = imported_member_groups(source) if source is not None else {}
     source_patterns = [
         (term, re.compile(r"(?<![a-z0-9])" + re.escape(term) + r"(?![a-z0-9])"))
         for term in source_terms
@@ -119,6 +157,19 @@ def inspect_assets(
                     for term, pattern in source_patterns
                     if pattern.search(path.stem.casefold())
                 ]
+                candidate["source_import_group_matches"] = []
+                if source_groups and path.suffix == ".py":
+                    try:
+                        code = path.read_bytes()
+                        if hashlib.sha256(code).hexdigest() != identity:
+                            raise ValueError("Candidate changed after hashing")
+                        candidate["source_import_group_matches"] = shared_import_groups(
+                            source_groups, code
+                        )
+                    except (SyntaxError, UnicodeError, ValueError) as error:
+                        # Preserve the candidate and prior hints; unreadable
+                        # source is a discovery gap, never a clearance claim.
+                        candidate["source_import_group_inspection_error"] = type(error).__name__
             candidates.append(candidate)
         coverage.append(
             {
@@ -138,6 +189,7 @@ def inspect_assets(
             row
             for row in candidates
             if row.get("source_import_matches")
+            or row.get("source_import_group_matches")
             or any(
                 reason in {"same_basename", "same_stem", "identical_bytes"}
                 for match in row["matches"]

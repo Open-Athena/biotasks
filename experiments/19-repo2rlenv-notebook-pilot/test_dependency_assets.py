@@ -7,8 +7,10 @@ from types import SimpleNamespace
 import pytest
 from dependency_assets import (
     apply_manifest,
+    imported_member_groups,
     imported_module_terms,
     inspect_assets,
+    shared_import_groups,
     validate_manifest,
 )
 from reference_replay import load_dependency_exclusions
@@ -260,6 +262,64 @@ if False:
     assert imported_module_terms(source) == ["dormant", "helpers", "metrics", "other"]
     with pytest.raises(SyntaxError):
         imported_module_terms("from broken import")
+
+
+def test_shared_input_imports_find_differently_named_tests_without_execution(tmp_path):
+    root = tmp_path / "site-packages"
+    files = {
+        "suite/tests/test_alignment.py": (
+            "from library_data.inputs import TRAJECTORY as t, TOPOLOGY\n"
+            "raise RuntimeError('candidate must not execute')\n"
+        ),
+        "suite/tests/test_other.py": "from library_data.inputs import TRAJECTORY\n",
+        "suite/tests/test_unrelated.py": (
+            "from library_data.different import TRAJECTORY, TOPOLOGY\n"
+        ),
+        "suite/tests/test_invalid.py": "from invalid import\n",
+    }
+    for name, code in files.items():
+        path = root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(code)
+    package = SimpleNamespace(
+        metadata={"Name": "suite"}, files=list(files), locate_file=lambda name: root / name
+    )
+    result = inspect_assets(
+        [{"path": "distance.csv", "sha256": "0" * 64}],
+        distributions=lambda: [package],
+        roots=[root],
+        source=(
+            "from library.compat.inputs import TRAJECTORY\n"
+            "from library.compat.inputs import TOPOLOGY as topology\n"
+            "raise RuntimeError('source must not execute')\n"
+        ),
+    )
+    priority = result["summary"]["priority_matches"]
+    assert [row["path"] for row in priority] == ["suite/tests/test_alignment.py"]
+    assert priority[0]["source_import_matches"] == []
+    assert priority[0]["matches"] == []
+    assert priority[0]["source_import_group_matches"] == [
+        {
+            "source_module": "library.compat.inputs",
+            "candidate_module": "library_data.inputs",
+            "members": ["TOPOLOGY", "TRAJECTORY"],
+        }
+    ]
+    records = {row["path"]: row for row in result["files"]}
+    assert len(records) == 4
+    assert records["suite/tests/test_invalid.py"]["source_import_group_inspection_error"] == (
+        "SyntaxError"
+    )
+    assert all((root / name).read_text() == code for name, code in files.items())
+
+
+def test_import_groups_are_case_sensitive_and_ignore_aliases_and_stars():
+    source = "from p.data import A as a, B\nfrom p.other import *\n"
+    groups = imported_member_groups(source)
+    assert groups == {"p.data": {"A", "B"}, "p.other": set()}
+    assert shared_import_groups(groups, "from q.Data import A, B\n") == []
+    assert shared_import_groups(groups, "from q.data import a, B\n") == []
+    assert shared_import_groups(groups, b"# coding: latin-1\n# \xe9\nfrom q.data import A, B\n")
 
 
 def test_inspection_command_reads_the_supplied_source_without_executing_it(

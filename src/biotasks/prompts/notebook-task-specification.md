@@ -59,6 +59,13 @@ ineligible under the endpoint rule. A plot being its only downstream consumer,
 nested serialization, an awkward parser format, or a difficult comparison does
 not by itself make an independent scientific result ineligible.
 
+Do not narrow the notebook's scope to the question you prefer to ask. A result
+answering a different scientific question is another branch to retain, not a
+reason for exclusion. A quantitative comparison of biological observations can
+be an endpoint even if it is introductory, scalar or unnamed. Exclude a teaching
+example only with evidence that its role is solely mechanics or diagnostics,
+rather than a distinct scientific comparison.
+
 A result missing from append-only exports is not automatically ineligible. When
 policy allows faithful source recomputation, identify its original computation,
 methods, arguments, original inputs and required input state in the private handoff.

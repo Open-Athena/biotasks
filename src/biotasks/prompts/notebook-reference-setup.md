@@ -44,7 +44,13 @@ streaming all rows, arrays or mismatches into the conversation.
   `priority_matches` and inspect the full catalog at the supplied sandbox path.
   These are discovery hints, not automatic answer/unused classifications.
   `source_import_matches` highlights candidates whose filename refers to a
-  literal imported module or member in the original source. Inspect relevant
+  literal imported module or member in the original source.
+  `source_import_group_matches` also highlights Python candidates importing
+  multiple literal members from a module with the same final name as one in the
+  original source, even when the candidate filename is unrelated. Inspect the
+  recorded full module names and actual inputs; namespace aliases and matching
+  names do not prove input identity. Parsing failures are discovery gaps, not
+  negative findings. Inspect relevant
   test code as well as data files: expected scientific values may be embedded
   as constants or assertions. An import-name match does not prove exposure,
   unused status or that the import executed; an empty priority list does not

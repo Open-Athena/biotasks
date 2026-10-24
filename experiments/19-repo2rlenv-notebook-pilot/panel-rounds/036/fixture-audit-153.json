@@ -1,0 +1,31 @@
+{
+  "observed_at": "2026-10-24T21:25:27.131277+00:00",
+  "source_archive_manifest_sha256": "30d6917345b10c72c680492b4b33681a250c0e407770be3aafe37df8a138e027",
+  "distribution_version": "2.9.0",
+  "source_distribution": {
+    "url": "https://files.pythonhosted.org/packages/3d/09/83a486b6686e8d5a230586d8b419a17f2e65ad981305e90cf2093690bf24/mdanalysistests-2.9.0.tar.gz",
+    "hash": "sha256:8e4942ec3aaef5e93aeb39690293764ab9995550135ff1bd0df2f40cb95c0626",
+    "size": 57488757
+  },
+  "installed_source_path": "MDAnalysisTests/analysis/test_align.py",
+  "installed_source_sha256": "6f99185651f117bf0b93b259ad5d3fd7086fd032d77d21c3564bce300075cd3c",
+  "retained_by_final_exclusion_manifest": true,
+  "reference_file": "materialization/reference/rmsd_backbone.csv",
+  "reference_sha256": "9daa8ecfa4027792830e66ebced6ada405fba1dde44929f153cdce8d0b8e1dbb",
+  "matching_literals": [
+    {
+      "source_line": 261,
+      "literal": 6.820321761927005,
+      "reference_frame": "97.0",
+      "reference_field": "Backbone",
+      "reference_value": 6.820321761026975,
+      "difference": 9.000302725326037e-10,
+      "context": "            atol=1.5e-6,\n            err_msg=\"error: rmsd() is not symmetric\",\n        )\n        assert_allclose(\n            rmsd,\n            6.820321761927005,\n            rtol=0,\n            atol=1.5e-5,\n            err_msg=\"RMSD calculation between 1st and last AdK frame gave wrong answer\",\n        )"
+    }
+  ],
+  "review_answer_isolation_decision": "approve",
+  "review_source_coverage_rationale": "All four terminal scientific results of the source are represented: the three exported per-frame analyses (call-149-4/150-0, call-167-9/171-0, call-198-11/205-0) and the full-backbone branch (call-107-4/112-0) that the source itself destroys by rebinding R and df before any export, recovered by a rerun of the unchanged call on the same inputs with documented lineage. Exclusions are defensible with source-backed reasons: call-92-0 (with its two backbone selections) is an unnamed, never-stored introductory API demonstration comparing the closed trajectory structure against the external open-conformation CRD, a different scientific question from the frame-0-referenced per-frame domain motion the task targets; the plots and DataFrame constructions are presentation of already-retained tables; the charges.shape print is a sizing diagnostic. Input claims (3341 atoms, 214 residues, 98 frames) are corroborated by the reference execution, the independent solution report and package-source references. Recovery changed no methods, selections, weights, reference frame or inputs.",
+  "no_original_or_scientific_files_modified": true,
+  "new_models_or_scientific_execution": 0,
+  "scope": "Read-only installed-source identity and numeric/provenance audit; no claim of direct interactive solver-filesystem inspection."
+}

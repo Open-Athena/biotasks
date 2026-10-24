@@ -15,6 +15,12 @@ preparation exports still requires faithful recovery when policy permits, or a
 concrete blocker. Preparatory intermediates need not become requested outputs.
 Do not copy the original function-by-function recipe into the public question.
 
+The proposed question cannot redefine source scope to exclude another scientific
+branch. A distinct quantitative comparison of biological observations can be an
+endpoint even when introductory, scalar or unnamed. "A different scientific
+question" is not an exclusion reason; establish a solely mechanical or diagnostic
+role from source evidence before excluding it as a teaching example.
+
 Submit a complete initial candidate from the supplied source, proposal and recorded
 observations before using the shell. The controller enforces this ordering:
 shell commands do not run until a candidate has undergone controlled execution.
