@@ -1,0 +1,135 @@
+{
+  "source_archive_manifest_sha256": "5c9b26c04ce94517c694341125d0778b9f20838a5ea9ad7474c248b102aeab40",
+  "pipeline_status": "validated",
+  "source_id": "pyradiomics-brain",
+  "elapsed_pipeline_seconds": 6559.12,
+  "stage_elapsed_seconds": {
+    "preparation": 51.924,
+    "setup": 2485.738,
+    "replay": 56.201,
+    "specification": 443.833,
+    "construction": 871.493,
+    "grading": 2424.87,
+    "native": 221.247
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "completed",
+    "replay": "completed",
+    "specification": "completed",
+    "construction": "completed",
+    "grading": "completed",
+    "native": "completed"
+  },
+  "accounted_model_request_attempts": 160,
+  "request_ledgers": [
+    {
+      "path": "grading/requests.sqlite",
+      "sha256": "bf4f0ea7d8c9a50c85b96faeca6197cb05645be96ec20079e3a56bc6b738892a",
+      "count": 61,
+      "calls": [
+        {
+          "scope": "grader",
+          "state": "response_received",
+          "count": 14
+        },
+        {
+          "scope": "independent",
+          "state": "response_received",
+          "count": 8
+        },
+        {
+          "scope": "probes",
+          "state": "response_received",
+          "count": 22
+        },
+        {
+          "scope": "repair",
+          "state": "response_received",
+          "count": 1
+        },
+        {
+          "scope": "review",
+          "state": "response_received",
+          "count": 3
+        },
+        {
+          "scope": "review-repair",
+          "state": "response_received",
+          "count": 13
+        }
+      ]
+    },
+    {
+      "path": "materialization-raw/requests.sqlite",
+      "sha256": "d4b4658ad070972ac67af6e109cf124634be21d67ffb11c653c49b1ed4829443",
+      "count": 14,
+      "calls": [
+        {
+          "scope": "materialize",
+          "state": "response_received",
+          "count": 14
+        }
+      ]
+    },
+    {
+      "path": "native/requests.sqlite",
+      "sha256": "1c9eb280eb8c48928fdfb19e5d2cc73b59e0fb33142f8f66131dbe0c47dd3e90",
+      "count": 8,
+      "calls": [
+        {
+          "scope": "solver",
+          "state": "http_200",
+          "count": 8
+        }
+      ]
+    },
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "ff524eae3f62848b33b10755b85800f4ef8e6da908239299f6fd2bbd2f30fc71",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "replay/requests.sqlite",
+      "sha256": "e2f280d7b17f832639376556a77f40ca2dc283bfd9df736e7768584274fcf1fa",
+      "count": 0,
+      "calls": []
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "b8e8e4c9be9f3dff752d67b44462bf579e7eb6e097e0305ab6ba26d135c690da",
+      "count": 74,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 74
+        }
+      ]
+    },
+    {
+      "path": "specification/requests.sqlite",
+      "sha256": "fe6735c55435bad79f6af0d18e2677751f198d580dc155cf6ab9f2d4aa040e85",
+      "count": 2,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 152,
+  "distinct_author_response_operations_within_stage": 152,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 1
+}
