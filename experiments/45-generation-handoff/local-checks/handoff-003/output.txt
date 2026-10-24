@@ -1,0 +1,24 @@
+..........F                                                              [100%]
+=================================== FAILURES ===================================
+___________ test_rejects_grading_drift_before_publication[task.toml] ___________
+
+fixture = ({'upstream_source': '/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/31/experiments/31-historical-bui...worktrees/31/experiments/31-historical-builds/inputs-private/upstream-package/src/repo2rlenv/registry/integration.py'>)
+target = 'task.toml'
+
+    @pytest.mark.parametrize("target", ["tests/test.sh", "task.toml"])
+    def test_rejects_grading_drift_before_publication(fixture, target):
+        config, native = fixture
+        original = inventory(Path(config["raw_exports"]))
+        def drift(stage):
+            if stage == "after_native_export":
+                path = Path(config["output_directory"]) / "staging/prepared/synthetic__fixture-1" / target
+                text = path.read_text()
+                path.write_text(text.replace("timeout_sec=300", "timeout_sec=301") if target == "task.toml" else "changed grading assets")
+>       with pytest.raises(ValidationError, match="grading"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValidationError
+
+experiments/45-generation-handoff/test_handoff.py:133: Failed
+=========================== short test summary info ============================
+FAILED experiments/45-generation-handoff/test_handoff.py::test_rejects_grading_drift_before_publication[task.toml]
+1 failed, 10 passed in 0.99s
