@@ -1,0 +1,40 @@
+...........................E........                                     [100%]
+==================================== ERRORS ====================================
+_ ERROR at teardown of test_uncached_cleanup_not_admitted_has_no_new_intent_or_transport _
+
+tmp_path = PosixPath('/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/51/experiments/51-held-retention/local-scratch/retention-002/test_uncached_cleanup_not_admi0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3771af4d60>
+
+    @pytest.fixture
+    def isolated(tmp_path, monkeypatch):
+        real = controller.verify_plan
+        original = real(ORIGINAL)
+        plan = copy.deepcopy(original)
+        ledger = tmp_path / "isolated-budget.json"
+        write_json(ledger, read_json(Path(plan["budget_ledger"])))
+        plan["budget_ledger"] = str(ledger)
+        plan["archive"] = {"kind": "local"}
+        monkeypatch.setattr(controller, "verify_plan", lambda root: copy.deepcopy(plan))
+    
+        def forbidden(*args, **kwargs):
+            pytest.fail("Offline retention must not use network/subprocess/SDK transport")
+    
+        monkeypatch.setattr(controller.Pipeline, "client", forbidden)
+        monkeypatch.setattr(socket.socket, "connect", forbidden)
+        monkeypatch.setattr(socket, "getaddrinfo", forbidden)
+        monkeypatch.setattr(subprocess, "Popen", forbidden)
+        before = inventory(ORIGINAL)
+        output = tmp_path / "retention"
+        retain.prepare(ORIGINAL, output)
+        yield output, plan, ledger
+>       assert inventory(ORIGINAL) == before
+E       AssertionError: assert [{'path': 'cl...6ced74'}, ...] == [{'path': 'cl...6ced74'}, ...]
+E         
+E         At index 18 diff: {'path': 'runs/task-4c1544d9d07c/cleanup/group.json', 'bytes': 16623, 'mode': '600', 'sha256': '1374457dfdcaad9fb1d6d1f8574b61afef195691c58439e8f422a28f57c96c4e'} != {'path': 'runs/task-4c1544d9d07c/cleanup/accounting.json', 'bytes': 730, 'mode': '600', 'sha256': 'cac3bd707bb98f9840deddf00acd13e36099e15754f053c6b3977609c0570655'}
+E         Right contains one more item: {'path': 'tasks/task-4c1544d9d07c/tree/outputs/task-4c1544d9d07c/opencobra__cobrapy-1497/tests/verifier.py', 'bytes': 25401, 'mode': '644', 'sha256': '154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b'}
+E         Use -v to get more diff
+
+experiments/51-held-retention/test_retention.py:140: AssertionError
+=========================== short test summary info ============================
+ERROR experiments/51-held-retention/test_retention.py::test_uncached_cleanup_not_admitted_has_no_new_intent_or_transport
+35 passed, 1 error in 7.13s
