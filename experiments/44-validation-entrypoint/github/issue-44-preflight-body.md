@@ -1,0 +1,9 @@
+Provide a reusable manifest entrypoint for validation of official Repo2RLEnv exports, with original task/grading assets and no per-task human/LLM repairs. Subissue of #33; generation remains upstream-owned.
+
+**Current status:** implementation checkpoint [cb3d2b78](https://github.com/Open-Athena/biotasks/commit/cb3d2b78) adds `biotasks validate plan/run/status`, fixed-handle recovery, CPU admission, native control classification, verified local/HF preservation and exact-worker cleanup. Thirty-four offline tests and repository quality checks pass. Native comparison is prepared, not yet executed; no biological parity or production-readiness claim.
+
+**Scope:** native inline exports at Repo2RLEnv `27d04ee8`, Harbor 0.6.6, original verifier settings and single-service egress guard; existing reserved Iris CPUs only. Other initializers/backends are explicit unsupported inputs. Each PR has its own identity/journal; this entrypoint admits tasks serially. Volumes are retained until verified archive readback.
+
+**Next acceptance gate:** compare unchanged eligible Cobrapy #1482 and Scanpy #4389 references from #38, including native outcomes, archive readback, owned cleanup and completed resumption. Checkpoint/admit all effects within #33’s cumulative 32 CPU-hour ceiling and existing archival reservation. Models/new capacity remain disabled. Default tests require no external data/models/paid compute.
+
+Open a focused supported-component PR only with relevant native evidence; never merge research branches or auto-merge the PR. Keep this issue and #33 open for review. Detailed logs and artifact links belong in comments.

@@ -1,0 +1,11 @@
+# Validation entrypoint
+
+2026-10-24: Started from main `2a1950d239f1ada467c35393991dac87debe35f7` on fresh supported branch `codex/pipeline/manifest-validation`; experiment evidence remains here on permanent research branch. No research branch will merge into main.
+
+Implemented manifest planning, independently owned native controls, fixed-handle journal recovery, cumulative CPU reservations, local/HF preservation and separate exact-worker cleanup. The worker now stops execution and retains its volume until archive verification; empty output after an attempt triggers a stop-only/retention hold. This changes infrastructure/preservation only, not original task assets, native grader, tracked tests or task timeouts.
+
+Offline checks: 29 tests passed, including installed wheel/worker resources, all seven effect boundaries, interrupted/missing RPC handle, empty versus zero-attempt output, negative outcomes, byte/mode binding, budget overrun, partial public upload/readback and retention. Fixtures are synthetic, not biological parity. Full suite completed 10:04:13--10:04:18 UTC, elapsed 4.44 seconds, peak RSS 60,456 KiB. First full attempt failed because sandbox could not write uv cache; elevated offline run passed. A later root Ruff invocation traversed our test scratch directory and found deliberately non-executable fixture strings; removing those disposable fixtures restores the normal source-only check. The hooks passed. Setup earlier used <84 MiB RSS but exact start/end timestamps were not recorded.
+
+Next: checkpoint code and unchanged eligible Cobrapy #1482 / Scanpy prerequisite-failure inputs, admit serial native comparison against the epic ledger, verify public archive and owned cleanup, then open a focused PR. No model calls, new capacity or native admission yet.
+
+Review caught and fixed the omitted second build in admission accounting. Added public byte-policy guards matching the inherited no-binary/no-NUL eligibility scope. Updated full suite: 34 tests, elapsed 4.53 seconds, peak RSS 60,684 KiB. Two reference exports accepted by the installed CLI planner, no unsupported inputs. Source task/mode identities match #38 exactly; notices restored by anonymous hash-verified HF reads. Pre-admission checkpoint is explicit; no native RPC yet.
