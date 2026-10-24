@@ -4346,3 +4346,6 @@ The opt-in transport now has a reproducible standalone compatibility runner: one
 ## 2026-10-24 UTC: MDAnalysis current cohort native acceptance
 
 140completed autonomously in1799.664seconds with19controls and native oracle/no-op/GLM rewards1/0/1;119accounted requests, no quality repair or operator task edits. All1282science files72,668,397bytes and98root files1,595,077bytes have original hash/size/mode readback; seven original cleanup owners passed fresh exact-ID/owner absence. All five RMSD branches are represented. Exact trajectory redistribution rights remain explicitly unestablished in the seed; preserve technical native acceptance privately, with no task/data publication. SGkit142is the only remaining live cohort host;141remains held. See panel-rounds/026/result-140.json.
+
+
+The standalone session-compat-001transport check reserves1USDwithin the existing200authorization:157conservative holds,43unallocated. Fresh typed admission found only142nonterminal;132–140original terminal records and cleanup proofs are present. The compatibility check occupies the second planned pool slot until its own original results and fresh cleanup audit are complete. Frozen runner source is50beb9c9; no model/notebook/extra Iris host, no uncertain mutating retry.
