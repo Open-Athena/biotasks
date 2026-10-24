@@ -156,9 +156,10 @@ class OperationBudgetExceeded(TimeoutError):
 class Remote:
     """Recorded, timeout-bounded I/O using upstream DaytonaWorker."""
 
-    def __init__(self, worker, sandbox, root, deadline, cpus):
+    def __init__(self, worker, sandbox, root, deadline, cpus, *, session_process=None):
         self.worker, self.sandbox, self.root = worker, sandbox, root
         self.deadline, self.cpus = deadline, cpus
+        self.session_process = session_process
         self.uncertain = False
         self.operation = 0
 
@@ -235,24 +236,33 @@ class Remote:
 
         try:
             try:
-                result = await asyncio.to_thread(
-                    self.worker.exec,
-                    [
-                        *env,
-                        "timeout",
-                        "--signal=TERM",
-                        "--kill-after=5",
-                        str(seconds + 10),
-                        "python",
-                        "/work/remote.py",
-                        "execute",
-                        json.dumps(argv),
-                        str(seconds),
-                        cwd,
-                        remote_label,
-                    ],
-                    timeout=seconds + 25,
-                )
+                command = [
+                    *env,
+                    "timeout",
+                    "--signal=TERM",
+                    "--kill-after=5",
+                    str(seconds + 10),
+                    "python",
+                    "/work/remote.py",
+                    "execute",
+                    json.dumps(argv),
+                    str(seconds),
+                    cwd,
+                    remote_label,
+                ]
+                if self.session_process is not None:
+                    from daytona_session import session_command
+
+                    result = await session_command(
+                        self.session_process,
+                        command,
+                        timeout=seconds + 25,
+                        directory=directory,
+                    )
+                else:
+                    result = await asyncio.to_thread(
+                        self.worker.exec, command, timeout=seconds + 25
+                    )
                 if result.returncode:
                     # A failed wrapper may never produce a completion receipt.
                     # Keep its actual response in the private evidence store;

@@ -1,0 +1,55 @@
+{
+  "recorded_at": "2026-10-24T09:51:41.356580+00:00",
+  "base_revision": "80fdb7ab20f06cd0e85adea3acee7d4f0967fd3f",
+  "change": "Prototype one asynchronous Daytona session submission, event-driven log observation and same-command identity/status checks. Explicit Remote(session_process=...) retains the existing nonce/argv/timeout/log-hash verification and read-only receipt recovery. Standard factory entrypoints still use the original transport.",
+  "activation": "Opt-in prototype only. No standard entrypoint or frozen campaign activated it.",
+  "official_api_sources": [
+    "https://www.daytona.io/docs/en/python-sdk/async/async-process/",
+    "https://www.daytona.io/docs/en/python-sdk/sync/process/"
+  ],
+  "installed_and_upstream_locked_daytona_version": "0.211.2",
+  "installed_sdk_source_sha256": {
+    "daytona/_async/process.py": "fd771b2b2951643559317b8572763e83e8678cc51d9514f42625c72056d0d0ac",
+    "daytona/_sync/process.py": "79f825b3bd8a05a2232e19a93eb3afcc6965eb19f0bc8e1e21fc8e241511618b",
+    "daytona/common/process.py": "635f6b52da5fa23743d2f5a2467b882e9365050bbfc71884d16bf3bde094d650",
+    "daytona_toolbox_api_client_async/models/command.py": "f9b2cfeff0f0a9bbcf3f6333e56cd7da6e47187299b1fea727cbd250fc0f5718"
+  },
+  "sdk_finding": "The sync client\u2019s async log method opens its WebSocket through synchronous connect_ws before awaiting the stream. The fully async implementation awaits connection setup. Prototype refuses a synchronous create_session method before any mutation.",
+  "internal_transport_timeouts": {
+    "quick_rpc_seconds": 30,
+    "completed_session_delete_seconds": 5,
+    "sdk_submission_http_addition_seconds": 5,
+    "total": "Unchanged existing worker-execution timeout (scientific seconds+25), with original receipt recovery inside seconds+55/campaign deadline. These are transport waits, not new scientific/model/request/repair allowances."
+  },
+  "offline_verification": {
+    "passed": 190,
+    "pytest_seconds": 13.28,
+    "guarded_wall_seconds": 14.17,
+    "peak_rss_kib": 139056,
+    "junit_sha256": "2e3cad7aa36a69291efc9abac50e5deac844b92d2c4e1b9caf858685a54ac2dc",
+    "resource_report_sha256": "b7ef52fabbd55541606a97e04ce14f744d525f44793969b10e38775ca175bbee",
+    "ruff_check": "passed",
+    "ruff_format_check": "passed",
+    "initial_prototype_checks_passed": 188,
+    "coverage": [
+      "One submission only; quoting is preserved and no sync fallback or local command execution occurs.",
+      "Fast completion and event-driven stream completion require matching command identity/status.",
+      "A lost stream can recover from the same completed command; a closed but pending stream cannot establish completion.",
+      "Cancellation/deadline, lost create/submit acknowledgements, command identity mismatch and incomplete completion remain uncertain and never resubmit.",
+      "Known-completed session cleanup errors do not mask command results; unknown commands stay with owner cleanup.",
+      "Remote validates original nonce/argv/log and recovers a lost submission acknowledgement without another dispatch.",
+      "Nonzero wrapper stdout/stderr remain private and block subsequent execution; existing source/import/offline/setup/grading/cleanup behavior remains covered."
+    ]
+  },
+  "source_sha256": {
+    "experiments/19-repo2rlenv-notebook-pilot/daytona_session.py": "acc1dd969fe58de830fe4000b367c7707a6eae5c77cead33a60080eadb28409e",
+    "experiments/19-repo2rlenv-notebook-pilot/test_daytona_session.py": "452139ade78c272c160e1563bfda3d3e0b99df203b379d7f4caf19f6c4aa4ddb",
+    "experiments/19-repo2rlenv-notebook-pilot/run_reference_setup.py": "b3811346fcc4dcf4788389ecff7689dd0e0428bd902bb72af181a14d05481107"
+  },
+  "limits": [
+    "No live compatibility, notebook, model or cloud run has used this prototype.",
+    "This does not yet establish that the original135provider stall is fixed.",
+    "Future stage integration must own and close AsyncDaytona client lifetime and retain source/compute/time/budget policy.",
+    "No task-specific scientific change, source patch, additional model call/repair or acceptance override. Frozen round026payloads unchanged."
+  ]
+}
