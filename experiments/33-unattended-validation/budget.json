@@ -10,7 +10,7 @@
   "admission_rule": "Before enabling paid model execution, verify model pricing and maximum request cost; atomically reserve a conservative bound, then reconcile provider-reported actual usage. Stop if accrued cost plus outstanding reservations plus the proposed bound exceeds 90 USD or cost is unknown.",
   "per_repository_settings": "Preserve official bootstrap settings: Sonnet 4.6 through OpenRouter, temperature 0.2, 2048 output-token cap, 20 calls, 5 USD estimated repository stop threshold; global admission remains required.",
   "additional_reserved_cpu_hour_ceiling": 32,
-  "additional_allocated_cpu_hours": 4.715986666414473,
+  "additional_allocated_cpu_hours": 4.785482221974267,
   "new_paid_capacity_allowed": false,
   "events": [
     {
@@ -92,20 +92,22 @@
       "run_id": "biotasks37-ohif-5996-inline-001",
       "maximum_allocated_cpu_hours": 6,
       "new_paid_capacity": false,
-      "state": "reserved before submission",
+      "state": "terminal reconciled",
       "child_issue": 37,
-      "child_total_ceiling_cpu_hours": 8
+      "child_total_ceiling_cpu_hours": 8,
+      "actual_allocated_cpu_hours": 0.06949555555979411
     },
     {
       "kind": "reserved_cpu_admission",
       "run_id": "biotasks37-ohif-5996-inline-001-cleanup",
       "maximum_allocated_cpu_hours": 0.16666666666666666,
       "new_paid_capacity": false,
-      "state": "reserved before submission",
+      "state": "released unused",
       "child_issue": 37,
-      "child_total_ceiling_cpu_hours": 8
+      "child_total_ceiling_cpu_hours": 8,
+      "reason": "Primary job verified owned resources empty; no cleanup attempt submitted"
     }
   ],
-  "outstanding_cpu_hour_reservations": 6.166666666666667,
+  "outstanding_cpu_hour_reservations": 0,
   "cpu_accounting_rule": "Sum terminal admission actuals and still-reserved admission maxima; normalize floating subtraction residue by recomputation."
 }

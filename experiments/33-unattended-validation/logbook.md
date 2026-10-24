@@ -119,3 +119,7 @@ Reserved 4 allocated CPU-hours plus 1/6 emergency-cleanup hour for the frozen na
 ## 2026-10-24 — #37 runtime admission
 
 Admitted the frozen OHIF #5996 native inline build-first comparison: at most six allocated CPU-hours plus 1/6 emergency cleanup, within child eight and epic 32. Existing reserved TRC CPUs only, no models or new capacity. Actual remains 4.715986666414473; outstanding CPU reservation is 6.166666666666667. No runtime submission at this checkpoint.
+
+## 2026-10-24 — #37 first build boundary
+
+OHIF #5996 native inline build failed at missing pnpm (exit 127), before Harbor setup/controls. No repeated build or repair. Task files/source-image absence/different worker and owned cleanup verified. Archived original bootstrap metadata contains additional Node/Corepack/PATH instructions omitted by native clean rebuild_cmds. This is an inline recipe-fidelity failure, independent of PR tests/verifier timeout. Recorded one build attempt and zero control pairs separately; cohort denominator remains 83. Reconciled 0.06949555555979411 CPU-hours; actual epic allocation 4.785482221974267, zero outstanding CPU reservations, zero model calls/new capacity. HF archival remains the next gate.
