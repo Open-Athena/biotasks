@@ -1,0 +1,70 @@
+{
+  "number": 134,
+  "observed_at": "2026-10-24T08:24:39.516422+00:00",
+  "source_archive_manifest_sha256": "831e1558449cc44c27c338e608c19a294385fb4212e51b1f683707ba74d71ada",
+  "finding": "The review conflated absence from the provided final-control suite with absence from all execution records. Some disputed calibration/structural tests do exist in hash-verified author diagnostics.",
+  "original_review_unchanged": true,
+  "manual_acceptance_override": false,
+  "final_grader_code_sha256": "bfbef30ada30a3d7dc1c55950d2f533db785d677b6465ad0deb8e47837b10da0",
+  "printed_author_code_byte_identical_to_final_candidate": true,
+  "author_diagnostic_evidence": [
+    {
+      "operation": "grading/operations/0066",
+      "operation_sha256": "5cd0c33428d0b701b371335377e9b88bf9b0f2f0e58b4a7943091250a9e2bc2a",
+      "output_sha256": "b275111eb3afb1a43a83a7f9f7ddf36e1e9e3916bdd35fa0646d8e3db51fca59",
+      "controller_exit_code": 0,
+      "shell_exit_code": 0,
+      "finding": "Author-side numerical boundary diagnostics contain accepted/rejected outcomes that the later review asserted were absent.",
+      "scope_limit": "Earlier diagnostic version; the subsequent final-code recheck in0068 is also retained."
+    },
+    {
+      "operation": "grading/operations/0067",
+      "operation_sha256": "19b31360da461d2f1c9b178f64fb1ddb7dabf5fe134c5661556b914b6f43a910",
+      "output_sha256": "a7b8565dd36fd45cf0b7d5dce2c108e0295c9e8c221d28529793bd488f68efd2",
+      "controller_exit_code": 0,
+      "shell_exit_code": 0,
+      "finding": "A truncated-body mutation was actually executed and rejected in an author-side diagnostic.",
+      "scope_limit": "Not a fresh final-candidate acceptance control; no final-code reexecution of this exact truncation is claimed."
+    },
+    {
+      "operation": "grading/operations/0068",
+      "operation_sha256": "68d73d010c249368a8f22789ae23f81dac3db960d44d92bdfe134188da3124e0",
+      "output_sha256": "6fcd51312c1c0a65b8fb962b9e149763d146485f3bd56048f367337bb64bc059",
+      "controller_exit_code": 0,
+      "shell_exit_code": 0,
+      "finding": "Author-side boundary cases were rechecked after the cleanup that produced the exact final grader code; accepted/rejected outcomes are logged.",
+      "scope_limit": "Author diagnostic, not an independent final-controller probe or native trial."
+    },
+    {
+      "operation": "grading/operations/0069",
+      "operation_sha256": "9468a26c277db2c64598f8b40186253172270fe780a3aa95306c201a7c2845f6",
+      "output_sha256": "c3c1231a989d1669402d5adffe83c76bbe08db026f0c04e46d18c70b23c099c4",
+      "controller_exit_code": 0,
+      "shell_exit_code": 0,
+      "finding": "The printed grader source is byte-identical to the final candidate grader_code.",
+      "scope_limit": "Source identity, not a new execution or semantic correctness proof."
+    }
+  ],
+  "review_visibility": {
+    "original_first_request_sha256": "63731aa88b10e450f6d475ffbd7ea4a9105c89177f747c8e8599241c291e32ba",
+    "exposed_tools": [
+      "submit_artifact",
+      "revise_artifact",
+      "list_package_files",
+      "search_package",
+      "read_package_file",
+      "read_reference_file"
+    ],
+    "disputed_author_diagnostic_stdout_provided_in_initial_request": false,
+    "operation_log_read_tool_available": false,
+    "source_code": "ReviewInspection exposes package sources and reference outputs, not prior author operation evidence."
+  },
+  "remaining_unresolved": {
+    "candidate_statistics": "Candidate says20wrong mutations across15distinct scripts; the canonical final suite has19wrong_solution probes and19distinct scripts.",
+    "wrong_banner_claim": "Not independently substantiated by this audit.",
+    "probe_annotation": "Review requested an additional expected check ID; not manually changed.",
+    "native_and_release": "Not run/not qualified; passing scientific controls alone does not resolve the review."
+  },
+  "general_next_work": "Provide bounded read-only access to hash-bound prior execution observations and explicitly distinguish author diagnostics from canonical fresh controls. Avoid redundant model-written validation histories. Do not declare unprovided evidence nonexistent.",
+  "limits": "No new science/model call and no repaired task. These original author observations do not increase the28fresh final controls or prove broad portability/biological validity."
+}

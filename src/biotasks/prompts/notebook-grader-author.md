@@ -168,7 +168,6 @@ stub to fill the response schema. Correct misleading
 explanations in the addendum or private rationale without changing the acceptance
 criteria. Describe numeric tolerances as limits on observable output differences,
 not as guarantees that every use of a particular wrong method will be detected.
-Keep run-specific calibration measurements and test history in the private rationale.
 Keep the rationale focused on the scientific comparison rules, their numerical
 justification, changes made and unresolved limitations. Do not recount control
 totals, maintain a test-history section, or declare the current passing/failing

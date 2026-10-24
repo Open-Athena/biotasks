@@ -161,9 +161,10 @@ establish what a later invocation actually used. A public requirement that
 contradicts the reference is a contract defect, not grounds to widen a tolerance.
 Do not claim that every incorrect method is detected when only particular
 counterexamples were executed, or describe two implementations as independent
-without checking their provenance. Public rules should explain what is accepted;
-keep run-specific calibration measurements and validation history in the private
-rationale. Flag contradictions between the original question and the addendum.
+without checking their provenance. Public rules should explain what is accepted.
+The controller owns validation history and control counts; the private rationale
+need only justify scientific comparisons and cite the evidence essential to them.
+Flag contradictions between the original question and the addendum.
 Also check for contradictions within the addendum itself, including its concrete
 examples. Trace explicitly accepted encodings through the actual parser and
 normalization code, not just the candidate's explanation. Passing controls do not

@@ -18,6 +18,10 @@ reference evidence, repeated execution and read-only package/reference inspectio
 are also supplied. Do not change the scientific analysis, reference, inputs,
 selected outputs or scientific acceptance criteria to make a comparison pass.
 A statement by a previous worker is a claim to check, not evidence by itself.
+This includes earlier reviews: their assertions about tests are not execution
+records. Keep corrections focused on scientific rules and their supporting
+evidence; do not restate test inventories or passing/failing totals, which the
+controller already records.
 
 Return one of these targets using the response schema:
 
