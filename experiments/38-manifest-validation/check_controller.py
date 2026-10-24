@@ -61,6 +61,17 @@ class Checks(unittest.TestCase):
         with patch('backend.observe',return_value='handle_missing') as observe,patch.object(adapter,'perform') as perform:
             adapter.recover('submission_recorded');observe.assert_called_once();perform.assert_not_called()
 
+    def test_admission_gate_consumes_real_preflight_receipt_schema(self):
+        # Actual checkpointed backend receipt, rather than a hand-shaped mock.
+        receipt=json.loads((ROOT/'preflight-check.json').read_text())
+        family=json.loads((ROOT/'runtime-plan.json').read_text())['families'][0]
+        adapter=object.__new__(Adapter);adapter.directory=self.root;adapter.family=family
+        write(self.root/'candidate.json',receipt)
+        write(self.root/'admission.json',dict(source_family_sha256=family['source_family_sha256']))
+        adapter.verify('candidate_verified',[])
+        receipt['job_id']='/exedev/unrelated';write(self.root/'candidate.json',receipt)
+        with self.assertRaises(AssertionError):adapter.verify('candidate_verified',[])
+
     def test_unarchived_volume_never_enters_emergency_deletion(self):
         adapter=object.__new__(Adapter);adapter.directory=self.root;adapter.family=dict(run_id='fixture')
         write(self.root/'readback.json',dict(task_package_verified=False,cleanup=None))

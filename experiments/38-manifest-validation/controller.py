@@ -43,7 +43,7 @@ class Adapter:
         family=self.family;d=self.directory
         if stage=='candidate_verified':
             value=json.loads((d/'candidate.json').read_text())
-            assert value['run_id']==family['run_id'] and value['payload_sha256']==family['payload_sha256']
+            assert value['job_id']=='/exedev/'+family['run_id'] and value['payload_sha256']==family['payload_sha256']
             assert json.loads((d/'admission.json').read_text())['source_family_sha256']==family['source_family_sha256']
         elif stage=='submission_recorded':
             row=json.loads((d/'submission.json').read_text())
