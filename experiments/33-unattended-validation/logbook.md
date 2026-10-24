@@ -111,3 +111,7 @@ Reserved 4 allocated CPU-hours plus 1/6 emergency-cleanup hour for the frozen na
 ## 2026-10-24 — different-worker gate satisfied
 
 #35 reproduced original clean Cobrapy #1482 controls on a different reserved worker using upstream native inline preparation, unchanged grading assets and no original bootstrap/image state. Verified all 18 HF objects anonymously and owned resource cleanup. Recorded the additional attempt separately; the frozen 83-export ledger and unique-task counts remain unchanged. Reconciled 0.28626888884438406 CPU-hours and released unused cleanup, bringing epic actual to 4.715986666414473 with zero CPU reservations/models/new capacity. Initial epic evidence gates are now satisfied; #36 is the separately queued source/fixture follow-up for native cache naming. Children remain open for human review.
+
+## 2026-10-24 — generic cache identity follow-up
+
+#36 completed ten function-level fixtures and a full pinned native preparation comparison with one explicit lookup-only reader override. All twelve originally blocked OHIF exports prepared; 96 instruction/oracle/grading assets and parsed contracts remained unchanged. Current upstream relevant functions are identical to pinned baseline. Ten HF objects verified anonymously, original/current source notices retained, working copies cleaned. No models, Docker operations, remote allocation or new capacity. Filed #37 for the separate different-worker runtime/build completeness question; no execution allocation yet. Original cohort denominator and budget remain unchanged.
