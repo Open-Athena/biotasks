@@ -1,0 +1,135 @@
+{
+  "source_archive_manifest_sha256": "f265ae77bdd7969fecedd94b9f90f565b40b484c1a8c7c4db6ad244671c62ef1",
+  "pipeline_status": "validated",
+  "source_id": "mdanalysis-rmsd",
+  "elapsed_pipeline_seconds": 4242.104,
+  "stage_elapsed_seconds": {
+    "preparation": 18.549,
+    "setup": 530.528,
+    "replay": 70.857,
+    "specification": 1182.591,
+    "construction": 249.765,
+    "grading": 1622.403,
+    "native": 561.473
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "completed",
+    "replay": "completed",
+    "specification": "completed",
+    "construction": "completed",
+    "grading": "completed",
+    "native": "completed"
+  },
+  "accounted_model_request_attempts": 149,
+  "request_ledgers": [
+    {
+      "path": "grading/requests.sqlite",
+      "sha256": "565032720b8ccf5542b49c3ca5b5699bcfb39a194626ce8aa94cc318efeb96f9",
+      "count": 76,
+      "calls": [
+        {
+          "scope": "grader",
+          "state": "response_received",
+          "count": 15
+        },
+        {
+          "scope": "independent",
+          "state": "response_received",
+          "count": 10
+        },
+        {
+          "scope": "probes",
+          "state": "response_received",
+          "count": 8
+        },
+        {
+          "scope": "repair",
+          "state": "response_received",
+          "count": 1
+        },
+        {
+          "scope": "review",
+          "state": "response_received",
+          "count": 23
+        },
+        {
+          "scope": "review-repair",
+          "state": "response_received",
+          "count": 19
+        }
+      ]
+    },
+    {
+      "path": "materialization-raw/requests.sqlite",
+      "sha256": "9dbea3f70e6e37bd02cfc949856e7eb1181b5d36db99304d8c82e1d76c498157",
+      "count": 3,
+      "calls": [
+        {
+          "scope": "materialize",
+          "state": "response_received",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "path": "native/requests.sqlite",
+      "sha256": "64371c3c6c89a2fdce3caa9b9459dc4a73d3be769fb638c43c1cfeafcbb102cc",
+      "count": 13,
+      "calls": [
+        {
+          "scope": "solver",
+          "state": "http_200",
+          "count": 13
+        }
+      ]
+    },
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "2f81c2f573a69f275622e26d176dc08def8b946ed38f48b59ca43c33d84d6b39",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "replay/requests.sqlite",
+      "sha256": "e2f280d7b17f832639376556a77f40ca2dc283bfd9df736e7768584274fcf1fa",
+      "count": 0,
+      "calls": []
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "eccc455ce03295dd1bb31d9f73576afefd5b5fdd751f7fe053f944224dc4b7e8",
+      "count": 27,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 27
+        }
+      ]
+    },
+    {
+      "path": "specification/requests.sqlite",
+      "sha256": "a8f8bcd5f5551568875b1d89413bbd95b6e4463898b8129caf6bf8be789904ba",
+      "count": 29,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 29
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 136,
+  "distinct_author_response_operations_within_stage": 136,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 1
+}

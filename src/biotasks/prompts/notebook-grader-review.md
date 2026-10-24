@@ -22,6 +22,13 @@ implementations and must not be copied into the public question as a repair.
 
 An undefined public comparison convention is a contract defect if it can change
 which submissions pass, even when every executed probe is far from that boundary.
+Audit scientific equivalence before numerical precision: exact arbitrary labels
+and componentwise agreement of non-identifiable coordinates need justification
+beyond a fixed seed or same-stack reproduction. Require a consistent identity
+mapping across dependent outputs and evidence for the proposed invariant
+comparison. Passing numerical controls does not resolve an unsuitable target;
+return a defect or blocker if the current contract still forces incidental
+implementation choices. Do not silently remove an endpoint as a repair.
 The controller's measured reports, rather than duplicated author-written test
 histories, establish current execution outcomes.
 Public descriptions of the supplied files must agree with the observed evidence.
@@ -35,8 +42,16 @@ the numerical checks pass. Treat explicit, provenance-bearing supplied
 intermediates separately from withheld downstream answers: meaningful downstream
 science must remain, without the requested answers being supplied as inputs.
 Where supplied, independently assess the installed-asset summary and setup
-worker's `dependency_asset_review`. Names/formats and test/example locations are
-discovery hints. Challenge dismissals based only on different bytes: provenance,
+worker's `dependency_asset_review`.
+Reassess that review against the final endpoint set, including faithfully
+recovered results added after setup. A setup review scoped to earlier exports
+cannot clear newly recovered answers. Inspect relevant installed source and
+reference evidence before making a negative exposure claim; distinguish verified
+absence from uninspected candidates. If the permitted repair cannot rebuild and
+revalidate an affected environment, block publication rather than assuming the
+earlier review covers it.
+Names/formats and test/example locations are discovery hints. Challenge
+dismissals based only on different bytes: provenance,
 rounding or serialization changes can leave a full scientific answer intact.
 An accessible fixture usable to check a requested answer is exposure even if
 the solver could also recompute the answer. Empty exclusions or passing controls

@@ -68,6 +68,16 @@ its values have been observed. Do not invent an analysis, repair the source, gue
 missing state or alter inputs/methods to recover it. Block unsupported recovery.
 
 Choose defensible representations and comparisons for all required endpoints.
+Resolve scientific equivalence before turning a reference representation into a
+public requirement. Arbitrary identifiers must not become exact answer keys;
+any proposed relabeling must remain consistent across dependent outputs.
+Coordinates with scientifically irrelevant orientation, origin or other
+non-identifiability need a justified invariant comparison, not componentwise
+matching to one seeded realization. A fixed seed and a matching library stack
+do not establish this. Where permitted, consider supplying a provenance-bearing
+upstream intermediate while preserving substantial downstream science. If no
+supported fair comparison or permitted reformulation remains, reject the whole
+task rather than forcing incidental implementation choices or dropping a branch.
 Project existing result fields when this preserves their scientific meaning;
 do not drop a scientific branch to avoid designing that representation. If a
 required eligible endpoint cannot be reproduced and graded fairly within policy,

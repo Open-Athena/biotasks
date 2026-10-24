@@ -1,0 +1,140 @@
+{
+  "source_archive_manifest_sha256": "29c642959ccd5e315a817cd9ae6c9af71fd97dddc9e3ca56298134dbe2f02a59",
+  "pipeline_status": "validated",
+  "source_id": null,
+  "elapsed_pipeline_seconds": 6348.873,
+  "stage_elapsed_seconds": {
+    "preparation": 21.656,
+    "setup": 795.708,
+    "replay": 412.668,
+    "specification": 272.55,
+    "construction": 543.746,
+    "grading": 3362.468,
+    "native": 933.939
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "completed",
+    "replay": "completed",
+    "specification": "completed",
+    "construction": "completed",
+    "grading": "completed",
+    "native": "completed"
+  },
+  "accounted_model_request_attempts": 166,
+  "request_ledgers": [
+    {
+      "path": "grading/requests.sqlite",
+      "sha256": "ffa3bc889dc3eb93c9a88a861d72b5007e45b15828fee45063a29bb83036b2e0",
+      "count": 80,
+      "calls": [
+        {
+          "scope": "grader",
+          "state": "response_received",
+          "count": 21
+        },
+        {
+          "scope": "independent",
+          "state": "response_received",
+          "count": 13
+        },
+        {
+          "scope": "probes",
+          "state": "response_received",
+          "count": 27
+        },
+        {
+          "scope": "repair",
+          "state": "response_received",
+          "count": 9
+        },
+        {
+          "scope": "review",
+          "state": "response_received",
+          "count": 4
+        },
+        {
+          "scope": "review-repair",
+          "state": "response_received",
+          "count": 6
+        }
+      ]
+    },
+    {
+      "path": "materialization-raw/requests.sqlite",
+      "sha256": "0269cef691abb8126488539a07858a232df8a1754152a80bb5f58c721d29f384",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "materialize",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "native/requests.sqlite",
+      "sha256": "8f8b6fecae79ba1c9afa18d9d87a94480d981fd4b325102ab96cf92140630136",
+      "count": 37,
+      "calls": [
+        {
+          "scope": "solver",
+          "state": "http_200",
+          "count": 36
+        },
+        {
+          "scope": "solver",
+          "state": "uncertain",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "774a44530f5be2716af17cc6a9ee0a9de72e2d11b7fab4d9bba1fc8acf5224d6",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "replay/requests.sqlite",
+      "sha256": "e2f280d7b17f832639376556a77f40ca2dc283bfd9df736e7768584274fcf1fa",
+      "count": 0,
+      "calls": []
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "ce4ba881ec1b7548546ce8bc79fc7131f061766e9075366d1765dfcc4afbe201",
+      "count": 29,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 29
+        }
+      ]
+    },
+    {
+      "path": "specification/requests.sqlite",
+      "sha256": "580eb27adbdb5eceb863495bd9945ff56281c934dd73316c4316d104313ca46d",
+      "count": 18,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 18
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 129,
+  "distinct_author_response_operations_within_stage": 129,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 1
+}

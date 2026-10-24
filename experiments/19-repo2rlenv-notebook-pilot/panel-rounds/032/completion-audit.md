@@ -20,42 +20,16 @@ draft and unmerged.
 | Bounded repairs and honest failure | One preparation repair is shared across static/runtime export feedback; one coherent quality revision preserves original probes and failed evidence. Current setup code raises an incomplete outcome if transport/setup time is exhausted before any controlled reference dispatch. The original [135 misclassification](../026/result-135.json) is preserved rather than rewritten. |
 | Executable binary grading with scientific controls | Matchms147 has 20 final controls; PyMC145 has 14. They include independently computed answers, missing/empty and consequential wrong submissions. Reward is executable, not an LLM opinion. These tested comparisons do not establish universal software portability or biological validity. |
 | Every claimed scientific check has an executed negative | The [147 release audit](../../autonomous-runs/147/release-audit.json) records full executed coverage. The conditional independent supplementary-probe worker was not needed, so its live execution is not claimed. |
-| Native Harbor reference, no-op and blind solver attempt | Rewards are 1/0/1 for147 and 1/0/0 for145. The PyMC solver's timeout is retained. Solver success is informative, not an acceptance requirement. MDAnalysis149 was rejected before native trials because installed test sources retained partial expected answers;148 reached only its native reference before cleanup infrastructure failed. |
+| Native Harbor reference, no-op and blind solver attempt | Rewards are 1/0/1 for147 and 1/0/0 for145. The PyMC solver's timeout is retained. Solver success is informative, not an acceptance requirement. Scanpy150 and MDAnalysis151 also completed native rewards 1/0/1, but require separate scientific qualification holds;150 records a solver timeout despite reward1. Earlier149 rejected before native trials and148 completed only its reference before a cleanup failure. |
 | Exact public release plus independent download | Matchms147 and PyMC145 have immutable Hub revisions and forced anonymous hash/mode readback. Original source/data notices remain attached; mixed or unverified permissions are not silently replaced with a blanket license. The older139 rights hold remains blocking. |
 | Inspect notebook, task, attempt, steps, prompts, inputs and outputs | The latest Matchms explorer has five views, fourteen stages and a sixteen-step solver attempt. [Browser checks](../../autonomous-runs/147/explorer-check.json) cover anchors, trajectory expansion, JavaScript errors and mobile overflow. Large arrays link to the immutable release. |
 | Preserve evidence and remove resources | Every completed panel outcome has original science/root archival verification and provider cleanup evidence. Original148's failed cleanup receipt is retained alongside later exact-ID/five-owner absence. An active campaign is not counted as cleaned or completed. |
-| Budget and GitHub status | $200 authorized, $197 conservative reservations and $3 unallocated after reserving150, not measured invoices. The issue body is a concise current summary; dated logs remain in comments. PR23 promotes tested helpers only and remains draft/unmerged. |
+| Budget and GitHub status | $200 authorized, $197 conservative reservations and $3 unallocated including 150/151, not measured invoices. The additional $100 is counted once. The issue body is a concise current summary; dated logs remain in comments. PR23 promotes tested helpers only and remains draft/unmerged. |
 
-The unresolved work is substantive: finish and audit150/151, retain the scientific
-and redistribution holds, and assess the remaining generated failures against
-the current general factory. In particular,137's numeric-encoding failure has
-general source-precision guidance in later prompts; fresh source-only run150
-is in grading to test that improvement. A successful run on a different numeric task
-does not establish that this original failure is fixed. Neither the two public
-outcomes nor green helper tests prove broad ten-domain reliability.
+The unresolved work is substantive. All ten sources now have independently archived completed outcomes and no active worker: two are published, five are qualification holds, and three are generated-candidate rejections. Seven reached native controls, but native success has not eliminated operator scientific qualification.
 
-149's complete originals and four-owner cleanup are now verified. Its last
-executed candidate passed 22 controls, but that does not clear answer exposure:
-three archived reference cells independently match constants reported by the
-worker's executed inspection. The worker could identify the unused files but
-could not modify the root-owned environment from grading, so it correctly
-blocked. The newer general source-import discovery hints prioritize relevant
-test-source names before the environment is frozen; 102 offline checks pass.
-They neither classify assets nor remove them, and are not applied to the already
-frozen150worker. Their setup step now has [selected original live evidence](../../autonomous-runs/151/setup-boundary-check.json),
-while qualification of the updated complete pipeline remains pending. A late environment-rebuild repair route
-remains unsupported; rejecting that candidate is preferable to claiming a clean
-environment without executing the removal and revalidation.
+[Scanpy150](../033/qualification-150.md) resolved the earlier execution failure, passing 21 controls and native rewards 1/0/1 in105.81 minutes, but its task still demands exact incidental cluster labels and componentwise embedding coordinates. Its solver timed out after producing outputs with reward1. Fair scientific equivalence remains unresolved; no operator changed or published this task.
 
-151 is submitted with the unchanged MDAnalysis source and the general discovery
-fix. It uses the unused $5 reservation transferred from never-submitted141;
-used campaign reservations and the imaging execution/access hold are unchanged.
-Total reservations remain $197 of $200. Source, seed and notices are unchanged;
-no previous task or answer-file identities are supplied. Nine selected files from
-the completed setup-stage export were independently hash/size/mode-verified.
-The initial catalog highlighted the asset through its source-import relationship;
-GLM declared the removal, and both offline reference tests passed with identical
-export hashes. This establishes the observed removal and retest of the initial
-exports, not final task coverage or solver-image answer isolation. The worker
-chose version2.11.0, whereas149used2.8.0; no controlled cross-run causal claim is
-made. Native trials and whole-campaign qualification are still pending.
+[MDAnalysis151](../034/qualification-151.md) passed 17 controls and native rewards 1/0/1 in70.70 minutes. Its setup demonstrated GLM-directed removal/retest of one unused expected-answer module, but final qualification found a matching partial answer in a retained test module. The original successful solver is recorded without claiming clean answer isolation. All original science/root files and seven-owner cleanup are verified for both runs.
+
+The current general prompt changes strengthen scientific-equivalence admission and review of answer isolation against final recovered endpoints. They contain no notebook methods, file identities or answer constants. They were not present in150/151 and have no live validation. A late environment-rebuild repair route is still unsupported; an honest rejection remains preferable to a false acceptance. Broad ten-domain reliability and autonomous scientific acceptance remain unproven. Keep the issue open and PR23 draft/unmerged.
