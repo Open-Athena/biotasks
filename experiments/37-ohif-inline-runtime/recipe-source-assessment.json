@@ -1,0 +1,32 @@
+{
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "source_path": "src/repo2rlenv/registry/integration.py",
+  "source_file_sha256": "dc2947685479c1d3c093371a3a233ce78a0fc5e334514c58ed817fc8b9ebaf2d",
+  "source_function_sha256": "1b262a7463091507f2e30cda2895a5934b6e96d8ffec6272ef3c2b0091a60e90",
+  "bootstrap_json_sha256": "c53fe124a2e0b859e90c47c79ce54b221398fc3906253d96ef2dd7893960e82b",
+  "cached_smoke_passed": true,
+  "cached_verify_passed": true,
+  "recorded_rebuild_commands": [
+    "export PATH=\"/usr/bin:$PATH\"",
+    "cd /workspace && pnpm install --frozen-lockfile"
+  ],
+  "recorded_reconstruction_run_count": 18,
+  "toolchain_commands_in_reconstruction": [
+    "RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && apt-get install -y nodejs 2>&1 | tail -5",
+    "RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - 2>&1 | tail -5 && apt-get install -y nodejs 2>&1 | tail -5",
+    "RUN node --version && npm --version && corepack enable && corepack prepare pnpm@12.8.1 --activate 2>&1 | tail -5",
+    "RUN export PATH=\"/usr/bin:$PATH\" && corepack enable && corepack prepare pnpm@12.8.1 --activate 2>&1 | tail -5 && pnpm --version",
+    "RUN echo 'export PATH=\"/usr/bin:$PATH\"' >> /root/.bashrc && export PATH=\"/usr/bin:$PATH\" && node --version && pnpm --version"
+  ],
+  "native_recipe_source": "Only rebuild_cmds rendered as RUN; reconstruction supplies base FROM, not all its commands",
+  "observed_first_failure": "pnpm: not found; native build exit 127 before controls",
+  "setup_cmds_field_present": false,
+  "model_calls": 0,
+  "command_replay": false,
+  "inference": "The clean inline recipe omits original persisted toolchain steps; this first failure is independent of verifier timeout and PR tests.",
+  "limits": [
+    "Original bootstrap booleans are archived historical records, not a current image pull",
+    "Complete transcript replay and registry distribution have not been tested here",
+    "Adding pnpm alone is not claimed sufficient; original reconstruction also changes Node and PATH"
+  ]
+}

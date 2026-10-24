@@ -1,0 +1,11 @@
+# OHIF inline recipe build result
+
+The selected #36 metadata candidate cannot currently rebuild its native environment from public `node:22-slim`: the only native build reaches `pnpm install --frozen-lockfile` and exits 127 because pnpm is absent. Git clone and bootstrap checkout completed. Original tests, the 300-second verifier and oracle never ran, so no new control pair or model/task score exists. One minute of execution consumed 0.069496 allocated CPU-hours.
+
+This is separate from the fixed recipe-cache naming problem. The original bootstrap JSON has only two `rebuild_cmds`: a PATH export and the pnpm install command. Its recorded reconstruction also includes Node installation, Corepack enable/prepare for pnpm 12.8.1, and PATH persistence. The native clean-recipe builder renders only `rebuild_cmds`, using the reconstruction solely to recover `FROM`. The archived cache reports original smoke/fresh-image verification passed; that verifies the retained image path historically, not a new clean inline rebuild.
+
+The first confirmed cause is therefore omitted persisted bootstrap tooling in the native inline recipe. It is not a verifier timeout, test failure or demonstrated TRC Docker limitation. Increasing test timeout would not make a missing executable available. Installing pnpm manually would violate this comparison and would not prove the rest of the reconstructed toolchain is sufficient. No repair or repeated build was attempted.
+
+Actual worker identity, absence of all original images, unchanged ten-file package/eight original grading assets, ownership-only recipe label and output archive hashes are verified. Primary cleanup removed owned containers, intermediate images, controller and volume. Unused emergency cleanup was released. The diagnostic job's succeeded state means this evidence/capture/cleanup path completed; the native image build failed.
+
+A scalable runner should record this as a pre-control build failure and continue independent candidates without fabricating rewards. Native registry distribution would preserve the committed environment instead of reconstructing it; a general recipe-fidelity fix would need its own before/after fresh-build checks. Neither is demonstrated by metadata preparation alone.
