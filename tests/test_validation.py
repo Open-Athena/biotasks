@@ -684,3 +684,26 @@ def test_closed_budget_blocks_primary_submissions_but_keeps_reserved_cleanup(
         budget.admit(path, "new", 1, 0.1)
     budget.verify_reserved(path, "one-cleanup")
     budget.verify_reserved(path, "one-stop")
+
+
+def test_installed_bridge_does_not_shadow_configured_sdk_dependencies(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import sys
+
+    installed = tmp_path / "foreign-site-packages"
+    package = installed / "biotasks/validation"
+    package.mkdir(parents=True)
+    (package.parent / "__init__.py").write_text("")
+    (package / "__init__.py").write_text("")
+    (package / "iris_client.py").write_text(
+        "import json, sdk_dependency\nprint('BIOTASKS_VALIDATION_RESULT='+json.dumps({'origin':sdk_dependency.origin}))\n"
+    )
+    (installed / "sdk_dependency.py").write_text("origin='wrong-main-environment'\n")
+    sdk = tmp_path / "configured-sdk"
+    sdk.mkdir()
+    (sdk / "sdk_dependency.py").write_text("origin='configured-sdk'\n")
+    monkeypatch.setenv("PYTHONPATH", str(sdk))
+    monkeypatch.setattr(bridge, "__file__", str(package / "bridge.py"))
+    value = bridge.call({"python": sys.executable}, {}, tmp_path / "bridge.log")
+    assert value == {"origin": "configured-sdk"}

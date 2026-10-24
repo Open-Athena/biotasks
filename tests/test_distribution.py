@@ -97,6 +97,35 @@ def test_installed_distribution_contains_and_loads_prompts(tmp_path: Path) -> No
     from biotasks.validation.files import content_sha
 
     assert json.loads(worker_resources) == {n: content_sha(v) for n, v in validation.items()}
+    # A real wheel lives beside its own dependencies. Only its BioTasks
+    # namespace may enter the separately configured SDK interpreter.
+    site = Path(
+        subprocess.check_output(
+            [str(python), "-I", "-c", "import sysconfig;print(sysconfig.get_paths()['purelib'])"],
+            cwd=outside,
+            env=environment,
+            timeout=10,
+        )
+        .decode()
+        .strip()
+    )
+    (site / "sdk_dependency.py").write_text("origin='wrong-main-environment'\n")
+    sdk = tmp_path / "sdk-imports"
+    sdk.mkdir()
+    (sdk / "sdk_dependency.py").write_text("origin='configured-sdk'\n")
+    for name in ("iris", "rigging"):
+        (sdk / name).mkdir()
+        (sdk / name / "__init__.py").write_text(
+            "import sdk_dependency\nassert sdk_dependency.origin=='configured-sdk'\n"
+        )
+    probe = "import sys;from pathlib import Path;from biotasks.validation.bridge import call;v=call({'python':sys.executable},{'action':'fingerprint'},Path(sys.argv[1]));assert set(v['source'])=={'iris','rigging'}"
+    subprocess.run(
+        [str(python), "-I", "-c", probe, str(tmp_path / "installed-bridge.log")],
+        cwd=outside,
+        env=environment | {"PYTHONPATH": str(sdk)},
+        check=True,
+        timeout=30,
+    )
     for name, content in expected.items():
         assert (
             subprocess.check_output(
