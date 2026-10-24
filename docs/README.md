@@ -8,6 +8,7 @@ operational guidance for preserving research artifacts.
 | [Prompt inspection](prompts.md) | Available templates, CLI behavior and Python helpers |
 | [Official PR task generation](generation.md) | Pinned source, frozen candidates, manifest execution, shared budgets and native outcomes |
 | [PR task validation](validation.md) | Manifest planning, Iris execution, recovery, archival and cleanup |
+| [Held native evidence](retention.md) | Source-bound retention and owned cleanup without scientific acceptance |
 | [Research artifact storage](storage.md) | Public eligibility, snapshot manifests, verification and retention |
 | [Contribution guidance](../AGENTS.md) | Setup, checks, permanent research branches and focused promotion |
 

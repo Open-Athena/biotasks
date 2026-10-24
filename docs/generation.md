@@ -135,11 +135,18 @@ biotasks generate run /durable/cohort-plan --allow-generation --allow-validation
 Planning is offline and atomic; it never submits a job. Run without execution
 flags stops before the corresponding stage. `--once` advances one serial pass
 for an external scheduler; otherwise the command waits five minutes between
-pending transitions. Incomplete, uncertain or held work prevents the next case
+pending transitions. Incomplete or uncertain work prevents the next case
 from being admitted. Preserve the same plan, installed code, shared ledger and
 backend for resumption. Do not restart on an observation timeout or a missing
 handle after submission intent. Unsupported exports with no native task are
 recorded as a terminal case and cannot block later cases indefinitely.
+
+Supported native reward-disagreement holds automatically enter the separate
+[retention lifecycle](retention.md). A fully archived/readback-verified and
+cleaned failure is recorded as scientifically held, with every acceptance flag
+false. It can finish that group without skipping later unstarted groups. Unknown
+holds, incomplete retention and closed admission still prevent further execution;
+cleanup never clears a budget hold. This does not accept late reward files.
 
 Generation allocates an existing4CPU/16GiB worker for at most5400s with a5000s
 work deadline, plus pre-reserved stop/cleanup. Its original Docker wrapper caps

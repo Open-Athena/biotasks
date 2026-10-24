@@ -3,6 +3,8 @@
 from pathlib import Path
 from typing import Any
 
+from biotasks.generation.native import retention_root
+from biotasks.retention import actor
 from biotasks.validation.controller import Pipeline, verify_plan
 from biotasks.validation.files import read_json, require, sha, write_json
 
@@ -23,11 +25,33 @@ def summarize(validation: Path) -> dict[str, Any]:
     plan = verify_plan(validation)
     rows: list[dict[str, Any]] = []
     for group in plan["tasks"]:
+        directory = validation / "runs" / group["id"]
+        if (directory / "held.json").exists():
+            retained = actor.run(retention_root(validation))
+            result = next(
+                (row for row in retained.get("results", []) if row["task_id"] == group["id"]), None
+            )
+            require(
+                result is not None and result["state"] == "retention_complete",
+                "Held evidence not fully retained/cleaned",
+            )
+            rows.append(
+                {
+                    "task": group["task"]["task"],
+                    "repo": group["task"]["repo"],
+                    "source_identity": group["task"]["source_identity"],
+                    "run_id": group["run_id"],
+                    "scientific_state": "held_unaccepted",
+                    **dict.fromkeys(FLAGS, False),
+                    "eligible_for_this_control_profile": False,
+                    "retention": result,
+                }
+            )
+            continue
         require(
             Pipeline(validation, plan, group).step() == "complete",
             "Only complete preserved/cleaned controls may enter outcomes",
         )
-        directory = validation / "runs" / group["id"]
         readback = read_json(directory / "readback.json")
         rows.append(
             {
