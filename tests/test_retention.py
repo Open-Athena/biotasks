@@ -9,8 +9,8 @@ import pytest
 
 from biotasks.generation import native, outcomes
 from biotasks.retention import actor, log_policy
-from biotasks.validation import preservation
-from biotasks.validation.files import ValidationError, inventory, write_json
+from biotasks.validation import controller, preservation
+from biotasks.validation.files import ValidationError, inventory, sha, write_json
 
 
 @pytest.fixture(autouse=True)
@@ -246,3 +246,67 @@ def test_retained_late_files_never_become_native_accepted_outcomes(tmp_path, mon
     assert row["scientific_state"] == "held_unaccepted"
     assert all(row[key] is False for key in outcomes.FLAGS)
     assert outcomes.summarize(validation) == value
+
+
+@pytest.mark.parametrize("lost_observation", [False, True])
+def test_uncertain_cleanup_uses_existing_handle_without_resubmission_or_releasing_reservation(
+    tmp_path, monkeypatch, lost_observation
+):
+    # Isolate the transport boundary after verified-publication admission. The
+    # original fixed-handle controller's ensure_submission method is real; only
+    # already-tested provenance/publication setup is replaced for this fault.
+    ledger = tmp_path / "budget.json"
+    write_json(ledger, {"cleanup_reservation": "still reserved"})
+    group = {"id": "first", "run_id": "fixed", "payload_sha256": {"worker.py": "a" * 64}}
+    pipe = controller.Pipeline(
+        tmp_path / "original", {"backend": {}, "budget_ledger": str(ledger)}, group
+    )
+    cleanup = pipe.directory / "cleanup"
+    auxiliary = {**group, "run_id": "fixed-cleanup"}
+    write_json(
+        cleanup / "submission.json",
+        {
+            "state": "submission_pending",
+            "job_id": "/exedev/fixed-cleanup",
+            "payload_sha256": group["payload_sha256"],
+        },
+    )
+    write_json(pipe.directory / "journal.json", {"state": "held"})
+    instance = actor.Retention.__new__(actor.Retention)
+    instance.pipe = pipe
+    instance.directory = tmp_path / "retention"
+    write_json(
+        instance.directory / "preserved/manifest.json",
+        {"test": "publication verified before boundary"},
+    )
+    write_json(instance.directory / "publication.json", {"test": "verified receipt boundary"})
+    instance.source = {
+        "source_identity": "source",
+        "original_files_sha256": {"journal.json": sha(pipe.directory / "journal.json")},
+        "control_archive_sha256": "b" * 64,
+        "protected_base": {"ref": "python:3.12-slim"},
+    }
+    instance.cleanup_allowed = True
+    monkeypatch.setattr(preservation, "verify_receipt", lambda directory: None)
+    monkeypatch.setattr(pipe, "auxiliary", lambda role, **settings: (auxiliary, cleanup, {}))
+    monkeypatch.setattr(actor.evidence, "auxiliary_contract", lambda *a, **k: (auxiliary, cleanup))
+    calls = []
+
+    def transport(action, *args, **kwargs):
+        calls.append(action)
+        assert action == "observe", "Existing cleanup intent must never cause another submit"
+        if lost_observation and len(calls) == 1:
+            raise TimeoutError("Observation acknowledgement lost")
+        return {"state": "handle_missing"}
+
+    monkeypatch.setattr(pipe, "client", transport)
+    before, reserved = inventory(pipe.root), sha(ledger)
+    if lost_observation:
+        with pytest.raises(TimeoutError):
+            instance.cleanup_terminal()
+    else:
+        instance.cleanup_terminal()
+    instance.cleanup_terminal()
+    assert calls == ["observe", "observe"]
+    assert inventory(pipe.root) == before and sha(ledger) == reserved
+    assert not (instance.directory / "cleanup_terminal.json").exists()
