@@ -37,3 +37,11 @@ The portable input bundle contains the original action plan, pinned native sourc
 ## 2026-10-24: live watcher recovery
 
 The lightweight local watcher was interrupted with SIGINT and exited 130. Its replacement recovered the existing journal and returned to waiting on the same remote handle. Submission receipt and runtime-plan bytes are identical across the restart; no remote cancellation or duplicate submission occurred. A first process lookup in the sandbox saw no elevated processes and failed closed without signaling anything; the elevated lookup identified only this task’s exact watcher. Outcome evidence remains pending.
+
+## 2026-10-24: fresh recorded-bootstrap result
+
+All eighteen original action exits matched. Native smoke and fresh-image checks passed; the latter reported 121 suites / 1,446 tests passing. The original #5996 overlay then built from the reconstructed dependency. Independent original controls gave nop reward 0, 0/26 F2P and 1189/1189 P2P; oracle reward 1, 26/26 F2P and 1189/1189 P2P, whole-command exit 0, no untracked failures. Original task files were checked unchanged before/after controls.
+
+Two actual task-image IDs differ, but their pre-control Git/tool/Python-package/lock-file/PATH probes agree and both exact ancestry chains reach the same reconstructed dependency ID. This is measured environment equivalence, not image byte identity. The original public base ID matches the sealed native-inline failure exactly. All thirteen runtime HF objects and nested members were anonymously verified after worker cleanup; every owned container/controller/image/volume is absent. Actual allocation is 0.5101238889164394 CPU-hours, one terminal attempt; no model calls or extra capacity. Unused cleanup reservation was released. Completed-controller reinvocation leaves stage/budget bytes unchanged.
+
+This isolates a clean-export reconstruction omission for one frozen OHIF task: replaying the original environment procedure recovers its original controls without installation or task repair commands. It does not prove universal replay, a standalone task Dockerfile, deterministic dependency availability across time, or production readiness. The portable initializer remains required. #40 is filed as the next source/transfer question and has no admission or runtime yet.

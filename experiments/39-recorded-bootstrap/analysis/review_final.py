@@ -12,6 +12,7 @@ def main():
     results=json.loads((ROOT/'results.json').read_text());assert results['cleanup_verified'] and results['anonymous_download_verified']
     files=[p for p in ROOT.iterdir() if p.is_file() and p.suffix in ['.py','.json','.md','.txt'] and not p.name.startswith(('final-evidence-','local-cleanup'))]
     files+=list((ROOT/'runs').rglob('*.json'))
+    files+=[p for p in (ROOT/'private').glob('controller-*.log') if p.is_file()]
     files+=[ROOT/'analysis/summarize.py',ROOT/'analysis/preserve_final.py',ROOT/'analysis/cleanup_local.py',Path(__file__).resolve()]
     rows=[]
     for path in sorted(set(files)):

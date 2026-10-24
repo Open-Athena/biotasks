@@ -1,0 +1,233 @@
+{
+  "issue": 39,
+  "task": "OHIF__Viewers-5996",
+  "original_task_identity": "3e2fefb6d0c5f69f6858a2263e74e7bceebe496fd879c833b8e149fca11ecdfe",
+  "candidate_task_identity": "80550ffa275e2dbf04523604f100845acd8de6c5fafb6b350d0b840f53a420fe",
+  "source_variant": "recorded_bootstrap_dependency",
+  "baseline_issue": 37,
+  "baseline": "Native inline recipe exited 127: pnpm missing; no controls",
+  "stage": "family_completed",
+  "bootstrap_stage": "dependency_verified",
+  "replay_status": "matched_recorded_exits",
+  "replay_steps_attempted": 18,
+  "bootstrap_source_commit": "4965e280cada2202a99f9dd0212a8465865b49f7",
+  "public_base_image_id": "sha256:58a96d9752cfedf3c4fcfcbe2dabbad725c147f7003caa9f7899a3f414ada3fc",
+  "bootstrap_image_id": "sha256:4fba42eda7cb6713392d2332365dbaaa8aa42a3f53b2a69d459d754f70fc6ab5",
+  "smoke_passed": true,
+  "fresh_image_check_passed": true,
+  "fresh_image_check_detail": "exit=0; rn false for invalid DICOM UIDs\n\nTest Suites: 121 passed, 121 total\nTests:       1446 passed, 1446 total\nSnapshots:   0 total\nTime:        20.686 s, estimated 173 s\nRan all test suites in 9 projects.",
+  "control_invocations": 2,
+  "rows": [
+    {
+      "agent": "nop",
+      "state": "completed",
+      "wrapper_exit": 0,
+      "trial_present": true,
+      "reward_details_present": true,
+      "exception": null,
+      "native_reward": 0.0,
+      "parse_status": "ok",
+      "resolved": false,
+      "command_resolved": false,
+      "test_exit_code": 1,
+      "f2p_passed": 0,
+      "f2p_total": 26,
+      "p2p_passed": 1189,
+      "p2p_total": 1189,
+      "untracked_failed_count": 0,
+      "raw_test_logs": [
+        {
+          "path": "jobs/OHIF__Viewers-5996/OHIF__Viewers-5996-300s-nop/OHIF__Viewers-5996__yHUXvpg/verifier/test-stdout.txt",
+          "bytes": 194562,
+          "sha256": "79cc7fb73193d382064f7207758ae948288097a9d1de8eea253421e880fdd89f"
+        }
+      ]
+    },
+    {
+      "agent": "oracle",
+      "state": "completed",
+      "wrapper_exit": 0,
+      "trial_present": true,
+      "reward_details_present": true,
+      "exception": null,
+      "native_reward": 1.0,
+      "parse_status": "ok",
+      "resolved": true,
+      "command_resolved": true,
+      "test_exit_code": 0,
+      "f2p_passed": 26,
+      "f2p_total": 26,
+      "p2p_passed": 1189,
+      "p2p_total": 1189,
+      "untracked_failed_count": 0,
+      "raw_test_logs": [
+        {
+          "path": "jobs/OHIF__Viewers-5996/OHIF__Viewers-5996-300s-oracle/OHIF__Viewers-5996__3bxcQ3k/verifier/test-stdout.txt",
+          "bytes": 157857,
+          "sha256": "449eb42cae0123ceba415489347450e5c2f306b92923bf8b86d094ea3a29387c"
+        }
+      ]
+    }
+  ],
+  "positive_control_pair": true,
+  "clean_oracle_command": true,
+  "all_tracked_p2p_pass_both": true,
+  "images": [
+    {
+      "git_head": "dc204f639c157851713f067ca2433b2657ffd49b",
+      "python": "3.11.2 (main, Oct  7 2026, 12:35:07) [GCC 12.2.0]",
+      "platform": "Linux-5.19.0-1022-gcp-x86_64-with-glibc2.36",
+      "tools": {
+        "python3": {
+          "path": "/usr/bin/python3",
+          "exit_code": 0,
+          "stdout": "Python 3.11.2",
+          "stderr": ""
+        },
+        "node": {
+          "path": "/usr/bin/node",
+          "exit_code": 0,
+          "stdout": "v24.22.1",
+          "stderr": ""
+        },
+        "npm": {
+          "path": "/usr/bin/npm",
+          "exit_code": 0,
+          "stdout": "11.19.1",
+          "stderr": ""
+        },
+        "pnpm": {
+          "path": "/usr/bin/pnpm"
+        }
+      },
+      "python_packages": null,
+      "lock_files": {
+        "pnpm-lock.yaml": {
+          "bytes": 1087425,
+          "sha256": "500066f5c2d515141014b4f50b59528fadefaa2277de6926f1594aade484dd88"
+        },
+        "package.json": {
+          "bytes": 5680,
+          "sha256": "c9115f4adb75922a612e8c11c1c160e54f1696a2be86197893902ca1e103f275"
+        },
+        "node_modules/.pnpm/lock.yaml": {
+          "bytes": 1057994,
+          "sha256": "d0bf0beaf05a11fbec21d0bbe4ef813b76e3c3ec08d379955f16e8860d9e3be0"
+        },
+        "node_modules/.modules.yaml": {
+          "bytes": 275250,
+          "sha256": "54ed13025394bfc24013a7f5e649eb1dec000e641694bcfb11e370cfe1eb6d7b"
+        }
+      },
+      "effective_path": "/usr/bin:/usr/local/lib/node_modules/.bin:/root/.nvm/versions/node/*/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "task": "OHIF__Viewers-5996",
+      "image": "biotasks39-ohif-viewers-b3689fc8f4-ohif__viewers-5996:e65bfc5b90f3",
+      "image_id": "sha256:476f1fa273ed7fb2860a85a2749b7e4448e4e16034410222aac56c4f21286a83",
+      "dockerfile_sha256": "e65bfc5b90f35f626dcfc8456a165a2aa1b6db3e8327d6129fd85e3ef6d508c1",
+      "captured": 1792820531.2954273,
+      "bootstrap_dependency_image_id": "sha256:4fba42eda7cb6713392d2332365dbaaa8aa42a3f53b2a69d459d754f70fc6ab5",
+      "dependency_ancestry": [
+        "sha256:476f1fa273ed7fb2860a85a2749b7e4448e4e16034410222aac56c4f21286a83",
+        "sha256:bad3b464c64c6cef7dc32fc02000e052c5aae47516fecdf6f5d7e7de0b4fc3af",
+        "sha256:d96c6002d0e8d3018be7ece8ab294bc3d9e470fdd5fc39ac029a37fead06943d",
+        "sha256:9f0c5986ffbae777b40896bf37fb48facaf02baba7d399b7db6f1c19cf914dc4",
+        "sha256:ac40a01cde542c8e66e82247e03aab44ad58436e162ad043a7bbabd3620c9227",
+        "sha256:978f88c05809d84c1aa3b09e885e99f9cd83b3b3a7b25b4bb62d5926aede5bac",
+        "sha256:25cb71a5cf228c3d5c8d3f5e7f16aed46916e3c9040b9bee737b287655f98542",
+        "sha256:d53d4d536a7074929ab163f7aec4281b28ca81b861ad397c4ccf3e2becff4336",
+        "sha256:5e1c6bf164aa48cdaf98469bdfbae3cc041e5f83c26d05cd1d173f301f8ec0ed",
+        "sha256:4fba42eda7cb6713392d2332365dbaaa8aa42a3f53b2a69d459d754f70fc6ab5"
+      ],
+      "dependency_ancestry_verified": true,
+      "test_commands_sha256": "df502defb39d54563b8b165c1f96097cbea2327b3e60ccba54237e49cc9ac072",
+      "effective_test_path_exports": [
+        "export PATH=\"/usr/local/lib/node_modules/.bin:$HOME/.nvm/versions/node/*/bin:$PATH\"",
+        "export PATH=\"/usr/bin:$PATH\""
+      ]
+    },
+    {
+      "git_head": "dc204f639c157851713f067ca2433b2657ffd49b",
+      "python": "3.11.2 (main, Oct  7 2026, 12:35:07) [GCC 12.2.0]",
+      "platform": "Linux-5.19.0-1022-gcp-x86_64-with-glibc2.36",
+      "tools": {
+        "python3": {
+          "path": "/usr/bin/python3",
+          "exit_code": 0,
+          "stdout": "Python 3.11.2",
+          "stderr": ""
+        },
+        "node": {
+          "path": "/usr/bin/node",
+          "exit_code": 0,
+          "stdout": "v24.22.1",
+          "stderr": ""
+        },
+        "npm": {
+          "path": "/usr/bin/npm",
+          "exit_code": 0,
+          "stdout": "11.19.1",
+          "stderr": ""
+        },
+        "pnpm": {
+          "path": "/usr/bin/pnpm"
+        }
+      },
+      "python_packages": null,
+      "lock_files": {
+        "pnpm-lock.yaml": {
+          "bytes": 1087425,
+          "sha256": "500066f5c2d515141014b4f50b59528fadefaa2277de6926f1594aade484dd88"
+        },
+        "package.json": {
+          "bytes": 5680,
+          "sha256": "c9115f4adb75922a612e8c11c1c160e54f1696a2be86197893902ca1e103f275"
+        },
+        "node_modules/.pnpm/lock.yaml": {
+          "bytes": 1057994,
+          "sha256": "d0bf0beaf05a11fbec21d0bbe4ef813b76e3c3ec08d379955f16e8860d9e3be0"
+        },
+        "node_modules/.modules.yaml": {
+          "bytes": 275250,
+          "sha256": "54ed13025394bfc24013a7f5e649eb1dec000e641694bcfb11e370cfe1eb6d7b"
+        }
+      },
+      "effective_path": "/usr/bin:/usr/local/lib/node_modules/.bin:/root/.nvm/versions/node/*/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "task": "OHIF__Viewers-5996",
+      "image": "biotasks39-ohif-viewers-b3689fc8f4-ohif__viewers-5996:e65bfc5b90f3",
+      "image_id": "sha256:a39acef5467749a845eba183079fdc26afc4531a7d2b0262ab1b3cae1735fe80",
+      "dockerfile_sha256": "e65bfc5b90f35f626dcfc8456a165a2aa1b6db3e8327d6129fd85e3ef6d508c1",
+      "captured": 1792820705.3570006,
+      "bootstrap_dependency_image_id": "sha256:4fba42eda7cb6713392d2332365dbaaa8aa42a3f53b2a69d459d754f70fc6ab5",
+      "dependency_ancestry": [
+        "sha256:a39acef5467749a845eba183079fdc26afc4531a7d2b0262ab1b3cae1735fe80",
+        "sha256:bad3b464c64c6cef7dc32fc02000e052c5aae47516fecdf6f5d7e7de0b4fc3af",
+        "sha256:d96c6002d0e8d3018be7ece8ab294bc3d9e470fdd5fc39ac029a37fead06943d",
+        "sha256:9f0c5986ffbae777b40896bf37fb48facaf02baba7d399b7db6f1c19cf914dc4",
+        "sha256:ac40a01cde542c8e66e82247e03aab44ad58436e162ad043a7bbabd3620c9227",
+        "sha256:978f88c05809d84c1aa3b09e885e99f9cd83b3b3a7b25b4bb62d5926aede5bac",
+        "sha256:25cb71a5cf228c3d5c8d3f5e7f16aed46916e3c9040b9bee737b287655f98542",
+        "sha256:d53d4d536a7074929ab163f7aec4281b28ca81b861ad397c4ccf3e2becff4336",
+        "sha256:5e1c6bf164aa48cdaf98469bdfbae3cc041e5f83c26d05cd1d173f301f8ec0ed",
+        "sha256:4fba42eda7cb6713392d2332365dbaaa8aa42a3f53b2a69d459d754f70fc6ab5"
+      ],
+      "dependency_ancestry_verified": true,
+      "test_commands_sha256": "df502defb39d54563b8b165c1f96097cbea2327b3e60ccba54237e49cc9ac072",
+      "effective_test_path_exports": [
+        "export PATH=\"/usr/local/lib/node_modules/.bin:$HOME/.nvm/versions/node/*/bin:$PATH\"",
+        "export PATH=\"/usr/bin:$PATH\""
+      ]
+    }
+  ],
+  "allocated_cpu_hours": 0.5101238889164394,
+  "attempts": 1,
+  "model_calls": 0,
+  "raw_archive_sha256": "6fedc73c0ecc3699091a20649642ca231d3cafe522d563498c338710e668a363",
+  "hf_prefix": "research/39-recorded-bootstrap/2026-10-24/94e53ca758799a7b28f7b19b7409c42f68d2a5b1c307355467a823e11d85edeb",
+  "anonymous_download_verified": true,
+  "cleanup_verified": true,
+  "initializer_required": true,
+  "task_dockerfile_alone_standalone": false,
+  "image_pushed": false,
+  "new_unique_tasks": 0,
+  "historical_cohort_totals_unchanged": true
+}
