@@ -1,6 +1,6 @@
 # Current ten-source development assessment
 
-Latest independently archived completed outcome per source. These are development versions, not a common-version holdout or a success-rate estimate. Original failures and superseded runs remain preserved. No campaign is currently running.
+Latest independently archived completed outcome per source. These are development versions, not a common-version holdout or a success-rate estimate. Original failures and superseded runs remain preserved. Active source-only repeat152 is excluded from these completed-outcome counts.
 
 | Domain | Source | Campaign | Pipeline minutes | Accounted model requests | Outcome |
 | --- | --- | --- | ---: | ---: | --- |
@@ -23,6 +23,6 @@ Latest independently archived completed outcome per source. These are developmen
 
 Measured pipeline times across the ten latest outcomes are **4.48–111.96 minutes**; the seven completing native controls took **37.30–111.96 minutes**. These exclude bootstrap, archive verification and publication. Short failures do not estimate successful throughput.
 
-Later general prompt changes require scientific equivalence before reference matching and reassessment of answer isolation against the final recovered endpoint set. Those changes were not in150/151 and have no live validation. The source-import discovery change was in151, where it helped one removal but did not establish comprehensive discovery.
+Later general prompt changes require scientific equivalence before reference matching and reassessment of answer isolation against the final recovered endpoint set. Those changes were not in150/151. The required review gate passed168offline checks; live validation is pending in152. The source-import discovery change was in151, where it helped one removal but did not establish comprehensive discovery.
 
 See [machine-readable identities](current-panel-summary.json) and [the requirement audit](completion-audit.md). The factory has demonstrated autonomous execution across diverse inputs; reliable scientific acceptance/rejection without operator qualification is still incomplete. R support remains deferred.
