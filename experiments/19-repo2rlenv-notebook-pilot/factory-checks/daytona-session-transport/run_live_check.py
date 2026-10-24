@@ -81,7 +81,7 @@ def program(name, exit_code):
     )
 
 
-async def run(config, root):
+async def run(config, root, *, checks=None):
     if (
         not re.fullmatch(r"biotasks19-session-compat-[a-z0-9-]+", config["owner"])
         or config["resources"] != {"cpus": 4, "memory_gib": 8, "disk_gib": 10, "gpu": False}
@@ -104,7 +104,11 @@ async def run(config, root):
         "new_model_calls": 0,
         "scientific_computation": False,
         "cleanup_verified": False,
-        "synthetic_failure_injection": "One acknowledged original completion is hidden from the caller; this is not a naturally occurring provider failure.",
+        "synthetic_failure_injection": (
+            "One acknowledged original completion is hidden from the caller; this is not a naturally occurring provider failure."
+            if checks is None
+            else None
+        ),
     }
     created = False
     primary = None
@@ -147,6 +151,12 @@ async def run(config, root):
         initialized.checked("Initialize infrastructure-only check")
         async_box = await async_client.get(sandbox.id, request_timeout=15)
         remote = Remote(worker, sandbox, root, work_deadline, 4, session_process=async_box.process)
+        if checks is not None:
+            result["cases"] = await checks(remote, root)
+            if len(result["cases"]) != 3 or not all(c["passed"] for c in result["cases"]):
+                raise ValueError("The three bounded synthetic checks did not all pass")
+            result["status"] = "checks_passed_cleanup_pending"
+            return
         for name, expected in [("success", 0), ("nonzero", 7), ("lost-ack", 0)]:
             if name == "lost-ack":
                 remote.session_process = LoseAcknowledgement(
