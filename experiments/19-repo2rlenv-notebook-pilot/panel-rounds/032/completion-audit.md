@@ -26,7 +26,7 @@ draft and unmerged.
 | Preserve evidence and remove resources | Every completed panel outcome has original science/root archival verification and provider cleanup evidence. Original148's failed cleanup receipt is retained alongside later exact-ID/five-owner absence. An active campaign is not counted as cleaned or completed. |
 | Budget and GitHub status | $200 authorized, $197 conservative reservations and $3 unallocated after reserving150, not measured invoices. The issue body is a concise current summary; dated logs remain in comments. PR23 promotes tested helpers only and remains draft/unmerged. |
 
-The unresolved work is substantive: finish and audit150, retain the scientific
+The unresolved work is substantive: finish and audit150/151, retain the scientific
 and redistribution holds, and assess the remaining generated failures against
 the current general factory. In particular,137's numeric-encoding failure has
 general source-precision guidance in later prompts; a fresh source-only150 run
@@ -45,3 +45,10 @@ They neither classify assets nor remove them, and are not live-validated or
 applied to the already frozen 150 worker. A late environment-rebuild repair route
 remains unsupported; rejecting that candidate is preferable to claiming a clean
 environment without executing the removal and revalidation.
+
+151 is submitted with the unchanged MDAnalysis source and the general discovery
+fix. It uses the unused $5 reservation transferred from never-submitted141;
+used campaign reservations and the imaging execution/access hold are unchanged.
+Total reservations remain $197 of $200. Source, seed and notices are unchanged;
+no previous task or answer-file identities are supplied. Submission is not proof
+that the updated discovery or any removal has succeeded.

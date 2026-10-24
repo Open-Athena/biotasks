@@ -1,6 +1,6 @@
 # Current ten-source development assessment
 
-Latest independently archived completed outcome per source. This combines development versions; it is not a held-out success-rate estimate. Original failed attempts remain preserved. The active 150 repeat is excluded from the completed-outcome counts.
+Latest independently archived completed outcome per source. This combines development versions; it is not a held-out success-rate estimate. Original failed attempts remain preserved. The active 150 and 151 repeats are excluded from the completed-outcome counts.
 
 | Domain | Source | Campaign | Pipeline minutes | Accounted model requests | Outcome |
 | --- | --- | --- | ---: | ---: | --- |
@@ -19,6 +19,6 @@ Five completed native-control sets are distinct from scientific qualification: P
 
 Across these ten outcomes, measured pipeline time ranges from 4.48 to 111.96 minutes. The five cases completing native controls range from 37.30 to 111.96 minutes. These exclude bootstrap, archive verification and publication. Short failed setup attempts do not estimate successful generation throughput.
 
-150 is an active unchanged Scanpy source-only repeat testing later general numeric-precision guidance. It receives no prior task or diagnostic hints.147 passed the executed-negative coverage guard; its conditional supplementary-probe role was not needed. The newer source-import asset hints have 102 offline regression checks but have not been applied to the frozen 150 worker or validated in a live setup session.
+150 is an active unchanged Scanpy source-only repeat testing later general numeric-precision guidance. It receives no prior task or diagnostic hints.147 passed the executed-negative coverage guard; its conditional supplementary-probe role was not needed. The newer source-import asset hints have 102 offline regression checks.151is a fresh unchanged MDAnalysis source-only validation; it receives no prior task or asset identities. The hints are not in the frozen150worker, and submission alone is not live validation.
 
 See [the complete machine-readable identities](current-panel-summary.json) for original archive and public receipt hashes. Computational reproduction does not establish biological validity; the development panel does not establish unseen-notebook generality.
