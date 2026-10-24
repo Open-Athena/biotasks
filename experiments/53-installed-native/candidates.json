@@ -1,0 +1,53 @@
+{
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "kind": "Unchanged official merged-PR descriptors; not all-history coverage",
+  "repo": "scverse/anndata",
+  "limit": 50,
+  "since": "2026-10-19",
+  "until": "2026-10-19",
+  "candidates": [
+    {
+      "number": 2710,
+      "title": "Backport PR #2641 on branch 0.13.x (fix: don't enforce identical df index on {obs,var}m)",
+      "body": "Backports #2641 ",
+      "state": "MERGED",
+      "merged_at": "2026-10-19T14:30:40Z",
+      "base_ref": "0.13.x",
+      "base_sha": "59fd3ec8ea3b2ad583af35f40253ce02ac805394",
+      "head_sha": "b0dfe4ec1a1a1d88c5a3069c617341cdb53922a1",
+      "is_draft": false,
+      "url": "https://github.com/scverse/anndata/pull/2710",
+      "changed_files": [
+        "docs/release-notes/2641.fix.md",
+        "src/anndata/_core/aligned_mapping.py",
+        "tests/test_concatenate.py",
+        "tests/test_obsmvarm.py"
+      ]
+    },
+    {
+      "number": 2641,
+      "title": "fix: don't enforce identical df index on `{obs,var}m`",
+      "body": "<!-- Please:\r\n1. Fill in the following check boxes\r\n2. Make sure checks pass (Ignore \u201cTriage\u201d ones)\r\n-->\r\n\r\nSee https://github.com/scverse/anndata-rs/pull/44 for more info, but since this isn't technically in our spec (and I find it wasteful in any case to enforce), I think removing it is reasonable.  I've already added a note to revisit this in #2060.\r\n\r\nWe could in theory warn users about the mismatch, but that would mean that everything produced by rustar-alginer (without a fix there enforcing the duplication of the index across multi-dim mappings) would yield the warning.\r\n\r\nI'm open to suggestions, but this seemed the least invasive!\r\n\r\n- [ ] Closes #\r\n- [ ] Tests added\r\n\r\n<!-- only check the following checkbox (and add a reason) if you want to skip release notes -->\r\n- [ ] Release note not necessary because:\r\n",
+      "state": "MERGED",
+      "merged_at": "2026-10-19T08:05:56Z",
+      "base_ref": "main",
+      "base_sha": "40495bcdf1e6486df35bcafd9e597c6557d4ec6e",
+      "head_sha": "9656ad923f7aad21ddd93342d357edf9c66cf96f",
+      "is_draft": false,
+      "url": "https://github.com/scverse/anndata/pull/2641",
+      "changed_files": [
+        "docs/release-notes/2641.fix.md",
+        "src/anndata/_core/aligned_mapping.py",
+        "tests/test_concatenate.py",
+        "tests/test_obsmvarm.py"
+      ]
+    }
+  ],
+  "discovery_binding": {
+    "native_config_sha256": "067c7c8110384a88fc5b6adada983cc6b3d86e14827f08edee91a606d541ae14",
+    "source_receipt_sha256": "43ca4ea817de43204e6fc09d9f9da7e09bf959104a0926b847aab9eae5676a2c"
+  },
+  "model_calls": 0,
+  "remote_jobs": 0,
+  "snapshot_identity": "b8bdb0ef27761ed2275297c79c8326d89a1d15260a9bd5a6e323626e8dabf506"
+}
