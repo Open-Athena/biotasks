@@ -75,3 +75,7 @@ At 23:17:41 UTC the confirmation handle was running. Stopped only the sleeping l
 ## 2026-10-23 — unattended confirmation complete
 
 The combined run succeeded with one attempt and2.213634 allocated CPU-hours. Both control receipts were captured, hash-verified and tied to their build intervals; dependency versions/hashes/Python/platform match exactly. Nop0/oracle1,1 F2P repaired,10 P2P preserved, oracle exit0 and twelve unchanged files. Ten HF objects passed anonymous readback. The controller then submitted and verified one owned cleanup attempt (0.004734 CPU-hours), exited0 and passed completed reinvocation without journal changes. Total allocation4.429718 CPU-hours, all CPU reservations reconciled, zero model calls. See `confirmation-diagnosis.md`; exact image portability remains #35's open question. Final small cleanup archive is being preserved separately.
+
+## 2026-10-24 — final evidence preserved
+
+The small cleanup archive and final derived audit are now in the verified eleven-object final HF snapshot on #33's branch. No owned remote resources or active controller remain. Direct pytest-log inspection corroborates the reward records: nop 1 failed/10 passed/1 skipped, oracle 11 passed/1 skipped. The eleven scored tests match the original contract; no untracked failures. Keep #34 open for review. The same-worker comparison is complete; #35 addresses clean-worker portability through native upstream distribution.
