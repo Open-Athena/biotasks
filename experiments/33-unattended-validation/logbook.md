@@ -155,3 +155,9 @@ Updated `next-step.json` to #39's source/interface assessment. #39 has no runtim
 ### 2026-10-24 — #39 interface source checkpoint
 
 #39 `b8cac779` verifies the original sandbox/clone/check and registry ref/provenance helpers before adding a new adapter. Selected an explicit recorded-bootstrap dependency bundle with private/local image metadata and an automatic initializer; it does not claim the task Dockerfile alone is standalone. Original action bytes, task overlay commands and all grading/resources remain unchanged. Use a unique owned dependency ref, and remove the source sandbox after commit before the unchanged fresh-image checker to retain the two-CPU/12-GiB envelope. Candidate generation and contract/lifecycle fixtures are next; no new runtime admission, model call or capacity. See the child's recorded source/justification for exact limits.
+
+## 2026-10-24: native verifier-integrity diagnostic complete
+
+#41 preserves three managed attempts separately: constructor failure before nested creation, Compose configuration failure before either writer, then native finite/timeout cases through unchanged Harbor 0.6.6. Live first-writer survival into retry and eleven transient in-container NUL samples are measured; final raw log is hole-free, so the original conjunction remains false. Historical Scanpy causation remains unproven. Full runtime/summary HF readback, owned cleanup and pre/post-cleanup inert invocation are verified; no new exports/biological controls/models. All attempts used 0.137659 CPUh; epic actual 6.265329 CPUh, zero outstanding CPU reservations. Original cohort ledger SHA remains 19295d77.
+
+Filed #42 as an actual epic subissue for source-first assessment of upstream cancellation/retry-log fixes; exact body, agent-generated label and hierarchy verified. No candidate selected, new runtime reservation, model call or paid capacity. This is a new optional follow-up question, not a change to #41's predeclared result.
