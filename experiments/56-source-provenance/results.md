@@ -74,3 +74,21 @@ covered; no project mapping, exact patch/Git identity, native/generated code,
 subprocess/xdist identity or complete executing-code claim. Report failure or
 absence is missing evidence. No runtime/model admission, AnnData retry, import
 repair or reward change.
+
+## Real installation inside the pytest process
+
+The separate installed-process harness now joins real pip metadata with the
+reporting plugin: four actual pytest invocations, before/after the preserved toy
+dependency replacement and with/without instrumentation. Both routes pass while
+the editable checkout is installed, then both fail the unchanged checkout test
+after the release replaces it. Same-process reports record editable0.0.0/checkout
+then release1.0.0/foreign. The plugin preserves the failure, not repairs it.
+
+The fixture interpreter uses the same Python3.13 pytest library provided by the
+existing locked tool environment, appended only for this synthetic harness in
+both routes; no target-module path is added. This is not the native environment
+or an AnnData installation. All original toy sources/wheels are hash-identical;
+new fixture installation/cache/scratch is removed. The first setup attempt
+failed on a read-only default uv cache before installation; the second declares
+an owned empty cache and succeeds. Complete original reports/commands/failure
+logs are preserved. No native/model call or original-result change.
