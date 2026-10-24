@@ -1,0 +1,232 @@
+{
+  "original_collection_failure": {
+    "class": "ValidationError",
+    "message": "Native reward disagreement"
+  },
+  "source_envelope_verified": true,
+  "terminal_accounting": {
+    "job_id": "/exedev/biotasks-val-issue47-apt-index-re-c38473859ea2",
+    "state": "succeeded",
+    "terminal": true,
+    "attempts": 1,
+    "exit_code": 0,
+    "attempt_seconds": 1436.9150002002716,
+    "allocated_cpu": 2.0,
+    "allocated_cpu_hours": 0.7982861112223731,
+    "output_archive": {
+      "state": "uploaded",
+      "uri": "gs://marin-us-central2/tmp/ttl=7d/iris/task-outputs/exedev/biotasks-val-issue47-apt-index-re-c38473859ea2/0/534ed5bafbc3ff06/outputs.tar.zst",
+      "size_bytes": 149360,
+      "sha256": "62bf6ac9e12f020bfa30c702816dafa7556917aba1026fe9a3dd7645829059c1",
+      "error_message": "",
+      "retention": "ttl",
+      "ttl_days": 7,
+      "skipped_count": 0,
+      "skipped_sample": []
+    },
+    "model_calls": 0
+  },
+  "original_control_records": [
+    {
+      "agent": "nop",
+      "state": "completed",
+      "wrapper_exit": 0,
+      "elapsed_seconds": 633.5276710987091,
+      "trials": [
+        {
+          "exception_info": {
+            "exception_type": "VerifierTimeoutError",
+            "exception_message": "Verifier execution timed out after 300.0 seconds",
+            "exception_traceback": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/verifier/verifier.py\", line 185, in verify\n    await self._environment.exec(\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 599, in exec\n    return await self._run_docker_compose_command(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 360, in _run_docker_compose_command\n    stdout_bytes, stderr_bytes = await process.communicate()\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 201, in communicate\n    stdin, stdout, stderr = await tasks.gather(stdin, stdout, stderr)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 181, in _read_stream\n    output = await stream.read()\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 706, in read\n    block = await self.read(self._limit)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 713, in read\n    await self._wait_for_data('read')\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 545, in _wait_for_data\n    await self._waiter\nasyncio.exceptions.CancelledError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 410, in _verify_with_retry\n    self.result.verifier_result = await asyncio.wait_for(\n                                  ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 519, in wait_for\n    async with timeouts.timeout(timeout):\n               ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/timeouts.py\", line 115, in __aexit__\n    raise TimeoutError from exc_val\nTimeoutError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 986, in run\n    await self._run_verification()\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 391, in _run_verification\n    await self._verify_with_retry()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 232, in async_wrapped\n    return await copy(fn, *args, **kwargs)  # type: ignore[type-var]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 126, in __call__\n    do = await self.iter(retry_state=retry_state)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 171, in iter\n    result = await action(retry_state)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/_utils.py\", line 130, in inner\n    return call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 482, in exc_check\n    retry_exc.reraise()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 216, in reraise\n    raise self.last_attempt.result()\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 449, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 401, in __get_result\n    raise self._exception\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 130, in __call__\n    result = await fn(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 415, in _verify_with_retry\n    raise VerifierTimeoutError(\nharbor.trial.trial.VerifierTimeoutError: Verifier execution timed out after 300.0 seconds\n",
+            "occurred_at": "2026-10-24T15:44:17.850289"
+          },
+          "verifier_result": null,
+          "agent_result": {
+            "n_input_tokens": null,
+            "n_cache_tokens": null,
+            "n_output_tokens": null,
+            "cost_usd": null,
+            "rollout_details": null,
+            "metadata": null
+          },
+          "started_at": "2026-10-24T15:34:12.071197Z",
+          "finished_at": "2026-10-24T15:44:29.115422Z"
+        }
+      ],
+      "original_reward_details": {
+        "opencobra__cobrapy-1497-nop/opencobra__cobrapy-1497__bpdbfnu/verifier/reward-details.json": {
+          "reward": 0.0,
+          "resolved": false,
+          "f2p_total": 17,
+          "f2p_passed": 0,
+          "f2p_rate": 0.0,
+          "p2p_total": 522,
+          "p2p_passed": 492,
+          "p2p_rate": 0.942529,
+          "regressions": [
+            "tests/test_flux_analysis/test_deletion.py::test_deletion_accessor",
+            "tests/test_flux_analysis/test_deletion.py::test_double_gene_deletion",
+            "tests/test_flux_analysis/test_deletion.py::test_double_gene_deletion_benchmark",
+            "tests/test_flux_analysis/test_deletion.py::test_double_gene_knockout_bug",
+            "tests/test_flux_analysis/test_deletion.py::test_double_reaction_deletion",
+            "tests/test_flux_analysis/test_deletion.py::test_double_reaction_deletion_benchmark",
+            "tests/test_flux_analysis/test_fastcc.py::test_fastcc_against_nonblocked_rxns_large",
+            "tests/test_flux_analysis/test_find_cyclic_reactions.py::test_find_cyclic_reactions[glpk-basic]",
+            "tests/test_flux_analysis/test_find_cyclic_reactions.py::test_find_cyclic_reactions[glpk-optimized]",
+            "tests/test_flux_analysis/test_find_cyclic_reactions.py::test_find_cyclic_reactions_benchmark[glpk-basic]",
+            "tests/test_flux_analysis/test_find_cyclic_reactions.py::test_find_cyclic_reactions_benchmark[glpk-optimized]",
+            "tests/test_flux_analysis/test_geometric.py::test_geometric_fba[glpk]",
+            "tests/test_flux_analysis/test_geometric.py::test_geometric_fba_benchmark[glpk]",
+            "tests/test_flux_analysis/test_moma.py::test_linear_moma_sanity[glpk]",
+            "tests/test_flux_analysis/test_parsimonious.py::test_pfba[glpk]",
+            "tests/test_flux_analysis/test_parsimonious.py::test_pfba_benchmark[glpk]",
+            "tests/test_flux_analysis/test_reaction.py::test_assess[glpk]",
+            "tests/test_flux_analysis/test_room.py::test_room_sanity[glpk-False-0.03-0.001]",
+            "tests/test_flux_analysis/test_room.py::test_room_sanity[glpk-False-0.1-0.01]",
+            "tests/test_flux_analysis/test_room.py::test_room_sanity[glpk-True-0.03-0.001]",
+            "tests/test_flux_analysis/test_room.py::test_room_sanity[glpk-True-0.1-0.01]",
+            "tests/test_flux_analysis/test_variability.py::test_find_blocked_reactions[glpk]",
+            "tests/test_flux_analysis/test_variability.py::test_flux_variability[glpk]",
+            "tests/test_flux_analysis/test_variability.py::test_flux_variability_benchmark[glpk]",
+            "tests/test_flux_analysis/test_variability.py::test_flux_variability_loopless[glpk-cycleFreeFlux]",
+            "tests/test_flux_analysis/test_variability.py::test_flux_variability_loopless[glpk-fastSNP]",
+            "tests/test_flux_analysis/test_variability.py::test_flux_variability_loopless_benchmark[glpk-cycleFreeFlux]",
+            "tests/test_flux_analysis/test_variability.py::test_flux_variability_loopless_benchmark[glpk-fastSNP]",
+            "tests/test_flux_analysis/test_variability.py::test_parallel_flux_variability[glpk]",
+            "tests/test_flux_analysis/test_variability.py::test_pfba_flux_variability[glpk]"
+          ],
+          "untracked_failed_count": 1,
+          "untracked_failed": [
+            "tests/test_io/test_web/test_load.py::test_remote_load[BIOMD0000000633-50-35]"
+          ],
+          "parse_status": "ok",
+          "runner": "pytest",
+          "tests_parsed": 556,
+          "exit_code": 1,
+          "command_resolved": false
+        }
+      }
+    },
+    {
+      "agent": "oracle",
+      "state": "completed",
+      "wrapper_exit": 0,
+      "elapsed_seconds": 627.3526122570038,
+      "trials": [
+        {
+          "exception_info": {
+            "exception_type": "VerifierTimeoutError",
+            "exception_message": "Verifier execution timed out after 300.0 seconds",
+            "exception_traceback": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/verifier/verifier.py\", line 185, in verify\n    await self._environment.exec(\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 599, in exec\n    return await self._run_docker_compose_command(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 360, in _run_docker_compose_command\n    stdout_bytes, stderr_bytes = await process.communicate()\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 201, in communicate\n    stdin, stdout, stderr = await tasks.gather(stdin, stdout, stderr)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 181, in _read_stream\n    output = await stream.read()\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 706, in read\n    block = await self.read(self._limit)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 713, in read\n    await self._wait_for_data('read')\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 545, in _wait_for_data\n    await self._waiter\nasyncio.exceptions.CancelledError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 410, in _verify_with_retry\n    self.result.verifier_result = await asyncio.wait_for(\n                                  ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 519, in wait_for\n    async with timeouts.timeout(timeout):\n               ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/timeouts.py\", line 115, in __aexit__\n    raise TimeoutError from exc_val\nTimeoutError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 986, in run\n    await self._run_verification()\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 391, in _run_verification\n    await self._verify_with_retry()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 232, in async_wrapped\n    return await copy(fn, *args, **kwargs)  # type: ignore[type-var]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 126, in __call__\n    do = await self.iter(retry_state=retry_state)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 171, in iter\n    result = await action(retry_state)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/_utils.py\", line 130, in inner\n    return call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 482, in exc_check\n    retry_exc.reraise()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 216, in reraise\n    raise self.last_attempt.result()\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 449, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 401, in __get_result\n    raise self._exception\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 130, in __call__\n    result = await fn(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 415, in _verify_with_retry\n    raise VerifierTimeoutError(\nharbor.trial.trial.VerifierTimeoutError: Verifier execution timed out after 300.0 seconds\n",
+            "occurred_at": "2026-10-24T15:54:45.498258"
+          },
+          "verifier_result": null,
+          "agent_result": {
+            "n_input_tokens": null,
+            "n_cache_tokens": null,
+            "n_output_tokens": null,
+            "cost_usd": null,
+            "rollout_details": null,
+            "metadata": null
+          },
+          "started_at": "2026-10-24T15:44:38.466876Z",
+          "finished_at": "2026-10-24T15:54:56.624108Z"
+        }
+      ],
+      "original_reward_details": {
+        "opencobra__cobrapy-1497-oracle/opencobra__cobrapy-1497__ptsHhn9/verifier/reward-details.json": {
+          "reward": 0.942529,
+          "resolved": false,
+          "f2p_total": 17,
+          "f2p_passed": 17,
+          "f2p_rate": 1.0,
+          "p2p_total": 522,
+          "p2p_passed": 492,
+          "p2p_rate": 0.942529,
+          "regressions": [
+            "tests/test_flux_analysis/test_deletion.py::test_deletion_accessor",
+            "tests/test_flux_analysis/test_deletion.py::test_double_gene_deletion",
+            "tests/test_flux_analysis/test_deletion.py::test_double_gene_deletion_benchmark",
+            "tests/test_flux_analysis/test_deletion.py::test_double_gene_knockout_bug",
+            "tests/test_flux_analysis/test_deletion.py::test_double_reaction_deletion",
+            "tests/test_flux_analysis/test_deletion.py::test_double_reaction_deletion_benchmark",
+            "tests/test_flux_analysis/test_fastcc.py::test_fastcc_against_nonblocked_rxns_large",
+            "tests/test_flux_analysis/test_find_cyclic_reactions.py::test_find_cyclic_reactions[glpk-basic]",
+            "tests/test_flux_analysis/test_find_cyclic_reactions.py::test_find_cyclic_reactions[glpk-optimized]",
+            "tests/test_flux_analysis/test_find_cyclic_reactions.py::test_find_cyclic_reactions_benchmark[glpk-basic]",
+            "tests/test_flux_analysis/test_find_cyclic_reactions.py::test_find_cyclic_reactions_benchmark[glpk-optimized]",
+            "tests/test_flux_analysis/test_geometric.py::test_geometric_fba[glpk]",
+            "tests/test_flux_analysis/test_geometric.py::test_geometric_fba_benchmark[glpk]",
+            "tests/test_flux_analysis/test_moma.py::test_linear_moma_sanity[glpk]",
+            "tests/test_flux_analysis/test_parsimonious.py::test_pfba[glpk]",
+            "tests/test_flux_analysis/test_parsimonious.py::test_pfba_benchmark[glpk]",
+            "tests/test_flux_analysis/test_reaction.py::test_assess[glpk]",
+            "tests/test_flux_analysis/test_room.py::test_room_sanity[glpk-False-0.03-0.001]",
+            "tests/test_flux_analysis/test_room.py::test_room_sanity[glpk-False-0.1-0.01]",
+            "tests/test_flux_analysis/test_room.py::test_room_sanity[glpk-True-0.03-0.001]",
+            "tests/test_flux_analysis/test_room.py::test_room_sanity[glpk-True-0.1-0.01]",
+            "tests/test_flux_analysis/test_variability.py::test_find_blocked_reactions[glpk]",
+            "tests/test_flux_analysis/test_variability.py::test_flux_variability[glpk]",
+            "tests/test_flux_analysis/test_variability.py::test_flux_variability_benchmark[glpk]",
+            "tests/test_flux_analysis/test_variability.py::test_flux_variability_loopless[glpk-cycleFreeFlux]",
+            "tests/test_flux_analysis/test_variability.py::test_flux_variability_loopless[glpk-fastSNP]",
+            "tests/test_flux_analysis/test_variability.py::test_flux_variability_loopless_benchmark[glpk-cycleFreeFlux]",
+            "tests/test_flux_analysis/test_variability.py::test_flux_variability_loopless_benchmark[glpk-fastSNP]",
+            "tests/test_flux_analysis/test_variability.py::test_parallel_flux_variability[glpk]",
+            "tests/test_flux_analysis/test_variability.py::test_pfba_flux_variability[glpk]"
+          ],
+          "untracked_failed_count": 1,
+          "untracked_failed": [
+            "tests/test_io/test_web/test_load.py::test_remote_load[BIOMD0000000633-50-35]"
+          ],
+          "parse_status": "ok",
+          "runner": "pytest",
+          "tests_parsed": 556,
+          "exit_code": 1,
+          "command_resolved": false
+        }
+      }
+    }
+  ],
+  "log_summaries": [
+    {
+      "path": "jobs/opencobra__cobrapy-1497-nop/opencobra__cobrapy-1497__bpdbfnu/verifier/test-stdout.txt",
+      "bytes": 129248,
+      "sha256": "379314e1bee98edce4b8e763319e4996c7f1491de1c04522b5c9666ab443b155",
+      "nul_bytes": 3154,
+      "tail": "ux_variability_loopless_benchmark[glpk-cycleFreeFlux]\",\n    \"tests/test_flux_analysis/test_variability.py::test_flux_variability_loopless_benchmark[glpk-fastSNP]\",\n    \"tests/test_flux_analysis/test_variability.py::test_parallel_flux_variability[glpk]\",\n    \"tests/test_flux_analysis/test_variability.py::test_pfba_flux_variability[glpk]\"\n  ],\n  \"untracked_failed_count\": 1,\n  \"untracked_failed\": [\n    \"tests/test_io/test_web/test_load.py::test_remote_load[BIOMD0000000633-50-35]\"\n  ],\n  \"parse_status\": \"ok\",\n  \"runner\": \"pytest\",\n  \"tests_parsed\": 556,\n  \"exit_code\": 1,\n  \"command_resolved\": false\n}\n+ git checkout 6f83a534569557f6a10bfdf6909522016985e47f -- tests/test_core/test_gpr.py\n+ exit 0\n"
+    },
+    {
+      "path": "jobs/opencobra__cobrapy-1497-nop/opencobra__cobrapy-1497__bpdbfnu/verifier/test_output.log",
+      "bytes": 125371,
+      "sha256": "bc3f489fc9605dbc9af7f08192c5f10936b9941b3221d897de30d1f76c3a86be",
+      "nul_bytes": 3154,
+      "tail": "py::test_gpr_with_special_characters[a,b] - T...\nFAILED tests/test_core/test_gpr.py::test_gpr_with_special_characters[a;b] - A...\nFAILED tests/test_core/test_gpr.py::test_gpr_with_special_characters[a<b] - T...\nFAILED tests/test_core/test_gpr.py::test_gpr_with_special_characters[a>b] - T...\nFAILED tests/test_core/test_gpr.py::test_gpr_with_special_characters[a[b]] - ...\nFAILED tests/test_core/test_gpr.py::test_gpr_with_special_characters[a{b}] - ...\nFAILED tests/test_core/test_gpr.py::test_reaction_copy_with_special_characters\nFAILED tests/test_io/test_web/test_load.py::test_remote_load[BIOMD0000000633-50-35]\n= 18 failed, 522 passed, 50 skipped, 9 xfailed, 78 warnings in 573.90s (0:09:33) =\n"
+    },
+    {
+      "path": "jobs/opencobra__cobrapy-1497-oracle/opencobra__cobrapy-1497__ptsHhn9/verifier/test-stdout.txt",
+      "bytes": 83883,
+      "sha256": "8770e21c12c0b0dbed16932c9e537e90840898d06909bbf1cf14d4f9f179c529",
+      "nul_bytes": 3154,
+      "tail": "ux_variability_loopless_benchmark[glpk-cycleFreeFlux]\",\n    \"tests/test_flux_analysis/test_variability.py::test_flux_variability_loopless_benchmark[glpk-fastSNP]\",\n    \"tests/test_flux_analysis/test_variability.py::test_parallel_flux_variability[glpk]\",\n    \"tests/test_flux_analysis/test_variability.py::test_pfba_flux_variability[glpk]\"\n  ],\n  \"untracked_failed_count\": 1,\n  \"untracked_failed\": [\n    \"tests/test_io/test_web/test_load.py::test_remote_load[BIOMD0000000633-50-35]\"\n  ],\n  \"parse_status\": \"ok\",\n  \"runner\": \"pytest\",\n  \"tests_parsed\": 556,\n  \"exit_code\": 1,\n  \"command_resolved\": false\n}\n+ git checkout 6f83a534569557f6a10bfdf6909522016985e47f -- tests/test_core/test_gpr.py\n+ exit 0\n"
+    },
+    {
+      "path": "jobs/opencobra__cobrapy-1497-oracle/opencobra__cobrapy-1497__ptsHhn9/verifier/test_output.log",
+      "bytes": 80000,
+      "sha256": "3583d1ba5824c510b3c603e9377c6c120faa642859490c57f57b076fe30a49e3",
+      "nul_bytes": 3154,
+      "tail": "     1\n-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\nLegend:\n  Outliers: 1 Standard Deviation from Mean; 1.5 IQR (InterQuartile Range) from 1st Quartile and 3rd Quartile.\n  OPS: Operations Per Second, computed as 1 / Mean\n=========================== short test summary info ============================\nFAILED tests/test_io/test_web/test_load.py::test_remote_load[BIOMD0000000633-50-35]\n= 1 failed, 539 passed, 50 skipped, 9 xfailed, 72 warnings in 566.84s (0:09:26) =\n"
+    }
+  ],
+  "verified_execution_stopped": {
+    "verified_stopped": true,
+    "stopped_containers": [
+      "6c7e54d54f2b"
+    ]
+  },
+  "readback_stage": "controls_returned",
+  "new_model_calls": 0,
+  "scientific_acceptance": false,
+  "original_rewards_and_logs_modified": false,
+  "retention": "Original canonical archive/remote retained volume preserved; original pipeline holds before scientific acceptance/publication/cleanup"
+}
