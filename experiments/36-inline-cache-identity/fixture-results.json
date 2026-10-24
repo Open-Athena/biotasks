@@ -1,0 +1,90 @@
+{
+  "scope": "Function-level fixtures; no complete bootstrap, Docker build or task execution",
+  "baseline_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "latest_revision": "4b29471c3b280e752e7ab4f3452ae455a9097094",
+  "relevant_upstream_functions_identical": true,
+  "function_source_sha256": {
+    "_options_hash": "3bf6c762ca4b98d195c900f3d39dca12e40143395c577983c12d39f0c4727d09",
+    "cache_key": "c9c1f263329f180dcdcd3d743ff6afcc96f0ddc258760ebd51efeab9baaefd85",
+    "_parse_local_tag": "8bcee30792ad33e5a4a2599d58996e25cdb0313d7b0b696585dc535f7dcca0d2",
+    "_build_clean_recipe": "1b262a7463091507f2e30cda2895a5934b6e96d8ffec6272ef3c2b0091a60e90",
+    "_load_bootstrap_recipe": "7a1970ed54425ceb3cdeb482c99057351bd356f5e819a37ba9457dafaea70a23"
+  },
+  "cases": [
+    {
+      "case": "lowercase",
+      "baseline_state": "resolved",
+      "candidate_state": "resolved",
+      "baseline_recipe_sha256": "d07947d148c43e8b99d3654839b53ecafedcfa786f6846ffd847355a0de73ab8",
+      "candidate_recipe_sha256": "d07947d148c43e8b99d3654839b53ecafedcfa786f6846ffd847355a0de73ab8"
+    },
+    {
+      "case": "mixed_case",
+      "baseline_state": "unavailable",
+      "candidate_state": "resolved",
+      "baseline_recipe_sha256": null,
+      "candidate_recipe_sha256": "569a98e939608c72a5a2c03f4504f872b52d9c37e729e9817a4a0645d56cb27b"
+    },
+    {
+      "case": "legacy_lowercase",
+      "baseline_state": "resolved",
+      "candidate_state": "resolved",
+      "baseline_recipe_sha256": "d07947d148c43e8b99d3654839b53ecafedcfa786f6846ffd847355a0de73ab8",
+      "candidate_recipe_sha256": "d07947d148c43e8b99d3654839b53ecafedcfa786f6846ffd847355a0de73ab8"
+    },
+    {
+      "case": "legacy_mixed_case",
+      "baseline_state": "unavailable",
+      "candidate_state": "resolved",
+      "baseline_recipe_sha256": null,
+      "candidate_recipe_sha256": "569a98e939608c72a5a2c03f4504f872b52d9c37e729e9817a4a0645d56cb27b"
+    },
+    {
+      "case": "explicit_custom_root",
+      "baseline_state": "unavailable",
+      "candidate_state": "resolved",
+      "baseline_recipe_sha256": null,
+      "candidate_recipe_sha256": "d07947d148c43e8b99d3654839b53ecafedcfa786f6846ffd847355a0de73ab8"
+    },
+    {
+      "case": "missing",
+      "baseline_state": "unavailable",
+      "candidate_state": "unavailable",
+      "baseline_recipe_sha256": null,
+      "candidate_recipe_sha256": null
+    },
+    {
+      "case": "single_option_slot",
+      "baseline_state": "resolved",
+      "candidate_state": "resolved",
+      "baseline_recipe_sha256": "d07947d148c43e8b99d3654839b53ecafedcfa786f6846ffd847355a0de73ab8",
+      "candidate_recipe_sha256": "d07947d148c43e8b99d3654839b53ecafedcfa786f6846ffd847355a0de73ab8"
+    },
+    {
+      "case": "multiple_option_slots",
+      "baseline_state": "resolved",
+      "candidate_state": "ambiguous rejected",
+      "baseline_recipe_sha256": "d07947d148c43e8b99d3654839b53ecafedcfa786f6846ffd847355a0de73ab8",
+      "candidate_recipe_sha256": null
+    },
+    {
+      "case": "metadata_repo_conflict",
+      "baseline_state": "resolved",
+      "candidate_state": "unavailable",
+      "baseline_recipe_sha256": "d07947d148c43e8b99d3654839b53ecafedcfa786f6846ffd847355a0de73ab8",
+      "candidate_recipe_sha256": null
+    },
+    {
+      "case": "metadata_ref_conflict",
+      "baseline_state": "resolved",
+      "candidate_state": "unavailable",
+      "baseline_recipe_sha256": "de6106a7df6e2e02801309146cd06d0243aabfd9fb9150552144ed0d2d7c6bdc",
+      "candidate_recipe_sha256": null
+    }
+  ],
+  "fixture_cases_passed": 10,
+  "blocked_operations": [],
+  "model_calls": 0,
+  "docker_commands": 0,
+  "owned_fixture_directories_removed": true
+}
