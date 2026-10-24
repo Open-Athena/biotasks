@@ -6,8 +6,9 @@ Code, prompts, small results, manifests and logbooks stay on permanent research
 branches. See [issues](https://github.com/Open-Athena/biotasks/issues) for
 experiments and results, including exact artifact locations.
 
-These are operational conventions for preserving research evidence. BioTasks
-has no implemented task-release loader or publication pipeline.
+These are operational conventions for preserving research evidence. The
+[validation entrypoint](validation.md) can publish eligible execution evidence;
+it does not release curated task datasets or provide a task-release loader.
 
 Keep large biological data out of the GitHub code repository. Check capacity and
 expected transfer costs before uploads, and obtain authorization before unplanned
@@ -33,4 +34,4 @@ Verify a completed upload by downloading it into a fresh directory and checking 
 
 Keep cited snapshots while any research conclusion, issue or release depends on them. Do not automatically delete them when an issue closes or a research branch is archived. Record and review any deliberate retention change, preserve replacement evidence, and update references before removing an artifact. Optional disposable work goes under `scratch/` with a recorded expiry; scratch paths must not be the only copy of cited evidence. Local scratch cleanup is a separate action after archive verification.
 
-Use the [HF bucket CLI or Python API](https://huggingface.co/docs/huggingface_hub/guides/buckets) with normal Hugging Face authentication. Never put tokens in manifests, commands saved to logs, or Git. Record the client version, commands and transfer settings with the research run. Follow the shared-node resource limits in [AGENTS.md](../AGENTS.md); storage transfers also consume memory and CPU. Storage tooling remains experiment-local until a reusable pipeline interface is justified.
+Use the [HF bucket CLI or Python API](https://huggingface.co/docs/huggingface_hub/guides/buckets) with normal Hugging Face authentication. Never put tokens in manifests, commands saved to logs, or Git. Record the client version, commands and transfer settings with the research run. Follow the shared-node resource limits in [AGENTS.md](../AGENTS.md); storage transfers also consume memory and CPU. The validation entrypoint implements these checks for its supported evidence; other storage workflows remain experiment-local.
