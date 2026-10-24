@@ -1,0 +1,118 @@
+{
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "source_manifest_sha256": "5581e3126d5053450e2266ce0b504a0294197af5619ed69e187ca2311f605daf",
+  "input_kind": "synthetic interface fixtures, not biological execution",
+  "full_unmodified_upstream_api": true,
+  "cases": [
+    {
+      "case": "configured_custom_cache",
+      "outcome": "missing_recipe",
+      "error": "inline mode requires the bootstrap reconstructed Dockerfile (saved under ./workspace/bootstrap/<repo>/<sha>/Dockerfile). Ref 'local/r2e-bootstrap/example__synthetic:0123456789ab' resolves to no cached Dockerfile. Either re-bootstrap or use registry mode.",
+      "source_unchanged": true
+    },
+    {
+      "case": "native_lookup_layout",
+      "outcome": "prepared",
+      "native_result": {
+        "mode": "inline_dockerfile",
+        "tasks_rewritten": 1,
+        "selected_host": null,
+        "selected_namespace": null,
+        "image_remote_ref": null,
+        "image_digest": null,
+        "image_visibility": null,
+        "image_pushed": false,
+        "fallback_reason": null,
+        "inline_recipe_source": "agent_replay",
+        "inline_recipe_sha256": "sha256:76919a7bcbaed45ef39cabec5d4d4aade5391e677f02a30ce46c81329e2421c5",
+        "probe_results": [],
+        "warnings": []
+      },
+      "changed": [
+        "example__synthetic-1/environment/Dockerfile",
+        "example__synthetic-1/task.toml"
+      ],
+      "grading_contract_preserved": true,
+      "raw_preserved": true,
+      "files_before": {
+        "example__synthetic-1/environment/Dockerfile": {
+          "sha256": "a98054a23ac0046d7b3c40990358a26fa06a6a3d9d7e1c64329d90b2f1b8075f",
+          "bytes": 102,
+          "mode": 420
+        },
+        "example__synthetic-1/instruction.md": {
+          "sha256": "e004333c573b58ab14fb89b7b3cb94d0ee9cc92e2fd60f01c5696ed1aa39191a",
+          "bytes": 57,
+          "mode": 420
+        },
+        "example__synthetic-1/solution/solve.sh": {
+          "sha256": "28d30385ffe51b5607b56caadbc49ca08c17bd6542f5d451a9b65c854fc24944",
+          "bytes": 47,
+          "mode": 493
+        },
+        "example__synthetic-1/task.toml": {
+          "sha256": "8a142352836e8bb776583659eecb177cdfb5f28f25ce94dad5b0fefecb99d656",
+          "bytes": 201,
+          "mode": 420
+        },
+        "example__synthetic-1/tests/test.sh": {
+          "sha256": "c8e1553e2bffe6a44edec1776646db3a65793185a70b0c2c963d9001a4740efe",
+          "bytes": 47,
+          "mode": 493
+        }
+      },
+      "files_after": {
+        "example__synthetic-1/environment/Dockerfile": {
+          "sha256": "29cd370438f11ca393aabd07669d1f65bdf77bd669d8606bd4a6dd9d5bd6662c",
+          "bytes": 1300,
+          "mode": 420
+        },
+        "example__synthetic-1/instruction.md": {
+          "sha256": "e004333c573b58ab14fb89b7b3cb94d0ee9cc92e2fd60f01c5696ed1aa39191a",
+          "bytes": 57,
+          "mode": 420
+        },
+        "example__synthetic-1/solution/solve.sh": {
+          "sha256": "28d30385ffe51b5607b56caadbc49ca08c17bd6542f5d451a9b65c854fc24944",
+          "bytes": 47,
+          "mode": 493
+        },
+        "example__synthetic-1/task.toml": {
+          "sha256": "102c6da51357b30e371112695003b256ec23ec1254d693b9000c65efdb4cb155",
+          "bytes": 476,
+          "mode": 420
+        },
+        "example__synthetic-1/tests/test.sh": {
+          "sha256": "c8e1553e2bffe6a44edec1776646db3a65793185a70b0c2c963d9001a4740efe",
+          "bytes": 47,
+          "mode": 493
+        }
+      }
+    },
+    {
+      "case": "zero_exports",
+      "outcome": "zero_tasks_not_successful_task",
+      "native_result": {
+        "mode": "local_only",
+        "tasks_rewritten": 0,
+        "selected_host": null,
+        "selected_namespace": null,
+        "image_remote_ref": null,
+        "image_digest": null,
+        "image_visibility": null,
+        "image_pushed": false,
+        "fallback_reason": null,
+        "inline_recipe_source": null,
+        "inline_recipe_sha256": null,
+        "probe_results": [],
+        "warnings": []
+      }
+    }
+  ],
+  "network_connections": 0,
+  "subprocesses": 0,
+  "credential_reads": 0,
+  "model_calls": 0,
+  "remote_jobs": 0,
+  "fixture_directories_removed": true
+}
