@@ -88,6 +88,12 @@ without changing the scientific target. If the target itself is contradictory,
 report a blocker. Keep software choice open and distinguish demonstrated agreement
 from untested portability. Never disclose measured answer values or private hashes.
 
+State each convention once rather than restating it with different examples.
+Check that every concrete encoding explicitly called acceptable follows the
+grader's actual parsing and normalization rules, and is not forbidden elsewhere
+in the combined public text. Use focused parser checks for distinct decoding
+paths when needed; a passing reference does not validate those alternatives.
+
 Specify exactly what is compared: files, identifiers, columns, row alignment and
 ordering, duplicates, missing values, nonfinite numbers, categorical identities,
 and numeric comparisons. Every acceptance rule must appear in the public text.

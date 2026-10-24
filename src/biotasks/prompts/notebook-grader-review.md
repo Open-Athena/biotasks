@@ -164,6 +164,11 @@ counterexamples were executed, or describe two implementations as independent
 without checking their provenance. Public rules should explain what is accepted;
 keep run-specific calibration measurements and validation history in the private
 rationale. Flag contradictions between the original question and the addendum.
+Also check for contradictions within the addendum itself, including its concrete
+examples. Trace explicitly accepted encodings through the actual parser and
+normalization code, not just the candidate's explanation. Passing controls do not
+clear an allowed representation that the code rejects, or conflicting public
+rules about the same representation; request repair within the existing allowance.
 
 An independently executed program is not an oracle merely because the controller
 runs it as a comparison control. A requirement to make that control pass cannot

@@ -7,7 +7,7 @@ import time
 
 import pytest
 import run_reference_setup
-from repo2rlenv.execution.base import CommandResult
+from repo2rlenv.execution.base import CommandResult, RemoteCommandError
 from run_reference_setup import Remote
 
 
@@ -97,6 +97,38 @@ def test_repeated_human_labels_receive_distinct_completion_nonces(tmp_path):
     ]
     assert records[0]["remote_label"] != records[1]["remote_label"]
     assert worker.executions == 2
+
+
+def test_failed_controller_response_is_preserved_privately_without_retry(tmp_path):
+    class FailedWrapper(Worker):
+        def exec(self, command, *, timeout):
+            self.executions += 1
+            return CommandResult(1, "partial private response\n", "private wrapper traceback\n")
+
+    worker = FailedWrapper()
+    remote = Remote(worker, None, tmp_path, time.time() + 60, 1)
+    with pytest.raises(RemoteCommandError) as captured:
+        asyncio.run(remote.command(["synthetic-operation"], 10, "failed-wrapper"))
+    assert "private" not in str(captured.value)
+    assert captured.value.result.stderr == "private wrapper traceback\n"
+    directory = tmp_path / "operations/0001"
+    evidence = json.loads((directory / "controller-result.json").read_text())
+    assert evidence == {
+        "returncode": 1,
+        "stdout": "partial private response\n",
+        "stderr": "private wrapper traceback\n",
+    }
+    record = json.loads((directory / "operation.json").read_text())
+    assert record["error_type"] == "RemoteCommandError"
+    assert record["controller_failure"] == {
+        "returncode": 1,
+        "result_path": "controller-result.json",
+    }
+    assert record["state"] == "uncertain" and remote.uncertain
+    assert not (directory / "output.log").exists()
+    with pytest.raises(RuntimeError, match="uncertain"):
+        asyncio.run(remote.command(["synthetic-operation"], 10, "do-not-repeat"))
+    assert worker.executions == 1
 
 
 @pytest.mark.parametrize("case,deadline", [("on_time", 1300), ("late", 1300), ("campaign", 1045)])

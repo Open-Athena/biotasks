@@ -12,6 +12,7 @@ from grading_inputs import selected_outputs
 from grading_protocol import Grader, Probe, Probes, check_coverage, check_probes, parse_report
 from grading_session import ISOLATION_PROBE
 from pydantic import ValidationError
+from repo2rlenv.execution.base import CommandResult
 from run_reference_setup import check_config
 
 HERE = Path(__file__).parent
@@ -123,7 +124,7 @@ def test_environment_setup_uses_time_left_and_dispatches_once(tmp_path, monkeypa
                 "timed_out": False,
                 "log_sha256": hashlib.sha256(log).hexdigest(),
             }
-            return SimpleNamespace(stdout=json.dumps(receipt), checked=lambda *args: None)
+            return CommandResult(0, json.dumps(receipt))
 
         def download(self, path, target):
             assert path.endswith(".log")
@@ -198,7 +199,6 @@ def test_independent_execution_admits_coherent_timeouts_once(
     tmp_path, monkeypatch, available, expected
 ):
     import hashlib
-    from types import SimpleNamespace
 
     import run_reference_setup
     from grading_session import GradingSession
@@ -224,7 +224,7 @@ def test_independent_execution_admits_coherent_timeouts_once(
                 "timed_out": False,
                 "log_sha256": hashlib.sha256(log).hexdigest(),
             }
-            return SimpleNamespace(stdout=json.dumps(receipt), checked=lambda *args: None)
+            return CommandResult(0, json.dumps(receipt))
 
         def download(self, source, destination):
             destination.write_bytes(log)
@@ -680,6 +680,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     inspect_review=False,
     question_defect=False,
     joint_revision=False,
+    probe_failure=False,
 ):
     import grading_session as module
 
@@ -826,6 +827,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             self.frozen_checks = None
             self.paths = ["value.txt"]
             self.remote = self
+            self.uncertain = False
 
         async def upload(self, *args):
             pass
@@ -837,6 +839,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             pass
 
         async def command(self, *args):
+            if self.uncertain:
+                raise RuntimeError("uncertain operation blocks further commands")
             commands.append(args[0])
             import hashlib
 
@@ -857,6 +861,11 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             }
 
         async def shell(self, *args, **kwargs):
+            if args[0] == "synthetic failed probe":
+                from repo2rlenv.execution.base import CommandResult, RemoteCommandError
+
+                self.uncertain = True
+                raise RemoteCommandError("Probe controller", CommandResult(1, "", "private error"))
             return json.dumps({"exit_code": 0, "stdout": "isolated"})
 
         async def validate_candidate(self, value):
@@ -930,6 +939,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 disposition="ready", code="pass", rationale="fixture"
             )
         elif name == "probes":
+            if probe_failure:
+                await kwargs["shell"]("synthetic failed probe", 120)
             if resume == "probe-draft":
                 assert kwargs["shell"] is None
                 assert inputs["prior_probe_draft"]["prior_suite"] == suite.model_dump()
@@ -1093,8 +1104,9 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 {"path": "value.txt", "bytes": 1, "sha256": hashlib.sha256(b"1").hexdigest()}
             ],
         }
-    result = asyncio.run(
-        module.run_grading(
+
+    async def exercise():
+        return await module.run_grading(
             remote=None,
             snapshot={
                 "directory": HERE / config["reference_directory"],
@@ -1121,7 +1133,18 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             deadline=10**20,
             complete=object(),
         )
-    )
+
+    if probe_failure:
+        from repo2rlenv.execution.base import RemoteCommandError
+
+        with pytest.raises(RemoteCommandError, match="Probe controller"):
+            asyncio.run(exercise())
+        assert calls == ["independent", "grader", "probes"]
+        assert ["chmod", "700", "/work/task-inputs"] in commands
+        assert ["chmod", "555", "/work/task-inputs"] not in commands
+        assert not (tmp_path / "final-candidate.json").exists()
+        return
+    result = asyncio.run(exercise())
     if question_defect:
         assert result["status"] == "public_question_defect"
         assert calls == ["independent", "grader", "probes", "review"]
@@ -1213,6 +1236,20 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     if semantic_feedback:
         expected_candidate["rationale"] = "Supported comparison; no unsupported measurement claim"
     assert json.loads((tmp_path / "final-candidate.json").read_text()) == expected_candidate
+
+
+def test_probe_controller_failure_is_not_masked_by_permission_restore(tmp_path, monkeypatch):
+    test_orchestration_separates_probe_author_and_gates_acceptance(
+        tmp_path,
+        monkeypatch,
+        repair=False,
+        derived=True,
+        resume=False,
+        reuse_probes=False,
+        contract_only=False,
+        comparison_conflict=False,
+        probe_failure=True,
+    )
 
 
 def test_joint_revision_reexecutes_original_probes_and_blind_implementation(tmp_path, monkeypatch):

@@ -230,6 +230,22 @@ class Remote:
                     ],
                     timeout=seconds + 25,
                 )
+                if result.returncode:
+                    # A failed wrapper may never produce a completion receipt.
+                    # Keep its actual response in the private evidence store;
+                    # exception messages must not expose arbitrary command output.
+                    save_record(
+                        directory / "controller-result.json",
+                        {
+                            "returncode": result.returncode,
+                            "stdout": result.stdout,
+                            "stderr": result.stderr,
+                        },
+                    )
+                    record["controller_failure"] = {
+                        "returncode": result.returncode,
+                        "result_path": "controller-result.json",
+                    }
                 result.checked("Reference controller operation")
                 process = json.loads(result.stdout)
                 output = await verified_output(process)
