@@ -57,6 +57,7 @@ class FakeRemote:
         }
         self.events = []
         self.blocked = False
+        self.uncertain = False
         self.setup_failure = setup_failure
         self.missing_output = missing_output
         self.mutated_input = mutated_input
@@ -555,6 +556,42 @@ def test_uncertain_reference_dispatch_does_not_refund_a_computation_slot(tmp_pat
         with pytest.raises(RuntimeError, match="Uncertain reference"):
             await s.test_reference()
         assert s.tests == 1 and s.last_pass is None
+        assert "exhausted" in json.loads(await s.test_reference())["error"]
+
+    asyncio.run(run())
+
+
+def test_uncertain_reference_preserves_provider_error_and_stays_offline(tmp_path):
+    class ProviderError(ConnectionError):
+        pass
+
+    failure = ProviderError("synthetic lost reference response")
+
+    class LostReference(FakeRemote):
+        async def command(self, argv, seconds, label, *, cwd="/work"):
+            if label.startswith("reference-"):
+                self.uncertain = True
+                raise failure
+            return await super().command(argv, seconds, label, cwd=cwd)
+
+        async def network(self, blocked):
+            if self.uncertain:
+                raise RuntimeError("uncertain operation blocks policy changes")
+            await super().network(blocked)
+
+    async def run():
+        remote = LostReference()
+        s = session(tmp_path, remote)
+        await s.initialize()
+        with pytest.raises(ProviderError) as raised:
+            await s.test_reference()
+        assert raised.value is failure
+        assert remote.blocked and remote.uncertain
+        assert remote.events[-1] == ("network", True, None)
+        assert s.tests == 1 and s.last_pass is None
+        record = json.loads((tmp_path / "trials/1/result.json").read_text())
+        assert record["status"] == "incomplete"
+        assert record["reference_tests_used"] == 1
         assert "exhausted" in json.loads(await s.test_reference())["error"]
 
     asyncio.run(run())

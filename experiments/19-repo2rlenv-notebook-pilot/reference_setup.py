@@ -568,8 +568,11 @@ class SetupSession:
                         "dependency_asset_candidates": summary["candidate_files"],
                     }
             finally:
-                # The adapter refuses policy changes after an uncertain command.
-                await self.remote.network(False)
+                # An uncertain command blocks policy changes. Leave networking
+                # offline for owner-scoped cleanup and preserve the original
+                # execution error instead of masking it with that refusal.
+                if not self.remote.uncertain:
+                    await self.remote.network(False)
             if self.repair_exports is not None and self.tests < self.max_tests:
                 feedback = runtime_export_feedback(self.prepared, changed, script, record)
                 if feedback is not None:

@@ -1,0 +1,31 @@
+{
+  "recorded_at": "2026-10-24T00:32:59Z",
+  "trigger": "panel-rounds/025/result-127.json",
+  "general_change": "If a reference command remains uncertain, leave networking offline for owner-scoped cleanup and propagate its original exception instead of masking it with a refused network-policy change.",
+  "frozen_cohort_unchanged": true,
+  "frozen_worker_revision": "501fbc2fa3f65df09ee5cd2bd8b05967d22e04c9",
+  "reference_reexecution": false,
+  "additional_allowances": false,
+  "offline_verification": {
+    "files": [
+      "test_reference_setup.py",
+      "test_command_receipt_recovery.py"
+    ],
+    "passed": 65,
+    "pytest_seconds": 3.43,
+    "guarded_wall_seconds": 4.08,
+    "peak_rss_kib": 133508,
+    "command_timeout_seconds": 30,
+    "plugin_autoload": false,
+    "execution_context": "Elevated local offline tests with in-memory provider/model fixtures; no credential load, model or sandbox dispatch.",
+    "new_regression": "The exact provider exception survives, the sandbox remains offline and uncertain, the original reference-test slot remains consumed, and incomplete evidence cannot be submitted as success.",
+    "restricted_attempts": "Three restricted-process attempts were interrupted or timed out at unchanged thread-backed fake-controller checks. The same complete selection passed outside that restriction; the exact restriction mechanism is unproven.",
+    "ruff_lint": "passed",
+    "ruff_format": "passed"
+  },
+  "limitations": [
+    "No live campaign uses this post-freeze change yet.",
+    "This preserves the primary error; it does not implement waiting for a delayed completion receipt.",
+    "The original uncertain campaign remains an incomplete infrastructure outcome, not a scientific rejection or recovered execution."
+  ]
+}

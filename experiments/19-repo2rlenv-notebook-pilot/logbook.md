@@ -4167,3 +4167,11 @@ The complete 481-file, 21,113,524-byte archive and 18-file root export are verif
 ## 2026-10-24 UTC: frozen Pyteomics starts after Scanpy cleanup
 
 Case 129 Pyteomics started only after the complete original 127 archive/root, FAILED host state and original/fresh sandbox absence were verified. The dispatcher checked owned states 086–128 and terminal proofs; 128 was the sole prior live host. Original 98 source/seed bytes and all 198 runtime hashes match the frozen cohort. Cases 130–132 remain funded and queued, with $106 conservative holds and $94 unallocated inside the authorized $200. No worker, prompt, scientific artifact or execution allowance changed. Recent operator logbook prose was clarified for readability; original execution records and their immutable manifests were not edited.
+
+## 2026-10-24 UTC: preserve the original uncertain-operation error
+
+Original Scanpy 127 evidence locates a `DaytonaBadGatewayError` during reference dispatch, followed by a failed receipt read before the original reconciliation deadline. A refused network-restoration call then masks the provider error at the stage boundary. The archived types do not establish whether the receipt was missing, inaccessible or unavailable for another transport reason. See `panel-rounds/025/transport-followup.md` for evidence and a bounded read-only reconciliation proposal.
+
+The next factory version now preserves the primary error and leaves an uncertain sandbox offline for existing owner-scoped cleanup. It does not reexecute the command, refund a computation slot, extend a deadline or alter the ten frozen payloads. The new regression plus related controller checks passed: 65 tests in 3.43 seconds, peak RSS 133,508 KiB. Three restricted-sandbox attempts stalled at unchanged thread-backed fixture checks and were stopped; the complete selection passed outside that restriction. The precise local restriction mechanism is not established. Ruff lint/format passed. See `factory-checks/uncertain-reference-error/result.json`.
+
+Authenticated bounded observations confirm Pyteomics 129 completed setup and clean replay; Bioframe 128 also completed those stages. Both are now running specification on the unchanged common runtime. No current run was restarted or patched, and the pending private-comment policy question remains undecided.
