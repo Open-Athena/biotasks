@@ -35,6 +35,17 @@ case "${1:-run}" in
         exec gh api repos/biopython/biopython --jq '{full_name: .full_name, private: .private}'
         ;;
     run)
+        "$experiment/inputs-private/candidate-runner/bin/python" -I -B - "$experiment" <<'PY_BASELINE'
+import json, sys
+from pathlib import Path
+root = Path(sys.argv[1]).resolve().parents[2] / "57/experiments/57-fresh-biopython"
+proof = json.loads((root / "completed-replay-proof.json").read_text())
+assert proof["completed_replay_byte_inert"] is True
+assert proof["result"]["state"] == "workflow_complete"
+for role in ("primary", "cleanup"):
+    receipt = json.loads((root / (role + "-hf-receipt.json")).read_text())
+    assert receipt["anonymous_download_verified"] is True
+PY_BASELINE
         exec "$experiment/inputs-private/candidate-runner/bin/biotasks" generate run "$experiment/inputs-private/run-001" --allow-generation --allow-validation
         ;;
     *) exit 2 ;;
