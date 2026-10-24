@@ -14,7 +14,11 @@ new paths containing spaces and a quoted working directory recover from the
 original file-not-found exit 4 to real passing tests. Existing quoted targets
 and node IDs remain one requested test. Independent fixture JUnit records and
 original parser results are both preserved; JUnit is not substituted for the
-native parser or reward. Unsafe absolute/traversing/NUL paths and an unexpected
+native parser or reward. Two filename-with-space cases execute successfully but yield zero test identities
+under the unchanged original parser. They are unsupported for scientific
+acceptance; JUnit is not used to rescue them or change the parser.
+
+Unsafe absolute/traversing/NUL paths and an unexpected
 upstream callback result reject explicitly. No model/native job or deployment.
 
 Latest official source at 0.9.4 / 4b29471c changes runner aliases to recognize
