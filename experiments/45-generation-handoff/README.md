@@ -1,0 +1,18 @@
+# Official generation/export handoff investigation
+
+The full epic goal remains an unattended official generation → export → independent validation pipeline. Fresh generation is not implemented/admitted here yet. The completed component in this branch is **local** preparation of already generated, source-bound raw exports using the unchanged pinned upstream API, followed by an ordinary validator manifest.
+
+`handoff.py` requires the validation helpers from PR #46 (currently unmerged), the exact pinned upstream package, its acquisition manifest and the bound TOML writer dependency. It is experimental code, not a capability available on `main`. Its JSON config declares raw/cache inventories, source/dependency hashes, a separate output directory and the ordinary validator backend/budget/publication policy. No repository-specific Python edit is needed.
+
+```bash
+/path/to/pr46-venv/bin/python -B handoff.py handoff-config.json
+/path/to/pr46-venv/bin/biotasks validate plan /durable/output/handoff/validation-manifest.json --work-dir /durable/new-validation-plan
+```
+
+Preparation does not run models, Docker, tests or remote jobs. It verifies an unambiguous local-bootstrap cache/image binding, invokes `prepare_dataset_for_push(..., inline_dockerfile=True)` under a no-network/subprocess/credential-read guard, checks every original file/mode and grading contract, flushes the result and publishes the local directory atomically. Interrupted local staging can be rebuilt from its unchanged raw input without restarting generation; completed calls verify immutable evidence and do not rerun the exporter. Changed code/input/policy or ambiguous/missing caches stop resumption. A zero-export result has no validator jobs; do not invoke validation for its empty manifest.
+
+Eleven offline checks cover the pinned exporter, downstream planner, four interruption boundaries and meaningful negative cases. The real historical comparison reacquires only twelve already-public Cobrapy raw packages and their original bootstrap cache: all twelve prepare and pass the real CLI planner. The independent proof verifies all 120 modes and original grading bytes/settings, normalizing the validator's package path prefix. These are historical inputs and local plans, not newly generated tasks or new native control results. The historical twelve-task plan is an offline regression artifact and is not the proposed fresh-reference execution cohort.
+
+`historical-handoff-proof.json`, `local-handoff-evidence-manifest.json`, `local-handoff-hf-receipt.json` and `local-handoff-cleanup.json` bind the evidence, anonymous HF readback and exact retained paths. The public snapshot contains own code/check/provenance metadata only; original task bytes remain in their separately verified historical source. No task data relies on `/tmp`.
+
+The proposed fresh reference is the unchanged official listing of Cobrapy PR #1497 in the inclusive 2026-10-12 window, with a fresh official bootstrap and the previously approved settings. This deliberately known reference tests integration rather than unbiased yield. Before any paid call/remote generation, checkpoint and check the trusted generation controller, conservative per-request/global admission, actual-charge reconciliation, source-bound archive/readback, stop/salvage and exact-worker cleanup. Use the already tested local handoff and validator afterward. Keep original tasks/grading/timeouts and no extra human/LLM repairs. The protocol's proposed $13.07 / 12.666667 CPUh bounds are not reservations; the epic's current recorded new model calls and new jobs for this investigation remain zero.
