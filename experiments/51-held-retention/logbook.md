@@ -37,3 +37,16 @@ First stop at the public-transfer gate without network/credentials; inspect the
 exact snapshot before publishing under51. Reuse the completed original cleanup;
 zero new native/model jobs and unchanged cumulative budget. Supported pipeline
 extraction/integration and meaningful fresh native execution remain unfinished.
+
+2026-10-24: Actual installed archived proof completed after45f6af68 source and
+afa28b3c exact snapshot/eligibility checkpoints. Offline mode performed source
+verification/local preservation, stopping at public-transfer admission. Public
+mode verified both append-only HF copies and source-bound already completed
+cleanup without another job, SDK transport, accounting rewrite or score repair.
+Completed replay is byte-inert. Raw four-log SHA/size/NUL bindings equal the49
+reviewed reference, but hashes were assertion outputs, not actor inputs. All
+original files/global budget unchanged;0native/model jobs. Results/receipts show
+the exact boundaries. Removed only disposable local-scratch test copies; retained
+actual sidecar underHOME for installed extraction. No owned/tmp paths. Next:
+extract into a fresh supported pipeline branch and integrate held outcomes into
+the serial generation loop without advancing scientific acceptance.
