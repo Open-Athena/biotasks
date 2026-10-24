@@ -1,0 +1,5 @@
+🤖 The original job `/exedev/biotasks53-anndata-001` was submitted to reserved worker `marin-tpu-v4-reserved-64-us-central2-b-20261019-0055-7c2d425d-worker-0`. A bounded read-only SDK log observation at 2026-10-24T20:47:27Z confirms configuration verification, controller setup and `native_generation` with `generation_started=true`. This observation adds no model call and does not expose individual model usage; `model_calls` is still unknown here, not zero.
+
+The frozen installed controller continues on 88a02827 with the original source/settings and handle. No task/environment/parser/grading repair or runtime swap. Exports, actual provider billing, independent native flags and final archive/cleanup remain pending. [Inputs](https://github.com/Open-Athena/biotasks/commit/c07470ee).
+
+Separate source-only #54 / draft #55 improves future watch scheduling; it passed 152 checks/CI and explicitly refuses adoption of this existing plan. It does not accelerate or alter the current native experiment. Keep issues open and do not infer task validity from startup progress.
