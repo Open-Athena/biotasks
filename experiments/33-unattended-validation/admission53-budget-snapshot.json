@@ -1,0 +1,533 @@
+{
+  "scope": "Incremental work authorized October 23, 2026 under issue 33; prior issues' completed spending excluded",
+  "user_limit_exclusive_usd": 100,
+  "operating_ceiling_usd": 90,
+  "unused_margin_usd": 10,
+  "recorded_paid_cost_usd": 0.287646,
+  "outstanding_reservations_usd": 23.07,
+  "new_model_calls": 11,
+  "paid_model_execution_enabled": true,
+  "admission_rule": "Before enabling paid model execution, verify model pricing and maximum request cost; atomically reserve a conservative bound, then reconcile provider-reported actual usage. Stop if accrued cost plus outstanding reservations plus the proposed bound exceeds 90 USD or cost is unknown.",
+  "per_repository_settings": "Preserve official bootstrap settings: Sonnet 4.6 through OpenRouter, temperature 0.2, 2048 output-token cap, 20 calls, 5 USD estimated repository stop threshold; global admission remains required.",
+  "additional_reserved_cpu_hour_ceiling": 32,
+  "additional_allocated_cpu_hours": 9.596001111004087,
+  "new_paid_capacity_allowed": false,
+  "events": [
+    {
+      "kind": "storage_reservation",
+      "service": "HF public research bucket",
+      "maximum_incremental_usd": 10,
+      "scope": "Bounded eligible research archival within existing public plan; no plan/add-on purchase or new paid storage tier. First snapshot under 1 MiB. Retain this conservative reservation until billing is reconciled.",
+      "pricing_reference": "https://huggingface.co/docs/hub/en/storage-limits",
+      "actual_billed_usd": null
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks34-macs-742-image-001",
+      "maximum_allocated_cpu_hours": 4,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "child_issue": 34,
+      "child_total_ceiling_cpu_hours": 12,
+      "actual_allocated_cpu_hours": 1.5525788889990912
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks34-macs-742-controls-001",
+      "maximum_allocated_cpu_hours": 4,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "child_issue": 34,
+      "actual_allocated_cpu_hours": 0.6512977777587043
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks34-macs-742-image-cleanup-001",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "child_issue": 34,
+      "actual_allocated_cpu_hours": 0.007472222116258409
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks34-macs-742-confirm-001",
+      "maximum_allocated_cpu_hours": 8,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "child_issue": 34,
+      "actual_allocated_cpu_hours": 2.2136344443427194
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks34-macs-742-confirm-cleanup-001",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "child_issue": 34,
+      "actual_allocated_cpu_hours": 0.004734444353315565
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks35-cobrapy-1482-inline-001",
+      "maximum_allocated_cpu_hours": 4,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "child_issue": 35,
+      "child_total_ceiling_cpu_hours": 8,
+      "actual_allocated_cpu_hours": 0.28626888884438406
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks35-cobrapy-1482-inline-001-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "child_issue": 35,
+      "child_total_ceiling_cpu_hours": 8,
+      "reason": "Primary job verified owned resources empty; no cleanup attempt submitted"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks37-ohif-5996-inline-001",
+      "maximum_allocated_cpu_hours": 6,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "child_issue": 37,
+      "child_total_ceiling_cpu_hours": 8,
+      "actual_allocated_cpu_hours": 0.06949555555979411
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks37-ohif-5996-inline-001-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "child_issue": 37,
+      "child_total_ceiling_cpu_hours": 8,
+      "reason": "Primary job verified owned resources empty; no cleanup attempt submitted"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks38-opencobra-cobrapy-19077d44e4",
+      "child_issue": 38,
+      "maximum_allocated_cpu_hours": 14,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "actual_allocated_cpu_hours": 0.8109061111344231
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks38-opencobra-cobrapy-19077d44e4-cleanup",
+      "child_issue": 38,
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "reason": "Primary cleanup or bound no-creation proof verified; no cleanup attempt submitted",
+      "proof_sha256": "97a5712cc108317f929e356f19bc75fe393e0234833a40bcff7225bb478b54bb"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks38-scverse-scanpy-460f57e5ac",
+      "child_issue": 38,
+      "maximum_allocated_cpu_hours": 3,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "actual_allocated_cpu_hours": 0.021157222191492717
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks38-scverse-scanpy-460f57e5ac-cleanup",
+      "child_issue": 38,
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "reason": "Primary cleanup or bound no-creation proof verified; no cleanup attempt submitted",
+      "proof_sha256": "9202fd28722b10396f88b65d053a2b15daadba768ad08ed334a719a9bc8f36e4"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks39-ohif-viewers-b3689fc8f4",
+      "child_issue": 39,
+      "maximum_allocated_cpu_hours": 5,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "actual_allocated_cpu_hours": 0.5101238889164394
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks39-ohif-viewers-b3689fc8f4-cleanup",
+      "child_issue": 39,
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "reason": "Primary cleanup or bound no-creation proof verified; no cleanup attempt submitted",
+      "proof_sha256": "2de46e87a0ce14742fdae4ea198125e848be2f00fe57db0b86659ea60a8cfda8"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks41-cancel-07c39c2ac6",
+      "child_issue": 41,
+      "maximum_allocated_cpu_hours": 1,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "actual_allocated_cpu_hours": 0.004358888864517212
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks41-cancel-07c39c2ac6-cleanup",
+      "child_issue": 41,
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "reason": "Primary cleanup or bound no-creation proof verified; no cleanup attempt submitted",
+      "proof_sha256": "2c2fb648541bbd1ff1efd64dca521916429ce6d04854bc3b0e1d4f9321f8c5e4"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks41-cancel-e206de2c48",
+      "child_issue": 41,
+      "maximum_allocated_cpu_hours": 0.9956411111354828,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "actual_allocated_cpu_hours": 0.056236666705873274
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks41-cancel-e206de2c48-cleanup",
+      "child_issue": 41,
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "reason": "Primary cleanup or bound no-creation proof verified; no cleanup attempt submitted",
+      "proof_sha256": "e4b65e06d278347618680bdee26d547c765d2109bb0619b6ce7df3567d8a4e2c"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks41-cancel-9789693f9b",
+      "child_issue": 41,
+      "maximum_allocated_cpu_hours": 0.9394044444296095,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "actual_allocated_cpu_hours": 0.07706388884120517
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks41-cancel-9789693f9b-cleanup",
+      "child_issue": 41,
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "reason": "Primary cleanup or bound no-creation proof verified; no cleanup attempt submitted",
+      "proof_sha256": "867fe639039b4f2d83ed567a049a736d3861d28b79f9792482e1867c9f08a5bf"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks43-compare-0cae81dff1",
+      "child_issue": 43,
+      "maximum_allocated_cpu_hours": 2,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "actual_allocated_cpu_hours": 0.09966722223493787
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks43-compare-0cae81dff1-cleanup",
+      "child_issue": 43,
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "reason": "Primary cleanup or bound no-creation proof verified; no cleanup attempt submitted",
+      "proof_sha256": "1804bd6f24589acab66ef9f005b77d84afd0886ecab29a7fece1532656b45ed3"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue44-native-80e39b1688d7",
+      "maximum_allocated_cpu_hours": 6.0,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "actual_allocated_cpu_hours": 0.17682555556297302
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue44-native-80e39b1688d7-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "controller": "biotasks.validation.v1",
+      "reason": "Verified empty/no-creation; no cleanup job"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue44-native-80e39b1688d7-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "actual_allocated_cpu_hours": 0.00802055557568868
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue44-native-5e2eec898682",
+      "maximum_allocated_cpu_hours": 6.0,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "actual_allocated_cpu_hours": 0.028388333320617676
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue44-native-5e2eec898682-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "controller": "biotasks.validation.v1",
+      "reason": "Verified empty/no-creation; no cleanup job"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue44-native-5e2eec898682-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "actual_allocated_cpu_hours": 0.004644444518619113
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue44-recovery-1f414bc1057a",
+      "maximum_allocated_cpu_hours": 6.0,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "actual_allocated_cpu_hours": 0.17348277780744764
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue44-recovery-1f414bc1057a-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "controller": "biotasks.validation.v1",
+      "reason": "Verified empty/no-creation; no cleanup job"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue44-recovery-1f414bc1057a-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "actual_allocated_cpu_hours": 0.008461111121707492
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks45-cobrapy-generation-001",
+      "maximum_allocated_cpu_hours": 6,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "primary",
+      "actual_allocated_cpu_hours": 0
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks45-cobrapy-generation-001-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "controller": "biotasks.validation.v1",
+      "role": "stop",
+      "reason": "Verified empty/no-creation; no cleanup job"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks45-cobrapy-generation-001-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "controller": "biotasks.validation.v1",
+      "role": "cleanup",
+      "reason": "Verified empty/no-creation; no cleanup job"
+    },
+    {
+      "kind": "model_run_reservation",
+      "run_id": "biotasks45-cobrapy-generation-001",
+      "maximum_usd": "13.07",
+      "outstanding_usd": "0",
+      "known_actual_usd": "0",
+      "known_calls": 0,
+      "call_count_complete": true,
+      "state": "terminal reconciled",
+      "quote_sha256": "3f97cfd21a8d34a24a1200110a9ac9e57daadbd35c2a50163e13b8b19e170592",
+      "plan_identity": "af17b1c1338211906a8a9e9f278ba23e2a8c9b8877cfec433522da673b3c39ff",
+      "model": "openrouter/anthropic/claude-sonnet-4.6",
+      "scope": "Only the original upstream bootstrap calls; no repairs/fallback/retries",
+      "observations": [
+        {
+          "known_actual_usd": "0",
+          "known_calls": 0,
+          "cost_complete": true,
+          "proof_sha256": "66badd45678da2d00853a9f1887a5f1033e97522e972e9b669c8445b2140c368"
+        }
+      ]
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks45-cobrapy-generation-002",
+      "maximum_allocated_cpu_hours": 6,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "primary",
+      "actual_allocated_cpu_hours": 1.9834211111068725
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks45-cobrapy-generation-002-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "controller": "biotasks.validation.v1",
+      "role": "stop",
+      "reason": "Verified empty/no-creation; no cleanup job"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks45-cobrapy-generation-002-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "cleanup",
+      "actual_allocated_cpu_hours": 0.004797777732213338
+    },
+    {
+      "kind": "model_run_reservation",
+      "run_id": "biotasks45-cobrapy-generation-002",
+      "maximum_usd": "13.07",
+      "outstanding_usd": "0",
+      "known_actual_usd": "0.287646",
+      "known_calls": 11,
+      "call_count_complete": true,
+      "state": "terminal reconciled",
+      "quote_sha256": "3f97cfd21a8d34a24a1200110a9ac9e57daadbd35c2a50163e13b8b19e170592",
+      "plan_identity": "839ce3f989876c3e46f7466183008e7e438870ea61f518efb9a0900e001769bb",
+      "model": "openrouter/anthropic/claude-sonnet-4.6",
+      "scope": "Only the original upstream bootstrap calls; no repairs/fallback/retries",
+      "observations": [
+        {
+          "known_actual_usd": "0.287646",
+          "known_calls": 11,
+          "cost_complete": true,
+          "proof_sha256": "3fcd538506125d972a0581c019edf2f681aed1539f5aa967454e142908249893"
+        }
+      ]
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue45-fresh-c1b5f6371606",
+      "maximum_allocated_cpu_hours": 6.0,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "primary",
+      "actual_allocated_cpu_hours": 0.02684944444232517
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue45-fresh-c1b5f6371606-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "controller": "biotasks.validation.v1",
+      "role": "stop",
+      "reason": "Verified empty/no-creation; no cleanup job"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue45-fresh-c1b5f6371606-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "cleanup",
+      "actual_allocated_cpu_hours": 0.00516722215546502
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue47-apt-index-re-c38473859ea2",
+      "maximum_allocated_cpu_hours": 6.0,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "primary",
+      "actual_allocated_cpu_hours": 0.7982861112223731
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue47-apt-index-re-c38473859ea2-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "stop",
+      "actual_allocated_cpu_hours": 0.004349444442325168
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue47-apt-index-re-c38473859ea2-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "cleanup",
+      "actual_allocated_cpu_hours": 0.008311111132303874
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks53-anndata-001",
+      "maximum_allocated_cpu_hours": 6,
+      "new_paid_capacity": false,
+      "state": "reserved before submission",
+      "controller": "biotasks.validation.v1",
+      "role": "primary"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks53-anndata-001-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "reserved before submission",
+      "controller": "biotasks.validation.v1",
+      "role": "stop"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks53-anndata-001-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "reserved before submission",
+      "controller": "biotasks.validation.v1",
+      "role": "cleanup"
+    },
+    {
+      "kind": "model_run_reservation",
+      "run_id": "biotasks53-anndata-001",
+      "maximum_usd": "13.07",
+      "outstanding_usd": "13.07",
+      "known_actual_usd": "0",
+      "known_calls": 0,
+      "call_count_complete": false,
+      "state": "reserved before submission",
+      "quote_sha256": "e8cc7f09a82ef907f687476ce56c07843e51ead757f623088519e46e10c754dc",
+      "plan_identity": "7d49ffba2a36b712d99ba0d77f3906ea51cbc9c45652cec2cb44066bc6996074",
+      "model": "openrouter/anthropic/claude-sonnet-4.6",
+      "scope": "Only the original upstream bootstrap calls; no repairs/fallback/retries",
+      "observations": []
+    }
+  ],
+  "outstanding_cpu_hour_reservations": 6.333333333333334,
+  "cpu_accounting_rule": "Sum terminal admission actuals and still-reserved admission maxima; normalize floating subtraction residue by recomputation."
+}

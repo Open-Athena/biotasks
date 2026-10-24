@@ -205,3 +205,24 @@ Filed actual48 for general manifest configuration (source-only7c06e022 from live
 2026-10-24: Child48experimental manifest implemented atac13a420, actual archived45handoff and41integratedchecks evidenced07d0324c. Source/config/candidates/notices/budgets now declared, no old adapter edit; completed repeated handoff external-forbidden and byte-inert,191originalgenerationfiles/globalbudget identical. Ten prepared assets/modes/grading preserved except native TOML reproducibility metadata. No new model/native/job/spend/unique task/acceptance. Supported installed extraction/acquisition and fresh manifest-path execution remain incomplete. All previous jobs terminal, budgets unchanged, no next runtime/model admission.
 
 2026-10-24: Installed extraction50drafta3c7f83f over46 exactdep, bothCIchecksSUCCESS and105lockedtests. Real wheel source/export/SDK proof8053eb2c,353source/7writer/8unchanged assets; original191files/globalbudget unchanged. No new model/native/job/spend. Source writer descriptor corrected from historical runtime cache and canonical record order, no task/native source repair. Created actual child51for generic automatic held-control retention, source/offline protocol from live main2a1950d2. Next51reuse49and50; fullgoal still needs generic failure path and meaningful fresh scientific evidence. No merge/release; budget9.596001111CPUh,0reservations,0.287646USD/11calls unchanged.
+
+2026-10-24:51 source candidate automatic held retention passed35 offline faults
+and real archived47/HF/cleanup-readback proof; scientific rejection/raw bytes
+unchanged. Extracted supported52 on fresh pipeline branch with declared50
+support dependency only, source88a02827,129locked checks+both CIgreen. Actual
+installed CLI source/preservation proof and exact wheel receipts2796424c. No
+new models/native jobs in extraction; old jobs not resubmitted/cleaned twice.
+Disposed test copies after retained proofs, no owned/tmp paths. Source52supports
+one native reward-disagreement family, unknown failures remain explicit holds.
+
+2026-10-24: Filed actual child53 and launched installed normal controller after
+frozen checkpointc07470ee/plan83e4dfe8. Official AnnData2026-10-19window selected
+2710backport and2641original, both retained; one fix, not independent semantic
+unique tasks or unbiased yield. Same official/model/grading/resource settings,
+no APT prefix or timeout/task repair. Generation CPU6.333333h/model13.07USD
+reservation now active, actual still9.596001111h/0.287646USD/11priorcalls at launch.
+Storage10USDunreconciled; same32CPUh/90USDoperating<100USDextra, no new allowance.
+Actual outcomes/billing/readback/cleanup pending. Persistent foreground controller
+session69136; expected original job/exedev/biotasks53-anndata-001. Resume original
+state/handles only, never replace an uncertain submission. Budget snapshot is
+historical admission evidence, not the live gate; live budget remains authoritative.
