@@ -1,0 +1,64 @@
+{
+  "issue": 38,
+  "removed": [
+    {
+      "path": "inputs-private/acquired",
+      "files": 385,
+      "logical_bytes": 7344039
+    },
+    {
+      "path": "inputs-private/frozen",
+      "files": 313,
+      "logical_bytes": 8757179
+    },
+    {
+      "path": "private/pre-submission-attempt-1",
+      "files": 5,
+      "logical_bytes": 6032
+    },
+    {
+      "path": "__pycache__",
+      "files": 8,
+      "logical_bytes": 96773
+    }
+  ],
+  "removed_logical_bytes": 16204023,
+  "retained": [
+    {
+      "path": "inputs-private/payloads",
+      "reason": "Immutable compiled payloads needed for completed-controller reinvocation",
+      "cleanup_condition": "Remove after review/related #39 work or verified rehydration procedure",
+      "files": 34,
+      "logical_bytes": 411094
+    },
+    {
+      "path": "private/opencobra__cobrapy",
+      "reason": "Canonical snapshot, output archive and stage evidence for readback/reinvocation",
+      "cleanup_condition": "Remove redundant local copies after review; retain cited HF snapshot",
+      "files": 26,
+      "logical_bytes": 2481580
+    },
+    {
+      "path": "private/scverse__scanpy",
+      "reason": "Canonical negative-build snapshot and stage evidence",
+      "cleanup_condition": "Remove redundant local copies after review; retain cited HF snapshot",
+      "files": 26,
+      "logical_bytes": 476298
+    },
+    {
+      "path": "private/final-snapshot",
+      "reason": "Verified compact final summary/source archive",
+      "cleanup_condition": "Remove local staging after review; retain cited HF snapshot",
+      "files": 2,
+      "logical_bytes": 283374
+    }
+  ],
+  "final_hf_prefix": "research/38-manifest-validation/2026-10-24/eae2c9b18c4c82005a7d18a09989c8309a1c8c581f59e8e3f9c10d14be2e2690",
+  "verified_before_deletion": true,
+  "task_owned_tmp_paths": [],
+  "immutable_payloads_and_stage_evidence_retained": true,
+  "remote_cleanup_already_verified": true,
+  "no_runtime_or_model_calls": true,
+  "credentials_or_other_tasks_touched": false,
+  "other_private_files": "Small watcher logs, publication drafts/intents and receipt-schema failure metadata remain until review; no transfer/readback cache retained"
+}
