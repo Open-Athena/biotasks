@@ -4,8 +4,10 @@ Develop open tools for creating and validating computational biology tasks.
 Following Marin's approach to research through code, experiments and recorded
 results, keep reasonably established pipelines and reusable helpers on `main`
 and preserve experiments independently. Read the [documentation](docs/README.md)
-for existing tools and operational practices. The implemented CLI lists and reads
-packaged prompt templates; it does not generate or validate tasks.
+for existing tools and operational practices. The CLI lists and reads prompt
+templates and validates existing native Repo2RLEnv inline PR task exports on
+reserved Iris workers. See [validation](docs/validation.md) for supported inputs,
+resource bounds and recovery contracts. It does not generate tasks or call models.
 
 ## Setup and CLI
 

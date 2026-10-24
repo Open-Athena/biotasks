@@ -1,11 +1,12 @@
 # BioTasks documentation
 
-BioTasks currently provides a CLI for inspecting bundled prompt templates and
+BioTasks provides prompt inspection, existing native PR task validation, and
 operational guidance for preserving research artifacts.
 
 | Document | Purpose |
 | --- | --- |
 | [Prompt inspection](prompts.md) | Available templates, CLI behavior and Python helpers |
+| [PR task validation](validation.md) | Manifest planning, Iris execution, recovery, archival and cleanup |
 | [Research artifact storage](storage.md) | Public eligibility, snapshot manifests, verification and retention |
 | [Contribution guidance](../AGENTS.md) | Setup, checks, permanent research branches and focused promotion |
 
