@@ -278,3 +278,23 @@ def test_serial_gate_does_not_start_later_case(cohort, monkeypatch, terminal):
     monkeypatch.setattr(runtime, "run", pending)
     assert flow.advance(path, output, allow_generation=True)["state"] == terminal
     assert calls == [output / "metabolism"]
+
+
+@pytest.mark.parametrize("ready", [False, True])
+def test_manifest_wait_hint_uses_actual_generation_stage_evidence(cohort, monkeypatch, ready):
+    path, output, manifest = cohort
+    flow.prepare(path, output)
+    runtime, _, _ = flow.adapter(manifest)
+
+    def observation(root, once):
+        assert root == output / "metabolism" and once is True
+        if ready:
+            write_json(
+                root / "runs/generation/submission_recorded.json", {"stage": "submission_recorded"}
+            )
+        return {"state": "recovering:submission_recorded"}
+
+    monkeypatch.setattr(runtime, "run", observation)
+    result = flow.advance(path, output, allow_generation=True)
+    assert result["state"] == "recovering:submission_recorded"
+    assert result["wait"] is (not ready)

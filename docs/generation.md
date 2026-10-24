@@ -141,6 +141,13 @@ backend for resumption. Do not restart on an observation timeout or a missing
 handle after submission intent. Unsupported exports with no native task are
 recorded as a terminal case and cannot block later cases indefinitely.
 
+Watch mode immediately advances a transition whose durable stage evidence is
+already present. It keeps the five-minute interval for pending/uncertain or
+unknown states, including missing original handles and incomplete cleanup.
+Every next transition still verifies the original journal/evidence bindings;
+scheduling does not admit a replacement job or bypass a hold. `--once` keeps
+its one-pass behavior for an external scheduler.
+
 Supported native reward-disagreement holds automatically enter the separate
 [retention lifecycle](retention.md). A fully archived/readback-verified and
 cleaned failure is recorded as scientifically held, with every acceptance flag

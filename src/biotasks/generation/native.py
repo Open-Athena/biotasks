@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from biotasks.generation.scheduling import waiting
 from biotasks.retention import actor
 from biotasks.validation import controller
 from biotasks.validation.files import lock
@@ -23,6 +24,7 @@ def retained(validation: Path, task_id: str):
     return {
         "state": "held_unsupported" if value["state"] == "held_unsupported" else "retaining",
         "retention": value,
+        "wait": waiting(output / "cases" / task_id, value["state"], actor.STAGES),
     }
 
 
@@ -49,6 +51,7 @@ def advance(validation: Path):
                         "state": value["state"],
                         "tasks": states,
                         "unsupported": plan["unsupported"],
+                        "wait": value.get("wait", True),
                     }
                 if value["admission_closed"]:
                     return {
@@ -60,7 +63,12 @@ def advance(validation: Path):
                 continue
             states[group["id"]] = {"state": state}
             if state != "complete":
-                return {"state": "in_progress", "tasks": states, "unsupported": plan["unsupported"]}
+                return {
+                    "state": "in_progress",
+                    "tasks": states,
+                    "unsupported": plan["unsupported"],
+                    "wait": waiting(directory, state),
+                }
             if any(
                 (directory / name).exists()
                 for name in (
