@@ -26,7 +26,6 @@
         "peak_rss_kib": 159092
       }
     ],
-    "not_claimed_passed": true,
     "tests": 104,
     "passed": 104,
     "elapsed_seconds": 3.96,
@@ -35,8 +34,10 @@
       "minimal_asyncio_to_thread_inside_sandbox": "timeout_exit124_after5seconds",
       "identical_example_outside_sandbox": "returned1_immediately",
       "unchanged_full_suites_outside_sandbox": "104passed",
-      "pipeline_workaround_added": false
-    }
+      "pipeline_workaround_added": false,
+      "minimal_probe_command": "timeout -k 1 5 .venv/bin/python -c 'import asyncio; print(asyncio.run(asyncio.to_thread(lambda: 1)), flush=True)'"
+    },
+    "earlier_attempts_not_claimed_passed": true
   },
   "new_model_calls": 0,
   "new_paid_campaigns": 0,
