@@ -1,0 +1,31 @@
+{
+  "state": "prepared_and_planned",
+  "policy": "apt-index-refresh-v1",
+  "upstream_source_files_modified": false,
+  "upstream_emitter_behavior_modified": true,
+  "new_generation_or_model_calls": 0,
+  "remote_jobs": 0,
+  "reference_source_members_reverified": 56,
+  "comparison": [
+    {
+      "task": "opencobra__cobrapy-1497",
+      "files": 10,
+      "changed_files": [
+        "environment/Dockerfile",
+        "task.toml"
+      ],
+      "grading_assets_modes_resources_deadlines_preserved": true,
+      "baseline_dockerfile_sha256": "76b0d91144e1da2695f0a7413854d60ed08a5d31813fe5b884d337256a8d027b",
+      "candidate_dockerfile_sha256": "881b72a72f649305e5e2b99de5aac24e20e6a15c27e79ca86639598f05be538f",
+      "command_deltas": [
+        {
+          "original": "apt-get install -y libexpat1-dev",
+          "candidate": "apt-get update && apt-get install -y libexpat1-dev"
+        }
+      ]
+    }
+  ],
+  "validation_plan_identity": "708d2c406e7b25cf08631e5abae39673083ea16a9e6c2ebf64624bd48ec592aa",
+  "configuration_sha256": "58c890abf903bc9eccb87be2868a53e201749e55b992597a9bf608356cb7dbc7",
+  "resume_preserves_originals": true
+}
