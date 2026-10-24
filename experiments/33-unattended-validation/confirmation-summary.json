@@ -1,0 +1,182 @@
+{
+  "run_id": "biotasks34-macs-742-confirm-001",
+  "lifecycle_complete": true,
+  "scientific_acceptance": true,
+  "gates": {
+    "reconstruction": true,
+    "unchanged_candidate": true,
+    "bootstrap_image_bound": true,
+    "two_dependency_receipts": true,
+    "receipt_bound_to_each_control_build": true,
+    "identical_dependencies_both_controls": true,
+    "positive_pair": true,
+    "clean_oracle_command": true,
+    "all_regressions_pass": true
+  },
+  "remote_attempts": 1,
+  "cleanup_attempts": 1,
+  "adopted_existing_submission": false,
+  "live_controller_restart_verified": true,
+  "rows": [
+    {
+      "task": "macs3-project__MACS-742",
+      "agent": "nop",
+      "verifier_timeout_seconds": 300,
+      "state": "completed",
+      "wrapper_exit": 0,
+      "trial_record_present": true,
+      "reward_details_present": true,
+      "exception_present": false,
+      "reward": 0.0,
+      "parse_status": "ok",
+      "resolved": false,
+      "command_resolved": false,
+      "test_exit_code": 1,
+      "f2p_passed": 0,
+      "f2p_total": 1,
+      "p2p_passed": 10,
+      "p2p_total": 10
+    },
+    {
+      "task": "macs3-project__MACS-742",
+      "agent": "oracle",
+      "verifier_timeout_seconds": 300,
+      "state": "completed",
+      "wrapper_exit": 0,
+      "trial_record_present": true,
+      "reward_details_present": true,
+      "exception_present": false,
+      "reward": 1.0,
+      "parse_status": "ok",
+      "resolved": true,
+      "command_resolved": true,
+      "test_exit_code": 0,
+      "f2p_passed": 1,
+      "f2p_total": 1,
+      "p2p_passed": 10,
+      "p2p_total": 10
+    }
+  ],
+  "control_dependency_bindings": [
+    {
+      "agent": "nop",
+      "image_id": "sha256:dad478177b854b2ced1d4ae6536335852c4c784b10d4915d854cda7150ec8c71",
+      "dependency_receipt_sha256": "0b975201aaf27db34617e006142230cf79ce80bd38e9f3b9185aa16c2b8f24f9",
+      "build_started": 1792798622.1780033,
+      "build_finished": 1792798648.5075793,
+      "control_started": 1792798614.0476298,
+      "control_finished": 1792798898.3952892
+    },
+    {
+      "agent": "oracle",
+      "image_id": "sha256:5cd466bd53e7285929a894eb166fda94ffa3d41d4d63f217c93e3558d031def1",
+      "dependency_receipt_sha256": "0b975201aaf27db34617e006142230cf79ce80bd38e9f3b9185aa16c2b8f24f9",
+      "build_started": 1792798902.5093787,
+      "build_finished": 1792798902.7913747,
+      "control_started": 1792798898.3971362,
+      "control_finished": 1792799153.8505862
+    }
+  ],
+  "dependency_sets": [
+    {
+      "image_id": "sha256:dad478177b854b2ced1d4ae6536335852c4c784b10d4915d854cda7150ec8c71",
+      "python": "3.12.15 (main, Oct 21 2026, 01:08:20) [GCC 14.2.0]",
+      "platform": "Linux-5.19.0-1022-gcp-x86_64-with-glibc2.41",
+      "wheels": [
+        {
+          "filename": "cython-3.3.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+          "name": "cython",
+          "version": "3.3.0",
+          "tags": [
+            "cp312-cp312-manylinux2014_x86_64",
+            "cp312-cp312-manylinux_2_17_x86_64",
+            "cp312-cp312-manylinux_2_28_x86_64"
+          ],
+          "bytes": 3412225,
+          "sha256": "428fafed98ea26927000a287b4dfc9ef07339f56656a5329a34eaa593f79a4f8"
+        },
+        {
+          "filename": "numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "name": "numpy",
+          "version": "2.5.4",
+          "tags": [
+            "cp312-cp312-manylinux_2_27_x86_64",
+            "cp312-cp312-manylinux_2_28_x86_64"
+          ],
+          "bytes": 16727283,
+          "sha256": "fbde6962867ee75b48b0ee29b2b9372ec5d617799dbaf38e82dc0596f2f7738a"
+        },
+        {
+          "filename": "setuptools-84.2.1-py3-none-any.whl",
+          "name": "setuptools",
+          "version": "84.2.1",
+          "tags": [
+            "py3-none-any"
+          ],
+          "bytes": 876263,
+          "sha256": "ca140b45d5325a9478f880e351484f62fef15f336462e449ca0c03c873d589c2"
+        }
+      ]
+    },
+    {
+      "image_id": "sha256:5cd466bd53e7285929a894eb166fda94ffa3d41d4d63f217c93e3558d031def1",
+      "python": "3.12.15 (main, Oct 21 2026, 01:08:20) [GCC 14.2.0]",
+      "platform": "Linux-5.19.0-1022-gcp-x86_64-with-glibc2.41",
+      "wheels": [
+        {
+          "filename": "cython-3.3.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+          "name": "cython",
+          "version": "3.3.0",
+          "tags": [
+            "cp312-cp312-manylinux2014_x86_64",
+            "cp312-cp312-manylinux_2_17_x86_64",
+            "cp312-cp312-manylinux_2_28_x86_64"
+          ],
+          "bytes": 3412225,
+          "sha256": "428fafed98ea26927000a287b4dfc9ef07339f56656a5329a34eaa593f79a4f8"
+        },
+        {
+          "filename": "numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "name": "numpy",
+          "version": "2.5.4",
+          "tags": [
+            "cp312-cp312-manylinux_2_27_x86_64",
+            "cp312-cp312-manylinux_2_28_x86_64"
+          ],
+          "bytes": 16727283,
+          "sha256": "fbde6962867ee75b48b0ee29b2b9372ec5d617799dbaf38e82dc0596f2f7738a"
+        },
+        {
+          "filename": "setuptools-84.2.1-py3-none-any.whl",
+          "name": "setuptools",
+          "version": "84.2.1",
+          "tags": [
+            "py3-none-any"
+          ],
+          "bytes": 876263,
+          "sha256": "ca140b45d5325a9478f880e351484f62fef15f336462e449ca0c03c873d589c2"
+        }
+      ]
+    }
+  ],
+  "allocated_cpu_hours_this_attempt": 2.218368888696035,
+  "cumulative_allocated_cpu_hours": 4.429717777570089,
+  "new_model_calls": 0,
+  "hf_prefix": "research/33-unattended-validation/2026-10-23/208b386345aaa70f2bec2a3e6dd66746b5381c76ac1ff6eb94686a3e151dea2f",
+  "evidence_sha256": {
+    "accounting": "5e1aa6691b5ff8665bdcdfa414cdcda21de261d20f98c7c052091ffdceeddd4b",
+    "readback": "67f871b42c1d04ec7736a54e4c03d7c467f3088758115daa2d3e5d0051a0713a",
+    "hf_receipt": "5ee4af5522d1558c42cd9c9f66ca0ef2e37907abc61ef8e01a84e308908f70f2",
+    "cleanup_accounting": "0ca5b2c57f5f7ebe16d362c13846d8b57e75a0e6cfcdc284421a43b018cc9ccb",
+    "cleanup_readback": "330e33a26bde6a6e5c5f609bf75be11e113149d7bed015f6b79eff2e626787c9",
+    "journal": "8769672faecfde354b1bd57f279ae0f68aabe61e521b599d11f5ab06c16d0d33",
+    "budget": "d96cf74b23b9b879dc351fcf667abe6a676202e1d16704a34d9a2d536ac2f5bd",
+    "restart": "e6b2c5abe047bbb63a05f4cbb1b3f8930300e4d43a2b1580d49f86f2bc72ff6f"
+  },
+  "limits": [
+    "One separate MACS diagnostic; frozen 83-export cohort counts are unchanged",
+    "Mutable bootstrap package sources and future wheel availability remain limitations",
+    "No Docker image distribution, solver score or production-pipeline claim",
+    "Storage billing remains reserved until authoritative reconciliation"
+  ]
+}

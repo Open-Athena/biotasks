@@ -66,9 +66,35 @@ def main():
     assert restart['journal_sha256_before_restart'] == restart['journal_sha256_after_restart']
     assert restart['submission_sha256_before_restart'] == restart['submission_sha256_after_restart']
     dependencies_match = matching_dependencies(result['dependency_receipts'])
+    raw_root = source/'inputs-private/confirmation-output'
+    member_hashes = {m['path']:m['sha256'] for m in result['archive_members']}
+    control_path = raw_root/'controls/controls/controls.json'
+    build_path = raw_root/'controls/bounded-builds.jsonl'
+    for path in (control_path, build_path):
+        name = str(path.relative_to(raw_root))
+        if name in member_hashes:
+            assert digest(path) == member_hashes[name]
+        else:
+            assert not path.exists()
+    controls = json.loads(control_path.read_text()) if control_path.exists() else []
+    builds = [json.loads(line) for line in build_path.read_text().splitlines()] if build_path.exists() else []
+    bindings = []
+    for control in controls:
+        matching_builds = [b for b in builds if control.get('started', float('inf')) <= b['started']
+            <= b['finished'] <= control.get('finished', float('-inf'))]
+        if len(matching_builds) != 1:
+            continue
+        build = matching_builds[0]
+        receipts = [r for r in result['dependency_receipts'] if r['image_id'] == build['image_id']]
+        if receipts:
+            bindings.append(dict(agent=control['agent'], image_id=build['image_id'],
+                dependency_receipt_sha256=receipts[0]['sha256'], build_started=build['started'],
+                build_finished=build['finished'], control_started=control['started'], control_finished=control['finished']))
+    arms_bound = len(bindings) == 2 and {b['agent'] for b in bindings} == {'nop', 'oracle'}
     pair = result['pair']
     gates = dict(reconstruction=result['reconstruction_verified'], unchanged_candidate=result['candidate_files_verified'],
         bootstrap_image_bound=result['bootstrap_image_bound'], two_dependency_receipts=result['dependency_preparation_verified'],
+        receipt_bound_to_each_control_build=arms_bound,
         identical_dependencies_both_controls=dependencies_match, positive_pair=pair['positive_control_pair'],
         clean_oracle_command=pair['clean_oracle_command'], all_regressions_pass=pair['all_regression_tests_pass_both'])
     budget = values['budget']
@@ -76,6 +102,7 @@ def main():
     summary = dict(run_id=RUN, lifecycle_complete=True, scientific_acceptance=all(gates.values()), gates=gates,
         remote_attempts=1, cleanup_attempts=1, adopted_existing_submission=False,
         live_controller_restart_verified=True, rows=result['rows'],
+        control_dependency_bindings=bindings,
         dependency_sets=[dict(image_id=r['image_id'], python=r['receipt']['python'],
             platform=r['receipt']['platform'], wheels=r['receipt']['wheels']) for r in result['dependency_receipts']],
         allocated_cpu_hours_this_attempt=values['accounting']['allocated_cpu_hours']+values['cleanup_accounting']['allocated_cpu_hours'],

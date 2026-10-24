@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from resume_runner import STAGES, advance, controller_lock, digest
 
@@ -117,6 +118,23 @@ class ResumeChecks(unittest.TestCase):
         for _ in range(4): self.step()
         self.assertEqual(self.step(), 'complete')
         self.assertEqual(self.adapter.calls, self.plan['stages'])
+
+    def test_fractional_reservations_reconcile_to_exact_zero(self):
+        import run_confirmation as campaign
+        events = [dict(kind='reserved_cpu_admission', run_id='prior', state='terminal reconciled', actual_allocated_cpu_hours=2.211),
+            dict(kind='reserved_cpu_admission', run_id='run', state='reserved before submission', maximum_allocated_cpu_hours=8),
+            dict(kind='reserved_cpu_admission', run_id='cleanup', state='reserved before submission', maximum_allocated_cpu_hours=1/6)]
+        path = self.root/'budget.json'
+        path.write_text(json.dumps(dict(events=events, additional_allocated_cpu_hours=2.211, outstanding_cpu_hour_reservations=8+1/6)))
+        adapter = object.__new__(campaign.Confirmation)
+        with patch.object(campaign, 'ROOT', self.root):
+            adapter.reconcile(dict(job_id='/exedev/run', allocated_cpu_hours=2.214))
+            self.assertEqual(json.loads(path.read_text())['outstanding_cpu_hour_reservations'], 1/6)
+            adapter.reconcile(dict(job_id='/exedev/cleanup', allocated_cpu_hours=0.0047))
+            self.assertEqual(json.loads(path.read_text())['outstanding_cpu_hour_reservations'], 0)
+            before = path.read_bytes()
+            adapter.reconcile(dict(job_id='/exedev/cleanup', allocated_cpu_hours=0.0047))
+            self.assertEqual(path.read_bytes(), before)
 
 
 if __name__ == '__main__':

@@ -133,8 +133,9 @@ class Confirmation:
                 return
             assert event['state'] == 'reserved before submission'
             event.update(state='terminal reconciled', actual_allocated_cpu_hours=account['allocated_cpu_hours'])
-            budget['additional_allocated_cpu_hours'] += account['allocated_cpu_hours']
-            budget['outstanding_cpu_hour_reservations'] -= event['maximum_allocated_cpu_hours']
+            admissions = [e for e in budget['events'] if e['kind'] == 'reserved_cpu_admission']
+            budget['additional_allocated_cpu_hours'] = sum(e['actual_allocated_cpu_hours'] for e in admissions if e['state'] == 'terminal reconciled')
+            budget['outstanding_cpu_hour_reservations'] = sum(e['maximum_allocated_cpu_hours'] for e in admissions if e['state'] == 'reserved before submission')
             atomic_write(path, budget)
 
     def call(self, filename, *args):

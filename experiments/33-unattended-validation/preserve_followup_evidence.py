@@ -123,7 +123,7 @@ def prepare(args):
 
 
 def publish(stem='followup', approved_scope='thirteen_non_matchms_followup_execution_archives', generated_manifest=False):
-    assert stem in ('followup', 'matchms-summary', 'offline', 'offline-cleanup', 'confirmation')
+    assert stem in ('followup', 'matchms-summary', 'offline', 'offline-cleanup', 'confirmation', 'confirmation-final')
     assert not generated_manifest or stem == 'confirmation'
     checkpointed = [f'{stem}-public-review.json', 'preserve_followup_evidence.py']
     if generated_manifest:
