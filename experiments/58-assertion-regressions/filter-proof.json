@@ -1,0 +1,253 @@
+{
+  "synthetic": true,
+  "real_pytest_processes": 9,
+  "source_filter_and_original_parser_used": true,
+  "cases": [
+    {
+      "case": "assertion_in_existing",
+      "new_test_function_count": 0,
+      "default_gate": "no_new_test_funcs",
+      "explicit_false_gate": null,
+      "f2p": [
+        "test_regression.py::test_existing"
+      ],
+      "p2p": [],
+      "real_pytest_stages": [
+        {
+          "post": false,
+          "exit": 1,
+          "statuses": {
+            "test_regression.py::test_existing": "FAILED"
+          },
+          "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/experiments/58-assertion-regressions/inputs-private/filter-001/assertion_in_existing/pre\nconfigfile: ../../../../../../pyproject.toml\ncollecting ... collected 1 item\n\ntest_regression.py::test_existing FAILED                                 [100%]\n\n=================================== FAILURES ===================================\n________________________________ test_existing _________________________________\n\n    def test_existing():\n     assert value() >= 0\n>    assert value() == 1\nE    assert 0 == 1\nE     +  where 0 = value()\n\ntest_regression.py:4: AssertionError\n=========================== short test summary info ============================\nFAILED test_regression.py::test_existing - assert 0 == 1\n============================== 1 failed in 0.02s ===============================\n",
+          "stderr": "",
+          "command": [
+            "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/../pipeline54/.venv/bin/python",
+            "-B",
+            "-m",
+            "pytest",
+            "-v",
+            "-p",
+            "no:cacheprovider",
+            "--rootdir=.",
+            "--confcutdir=.",
+            "test_regression.py"
+          ]
+        },
+        {
+          "post": true,
+          "exit": 0,
+          "statuses": {
+            "test_regression.py::test_existing": "PASSED"
+          },
+          "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/experiments/58-assertion-regressions/inputs-private/filter-001/assertion_in_existing/post\nconfigfile: ../../../../../../pyproject.toml\ncollecting ... collected 1 item\n\ntest_regression.py::test_existing PASSED                                 [100%]\n\n============================== 1 passed in 0.01s ===============================\n",
+          "stderr": "",
+          "command": [
+            "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/../pipeline54/.venv/bin/python",
+            "-B",
+            "-m",
+            "pytest",
+            "-v",
+            "-p",
+            "no:cacheprovider",
+            "--rootdir=.",
+            "--confcutdir=.",
+            "test_regression.py"
+          ]
+        }
+      ],
+      "eligible_is_not_native_validation_or_scientific_acceptance": true
+    },
+    {
+      "case": "new_function",
+      "new_test_function_count": 1,
+      "default_gate": null,
+      "explicit_false_gate": null,
+      "f2p": [
+        "test_regression.py::test_regression"
+      ],
+      "p2p": [
+        "test_regression.py::test_existing"
+      ],
+      "real_pytest_stages": [
+        {
+          "post": false,
+          "exit": 1,
+          "statuses": {
+            "test_regression.py::test_existing": "PASSED",
+            "test_regression.py::test_regression": "FAILED"
+          },
+          "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/experiments/58-assertion-regressions/inputs-private/filter-001/new_function/pre\nconfigfile: ../../../../../../pyproject.toml\ncollecting ... collected 2 items\n\ntest_regression.py::test_existing PASSED                                 [ 50%]\ntest_regression.py::test_regression FAILED                               [100%]\n\n=================================== FAILURES ===================================\n_______________________________ test_regression ________________________________\n\n    def test_regression():\n>    assert value() == 1\nE    assert 0 == 1\nE     +  where 0 = value()\n\ntest_regression.py:6: AssertionError\n=========================== short test summary info ============================\nFAILED test_regression.py::test_regression - assert 0 == 1\n========================= 1 failed, 1 passed in 0.02s ==========================\n",
+          "stderr": "",
+          "command": [
+            "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/../pipeline54/.venv/bin/python",
+            "-B",
+            "-m",
+            "pytest",
+            "-v",
+            "-p",
+            "no:cacheprovider",
+            "--rootdir=.",
+            "--confcutdir=.",
+            "test_regression.py"
+          ]
+        },
+        {
+          "post": true,
+          "exit": 0,
+          "statuses": {
+            "test_regression.py::test_existing": "PASSED",
+            "test_regression.py::test_regression": "PASSED"
+          },
+          "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/experiments/58-assertion-regressions/inputs-private/filter-001/new_function/post\nconfigfile: ../../../../../../pyproject.toml\ncollecting ... collected 2 items\n\ntest_regression.py::test_existing PASSED                                 [ 50%]\ntest_regression.py::test_regression PASSED                               [100%]\n\n============================== 2 passed in 0.01s ===============================\n",
+          "stderr": "",
+          "command": [
+            "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/../pipeline54/.venv/bin/python",
+            "-B",
+            "-m",
+            "pytest",
+            "-v",
+            "-p",
+            "no:cacheprovider",
+            "--rootdir=.",
+            "--confcutdir=.",
+            "test_regression.py"
+          ]
+        }
+      ],
+      "eligible_is_not_native_validation_or_scientific_acceptance": true
+    },
+    {
+      "case": "cosmetic_only",
+      "new_test_function_count": 0,
+      "default_gate": "no_new_test_funcs",
+      "explicit_false_gate": null,
+      "f2p": [],
+      "p2p": [
+        "test_regression.py::test_existing"
+      ],
+      "real_pytest_stages": [
+        {
+          "post": false,
+          "exit": 0,
+          "statuses": {
+            "test_regression.py::test_existing": "PASSED"
+          },
+          "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/experiments/58-assertion-regressions/inputs-private/filter-001/cosmetic_only/pre\nconfigfile: ../../../../../../pyproject.toml\ncollecting ... collected 1 item\n\ntest_regression.py::test_existing PASSED                                 [100%]\n\n============================== 1 passed in 0.00s ===============================\n",
+          "stderr": "",
+          "command": [
+            "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/../pipeline54/.venv/bin/python",
+            "-B",
+            "-m",
+            "pytest",
+            "-v",
+            "-p",
+            "no:cacheprovider",
+            "--rootdir=.",
+            "--confcutdir=.",
+            "test_regression.py"
+          ]
+        },
+        {
+          "post": true,
+          "exit": 0,
+          "statuses": {
+            "test_regression.py::test_existing": "PASSED"
+          },
+          "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/experiments/58-assertion-regressions/inputs-private/filter-001/cosmetic_only/post\nconfigfile: ../../../../../../pyproject.toml\ncollecting ... collected 1 item\n\ntest_regression.py::test_existing PASSED                                 [100%]\n\n============================== 1 passed in 0.00s ===============================\n",
+          "stderr": "",
+          "command": [
+            "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/../pipeline54/.venv/bin/python",
+            "-B",
+            "-m",
+            "pytest",
+            "-v",
+            "-p",
+            "no:cacheprovider",
+            "--rootdir=.",
+            "--confcutdir=.",
+            "test_regression.py"
+          ]
+        }
+      ],
+      "eligible_is_not_native_validation_or_scientific_acceptance": true
+    },
+    {
+      "case": "ci_only",
+      "new_test_function_count": 1,
+      "default_gate": "ci_only_patch",
+      "explicit_false_gate": "ci_only_patch",
+      "f2p": [
+        "test_regression.py::test_regression"
+      ],
+      "p2p": [
+        "test_regression.py::test_existing"
+      ],
+      "real_pytest_stages": [
+        {
+          "post": false,
+          "exit": 1,
+          "statuses": {
+            "test_regression.py::test_existing": "PASSED",
+            "test_regression.py::test_regression": "FAILED"
+          },
+          "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/experiments/58-assertion-regressions/inputs-private/filter-001/ci_only/pre\nconfigfile: ../../../../../../pyproject.toml\ncollecting ... collected 2 items\n\ntest_regression.py::test_existing PASSED                                 [ 50%]\ntest_regression.py::test_regression FAILED                               [100%]\n\n=================================== FAILURES ===================================\n_______________________________ test_regression ________________________________\n\n    def test_regression():\n>    assert value() == 1\nE    assert 0 == 1\nE     +  where 0 = value()\n\ntest_regression.py:6: AssertionError\n=========================== short test summary info ============================\nFAILED test_regression.py::test_regression - assert 0 == 1\n========================= 1 failed, 1 passed in 0.02s ==========================\n",
+          "stderr": "",
+          "command": [
+            "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/../pipeline54/.venv/bin/python",
+            "-B",
+            "-m",
+            "pytest",
+            "-v",
+            "-p",
+            "no:cacheprovider",
+            "--rootdir=.",
+            "--confcutdir=.",
+            "test_regression.py"
+          ]
+        },
+        {
+          "post": true,
+          "exit": 0,
+          "statuses": {
+            "test_regression.py::test_existing": "PASSED",
+            "test_regression.py::test_regression": "PASSED"
+          },
+          "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/experiments/58-assertion-regressions/inputs-private/filter-001/ci_only/post\nconfigfile: ../../../../../../pyproject.toml\ncollecting ... collected 2 items\n\ntest_regression.py::test_existing PASSED                                 [ 50%]\ntest_regression.py::test_regression PASSED                               [100%]\n\n============================== 2 passed in 0.01s ===============================\n",
+          "stderr": "",
+          "command": [
+            "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/../pipeline54/.venv/bin/python",
+            "-B",
+            "-m",
+            "pytest",
+            "-v",
+            "-p",
+            "no:cacheprovider",
+            "--rootdir=.",
+            "--confcutdir=.",
+            "test_regression.py"
+          ]
+        }
+      ],
+      "eligible_is_not_native_validation_or_scientific_acceptance": true
+    }
+  ],
+  "targeting_preflight": {
+    "recorded_bootstrap_command": [
+      "cd /workspace/Tests && python -m pytest -v"
+    ],
+    "actual_upstream_targeted_command": [
+      "cd /workspace/Tests && python -m pytest -v Tests/test_PDB_PDBIO.py"
+    ],
+    "fixture_only_workspace_substitution": "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/experiments/58-assertion-regressions/inputs-private/filter-001/cwd_targeting",
+    "exit": 4,
+    "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58\nconfigfile: pyproject.toml\ncollecting ... collected 0 items\n\n============================ no tests ran in 0.00s =============================\n",
+    "stderr": "ERROR: file or directory not found: Tests/test_PDB_PDBIO.py\n\n",
+    "native_biopython_validation_run": false,
+    "finding": "Original helper appends a root-relative file after cd into Tests; the synthetic faithful layout has no Tests/Tests path. This is a source/fixture prediction for Biopython, not a native outcome."
+  },
+  "scratch_removed": true,
+  "new_model_native_calls": 0,
+  "native_candidate_admitted": false,
+  "limitation": "Pure filter helpers plus real standalone pytest/parser fixtures; not the full native validator, environment or reward."
+}
