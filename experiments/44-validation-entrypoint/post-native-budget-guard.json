@@ -1,0 +1,21 @@
+{
+  "pipeline_commit": "7a6c8ba340cf8927fa106f7b2be4da6511729c0c",
+  "scope": "Host CPU-accounting edge case only; no native task, bootstrap, grading, source/control/recipe/classifier/journal changes",
+  "unchanged_native_module_paths": [
+    "worker/controls.py",
+    "worker/job.py",
+    "worker/docker_bridge.py",
+    "worker/cleanup.py",
+    "worker/common.py",
+    "worker/setup_controller.sh",
+    "recipes.py",
+    "collection.py",
+    "journal.py"
+  ],
+  "regression": "Synthetic overrun previously prevented archival/cleanup and did not close new admission. Both tests failed before the fix. Now new primaries close, only already reserved stop/cleanup can start, budget holds are archived/bound/visible and execution reports held after cleanup.",
+  "checks": "40 offline tests passed in 5.37 seconds, peak RSS 60,800 KiB; Ruff/format/ty/hooks pass",
+  "native_runs_added": 0,
+  "model_calls_added": 0,
+  "actual_epic_cpu_unchanged": 6.764818888770209,
+  "app_attachment": "PR46 GitHub publication succeeded; app attach request was attempted but unconfirmed after stalling. Local load0 and ~7GiB available; no native/model launches pending."
+}

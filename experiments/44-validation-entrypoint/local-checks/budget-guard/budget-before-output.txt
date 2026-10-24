@@ -1,0 +1,74 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+___________ test_budget_overrun_preserves_and_cleans_before_holding ____________
+
+prepared = (PosixPath('/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline44-final/.checks/pytest-budget-bef...asks/.research-worktrees/pipeline44-final/.checks/pytest-budget-before/test_budget_overrun_preserves_0/manifest.json'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb402318180>
+
+    def test_budget_overrun_preserves_and_cleans_before_holding(prepared: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch) -> None:
+        root, _ = prepared
+        remote = Remote(root, monkeypatch)
+        output = remote.output
+    
+        def overspend(group: dict[str, Any], request: dict[str, Any]) -> dict[str, Any]:
+            value = output(group, request)
+            if not group["run_id"].endswith("-cleanup"):
+                value["allocated_cpu_hours"] = 3.25
+            return value
+    
+        monkeypatch.setattr(remote, "output", overspend)
+>       assert finish(root)["state"] == "held"
+               ^^^^^^^^^^^^
+
+tests/test_validation.py:652: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_validation.py:243: in finish
+    state = controller.run(root, once=True)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/biotasks/validation/controller.py:461: in run
+    state = pipeline.step()
+            ^^^^^^^^^^^^^^^
+src/biotasks/validation/controller.py:451: in step
+    return advance(self.group["run_id"], inputs, self.directory / "journal.json", self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/biotasks/validation/journal.py:114: in advance
+    adapter.perform(stage)
+src/biotasks/validation/controller.py:138: in perform
+    {
+src/biotasks/validation/controller.py:210: in terminal
+    if self.observe(self.group, self.directory) is not None:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/biotasks/validation/controller.py:206: in observe
+    budget.reconcile(self.ledger, group["run_id"], value["allocated_cpu_hours"])
+src/biotasks/validation/budget.py:109: in reconcile
+    require(actual <= event["maximum_allocated_cpu_hours"], "Actual CPU bound exceeded")
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, message = 'Actual CPU bound exceeded'
+
+    def require(condition: object, message: str) -> None:
+        if not condition:
+>           raise ValidationError(message)
+E           biotasks.validation.files.ValidationError: Actual CPU bound exceeded
+
+src/biotasks/validation/files.py:22: ValidationError
+___ test_closed_budget_blocks_primary_submissions_but_keeps_reserved_cleanup ___
+
+tmp_path = PosixPath('/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline44-final/.checks/pytest-budget-before/test_closed_budget_blocks_prim0')
+
+    def test_closed_budget_blocks_primary_submissions_but_keeps_reserved_cleanup(tmp_path: Path) -> None:
+        path = tmp_path / "budget.json"
+        budget.create(path, 10)
+        budget.admit(path, "one", 1, .1)
+        budget.admit(path, "other", 1, .1)
+        with pytest.raises(ValidationError, match="Actual CPU bound"):
+            budget.reconcile(path, "one", 1.1)
+>       with pytest.raises(ValidationError, match="closed"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValidationError
+
+tests/test_validation.py:669: Failed
+=========================== short test summary info ============================
+FAILED tests/test_validation.py::test_budget_overrun_preserves_and_cleans_before_holding
+FAILED tests/test_validation.py::test_closed_budget_blocks_primary_submissions_but_keeps_reserved_cleanup
+2 failed, 33 deselected in 0.22s
