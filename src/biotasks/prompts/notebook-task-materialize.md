@@ -47,6 +47,13 @@ rationale. A substantive methodological change requires a blocker, not a silent
 repair. Leave unresolved numerical equivalence to the comparison stage; do not
 attempt repeated full independent implementations before submitting a candidate.
 Grader design and independent-implementation plans belong to later workers.
+Verify that public units and scales describe the produced values, including any
+reader/library conversions; source table headings alone are insufficient. An
+accurate output-column label or explicit reversible unit conversion is a
+representation change only when it preserves the same source-computed quantity.
+Document its exact mapping, retain original reference bytes and produce the
+derived representation separately. Do not change scientific methods, reinterpret
+the physical quantity, or retain a known false unit merely to match a source label.
 The shell runs in a locked Python environment, offline. `/work/reference` contains
 read-only original terminal artifacts. `original_inputs` identifies read-only
 original input files and their recorded identities. Work under `/work/author`.

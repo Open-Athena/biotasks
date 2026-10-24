@@ -143,6 +143,17 @@ output projection is allowed when it retains the selected scientific result;
 explain its derivation privately. Preserve recorded reference artifacts; describe
 any permitted source-faithful recovery separately rather than replacing them.
 
+Treat notebook headings and column labels as claims about quantities, not proof
+of their units or scale. Trace a consequential reported quantity to its producing
+operation, including reader/library unit conversions and any explicit subsequent
+transformation. A copied label can disagree with the values even when execution
+and numerical comparisons succeed. Use an accurate public label and unit; a
+documented reversible representation or unit conversion may preserve the same
+quantity without changing the scientific computation. Keep the original evidence
+and explain that mapping privately. Do not silently relabel unconverted numbers,
+copy a known false unit, or change the physical target to accommodate it. If the
+actual quantity cannot be established from evidence, report a blocker.
+
 State resource/network limits from policy. Mark comparison details as provisional
 until executable validation; no solver should receive an unvalidated draft.
 

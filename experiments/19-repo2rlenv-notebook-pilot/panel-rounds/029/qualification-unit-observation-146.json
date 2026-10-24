@@ -1,0 +1,45 @@
+{
+  "number": 146,
+  "observed_at": "2026-10-24T14:39:51.922038+00:00",
+  "stage": "Live read-only qualification observation; native/final original archive outcome still pending.",
+  "publication_hold": true,
+  "reason": "The generated public contract labels unconverted reader/RMSD time values as nanoseconds; the pinned producer reports picoseconds. Numerical agreement does not validate the attached physical unit.",
+  "source_notebook_unchanged": true,
+  "source_evidence": "Original notebook directly constructs a default MDAnalysis Universe without a timestep/unit override and labels RMSD result time columns Time(ns); RMSD results and reader code define those time values inps.",
+  "public_instruction_sha256": "fc327978fbb9e51bdaace8fac4f0038f3f70f27a57880886d3170691883dd6be",
+  "public_review_sha256": "18950dd705d53a841a9b4ab53e4e3614925e4cd7296e82a289f4d3d2df591fee",
+  "contract_quotes": [
+    "Time (ns)",
+    "a value close to but not exactly 1 in the file's time unit"
+  ],
+  "primary_sources": [
+    {
+      "url": "https://github.com/MDAnalysis/mdanalysis/blob/release-2.8.0/package/MDAnalysis/units.py",
+      "path": "units.py",
+      "sha256": "a4fc9d99addbb846fc793649b9bc96e6ce0d1ff12c1b094adcbb9e8042120f84",
+      "bytes": 14257,
+      "gh_api_raw_readback_verified": true
+    },
+    {
+      "url": "https://github.com/MDAnalysis/mdanalysis/blob/release-2.8.0/package/MDAnalysis/analysis/rms.py",
+      "path": "rms.py",
+      "sha256": "2768ac775192d7b29c3973317e4c4beb8b350f191bd0e8c386ea9f42fce13bca",
+      "bytes": 36781,
+      "gh_api_raw_readback_verified": true
+    },
+    {
+      "url": "https://github.com/MDAnalysis/mdanalysis/blob/release-2.8.0/package/MDAnalysis/coordinates/DCD.py",
+      "path": "DCD.py",
+      "sha256": "15d200a914746425b760337013bf0ca1562c343fac739ef4e973a612870b7a41",
+      "bytes": 18551,
+      "gh_api_raw_readback_verified": true
+    }
+  ],
+  "scientific_interpretation": "This is a source-label inconsistency retained in the generated scientific question; not an execution failure or evidence that the underlying RMSD calculation is wrong. Unit labels are consequential metadata, not proof of units.",
+  "general_remedy": "Have specification/construction/review trace quantities through producer conversions; permit explicitly justified reversible output representation or accurate labels while keeping source computations and original reference bytes fixed. Otherwise block. No package, notebook or unit-specific production rule.",
+  "operator_task_or_scientific_edits": 0,
+  "worker_advice_sent": false,
+  "running_frozen_payload_modified": false,
+  "native_success_not_assumed": true,
+  "new_model_calls_for_this_observation": 0
+}

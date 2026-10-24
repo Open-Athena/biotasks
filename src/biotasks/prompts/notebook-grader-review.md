@@ -62,6 +62,16 @@ fixed instance's outputs happen to be unaffected. Do not downgrade that conflict
 to an advisory note merely because current controls pass. Distinguish actual
 input observations from assumptions inferred from the reference's parser options.
 
+Audit consequential output units and scales against the operation producing the
+values, including reader/library conversions and later transformations. Notebook
+headings and inherited table labels are not independent evidence. Two numerical
+implementations can agree while both attaching a false unit; passing controls do
+not resolve that scientific-contract defect. Verify any derived label or
+reversible unit-conversion mapping against the source quantity and distinguish
+accurate representation from a changed scientific target. A unit mismatch is not
+a cosmetic typo. Require a supported correction through the existing repair route
+or a blocker; never accept it merely because it was present in the notebook.
+
 Independently audit endpoint coverage against `source_evidence`: the original
 converted source and narrative, preparation plan and export code. Review all
 scientific branches, including results that an earlier worker excluded. Earlier
