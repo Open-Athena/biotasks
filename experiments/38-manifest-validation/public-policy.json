@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "issue": 38,
+  "public_eligible": true,
+  "cohort_sha256": "8b5dc9d0aea690214b9271c0bb4f4a333c33465171904b539b74f7bbf2bdfc0f",
+  "source_families": {
+    "opencobra__cobrapy": "f9c90dc450a2e48fd6c8eaee9c0f18c0f5b876be2234d2e13f93339568f01852",
+    "scverse__scanpy": "6577842c8bf3cade3a346c92685151eec913a726ec1744b6f416a5840551d436",
+    "OHIF__Viewers": "867cdd5138deddddafce45ffa363445b42a7680e7dc6195029c8d2a462f4180b"
+  },
+  "source_reviews": {
+    "opencobra__cobrapy": "a01ecc5fbcb7fcaaf2fda5e0233134ad6e9270d55108e34d63985a7af5f127b9",
+    "scverse__scanpy": "d5f48367821197ed7156b221d1fe9f7231888962152eb66ce6fff0f2ca57b067",
+    "OHIF__Viewers": "0bf583bd3e397fe11ca0855c6a990bf8602f34939a018d2282f2f062f27a3f43"
+  },
+  "scope": "Frozen eligible native source tasks, source notices, isolated no-model control/build logs, payload provenance and ownership cleanup only; no images, environments, wheels or biological datasets.",
+  "allowed_runtime_modes": [
+    "native_inline"
+  ],
+  "excluded_repositories": [
+    "matchms/matchms"
+  ],
+  "reference_only_mode": "reference_stop",
+  "max_single_object_bytes": 33554432,
+  "max_expanded_archive_bytes": 33554432,
+  "max_member_bytes": 8388608,
+  "max_objects_per_family": 17,
+  "requirements": [
+    "Generated manifest bound to frozen cohort and source-family identity",
+    "Only UTF-8 text and recursively inspected bounded regular-file archives",
+    "Reject credential signals, binary patches, embedded data images and NUL bytes",
+    "Append-only snapshot prefix, all objects and archive members anonymously downloaded and verified",
+    "Retain protected local evidence and halt on unknown eligibility; no repair/model fallback"
+  ],
+  "retention": "Retain while cited; no automatic deletion.",
+  "budget": "Existing $10 HF archival reservation within the $90 operating ceiling; no new paid tier or purchase.",
+  "pipeline_or_task_modifications": false
+}

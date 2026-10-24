@@ -1,0 +1,43 @@
+{
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "files": [
+    {
+      "path": "src/repo2rlenv/validation.py",
+      "sha256": "0bbace2fe3b0de62d7a9b5870c30acb73d01b6edfd805caa04403db4ad2fdf2a"
+    },
+    {
+      "path": "src/repo2rlenv/execution/base.py",
+      "sha256": "829b7a1cdc5502f6b60d23e137474c32dc8ca5662247c96b8d672d50e51e0bcb"
+    },
+    {
+      "path": "src/repo2rlenv/execution/harbor.py",
+      "sha256": "fdca449f7c304db3245b10d4c0c3af5e2e84932a48c54c8e10e917253f6839e8"
+    },
+    {
+      "path": "src/repo2rlenv/tasksmith/batch.py",
+      "sha256": "8a4715c1d17638c13eb4709bf4cada1083af8c49842fc5afc1c33440d25e6de5"
+    },
+    {
+      "path": "src/repo2rlenv/tasksmith/matrix_runner.py",
+      "sha256": "056e976390076c288ab7026ca7214f823e39096375b8281e91460981c818815e"
+    }
+  ],
+  "reused": [
+    "Native inline preparation API",
+    "Native static oracle/asset validation: 25 tasks, zero errors/warnings",
+    "Byte-identical existing stage journal, Harbor 0.6.6 control helper/setup and owned cleanup"
+  ],
+  "assessment": {
+    "native_validate": "Static asset checks only; source explicitly excludes Docker-build/control proof",
+    "native_remote_workers": "Built-in WorkerSpec/connect_worker/create_worker supports Modal and Daytona, not reserved Iris workers",
+    "native_harbor_trials": "Supports deterministic nop/oracle without model; not a drop-in Iris lifecycle/legacy environment controller",
+    "native_tasksmith_batch": "Candidate-generation/quality-loop orchestration with its provider/ledger lifecycle; not invoked to avoid changing frozen tasks or adding generation/model calls"
+  },
+  "adaptations": [
+    "Generic reserved-Iris lifecycle/resource adapter",
+    "Common-prefix and per-task build prerequisites",
+    "Epics reserved-CPU accounting and pre-reviewed HF snapshot/readback policy"
+  ],
+  "limits": "This preserves the prior Harbor 0.6.6 comparison; no TaskSpec, verifier, oracle or installation recipe changes. No production release or whole-upstream batch compatibility claimed.",
+  "model_calls": 0
+}
