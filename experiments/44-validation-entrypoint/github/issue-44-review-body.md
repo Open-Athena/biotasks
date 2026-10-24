@@ -1,0 +1,9 @@
+Provide a reusable manifest entrypoint for validation of official Repo2RLEnv exports, preserving original task/grading assets without per-task human/LLM repairs. Subissue of #33.
+
+**Status:** [PR #46](https://github.com/Open-Athena/biotasks/pull/46) is open and unmerged. The CLI covers planning, fixed-job recovery, CPU admission, native control classification, verified local/HF preservation and exact-worker cleanup. Forty-one offline tests and GitHub’s Code quality/Tests checks pass. [Results and limitations](https://github.com/Open-Athena/biotasks/blob/42be192b/experiments/44-validation-entrypoint/results.md).
+
+**Native evidence:** unchanged Cobrapy #1482 reproduced nop 0/oracle 1 with a clean oracle command; Scanpy #4389 reproduced its apt prerequisite failure before controls. The final controller repeated the positive clean Cobrapy result. All three workflows verified anonymous HF readback and empty owned-resource cleanup; completed reinvocations were inert. All ten files/modes per reference remained unchanged. No task or environment repair was added.
+
+**Supported scope:** pinned native-inline Repo2RLEnv `27d04ee8`, Harbor 0.6.6, original grading/timeouts, serial validation on existing reserved Iris CPUs with a POSIX controller/Linux x86-64 workers. Recorded initializers and generation remain separate; #45 investigates the official generation/export handoff. Cohort portability, grader robustness and task-release readiness remain unproven.
+
+**Budget/review:** #44 used 0.399823 additional allocated CPU-hours; epic total 6.764819/32, no outstanding CPU reservations, new model calls or new capacity. Existing $10 archival reservation remains unreconciled within the $90 operating ceiling, strictly below the user’s $100 extra limit. Native evidence and logs are linked in comments. Keep this issue and #33 open for review; no automatic merge.
