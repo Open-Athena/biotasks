@@ -115,3 +115,7 @@ Reserved 4 allocated CPU-hours plus 1/6 emergency-cleanup hour for the frozen na
 ## 2026-10-24 — generic cache identity follow-up
 
 #36 completed ten function-level fixtures and a full pinned native preparation comparison with one explicit lookup-only reader override. All twelve originally blocked OHIF exports prepared; 96 instruction/oracle/grading assets and parsed contracts remained unchanged. Current upstream relevant functions are identical to pinned baseline. Ten HF objects verified anonymously, original/current source notices retained, working copies cleaned. No models, Docker operations, remote allocation or new capacity. Filed #37 for the separate different-worker runtime/build completeness question; no execution allocation yet. Original cohort denominator and budget remain unchanged.
+
+## 2026-10-24 — #37 runtime admission
+
+Admitted the frozen OHIF #5996 native inline build-first comparison: at most six allocated CPU-hours plus 1/6 emergency cleanup, within child eight and epic 32. Existing reserved TRC CPUs only, no models or new capacity. Actual remains 4.715986666414473; outstanding CPU reservation is 6.166666666666667. No runtime submission at this checkpoint.
