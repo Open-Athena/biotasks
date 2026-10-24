@@ -19,7 +19,7 @@ import sys
 import tarfile
 import tempfile
 import time
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 CREDENTIAL_ENV_NAMES = (
     "GLM_BULK_TOKEN",
@@ -282,6 +282,123 @@ def snapshot(root, prefix):
         export(output, prefix)
 
 
+def restore_snapshot(transport, destination):
+    """Verify and restore a downloaded failure snapshot without executing it.
+
+    The caller must obtain the original transport files from its authenticated
+    campaign prefix. A verified snapshot is archival evidence, not task acceptance.
+    Existing destinations are never overwritten and no final receipt is written
+    if any transport/member identity is missing, unexpected or inconsistent.
+    """
+    transport = Path(transport)
+    destination = Path(destination)
+
+    def metadata(name):
+        path = transport / name
+        if path.is_symlink() or not path.is_file() or path.stat().st_size > 8 * 1024 * 1024:
+            raise ValueError("Snapshot metadata must be a bounded regular file")
+        return path.read_bytes()
+
+    seal_bytes = metadata("export-manifest.json")
+    seal = json.loads(seal_bytes)
+    if seal.get("download_checked") is not True:
+        raise ValueError("Snapshot transport was not download verified")
+    transport_rows = seal["files"]
+    if len(transport_rows) != 2 or {row["path"] for row in transport_rows} != {
+        "evidence.tar.gz",
+        "snapshot-files.json",
+    }:
+        raise ValueError("Unexpected snapshot transport members")
+    for row in transport_rows:
+        path = transport / row["path"]
+        if (
+            path.is_symlink()
+            or not path.is_file()
+            or path.stat().st_size != row["bytes"]
+            or digest(path) != row["sha256"]
+        ):
+            raise ValueError("Snapshot transport checksum or size mismatch")
+    manifest_bytes = metadata("snapshot-files.json")
+    manifest = json.loads(manifest_bytes)
+    if manifest.get("source_quiescent") is not True:
+        raise ValueError("Snapshot source was not declared quiescent")
+    expected = {}
+    for row in manifest["files"]:
+        name = row["path"]
+        path = PurePosixPath(name)
+        if (
+            not name
+            or not path.parts
+            or "\\" in name
+            or "\x00" in name
+            or path.is_absolute()
+            or ".." in path.parts
+            or path.as_posix() != name
+            or name in expected
+            or type(row["bytes"]) is not int
+            or row["bytes"] < 0
+            or type(row["mode"]) is not int
+            or not 0 <= row["mode"] <= 0o777
+            or not re.fullmatch("[0-9a-f]{64}", row["sha256"])
+        ):
+            raise ValueError("Invalid or duplicate snapshot file identity")
+        expected[name] = row
+    for name in expected:
+        if any(parent.as_posix() in expected for parent in PurePosixPath(name).parents):
+            raise ValueError("Snapshot path is both a file and directory")
+
+    destination.mkdir(mode=0o700, parents=True, exist_ok=False)
+    seen = set()
+    with tarfile.open(transport / "evidence.tar.gz", "r|gz") as archive:
+        for member in archive:
+            if not member.name.startswith("files/"):
+                raise ValueError("Unexpected snapshot archive prefix")
+            name = member.name.removeprefix("files/")
+            row = expected.get(name)
+            if (
+                row is None
+                or name in seen
+                or not member.isfile()
+                or member.size != row["bytes"]
+                or member.mode != row["mode"]
+            ):
+                raise ValueError("Unexpected snapshot member identity or type")
+            path = destination / "files" / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            value = hashlib.sha256()
+            count = 0
+            with archive.extractfile(member) as source, path.open("xb") as target:
+                while chunk := source.read(1024 * 1024):
+                    count += len(chunk)
+                    if count > row["bytes"]:
+                        raise ValueError("Snapshot member exceeds its declared size")
+                    value.update(chunk)
+                    target.write(chunk)
+            if count != row["bytes"] or value.hexdigest() != row["sha256"]:
+                raise ValueError("Snapshot member checksum mismatch")
+            if digest(path) != row["sha256"]:
+                raise ValueError("Restored snapshot readback differs")
+            path.chmod(row["mode"])
+            if path.stat().st_mode & 0o777 != row["mode"]:
+                raise ValueError("Restored snapshot permissions differ")
+            seen.add(name)
+    if seen != set(expected):
+        raise ValueError("Snapshot is missing manifest members")
+    (destination / "snapshot-files.json").write_bytes(manifest_bytes)
+    (destination / "transport-export-manifest.json").write_bytes(seal_bytes)
+    receipt = {
+        "format": "quiescent-tar-v1",
+        "source_manifest_sha256": hashlib.sha256(manifest_bytes).hexdigest(),
+        "transport_manifest_sha256": hashlib.sha256(seal_bytes).hexdigest(),
+        "all_snapshot_files_hash_size_mode_verified": True,
+        "file_count": len(expected),
+        "bytes": sum(row["bytes"] for row in expected.values()),
+        "scope": "Complete original snapshot member readback only; no scientific execution, task acceptance or reconstruction of an absent per-file export seal.",
+    }
+    (destination / "snapshot-readback.json").write_text(json.dumps(receipt, indent=2) + "\n")
+    return receipt
+
+
 def export_failure_snapshot(
     inputs,
     configuration,
@@ -532,5 +649,7 @@ if __name__ == "__main__":
         export(Path(sys.argv[2]), sys.argv[3])
     elif len(sys.argv) == 4 and sys.argv[1] == "--snapshot":
         snapshot(Path(sys.argv[2]), sys.argv[3])
+    elif len(sys.argv) == 4 and sys.argv[1] == "--restore-snapshot":
+        print(json.dumps(restore_snapshot(Path(sys.argv[2]), Path(sys.argv[3]))))
     else:
         main()

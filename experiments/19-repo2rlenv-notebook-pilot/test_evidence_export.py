@@ -1,6 +1,7 @@
 """Streaming export preserves exact bytes and refuses credentials/symlinks."""
 
 import hashlib
+import io
 import json
 import sys
 import tarfile
@@ -275,3 +276,112 @@ def test_expired_cleanup_does_not_start_snapshot_process(tmp_path, monkeypatch):
     status = json.loads((evidence / "bootstrap-status.json").read_text())
     assert status["failure_snapshot_error_type"] == "TimeoutError"
     assert "failure_snapshot_download_checked" not in status
+
+
+def test_snapshot_restore_preserves_exact_originals_and_never_overwrites(tmp_path, monkeypatch):
+    import iris_bootstrap
+
+    for name in CREDENTIAL_ENV_NAMES:
+        monkeypatch.delenv(name, raising=False)
+    source, transport, restored = (tmp_path / name for name in ("source", "transport", "restored"))
+    source.mkdir()
+    transport.mkdir()
+    (source / "pipeline.json").write_text('{"status":"infrastructure_failed"}')
+    (source / "executable.py").write_bytes(b"original bytes\n")
+    (source / "executable.py").chmod(0o755)
+    iris_bootstrap.snapshot(source, transport.as_uri())
+    before = {p.name: p.read_bytes() for p in transport.iterdir()}
+    receipt = iris_bootstrap.restore_snapshot(transport, restored)
+    assert receipt["all_snapshot_files_hash_size_mode_verified"] and receipt["file_count"] == 2
+    assert restored.stat().st_mode & 0o777 == 0o700
+    for p in source.iterdir():
+        copy = restored / "files" / p.name
+        assert copy.read_bytes() == p.read_bytes()
+        assert copy.stat().st_mode & 0o777 == p.stat().st_mode & 0o777
+    assert (
+        json.loads((restored / "files/pipeline.json").read_text())["status"]
+        == "infrastructure_failed"
+    )
+    assert (restored / "snapshot-files.json").read_bytes() == before["snapshot-files.json"]
+    assert {p.name: p.read_bytes() for p in transport.iterdir()} == before
+    with pytest.raises(FileExistsError):
+        iris_bootstrap.restore_snapshot(transport, restored)
+    result = iris_bootstrap.subprocess.run(
+        [
+            sys.executable,
+            str(iris_bootstrap.__file__),
+            "--restore-snapshot",
+            str(transport),
+            str(tmp_path / "cli-restored"),
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert json.loads(result.stdout) == receipt
+
+
+@pytest.mark.parametrize(
+    "defect", ["transport", "traversal", "symlink", "duplicate", "missing", "member_hash"]
+)
+def test_snapshot_restore_rejects_inconsistent_members_without_final_receipt(
+    tmp_path, monkeypatch, defect
+):
+    import iris_bootstrap
+
+    for name in CREDENTIAL_ENV_NAMES:
+        monkeypatch.delenv(name, raising=False)
+    source, transport, restored = (tmp_path / name for name in ("source", "transport", "restored"))
+    source.mkdir()
+    transport.mkdir()
+    (source / "result.json").write_bytes(b"original")
+    iris_bootstrap.snapshot(source, transport.as_uri())
+    manifest_path = transport / "snapshot-files.json"
+    manifest = json.loads(manifest_path.read_text())
+    row = manifest["files"][0]
+    if defect == "transport":
+        with (transport / "evidence.tar.gz").open("ab") as target:
+            target.write(b"tampered")
+    else:
+        if defect == "traversal":
+            row["path"] = "../../escaped"
+        manifest_path.write_text(json.dumps(manifest))
+        with tarfile.open(transport / "evidence.tar.gz", "w:gz") as archive:
+            if defect != "missing":
+                member = tarfile.TarInfo("files/" + row["path"])
+                member.size, member.mode = row["bytes"], row["mode"]
+                data = b"different" if defect == "member_hash" else b"original"
+                if defect == "symlink":
+                    member.type, member.linkname, member.size = tarfile.SYMTYPE, "../../escaped", 0
+                    archive.addfile(member)
+                else:
+                    archive.addfile(member, io.BytesIO(data))
+                    if defect == "duplicate":
+                        archive.addfile(member, io.BytesIO(data))
+        # Make the transport seal consistent, so per-file checks must detect
+        # invalid internal structure rather than only the compressed hash.
+        seal_path = transport / "export-manifest.json"
+        seal = json.loads(seal_path.read_text())
+        for entry in seal["files"]:
+            p = transport / entry["path"]
+            entry.update(bytes=p.stat().st_size, sha256=iris_bootstrap.digest(p))
+        seal_path.write_text(json.dumps(seal))
+    before = {p.name: p.read_bytes() for p in transport.iterdir()}
+    with pytest.raises(ValueError):
+        iris_bootstrap.restore_snapshot(transport, restored)
+    assert not (restored / "snapshot-readback.json").exists()
+    assert not (tmp_path / "escaped").exists()
+    assert {p.name: p.read_bytes() for p in transport.iterdir()} == before
+
+
+def test_snapshot_restore_refuses_nonregular_metadata_without_opening_it(tmp_path):
+    import os
+
+    import iris_bootstrap
+
+    transport = tmp_path / "transport"
+    transport.mkdir()
+    os.mkfifo(transport / "export-manifest.json")
+    with pytest.raises(ValueError, match="regular file"):
+        iris_bootstrap.restore_snapshot(transport, tmp_path / "restored")
+    assert not (tmp_path / "restored").exists()

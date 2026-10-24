@@ -1,0 +1,51 @@
+{
+  "recorded_at": "2026-10-24T03:45:00.281924+00:00",
+  "base_revision": "28ab7b11",
+  "change": "Verify and restore downloaded failure snapshots without executing scientific files. Require original transport seal, both payload hashes, canonical per-file identities and exact tar membership; independently read back restored bytes/modes, preserve exact original manifests and write a final receipt only on complete success. Refuse existing destinations; use a private destination root.",
+  "scope": "Local post-run archival verification only. Current/queued198-file scientific workers and9588outer producers remain unchanged.",
+  "offline_verification": {
+    "passed": 76,
+    "seconds": 3.12,
+    "peak_rss_kib": 90252,
+    "guarded_wall_seconds": 3.4,
+    "junit_sha256": "1b37455ee0fd26976ea114975ff8080c25a3edfdd5ea0fa31075c59bb485c0b0",
+    "ruff_lint": "passed",
+    "ruff_format": "passed",
+    "earlier_failed_check": "The private-root regression caught a mode change applied to unpack instead of restore. Corrected before committing; unpack is unchanged and final76selectionpassed. The initial failed report is preserved.",
+    "tests": [
+      "Exact original bytes/executable modes, preserved failure status, original manifests unchanged, existing destination refusal, owner-only destination root and exact CLI path.",
+      "Corrupt transport, unsafe traversal, symlink, duplicate/missing member and member-hash mismatch cannot produce a final readback receipt or change original transport.",
+      "Nonregular/FIFO metadata is refused without opening it.",
+      "Existing per-file export, original-file snapshot and frozen-payload/reference checks remain green."
+    ]
+  },
+  "local_scale_check": {
+    "observed_at": "2026-10-24T03:40:01.073570+00:00",
+    "receipt": {
+      "format": "quiescent-tar-v1",
+      "source_manifest_sha256": "9aa5da5f818e6df49d9bf58655bdde9df5500a5d191093e8162a472d507d0d3b",
+      "transport_manifest_sha256": "974cb093a1badd92d9aeada3d89a3e102860d24d1021057065bb2007297f9228",
+      "all_snapshot_files_hash_size_mode_verified": true,
+      "file_count": 2272,
+      "bytes": 262822262,
+      "scope": "Complete original snapshot member readback only; no scientific execution, task acceptance or reconstruction of an absent per-file export seal."
+    },
+    "original_surviving_object_hashes_independently_compared": 2272,
+    "original_failure_status_preserved": true,
+    "elapsed_seconds": 1.86,
+    "source_transport_scope": "Local transport snapshot of the already recovered partial129scientific objects. Not an original whole-science seal, scientific validation, missing-object recovery or remote storage reliability test."
+  },
+  "scale_check_private_root_note": "The core2272-file restore was checked before the final private-destination default; final focused tests assert0700. That temporary test destination was subsequently chmod0700. No scale-performance claim about the permission-only adjustment.",
+  "new_hosts": 0,
+  "new_model_calls": 0,
+  "new_sandboxes": 0,
+  "scientific_computation_executed": false,
+  "no_recovered_missing_originals_claim": true,
+  "no_original_whole_scientific_archive_completeness_claim_for129": true,
+  "new_model_byte_caps": false,
+  "administrative_metadata_bound_bytes": 8388608,
+  "source_sha256": {
+    "iris_bootstrap.py": "a17acb66767f33044f81f7bd6ed8c4872178b8d154d36f623f87d459420b7d99",
+    "test_evidence_export.py": "e881ae8cbe7565d526683f11e998bd753b1b934b75538e2b3bcf08c5507055b8"
+  }
+}

@@ -275,3 +275,32 @@ accident guard, not an exhaustive shell/Python interpreter or security sandbox;
 renamed scripts, dynamic execution and other scientific computations are still
 forbidden by the existing contract. The frozen ten-case scientific workers do not
 include this candidate. No new stage, model call or execution allowance is added.
+
+### Reading a failure snapshot
+
+Download the original `autonomous-snapshot/export-manifest.json`,
+`autonomous-snapshot/snapshot-files.json` and
+`autonomous-snapshot/evidence.tar.gz` from the authenticated campaign prefix.
+Preserve those original bytes. From this checkout, restore to a fresh private
+directory with:
+
+```bash
+python experiments/19-repo2rlenv-notebook-pilot/iris_bootstrap.py \
+  --restore-snapshot DOWNLOADED_TRANSPORT NEW_DESTINATION
+```
+
+The reader verifies the transport seal and both payload hashes, streams only
+manifest-listed regular files, checks every member's size/hash/mode, independently
+reads the restored bytes and preserves the exact original manifests. It refuses
+existing destinations, unsafe paths, links, duplicates, missing members and
+corrupt transport/content. Its final `snapshot-readback.json` is written only
+after all checks pass. The destination root is private by default. A failed
+restore may leave an unverified partial destination; retain the original
+transport and do not mistake that partial directory for a verified archive.
+
+This is an evidence transport operation. It executes no scientific scripts,
+does not turn an infrastructure failure into rejection or success, and does not
+reconstruct a missing per-file scientific export seal. Authentic original
+snapshot provenance and scientific/native acceptance remain separate gates.
+The existing 8-MiB readback-metadata bound applies to the two administrative JSON
+manifests; it does not impose a model input/output or scientific data-size cap.
