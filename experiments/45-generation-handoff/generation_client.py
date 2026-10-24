@@ -41,13 +41,14 @@ class GenerationClient:
             "Secrets entered ordinary environment metadata",
         )
         kwargs["environment"] = dataclasses.replace(environment, secrets=self.secrets)
-        kwargs["entrypoint"] = dataclasses.replace(
-            entrypoint,
+        kwargs["entrypoint"] = type(entrypoint)(
             command=[
                 "bash",
                 "-c",
                 'PYTHONPATH="$IRIS_WORKDIR" exec "$IRIS_PYTHON" -u "$IRIS_WORKDIR/generation_worker.py"',
             ],
+            workdir_files=entrypoint.workdir_files,
+            workdir_file_refs=entrypoint.workdir_file_refs,
         )
         return self.client.submit(**kwargs)
 

@@ -83,10 +83,11 @@ def test_changed_native_call_is_not_sent(change):
         guarded(**args)
 
 
-@dataclass
 class Entrypoint:
-    command: list
-    workdir_files: dict
+    def __init__(self, *, command, workdir_files, workdir_file_refs=None):
+        self.command = command
+        self.workdir_files = workdir_files
+        self.workdir_file_refs = workdir_file_refs or {}
 
 
 @dataclass
@@ -105,12 +106,12 @@ def test_primary_uses_isolated_named_secret_files_not_manifest_environment():
     )
     payload = {"generation_worker.py": b"synthetic"}
     original_entry = Entrypoint(
-        [
+        command=[
             "bash",
             "-c",
             'PYTHONPATH="$IRIS_WORKDIR" exec "$IRIS_PYTHON" -u -m biotasks.validation.worker.job',
         ],
-        payload,
+        workdir_files=payload,
     )
     original_env = Environment({"BIOTASKS_RUN_ID": "fixture"})
     assert (
@@ -132,12 +133,12 @@ def test_unisolated_secret_delivery_is_rejected():
     with pytest.raises(ValidationError):
         proxy.submit(
             entrypoint=Entrypoint(
-                [
+                command=[
                     "bash",
                     "-c",
                     'PYTHONPATH="$IRIS_WORKDIR" exec "$IRIS_PYTHON" -u -m biotasks.validation.worker.job',
                 ],
-                {},
+                workdir_files={},
             ),
             environment=Environment({}, secret_behavior="inherit"),
         )

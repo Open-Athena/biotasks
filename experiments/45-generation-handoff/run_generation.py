@@ -4,6 +4,7 @@ import argparse
 import copy
 import importlib.util
 import json
+import re
 import shutil
 import time
 import urllib.request
@@ -50,8 +51,9 @@ def verify(root):
     return plan
 
 
-def prepare(root, backend, ledger, profile=None):
+def prepare(root, backend, ledger, run_id, profile=None):
     require(not root.exists(), "Never overwrite a generation plan")
+    require(re.fullmatch(r"[a-z][a-z0-9-]{0,95}", run_id), "Invalid fixed run identity")
     root.mkdir(parents=True, mode=0o700)
     old = BASE / "experiments/28-catalogued-fields"
     source = BASE / ".research-worktrees/31/experiments/31-historical-builds"
@@ -78,7 +80,6 @@ def prepare(root, backend, ledger, profile=None):
         "actual_stop_usd": "5",
         "only_original_upstream_calls": True,
     }
-    run_id = "biotasks45-cobrapy-generation-001"
     resources = {
         "cpus": 4,
         "memory_gib": 16,
@@ -233,15 +234,20 @@ def main():
     parser.add_argument("action", choices=["plan", "run", "status"])
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--once", action="store_true")
+    parser.add_argument(
+        "--run-id",
+        help="Required new fixed identity for planning; never replaces an existing handle",
+    )
     args = parser.parse_args()
     root = args.root.resolve()
     if args.action == "plan":
+        require(bool(args.run_id), "Planning needs an explicit new fixed run identity")
         backend = read_json(
             BASE
             / ".research-worktrees/44/experiments/44-validation-entrypoint/native-manifest.json"
         )["backend"]
         ledger = BASE / ".research-worktrees/33/experiments/33-unattended-validation/budget.json"
-        result = prepare(root, backend, ledger)
+        result = prepare(root, backend, ledger, args.run_id)
         print(
             json.dumps(
                 {
