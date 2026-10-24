@@ -29,3 +29,5 @@ Primary cleanup verified no owned containers, controllers, images or volumes. Re
 Filed #36 as an actual epic child for the separately observed generic cache-identity inconsistency. Its source/fixture work is queued, with no new execution allocation. Issue #35 remains open for review.
 
 Verified all 18 HF objects anonymously, including nested archive/member hashes, with no overwrites. Removed 12,389,446 bytes of disposable public phase downloads; transfer caches and fresh readbacks were removed by the publisher. completion-status.json records remaining small verification inputs and native-preparation copies retained temporarily for #36, with explicit cleanup conditions. No task-owned /tmp evidence or remote jobs remain.
+
+#36 completed and archived its source/fixture/metadata comparison. Removed the remaining native-preparation copies after its verified HF readback; original source phases remain publicly archived. Updated completion-status.json accordingly.
