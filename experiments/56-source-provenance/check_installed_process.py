@@ -37,6 +37,7 @@ def main():
         PYTEST_DISABLE_PLUGIN_AUTOLOAD="1",
         PYTHONPATH=str(BASE),
         TMPDIR=str(scratch / "tmp"),
+        UV_CACHE_DIR=str(scratch / "uv-cache"),
     )
     (scratch / "tmp").mkdir()
 

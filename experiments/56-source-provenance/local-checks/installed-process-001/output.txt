@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/56/experiments/56-source-provenance/check_installed_process.py", line 164, in <module>
+    main()
+    ~~~~^^
+  File "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/56/experiments/56-source-provenance/check_installed_process.py", line 64, in main
+    command([TOOLS / "bin/uv", "venv", "--python", sys.executable, scratch / "venv"])
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/56/experiments/56-source-provenance/check_installed_process.py", line 60, in command
+    assert result.returncode == expected, record
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'command': ['/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/pipeline54/.venv/bin/uv', 'venv', '--python', '/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/56/../pipeline54/.venv/bin/python', '/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/56/experiments/56-source-provenance/inputs-private/installed-process-001/venv'], 'exit': 2, 'stdout': '', 'stderr': 'error: Could not acquire lock\n  cause: Could not create temporary file\n  cause: Read-only file system (os error 30) at path "/home/exedev/.cache/uv/.tmppR3lvA"\n'}
