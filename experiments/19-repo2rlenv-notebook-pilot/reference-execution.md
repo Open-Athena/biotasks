@@ -257,3 +257,21 @@ payload and all198scientific-worker files/prompts, configuration and seed bytes.
 Do not claim whole-launcher identity across this variation. The offline transport
 check over2,272recovered files is a scale check of the backup mechanism, not a
 recovery of absent originals or live proof of remote storage reliability.
+
+### Direct analysis execution in the setup shell
+
+The existing setup prompt requires full scientific computation to use
+`test_reference`. A live worker nevertheless attempted an ad-hoc `analysis.py`
+launch in the setup shell; that attempt failed during an input-package import and
+provides no valid scientific result. Preserve such attempts in the final audit,
+separately from controlled tests and source-quality conclusions.
+
+A next-version candidate now refuses literal launches of the controller-owned
+`analysis.py`, `original.py`, `reference.py` and `exports.py` roles at the shell-tool
+boundary. It records the command hash and returns corrective feedback without
+remote dispatch, consuming no reference test or setup tool time. Package imports,
+file inspection and static compilation remain available. This is a conservative
+accident guard, not an exhaustive shell/Python interpreter or security sandbox;
+renamed scripts, dynamic execution and other scientific computations are still
+forbidden by the existing contract. The frozen ten-case scientific workers do not
+include this candidate. No new stage, model call or execution allowance is added.

@@ -13,7 +13,13 @@ from pathlib import Path
 import pytest
 from reference_protocol import ReferencePlan
 from reference_remote import snapshot_inputs, verify_staging
-from reference_setup import TEST_TOOL, PreparedReference, SetupOutcome, SetupSession
+from reference_setup import (
+    TEST_TOOL,
+    PreparedReference,
+    SetupOutcome,
+    SetupSession,
+    direct_source_invocation,
+)
 from reference_stage import stage
 from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.quality.loop.client import RunBudget
@@ -610,6 +616,64 @@ def test_exhausted_setup_returns_feedback_without_dispatch_or_more_computations(
         assert answer["status"] == "setup_budget_exhausted"
         assert s.tests == 0 and s.last_pass is None
         assert not any(label.startswith(("setup-", "reference-")) for label, *_ in remote.events)
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "python /work/setup/analysis.py",
+        "MPLBACKEND=Agg /tmp/venv/bin/python3.13 analysis.py > /tmp/check.log",
+        "ls /inputs; cd /tmp && python -W ignore /work/run/reference.py; echo done",
+        "cd /tmp\npython original.py",
+        "env FOO=bar python exports.py",
+        "uv run python reference.py",
+        "uv run --python 3.13 analysis.py",
+        "./analysis.py",
+        "bash -c 'python /work/setup/analysis.py'",
+    ],
+)
+def test_literal_source_launches_are_refused_by_role_not_seed(command):
+    assert direct_source_invocation(command) in {
+        "analysis.py",
+        "original.py",
+        "reference.py",
+        "exports.py",
+    }
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "cat analysis.py; grep import original.py",
+        "python -c \"import json; print(open('analysis.py').read())\"",
+        "python -m py_compile analysis.py",
+        "python -c 'import numpy; print(numpy.__version__)'",
+        "uv sync --project /work/setup",
+        "printf '%s' python analysis.py",
+    ],
+)
+def test_setup_inspection_and_static_compilation_remain_available(command):
+    assert direct_source_invocation(command) is None
+
+
+def test_source_shell_refusal_is_recorded_without_dispatch_or_consuming_test(tmp_path):
+    async def run():
+        remote = FakeRemote()
+        s = session(tmp_path, remote)
+        before = list(remote.events)
+        remaining = s.setup_remaining
+        answer = json.loads(await s.shell("python /work/setup/analysis.py"))
+        assert answer["dispatched"] is False
+        assert answer["reference_test_consumed"] is False
+        assert "test_reference" in answer["error"]
+        assert remote.events == before and s.setup_remaining == remaining
+        assert s.tests == s.test_requests == 0 and s.last_pass is None
+        assert json.loads((tmp_path / "shell-policy/0001.json").read_text()) == answer
+        # A refused attempt does not disable ordinary setup inspection.
+        assert json.loads(await s.shell("python -c 'import json'"))["exit_code"] == 0
+        assert remote.events[-1][0] == "shell-2"
 
     asyncio.run(run())
 

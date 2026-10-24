@@ -1,0 +1,39 @@
+{
+  "recorded_at": "2026-10-24T03:11:50.396401+00:00",
+  "base_revision": "baebb166",
+  "trigger": "Live130setup command attempted the full analysis through shell while the prompt already requires test_reference; the captured command failed during an input-package import and produced no valid scientific result. It is not source-quality evidence.",
+  "change": "Refuse literal launches of controller-owned analysis.py/original.py/reference.py/exports.py through the setup shell before dispatch; return recorded tool feedback directing every full-analysis attempt to test_reference. Preserve package-import/file-inspection/static-compilation checks. File roles are generic, not notebook names.",
+  "scientific_worker_revision_current_cohort": "501fbc2fa3f65df09ee5cd2bd8b05967d22e04c9",
+  "frozen_current_and_queued_workers_changed": false,
+  "new_stages_or_calls": false,
+  "new_model_or_test_or_time_allowance": false,
+  "source_or_scientific_method_patch": false,
+  "offline_verification": {
+    "passed": 81,
+    "seconds": 2.98,
+    "guarded_wall_seconds": 3.61,
+    "peak_rss_kib": 133952,
+    "files": [
+      "test_reference_setup.py",
+      "test_command_receipt_recovery.py"
+    ],
+    "junit_sha256": "3f24f398a34fac63f46b303b95dfc8e4061d7c58dc3c32720a70a4e5b9695e4c",
+    "ruff_lint": "passed",
+    "ruff_format": "passed",
+    "new_cases": 16,
+    "regressions": [
+      "Known script-role launches with environment assignments, command chains, newline commands, literal Python/uv and nested shell wrappers are refused.",
+      "Package imports, source reading and static compilation remain available.",
+      "Refusal records exact command hash, sends no remote command, consumes no reference test/setup tool time, and permits subsequent ordinary setup checks."
+    ]
+  },
+  "limitations": [
+    "Next-version candidate only; no live worker has this guard. All198frozen current/queued scientific files and prompts remain unchanged.",
+    "This is a conservative literal accident guard, not a shell/Python evaluator or security sandbox. Renamed copies, dynamic exec and other scientific work remain forbidden by the existing worker contract but are not exhaustively detected.",
+    "The original130shell attempt and all later controlled tests must remain in the outcome audit; an early import failure does not establish a successful or offline scientific run."
+  ],
+  "source_sha256": {
+    "reference_setup.py": "a73ff8ccfbc5281a51ba55817316f33d8d3398d4227c4218f6bf0e553c3b2c83",
+    "test_reference_setup.py": "795d3746d6087f425819c0a8907adc53ed70ef03357f997d65abebe8e2b1529b"
+  }
+}

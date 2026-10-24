@@ -9,6 +9,7 @@ import ast
 import hashlib
 import json
 import re
+import shlex
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -26,6 +27,65 @@ class SetupBudgetExceeded(TimeoutError):
 
 def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def direct_source_invocation(command: str) -> str | None:
+    """Catch literal full-source launches at the setup-tool boundary.
+
+    This is an accident guard for controller-owned script roles, not a security
+    sandbox or a general shell/Python evaluator. Renamed copies, dynamic exec and
+    other scientific work remain forbidden by the worker contract.
+    """
+    sources = {"analysis.py", "original.py", "reference.py", "exports.py"}
+    pending = [command]
+    while pending:
+        lexer = shlex.shlex(pending.pop(), posix=True, punctuation_chars=";&|()\n")
+        lexer.whitespace = " \t\r"
+        lexer.whitespace_split = True
+        try:
+            words = list(lexer)
+        except ValueError:
+            continue
+        clauses = [[]]
+        for word in words:
+            if word and all(character in ";&|()\n" for character in word):
+                clauses.append([])
+            else:
+                clauses[-1].append(word)
+        for clause in clauses:
+            while clause and (
+                re.match(r"[A-Za-z_]\w*=", clause[0])
+                or clause[0] in {"env", "command", "exec", "then", "do"}
+            ):
+                clause.pop(0)
+            if not clause:
+                continue
+            program = Path(clause[0]).name
+            args = clause[1:]
+            if program == "uv" and args[:1] == ["run"]:
+                # uv's Python selector/options may precede a literal interpreter
+                # or script. Ignore other uv subcommands such as sync and pip.
+                args = args[1:]
+                for index, word in enumerate(args):
+                    if Path(word).name in sources or re.fullmatch(
+                        r"python(?:\d+(?:\.\d+)*)?", Path(word).name
+                    ):
+                        program, args = Path(word).name, args[index + 1 :]
+                        break
+            if program in sources:
+                return program
+            if program in {"sh", "bash", "dash"} and "-c" in args:
+                index = args.index("-c")
+                if index + 1 < len(args):
+                    pending.append(args[index + 1])
+            if not re.fullmatch(r"(?:python(?:\d+(?:\.\d+)*)?|ipython)", program):
+                continue
+            for word in args:
+                if word in {"-c", "-m", "-"}:
+                    break
+                if Path(word).name in sources:
+                    return Path(word).name
+    return None
 
 
 def import_inventory(source):
@@ -337,6 +397,18 @@ class SetupSession:
         if not isinstance(command, str) or not command.strip():
             raise ValueError("A nonempty shell command is required")
         self.shell_calls += 1
+        if source := direct_source_invocation(command):
+            refusal = {
+                "error": "Full scientific source must run through test_reference, not shell.",
+                "source_script": source,
+                "command_sha256": digest(command.encode()),
+                "dispatched": False,
+                "reference_test_consumed": False,
+                "setup_seconds_remaining": self.setup_remaining,
+                "guidance": "Use focused package imports or file inspection for setup checks. Submit the setup recipe to test_reference for every full analysis attempt, including expected failures or offline simulations. Renaming or copying the source to bypass this rule is forbidden.",
+            }
+            save_record(self.root / "shell-policy" / f"{self.shell_calls:04}.json", refusal)
+            return json.dumps(refusal)
         try:
             reply = await self.setup_command(
                 ["sh", "-c", "cd /work/setup && " + command],
