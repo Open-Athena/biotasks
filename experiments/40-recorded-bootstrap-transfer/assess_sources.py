@@ -91,7 +91,7 @@ def main():
         outcomes.append(dict(agent=control['agent'],timeout_seconds=timeout,trial_path=trial_row['path'],trial_sha256=packed['jobs/scanpy-controls/'+trial_row['path']]['sha256'],
             exception_type=error['exception_type'],reward=None,scientific_pair_validity='unmeasured_timeout',
             raw_log_path=log_name,raw_log_sha256=log['sha256'],raw_log_bytes=log['bytes'],raw_log_nul_bytes=log['data'].count(b'\0'),
-            maximum_printed_progress_percent=max(percentages),pytest_collected_items=[int(n) for n in re.findall(r'collected (\d+) items?',text)],last_test_lines=last_tests,failed_test_lines=[s.replace('\x00','') for s in text.splitlines() if ' FAILED' in s][-8:]))
+            log_line_projection='NUL characters omitted only in readable line excerpts; raw archive/bytes and NUL counts are preserved',maximum_printed_progress_percent=max(percentages),pytest_collected_items=[int(n) for n in re.findall(r'collected (\d+) items?',text)],last_test_lines=last_tests,failed_test_lines=[s.replace('\x00','') for s in text.splitlines() if ' FAILED' in s][-8:]))
     assert {(r['agent'],r['timeout_seconds']) for r in outcomes}=={(a,t) for a in ['nop','oracle'] for t in [300,1200]}
     cleanup=archive_records(acquired/'cleanup.tar.zst','tar.zst');cleanup_report=json.loads(cleanup['cleanup-result.json']['data']);assert cleanup_report['verified_empty'] and not cleanup_report['remaining_containers'] and not cleanup_report['remaining_images']
     baseline,baseline_report=verified_output(acquired/'native-runtime.tar.zst','result.json')
@@ -133,7 +133,7 @@ def main():
         new_remote_jobs=0,new_model_calls=0,new_allocated_cpu_hours=0,new_reservations=0,
         outcome='Retrospective negative transfer assessment, not a new failed runtime or fresh control score',
         decision='Do not repeat known unchanged replay/control failures or silently relax source/grading/timeout/acceptance contracts. Preserve this assessment and original public evidence.',
-        limitations=['Timeout progress is incomplete output, not a pass rate or scored reward','Partial logs do not prove a hang or that extra time alone would produce valid controls','No new cold Scanpy rebuild or dependency identity equivalence claim','Recorded mutable installs can drift; no installation/test/config repair applied'])
+        limitations=['Timeout progress is incomplete output, not a pass rate or scored reward','Raw logs contain NUL holes; neither the capture cause nor complete ordering is established','Partial logs do not prove a hang or that extra time alone would produce valid controls','No new cold Scanpy rebuild or dependency identity equivalence claim','Recorded mutable installs can drift; no installation/test/config repair applied'])
     write(ROOT/'source-assessment.json',rows)
     print(json.dumps(dict(actions_verified=16,source_files_verified=353,original_grading_assets_unchanged=8,historical_timeout_trials=4,exact_public_base_matches=True,unmodified_transfer='unsupported_as_is',new_remote_jobs=0,new_model_calls=0)))
 

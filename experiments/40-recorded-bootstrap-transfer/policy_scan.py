@@ -2,7 +2,7 @@
 import io
 import re
 import tarfile
-from common import safe
+from common import safe,content_sha
 
 LIMIT=32*1024**2
 

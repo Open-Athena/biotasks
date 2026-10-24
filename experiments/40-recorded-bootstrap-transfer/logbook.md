@@ -13,3 +13,9 @@ Ten existing public source/evidence objects (791,827 bytes) were freshly downloa
 Pinned upstream deliberately caches flagged bootstrap images; #39 adds a hard acceptance gate. Its OHIF-specific PATH probe also cannot represent Scanpy venv activation without code changes. These are explicitly our outer interface/policy differences, not an upstream inability to execute recorded Python setup. No fresh runtime was admitted: the unchanged-transfer question is negative on existing evidence, and the epic stopping rule prohibits repeatedly spending allocation on known unchanged failures. Original scientific outcomes/commands/timeout settings remain unchanged.
 
 The source checker initially selected the task-file ledger while asserting the canonical task-execution-ledger hash. It stopped before results/admission. The path was corrected to the already frozen source; the first resource receipt and preparation note are retained. No acceptance rule or source evidence was changed.
+
+## 2026-10-24: raw-log and publication boundaries
+
+All four archived test logs contain NUL holes. Derived readable excerpts omit NUL characters explicitly and retain raw paths, hashes, sizes and NUL counts. Raw logs remain unchanged at their existing HF references. The capture cause is not established; possible residual writers/retry truncation require a separate diagnosis before blaming an infrastructure component.
+
+The first unpublished archive preparation found a missing content_sha import in the extracted unchanged artifact inspector. Its required import was corrected, preserving the scanner logic. No public objects, remote jobs or model calls were made by that failed preparation. The curation note records the original scanner hash.
