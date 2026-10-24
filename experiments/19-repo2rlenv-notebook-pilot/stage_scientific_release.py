@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 from release_metadata import (
+    additional_release_evidence,
     load_release_metadata,
     release_execution_provenance,
     scientific_probe_documents,
@@ -85,6 +86,7 @@ documents = {
         "rationale": read(Path(config["materialization"]) / "candidate.json")["rationale"]
     },
 }
+documents.update(additional_release_evidence(config, reserved=documents))
 plan = ReleasePlan(
     repo_id=metadata["repo_id"],
     recipe="notebook-artifact-reproduction",

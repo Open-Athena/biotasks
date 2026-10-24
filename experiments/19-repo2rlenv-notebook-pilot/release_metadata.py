@@ -2,7 +2,44 @@
 
 import hashlib
 import json
+import re
 from pathlib import Path
+
+
+def additional_release_evidence(config, *, reserved):
+    """Attach reviewed, hash-pinned publication notices outside the tested task."""
+    declared = config.get("release_metadata", {}).get("evidence_documents", {})
+    if not isinstance(declared, dict):
+        raise ValueError("Additional release evidence must be a document mapping")
+    names = {name.casefold() for name in reserved}
+    documents = {}
+    for name, item in declared.items():
+        if (
+            not isinstance(name, str)
+            or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,120}\.json", name)
+            or name.casefold() in names
+        ):
+            raise ValueError("Additional evidence must not replace existing release evidence")
+        if (
+            not isinstance(item, dict)
+            or set(item) != {"path", "sha256"}
+            or not isinstance(item["path"], str)
+            or not isinstance(item["sha256"], str)
+            or not re.fullmatch("[0-9a-f]{64}", item["sha256"])
+        ):
+            raise ValueError("Additional evidence needs an explicit path and SHA256")
+        path = Path(item["path"])
+        if path.is_symlink() or not path.is_file():
+            raise ValueError("Additional evidence must be a regular document")
+        raw = path.read_bytes()
+        if hashlib.sha256(raw).hexdigest() != item["sha256"]:
+            raise ValueError("Additional release evidence differs from its reviewed hash")
+        value = json.loads(raw)
+        if not isinstance(value, dict) or not value:
+            raise ValueError("Additional release evidence must be a nonempty JSON object")
+        documents[name] = value
+        names.add(name.casefold())
+    return documents
 
 
 def load_release_metadata(config):
