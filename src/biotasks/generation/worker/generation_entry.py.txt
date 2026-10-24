@@ -1,6 +1,7 @@
-"""Invoke the unchanged official CLI once, observing only its original calls."""
+"""Invoke the pinned official CLI once with declared deterministic policies."""
 
 import dataclasses
+from contextlib import contextmanager
 import functools
 import hashlib
 import json
@@ -48,6 +49,27 @@ def check_candidates(values, expected):
         "Frozen candidate descriptors changed; no wider discovery or replacement",
     )
     return values
+
+
+@contextmanager
+def targeting_policy(family, state):
+    name = family.get("targeting_policy")
+    require(name in (None, "workspace-python-v1"), "Unknown targeting policy")
+    state["targeting_policy"] = name
+    if name is None:
+        yield
+        return
+    import python_targeting
+    from repo2rlenv.pipelines import pr_runtime
+
+    original = pr_runtime.targeted_test_cmds_for_pr
+    candidate = python_targeting.wrap(original)
+    pr_runtime.targeted_test_cmds_for_pr = candidate
+    try:
+        yield
+    finally:
+        pr_runtime.targeted_test_cmds_for_pr = original
+        state["targeting_policy_restored"] = True
 
 
 def main():
@@ -156,10 +178,12 @@ def main():
             "--max-spend-usd",
             "5",
         ]
-        state.update(native_cli_started=True, command=sys.argv, state="native_running")
-        save()
-        runpy.run_path(executable, run_name="__main__")
-        state.update(native_exit_code=0, state="native_returned")
+        family = json.loads(Path("/work/family.json").read_text())
+        with targeting_policy(family, state):
+            state.update(native_cli_started=True, command=sys.argv, state="native_running")
+            save()
+            runpy.run_path(executable, run_name="__main__")
+            state.update(native_exit_code=0, state="native_returned")
     except SystemExit as error:
         state.update(
             native_exit_code=error.code if isinstance(error.code, int) else 1,

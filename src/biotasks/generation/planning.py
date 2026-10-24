@@ -152,6 +152,10 @@ def load(path):
     require(isinstance(cases, list) and 1 <= len(cases) <= 10, "Manifest case bound is 1..10")
     ids, runs = set(), set()
     for case in cases:
+        require(
+            case.get("targeting_policy") in (None, "workspace-python-v1"),
+            "Unknown targeting policy; only explicit workspace-python-v1 is supported",
+        )
         identity = identifier(case["id"])
         require(
             len(manifest["id"] + "-" + identity) <= 32,
@@ -243,7 +247,7 @@ def _fresh(manifest, case, root, runtime, context):
     reused = {}
     for name, data in bundled.items():
         (payload / name).write_bytes(data)
-        if name not in {"cost_guard.py", "generation_entry.py", "generation_worker.py"}:
+        if name in ASSETS and name != "cost_guard.py":
             reused[name] = __import__("hashlib").sha256(data).hexdigest()
     for name, data in planning.code_files().items():
         target = payload / "biotasks/validation" / name
@@ -269,6 +273,7 @@ def _fresh(manifest, case, root, runtime, context):
             "tools": planning.TOOLS,
             "resources": RESOURCES,
             "model_budget": model,
+            "targeting_policy": case.get("targeting_policy"),
         },
     )
     write_json(
