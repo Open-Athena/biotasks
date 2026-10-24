@@ -1,0 +1,7 @@
+Can generic recipe emission preserve bootstrap setup state without per-repository repairs or extra model calls? Subissue of #33, following #45; distinct from #36’s cache identity and #40’s replay transfer.
+
+**Current finding:** all 56 original generation members and pinned sources were reverified. The live bootstrap successfully ran APT update, but saved rebuild commands omit it. The official inline prelude clears indexes, so the unchanged Cobrapy #1497 reconstruction fails at `apt-get install libexpat1-dev`, before either independent control. Upstream fresh-image checks test the committed live image; they do not rebuild the emitted recipe. [Source assessment](https://github.com/Open-Athena/biotasks/blob/e9ffc341/experiments/47-bootstrap-recipe-state/results.md).
+
+**Next:** define and test a minimal generic package-index/emission policy, retaining the original failed baseline and explicit candidate identity. Do not regenerate, infer commands from model output, edit task/grade contracts or add repair calls. Preserve original resources/deadlines and distinguish build success from independent rewards/clean full-suite commands. A narrow APT result cannot establish general dependency closure.
+
+**Budget/status:** source-only so far: zero new model calls/jobs/reservations. Any later native comparison needs checkpointed admission within #33’s existing 32 CPUh / $90 operating ceiling, strictly below $100 extra; existing reserved CPUs only. No new allowance. Keep open for review, concise status here and detailed logs/HF evidence in comments.
