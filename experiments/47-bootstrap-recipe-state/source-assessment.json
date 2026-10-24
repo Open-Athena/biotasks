@@ -1,0 +1,84 @@
+{
+  "source_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "predecessor_evidence_commit": "7759bb06",
+  "source_manifest_sha256": "5581e3126d5053450e2266ce0b504a0294197af5619ed69e187ca2311f605daf",
+  "sources": [
+    {
+      "path": "src/repo2rlenv/bootstrap/agent.py",
+      "bytes": 10473,
+      "git_blob": "017a9e1c569cf4eb7814d107c54c9418c645d399",
+      "sha256": "e8ae8e0741b5c326dc31b5916696b087ef8a58901b6122b62dd4e2c2382c8b57",
+      "functions": {
+        "run_agent_loop": {
+          "start": 154,
+          "end": 285
+        }
+      }
+    },
+    {
+      "path": "src/repo2rlenv/bootstrap/runner.py",
+      "bytes": 30154,
+      "git_blob": "42a4a08e10ef6a6a45ccd20e37926c32cf34f6d5",
+      "sha256": "353027eb87f37881e12ba66a0ee6bb1c82e7cab32670552b5bac849c7dab5ee3",
+      "functions": {
+        "_verify_committed_image": {
+          "start": 255,
+          "end": 297
+        }
+      }
+    },
+    {
+      "path": "src/repo2rlenv/registry/integration.py",
+      "bytes": 34604,
+      "git_blob": "f99547c4069cf0d40bba0fb3ddf85e4e8c787581",
+      "sha256": "dc2947685479c1d3c093371a3a233ce78a0fc5e334514c58ed817fc8b9ebaf2d",
+      "functions": {
+        "_build_clean_recipe": {
+          "start": 642,
+          "end": 699
+        },
+        "_load_bootstrap_recipe": {
+          "start": 702,
+          "end": 742
+        }
+      }
+    }
+  ],
+  "generation_readback_sha256": "c27822611c3c0e30f09c64a207eddcb9b11622062c177910d035c6aebad364e2",
+  "generation_receipt": "research/45-generation-handoff/2026-10-24/e0a60f25746278ddfa806f82e03324dc61d31e0402bd5ab2f76041d8025688c7",
+  "source_members_reverified": 56,
+  "bootstrap_sha256": "c7c56d524482840252c472d882a3a784f19984b44c2f687a1af402bac77ba2a3",
+  "transcript_sha256": "df9c245d0109da90dd7f636c1d3eb3f215f22fd3307d97635215601d45987646",
+  "recorded_apt_actions": [
+    {
+      "step": 4,
+      "action": "BASH",
+      "input": "apt-get install -y libexpat1 2>&1 | tail -5",
+      "observation": "exit=0\nReading package lists...\nBuilding dependency tree...\nReading state information...\nE: Unable to locate package libexpat1\n"
+    },
+    {
+      "step": 5,
+      "action": "BASH",
+      "input": "apt-get update -q && apt-get install -y libexpat1-dev 2>&1 | tail -10",
+      "observation": "exit=0\nHit:1 http://deb.debian.org/debian trixie InRelease\nGet:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]\nGet:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]\nGet:4 http://deb.debian.org/debian trixie/main amd64 Packages [9678 kB]\nGet:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [720 B]\nGet:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [270 kB]\nFetched 10.0 MB in 1s (11.1 MB/s)\nReading package lists...\nSetting up libexpat1:amd64 (2.9.0-1~deb13u1) ...\nSetting up manpages (6.9.1-1) ...\nSetting up linux-libc-dev (6.12.113-1) ...\nSetting up rpcsvc-proto (1.4.3-1) ...\nSetting up libcrypt-dev:amd64 (1:4.4.38-1) ...\nSetting up libc-dev-bin (2.41-12+deb13u4) ...\nSetting up manpages-dev (6.9.1-1) ...\nSetting up libc6-dev:amd64 (2.41-12+deb13u4) ...\nSetting up libexpat1-dev:amd64 (2.9.0-1~deb13u1) ...\nProcessing triggers for libc-bin (2.41-12+deb13u4) ...\n"
+    }
+  ],
+  "saved_rebuild_cmds": [
+    "apt-get install -y libexpat1-dev",
+    "pip install -e /workspace/.[development]",
+    "pip install pytest pytest-xdist pytest-mock pytest-benchmark"
+  ],
+  "saved_test_cmds": [
+    "python -m pytest -v /workspace/tests/"
+  ],
+  "smoke_passed": false,
+  "verify_passed": false,
+  "verify_detail": "exit=124; on PASSED [ 51%]\ntests/test_flux_analysis/test_deletion.py::test_deletion_accessor PASSED [ 52%]\ntests/test_flux_analysis/test_fastcc.py::test_fastcc_against_nonblocked_rxns_large [timeout after 300s]",
+  "transcript_rows": 10,
+  "invalid_actions": 1,
+  "provider_calls": 11,
+  "billing_note": "Successful SAVE_SETUP returns without appending a transcript turn; transcript length is not provider call count.",
+  "new_model_calls": 0,
+  "new_remote_jobs": 0,
+  "upstream_or_task_modified": false
+}
