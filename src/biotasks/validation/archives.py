@@ -43,6 +43,8 @@ def pack(root: Path, target: Path) -> dict[str, Any]:
 
 
 def records(source: Path | bytes, kind: str) -> dict[str, dict[str, Any]]:
+    if isinstance(source, Path):
+        require(source.stat().st_size <= MAX_ARCHIVE, "Archive exceeds limit")
     raw = source if isinstance(source, bytes) else source.read_bytes()
     require(len(raw) <= MAX_ARCHIVE, "Archive exceeds limit")
     if kind == "tar.zst":

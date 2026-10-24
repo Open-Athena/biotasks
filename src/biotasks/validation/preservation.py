@@ -22,6 +22,7 @@ from biotasks.validation.files import (
 )
 
 TRANSFER_LIMITS = {
+    "HF_HUB_DISABLE_PROGRESS_BARS": "1",
     "HF_XET_HIGH_PERFORMANCE": "0",
     "HF_XET_CLIENT_ENABLE_ADAPTIVE_CONCURRENCY": "false",
     "HF_XET_CLIENT_AC_INITIAL_UPLOAD_CONCURRENCY": "1",
@@ -192,15 +193,36 @@ def _publish(directory: Path, archive: dict[str, Any], policy: dict[str, Any]) -
         require(existing <= expected, "Unexpected existing object; never overwrite or delete")
         verified = []
         with tempfile.TemporaryDirectory(prefix=".anonymous-readback-", dir=directory) as temporary:
+            # Refuse changed existing bytes before making any new writes.
             for name, source in objects.items():
                 remote = prefix + "/" + name
-                if remote not in existing:
-                    api.batch_bucket_files(bucket, add=[(str(source), remote)])
+                if remote in existing:
+                    dest = Path(temporary) / name
+                    dest.parent.mkdir(parents=True, exist_ok=True)
+                    api.download_bucket_files(
+                        bucket, [(remote, dest)], token=False, raise_on_missing_files=True
+                    )
+                    require(
+                        dest.stat().st_size == source.stat().st_size and sha(dest) == sha(source),
+                        "Anonymous readback differs; never overwrite",
+                    )
+            missing: list[tuple[str | Path | bytes, str]] = [
+                (str(source), prefix + "/" + name)
+                for name, source in objects.items()
+                if prefix + "/" + name not in existing
+            ]
+            if missing:
+                # Transfer concurrency remains one; batch the API handoff rather
+                # than paying a separate upload session for every small object.
+                api.batch_bucket_files(bucket, add=missing)
+            for name, source in objects.items():
+                remote = prefix + "/" + name
                 dest = Path(temporary) / name
                 dest.parent.mkdir(parents=True, exist_ok=True)
-                api.download_bucket_files(
-                    bucket, [(remote, dest)], token=False, raise_on_missing_files=True
-                )
+                if remote not in existing:
+                    api.download_bucket_files(
+                        bucket, [(remote, dest)], token=False, raise_on_missing_files=True
+                    )
                 require(
                     dest.stat().st_size == source.stat().st_size and sha(dest) == sha(source),
                     "Anonymous readback differs; never overwrite",

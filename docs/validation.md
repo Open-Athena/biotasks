@@ -7,7 +7,9 @@ native inline Dockerfiles with the original single-service egress guard.
 Recorded bootstrap replay and other initializers are explicit unsupported
 inputs and receive no jobs.
 
-The backend uses existing healthy Iris reserved v4 workers with `DOCKER_ACCESS`;
+Validation requires a POSIX controller and Linux x86-64 workers; prompt
+inspection does not require POSIX locking. The backend uses existing healthy
+Iris reserved v4 workers with `DOCKER_ACCESS`;
 it cannot create capacity. Supply an authenticated Iris SDK environment and YAML
 configuration separately from the locked BioTasks environment. The local
 controller also needs `gcloud storage cp` to retrieve Iris archives. Credentials

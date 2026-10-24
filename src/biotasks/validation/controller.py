@@ -475,7 +475,10 @@ def run(root: Path, once: bool = False) -> dict[str, Any]:
                     "recovering:cleanup_terminal",
                 )
             ):
-                time.sleep(300)
+                # Recovery may have just produced durable ready evidence.
+                # Commit that transition immediately; sleep only while pending.
+                if not (pipeline.directory / (state.split(":", 2)[1] + ".json")).exists():
+                    time.sleep(300)
     return {
         "state": "complete" if plan["tasks"] else "unsupported",
         "tasks": states,

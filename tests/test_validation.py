@@ -572,3 +572,66 @@ def test_window_covers_both_bootstrap_and_task_builds(prepared: tuple[Path, Path
     write_json(path, manifest)
     with pytest.raises(ValidationError, match="does not cover native controls"):
         planning.prepare(path, root.parent / "insufficient-window")
+
+
+@pytest.mark.parametrize("scope", ["primary", "cleanup"])
+def test_watch_commits_ready_recovery_without_an_idle_wait(
+    prepared: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch, scope: str
+) -> None:
+    root, _ = prepared
+    remote = Remote(root, monkeypatch)
+    original = remote.call
+    observations = 0
+
+    def call(backend: dict[str, Any], request: dict[str, Any], log: Path) -> dict[str, Any]:
+        nonlocal observations
+        if request["action"] == "observe" and request["group"]["run_id"].endswith("-cleanup") == (
+            scope == "cleanup"
+        ):
+            observations += 1
+            if observations <= 2:
+                return {"state": "running"}
+        return original(backend, request, log)
+
+    monkeypatch.setattr(bridge, "call", call)
+    monkeypatch.setattr(
+        controller.time,
+        "sleep",
+        lambda seconds: pytest.fail("Ready recovery must not wait another five minutes"),
+    )
+    assert controller.run(root)["state"] == "complete"
+    assert len(remote.submissions) == 2
+
+
+def test_oversized_archive_is_rejected_before_reading(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from biotasks.validation.files import MAX_ARCHIVE
+
+    file = tmp_path / "oversized.tar.gz"
+    with file.open("wb") as stream:
+        stream.truncate(MAX_ARCHIVE + 1)
+    monkeypatch.setattr(
+        Path, "read_bytes", lambda self: pytest.fail("Oversized archive must not be loaded")
+    )
+    with pytest.raises(ValidationError, match="Archive exceeds limit"):
+        records(file, "tar.gz")
+
+
+def test_prompt_cli_does_not_require_posix_file_locking() -> None:
+    import subprocess
+    import sys
+
+    command = """import builtins
+original=builtins.__import__
+def import_without_fcntl(name,*args,**kwargs):
+    if name=='fcntl':raise ImportError('Simulate a non-POSIX controller')
+    return original(name,*args,**kwargs)
+builtins.__import__=import_without_fcntl
+from biotasks.cli import main
+main(['prompts','list'])
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", command], capture_output=True, text=True, check=True, timeout=10
+    )
+    assert result.stdout.splitlines() == ["author-task", "find-units"]

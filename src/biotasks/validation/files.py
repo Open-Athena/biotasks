@@ -1,6 +1,5 @@
 """Bounded identities and durable local records shared with the worker."""
 
-import fcntl
 import hashlib
 import json
 import os
@@ -66,6 +65,10 @@ def write_json(path: Path, value: Any) -> None:
 @contextmanager
 def lock(path: Path) -> Iterator[None]:
     """A nonblocking per-run/ledger lock, independent of the shared heavy lock."""
+    try:
+        import fcntl
+    except ImportError as error:
+        raise ValidationError("Validation requires a POSIX controller with flock") from error
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a") as stream:
         fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
