@@ -1,0 +1,104 @@
+{
+  "issue": 41,
+  "kind": "Pinned source and selected native AST under fake process transport",
+  "package_wheel_sha256": "30477bf698d6853d6c4bb76d85aec85e1e95190ad3a6e4bf4730435926007652",
+  "version": "0.6.6",
+  "source_files_verified": 203,
+  "symbols": [
+    {
+      "path": "harbor/environments/docker/docker.py",
+      "symbol": "DockerEnvironment._run_docker_compose_command",
+      "line": 321,
+      "end_line": 390,
+      "file_sha256": "37e1f54df10aeed766a2e750bea51c692bcd7323ce3ba7607214e4506010798a",
+      "symbol_source_sha256": "e9ee362f98df5b219d25166053e51e24f38d61a798b67e2a921b9ce55eeb148f"
+    },
+    {
+      "path": "harbor/verifier/verifier.py",
+      "symbol": "Verifier.verify",
+      "line": 123,
+      "end_line": 212,
+      "file_sha256": "8efc67f46713a7cbbfa27b41826b814889851fd0d2e2e0ca0d8f19432e4c9363",
+      "symbol_source_sha256": "1cdb5799856ec83f8bb0c74adf854e4a68ce1da1ebb5c2e4a5b8b6be3e469230"
+    },
+    {
+      "path": "harbor/trial/trial.py",
+      "symbol": "Trial._verify_with_retry",
+      "line": 401,
+      "end_line": 419,
+      "file_sha256": "3cd6cd879c2ccda62c283aa85951f372480e1ada616c57a679bfd4f08bff0515",
+      "symbol_source_sha256": "463dc829ee6e7a022816ef015980f91b17b1dc5ce0f455c064a066f0c7e702aa"
+    },
+    {
+      "path": "harbor/trial/trial.py",
+      "symbol": "Trial.run",
+      "line": 932,
+      "end_line": 1035,
+      "file_sha256": "3cd6cd879c2ccda62c283aa85951f372480e1ada616c57a679bfd4f08bff0515",
+      "symbol_source_sha256": "2b2d07a4eb926f4ae19e1629d1ed8acfc06ae1f26d34e3b2ce4b25e0775ed7d8"
+    },
+    {
+      "path": "harbor/utils/scripts.py",
+      "symbol": "build_execution_command",
+      "line": 122,
+      "end_line": 160,
+      "file_sha256": "e8fbe52e7c29cb92f9730ad31efbb68dfa8aaa3e0a38c5439700d23aa803ec8c",
+      "symbol_source_sha256": "55e3b78eee3df53b319f5feb906fd97d8d428fe37aea7a16736370e7ca379949"
+    },
+    {
+      "path": "harbor/environments/docker/docker.py",
+      "symbol": "DockerEnvironment.capabilities",
+      "line": 238,
+      "end_line": 243,
+      "file_sha256": "37e1f54df10aeed766a2e750bea51c692bcd7323ce3ba7607214e4506010798a",
+      "symbol_source_sha256": "d0b88632636f38ead5965e0d061766245dfeb62d40ab61f8566fdfac9fda472f"
+    }
+  ],
+  "facts": {
+    "verifier_deadline": "Trial asyncio.wait_for around verifier.verify",
+    "inner_docker_exec_timeout_supplied": false,
+    "docker_helper_timeout_handler": "Catches its internal TimeoutError, terminates/kills only its client subprocess; no CancelledError/finally handler",
+    "native_verifier_attempts": 2,
+    "retry_minimum_delay_seconds": 1,
+    "environment_stopped_between_attempts": false,
+    "environment_stop": "Trial.run finalization after retry loop",
+    "verifier_stdout_redirect": "Truncating shell redirection to the same per-trial file",
+    "linux_logs_directly_mounted": true
+  },
+  "checks_sha256": "2cee0b98481a992f1b71d44fd3105184287291b5cdac859497c6073d3e0b1a67",
+  "checks_run": 3,
+  "selected_native_ast_executed": true,
+  "process_transport": "fake",
+  "dependency_version": "9.2.1",
+  "dependency_wheel_sha256": "9e56f17539296baab7beabb08b92f6ee3d7be92d8be72d763360677c2ad6580e",
+  "local_python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+  "interpretation": "Outer cancellation misses the helper termination branch; retry reuses the environment. This makes surviving writers plausible but does not demonstrate daemon-side survival or historical log-hole causation.",
+  "required_native_evidence": [
+    "Observe first writer PID/start time/FD after native first deadline and during retry",
+    "Tie same-inode truncation and writer offsets to any NUL holes",
+    "Compare with a finite normal-completion fixture using the same native path",
+    "Preserve raw events/log bytes before ownership-scoped teardown"
+  ],
+  "no_original_task_changes": true,
+  "real_subprocesses_started": 0,
+  "remote_jobs": 0,
+  "model_calls": 0,
+  "retained_paths": [
+    {
+      "path": "inputs-private/harbor-0.6.6-py3-none-any.whl",
+      "reason": "Exact pinned package for source/runtime parity",
+      "cleanup_condition": "Remove duplicate after runtime/evidence archival and source availability verification"
+    },
+    {
+      "path": "inputs-private/source",
+      "reason": "Pinned source for parity checks and source references",
+      "cleanup_condition": "After verified archival/reproducibility"
+    },
+    {
+      "path": "inputs-private/check-dependency",
+      "reason": "Original exact Tenacity wheel/source for isolated tests and runtime pin",
+      "cleanup_condition": "After verified archival/reproducibility"
+    }
+  ],
+  "task_owned_tmp_paths": []
+}

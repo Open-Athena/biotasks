@@ -1,0 +1,25 @@
+# Native Docker cancellation probe: planned, not executed
+
+Use the exact Harbor 0.6.6 wheel pinned in `package-acquisition.json` and Tenacity 9.2.1 from the verified original #39 freeze. The three source checks exercise unchanged selected AST functions with fake subprocess transport. They prove the Python cancellation/retry branch behavior, not that real Docker commands survive or that this caused historical Scanpy NUL holes. A native Docker fixture is still needed.
+
+## Cases and observations
+
+Run two synthetic tasks serially on one existing reserved TRC worker, using Harbor’s real nop agent, Docker environment and default internal verifier retry loop. Keep Harbor source unchanged. Both fixture verifier deadlines are five seconds, explicitly synthetic settings rather than changes to any original task. A finite case writes for two seconds and returns a fixture reward of zero; a timeout case writes for thirty seconds and never reaches a reward before its native deadlines. No agent/model API calls or biological data are involved. Do not interpret the fixture reward as a benchmark score.
+
+The test script redirects a pure-stdlib writer to `/logs/verifier/writer.log`, matching the important nested truncation structure of the original tasks. Each invocation chooses a unique token and appends to a separate `process-events.jsonl` using append/locking. Record PID, PPID, process-group/session IDs, `/proc` start time, log inode and file offset. At the next invocation, inspect earlier recorded PIDs/start times and `/proc/PID/fdinfo/1`; distinguish live states from zombies and PID reuse. A prior live writer, matching inode, offset beyond the newly truncated size and subsequent holes would directly demonstrate the mechanism in this fixture. Capture cgroup CPU/memory and an independent Docker inspect while the task is active. Do not infer survival merely from a missing end event.
+
+Writer data should contain fixed-size ASCII records of token, sequence number and filler, with frequent flushes. Self-terminate after the declared thirty-second upper bound even if cancellation fails. The native retry is expected to start a second invocation in the same container after one second; this is a hypothesis to test, not an acceptance assertion that forces a positive result. Preserve negative/inconclusive findings and finite-control failures without repairing the fixture during the admitted run.
+
+## Execution and ownership
+
+Reuse the previously demonstrated eight-stage outer journal, fixed-handle Iris backend, budget class and cleanup/archive transport where their contracts apply. Declare diagnostic mode separately; never label the fixture a Repo2RLEnv-generated task. The trusted controller is 0.5 CPU/4 GiB, each task 1 CPU/6 GiB with network disabled, within a 2-CPU/12-GiB Iris allocation and 8-GiB declared disk. Proposed maximum allocation is one CPU-hour plus 1/6 emergency cleanup; no reservation exists yet. No new capacity or model execution is allowed.
+
+Use the verified public Python base digest from #40. Make separate, ownership-labeled metadata-only images per case (FROM plus LABEL, no install commands), because native Harbor cleanup uses `compose down --rmi all`. Do not point that cleanup at a shared public image: native removal must touch only this run’s image. Verify the shared public base ID before and after. All task containers use the run’s label. A trusted controller may mount the worker socket and the same owned volume at `/work` and its host mountpoint, following the existing transport; supply only whitelisted run/worker variables under Iris secret isolation.
+
+Use real Harbor CLI commands with `-a nop --env docker -n 1 -k 1 -r 0`, one CPU and 6144 MiB overrides. Job retry zero is distinct from Harbor’s hard-coded two verifier attempts. An outer wrapper timeout must stop all owned task containers before any later case; no retry after an uncertain effect. Copy fixture/events/log evidence before deleting the owned volume, and defer destructive cleanup if copying fails. Reuse the independent emergency cleanup only after durable readback.
+
+## Preservation and entry gate
+
+Checkpoint generated inputs, actual native-source parity checks, package hashes, case/resource configuration, deterministic handle, public policy and epic-ledger admission before submission. The controller must not depend on this Codex session to advance terminal readback, accounting, HF archive and cleanup. Preserve the complete raw logs/events and original task-file identities before/after execution.
+
+A synthetic writer log may intentionally contain NUL holes. Any public-policy exception must be restricted to the exact generated writer-log paths and bounded, validated ASCII-record-plus-NUL content; keep all other secret/binary guards. Explain that this is self-authored infrastructure output, not permission to transform or republish unrelated raw logs. Record hashes, sizes, hole counts and reader results separately. No images, installed environments, credentials or biological data may be uploaded. Keep HOME-owned staging and exact cleanup conditions; use no `/tmp` evidence.

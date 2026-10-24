@@ -5,7 +5,7 @@
   "baseline_main_commit": "2a1950d239f1ada467c35393991dac87debe35f7",
   "question": "Does native verifier timeout/retry leave surviving writers or compromise output capture?",
   "harbor_version": "0.6.6",
-  "package_hash": "not yet acquired",
+  "package_hash": "30477bf698d6853d6c4bb76d85aec85e1e95190ad3a6e4bf4730435926007652",
   "source_required": [
     "Native verifier await/cancellation path",
     "Docker compose exec cancellation and container lifetime",
@@ -73,11 +73,32 @@
     "emergency_cleanup_cpu_hours": 0.16666666666666666
   },
   "admission": {
-    "state": "not admitted",
+    "state": "not admitted; native Docker fixture inputs/policy/manifest and ledger still required",
     "epic_cpu_ceiling": 32,
     "model_calls_enabled": false,
     "new_capacity_allowed": false
   },
   "scientific_scope": "Infrastructure diagnosis only; no new biological task, original-control recovery or solver score",
-  "retained_tmp_paths": []
+  "retained_tmp_paths": [],
+  "package_acquisition_sha256": "5ecbbb190119199c521cdf40b8d060f135b3d3076c976f58537682bee4f20fa3",
+  "source_assessment_sha256": "19eb978b0f286c29ded7ae23c045ce18fe566275916fcfd566d35eafcb08023a",
+  "source_logic_checks": {
+    "checks": 3,
+    "passed": true,
+    "transport": "fake",
+    "real_subprocesses_started": 0,
+    "native_docker_result": false
+  },
+  "planned_fixture_cases": [
+    {
+      "name": "finite",
+      "verifier_seconds": 5,
+      "writer_seconds": 2
+    },
+    {
+      "name": "timeout",
+      "verifier_seconds": 5,
+      "writer_seconds": 30
+    }
+  ]
 }
