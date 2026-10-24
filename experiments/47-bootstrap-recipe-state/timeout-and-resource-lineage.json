@@ -1,0 +1,46 @@
+{
+  "source_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "verified_source_files": [
+    {
+      "path": "src/repo2rlenv/emitter/harbor.py",
+      "bytes": 8312,
+      "git_blob": "70f6638e4e13477dffc047ab49330b4a3d875322",
+      "sha256": "1a15644fd20e8eedcf1cc911d6caa6dd5eaf1b819f452d016ed0b4840372ee49"
+    },
+    {
+      "path": "src/repo2rlenv/spec/options.py",
+      "bytes": 11985,
+      "git_blob": "f28f0619013d3795b7ef3533dd2788c0a8d54681",
+      "sha256": "4f8cfb1a72325abc0021e09d20d3e4e8b1ace77dbd597e83ca9dc3b0994c370b"
+    },
+    {
+      "path": "src/repo2rlenv/pipelines/pr_runtime_validate.py",
+      "bytes": 13513,
+      "git_blob": "2b4e4683b1770dba9de5da45ae89646814a6b51d",
+      "sha256": "1f8349718bc93315bf3e5cbb10d5823c832539a8ef680b5ee169e4562de3ea49"
+    }
+  ],
+  "source_lines": {
+    "harbor_emitter_timeout": 136,
+    "pr_runtime_options_default": 55,
+    "stage1_sandbox_exec": 248,
+    "stage2_sandbox_exec": 270
+  },
+  "generation_validation_timeout_seconds_per_stage": 600,
+  "generation_config_explicitly_overrides_default": false,
+  "exported_verifier_timeout_seconds": 300,
+  "exported_agent_timeout_seconds": 1800,
+  "task_environment_resource_section_present": false,
+  "baseline_and_candidate_validator_profile": {
+    "cpu": 1,
+    "memory_gib": 6,
+    "origin": "Explicit approved outer validation overrides; unchanged between original failed reconstruction and candidate. Do not attribute this hardware profile to the authors."
+  },
+  "generation_container_guard_profile": {
+    "cpu": 1.5,
+    "memory_gib": 6
+  },
+  "original_native_generation_pre_suite_seconds": 435.21,
+  "original_native_generation_post_suite_seconds": 431.68,
+  "interpretation": "Generation accepts stages with a600-second cap, but generic Harbor emitter hardcodes300 seconds. Native worker/resource/timing differences must be measured; this is source lineage, not a diagnosis of still-pending control outcomes. No timeout/resource change is made in47."
+}
