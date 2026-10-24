@@ -11,7 +11,15 @@ from pathlib import Path
 from typing import Any
 
 from biotasks.validation.archives import records
-from biotasks.validation.files import inventory, read_json, require, safe, sha, write_json
+from biotasks.validation.files import (
+    ValidationError,
+    inventory,
+    read_json,
+    require,
+    safe,
+    sha,
+    write_json,
+)
 
 TRANSFER_LIMITS = {
     "HF_XET_HIGH_PERFORMANCE": "0",
@@ -119,6 +127,14 @@ def inspect(raw: bytes, name: str, depth: int = 0) -> None:
         for member, row in records(raw, "tar.gz" if name.endswith(".gz") else "tar.zst").items():
             inspect(row["data"], member, depth + 1)
         return
+    try:
+        raw.decode("utf-8")
+    except UnicodeError as error:
+        raise ValidationError("Non-text public archive member: " + name) from error
+    require(
+        b"\x00" not in raw and b"GIT binary patch" not in raw and b"data:image/" not in raw,
+        "Binary/embedded-data public archive member",
+    )
     require(
         not re.search(
             rb"(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-or-v1-[0-9a-f]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|https?://[^/\s:@]+:[^/\s@]+@)",

@@ -551,3 +551,24 @@ def test_extra_compose_services_are_unsupported_before_admission(
     assert plan["tasks"] == []
     assert "single-service" in plan["unsupported"][0]["reason"]
     assert read_json(Path(plan["budget_ledger"]))["events"] == []
+
+
+@pytest.mark.parametrize("raw", [b"\x00", b"GIT binary patch", b"\xff", b"sk-or-v1-" + b"a" * 40])
+def test_publication_scan_rejects_disallowed_bytes(raw: bytes) -> None:
+    with pytest.raises(ValidationError):
+        preservation.inspect(raw, "output.txt")
+
+
+def test_window_covers_both_bootstrap_and_task_builds(prepared: tuple[Path, Path]) -> None:
+    root, path = prepared
+    manifest = read_json(path)
+    task = Path(manifest["exports"][0]["path"]) / "task.toml"
+    task.write_text(
+        task.read_text()
+        .replace("timeout_sec=1", "timeout_sec=300", 1)
+        .replace("[agent]\ntimeout_sec=1", "[agent]\ntimeout_sec=1800")
+    )
+    manifest["max_cpu_hours_per_task"] = 5
+    write_json(path, manifest)
+    with pytest.raises(ValidationError, match="does not cover native controls"):
+        planning.prepare(path, root.parent / "insufficient-window")

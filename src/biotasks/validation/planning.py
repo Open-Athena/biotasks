@@ -295,7 +295,7 @@ def _prepare(manifest_path: Path, directory: Path) -> dict[str, Any]:
             wrapper = 2 * task["verifier_seconds"] + task["agent_seconds"] + 300
             seconds = math.floor(limit * 3600 / 2) - 300
             require(
-                seconds - 300 >= 1200 + 600 + 2 * wrapper + 300,
+                seconds - 300 >= 2 * 1200 + 600 + 2 * wrapper + 300,
                 "CPU bound does not cover native controls and cleanup; increase max_cpu_hours_per_task",
             )
             tasks.append(
