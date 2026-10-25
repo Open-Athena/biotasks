@@ -107,9 +107,10 @@ repairs are disabled. Review does not supply an executable reward or replace any
 independent implementation, negative controls, native trials or release gate.
 
 This adds model sessions within the existing campaign deadline, with no new
-sandbox stage, resource allowance or request/token/byte cap. The implementation
-has offline routing and evidence-grounding tests; fresh model validation is still
-pending. Frozen campaigns 170/171 do not contain this later change.
+sandbox stage, resource allowance or request/token/byte cap. Offline routing and evidence-grounding tests cover this implementation. Live
+review/revision outcomes are recorded against the frozen factory in each run
+receipt; reviewer readiness alone does not establish scientific acceptance.
+Frozen campaigns 170/171 do not contain this later change.
 
 ## Scientific quality repair
 

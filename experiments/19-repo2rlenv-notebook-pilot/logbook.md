@@ -4870,3 +4870,8 @@ Combine that3with172's2never-dispatched-stage allowance to reserve the unchanged
 
 
 Campaign 173 was submitted after the exact 219-file freeze/readback, verification of the original source assets from 169, and typed pool admission with no other live host. Only grading_session.py and test_grading.py differ from 172; no earlier proposal, review, identity diagnosis or answer is supplied. Public runtime 675839ae and private input 40e8957a64c663306d46c4cbb68c17a7f392014c are recorded separately; the private ref is not pushed. Resource, model, timing and repair rules are unchanged. Initial typed status is RUNNING; bounded metadata shows preparation complete and setup actively executing. The outcome remains pending.
+
+
+## 25 October 2026 — fresh construction boundary crossed
+
+173 completed its independent review/revision/fresh-review chain (revise→ready) using the existing single quality allowance. The unchanged original source then reached construction and its controlled environment operations, past the legacy missing-README handoff that stopped172. This is a live boundary observation, not a validated scientific task: original terminal archive readback, scientific controls, native trials and release qualification remain pending. No operator scientific feedback or task edits were supplied. The exact metadata observation and frozen runtime identity are retained in panel-rounds/077/construction-boundary-173.json.
