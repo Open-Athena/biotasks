@@ -1,0 +1,24 @@
+{
+  "assessment": "The proposal is close to ready: package-source inspection confirms the consequential scientific definitions (overlap how='left' default grounding all-peaks and all-motifs populations; half-open strand-agnostic overlap; narrowPeak fc field 7 and JASPAR pval field 6; expand pad=1000 on both sides; subtract trim/split/full-drop with carried peak and motif columns). All three substantial quantified branches dropped by plot-only packaging (fraction of motif-less peaks, fc-vs-motif-pval Pearson correlation, reverse row-weighted motif-peak cumulative curve) are restored as well-defined, input-derivable endpoints; the per-distinct-t curve formulation is the right-limit of the plotted step function and is defensible rather than invented. Tie handling by set-acceptance, uncalibrated tolerance deferral, the JASPAR first-line disclosure, and the \u00a7E wrong-alternative battery are policy-compliant. The blacklist closest-distance branch exclusion is source-backed (narrative frames it solely as motivating the preserved \u00b11 kb filter). One blocking defect: the public brief asserts per-peak granularity for the strongest-motif table and the Pearson population without a stated peak-identity rule, while the reference assignment groups by (chrom_1,start_1,end_1) and would collapse duplicate-coordinate peaks while the fraction separately counts peak records; the writer acknowledges this identity rule is unmeasured. It cannot be resolved from prefix-only input evidence and must be measured and pinned in the public contract before freeze.",
+  "disposition": "revise",
+  "findings": [
+    {
+      "evidence": [
+        {
+          "path": "proposal/task_brief",
+          "quote": "one row per surviving (post-blacklist-subtraction) peak sub-interval"
+        },
+        {
+          "path": "proposal/task_brief",
+          "quote": "on the full set of peaks before any interval removal, one row per peak"
+        },
+        {
+          "path": "proposal/validation_handoff",
+          "quote": "if duplicates exist, reconcile before finalizing; expected none but unmeasured"
+        }
+      ],
+      "problem": "The public brief asserts per-peak granularity (one row per surviving peak sub-interval; Pearson correlation 'one row per peak') but never states the peak-identity rule it rests on. The executed reference computes the strongest-motif table via groupby([\"chrom_1\",\"start_1\",\"end_1\"]).idxmax(), so if any two records in input 1 share identical (chrom,start,end), the reference collapses them into a single strongest-motif row and a single Pearson contribution, while fraction_peaks_without_motif (grouped by peak record index) counts them separately. The brief's per-peak phrasing would then produce two rows where the reference produces one, making a brief-conformant solution fail grading on all three outputs, and the proposed row-multiset and per-peak tie-set grading have no well-defined peak key under duplicates. The validation handoff itself admits this identity rule is 'expected none but unmeasured', i.e. output 1, the Pearson population and the tie-acceptance plan currently rest on an unverified assumption, and it cannot be closed from the prefix-only input evidence in record.",
+      "required_change": "Before freezing assets, measure whether any two records in staged ENCFF401MQL share identical (chrom,start,end) (this is a pure input check, not an analysis change), and pin the identity rule explicitly in the public brief: if coordinates are unique, record the verified fact and the per-peak rule in the brief/handoff; if duplicates exist, redefine the strongest-motif table, output-1 rows and the Pearson population to the coordinate-grouped semantics actually executed by the reference (or faithfully recompute those endpoints per peak record under the allowed recovery policy), and state that rule in the brief so that fraction (per record), the strongest-motif table, the Pearson population and the tie-set grading all reference one explicit identity rule rather than an unmeasured assumption."
+    }
+  ]
+}

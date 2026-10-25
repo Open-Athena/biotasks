@@ -1,0 +1,7 @@
+# Canonical specification handoff, without an operator README
+
+The first live early-review run172 completed review → worker revision → fresh review (`revise` → `ready`) and spent its existing single quality allowance. Construction then failed before any construction model call because the context builder unconditionally read `specification-revision/README.md`. A revised worker supplies the canonical `specification.json`, not legacy operator notes. This is a factory I/O bug, not a scientific rejection or broken notebook.
+
+The shared context now consumes the typed worker proposal without reading or sending an operator README. Existing documentation can remain alongside a proposal without defining the task. This applies equally to initial and revised specifications and to construction/grading; no generated task or scientific artifact was changed.
+
+Four offline boundary cases reproduced the failure or unwanted operator-note input before the fix. All150affected context/grading/early-review/autonomous cases pass afterward, with Ruff checks. [Checks](checks.json) bind exact source hashes. A read-only replay of the **actual archived172revised proposal** reaches the construction boundary without creating a README, starting a model or sandbox, or executing science. [Actual-input proof](actual-input-boundary.json). This proves the repaired boundary, not a fresh end-to-end success; that still requires a new frozen original-source run.

@@ -1,0 +1,9 @@
+# Preserve the first live early-review result and handoff failure
+
+Source-only172 used the general early specification review for the first time. The initial review requested a precise unit of analysis; a GLM revision and fresh review produced `ready`, with parent hashes and evidence quotations independently checked. The existing single quality repair was consumed. A separate factory dependency on a missing legacy README then stopped construction before its LLM ran. No scientific task was manually corrected.
+
+[Original outcome](../075/result-172.json), [model component exercise](../../factory-checks/specification-review/model-exercise-172.json), [general boundary fix](../../factory-checks/specification-handoff/README.md). All739science files and49root files were independently verified; all three original sandbox owners/IDs are absent. This is incomplete infrastructure execution, not source rejection, task acceptance or a solver score.
+
+The unchanged unused-stage auditor [dry run](unused-172-dry-run.json) and [application](unused-172-applied.json) retain all three dispatched-stage allowances and release only grading/native reservations never dispatched. Current conservative holds are$198 /$2unallocated within the unchanged$200authorization; no invoice or credit claim. A new full campaign still requires$5.
+
+An unchanged four-SDK accounting profile refused149 because its exact older controller hash is not registered. The refusal is preserved; nothing was dropped to make it fit. A source comparison finds only the later full-budget guard refactor in the controller and one extra source-path argument in dependency inspection; the actual provider creator file is byte-identical. That compatibility is a **candidate for source-reviewed accounting admission**, not an adopted change or release of used-resource holds. No new model/sandbox was started by these metadata checks.

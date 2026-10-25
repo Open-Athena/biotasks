@@ -4851,3 +4851,12 @@ The unchanged round-043 completed-run auditor applied its passing171dry run: ret
 
 
 Source-only172 was submitted after exact219-file freeze/readback, unchanged169source assets, prior compatibility/cleanup checks and typed pool admission with no other nonterminal hosts. All original170failure-snapshot cleanup and171final cleanup were accepted as terminal evidence; no final science seal was fabricated. Its private input ref4498b5a1725613798097d618cf84a2d10701e3d1remains local; publicruntime2a421109. Models/resources/time and shared repair policy are unchanged. The new early-review behavior remains unvalidated until executed evidence is recovered.
+
+
+## 25 October 2026 — first real early review and a general handoff fix
+
+172 completed the review/revision/fresh-review chain (revise→ready), consuming the existing single quality allowance. Its original/revised proposal hashes and review quotations were checked against archived inputs. The first review caught an ambiguous unit of analysis; the revised question states the source's grouping rule rather than assuming input uniqueness. No operator scientific edit or feedback was sent.
+
+Construction then failed before its model call because the shared context unconditionally read a legacy README that a revised worker does not produce. Remove that read and the now-unneeded context field/pop; scientific input remains the canonical typed worker proposal. Four boundary cases fail before the fix, and150affected cases pass after it. Ruff passes. A read-only context replay with the actual archived revised proposal reaches the construction boundary without creating the missing README or running a model, sandbox or science. Fresh full validation is pending.
+
+All739original science files/49root files and three-owner cleanup are verified.172 is incomplete infrastructure execution, not a source rejection or accepted task. The unchanged037auditor releases only its two undispatched-stage allowances:198USDheld/2free within200authorized once. The unchanged065four-SDK profile refuses149's older controller; preserve that refusal and candidate source comparison, with no used-resource release. No model/worker is active at this checkpoint.

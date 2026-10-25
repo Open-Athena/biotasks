@@ -1,0 +1,44 @@
+--- earlier-known-source/run_autonomous.py
++++ later-known-source/run_autonomous.py
+@@ -17,6 +17,11 @@
+ import time
+ from pathlib import Path
+ 
++from campaign_budget import (
++    SANDBOX_STAGES,
++    STAGE_RESERVATION_USD,
++    require_full_pipeline_budget,
++)
+ from model_profile import native_effort
+ 
+ HERE = Path(__file__).parent
+@@ -226,8 +231,7 @@
+         path = Path(config["notebook_file"])
+         if path.is_absolute() or ".." in path.parts:
+             raise ValueError("Notebook must be checkpoint-relative")
+-        if not 0 < float(config["daytona_budget_usd"]) <= 5:
+-            raise ValueError("This profile reserves at most five dollars")
++        require_full_pipeline_budget(config)
+         self.reasoning_effort = native_effort(config)
+         self.config, self.root, self.seed = config, root, seed
+         self.deadline, self.endpoint, self.credential = deadline, endpoint, credential
+@@ -255,7 +259,7 @@
+             entrypoint=entrypoint,
+             campaign_seconds=7200,
+             cleanup_seconds=300,
+-            daytona_budget_usd="1.00",
++            daytona_budget_usd=str(STAGE_RESERVATION_USD),
+             setup_seconds=1800,
+             reference_seconds=600,
+             verifier_seconds=120,
+@@ -273,7 +277,9 @@
+         if self.deadline - time.time() < 600:
+             raise TimeoutError("Insufficient campaign time for another stage and cleanup")
+         if paid:
+-            reservation = self.receipt["daytona_reserved_usd"] + 1
++            if name not in SANDBOX_STAGES:
++                raise ValueError("Sandbox stage is absent from the campaign reservation plan")
++            reservation = self.receipt["daytona_reserved_usd"] + float(STAGE_RESERVATION_USD)
+             if reservation > float(self.config["daytona_budget_usd"]):
+                 raise TimeoutError("Campaign reservation exhausted")
+             self.receipt["daytona_reserved_usd"] = reservation

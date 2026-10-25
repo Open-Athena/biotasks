@@ -28,6 +28,80 @@ Path(a.report).write_text(json.dumps({'passed':ok,'checks':[{'id':'value','passe
 """
 
 
+@pytest.mark.parametrize("directory", ["specification", "specification-revision"])
+@pytest.mark.parametrize("readme_present", [False, True])
+def test_materialization_uses_worker_proposal_without_operator_readme(
+    tmp_path, monkeypatch, directory, readme_present
+):
+    import grading_session as module
+    import task_materialization
+
+    reference = tmp_path / "reference"
+    for name, text in {
+        "inputs/original.py": "result = 1\n",
+        "inputs/exports.py": "# export evidence\n",
+        "inputs/plan.json": "{}",
+        "trial/source.diff": "",
+        "candidate/pyproject.toml": "[project]\nname = 'fixture'\n",
+        "trial/environment.txt": "fixture environment",
+        "trial/result.json": '{"input_observations": {"files": []}}',
+        "output-audit.json": "{}",
+    }.items():
+        path = reference / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+    proposal = {"task_brief": "Return the worker-selected output", "validation_handoff": "Private"}
+    spec = tmp_path / directory
+    spec.mkdir()
+    (spec / "specification.json").write_text(json.dumps(proposal))
+    canary = "Legacy operator notes must not define the scientific task"
+    if readme_present:
+        (spec / "README.md").write_text(canary)
+    replay = tmp_path / "replay"
+    replay.mkdir()
+    (replay / "result.json").write_text("{}")
+    policy = tmp_path / "policy.json"
+    policy.write_text("{}")
+
+    class Session:
+        paths = ["value.txt"]
+
+        def __init__(self, **kwargs):
+            pass
+
+        async def initialize(self):
+            pass
+
+    async def materialize(**kwargs):
+        context = kwargs["context"]
+        assert context["specification"] == proposal
+        assert "operator_handoff" not in context
+        assert canary not in json.dumps(context)
+        return {"status": "boundary_reached"}
+
+    monkeypatch.setattr(module, "GradingSession", Session)
+    monkeypatch.setattr(task_materialization, "run_materialization", materialize)
+    result = asyncio.run(
+        module.run_grading(
+            remote=None,
+            snapshot={"directory": reference, "hashes": {}},
+            root=tmp_path / "construction",
+            config={
+                "specification_directory": str(spec),
+                "replay_directory": str(replay),
+                "policy_file": str(policy),
+                "verifier_seconds": 120,
+                "reference_seconds": 600,
+                "materialize_task": True,
+            },
+            endpoint="",
+            credential="",
+            deadline=10**20,
+        )
+    )
+    assert result == {"status": "boundary_reached"}
+
+
 def test_shell_budget_refusal_allows_shorter_request_but_not_transport_retry(tmp_path, monkeypatch):
     from types import SimpleNamespace
 
@@ -687,6 +761,14 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     import grading_session as module
 
     config = json.loads((HERE / "grading-config.json").read_text())
+    # Initial and revised workers supply a typed proposal, without operator notes.
+    original_spec = HERE / config["specification_directory"]
+    worker_spec = tmp_path / "worker-specification"
+    worker_spec.mkdir()
+    (worker_spec / "specification.json").write_bytes(
+        (original_spec / "specification.json").read_bytes()
+    )
+    config["specification_directory"] = str(worker_spec)
     config.pop("resume_grading_directory", None)
     config.pop("resume_grader_draft_directory", None)
     config.pop("resume_independent_directory", None)

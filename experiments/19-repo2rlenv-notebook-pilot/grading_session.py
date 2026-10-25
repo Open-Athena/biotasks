@@ -536,7 +536,6 @@ async def run_grading(
     # Each stage receives an explicit, reproducible input object; no hidden task edits.
     context = {
         "specification": json.loads((spec / "specification.json").read_text()),
-        "operator_handoff": (spec / "README.md").read_text(),
         "source_evidence": {
             name: (reference / name).read_text()
             for name in (
@@ -584,7 +583,6 @@ async def run_grading(
         context["specification"] = {
             "task_brief": snapshot["materialization"]["candidate"]["instruction"],
         }
-        context.pop("operator_handoff")
         context["paths"]["task_inputs"] = "/work/task-inputs"
         context["paths"]["recomputed_outputs"] = "/work/recomputed"
     if config.get("materialize_task"):
