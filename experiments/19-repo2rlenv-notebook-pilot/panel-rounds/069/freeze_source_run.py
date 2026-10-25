@@ -22,7 +22,9 @@ def main():
     parser.add_argument("--prior", type=int, required=True)
     parser.add_argument("--private-root", type=Path, required=True)
     parser.add_argument("--baseline-round", type=Path, required=True)
-    parser.add_argument("--output", type=Path, required=True, help="Directory for a new public freeze")
+    parser.add_argument(
+        "--output", type=Path, required=True, help="Directory for a new public freeze"
+    )
     args = parser.parse_args()
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)

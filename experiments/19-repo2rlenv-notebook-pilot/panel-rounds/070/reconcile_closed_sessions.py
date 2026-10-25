@@ -136,7 +136,7 @@ def main():
         r for r in ledger["reservations"] if r["scope"].startswith(f"autonomous-panel-{number:03}:")
     )
     assert (
-        row["ceiling_usd"] == "4.00"
+        row["ceiling_usd"] == f"{prior_retained:.2f}"
         and row["state"] == "terminal_sdk_only_all_lifetimes_bound_reconciled"
     )
     assert args.prior_proof.relative_to(args.ledger.parent).as_posix() in row["reconciliation"]
