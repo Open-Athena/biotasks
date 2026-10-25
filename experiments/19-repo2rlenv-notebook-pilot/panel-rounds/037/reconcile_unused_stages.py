@@ -42,7 +42,7 @@ for number in args.numbers:
         for p in (launch / "typed-observations").glob(f"{number:03}-*.json")
     ]
     terminal = max(observations, key=lambda row: row["observed_at"])
-    assert terminal["state"] == "SUCCEEDED" and terminal["terminal"]
+    assert terminal["state"] in {"SUCCEEDED", "FAILED"} and terminal["terminal"]
     assert terminal["claim_sha256"] == hashlib.sha256(claim_raw).hexdigest()
     manifest_raw = (archive / "sealed-manifest.json").read_bytes()
     manifest = json.loads(manifest_raw)
@@ -56,8 +56,14 @@ for number in args.numbers:
     assert len(raw) == original["bytes"]
     assert hashlib.sha256(raw).hexdigest() == original["sha256"]
     pipeline = json.loads(raw)
-    assert pipeline["status"] == "rejected"
-    assert all(row["status"] in {"completed", "rejected"} for row in pipeline["stages"])
+    if pipeline["status"] == "rejected":
+        assert terminal["state"] == "SUCCEEDED"
+        assert all(row["status"] in {"completed", "rejected"} for row in pipeline["stages"])
+    else:
+        assert pipeline["status"] == "infrastructure_failed" and terminal["state"] == "FAILED"
+        assert pipeline["stages"][-1]["name"] == pipeline["failed_stage"]
+        assert pipeline["stages"][-1]["status"] == "incomplete"
+        assert all(row["status"] == "completed" for row in pipeline["stages"][:-1])
     payload = launch / f"{number:03}-payload"
     config_raw = (payload / "campaign-config.json").read_bytes()
     assert (
