@@ -1,5 +1,7 @@
-# Original Scanpy source queued on the common general runtime
+# Original Scanpy source queued on verified general runtime
 
-Reserve$5for an unchanged source-only rerun of original Scanpy150. It uses the same scientific runtime and general prompts as COBRApy162, with no earlier task, answer, expected labels or operator diagnosis. The source is the full current tutorial, not the earlier legacy notebook. Common model/resource/time/repair rules remain unchanged.
+The original current tutorial and metadata/notices are byte-identical to150. No earlier task, answer, expected labels or operator diagnosis is supplied. Common model/resource/time/repair rules and the canonical scientific prompts from162remain unchanged. The new runtime adds only the general bounded-network implementation and its tests, independently exercised by116local checks and the source-bound provider compatibility check. [Current freeze](freeze-163.json), [runtime identity](runtime-identity.json).
 
-No run is submitted. Freeze exact original inputs/runtime, pass funded preflight and wait for a free slot in the maximum-two host/task-sandbox pool.161/162are active. Funding comes from verified completed-resource and never-dispatched-stage reconciliation; existing scientific holds are not cleared. [Reservation](reservation-163.json).
+The first unsubmitted freeze completed its source payload but hit a reporting error because the valid seed uses a URL instead of optional `id`. [Original identity/runtime](initial-unsubmitted/freeze-identity.json) and [failure](freeze-reporting-failure.json) remain preserved. No seed/source was edited to add an ID. Generic reporting now uses the pipeline’s existing URL fallback; the new source payload was re-frozen only after the general provider check and fresh cleanup passed. No job/model/sandbox ran for that initial attempt.
+
+$5 is reserved; no run is yet submitted. Funded preflight and a free slot in the maximum-two pool are required before launch.161is active;162is terminal with full original archives and fresh cleanup. Funding comes from verified completed-resource/unused-stage reconciliation, not assumed credits or a cleared scientific hold.
