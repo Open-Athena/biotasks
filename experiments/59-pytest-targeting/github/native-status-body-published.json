@@ -1,0 +1,13 @@
+{
+  "body": "The original targeter appends repository-relative pytest paths after a bootstrap `cd`, producing `Tests/Tests/...` for the recorded Biopython command. #58 reproduced file-not-found exit 4 with the pinned helper and a faithful synthetic layout. #57 never ran PR validation, so this remains a source/fixture finding. Subissue of #33; dependency for #58.\n\nA separate opt-in generic adapter roots newly appended Python targets at `/workspace`, quotes them for the shell and preserves recognized existing targets/node IDs. It does not change cwd, tests, imports/install, parser, reward, deadlines or resources. [Candidate and evidence](https://github.com/Open-Athena/biotasks/blob/4baab097/experiments/59-pytest-targeting/results.md): eight paired real pytest layouts (16 processes), unsafe paths/changed callback rejected, non-pytest behavior unchanged. Two filename-with-space cases run but the original parser returns no identities; scientific acceptance remains unsupported there, with no parser/JUnit rescue.\n\nLatest official 0.9.4 adds `py.test` aliases but still emits the same wrong path for the recorded command; this is not whole-function/release parity. The adapter is a declared behavior change, not the official baseline. The policy was integrated in the declared #58 candidate; no repository/PR-specific repair. Owned scratch removed, source and complete notices retained.\n\n**Native observation:** #58 applied and restored this policy and reached PR validation with a valid absolute path. Both stages then failed collection after cleanup removed required compiled extensions; zero exports. Fresh bootstrap used a different working directory, so this does not reproduce the nested-directory Biopython case. [Actual diagnosis](https://github.com/Open-Athena/biotasks/blob/ab0788c2/experiments/58-assertion-regressions/compiled-artifact-diagnosis.json). #60 investigates rebuilding separately, source/offline only. No new native/model admission. Same existing 32 CPUh/$90 ceiling, strictly below $100 extra. Scientific acceptance remains unproven; keep child/epic open, no merge/release.\n",
+  "labels": [
+    {
+      "id": "LA_kwDOU1dZq88AAAAC5-HoiQ",
+      "name": "agent-generated",
+      "description": "Issue or PR with an agent-authored body, including human-reviewed drafts.",
+      "color": "5319E7"
+    }
+  ],
+  "state": "OPEN",
+  "url": "https://github.com/Open-Athena/biotasks/issues/59"
+}
