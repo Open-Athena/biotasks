@@ -1,3 +1,5 @@
 # Sealed generation and case-safe local export
 
 2026-10-25: From recorded main2a1950d2. Original62 generation is terminal with verified billing/HF/cleanup, but the local connector stopped before controls due mixed-case cache/lowercase Docker tag mismatch. Original82506 exited2; do not restart or alter it. Source/offline initial scope, generic staging only, explicit sealed import and active-plan drift rejection. No model/native admission or per-task repair.
+
+2026-10-25: Candidate1c9c1002/e5b76b84 passes186 full checks plus lint/format/types/hooks. Actual pinned API fixtures reproduce original mixed-case rejection and candidate success; lower-case output equivalent except official pushed_at timestamp. Clean installed known sealed import passes with transport/credentials/writes forbidden, rejects oldrun and leaves original/budget byte-inert. Actual normalCLI completed-consumer plan e14fa567 prepares original export without models/repair; validation plan d4332e4e has1task/no unsupported. One control admission6.333333CPUh projects20.012327<32,0modelreservation. Source/input/preflight checkpoint before anynative run; previousfailedharness records preserved.
