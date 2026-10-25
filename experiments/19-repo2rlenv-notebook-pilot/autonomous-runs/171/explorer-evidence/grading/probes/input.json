@@ -1,0 +1,93 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "cosine_spectrum_5_min5.csv",
+      "cosine_spectrum_5_top10.csv",
+      "modified_cosine_spectrum_11_min5.csv",
+      "modified_cosine_spectrum_5_min5.csv",
+      "modified_cosine_spectrum_97_min5.csv",
+      "spectrum_identifiers.csv"
+    ],
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "checks": [
+    {
+      "artifacts": [
+        "spectrum_identifiers.csv"
+      ],
+      "id": "identifiers",
+      "kind": "scientific",
+      "public_requirement": "spectrum_identifiers.csv is a UTF-8 CSV with header exactly spectrum_index,inchikey,smiles, one row per spectrum (1267 rows), with spectrum_index strictly 0..n-1 in file order, and inchikey/smiles after the Step-2 metadata chain, compared row-by-row with the reference (only repositioning inside an identical-identifier duplicate group is not treated as a mismatch); empty string encodes an unavailable field; missing, malformed, ragged or duplicate rows fail."
+    },
+    {
+      "artifacts": [
+        "cosine_spectrum_5_top10.csv"
+      ],
+      "id": "cosine_spectrum_5_top10",
+      "kind": "scientific",
+      "public_requirement": "cosine_spectrum_5_top10.csv has header rank,matched_spectrum_index,inchikey,smiles,cosine_score,matched_peak_count and up to 10 data rows for query index 5 under any equivalent sorting rule: rows sorted by cosine_score descending with rank 0..n-1 consecutive in file order, matched_spectrum_index in [0, 1266) with their reference inchikey/smiles, scores, counts, and index set all matching the reference; equal-score (within 1e-12 absolute) rows may appear in any order; missing, malformed, nonfinite, duplicate-index, out-of-range or empty files fail."
+    },
+    {
+      "artifacts": [
+        "cosine_spectrum_5_min5.csv"
+      ],
+      "id": "cosine_spectrum_5_min5",
+      "kind": "scientific",
+      "public_requirement": "cosine_spectrum_5_min5.csv has header rank,matched_spectrum_index,inchikey,smiles,cosine_score,matched_peak_count and up to 10 data rows for query index 5 restricted to matched_peak_count >= 5, sorted by cosine_score descending with rank 0..n-1 consecutive in file order, matched_spectrum_index in [0, 1266) with their reference inchikey/smiles, scores and counts, and the reference matched-spectrum index set (membership); equal-score rows may appear in any order; missing, malformed, nonfinite, duplicate-index, out-of-range or empty files fail."
+    },
+    {
+      "artifacts": [
+        "modified_cosine_spectrum_5_min5.csv"
+      ],
+      "id": "modified_cosine_spectrum_5_min5",
+      "kind": "scientific",
+      "public_requirement": "modified_cosine_spectrum_5_min5.csv has header rank,matched_spectrum_index,inchikey,smiles,cosine_score,matched_peak_count and up to 10 data rows for query index 5 (modified cosine, matched_peak_count >= 5), sorted by cosine_score descending with rank 0..n-1 consecutive in file order, matched_spectrum_index in [0, 1266) with their reference inchikey/smiles, scores and counts, and the reference matched-spectrum index set; equal-score rows may appear in any order; missing, malformed, nonfinite, duplicate-index, out-of-range or empty files fail."
+    },
+    {
+      "artifacts": [
+        "modified_cosine_spectrum_11_min5.csv"
+      ],
+      "id": "modified_cosine_spectrum_11_min5",
+      "kind": "scientific",
+      "public_requirement": "modified_cosine_spectrum_11_min5.csv has header rank,matched_spectrum_index,inchikey,smiles,cosine_score,matched_peak_count and up to 10 data rows for query index 11 (modified cosine, matched_peak_count >= 5), sorted by cosine_score descending with rank 0..n-1 consecutive in file order, matched_spectrum_index in [0, 1266) with their reference inchikey/smiles, scores and counts, and the reference matched-spectrum index set; equal-score rows may appear in any order; missing, malformed, nonfinite, duplicate-index, out-of-range or empty files fail."
+    },
+    {
+      "artifacts": [
+        "modified_cosine_spectrum_97_min5.csv"
+      ],
+      "id": "modified_cosine_spectrum_97_min5",
+      "kind": "scientific",
+      "public_requirement": "modified_cosine_spectrum_97_min5.csv has header rank,matched_spectrum_index,inchikey,smiles,cosine_score,matched_peak_count and up to 10 data rows for query index 97 (modified cosine, matched_peak_count >= 5), sorted by cosine_score descending with rank 0..n-1 consecutive in file order, matched_spectrum_index in [0, 1266) with their reference inchikey/smiles, scores and counts, and the reference matched-spectrum index set; equal-score rows may appear in any order; missing, malformed, nonfinite, duplicate-index, out-of-range or empty files fail."
+    }
+  ],
+  "output_paths": [
+    "cosine_spectrum_5_min5.csv",
+    "cosine_spectrum_5_top10.csv",
+    "modified_cosine_spectrum_11_min5.csv",
+    "modified_cosine_spectrum_5_min5.csv",
+    "modified_cosine_spectrum_97_min5.csv",
+    "spectrum_identifiers.csv"
+  ],
+  "paths": {
+    "reference_outputs": "/work/reference",
+    "working_directory": "/work/probe"
+  },
+  "public_instruction": "# Spectral similarity analysis of the GNPS-NIH natural-products MS/MS library\n\n## Input\n`inputs/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf` \u2014 the GNPS-NIH natural-products MS/MS spectral library in Mascot Generic Format (~39 MB, 1267 spectra). Spectra appear in a deterministic file order; every positional reference below is a 0-based index into this order (index 0 = first spectrum in the file). The raw file's library-declared inchikey/inchi fields are mostly undefined; do not pre-filter or discard spectra for that reason \u2014 identifiers are recovered by the metadata chain below. No spectra are excluded for any other reason; the population of every output is the full parsed library.\n\n## Processing pipeline (matchms tutorial \"spectral processing and similarity search\" preset)\nUse of matchms (~0.30) is permitted; any implementation producing the same filtered spectra, matched peak assignments, scores and counts is equally acceptable.\n\n1. **Parse** all spectra from the MGF in file order, keeping all metadata.\n2. **Metadata processing** (per spectrum, in this order): standard metadata-cleanup defaults; repair of identifier entries stored in wrong fields; convert between SMILES / InChI / inchikey wherever possible; harmonize undefined entries of each to the empty string; set `precursor_mz` from the PEPMASS field.\n3. **Peak processing** (per spectrum, in this order): normalize all peak intensities by dividing by the maximum peak intensity; retain peaks whose normalized intensity is \u2265 0.01; retain peaks whose m/z is within [10, 1000] inclusive.\n\n## Similarity measures\nFor each (query, library-spectrum) pair compute a (score, matched_peak_count) result under each measure, with m/z-match tolerance **0.005** (inclusive), intensity power 1, m/z power 0:\n\n- **CosineGreedy score** \u2014 candidate peak pairs are (query peak, library peak) with |\u0394m/z| \u2264 0.005, no mass shift. Pool all candidate pairs, sort by descending product of normalized intensities, and greedily assign indices to distinct peaks of each spectrum (each peak used at most once). Score = (sum of intensity products over assigned pairs) / (\u221a(\u03a3 query intensities\u00b2) \u00b7 \u221a(\u03a3 library intensities\u00b2)).\n- **Modified cosine score** (Watrous et al., PNAS 2012) \u2014 as above, but candidate peak pairs are additionally assessed under a constant mass shift equal to the difference in precursor-m/z of the two spectra; unshifted and shifted candidates are pooled in the same greedy assignment. Requires `precursor_mz` on every spectrum (set in Step 2).\n\nScores are raw floats in [0, ~1], possibly marginally above 1 by floating-point rounding; report raw values without clamping.\n\n## Per-query match lists\nFor each specified query, rank **all** library spectra by score descending (the query itself competes and typically appears as the top self-match).\n\n## Required outputs\nWrite these CSV files (UTF-8, one header row, standard minimal quoting) into the output directory:\n\n1. `spectrum_identifiers.csv` \u2014 one row per input spectrum, in file order:\n   `spectrum_index,inchikey,smiles`\n   (values after Steps 2\u20133; empty string for unavailable fields)\n2. `cosine_spectrum_5_top10.csv` \u2014 query at file-order index 5, CosineGreedy score, top 10 by score, no other filter:\n   `rank,matched_spectrum_index,inchikey,smiles,cosine_score,matched_peak_count`\n3. `cosine_spectrum_5_min5.csv` \u2014 same schema and query, restricted to matches with \u2265 5 matched peaks, top 10 by score.\n4. `modified_cosine_spectrum_5_min5.csv` \u2014 same schema (cosine_score = modified cosine score), query index 5, matches with \u2265 5 matched peaks, top 10 by score.\n5. `modified_cosine_spectrum_11_min5.csv` \u2014 as Output 4, query index 11.\n6. `modified_cosine_spectrum_97_min5.csv` \u2014 as Output 4, query index 97.\n\nConventions:\n- `rank` is the 0-based position after sorting by score descending (rank 0 = highest-scoring match).\n- `matched_spectrum_index` is the 0-based file-order index of the matched library spectrum.\n- `inchikey`/`smiles` in match tables are those of the matched spectrum after Steps 2\u20133 (identical to the corresponding row of `spectrum_identifiers.csv`).\n- `matched_peak_count` is an integer; `cosine_score` is a raw float.\n- If fewer than 10 spectra satisfy a table's filter, emit only those rows.\n- Each match table requires only the query-vs-all-library rows (computing the full library-vs-library matrix is also acceptable).\n\n## Environment / constraints\n- Offline, no network access.\n- 4 CPUs, 8 GB RAM, 600-second wall-clock budget.\n- Supplied environment (for convenience): matchms 0.30.2, rdkit 2024.9.6, numpy 2.2.6 on Python 3.13. The tolerance, peak-processing thresholds and match-list filters must not be altered.\n\n## Acceptance rules\n\n## Acceptance rules\n\n### File set and parsing\nEach of the six required CSV files must exist at its declared path relative to the output root, be UTF-8 text with one header row, and be readable as standard CSV (`csv.reader` semantics, minimal quoting; CRLF and LF line endings both acceptable). Files at any other path (e.g. nested under an extra `outputs/` layer) are at the wrong declared path and are not found. A missing, unreadable, empty (zero data rows where data rows are required), ragged (wrong field count), or malformed file fails its checks.\n\n### CSV conventions\n- Header rows are compared exactly (names, order, count): `spectrum_index,inchikey,smiles` for `spectrum_identifiers.csv`; `rank,matched_spectrum_index,inchikey,smiles,cosine_score,matched_peak_count` for the five match tables.\n- `spectrum_index`, `rank`, `matched_spectrum_index` and `matched_peak_count` must be nonnegative integers in plain canonical decimal form (no signs, blanks, decimals or exponent notation). An unavailable identifier field is the empty string.\n- `cosine_score` must be a finite real number in a standard decimal or exponent form a Python `float()` accepts; `NaN`, `inf` and empty are rejected. Scores are compared as parsed float values, not as strings; any serialization preserving the parsed value (shortest round-trip `repr`, fixed precision, or extra exponent digits) is equally acceptable. Scores are raw, unclamped values (values marginally above 1 from floating-point rounding are not errors).\n- Completely blank physical lines are ignored; blank cells are not (an empty `cosine_score` or integer cell fails).\n\n### spectrum_identifiers.csv\nOne row per input spectrum, in input file order: `spectrum_index` must equal the 0-based row position (0..n-1) in every row. Each row's `inchikey`/`smiles` are compared to the reference values of the same `spectrum_index`. The number of spectra (and therefore rows) is read from the reference table, not hardcoded. An empty `inchikey`/`smiles` is significant: the empty string is compared like any other value (a non-empty value where the reference is empty, or vice versa, fails). No columns beyond the declared ones exist; row-aligned tuple comparison means that repeated identifier values across different spectra do not license different values in a row.\n\n### Match tables (five files)\nEach table lists at most 10 rows for its specified query, filter and measure, with `rank` = 0-based file position after sorting. Validation compares, against the reference table, per matched-spectrum value and per table:\n- Row count must not exceed 10 and must contain all qualifying spectra if fewer than 10 exist (row count is compared exactly against the reference, which reflects the number of spectra satisfying each table's filter).\n- `rank` must equal 0..n-1 consecutively in file order.\n- Rows must be sorted by descending `cosine_score` (ascending rank order with non-increasing scores).\n- `matched_spectrum_index` must lie in [0, number_of_spectra) and be unique within a table.\n- For each listed spectrum index, the `inchikey`, `smiles`, `cosine_score` and `matched_peak_count` must match the reference values for that same index (match tables are compared per spectrum identity, not per row position). Cross-check: the `inchikey`/`smiles` of every listed row must equal the same-index row of the submission's own `spectrum_identifiers.csv`.\n- The set of listed `matched_spectrum_index` values must equal the reference set for that table (each of the requested \"top 10 ranked lists\" is a selection of ten spectra; a different selection of indices is a wrong answer even if all looked-up, in-range and unique).\n- Scores are compared with an absolute tolerance of **1e-12** on the floating-point difference between parsed submission and reference values; `matched_peak_count` is compared exactly as an integer.\n- Ordering tolerance for ties: if two or more rows carry scores equal to each other within 1e-12 (in the reference's ordering), any permutation of those rows within the tied block is accepted; relative order of rows with scores differing by more than 1e-12 must match the reference. This addresses artifacts of unstable stable-sort behavior on exactly tied scores, not different numeric results.",
+  "reference_seconds": 600,
+  "verifier_seconds": 120
+}

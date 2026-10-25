@@ -1,0 +1,89 @@
+{
+  "asset_value_assessments": [],
+  "decision": "accept_for_packaging",
+  "issues": [],
+  "question_issues": [],
+  "rationale": "The candidate is suitable for packaging. (1) Public contract vs source: I verified the base question's pipeline description against installed matchms 0.30.2 source \u2014 normalize_intensities divides by max intensity (normalize_intensities.py:35-44); select_by_intensity keeps intensity_from <= x (select_by_intensity.py:37, inclusive, matching \"\u2265 0.01\"); select_by_mz keeps mz_from <= mz <= mz_to (select_by_mz.py:35, inclusive both ends); add_precursor_mz falls back to PEPMASS (add_precursor_mz.py:72-74); the cosine kernels match at |\u0394m/z| \u2264 tolerance (spectrum_similarity_functions.py:76-85), apply greedy one-use-per-peak assignment after sorting by descending intensity product (ModifiedCosine.py:126-128, spectrum_similarity_functions.py:100-104), and normalize by sqrt of summed squared intensities (:107-110); ModifiedCosine pools unshifted and precursor-difference-shifted candidates (ModifiedCosine.py:108-125). The question's claims about 1267 spectra, unclamped self-match scores (recorded 1.000000000000003) and identifier recovery via the metadata chain are corroborated by the trial log and recorded reference observations. (2) Comparisons: the grader compares parsed CSV values (never bytes), keyed by stable identities (spectrum_index / matched_spectrum_index), with cross-file consistency against the submission's own identifiers table, exact index-set equality, exact integer counts, and a 1e-12 absolute score tolerance justified by serialization/summation-order effects and probed from above (1e-6 and 5e-12 perturbations rejected in executed probes). The duplicate-group repositioning allowance is effectively vacuous (identical-identifier swaps are value no-ops), accepting no wrong answer. (3) Controls: 20/20 executed controls met expected outcomes \u2014 reference/recomputed/alternative passes, empty/misplaced fails, per-file missing-output fails, 8 wrong_solution probes with meaningful scientific errors and 1 valid representation alternative (17-digit scientific notation + LF) accepted. (4) Answer isolation: the solver receives only the MGF (sha-verified b7d33f02...); the reference inventory is exactly the six declared files; the oracle isolation run and the independent solution executed without answer access and produced byte-identical outputs; the dependency-asset catalog enumerated 10,758 installed files across 42 distributions, content-inspected the four matchms data tables (adduct/key lookups), found no 'GNPS-NIH' content, and the asset-value-hint numeric-literal scan returned zero findings against all reference cells. (5) Source coverage: all six per-query analytical branches are required outputs; the tables not surviving trial serialization were recovered source-faithfully under the endpoint-recovery policy and cross-checked value-wise against the surviving recorded artifacts (identifiers CSV, best_matches_spectrum_97.csv, all-pairs npz at both orientations); excluded branches (histograms, heatmaps, RDKit drawings, np.where case selection, json/pickle serialization of the intermediate) have source-backed non-scientific roles. Residual, honestly disclosed limitations (cross-stack determinism of the tolerance; no real ties in current data) do not undermine the current evidence.",
+  "scientific_admission": {
+    "answer_isolation": {
+      "blockers": [],
+      "decision": "approve",
+      "evidence": [
+        "Materialization input inventory: derive_code copies only GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf into inputs/ (sha-verified b7d33f02fa35ebebc2c3e8150c57be014a5f4edd556531a7fc8e52913f985f72) and enforces the exact 6-file reference inventory, so no matrix or processed-library file ships in the solver-facing tree",
+        "Execution record oracle_isolation: exit 0, stdout 'isolated'; oracle recomputed all six CSVs from the single MGF with results byte-identical to reference (oracle_outputs sha256 equal to reference for all six files)",
+        "Independent solution ran with status executed_without_answer_access and produced identical hashes for all six outputs, confirming no reference access is needed to solve",
+        "Grader code reads reference only via --reference-dir and writes only the report; no answer values, row counts or indices are embedded (ref_n read from the reference identifiers table)",
+        "Dependency-asset catalog: 10,758 installed files enumerated across all 42 distributions; the only matchms candidates are 4 internal data CSVs (export_key_conversions, known_adduct_conversions, known_adducts_table, known_key_conversions), content-inspected as adduct/metadata lookup tables with no spectra or scores; grep for 'GNPS-NIH' across the matchms distribution found no embedded library copy",
+        "Asset-value-hint scan (relative_discovery_distance 1e-8) of floating literals in all matched installed Python-source candidates against numeric cells of all six reference CSVs returned zero findings, with all six reference outputs covered by the numeric-cells-inspected status",
+        "Runtime evidence: oracle ~120 s and all pipeline runs well within the 600 s budget; grader runtimes trivial versus the 120 s verifier budget"
+      ],
+      "output_paths": [
+        "spectrum_identifiers.csv",
+        "cosine_spectrum_5_top10.csv",
+        "cosine_spectrum_5_min5.csv",
+        "modified_cosine_spectrum_5_min5.csv",
+        "modified_cosine_spectrum_11_min5.csv",
+        "modified_cosine_spectrum_97_min5.csv"
+      ],
+      "rationale": "Actual solver-visible inputs are the MGF alone; the reference tree holds exactly the six declared outputs and nothing else; a clean isolated recomputation (oracle) and an independently executed solution both produce byte-identical outputs without answer access, so no installed asset or solver-visible file discloses a requested answer. The catalog's stated caveat (not an exhaustive semantic audit of every installed file) is mitigated by the complete 42-distribution file enumeration, content inspection of the only matchms data files, a negative grep for the library identifier string, and a zero-finding numeric-literal scan of all matched installed source files against every reference cell; the answers are freshly derived from the 39 MB public library, not packaged anywhere. The grader does not use BIOTASKS_TRUSTED_INPUT_DIR, but it is a value-comparison grader against controller-supplied reference files (interface --reference-dir / --submission-dir), so no trusted-input recomputation is required by the public contract and no solver-controlled copy is trusted."
+    },
+    "comparisons": [
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Installed matchms 0.30.2 source: add_precursor_mz.py:72-74 (precursor_mz from pepmass fallback); default_filters/repair/derive/harmonize chain identical to public Step 2",
+          "Reference observation: 1267 rows, spectrum_index 0..1266, 1255 distinct inchikeys/smiles, all non-empty; materialization cross-check reproduced the recorded CSV row-for-row (derivation exit 0, identifiers_match_recorded_csv: true)",
+          "Control records: reference pass; empty submission fails (missing file); identifiers-wrong-index-alignment probe fails at 'spectrum_index at row 327 is 999'; identifiers-unmatched-value probe fails at 'row 400: inchikey/smiles mismatch'",
+          "Grader reads row count from the reference table (ref_n = len(ref_ident)), not hardcoded; empty string compared as a significant value"
+        ],
+        "output_paths": [
+          "spectrum_identifiers.csv"
+        ],
+        "rationale": "Parsed-value, row-aligned comparison keyed by spectrum_index enforcing 0..n-1 alignment and per-index inchikey/smiles equality against the reference, with row count read from the reference (not hardcoded). The written duplicate-group repositioning allowance is effectively vacuous (identical-identifier swaps are value no-ops), so it neither accepts a wrong answer nor rejects a correct one. Cross-file consistency with the five match tables is separately enforced inside each match-table check via the submission's own identifiers table."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Installed matchms 0.30.2 source: normalize_intensities.py:35-44 (divide by max), select_by_intensity.py:37 (inclusive intensity_from <= x), select_by_mz.py:35 (inclusive both ends), spectrum_similarity_functions.py:76-85 (tolerance-inclusive match), :100-104 (greedy distinct-index assignment), :107-110 (sqrt normalization) \u2014 matching the public definitions point for point",
+          "Derivation cross-check: recovered cosine_spectrum_5 tables produced by unchanged source invocations under matchms 0.30.2/numpy 2.2.6; oracle and independent solution each produced byte-identical files (sha256 equal across reference/recomputed/alternative)",
+          "Control records: top10-wrong-value-and-count probe fails with specific score/count messages; top10-wrong-index-set and min5 index-set probes fail on set membership; valid-score-notation-encoding probe (17-digit scientific notation, LF) passes",
+          "Independent solution used per-query .pair() scoring with a stable file-order sort \u2014 a different code path agreeing exactly with scores_by_query results, supporting that the comparison target is the scientific ranking, not an implementation detail"
+        ],
+        "output_paths": [
+          "cosine_spectrum_5_top10.csv",
+          "cosine_spectrum_5_min5.csv"
+        ],
+        "rationale": "CosineGreedy top-10 (unrestricted) and min_match>=5 tables are compared per matched-spectrum identity: rank 0..n-1 in file order, descending-score monotonicity, in-range unique indices, per-index inchikey/smiles/score/count against the reference, and exact equality of the listed index set, with 1e-12 absolute score tolerance and tie-block ordering tolerance. Kernel semantics (tolerance 0.005 inclusive, no shift, greedy pooled assignment sorted by descending intensity product, sqrt-of-sum-of-squares normalization) were verified directly in installed matchms 0.30.2 source. The recovered reference for these tables (not serialized by the trial) was produced by rerunning the unchanged source invocations under the pinned environment, with oracle and independent implementations producing byte-identical outputs. Wrong-value, wrong-count, wrong-index-set and duplicate-index probes all fail with well-formed files, and a 17-digit scientific-notation/LF re-encoding passes, demonstrating representation independence."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Installed matchms 0.30.2 source: ModifiedCosine.py:106-128 (zero-shift and precursor-difference-shift candidates collected, pooled, sorted by descending intensity product); :92-104 (precursor_mz required, set by Step 2's add_precursor_mz)",
+          "Derivation cross-check report: spectrum_97_matches_recorded_export: true (row-for-row vs recorded best_matches_spectrum_97.csv, including the 1.000000000000003 unclamped self-match); modified_cosine_rows_match_recorded_matrix: true (30 rows checked against modified_cosine_scores.npz at both orientations); modified_cosine_top10_selection_matches_recorded_matrix: true",
+          "Repeatability record: two reference replays byte-identical for all recorded artifacts",
+          "Control records: modified97-wrong-count-index-set and modified11-wrong-count-score-dup probes fail on set membership/uniqueness and per-index value comparison with parseable, well-formed files"
+        ],
+        "output_paths": [
+          "modified_cosine_spectrum_5_min5.csv",
+          "modified_cosine_spectrum_11_min5.csv",
+          "modified_cosine_spectrum_97_min5.csv"
+        ],
+        "rationale": "Modified-cosine min_match>=5 tables for queries 5, 11 and 97 are compared under the same per-identity rules (rank sequence, descending order, unique in-range indices, per-index identifiers/score/count against reference, exact index-set equality, 1e-12 score tolerance). Modified-cosine semantics (pooled unshifted + precursor-shifted candidates under one greedy assignment, tolerance 0.005 inclusive, precursor_mz from PEPMASS) were verified in installed matchms 0.30.2 source. Query 97's recovered table was cross-checked value-wise against the surviving recorded export, and all three tables' rows against the recorded all-pairs npz matrix, providing independent corroboration wherever a recorded artifact exists; queries 5 and 11 were recovered by rerunning the unchanged source invocations on the same input under the same pinned stack on which both reference replays were byte-identical. Cross-file identity mapping is enforced per match-table check against the submission's own identifiers table."
+      }
+    ]
+  },
+  "source_coverage": {
+    "decision": "approve",
+    "omitted_scientific_endpoints": [],
+    "rationale": "Audited every source operation in the ledger against the final endpoint set. All six per-query analytical branches of the tutorial are required outputs: CosineGreedy query-5 unrestricted top-10 (call-172-15) and min_match>=5 (call-187-17); ModifiedCosine queries 5 (call-209-17), 11 (call-236-17) and 97 (call-258-17); plus the identifiers projection of the processed library (metadata chain call-83..91, peak chain call-107..109, parsing call-38). The two matching-matrix computations (CosineGreedy call-160, ModifiedCosine call-206) directly feed the required match lists and are exercised by the reference, oracle and independent solution. The CosineGreedy tables and modified query-5/11 tables that the trial termination did not serialize were recovered via the permitted endpoint-recovery route (unchanged invocations, same input, pinned stack) and cross-checked against the surviving recorded artifacts (best_matches_spectrum_97.csv row-for-row; identifiers CSV row-for-row; 30 npz matrix rows at both orientations; matrix-derived top-10 selection with tie analysis). Excluded branches have source-backed non-scientific roles: metadata tallies and heads (diagnostics), peaks-per-spectrum histograms (pipeline diagnostics), score-matrix corner prints (inspection), heatmaps (visual rendering of the matrix whose per-query scientific content is preserved in the required match tables), np.where(precursor_mz>600) (case-selection diagnostic; the spectrums[97] case is fixed in the task), RDKit structure drawings (rendering of the already-tabulated match lists), and the source's own json/pickle serialization of the processed library (representation of an intermediate whose identifier columns are exactly Output 1 and whose peaks fully determine the required scores; recoverable from the supplied input via public Steps 1-3). The all-pairs matrices are preparatory intermediates whose per-query terminal content the match tables preserve; the npz is retained reference-side as cross-validation evidence and does not supply any requested answer to the solver. No eligible terminal scientific result is omitted.",
+    "remaining_validation": [
+      "Cross-stack (different OS/BLAS) determinism of scores within the 1e-12 tolerance is not separately demonstrated; honestly disclosed as a limitation in the grader rationale and not a claim made by the public contract",
+      "Rank-9/10 tie boundary: no equal scores exist in the current reference tables, so the tie tolerance is untested against real ties, but it is sound by construction because per-index value checks still bind every listed spectrum"
+    ],
+    "scientific_scope_changes": [],
+    "unsupported_evidence_claims": []
+  }
+}

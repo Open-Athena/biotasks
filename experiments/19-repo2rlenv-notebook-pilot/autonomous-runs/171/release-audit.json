@@ -1,0 +1,95 @@
+{
+  "reviewed_at": "2026-10-25T13:35:20.738506+00:00",
+  "native_acceptance": {
+    "bundle_hash": "sha256:f71d305229cbbc29dff404d0da00b78b9b6e5a03fe96414c7c4cfd29275d2438",
+    "native_trials": [
+      {
+        "agent": "oracle",
+        "reward": 1.0,
+        "exception_type": null,
+        "bundle_hash": "sha256:f71d305229cbbc29dff404d0da00b78b9b6e5a03fe96414c7c4cfd29275d2438",
+        "result_sha256": "b869a2acc83a87cbbb9dff7d894ae2bd3918bbef634299679f0506b95699f70c"
+      },
+      {
+        "agent": "nop",
+        "reward": 0.0,
+        "exception_type": null,
+        "bundle_hash": "sha256:f71d305229cbbc29dff404d0da00b78b9b6e5a03fe96414c7c4cfd29275d2438",
+        "result_sha256": "f5d43c313fd1ab304772fcc03b5f595549016f575919f63538da1815cffe0a69"
+      },
+      {
+        "agent": "terminus-2",
+        "reward": 1.0,
+        "exception_type": null,
+        "bundle_hash": "sha256:f71d305229cbbc29dff404d0da00b78b9b6e5a03fe96414c7c4cfd29275d2438",
+        "result_sha256": "427926a4bc4d6184eb4300e36428012a91000d2b016ed7e54d2513a1cc14b2c0"
+      }
+    ],
+    "scientific_controls": 20,
+    "source_coverage_review_verified": true,
+    "scientific_admission_review_verified": true,
+    "asset_value_hints_review_verified": true,
+    "executed_scientific_negative_coverage_verified": true,
+    "accepted": true
+  },
+  "full_input_metadata": {
+    "observed_at": "2026-10-25T13:32:47.813453+00:00",
+    "campaign": 171,
+    "bytes": 39095019,
+    "path": "GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf",
+    "sha256": "b7d33f02fa35ebebc2c3e8150c57be014a5f4edd556531a7fc8e52913f985f72",
+    "spectra": 1267,
+    "unique_gnps_spectrum_identifiers": 1267,
+    "first_identifiers": [
+      "CCMSLIB00000079350",
+      "CCMSLIB00000079351",
+      "CCMSLIB00000079352"
+    ],
+    "metadata_counters": {
+      "ORGANISM": {
+        "GNPS-NIH-NATURALPRODUCTSLIBRARY": 1267
+      },
+      "PI": {
+        "Dorrestein": 1267
+      },
+      "DATACOLLECTOR": {
+        "VVP/LMS": 1266,
+        "Dorrestein": 1
+      },
+      "SUBMITUSER": {
+        "vphelan": 1267
+      }
+    },
+    "all_spectra_in_named_original_nih_library": true,
+    "download_url": "https://external.gnps2.org/gnpslibrary/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf",
+    "lineage": "Official GNPS2 named library download, pinned by recorded SHA256. Not the repository-committed snapshot used by campaign147; no equality to the unavailable old GNPS host is asserted.",
+    "original_source_preserved": true,
+    "new_model_calls": 0,
+    "new_scientific_execution": false
+  },
+  "eligible_outputs": "Identifiers for all input spectra plus all five terminal ranked-match branches; full matrices and processed objects are computational intermediates, not separately required outputs. Source coverage review and operation ledger retained.",
+  "source_coverage_review": {
+    "decision": "approve",
+    "omitted_scientific_endpoints": [],
+    "rationale": "Audited every source operation in the ledger against the final endpoint set. All six per-query analytical branches of the tutorial are required outputs: CosineGreedy query-5 unrestricted top-10 (call-172-15) and min_match>=5 (call-187-17); ModifiedCosine queries 5 (call-209-17), 11 (call-236-17) and 97 (call-258-17); plus the identifiers projection of the processed library (metadata chain call-83..91, peak chain call-107..109, parsing call-38). The two matching-matrix computations (CosineGreedy call-160, ModifiedCosine call-206) directly feed the required match lists and are exercised by the reference, oracle and independent solution. The CosineGreedy tables and modified query-5/11 tables that the trial termination did not serialize were recovered via the permitted endpoint-recovery route (unchanged invocations, same input, pinned stack) and cross-checked against the surviving recorded artifacts (best_matches_spectrum_97.csv row-for-row; identifiers CSV row-for-row; 30 npz matrix rows at both orientations; matrix-derived top-10 selection with tie analysis). Excluded branches have source-backed non-scientific roles: metadata tallies and heads (diagnostics), peaks-per-spectrum histograms (pipeline diagnostics), score-matrix corner prints (inspection), heatmaps (visual rendering of the matrix whose per-query scientific content is preserved in the required match tables), np.where(precursor_mz>600) (case-selection diagnostic; the spectrums[97] case is fixed in the task), RDKit structure drawings (rendering of the already-tabulated match lists), and the source's own json/pickle serialization of the processed library (representation of an intermediate whose identifier columns are exactly Output 1 and whose peaks fully determine the required scores; recoverable from the supplied input via public Steps 1-3). The all-pairs matrices are preparatory intermediates whose per-query terminal content the match tables preserve; the npz is retained reference-side as cross-validation evidence and does not supply any requested answer to the solver. No eligible terminal scientific result is omitted.",
+    "remaining_validation": [
+      "Cross-stack (different OS/BLAS) determinism of scores within the 1e-12 tolerance is not separately demonstrated; honestly disclosed as a limitation in the grader rationale and not a claim made by the public contract",
+      "Rank-9/10 tie boundary: no equal scores exist in the current reference tables, so the tie tolerance is untested against real ties, but it is sound by construction because per-index value checks still bind every listed spectrum"
+    ],
+    "scientific_scope_changes": [],
+    "unsupported_evidence_claims": []
+  },
+  "solver_trajectory_audit": "Recorded tools inspect supplied MGF and installed matchms sources, implement metadata/peak processing and per-query pairwise similarity computations, and write all six CSVs. No recorded retrieval/copy of reference answers. This is a trajectory audit, not proof against arbitrary covert behavior.",
+  "quality_repairs_used": 0,
+  "manual_scientific_edits": 0,
+  "limits": [
+    "All authoring and solver workers use GLM-5.3; independent programs share the matchms engine.",
+    "1e-12 score tolerance is supported by executed pinned-stack checks, not universal cross-engine portability.",
+    "No relevant top-k boundary ties were observed; tie-boundary selection portability is not established.",
+    "The public question has a duplicated Acceptance rules heading; retained unchanged in the tested bundle.",
+    "Raw input is an explicitly pinned official GNPS2 snapshot, not the older repository data snapshot.",
+    "Source terms are mixed; no blanket commercial-training or biological-validity claim."
+  ],
+  "new_model_calls": 0,
+  "new_sandboxes": 0
+}

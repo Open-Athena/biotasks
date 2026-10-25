@@ -4825,3 +4825,12 @@ The freezer now checks a reviewed union of edits, additions and removals, record
 
 
 Two additional checks exercise the actual grading controller (not only the pipeline's passed flag): after early use of the allowance, neither grader nor public-question repair runs. Both pass. The proposed review implementation remains unvalidated by a model; no active campaign imports the working checkout.
+
+
+## 25 October 2026 — qualify and publish the fresh Matchms task
+
+Source-only171 completed in 64.44 minutes with 139 request attempts from the original per-stage request ledgers, including 18 native relay calls. All 20 scientific controls pass; native reference/empty/blind GLM rewards 1/0/1 with no exceptions. No quality repair or operator scientific edit. Complete 1,787-file science and 98-file root archives are independently verified, and all seven original resource owners/IDs are absent.
+
+The exact 39,095,019-byte official GNPS2 library snapshot is pinned at b7d33f02fa35ebebc2c3e8150c57be014a5f4edd556531a7fc8e52913f985f72. All 1,267 records name the original NIH library, Dorrestein and original contributor. Applying GNPS direct-contribution default CC0 is documented as an inference from primary sources and complete metadata, alongside original mixed MIT/CC BY-NC-SA source notices. No equality to 147's different repository bytes or unavailable old server is asserted. All five terminal ranked-match branches and identifiers are retained; full matrices are preparatory intermediates. Cross-engine portability and top-k cutoff tie behavior remain unestablished.
+
+Release fe51e64ae9f14b8795c68e6599e7c4e045c99cd4 was published and force-downloaded anonymously, verifying all files/modes and exact native bundle. A local packaging import failure was preserved and resolved using the existing hash-pinned Harbor 0.22 wheel as reader; no new scientific execution occurred. The latest viewer selects actual 171 prompts, inputs and outputs; twelve stages/five views/nineteen solver steps pass browser checks without overflow or JavaScript errors. The new early specification-review implementation was not used by 171. Scanpy 170 remains active in its existing single comparison repair. Authorization remains 200 USD, counting the additional 100 once;198 conservative holds / 2 unallocated are not actual invoices or credits.

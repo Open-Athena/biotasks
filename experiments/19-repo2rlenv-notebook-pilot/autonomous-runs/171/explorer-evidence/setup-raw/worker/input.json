@@ -1,0 +1,1136 @@
+{
+  "limits": {
+    "base_image": "python:3.13.13-slim-bookworm",
+    "campaign_seconds": 7200,
+    "gpu": false,
+    "max_requests": null,
+    "max_tests": 2,
+    "network": "Internet during setup only; reference is offline",
+    "reference_seconds": 600,
+    "request_timeout_seconds": 600,
+    "setup_seconds": 1800,
+    "task_cpus": 4,
+    "task_disk_gib": 10,
+    "task_memory_gib": 8
+  },
+  "paths": {
+    "exports.py": "/work/frozen/exports.py",
+    "original.py": "/work/frozen/original.py",
+    "plan.json": "/work/frozen/plan.json",
+    "reference_cwd": "/work/run",
+    "setup": "/work/setup"
+  },
+  "preparation": {
+    "conversion": {
+      "code_cells": 32,
+      "converter": "jupytext",
+      "converter_version": "1.19.6",
+      "directory_normalizations": [],
+      "documentation_execution_policy": {},
+      "equivalence_basis": "Python statements after recorded presentation and directory normalization",
+      "executable_ast_sha256": "cdde50302eba381de78b5b3b744915a2e86164f6f18540e4fe57418a0fd349bb",
+      "executed": false,
+      "format": "py:nomarker",
+      "ignored_cell_editor_metadata": [],
+      "ignored_editor_metadata": {},
+      "ignored_presentation_tags": [],
+      "markdown_cells": 17,
+      "markdown_representation": "line_comments",
+      "ordered_code_equivalence": true,
+      "presentation_normalizations": [],
+      "profile": "python-narrative-v6",
+      "script_sha256": "0524c9db731ca258d71e7af8fe0846312643b8ff1f02ce833162a6be4c5d6db0",
+      "source_sha256": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d",
+      "stored_outputs_used_as_evidence": false
+    },
+    "plan": {
+      "artifacts": [
+        {
+          "description": "The full spectral library after the metadata and peak processing pipelines, re-serialized from the surviving `spectrums` list.",
+          "path": "GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.json",
+          "source_evidence": "The source narrative section 'Export processed data' states the processed data can be written back as .json, and the original script produces it by `spectrums = [metadata_processing(s) ...]` then `spectrums = [peak_processing(s) ...]`, followed by `save_as_json(spectrums, ...)`. The harmonized/filtered library is itself an end product of the processing pipeline part of the tutorial, held at completion in `spectrums`."
+        },
+        {
+          "description": "All-pairs Modified Cosine similarity matrices: one score matrix and one peak-match-count matrix, in spectrum order.",
+          "path": "modified_cosine_scores.npz",
+          "source_evidence": "The narrative 'Computing spectra similarities between all spectra - Modified Cosine score' defines computing scores between all spectra pairs as the goal, and the results are subsequently interpreted (score heatmap, min_match filtering, drawing conclusions about related spectra). Produced by `scores = calculate_scores(spectrums, spectrums, ModifiedCosine(...), is_symmetric=True)` and surviving as `scores_array = scores.scores.to_array()`; `scores_array[...][ModifiedCosine_matches]` is used by the source's min_match criterion, so both fields are exported."
+        },
+        {
+          "description": "Positional index of each processed spectrum with its inchikey and smiles, providing the identifier context for the matrix indices and match list.",
+          "path": "spectrum_identifiers.csv",
+          "source_evidence": "The source interprets similarity matrices and per-query match lists by spectrum position ('Spectrum #ID') and by compound identity (smiles shown and rendered per match). These identifiers are read from the surviving `spectrums` objects produced by the processing pipeline."
+        },
+        {
+          "description": "Top-10 Modified Cosine matches for spectrums[97] (min_match>=5): score, peak match count, smiles and inchikey per matched spectrum.",
+          "path": "best_matches_spectrum_97.csv",
+          "source_evidence": "The final analytical branch 'Inspect a case that doesn't work that well...' inspects spectrums[97]; its top matches are computed by `best_matches = [x for x in sorted_matches if x[1][ModifiedCosine_matches] >= min_match][:10]` and then summarized/interpreted (scores printed, compounds drawn). This is the only match list still stored at completion, held in `best_matches`."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "All-pairs CosineGreedy similarity matrix and the spectrums[5] top matches: computed and displayed earlier, but `scores`, `scores_array`, `best_matches` and `sorted_matches` are overwritten by the ModifiedCosine section, so no eligible stored value remains at script completion; recovery would require recomputation, which is not permitted for exports.",
+        "Top modified-cosine matches for spectrums[5] and spectrums[11] (including the 'closer look at spectrums[11]' conclusion): their `best_matches`/`sorted_matches` values are overwritten by the final spectrums[97] inspection branch, so only the spectrums[97] match list survives to be exported.",
+        "compound_{i}.png structure images: rendered by RDkit inside the original script's plotting calls and written to the working directory; where the underlying matched lists survive, their identifying metadata and scores are exported as CSV rather than the plot-only image output.",
+        "Inchikey/inchi/smiles metadata tallies, peaks-per-spectrum histograms and precursor-mz inspection (`masses`, np.where result): data-quality diagnostics that support the processing pipeline, not independent scientific endpoints.",
+        "The source's own json/pickle exports of the processed library to path_data remain unchanged; the export code writes an additional copy under /work/outputs without altering the originals."
+      ],
+      "explanation": "The tutorial's terminal products are (a) the processed spectral library (explicitly exported by the source), (b) the all-pairs Modified Cosine similarity results, and (c) the top modified-cosine matches for the inspected query spectrum. At script completion only the ModifiedCosine results survive: `scores`/`scores_array`/`best_matches`/`sorted_matches` were reassigned by the ModifiedCosine section and the spectrums[97] inspection. The appended code only serializes these surviving values (score and matches matrices via np.savez, a spectrum-identifier table, the surviving top-10 match list as CSV, and the processed library via matchms' own save_as_json) under /work/outputs; no analysis is recomputed or altered.",
+      "export_code": "import os as _export_os\nimport csv as _export_csv\nimport numpy as _export_np\n\n_export_dir = \"/work/outputs\"\n_export_os.makedirs(_export_dir, exist_ok=True)\n\n# 1) Processed spectral library (product of the metadata/peak processing pipelines)\nfrom matchms.exporting import save_as_json as _export_save_as_json\n_export_save_as_json(\n    spectrums,\n    _export_os.path.join(_export_dir, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.json\"),\n)\n\n# 2) All-pairs Modified Cosine results (survives in scores/scores_array)\n_export_np.savez(\n    _export_os.path.join(_export_dir, \"modified_cosine_scores.npz\"),\n    ModifiedCosine_score=scores_array[\"ModifiedCosine_score\"],\n    ModifiedCosine_matches=scores_array[\"ModifiedCosine_matches\"],\n)\n\n# 3) Spectrum identifiers to interpret matrix indices (positional order of spectrums)\nwith open(_export_os.path.join(_export_dir, \"spectrum_identifiers.csv\"),\n          \"w\", newline=\"\", encoding=\"utf-8\") as _export_fh:\n    _export_writer = _export_csv.writer(_export_fh)\n    _export_writer.writerow([\"spectrum_index\", \"inchikey\", \"smiles\"])\n    for _export_i, _export_s in enumerate(spectrums):\n        _export_writer.writerow([_export_i, _export_s.get(\"inchikey\"), _export_s.get(\"smiles\")])\n\n# 4) Top modified-cosine matches for the inspected spectrum spectrums[97] (last surviving best_matches)\nwith open(_export_os.path.join(_export_dir, \"best_matches_spectrum_97.csv\"),\n          \"w\", newline=\"\", encoding=\"utf-8\") as _export_fh:\n    _export_writer = _export_csv.writer(_export_fh)\n    _export_writer.writerow([\"rank\", \"smiles\", \"inchikey\",\n                             \"ModifiedCosine_score\", \"ModifiedCosine_matches\"])\n    for _export_i, _export_match in enumerate(best_matches):\n        _export_writer.writerow([_export_i,\n                                 _export_match[0].get(\"smiles\"),\n                                 _export_match[0].get(\"inchikey\"),\n                                 float(_export_match[1][\"ModifiedCosine_score\"]),\n                                 int(_export_match[1][\"ModifiedCosine_matches\"])])\n",
+      "unresolved_assumptions": [
+        "Whether the installed matchms version exports `save_as_json` and produces `scores_by_query` tuples whose second element supports the dict-style key access used by the source; the export code relies on the same access patterns the source itself uses.",
+        "Whether the spectrums[97] match list is non-empty at runtime (the source narrative labels it a weak-match case); the CSV would then be header-only.",
+        "Actual matrix size, library spectrum count, runtime and memory footprint of the pairwise score computation under the given CPU/memory limits are unverified and remain execution-stage questions."
+      ]
+    },
+    "source": {
+      "id": "matchms-spectral-matching",
+      "license": "Mixed repository notices: MIT book-producing code; CC BY-NC-SA 4.0 rendered book/artwork. Notebook coverage requires review.",
+      "provenance": {
+        "data_lineage": "GNPS NIH natural-products spectral library; source data file is about 39 MB.",
+        "data_redistribution_review": "Not independently established; no automatic public release. Raw notebook and generated data/task bundles remain private pending source-specific review.",
+        "input_preservation": "Original notebook bytes; no cell edits, input reductions or task design supplied by the operator.",
+        "notebook": {
+          "git_blob_sha1": "89b87a1d0156a63e60d1dbaca1233b9041658add",
+          "license": "Mixed repository notices: MIT book-producing code; CC BY-NC-SA 4.0 rendered book/artwork. Notebook coverage requires review.",
+          "license_url": "https://github.com/matchms/matchms-docs/blob/796f156c58d25adfb7e1528fcb24eb8c40c143a5/LICENSE.txt",
+          "revision": "796f156c58d25adfb7e1528fcb24eb8c40c143a5",
+          "sha256": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d",
+          "url": "https://github.com/matchms/matchms-docs/blob/796f156c58d25adfb7e1528fcb24eb8c40c143a5/notebooks/matchms_tutorial_01_building_analysis_pipeline.ipynb"
+        }
+      },
+      "source_revision": "796f156c58d25adfb7e1528fcb24eb8c40c143a5",
+      "source_sha256": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d",
+      "title": "Spectral processing and cosine/modified-cosine comparisons",
+      "url": "https://github.com/matchms/matchms-docs/blob/796f156c58d25adfb7e1528fcb24eb8c40c143a5/notebooks/matchms_tutorial_01_building_analysis_pipeline.ipynb"
+    }
+  },
+  "source_imports": {
+    "analysis": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 32,
+        "statement": "import os"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 33,
+        "statement": "import numpy as np"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 34,
+        "statement": "from matchms.importing import load_from_mgf"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 58,
+        "statement": "from matplotlib import pyplot as plt"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 72,
+        "statement": "from matchms.filtering import default_filters"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 73,
+        "statement": "from matchms.filtering import repair_inchi_inchikey_smiles"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 74,
+        "statement": "from matchms.filtering import derive_inchikey_from_inchi"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 75,
+        "statement": "from matchms.filtering import derive_smiles_from_inchi"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 76,
+        "statement": "from matchms.filtering import derive_inchi_from_smiles"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 77,
+        "statement": "from matchms.filtering import harmonize_undefined_inchi"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 78,
+        "statement": "from matchms.filtering import harmonize_undefined_inchikey"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 79,
+        "statement": "from matchms.filtering import harmonize_undefined_smiles"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 80,
+        "statement": "from matchms.filtering import add_precursor_mz"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 102,
+        "statement": "from matchms.filtering import normalize_intensities"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 103,
+        "statement": "from matchms.filtering import select_by_intensity"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 104,
+        "statement": "from matchms.filtering import select_by_mz"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 126,
+        "statement": "from matplotlib import pyplot as plt"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 140,
+        "statement": "from matchms.exporting import save_as_json"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 147,
+        "statement": "import pickle"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 156,
+        "statement": "from matchms import calculate_scores"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 157,
+        "statement": "from matchms.similarity import CosineGreedy"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 177,
+        "statement": "from rdkit import Chem"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 178,
+        "statement": "from rdkit.Chem import Draw"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 203,
+        "statement": "from matchms.similarity import ModifiedCosine"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 244,
+        "statement": "from rdkit import Chem"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 245,
+        "statement": "from rdkit.Chem import Draw"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 262,
+        "statement": "from rdkit import Chem"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 263,
+        "statement": "from rdkit.Chem import Draw"
+      }
+    ],
+    "exports": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 1,
+        "statement": "import os as _export_os"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 2,
+        "statement": "import csv as _export_csv"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 3,
+        "statement": "import numpy as _export_np"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 9,
+        "statement": "from matchms.exporting import save_as_json as _export_save_as_json"
+      }
+    ],
+    "scope": "Literal source statements and locations only; dynamic imports, native libraries and availability remain unverified."
+  },
+  "source_operations": {
+    "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+    "operations": [
+      {
+        "column": 12,
+        "end_column": 62,
+        "end_line": 36,
+        "function": "os.path.join",
+        "id": "call-36-12",
+        "line": 36,
+        "source": "os.path.join(os.path.dirname(os.getcwd()), \"data\")"
+      },
+      {
+        "column": 25,
+        "end_column": 53,
+        "end_line": 36,
+        "function": "os.path.dirname",
+        "id": "call-36-25",
+        "line": 36,
+        "source": "os.path.dirname(os.getcwd())"
+      },
+      {
+        "column": 41,
+        "end_column": 52,
+        "end_line": 36,
+        "function": "os.getcwd",
+        "id": "call-36-41",
+        "line": 36,
+        "source": "os.getcwd()"
+      },
+      {
+        "column": 11,
+        "end_column": 73,
+        "end_line": 37,
+        "function": "os.path.join",
+        "id": "call-37-11",
+        "line": 37,
+        "source": "os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf\")"
+      },
+      {
+        "column": 12,
+        "end_column": 41,
+        "end_line": 38,
+        "function": "list",
+        "id": "call-38-12",
+        "line": 38,
+        "source": "list(load_from_mgf(file_mgf))"
+      },
+      {
+        "column": 17,
+        "end_column": 40,
+        "end_line": 38,
+        "function": "load_from_mgf",
+        "id": "call-38-17",
+        "line": 38,
+        "source": "load_from_mgf(file_mgf)"
+      },
+      {
+        "column": 0,
+        "end_column": 55,
+        "end_line": 40,
+        "function": "print",
+        "id": "call-40-0",
+        "line": 40,
+        "source": "print(f\"{len(spectrums)} spectrums found and imported\")"
+      },
+      {
+        "column": 9,
+        "end_column": 23,
+        "end_line": 40,
+        "function": "len",
+        "id": "call-40-9",
+        "line": 40,
+        "source": "len(spectrums)"
+      },
+      {
+        "column": 13,
+        "end_column": 30,
+        "end_line": 46,
+        "function": "s.get",
+        "id": "call-46-13",
+        "line": 46,
+        "source": "s.get(\"inchikey\")"
+      },
+      {
+        "column": 18,
+        "end_column": 65,
+        "end_line": 47,
+        "function": "np.sum",
+        "id": "call-47-18",
+        "line": 47,
+        "source": "np.sum([1 for x in inchikeys if x is not None])"
+      },
+      {
+        "column": 0,
+        "end_column": 60,
+        "end_line": 48,
+        "function": "print",
+        "id": "call-48-0",
+        "line": 48,
+        "source": "print(f\"Found {int(found_inchikeys)} inchikeys in metadata\")"
+      },
+      {
+        "column": 15,
+        "end_column": 35,
+        "end_line": 48,
+        "function": "int",
+        "id": "call-48-15",
+        "line": 48,
+        "source": "int(found_inchikeys)"
+      },
+      {
+        "column": 9,
+        "end_column": 23,
+        "end_line": 50,
+        "function": "s.get",
+        "id": "call-50-9",
+        "line": 50,
+        "source": "s.get(\"inchi\")"
+      },
+      {
+        "column": 10,
+        "end_column": 25,
+        "end_line": 53,
+        "function": "s.get",
+        "id": "call-53-10",
+        "line": 53,
+        "source": "s.get(\"smiles\")"
+      },
+      {
+        "column": 20,
+        "end_column": 35,
+        "end_line": 56,
+        "function": "len",
+        "id": "call-56-20",
+        "line": 56,
+        "source": "len(s.peaks.mz)"
+      },
+      {
+        "column": 0,
+        "end_column": 34,
+        "end_line": 59,
+        "function": "plt.figure",
+        "id": "call-59-0",
+        "line": 59,
+        "source": "plt.figure(figsize=(5,4), dpi=150)"
+      },
+      {
+        "column": 0,
+        "end_column": 49,
+        "end_line": 60,
+        "function": "plt.hist",
+        "id": "call-60-0",
+        "line": 60,
+        "source": "plt.hist(numbers_of_peaks, 20, edgecolor=\"white\")"
+      },
+      {
+        "column": 0,
+        "end_column": 50,
+        "end_line": 61,
+        "function": "plt.title",
+        "id": "call-61-0",
+        "line": 61,
+        "source": "plt.title(\"Peaks per spectrum (before filtering)\")"
+      },
+      {
+        "column": 0,
+        "end_column": 41,
+        "end_line": 62,
+        "function": "plt.xlabel",
+        "id": "call-62-0",
+        "line": 62,
+        "source": "plt.xlabel(\"Number of peaks in spectrum\")"
+      },
+      {
+        "column": 0,
+        "end_column": 31,
+        "end_line": 63,
+        "function": "plt.ylabel",
+        "id": "call-63-0",
+        "line": 63,
+        "source": "plt.ylabel(\"Number of spectra\")"
+      },
+      {
+        "column": 15,
+        "end_column": 40,
+        "end_line": 83,
+        "function": "default_filters",
+        "id": "call-83-15",
+        "line": 83,
+        "source": "default_filters(spectrum)"
+      },
+      {
+        "column": 15,
+        "end_column": 53,
+        "end_line": 84,
+        "function": "repair_inchi_inchikey_smiles",
+        "id": "call-84-15",
+        "line": 84,
+        "source": "repair_inchi_inchikey_smiles(spectrum)"
+      },
+      {
+        "column": 15,
+        "end_column": 49,
+        "end_line": 85,
+        "function": "derive_inchi_from_smiles",
+        "id": "call-85-15",
+        "line": 85,
+        "source": "derive_inchi_from_smiles(spectrum)"
+      },
+      {
+        "column": 15,
+        "end_column": 49,
+        "end_line": 86,
+        "function": "derive_smiles_from_inchi",
+        "id": "call-86-15",
+        "line": 86,
+        "source": "derive_smiles_from_inchi(spectrum)"
+      },
+      {
+        "column": 15,
+        "end_column": 51,
+        "end_line": 87,
+        "function": "derive_inchikey_from_inchi",
+        "id": "call-87-15",
+        "line": 87,
+        "source": "derive_inchikey_from_inchi(spectrum)"
+      },
+      {
+        "column": 15,
+        "end_column": 51,
+        "end_line": 88,
+        "function": "harmonize_undefined_smiles",
+        "id": "call-88-15",
+        "line": 88,
+        "source": "harmonize_undefined_smiles(spectrum)"
+      },
+      {
+        "column": 15,
+        "end_column": 50,
+        "end_line": 89,
+        "function": "harmonize_undefined_inchi",
+        "id": "call-89-15",
+        "line": 89,
+        "source": "harmonize_undefined_inchi(spectrum)"
+      },
+      {
+        "column": 15,
+        "end_column": 53,
+        "end_line": 90,
+        "function": "harmonize_undefined_inchikey",
+        "id": "call-90-15",
+        "line": 90,
+        "source": "harmonize_undefined_inchikey(spectrum)"
+      },
+      {
+        "column": 15,
+        "end_column": 41,
+        "end_line": 91,
+        "function": "add_precursor_mz",
+        "id": "call-91-15",
+        "line": 91,
+        "source": "add_precursor_mz(spectrum)"
+      },
+      {
+        "column": 15,
+        "end_column": 46,
+        "end_line": 107,
+        "function": "normalize_intensities",
+        "id": "call-107-15",
+        "line": 107,
+        "source": "normalize_intensities(spectrum)"
+      },
+      {
+        "column": 15,
+        "end_column": 65,
+        "end_line": 108,
+        "function": "select_by_intensity",
+        "id": "call-108-15",
+        "line": 108,
+        "source": "select_by_intensity(spectrum, intensity_from=0.01)"
+      },
+      {
+        "column": 15,
+        "end_column": 61,
+        "end_line": 109,
+        "function": "select_by_mz",
+        "id": "call-109-15",
+        "line": 109,
+        "source": "select_by_mz(spectrum, mz_from=10, mz_to=1000)"
+      },
+      {
+        "column": 13,
+        "end_column": 35,
+        "end_line": 118,
+        "function": "metadata_processing",
+        "id": "call-118-13",
+        "line": 118,
+        "source": "metadata_processing(s)"
+      },
+      {
+        "column": 13,
+        "end_column": 31,
+        "end_line": 119,
+        "function": "peak_processing",
+        "id": "call-119-13",
+        "line": 119,
+        "source": "peak_processing(s)"
+      },
+      {
+        "column": 13,
+        "end_column": 30,
+        "end_line": 121,
+        "function": "s.get",
+        "id": "call-121-13",
+        "line": 121,
+        "source": "s.get(\"inchikey\")"
+      },
+      {
+        "column": 20,
+        "end_column": 35,
+        "end_line": 124,
+        "function": "len",
+        "id": "call-124-20",
+        "line": 124,
+        "source": "len(s.peaks.mz)"
+      },
+      {
+        "column": 0,
+        "end_column": 34,
+        "end_line": 127,
+        "function": "plt.figure",
+        "id": "call-127-0",
+        "line": 127,
+        "source": "plt.figure(figsize=(5,4), dpi=150)"
+      },
+      {
+        "column": 0,
+        "end_column": 49,
+        "end_line": 128,
+        "function": "plt.hist",
+        "id": "call-128-0",
+        "line": 128,
+        "source": "plt.hist(numbers_of_peaks, 20, edgecolor=\"white\")"
+      },
+      {
+        "column": 0,
+        "end_column": 49,
+        "end_line": 129,
+        "function": "plt.title",
+        "id": "call-129-0",
+        "line": 129,
+        "source": "plt.title(\"Peaks per spectrum (after filtering)\")"
+      },
+      {
+        "column": 0,
+        "end_column": 41,
+        "end_line": 130,
+        "function": "plt.xlabel",
+        "id": "call-130-0",
+        "line": 130,
+        "source": "plt.xlabel(\"Number of peaks in spectrum\")"
+      },
+      {
+        "column": 0,
+        "end_column": 31,
+        "end_line": 131,
+        "function": "plt.ylabel",
+        "id": "call-131-0",
+        "line": 131,
+        "source": "plt.ylabel(\"Number of spectra\")"
+      },
+      {
+        "column": 19,
+        "end_column": 92,
+        "end_line": 142,
+        "function": "os.path.join",
+        "id": "call-142-19",
+        "line": 142,
+        "source": "os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.json\")"
+      },
+      {
+        "column": 0,
+        "end_column": 41,
+        "end_line": 143,
+        "function": "save_as_json",
+        "id": "call-143-0",
+        "line": 143,
+        "source": "save_as_json(spectrums, file_export_json)"
+      },
+      {
+        "column": 21,
+        "end_column": 96,
+        "end_line": 149,
+        "function": "os.path.join",
+        "id": "call-149-21",
+        "line": 149,
+        "source": "os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.pickle\")"
+      },
+      {
+        "column": 0,
+        "end_column": 43,
+        "end_line": 151,
+        "function": "pickle.dump",
+        "id": "call-150-0",
+        "line": 150,
+        "source": "pickle.dump(spectrums, \n            open(file_export_pickle, \"wb\"))"
+      },
+      {
+        "column": 12,
+        "end_column": 42,
+        "end_line": 151,
+        "function": "open",
+        "id": "call-151-12",
+        "line": 151,
+        "source": "open(file_export_pickle, \"wb\")"
+      },
+      {
+        "column": 21,
+        "end_column": 50,
+        "end_line": 159,
+        "function": "CosineGreedy",
+        "id": "call-159-21",
+        "line": 159,
+        "source": "CosineGreedy(tolerance=0.005)"
+      },
+      {
+        "column": 9,
+        "end_column": 86,
+        "end_line": 160,
+        "function": "calculate_scores",
+        "id": "call-160-9",
+        "line": 160,
+        "source": "calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)"
+      },
+      {
+        "column": 15,
+        "end_column": 39,
+        "end_line": 164,
+        "function": "scores.scores.to_array",
+        "id": "call-164-15",
+        "line": 164,
+        "source": "scores.scores.to_array()"
+      },
+      {
+        "column": 15,
+        "end_column": 39,
+        "end_line": 167,
+        "function": "scores.scores.to_array",
+        "id": "call-167-15",
+        "line": 167,
+        "source": "scores.scores.to_array()"
+      },
+      {
+        "column": 15,
+        "end_column": 89,
+        "end_line": 172,
+        "function": "scores.scores_by_query",
+        "id": "call-172-15",
+        "line": 172,
+        "source": "scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)"
+      },
+      {
+        "column": 0,
+        "end_column": 35,
+        "end_line": 173,
+        "function": "print",
+        "id": "call-173-0",
+        "line": 173,
+        "source": "print([x[1] for x in best_matches])"
+      },
+      {
+        "column": 1,
+        "end_column": 19,
+        "end_line": 175,
+        "function": "x[0].get",
+        "id": "call-175-1",
+        "line": 175,
+        "source": "x[0].get(\"smiles\")"
+      },
+      {
+        "column": 17,
+        "end_column": 70,
+        "end_line": 180,
+        "function": "enumerate",
+        "id": "call-180-17",
+        "line": 180,
+        "source": "enumerate([x[0].get(\"smiles\") for x in best_matches])"
+      },
+      {
+        "column": 28,
+        "end_column": 46,
+        "end_line": 180,
+        "function": "x[0].get",
+        "id": "call-180-28",
+        "line": 180,
+        "source": "x[0].get(\"smiles\")"
+      },
+      {
+        "column": 8,
+        "end_column": 34,
+        "end_line": 181,
+        "function": "Chem.MolFromSmiles",
+        "id": "call-181-8",
+        "line": 181,
+        "source": "Chem.MolFromSmiles(smiles)"
+      },
+      {
+        "column": 4,
+        "end_column": 42,
+        "end_line": 182,
+        "function": "Draw.MolToFile",
+        "id": "call-182-4",
+        "line": 182,
+        "source": "Draw.MolToFile(m, f\"compound_{i}.png\")"
+      },
+      {
+        "column": 17,
+        "end_column": 91,
+        "end_line": 187,
+        "function": "scores.scores_by_query",
+        "id": "call-187-17",
+        "line": 187,
+        "source": "scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)"
+      },
+      {
+        "column": 21,
+        "end_column": 52,
+        "end_line": 205,
+        "function": "ModifiedCosine",
+        "id": "call-205-21",
+        "line": 205,
+        "source": "ModifiedCosine(tolerance=0.005)"
+      },
+      {
+        "column": 9,
+        "end_column": 86,
+        "end_line": 206,
+        "function": "calculate_scores",
+        "id": "call-206-9",
+        "line": 206,
+        "source": "calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)"
+      },
+      {
+        "column": 17,
+        "end_column": 93,
+        "end_line": 209,
+        "function": "scores.scores_by_query",
+        "id": "call-209-17",
+        "line": 209,
+        "source": "scores.scores_by_query(spectrums[5], name=\"ModifiedCosine_score\", sort=True)"
+      },
+      {
+        "column": 15,
+        "end_column": 39,
+        "end_line": 213,
+        "function": "scores.scores.to_array",
+        "id": "call-213-15",
+        "line": 213,
+        "source": "scores.scores.to_array()"
+      },
+      {
+        "column": 0,
+        "end_column": 34,
+        "end_line": 215,
+        "function": "plt.figure",
+        "id": "call-215-0",
+        "line": 215,
+        "source": "plt.figure(figsize=(6,6), dpi=150)"
+      },
+      {
+        "column": 0,
+        "end_column": 74,
+        "end_line": 216,
+        "function": "plt.imshow",
+        "id": "call-216-0",
+        "line": 216,
+        "source": "plt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"], cmap=\"viridis\")"
+      },
+      {
+        "column": 0,
+        "end_column": 24,
+        "end_line": 217,
+        "function": "plt.colorbar",
+        "id": "call-217-0",
+        "line": 217,
+        "source": "plt.colorbar(shrink=0.7)"
+      },
+      {
+        "column": 0,
+        "end_column": 49,
+        "end_line": 218,
+        "function": "plt.title",
+        "id": "call-218-0",
+        "line": 218,
+        "source": "plt.title(\"Modified Cosine spectra similarities\")"
+      },
+      {
+        "column": 0,
+        "end_column": 26,
+        "end_line": 219,
+        "function": "plt.xlabel",
+        "id": "call-219-0",
+        "line": 219,
+        "source": "plt.xlabel(\"Spectrum #ID\")"
+      },
+      {
+        "column": 0,
+        "end_column": 26,
+        "end_line": 220,
+        "function": "plt.ylabel",
+        "id": "call-220-0",
+        "line": 220,
+        "source": "plt.ylabel(\"Spectrum #ID\")"
+      },
+      {
+        "column": 0,
+        "end_column": 34,
+        "end_line": 225,
+        "function": "plt.figure",
+        "id": "call-225-0",
+        "line": 225,
+        "source": "plt.figure(figsize=(6,6), dpi=150)"
+      },
+      {
+        "column": 0,
+        "end_column": 140,
+        "end_line": 226,
+        "function": "plt.imshow",
+        "id": "call-226-0",
+        "line": 226,
+        "source": "plt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"] * (scores_array[:50, :50][\"ModifiedCosine_matches\"] >= min_match), cmap=\"viridis\")"
+      },
+      {
+        "column": 0,
+        "end_column": 24,
+        "end_line": 227,
+        "function": "plt.colorbar",
+        "id": "call-227-0",
+        "line": 227,
+        "source": "plt.colorbar(shrink=0.7)"
+      },
+      {
+        "column": 0,
+        "end_column": 63,
+        "end_line": 228,
+        "function": "plt.title",
+        "id": "call-228-0",
+        "line": 228,
+        "source": "plt.title(\"Modified Cosine spectra similarities (min_match=5)\")"
+      },
+      {
+        "column": 0,
+        "end_column": 26,
+        "end_line": 229,
+        "function": "plt.xlabel",
+        "id": "call-229-0",
+        "line": 229,
+        "source": "plt.xlabel(\"Spectrum #ID\")"
+      },
+      {
+        "column": 0,
+        "end_column": 26,
+        "end_line": 230,
+        "function": "plt.ylabel",
+        "id": "call-230-0",
+        "line": 230,
+        "source": "plt.ylabel(\"Spectrum #ID\")"
+      },
+      {
+        "column": 17,
+        "end_column": 94,
+        "end_line": 236,
+        "function": "scores.scores_by_query",
+        "id": "call-236-17",
+        "line": 236,
+        "source": "scores.scores_by_query(spectrums[11], name=\"ModifiedCosine_score\", sort=True)"
+      },
+      {
+        "column": 1,
+        "end_column": 19,
+        "end_line": 240,
+        "function": "x[0].get",
+        "id": "call-240-1",
+        "line": 240,
+        "source": "x[0].get(\"smiles\")"
+      },
+      {
+        "column": 17,
+        "end_column": 70,
+        "end_line": 247,
+        "function": "enumerate",
+        "id": "call-247-17",
+        "line": 247,
+        "source": "enumerate([x[0].get(\"smiles\") for x in best_matches])"
+      },
+      {
+        "column": 28,
+        "end_column": 46,
+        "end_line": 247,
+        "function": "x[0].get",
+        "id": "call-247-28",
+        "line": 247,
+        "source": "x[0].get(\"smiles\")"
+      },
+      {
+        "column": 8,
+        "end_column": 34,
+        "end_line": 248,
+        "function": "Chem.MolFromSmiles",
+        "id": "call-248-8",
+        "line": 248,
+        "source": "Chem.MolFromSmiles(smiles)"
+      },
+      {
+        "column": 4,
+        "end_column": 42,
+        "end_line": 249,
+        "function": "Draw.MolToFile",
+        "id": "call-249-4",
+        "line": 249,
+        "source": "Draw.MolToFile(m, f\"compound_{i}.png\")"
+      },
+      {
+        "column": 10,
+        "end_column": 31,
+        "end_line": 253,
+        "function": "s.get",
+        "id": "call-253-10",
+        "line": 253,
+        "source": "s.get(\"precursor_mz\")"
+      },
+      {
+        "column": 0,
+        "end_column": 32,
+        "end_line": 255,
+        "function": "np.where",
+        "id": "call-255-0",
+        "line": 255,
+        "source": "np.where(np.array(masses) > 600)"
+      },
+      {
+        "column": 9,
+        "end_column": 25,
+        "end_line": 255,
+        "function": "np.array",
+        "id": "call-255-9",
+        "line": 255,
+        "source": "np.array(masses)"
+      },
+      {
+        "column": 17,
+        "end_column": 94,
+        "end_line": 258,
+        "function": "scores.scores_by_query",
+        "id": "call-258-17",
+        "line": 258,
+        "source": "scores.scores_by_query(spectrums[97], name=\"ModifiedCosine_score\", sort=True)"
+      },
+      {
+        "column": 17,
+        "end_column": 70,
+        "end_line": 265,
+        "function": "enumerate",
+        "id": "call-265-17",
+        "line": 265,
+        "source": "enumerate([x[0].get(\"smiles\") for x in best_matches])"
+      },
+      {
+        "column": 28,
+        "end_column": 46,
+        "end_line": 265,
+        "function": "x[0].get",
+        "id": "call-265-28",
+        "line": 265,
+        "source": "x[0].get(\"smiles\")"
+      },
+      {
+        "column": 8,
+        "end_column": 34,
+        "end_line": 266,
+        "function": "Chem.MolFromSmiles",
+        "id": "call-266-8",
+        "line": 266,
+        "source": "Chem.MolFromSmiles(smiles)"
+      },
+      {
+        "column": 4,
+        "end_column": 42,
+        "end_line": 267,
+        "function": "Draw.MolToFile",
+        "id": "call-267-4",
+        "line": 267,
+        "source": "Draw.MolToFile(m, f\"compound_{i}.png\")"
+      }
+    ],
+    "source_sha256": "0524c9db731ca258d71e7af8fe0846312643b8ff1f02ce833162a6be4c5d6db0"
+  }
+}

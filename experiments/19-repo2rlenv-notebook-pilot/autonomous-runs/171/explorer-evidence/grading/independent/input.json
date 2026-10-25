@@ -1,0 +1,40 @@
+{
+  "environment": "certifi==2026.10.23\ncharset-normalizer==3.5.2\ncloudpickle==3.1.2\ncontourpy==1.4.0\ncycler==0.12.1\ndeprecated==3.0.0\nfonttools==4.67.0\nidna==3.20\njoblib==1.6.0\nkiwisolver==1.5.1\nllvmlite==0.44.0\nlxml==5.4.0\nmatchms==0.30.2\nmatplotlib==3.11.2\nnarwhals==2.27.1\nnetworkx==3.7\nnumba==0.61.2\nnumpy==2.2.6\npackaging==26.3\npandas==2.3.3\npickydict==0.5.0\npillow==13.0.0\npubchempy==1.0.5\npynndescent==0.6.0\npyparsing==3.3.3\npyteomics==5.0.1\npython-dateutil==3.0.0\npytz==2026.5\npyyaml==6.0.3\nrdkit==2024.9.6\nrequests==2.34.2\nscikit-learn==1.9.1\nscipy==1.18.1\nsix==1.17.0\nsparsestack==0.7.0\nthreadpoolctl==3.7.0\ntqdm==4.70.1\ntzdata==2026.5\nurllib3==2.8.0\nwrapt==2.5.1\n",
+  "input_paths": [
+    "GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf"
+  ],
+  "output_paths": [
+    "cosine_spectrum_5_min5.csv",
+    "cosine_spectrum_5_top10.csv",
+    "modified_cosine_spectrum_11_min5.csv",
+    "modified_cosine_spectrum_5_min5.csv",
+    "modified_cosine_spectrum_97_min5.csv",
+    "spectrum_identifiers.csv"
+  ],
+  "paths": {
+    "inputs": "/work/task-inputs",
+    "working_directory": "/work/probe"
+  },
+  "policy": {
+    "dependency_answers": "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "supplied_intermediates": "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  },
+  "public_instruction": "# Spectral similarity analysis of the GNPS-NIH natural-products MS/MS library\n\n## Input\n`inputs/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf` \u2014 the GNPS-NIH natural-products MS/MS spectral library in Mascot Generic Format (~39 MB, 1267 spectra). Spectra appear in a deterministic file order; every positional reference below is a 0-based index into this order (index 0 = first spectrum in the file). The raw file's library-declared inchikey/inchi fields are mostly undefined; do not pre-filter or discard spectra for that reason \u2014 identifiers are recovered by the metadata chain below. No spectra are excluded for any other reason; the population of every output is the full parsed library.\n\n## Processing pipeline (matchms tutorial \"spectral processing and similarity search\" preset)\nUse of matchms (~0.30) is permitted; any implementation producing the same filtered spectra, matched peak assignments, scores and counts is equally acceptable.\n\n1. **Parse** all spectra from the MGF in file order, keeping all metadata.\n2. **Metadata processing** (per spectrum, in this order): standard metadata-cleanup defaults; repair of identifier entries stored in wrong fields; convert between SMILES / InChI / inchikey wherever possible; harmonize undefined entries of each to the empty string; set `precursor_mz` from the PEPMASS field.\n3. **Peak processing** (per spectrum, in this order): normalize all peak intensities by dividing by the maximum peak intensity; retain peaks whose normalized intensity is \u2265 0.01; retain peaks whose m/z is within [10, 1000] inclusive.\n\n## Similarity measures\nFor each (query, library-spectrum) pair compute a (score, matched_peak_count) result under each measure, with m/z-match tolerance **0.005** (inclusive), intensity power 1, m/z power 0:\n\n- **CosineGreedy score** \u2014 candidate peak pairs are (query peak, library peak) with |\u0394m/z| \u2264 0.005, no mass shift. Pool all candidate pairs, sort by descending product of normalized intensities, and greedily assign indices to distinct peaks of each spectrum (each peak used at most once). Score = (sum of intensity products over assigned pairs) / (\u221a(\u03a3 query intensities\u00b2) \u00b7 \u221a(\u03a3 library intensities\u00b2)).\n- **Modified cosine score** (Watrous et al., PNAS 2012) \u2014 as above, but candidate peak pairs are additionally assessed under a constant mass shift equal to the difference in precursor-m/z of the two spectra; unshifted and shifted candidates are pooled in the same greedy assignment. Requires `precursor_mz` on every spectrum (set in Step 2).\n\nScores are raw floats in [0, ~1], possibly marginally above 1 by floating-point rounding; report raw values without clamping.\n\n## Per-query match lists\nFor each specified query, rank **all** library spectra by score descending (the query itself competes and typically appears as the top self-match).\n\n## Required outputs\nWrite these CSV files (UTF-8, one header row, standard minimal quoting) into the output directory:\n\n1. `spectrum_identifiers.csv` \u2014 one row per input spectrum, in file order:\n   `spectrum_index,inchikey,smiles`\n   (values after Steps 2\u20133; empty string for unavailable fields)\n2. `cosine_spectrum_5_top10.csv` \u2014 query at file-order index 5, CosineGreedy score, top 10 by score, no other filter:\n   `rank,matched_spectrum_index,inchikey,smiles,cosine_score,matched_peak_count`\n3. `cosine_spectrum_5_min5.csv` \u2014 same schema and query, restricted to matches with \u2265 5 matched peaks, top 10 by score.\n4. `modified_cosine_spectrum_5_min5.csv` \u2014 same schema (cosine_score = modified cosine score), query index 5, matches with \u2265 5 matched peaks, top 10 by score.\n5. `modified_cosine_spectrum_11_min5.csv` \u2014 as Output 4, query index 11.\n6. `modified_cosine_spectrum_97_min5.csv` \u2014 as Output 4, query index 97.\n\nConventions:\n- `rank` is the 0-based position after sorting by score descending (rank 0 = highest-scoring match).\n- `matched_spectrum_index` is the 0-based file-order index of the matched library spectrum.\n- `inchikey`/`smiles` in match tables are those of the matched spectrum after Steps 2\u20133 (identical to the corresponding row of `spectrum_identifiers.csv`).\n- `matched_peak_count` is an integer; `cosine_score` is a raw float.\n- If fewer than 10 spectra satisfy a table's filter, emit only those rows.\n- Each match table requires only the query-vs-all-library rows (computing the full library-vs-library matrix is also acceptable).\n\n## Environment / constraints\n- Offline, no network access.\n- 4 CPUs, 8 GB RAM, 600-second wall-clock budget.\n- Supplied environment (for convenience): matchms 0.30.2, rdkit 2024.9.6, numpy 2.2.6 on Python 3.13. The tolerance, peak-processing thresholds and match-list filters must not be altered.",
+  "reference_seconds": 600
+}
