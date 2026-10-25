@@ -66,10 +66,14 @@ def generation_ready(root):
             "generation_plan_sha256": sha(root / "plan.json"),
             "generation_evidence": bindings,
             "connector_sha256": sha(Path(__file__)),
-            **({
-                "read_only_completed_import": True,
-                "original_generation_code_identity": plan["generation_code_identity"],
-                "consumer_generation_code_identity": resources.code_identity(),
-            } if imported else {}),
+            **(
+                {
+                    "read_only_completed_import": True,
+                    "original_generation_code_identity": plan["generation_code_identity"],
+                    "consumer_generation_code_identity": resources.code_identity(),
+                }
+                if imported
+                else {}
+            ),
         },
     }

@@ -128,7 +128,8 @@ def cache_bindings(native, raw, cache):
         root = roots[0]
         require(
             re.fullmatch(r"[A-Za-z0-9_.-]+__[A-Za-z0-9_.-]+", root.name)
-            and root.is_dir() and not root.is_symlink(),
+            and root.is_dir()
+            and not root.is_symlink(),
             "Unsafe bootstrap repository cache",
         )
         matches = sorted(p for p in root.iterdir() if p.name.startswith(short[:12]))
