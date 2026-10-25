@@ -1,0 +1,24 @@
+{
+  "assessment": "Overall the proposal is scientifically defensible and source-faithful. Verified against bioframe 0.8.0 package source: narrowPeak/jaspar/bed3 schema field orders, overlap defaults (how=\"left\", keep_order=True, left rows retained with null right side), subtract semantics (left overlap vs complement, drop fully-subtracted, split partial rows, replicate annotation columns, reset index), expand padding both sides, and read_table defaults (tab/no-header/gzip) all match the handoff's claims and the public brief. The reference CSV header confirms the column-identity map and empty-string missing encoding. Endpoint selection preserves all eligible branches (final filtered table, no-motif fraction, fc-vs-motif-pval Pearson correlation, reverse motif-to-peak association curve with row multiplicity); the excluded histograms are source-backed diagnostics whose motivating effects are retained as graded endpoints. The brief stands alone, defines populations, overlap rule, tie handling, duplicate-coordinate grouping and missing-value encoding precisely, and withholds private reference values. Uncalibrated tolerances and pending construction-run recomputation of endpoints 2-4 are correctly deferred to executable validation and do not block at specification stage. One correctable contract defect remains: the Output 1 grading rules are internally contradictory on tied argmax motifs - the brief promises tie-agnostic acceptance while the drafted rules simultaneously require strict row-multiset equality with the reference, and the calibration/adversarial-probe list contains no tie-substitution probe to resolve the conflict. This must be settled before grading rules are frozen (e.g., exact comparison of peak-side fields plus validity of motif fields against the input motif population as an overlapping motif with pval equal to the peak's maximum overlapping pval), or a measurement establishing that no peak has a tied argmax (in which case the rules coincide and the coincidence should be recorded).",
+  "disposition": "revise",
+  "findings": [
+    {
+      "evidence": [
+        {
+          "path": "proposal/task_brief",
+          "quote": "If several overlapping motifs share the maximum `pval`, report any one of them (the grader accepts any such tied choice)."
+        },
+        {
+          "path": "proposal/validation_handoff",
+          "quote": "Row-multiset equality with the reference after numeric normalization (chrom/strand exact strings; start/end/pval integer-valued; fc decimal; empty fields must align exactly with null motif assignments)."
+        },
+        {
+          "path": "proposal/validation_handoff",
+          "quote": "(iii) reported `motif_pval` equals the maximum `pval` among motifs overlapping the *original* peak interval, and the reported motif is one of the tied-argmax motifs overlapping that peak (validates tie-agnostic acceptance);"
+        }
+      ],
+      "problem": "The Output 1 grading rules are internally contradictory for tied argmax motifs. The public brief promises the solver that any tied choice is accepted, but the drafted grading rule also requires strict row-multiset equality with the reference, which would fail any solver that selects a different legitimate tied-argmax motif. With roughly 61 motif-populated reference rows per distinct pval value (34,792 populated rows over 567 distinct pvals, per output-audit.json) and many peaks carrying multiple overlapping motifs, tied maximum-pval motifs are at least highly plausible; a strict multiset rule would then reject scientifically correct answers and contradict the solver-facing contract. The calibration plan's adversarial probes (wrong populations, wrong filters, wrong statistics, wrong curve semantics, missing handling, tolerance, permutation) include no tie-substitution probe, so the conflict could survive construction unnoticed.",
+      "required_change": "Resolve the Output 1 comparison rule to be internally consistent before freezing grading rules: either (a) replace strict row-multiset equality on motif fields with a tie-agnostic comparison - exact equality on peak-side fields (chrom/start/end/fc) and empty-field alignment, plus validity of motif fields verified directly against the supplied motif population (the reported motif must be an input motif record overlapping the original peak interval, with pval equal to the maximum pval among overlapping motifs) - and add an explicit tie-substitution adversarial probe (a valid alternative tied-argmax motif choice must pass) to the calibration requirements; or (b) measure whether any peak record actually has a tied argmax in the executed data (feasible during the construction run), and if none exists, record that the strict and tie-agnostic rules coincide on this input so both rules are equivalent as graded. In either case the solver-facing promise and the grader's implemented comparison must agree as written."
+    }
+  ]
+}

@@ -4878,3 +4878,8 @@ Campaign 173 was submitted after the exact 219-file freeze/readback, verificatio
 
 
 The unchanged admitted-source auditors checked144 with fresh four-owner absence and all original archive/root/claim/source identities. Each full profile was first bounded for7500seconds, then every source-verified closed session plus300seconds at both ends. Retain1USDagainst0.63200735800163USD, releasing3 from its previous4 hold. Live primary pricing still matches the pinned resource rates; no credits or free storage are assumed. Aggregate197held/3unallocated within200authorized once, including173's unchanged5. No scientific outcome, runtime, resource or future reservation guard changed. Proofs:panel-rounds/077/sdk-144-applied.json andclosed-144-applied.json.
+
+
+## 25 October 2026 — preserve the actual 173 network-control failure
+
+173 completed source-only setup/replay, review/revision/fresh-review and construction, then stopped before the grading model during offline-network initialization. Provider readback said blocked, but both completed TCP probes connected. The controller correctly refused further execution. Propagation delay versus ineffective provider enforcement is unestablished; this is infrastructure, not a source or scientific rejection. Original31.36pipeline minutes/84requests,1,038science files/60,096,712bytes,61root files/1,228,807bytes and fresh four-owner absence are verified. No native attempt, accepted controls or release.169remains the selected completed Bioframe outcome. Original data and failures are preserved before any general change.
