@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "structure",
+      "passed": true,
+      "message": "all four files are readable single-row CSVs with unique non-empty header names and finite-or-empty numeric fields (hrv_freq.csv: 10 columns, hrv_indices.csv: 95 columns, hrv_nonlinear.csv: 60 columns, hrv_time.csv: 25 columns)"
+    },
+    {
+      "id": "hrv_time_values",
+      "passed": true,
+      "message": "all 21 value column(s) and 4 undefined/empty column(s) match within |s-r| <= 1e-09 + 1e-09*|r|"
+    },
+    {
+      "id": "hrv_freq_values",
+      "passed": true,
+      "message": "all 9 value column(s) and 1 undefined/empty column(s) match within |s-r| <= 1e-09 + 1e-09*|r|"
+    },
+    {
+      "id": "hrv_nonlinear_values",
+      "passed": true,
+      "message": "all 60 value column(s) and 0 undefined/empty column(s) match within |s-r| <= 1e-09 + 1e-09*|r|"
+    },
+    {
+      "id": "hrv_indices_values",
+      "passed": true,
+      "message": "all 90 value column(s) and 5 undefined/empty column(s) match within |s-r| <= 1e-09 + 1e-09*|r|"
+    },
+    {
+      "id": "combined_consistency",
+      "passed": true,
+      "message": "combined table contains exactly the union of the 95 domain index columns with matching values and empty-field statuses"
+    }
+  ]
+}
