@@ -4609,3 +4609,7 @@ Freeze160againstpublicruntimed4ba7374withoriginal158notebook/seed/noticesbytes. 
 ### 2026-10-25 — verify undispatched Matchms157 allowances
 
 The unchanged unused-stage auditor verifies a terminal infrastructure failure, one dispatched setup stage, complete original archive/root readback and fresh exact-ID/owner absence. Retain its full $1 used-stage allowance; release four never-dispatched stages. Aggregate holds are $192 with $8 unallocated, within the same $200 authorization. No actual invoice/credit claim and no scientific outcome changed. Existing159/160 continue; a new campaign still requires a free pool slot and explicit ledger allocation. See panel-rounds/051.
+
+### 2026-10-25 — current converter across all ten original sources
+
+All ten hash-pinned original notebook inputs pass deterministic repeat conversion and ordered-code equivalence. The0.64second local metadata/source check executed no scientific code and created no models or resources. Initial arbitrary-ID filename reporting failure and partial receipts remain preserved. This strengthens source handling evidence only; it does not replace current-version reference/scientific runs. See panel-rounds/053.
