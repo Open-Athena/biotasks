@@ -1,0 +1,9 @@
+# Specification boundary: evidence and an unadopted simplification
+
+The frozen221-file round has two independent-domain examples:177 and178. Both original references and clean replays passed, and both independent reviews accepted the core scientific endpoints/populations. Each exhausted its single quality revision before construction. Remaining defects were generated comparison/probe guidance, not source failures.178's threshold/metadata distinctions are independently corroborated in the exact frozen package sources. Retain the original rejected outcomes.
+
+A possible general change is to make specification own the public biological objective, methodology/preset, input/output identities and source coverage. Its private handoff would preserve source-backed facts and unresolved validation questions, without prescribing unexecuted negative probes, exact equality modes, numerical tolerances or exhaustive implementation-default explanations. Prefer the chosen reference preset to guessing internals that the source never specified.
+
+Executable grading would continue to own comparison rules, empirical calibration, conforming representation alternatives and meaningful scientific negatives. A defective public scientific contract would still block construction. Deterministic final controls, source coverage, answer isolation, native reference/empty controls and the blind solver attempt remain mandatory. Deferral must not be used to accept a known invalid comparator or publish an unvalidated task.
+
+This is under consideration, not an adopted prompt change or extra repair allowance. Continue the frozen scientific runtime across the remaining domains before selecting a revision. Compare any future general change on the same original sources, preserving failures and measuring scientifically qualified yield, rejection reasons, runtime and recorded requests. No seed-specific method patch, tolerance weakening or new model/resource allowance is proposed.
