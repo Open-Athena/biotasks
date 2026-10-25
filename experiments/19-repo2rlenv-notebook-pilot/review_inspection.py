@@ -17,6 +17,7 @@ from reference_replay import sha256
 class ReviewInspection:
     def __init__(self, snapshot, root, deadline):
         self.root, self.deadline, self.executions = root, deadline, None
+        self.snapshot = snapshot
         reference = snapshot["directory"]
         evidence = {}
         identities = {}
@@ -45,6 +46,41 @@ class ReviewInspection:
             "inspection_evidence_sha256": identities,
         }
         (root / "identities.json").write_text(json.dumps(self.context, indent=2) + "\n")
+
+    async def prepare_asset_value_hints(self):
+        """Surface matches against final outputs, including recovered endpoints."""
+        if "asset_value_hints" in self.context:
+            return
+        from asset_value_hints import build_hints
+
+        snapshot = self.snapshot
+
+        def recorded(name):
+            if name not in snapshot["hashes"]:
+                return None
+            path = snapshot["directory"] / name
+            if sha256(path) != snapshot["hashes"][name]:
+                raise ValueError("Reviewer installed-asset evidence identity changed: " + name)
+            return json.loads(path.read_text())
+
+        summary = recorded("trial/dependency-assets-summary.json")
+        if summary is None:
+            hints = {
+                "status": "installed_asset_summary_unavailable",
+                "findings": [],
+                "scope": "Missing recorded catalog is a gap, not answer-isolation approval.",
+            }
+        else:
+            applied = recorded("trial/dependency-exclusions-applied.json")
+            exclusions = (
+                applied["files"] if applied and applied.get("excluded_files_absent") else []
+            )
+            hints = await build_hints(
+                self.packages, self.references, summary["priority_matches"], exclusions
+            )
+        self.context["asset_value_hints"] = hints
+        (self.root / "asset-value-hints.json").write_text(json.dumps(hints, indent=2) + "\n")
+        (self.root / "identities.json").write_text(json.dumps(self.context, indent=2) + "\n")
 
     def refresh_execution_evidence(self, roots):
         from execution_inspection import ExecutionInspection

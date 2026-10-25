@@ -1,0 +1,63 @@
+{
+  "observed_at": "2026-10-25T01:50:11.154386+00:00",
+  "status": "offline_checks_and_three_domain_readonly_replay_passed",
+  "tests": 216,
+  "pytest_seconds": 6.87,
+  "guarded_elapsed_seconds": 8.09,
+  "peak_rss_kib": 164436,
+  "ruff": "passed",
+  "canonical_prompt_readback": "passed",
+  "identities": {
+    "experiments/19-repo2rlenv-notebook-pilot/asset_value_hints.py": "c6299df6fe99c0bb4cf90b746759f98b13b1c23255e7d1d125b6348893b24401",
+    "experiments/19-repo2rlenv-notebook-pilot/test_asset_value_hints.py": "7df722d8e6eeba537fdf713a7cd2cf19dc460757d31b86988b4de71eb9b51541",
+    "experiments/19-repo2rlenv-notebook-pilot/review_inspection.py": "9aadba375211e91a612dd117142dc29aa773264279efdd305f09a69ff96a711e",
+    "experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py": "325e428aef16dbb5dd197f6b7ebf7b12efc69a6083479996157b4a4e335466bd",
+    "experiments/19-repo2rlenv-notebook-pilot/grading_session.py": "88eda9882212ac12be2c2ef25c5e24d8c608ad031a399dbc1a59a57d5ce3357f",
+    "experiments/19-repo2rlenv-notebook-pilot/factory-checks/asset-value-hints/replay_archived.py": "45aa854cde7180f3a1c2ebc11780d661a38f34ffbcbf3779c3467ebcb19f8e15",
+    "src/biotasks/prompts/notebook-grader-review.md": "49d3e2bec28a42db568512f4228499cab130ca93bfda6bcadf3d65b8cfefc91d"
+  },
+  "replay_cases": [
+    {
+      "campaign": 156,
+      "original_archive_manifest_sha256": "4bb69138b27523236507215a1e6a6fda2264207d6d32f12e03eb53a7f3dacb14",
+      "replay_record_sha256": "f54cedc1e05663eb943f26778f48a1d20352203108786bb129ad6c3826c123a5",
+      "priority_candidates": 52,
+      "hash_matched_python_files_inspected": 45,
+      "findings": 1,
+      "final_output_files_inspected": 5,
+      "seconds": 3.263,
+      "limitations": "Only retained release sources, priority Python literals and final CSV/TSV cells. Zero findings do not establish answer absence.",
+      "known_missed_fixture_surfaced": true,
+      "finding_id": "34627292f632dff057502d407c09fe1cccd1de3b0085437845b6f250dfafe84b"
+    },
+    {
+      "campaign": 147,
+      "original_archive_manifest_sha256": "c40a85a9b281702ad44dc53d3c02586b118ece69376419efc57b51be746c50cb",
+      "replay_record_sha256": "e0cd586e50ca442044b9f929ed062f336d8ae6138197604b5394edc18bb3cc02",
+      "priority_candidates": 0,
+      "hash_matched_python_files_inspected": 0,
+      "findings": 0,
+      "final_output_files_inspected": 2,
+      "seconds": 0.004,
+      "limitations": "Only retained release sources, priority Python literals and final CSV/TSV cells. Zero findings do not establish answer absence."
+    },
+    {
+      "campaign": 145,
+      "original_archive_manifest_sha256": "dafa0943125440aaf8471d407bb48cc3134a45d23efaca7f7d7264a16093d646",
+      "replay_record_sha256": "e87433c9c34ecc7de3bb896c0c102be22dce92473fbbd80cd6032dd0fbcae4fa",
+      "priority_candidates": 0,
+      "hash_matched_python_files_inspected": 0,
+      "findings": 0,
+      "final_output_files_inspected": 1,
+      "seconds": 0.151,
+      "limitations": "Only retained release sources, priority Python literals and final CSV/TSV cells. Zero findings do not establish answer absence."
+    }
+  ],
+  "development_observations": [
+    "Initial test collection lacked existing upstream site-packages on the local test path; environment corrected without installation or runtime change.",
+    "An old async shell-budget test stalled inside the execution sandbox; the identical single test passed elevated in2.45s. The task-owned stalled group was stopped; no broad-suite pass was claimed for that interrupted invocation. Affected suites subsequently passed elevated.",
+    "First archived replay produced1181findings dominated by integer-valued frame/angle constants. Its original observation and prefilter helper are retained privately. General non-integral-literal filtering yields1finding on156, and0on147/145. No answer values, paths or seed names are hardcoded in runtime logic."
+  ],
+  "scope": "Advisory discovery and typed per-finding consideration, not scientific equivalence or grading. No model, task edit, scientific recomputation, provider sandbox or fresh pipeline run in this evidence.",
+  "live_validation_pending": true
+}

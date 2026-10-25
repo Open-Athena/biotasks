@@ -21,6 +21,7 @@ from grading_protocol import (
     check_coverage,
     check_probes,
     check_repair_inventory,
+    check_review_asset_hints,
     check_review_scientific_admission,
     check_review_source_coverage,
     control_summary,
@@ -1070,11 +1071,16 @@ async def run_grading(
             record_name=None,
         ):
             if inspection:
+                await inspection.prepare_asset_value_hints()
                 inspection.refresh_execution_evidence(observation_roots)
 
             async def validate_review(value):
                 check_review_source_coverage(value)
                 check_review_scientific_admission(value, session.paths)
+                check_review_asset_hints(
+                    value,
+                    inspection.context["asset_value_hints"]["findings"] if inspection else [],
+                )
                 if inspection and "question_issues" not in value.model_fields_set:
                     raise ValueError("Explicitly assess question_issues in this review")
                 question = context["specification"]["task_brief"]

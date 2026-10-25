@@ -153,6 +153,19 @@ class ScientificAdmission(StrictModel):
     answer_isolation: ScientificAudit
 
 
+class AssetValueAssessment(StrictModel):
+    hint_id: str = Field(pattern=r"^[0-9a-f]{64}$")
+    decision: Literal["unrelated", "answer_exposure", "unresolved"]
+    rationale: str = Field(min_length=1)
+    evidence: list[str] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def explicit_evidence(self):
+        if any(not v.strip() for v in [self.rationale, *self.evidence]):
+            raise ValueError("Explain each installed-asset value hint with explicit evidence")
+        return self
+
+
 class Review(StrictModel):
     decision: Literal["accept_for_packaging", "revise", "blocked"]
     rationale: str = Field(min_length=1)
@@ -164,10 +177,23 @@ class Review(StrictModel):
     question_issues: list[PublicQuestionIssue] = Field(default_factory=list)
     # Historical reviews remain readable; the live controller requires this.
     scientific_admission: ScientificAdmission | None = None
+    asset_value_assessments: list[AssetValueAssessment] = Field(default_factory=list)
 
 
 class LiveReview(Review):
     scientific_admission: ScientificAdmission
+
+
+def check_review_asset_hints(review, findings):
+    """Require explicit consideration, without declaring numeric matches answers."""
+    expected = {row["hint_id"] for row in findings}
+    observed = [row.hint_id for row in review.asset_value_assessments]
+    if len(set(observed)) != len(observed) or set(observed) != expected:
+        raise ValueError("Explicitly assess every supplied asset value hint exactly once")
+    if review.decision == "accept_for_packaging" and any(
+        row.decision != "unrelated" for row in review.asset_value_assessments
+    ):
+        raise ValueError("Acceptance cannot retain answer exposure or unresolved asset value hints")
 
 
 def check_review_scientific_admission(review, output_paths):

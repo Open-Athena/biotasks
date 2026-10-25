@@ -84,6 +84,21 @@ earlier review covers it.
 Names/formats and test/example locations are discovery hints. Challenge
 dismissals based only on different bytes: provenance,
 rounding or serialization changes can leave a full scientific answer intact.
+When `asset_value_hints` is supplied, assess every finding exactly once in
+`asset_value_assessments`, using its `hint_id`, a decision (`unrelated`,
+`answer_exposure` or `unresolved`), rationale and evidence. These hints compare
+floating literals in hash-matched installed Python source with final CSV/TSV
+cells, including endpoints recovered after setup. They are discovery clues,
+not scientific equality tests or grading tolerances. Signs, shared constants,
+different inputs and unrelated methods can produce coincidences. Inspect the
+source around a matching literal and its actual computation/input provenance;
+do not dismiss an embedded expected value merely because it supplies only one
+requested cell rather than a whole output file. A negative search for one
+endpoint value does not clear findings for other endpoints. Approval requires
+every supplied hint to be justified as unrelated; exposure or uncertainty must
+block acceptance of the current environment. An empty finding list is not an
+exhaustive audit: read the stated coverage and gaps. This stage cannot claim a
+new exclusion was applied without fresh environment and reference evidence.
 An accessible fixture usable to check a requested answer is exposure even if
 the solver could also recompute the answer. Empty exclusions or passing controls
 do not override a known remaining fixture. Report unresolved exposure; do not
