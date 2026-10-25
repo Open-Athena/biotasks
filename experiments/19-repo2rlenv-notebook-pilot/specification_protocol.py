@@ -22,7 +22,7 @@ class TaskSpecification(StrictModel):
     )
     validation_handoff: str = Field(
         min_length=1,
-        description="Private proposed input derivations, comparison rules, evidence requirements and cross-output dependencies, or focused evidence requests when blocked. Distinguish proposals from validated rules; do not invent numerical tolerances.",
+        description="Private input derivations, endpoint lineage, scientific meaning/identity constraints and unresolved evidence questions. Executable comparator design, probe construction and tolerance calibration belong to later validation. No predicted pass/fail outcomes or invented numerical tolerances.",
     )
 
     @model_validator(mode="after")

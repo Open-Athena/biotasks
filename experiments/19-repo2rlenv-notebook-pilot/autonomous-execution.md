@@ -107,6 +107,18 @@ feedback withheld. Read-only package/reference inspection remains available.
 Blocking findings must quote supplied evidence exactly. This grounds findings;
 it is not a programmatic proof of their scientific correctness.
 
+The next-version specification prompt owns the scientific question, populations,
+methods, output schemas, source coverage and evidence-backed input derivations.
+It hands off scientific meaning, identity relationships and unresolved evidence
+questions. Executable comparator design, wrong/valid-alternative probes and
+tolerance calibration belong to the later grading stage, after materialization.
+Early review still blocks unsupported claims affecting the scientific target;
+it does not consume the revision allowance correcting hypothetical probe plans.
+The final independent implementation, scientific review, executable controls and
+native qualification remain required. This prompt change is not contained in
+the explicitly frozen original-runtime campaigns 177–184; its live scientific
+effect remains to be measured in a fresh campaign.
+
 A ready review permits construction. An explicit rejection stops the candidate.
 A correctable proposal can consume the existing single scientific quality-repair
 allowance here: GLM revises the complete proposal under the same source/policy,

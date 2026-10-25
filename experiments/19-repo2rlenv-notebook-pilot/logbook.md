@@ -5001,3 +5001,10 @@ Unchanged unused-stage audit released182's1USDnever-dispatched native allowance,
 Added narrow accounting profiles for current grading rejections and native failures before any supervisor dispatch.83focused offline checks pass; the first combined test run exposed a mutable test fixture, fixed by copying the expected-source mapping. Exact original182archive, source and four closed SDK lifetimes plus fresh cleanup bound resources at0.393646USD; retain1and release3of excessholds. Exact180frozen runner/non-dispatch proof plus four closed SDK sessions bound resources at0.611036USD; retain1and release4of excessholds. No invoice/credit claim, scientific outcome change or extra model/resource allowance.
 
 Reserve full5for original145PyMC184on explicit originalb0e1f4fruntime, empty reviewed delta, source/provenance only.200authorized once,198held/2available.183completed setup/replay and is in specification review. Current pipeline candidates remain unadopted by the frozen cases.
+
+
+### 2026-10-25 — Submit PyMC and separate specification from executable validation
+
+184submitted with full5USDreservation, exact original145source/provenance, originalb0e1f4fruntime and empty runtime delta. Typed pool admission found only183active; one new reserved CPU host, at most one task sandbox, all existing model/resource/time/repair limits unchanged. No earlier task/answer/setup hints supplied.183used its one specification revision, passed fresh review and entered construction;184entered setup.
+
+Next-version prompts now assign scientific quantities, populations, methods, input derivations, schemas and source coverage to specification; comparator algorithms, predicted mutation outcomes, executable probe design and tolerance calibration remain with downstream validation. Unsupported scientific claims still block, and later qualification is unchanged.36offline writer/reviewer/repair-routing checks pass; no live scientific improvement is claimed.177–184remain on their frozen original prompts. Final-endpoint installed-answer repair routing remains separate unfinished work.

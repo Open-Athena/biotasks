@@ -12,7 +12,17 @@ self-review is deliberately withheld. `evidence_text` names exact texts availabl
 for citation. Existing read-only package-source and reference-text tools can
 resolve consequential missing facts. You cannot run science or change artifacts.
 
-Check the whole proposal:
+Review the scientific definition and its supporting evidence. This stage does
+not approve an executable grading plan. A missing comparator, uncalibrated
+tolerance or untested hypothetical probe is later validation work, not grounds
+to reject an otherwise well-defined scientific question. Do not spend the
+proposal's revision allowance inventing or correcting a mutation suite. Record
+such downstream concerns in the assessment. If a handoff claim changes the
+scientific quantity, population, required inputs, identity rules or source
+coverage, it is within this review and can be blocking. Unsupported scientific
+claims do not become acceptable merely because they appear in private notes.
+
+Check:
 
 - Preserve the original methods, input populations and every eligible scientific
   branch. Check the source and narrative rather than assuming the initial exports
@@ -55,6 +65,11 @@ notebook broken merely because its generated proposal is defective.
 Each blocking finding must cite at least one exact nonempty quotation from a key
 in `evidence_text`, explain the problem and identify the required change. These
 quotes ground the finding; they do not by themselves prove its scientific claim.
+Explain how the defect affects the scientific task or its source fidelity. A
+contradiction confined to a proposed future comparator or hypothetical probe
+does not establish a defect in the scientific target. The later independent
+validation worker must build and test its own comparisons and controls; this
+review neither approves those suggestions nor bypasses that gate.
 You may cite the proposal's own unsupported claim and explain what evidence is
 missing. Keep observations, inference and unresolved gaps explicit. Return a
 concise assessment, not a stream of tentative calculations or a rewritten task.
