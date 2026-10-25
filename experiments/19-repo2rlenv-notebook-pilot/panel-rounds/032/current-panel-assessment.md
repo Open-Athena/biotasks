@@ -1,6 +1,6 @@
 # Current ten-source development assessment
 
-Latest independently archived scientific outcome per source, with subsequent infrastructure failures explicit below. These are development versions, not a common-version holdout or a success-rate estimate. Original failures and superseded runs remain preserved. No source-only runs are active.
+Latest independently archived scientific outcome per source, with subsequent infrastructure failures explicit below. These are development versions, not a common-version holdout or a success-rate estimate. Original failures and superseded runs remain preserved. Fresh source-only 158/159 are active and excluded from scientific outcome counts.
 
 | Domain | Source | Campaign | Pipeline minutes | Accounted model requests | Outcome |
 | --- | --- | --- | ---: | ---: | --- |
@@ -35,4 +35,6 @@ Fresh [156](../044/qualification-156.md) completed the same original MDAnalysis 
 
 Fresh [157](../045/failure-157.md) used the byte-identical general runtime on the unchanged Matchms seed. It stopped during setup on provider HTTP502 after26.83minutes/86requests. This is an infrastructure failure, not a scientific notebook rejection or a fresh qualified task. Complete794-file science/20-file host archives and original/fresh single-owner cleanup are verified. A general single-generation retry for502/503/504 now shares the existing timeout/connection allowance and passes107offlinechecks; live recovery remains untested. No task was manually fixed.
 
-All hosts are terminal and all eight corresponding sandbox owners/IDs absent. The [unchanged completed-run bound](../046/resource-bound-156.json) retains2USDfor156 and releases3USDof excess escrow. Current conservative reservations are195USD/5USDunallocated within200USDauthorized. These are not invoices or assumed credits. Next work is general final-endpoint answer-isolation evidence and a fresh controlled run; the current native passes do not clear publication holds.
+Completed156/157 hosts are terminal and all eight corresponding sandbox owners/IDs are absent. Their held/infrastructure outcomes remain unchanged. The existing completed-run audit was also applied to133/139 after fresh cleanup checks, retaining $2 each and freeing $6 of excess escrow. Current conservative reservations are **$199 / $1 unallocated within $200 authorized**, including $5 each for active158/159. These are not invoices or assumed credits. Scientific acceptance remains incomplete.
+
+[General final-output value hints](../../factory-checks/asset-value-hints/README.md) now require explicit worker assessment of every finding.216offline checks pass, and read-only archived replays surface the known156fixture. Fresh [158](../047/submission-158.json) and [159](../048/submission-159.json) use the same213 runtime identities and unchanged original seeds, with no prior generated task or operator diagnosis. Their results are pending. Budget reservations are199USD/1USDunallocated within200authorized; this is not billing.
