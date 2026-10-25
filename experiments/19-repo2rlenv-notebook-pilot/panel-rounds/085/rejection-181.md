@@ -1,0 +1,5 @@
+# Pyteomics181: setup recipe rejected within its two-test allowance
+
+The first controlled reference failed because the selected matplotlib no longer supplied the style name requested by the notebook. GLM staged a legacy-name style alias. The second reached mzIdentML parsing, then failed because the generated dependency recipe omitted psims. The worker amended its recipe but correctly declined to call it tested after exhausting the two-reference-test allowance. No clean replay, construction, grading or solver followed. This is an incomplete generated environment recipe, not proof that the scientific source is broken.
+
+Complete592science files/6988630bytes and21root files/1008445bytes were independently verified, along with original cleanup and fresh one-owner absence. Pipeline time8.47minutes/38recorded requests. The earlier139native outcome and unresolved redistribution hold remain preserved. No original data or scientific results are published here. [Outcome](result-181.json), [original setup report](../../autonomous-runs/181/setup-raw/outcome.json).

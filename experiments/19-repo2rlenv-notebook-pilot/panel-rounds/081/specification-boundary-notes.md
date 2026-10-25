@@ -1,6 +1,6 @@
 # Specification boundary: evidence and an unadopted simplification
 
-The frozen221-file round has two independent-domain examples:177 and178. Both original references and clean replays passed, and both independent reviews accepted the core scientific endpoints/populations. Each exhausted its single quality revision before construction. Remaining defects were generated comparison/probe guidance, not source failures.178's threshold/metadata distinctions are independently corroborated in the exact frozen package sources. Retain the original rejected outcomes.
+The frozen221-file round has three independent-domain examples:177,178and179. All original references and clean replays passed. Each exhausted its single quality revision before construction.177/178had generated private comparison/probe guidance defects;179also put an unsupported writer/population claim in the public question. None proves a source failure.178's threshold/metadata distinctions are independently corroborated in the exact frozen package sources. Retain the original rejected outcomes.
 
 A possible general change is to make specification own the public biological objective, methodology/preset, input/output identities and source coverage. Its private handoff would preserve source-backed facts and unresolved validation questions, without prescribing unexecuted negative probes, exact equality modes, numerical tolerances or exhaustive implementation-default explanations. Prefer the chosen reference preset to guessing internals that the source never specified.
 
