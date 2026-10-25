@@ -1,0 +1,237 @@
+{
+  "concerns": [
+    "The tolerance rule (1e-9 relative, with the requirement that an ordinary CSV write/read round trip must not change grading) is only satisfiable with full double-precision decimals; a submission writing fewer significant digits would still pass. No defect, but the public bound effectively mandates full-precision serialization.",
+    "The structural rule forbids an extra blank line after the record while also requiring a single trailing newline. The exact accepted EOF byte set beyond a single LF (e.g. CRLF terminators) is not specified; the reference uses LF only, so no probe tested alternate line terminators."
+  ],
+  "disposition": "ready",
+  "probes": [
+    {
+      "check_ids": [
+        "hrv_time_values",
+        "hrv_indices_values"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_time.csv",
+          "quote": "HRV_MeanNN,HRV_SDNN,HRV_SDANN1,HRV_SDNNI1,HRV_SDANN2,HRV_SDNNI2,HRV_SDANN5,HRV_SDNNI5,HRV_RMSSD,\n696.3953488372093,62.135891206172104,10.060727541349376,60.27503600273103,,,,,69.69798316887554,"
+        },
+        {
+          "path": "hrv_indices.csv",
+          "quote": "HRV_MeanNN,HRV_SDNN,HRV_SDANN1,HRV_SDNNI1,HRV_SDANN2,HRV_SDNNI2,HRV_SDANN5,HRV_SDNNI5,HRV_RMSSD,"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "p1-time-mean-shift",
+      "rationale": "Shifts HRV_MeanNN by +0.5 ms (beyond the millisecond-unit tolerance) identically in hrv_time.csv and hrv_indices.csv. The undefined fields (SDANN2/SDNNI2/SDANN5/SDNNI5), structure, column sets and cross-file consistency are preserved, so only the scientific time-domain and combined-value checks fail.",
+      "script": "import csv\ndef rc(p):\n    rows=list(csv.reader(open(p,newline='',encoding='utf-8')))\n    assert len(rows)==2 and len(rows[0])==len(rows[1])\n    return rows[0],rows[1]\ndef wc(p,h,d):\n    f=open(p,'w',newline='',encoding='utf-8');w=csv.writer(f,lineterminator='\\n');w.writerow(h);w.writerow(d);f.close()\nold='696.3953488372093';new='696.8953488372093'\nfor p in ('hrv_time.csv','hrv_indices.csv'):\n    h,d=rc(p);i=h.index('HRV_MeanNN')\n    assert d[i]==old,(p,d[i])\n    d[i]=new;wc(p,h,d)\n    h2,d2=rc(p);assert d2[h2.index('HRV_MeanNN')]==new\nprint('OK')\n"
+    },
+    {
+      "check_ids": [
+        "hrv_freq_values",
+        "hrv_indices_values"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_freq.csv",
+          "quote": "HRV_ULF,HRV_VLF,HRV_LF,HRV_HF,HRV_VHF,HRV_TP,HRV_LFHF,HRV_LFn,HRV_HFn,HRV_LnHF\n,0.01731007726584816,0.04802607886179408,0.06023186865189019,0.011185774793627324,0.13675379957315975,"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "p2-freq-unnormalized-psd",
+      "rationale": "Multiplies VLF/LF/HF/VHF and TP by 2**11, i.e. reports raw-PSD-magnitude values instead of the max-normalized PSD, in both hrv_freq.csv and hrv_indices.csv. The empty ULF field, structure and cross-file consistency are preserved; the acceptance rule explicitly names an unnormalized-PSD result as failing the frequency check.",
+      "script": "import csv\ndef rc(p):\n    rows=list(csv.reader(open(p,newline='',encoding='utf-8')))\n    assert len(rows)==2 and len(rows[0])==len(rows[1])\n    return rows[0],rows[1]\ndef wc(p,h,d):\n    f=open(p,'w',newline='',encoding='utf-8');w=csv.writer(f,lineterminator='\\n');w.writerow(h);w.writerow(d);f.close()\na=2.0**11;B=['HRV_VLF','HRV_LF','HRV_HF','HRV_VHF']\nfor p in ('hrv_freq.csv','hrv_indices.csv'):\n    h,d=rc(p)\n    b={n:float(d[h.index(n)]) for n in B}\n    assert all(d[h.index(n)]!='' for n in B)\n    TP=b['HRV_VLF']+b['HRV_LF']+b['HRV_HF']+b['HRV_VHF']\n    assert abs(TP-float(d[h.index('HRV_TP')]))<1e-12,p\n    for n in B:d[h.index(n)]=repr(b[n]*a)\n    d[h.index('HRV_TP')]=repr(TP*a)\n    wc(p,h,d)\nprint('OK')\n"
+    },
+    {
+      "check_ids": [
+        "hrv_nonlinear_values",
+        "hrv_indices_values"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_nonlinear.csv",
+          "quote": "HRV_SD1,HRV_SD2,HRV_SD1SD2,HRV_S,HRV_CSI,HRV_CVI,HRV_CSI_Modified,HRV_PIP,HRV_IALS,HRV_PSS,HRV_PAS,\n49.34128100482926,72.59743491590363,0.679655983189845,11253.343335830747,1.4713325928606957,4.758251679217147,"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "p3-nonlinear-method-settings",
+      "rationale": "Scales nine non-linear indices (SD1, SD2, S, CSI, DFA_alpha1, SampEn, FuzzyEn, HFD, LZC) by 3-15 percent, the magnitude the spec attributes to altered method settings (entropy tolerance, DFA window ranges, fractal parameters). Applied consistently in hrv_nonlinear.csv and hrv_indices.csv, so cross-file consistency holds and only the scientific non-linear checks fail.",
+      "script": "import csv\ndef rc(p):\n    rows=list(csv.reader(open(p,newline='',encoding='utf-8')))\n    assert len(rows)==2 and len(rows[0])==len(rows[1])\n    return rows[0],rows[1]\ndef wc(p,h,d):\n    f=open(p,'w',newline='',encoding='utf-8');w=csv.writer(f,lineterminator='\\n');w.writerow(h);w.writerow(d);f.close()\nF={'HRV_SD1':1.03,'HRV_SD2':0.97,'HRV_S':1.02,'HRV_CSI':1.05,'HRV_DFA_alpha1':1.04,'HRV_SampEn':1.15,'HRV_FuzzyEn':1.10,'HRV_HFD':0.95,'HRV_LZC':1.06}\nfor p in ('hrv_nonlinear.csv','hrv_indices.csv'):\n    h,d=rc(p);n2=list(d);s=0\n    for i,n in enumerate(h):\n        if n in F:\n            assert d[i]!='';n2[i]=repr(float(d[i])*F[n]);s+=1\n    assert s==len(F),(p,s)\n    wc(p,h,n2)\nprint('OK')\n"
+    },
+    {
+      "check_ids": [
+        "hrv_freq_values",
+        "hrv_indices_values"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_freq.csv",
+          "quote": "0.797353293807977,0.3511864314680439,0.44044018403794105,-2.8095536871398052"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "p4-freq-band-reshaped",
+      "rationale": "Scales the four defined bands by distinct factors and recomputes TP, LFHF, LFn, HFn and LnHF so the report remains internally coherent as a spectrum (fractions still partition the new total, LFHF is the new LF/HF) but is no longer the reference spectrum, as if produced by different interpolation or windowing. Applied consistently to both files, so cross-file consistency passes and only the frequency scientific checks fail.",
+      "script": "import csv,math\ndef rc(p):\n    rows=list(csv.reader(open(p,newline='',encoding='utf-8')))\n    assert len(rows)==2 and len(rows[0])==len(rows[1])\n    return rows[0],rows[1]\ndef wc(p,h,d):\n    f=open(p,'w',newline='',encoding='utf-8');w=csv.writer(f,lineterminator='\\n');w.writerow(h);w.writerow(d);f.close()\nF={'HRV_VLF':1.15,'HRV_LF':1.5,'HRV_HF':0.7,'HRV_VHF':1.2}\nfor p in ('hrv_freq.csv','hrv_indices.csv'):\n    h,d=rc(p)\n    assert all(d[h.index(n)]!='' for n in F)\n    b={n:float(d[h.index(n)])*F[n] for n in F}\n    TP=b['HRV_VLF']+b['HRV_LF']+b['HRV_HF']+b['HRV_VHF']\n    assert TP!=float(d[h.index('HRV_TP')])\n    for n in F:d[h.index(n)]=repr(b[n])\n    d[h.index('HRV_TP')]=repr(TP)\n    d[h.index('HRV_LFHF')]=repr(b['HRV_LF']/b['HRV_HF'])\n    d[h.index('HRV_LFn')]=repr(b['HRV_LF']/TP)\n    d[h.index('HRV_HFn')]=repr(b['HRV_HF']/TP)\n    d[h.index('HRV_LnHF')]=repr(math.log(b['HRV_HF']))\n    wc(p,h,d)\nprint('OK')\n"
+    },
+    {
+      "check_ids": [
+        "hrv_nonlinear_values",
+        "hrv_indices_values"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_nonlinear.csv",
+          "quote": "HRV_Symbolic_EqualProb4_0V,HRV_Symbolic_EqualProb4_1V,HRV_Symbolic_EqualProb4_2LV,HRV_Symbolic_EqualProb4_2UV\n0.21261682242990654,0.48130841121495327,0.14485981308411214,0.16121495327102803"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "p5-symbolic-swap",
+      "rationale": "Swaps the least frequent (2LV: 0.1449) and most frequent (1V: 0.4813) symbolic equal-probability-4 pattern proportions in hrv_nonlinear.csv and hrv_indices.csv. The four proportions still sum to 1, all columns remain populated finite decimals and both files agree, so this is a wrong-association change exercising the symbolic-dynamics rule rather than a structural failure.",
+      "script": "import csv\ndef rc(p):\n    rows=list(csv.reader(open(p,newline='',encoding='utf-8')))\n    assert len(rows)==2 and len(rows[0])==len(rows[1])\n    return rows[0],rows[1]\ndef wc(p,h,d):\n    f=open(p,'w',newline='',encoding='utf-8');w=csv.writer(f,lineterminator='\\n');w.writerow(h);w.writerow(d);f.close()\nh,d=rc('hrv_nonlinear.csv')\nS=[i for i,n in enumerate(h) if n.startswith('HRV_Symbolic')]\nassert len(S)==4,S\nv=[float(d[i]) for i in S]\ni0=S[v.index(min(v))];i1=S[v.index(max(v))];assert i0!=i1\nn0,n1=h[i0],h[i1]\nfor p in ('hrv_nonlinear.csv','hrv_indices.csv'):\n    hh,dd=rc(p);a,c=hh.index(n0),hh.index(n1)\n    assert dd[a]!='' and dd[c]!=''\n    dd[a],dd[c]=dd[c],dd[a]\n    wc(p,hh,dd)\nprint('OK')\n"
+    },
+    {
+      "check_ids": [
+        "hrv_time_values",
+        "combined_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_time.csv",
+          "quote": "696.3953488372093,62.135891206172104,10.060727541349376,60.27503600273103,,,,,69.69798316887554,"
+        },
+        {
+          "path": "hrv_indices.csv",
+          "quote": "HRV_MeanNN,HRV_SDNN,HRV_SDANN1,HRV_SDNNI1,HRV_SDANN2,HRV_SDNNI2,HRV_SDANN5,HRV_SDNNI5,HRV_RMSSD,"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "p6-time-inconsistent-combined",
+      "rationale": "Shifts HRV_MeanNN by +1.5 ms in hrv_time.csv only, leaving hrv_indices.csv at the reference-consistent value; hrv_freq.csv and hrv_nonlinear.csv are untouched. This fails the time-domain scientific check (wrong value) and the cross-file consistency check (domain file disagrees with the combined table) while everything else remains valid, isolating the consistency rule.",
+      "script": "import csv\ndef rc(p):\n    rows=list(csv.reader(open(p,newline='',encoding='utf-8')))\n    assert len(rows)==2 and len(rows[0])==len(rows[1])\n    return rows[0],rows[1]\ndef wc(p,h,d):\n    f=open(p,'w',newline='',encoding='utf-8');w=csv.writer(f,lineterminator='\\n');w.writerow(h);w.writerow(d);f.close()\nold='696.3953488372093';new='697.8953488372093'\nh,d=rc('hrv_time.csv');i=h.index('HRV_MeanNN')\nassert d[i]==old\nd[i]=new;wc('hrv_time.csv',h,d)\nhh,dd=rc('hrv_indices.csv')\nassert dd[hh.index('HRV_MeanNN')]==old\nprint('OK')\n"
+    },
+    {
+      "check_ids": [
+        "hrv_freq_values",
+        "hrv_indices_values"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_freq.csv",
+          "quote": "HRV_HF\n0.06023186865189019"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "p7-freq-hf-scaling",
+      "rationale": "Scales only HRV_HF by 4096x in hrv_freq.csv and hrv_indices.csv, keeping every other frequency index at the reference value and the two files mutually consistent. This isolates a single wrong band value (as from a partial normalization or band-definition error) in the frequency domain and its mirror in the combined table, while structure and cross-file consistency remain valid.",
+      "script": "import csv\ndef rc(p):\n    rows=list(csv.reader(open(p,newline='',encoding='utf-8')))\n    assert len(rows)==2 and len(rows[0])==len(rows[1])\n    return rows[0],rows[1]\ndef wc(p,h,d):\n    f=open(p,'w',newline='',encoding='utf-8');w=csv.writer(f,lineterminator='\\n');w.writerow(h);w.writerow(d);f.close()\nfor p in ('hrv_freq.csv','hrv_indices.csv'):\n    h,d=rc(p);i=h.index('HRV_HF')\n    v=float(d[i]);assert v!=0\n    n=v*4096.0\n    assert abs(n-v)>1e-9+1e-9*abs(v)\n    d[i]=repr(n);wc(p,h,d)\nprint('OK')\n"
+    },
+    {
+      "check_ids": [
+        "structure",
+        "hrv_indices_values"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_indices.csv",
+          "quote": "HRV_SampEn,HRV_ShanEn,HRV_FuzzyEn,HRV_MSEn,HRV_CMSEn,HRV_RCMSEn,\n1.1836484532861742,1.2599314579739807,4.282683406115447,"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "p8-nan-token-field",
+      "rationale": "Writes the nonfinite NaN token into the required HRV_SampEn field of hrv_indices.csv only, leaving all three domain files untouched and fully valid. The row keeps its field count and every other field is unchanged, so the file still parses as CSV, but the field is neither a finite decimal nor a permitted empty field, violating the structural nonfinite-token rule and the combined file's required-value rule.",
+      "script": "import csv\nrows=list(csv.reader(open('hrv_indices.csv',newline='',encoding='utf-8')))\nassert len(rows)==2 and len(rows[0])==len(rows[1])\nh,d=rows;i=h.index('HRV_SampEn')\nassert d[i]!=''\nd[i]='NaN'\nf=open('hrv_indices.csv','w',newline='',encoding='utf-8')\nw=csv.writer(f,lineterminator='\\n');w.writerow(h);w.writerow(d);f.close()\nprint('OK')\n"
+    },
+    {
+      "check_ids": [
+        "hrv_indices_values",
+        "combined_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_indices.csv",
+          "quote": "HRV_SampEn,HRV_ShanEn,HRV_FuzzyEn,HRV_MSEn,HRV_CMSEn,HRV_RCMSEn,HRV_CD,HRV_HFD,HRV_KFD,HRV_LZC,HRV_Symbolic_EqualProb4_0V,"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "p9-combined-drops-column",
+      "rationale": "Drops the required HRV_SampEn column from hrv_indices.csv only, keeping the three domain files (which still contain HRV_SampEn) and all remaining combined values at the reference values. The file remains a well-formed two-row CSV, so the failure is scientific: the combined header is missing a reference index and no longer equals the union of the domain column sets.",
+      "script": "import csv\nrows=list(csv.reader(open('hrv_indices.csv',newline='',encoding='utf-8')))\nassert len(rows)==2 and len(rows[0])==len(rows[1])\nh,d=rows;i=h.index('HRV_SampEn')\nh2=h[:i]+h[i+1:];d2=d[:i]+d[i+1:]\nassert len(h2)==len(h)-1 and 'HRV_SampEn' not in h2\nf=open('hrv_indices.csv','w',newline='',encoding='utf-8')\nw=csv.writer(f,lineterminator='\\n');w.writerow(h2);w.writerow(d2);f.close()\nprint('OK')\n"
+    },
+    {
+      "check_ids": [
+        "structure",
+        "hrv_time_values",
+        "hrv_freq_values",
+        "hrv_nonlinear_values",
+        "hrv_indices_values",
+        "combined_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_time.csv",
+          "quote": "HRV_MeanNN,HRV_SDNN,HRV_SDANN1,HRV_SDNNI1,HRV_SDANN2,HRV_SDNNI2,HRV_SDANN5,HRV_SDNNI5,HRV_RMSSD,HRV_SDSD,HRV_CVNN,HRV_CVSD,HRV_MedianNN,HRV_MadNN,HRV_MCVNN,HRV_IQRNN,HRV_SDRMSSD,HRV_Prc20NN,HRV_Prc80NN,HRV_pNN50,HRV_pNN20,HRV_MinNN,HRV_MaxNN,HRV_HTI,HRV_TINN"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "p10-valid-quoting",
+      "rationale": "Re-serializes all four files with every field fully double-quoted; values, column order, undefined-field emptiness and column sets are exactly unchanged. The acceptance rule permits quoted fields decoded with standard CSV rules and compares decoded values, so all structural, per-file value and cross-file checks must pass.",
+      "script": "import csv\nfor p in ('hrv_time.csv','hrv_freq.csv','hrv_nonlinear.csv','hrv_indices.csv'):\n    rows=list(csv.reader(open(p,newline='',encoding='utf-8')))\n    assert len(rows)==2 and len(rows[0])==len(rows[1])\n    h,d=rows\n    for v in d:\n        if v!='':float(v)\n    f=open(p,'w',newline='',encoding='utf-8')\n    w=csv.writer(f,lineterminator='\\n',quoting=csv.QUOTE_ALL)\n    w.writerow(h);w.writerow(d);f.close()\n    rows2=list(csv.reader(open(p,newline='',encoding='utf-8')))\n    assert rows2==rows\nprint('OK')\n"
+    },
+    {
+      "check_ids": [
+        "structure",
+        "hrv_time_values",
+        "hrv_freq_values",
+        "hrv_nonlinear_values",
+        "hrv_indices_values",
+        "combined_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_time.csv",
+          "quote": "696.3953488372093,62.135891206172104,10.060727541349376,60.27503600273103,"
+        },
+        {
+          "path": "hrv_freq.csv",
+          "quote": ",0.01731007726584816,0.04802607886179408,0.06023186865189019,"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "valid_alternative",
+      "name": "p11-valid-precision-mix",
+      "rationale": "Rewrites every numeric field as an alternating mix of 17-significant-digit fixed and scientific decimal literals, each verified programmatically to round-trip bit-identically to the saved double (the reference decimals are full double-precision representations, so 17 digits are sufficient), and reverses the column order in every file. Column order is explicitly not graded and both literals are standard CSV numeric forms, so all checks must pass.",
+      "script": "import csv\nfor p in ('hrv_time.csv','hrv_freq.csv','hrv_nonlinear.csv','hrv_indices.csv'):\n    rows=list(csv.reader(open(p,newline='',encoding='utf-8')))\n    assert len(rows)==2 and len(rows[0])==len(rows[1])\n    h,d=rows;n=[]\n    for i,v in enumerate(d):\n        if v=='':n.append('')\n        elif i%2==0:\n            x='%.17g'%float(v);assert float(x)==float(v),(v,x);n.append(x)\n        else:\n            x='%.17e'%float(v);assert float(x)==float(v),(v,x);n.append(x)\n    rh,rd=h[::-1],n[::-1]\n    f=open(p,'w',newline='',encoding='utf-8')\n    w=csv.writer(f,lineterminator='\\n');w.writerow(rh);w.writerow(rd);f.close()\n    rows2=list(csv.reader(open(p,newline='',encoding='utf-8')))\n    assert set(rows2[0])==set(h) and len(rows2)==2\nprint('OK')\n"
+    },
+    {
+      "check_ids": [
+        "structure",
+        "hrv_time_values",
+        "hrv_freq_values",
+        "hrv_nonlinear_values",
+        "hrv_indices_values",
+        "combined_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_time.csv",
+          "quote": "HRV_MeanNN,HRV_SDNN,HRV_SDANN1,HRV_SDNNI1,HRV_SDANN2,HRV_SDNNI2,HRV_SDANN5,HRV_SDNNI5,HRV_RMSSD,\n696.3953488372093,62.135891206172104,10.060727541349376,60.27503600273103,"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "valid_alternative",
+      "name": "p12-valid-tolerance-bound",
+      "rationale": "Perturbs HRV_MeanNN by 25 percent of the stated tolerance bound (|s-r| <= 1e-9 + 1e-9*|r|; a +1.74e-7 ms change on a ~696.4 ms value) identically in hrv_time.csv and hrv_indices.csv, preserving cross-file consistency. The change is strictly inside the declared bound, so under the public rule every check must still pass even though the written literal differs from the reference.",
+      "script": "import csv\ndef rc(p):\n    rows=list(csv.reader(open(p,newline='',encoding='utf-8')))\n    assert len(rows)==2 and len(rows[0])==len(rows[1])\n    return rows[0],rows[1]\ndef wc(p,h,d):\n    f=open(p,'w',newline='',encoding='utf-8');w=csv.writer(f,lineterminator='\\n');w.writerow(h);w.writerow(d);f.close()\nh,d=rc('hrv_time.csv');i=h.index('HRV_MeanNN');r=float(d[i])\nb=1e-9+1e-9*abs(r);s=r+0.25*b\nassert abs(s-r)<=b\nnew=repr(s)\nfor p in ('hrv_time.csv','hrv_indices.csv'):\n    hh,dd=rc(p);k=hh.index('HRV_MeanNN');dd[k]=new;wc(p,hh,dd)\nprint('OK')\n"
+    }
+  ]
+}

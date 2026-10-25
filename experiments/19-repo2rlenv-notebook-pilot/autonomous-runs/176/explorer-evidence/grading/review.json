@@ -1,0 +1,91 @@
+{
+  "asset_value_assessments": [],
+  "decision": "accept_for_packaging",
+  "issues": [],
+  "question_issues": [],
+  "rationale": "The candidate is a complete, well-executed HRV grading package and I found no actionable defects. (1) Base question fidelity: every consequential methodology claim in the public question is verified against the installed neurokit2 0.2.13 source \u2014 ecg_peaks defaults method=\"neurokit\", correct_artifacts=False (ecg_peaks.py:9); Welch PSD with Hann window, average=\"mean\", scaling=\"density\", detrend=False (signal_psd.py:291-301); max-normalization power /= np.max(power) (signal_psd.py:219-220); default band edges 0.0033/0.04/0.15/0.4/0.5, normalize=True default and interpolation_rate=100 (hrv_frequency.py:17-28). Input claims (header ECG,PPG,RSP, 100 Hz, 30,000 rows) match the recorded input observation (sha256 6a33ff8a..., 1,784,368 bytes) and outcome.json. Undefined-index semantics (HRV_ULF, SDANN2/SDNNI2/SDANN5/SDNNI5 empty) match the reference structural profiles. The only wording nit is the index attribution 'Henrich triangle index' for HRV_HTI, which is a common literature phrasing for the RR triangular index, does not define any quantity differently, and no check depends on the attribution. (2) Source coverage: the materialization ledger accounts for all 7 literal call sites; the four scientific endpoints (hrv_time 25 cols, hrv_freq 10, hrv_nonlinear 60, hrv_indices 95 \u2014 the column union) are all retained, peaks deliberately not supplied as an input, data.head presentation-only. (3) Grader: reads reference dynamically (no hardcoded answers, shapes or column lists); exact per-file column-set match by case-sensitive name; empty-field positions matched exactly; tolerance |s-r| \u2264 1e-9 + 1e-9\u00b7|r| with a defensible precision basis (byte-identical replay across reference, oracle, independent solution and two repeatability replays; full-precision serialization round trips verified \u2014 controller probes p10-p12 plus recorded author diagnostics in catalog operations 0042/0043: round-trip pass, zeros/perturb/rename fail, 1e-13 pass / 1e-3 fail); cross-file identity check ties hrv_indices to the submission's own domain files; no fallback path search (misplaced outputs/ control fails). (4) Controls: 21/21 executed with expected outcomes \u2014 reference, recomputed and independently authored alternative all pass byte-identically; empty, misplaced and each per-file omission fail; 12 probes with 9 meaningful wrong solutions (0.5 ms value shift, unnormalized PSD, 3-15% method-settings changes, coherent spectrum reshaping, symbolic swap, cross-file inconsistency, 4096x single-band scaling, NaN token, dropped column) all fail exactly the targeted checks without crashes or malformed-file reliance, and 3 valid alternatives (quoting, 17-digit scientific/fixed precision with column reversal, 25%-of-bound perturbation) all pass. (5) Isolation: oracle isolation run reports 'isolated'; the environment distribution review plus the hash-matched source-literal scan over hrv_time.py / hrv_nonlinear.py / test_pyplot produced zero magnitude findings against the final CSV cells, and no installed distribution bundles the dataset or any HRV answer table. Residual limitations are disclosed and do not constitute defects: cross-stack tolerance portability was not tested (only the pinned stack is installable offline), so the tolerance effectively mandates full-precision serialization, which the addendum's round-trip requirement already states; EOF byte-set beyond a single LF is untested but unambiguous in the public wording. The grader does not read BIOTASKS_TRUSTED_INPUT_DIR, which is acceptable because it has no input-dependent acceptance branch \u2014 every acceptance relation is determined by the reference tables, and the controller verifies input hashes before and after grading.",
+  "scientific_admission": {
+    "answer_isolation": {
+      "blockers": [],
+      "decision": "approve",
+      "evidence": [
+        "Solver-visible inputs: only inputs/bio_resting_5min_100hz.csv (raw ECG/PPG/RSP recording, sha256 6a33ff8a...); R-peak peaks deliberately not supplied as an intermediate (operation_coverage call-44-14 role 'support': 'deliberately not supplied')",
+        "Oracle isolation: separate operation exit 0 with stdout 'isolated'; controller supplies an immutable trusted-input copy with hash checks before and after grading per artifact_interface.trusted_inputs usage note",
+        "Environment distribution scan (dependency-assets-summary.json): 8686 installed files across 27 distributions; priority matches (matplotlib/tests/test_pyplot.py, neurokit2/hrv/hrv_time.py, hrv_nonlinear.py) are pytest code and mandatory implementation modules; targeted grep for 'bio_resting_5min_100hz' found only source/docstring references with no bundled dataset copy and no answer tables",
+        "asset_value_hints findings = [] for floating literals in hash-matched installed source (hrv_nonlinear.py 12 literals, hrv_time.py 0) against all numeric cells of the four hash-verified reference CSVs at 1e-8 discovery distance \u2014 no answer values embedded in installed source",
+        "dependency-exclusions.json files: [] with trial/dependency-exclusions-applied.json excluded_files_absent: true; no unused-answer exclusions claimed, so nothing was removed and no post-removal revalidation is outstanding",
+        "Reference exports live only in the separate destination/reference directory; the materialization derive_code copies input and reference byte-for-byte with sha256 identity checks and the oracle accepts only --input-dir/--output-dir"
+      ],
+      "output_paths": [
+        "hrv_freq.csv",
+        "hrv_indices.csv",
+        "hrv_nonlinear.csv",
+        "hrv_time.csv"
+      ],
+      "rationale": "No requested answers are disclosed through solver-visible inputs, installed assets or recovered outputs. The only solver input is the raw 30,000-row ECG/PPG/RSP recording; the R-peak intermediate and all four answer tables are withheld. The grader embeds no answers, column lists, hashes or shapes (reference read dynamically from --reference-dir). Installed environments contain only implementation code: the source-literal discovery scan found zero magnitude matches against all final CSV cells, corroborated by the distribution-level inventory and the setup worker's targeted grep (no bundled dataset or HRV result table anywhere in site-packages). No fixtures usable to check a requested answer remain. The hint scan is a discovery aid rather than an exhaustive semantic audit, but it is consistent with the structural fact that the answers are computed functions of a non-trivial pipeline on the single yielded input, and all HRV-computing modules are mandatory code that the source itself imports; no uninspected candidate could plausibly hold a precomputed HRV table."
+    },
+    "comparisons": [
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Reference observation hrv_time.csv: 25 columns HRV_MeanNN..HRV_TINN, 1 data row, empty fields exactly at HRV_SDANN2/SDNNI2/SDANN5/SDNNI5, sha256 4da5b39c...; reference control reports 21 value + 4 undefined columns matched per-file",
+          "Grader check hrv_time_values enforces the exact reference column set, empty fields exactly at reference-undefined positions, and |s-r| <= 1e-9 + 1e-9*|r| in ms units",
+          "Probes p1 (0.5 ms MeanNN shift, applied to both files) and p6 (shift in domain file only) fail hrv_time_values at deviations 5.000e-01 / 1.500e+00 vs tolerance 6.974e-07; zeros-for-undefined and 5% RMSSD perturbation recorded as failures in execution catalog operations 0042/0043"
+        ],
+        "output_paths": [
+          "hrv_time.csv"
+        ],
+        "rationale": "The time-domain table is the faithful, complete projection of the source's nk.hrv_time(peaks, sampling_rate=100) result cell (operation call-57-11). Its R-peak population is defined by the default detector \u2014 verified in installed neurokit2 0.2.13 ecg_peaks.py line 9: method='neurokit', correct_artifacts=False \u2014 and the undefined-for-5-minutes semantics (SDANN2/SDNNI2/SDANN5/SDNNI5 empty) are confirmed by both the reference structural profile and the package docstring for these indices. The comparison contract (exact case-sensitive column-name set, empty fields exactly at reference-undefined positions, tolerance anchored to the ms-unit reference value) is precise and name-keyed, independent of column order; the grader reads the reference dynamically so no values are embedded. Executed evidence covers value errors, cross-file inconsistency, representation edits and the tolerance boundary."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Reference observation hrv_freq.csv: 10 columns, HRV_ULF empty, sha256 81749e0b...; grader check hrv_freq_values reports 9 value + 1 undefined columns matched",
+          "Installed-source verification of the prose claims: neurokit2/signal/signal_psd.py lines 291-301 (scipy.signal.welch with fs=sampling_rate, scaling='density', detrend=False, average='mean', window='hann'); lines 219-220 (power /= np.max(power)); neurokit2/hrv/hrv_frequency.py lines 17-28 (band edges ulf=(0,0.0033), vlf=(0.0033,0.04), lf=(0.04,0.15), hf=(0.15,0.4), vhf=(0.4,0.5); psd_method='welch', normalize=True and interpolation_rate=100 defaults)",
+          "Probes p2 (unnormalized PSD, 2^11 scaling of VLF/LF/HF/VHF/TP), p4 (coherent band reshaping with recomputed TP/LFHF/LFn/HFn/LnHF) and p7 (single-band HRV_HF 4096x) all fail hrv_freq_values and hrv_indices_values while structure and cross-file consistency hold"
+        ],
+        "output_paths": [
+          "hrv_freq.csv"
+        ],
+        "rationale": "The frequency-domain table is the faithful projection of nk.hrv_frequency(peaks, sampling_rate=100, show=True, normalize=True) (call-66-11); normalize=True is also the 0.2.13 default (installed hrv_frequency.py line 25), and the combined nk.hrv path uses the same default, so the standalone and combined frequency blocks are the same quantity \u2014 corroborated by identical per-column values between hrv_freq.csv and the frequency block of hrv_indices.csv in the reference structural profiles. The question's Welch description was independently checked against installed source rather than trusted as prose, and every parameter (Hann window, mean averaging, density scaling, detrend=False, max-normalization, 100 Hz interpolation, band edges) matches. Undefined ULF for a 5-minute recording is confirmed by the reference's empty field. Consequential wrong spectra are rejected without relying on crashes."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Reference observation hrv_nonlinear.csv: 60 columns, all finite values, no undefined columns, sha256 8afda790...; grader check hrv_nonlinear_values reports 60 value columns matched",
+          "Non-linear methodology claims (Poincare, CSI/CVI, Guzik/Porta, asymmetric decomposition, DFA/MFDFA, entropies including MSEn/CMSEn/RCMSEn, CD/HFD/KFD, LZC, Symbolic_EqualProb4) are all defined by the reference preset defaults per the checks' public requirements and the export from nk.hrv_nonlinear defaults",
+          "Probes p3 (3-15% scalings across SD1, SD2, S, CSI, DFA_alpha1, SampEn, FuzzyEn, HFD, LZC as would result from altered method settings) and p5 (symbolic EqualProb4 proportion swap preserving structure and sum) fail the non-linear checks at deviations many orders beyond tolerance"
+        ],
+        "output_paths": [
+          "hrv_nonlinear.csv"
+        ],
+        "rationale": "The non-linear table is the faithful projection of nk.hrv_nonlinear(peaks, sampling_rate=100) (call-73-16), all 60 default indices exported with finite values. show=True is plot-only and the oracle's show-default rerun reproduces byte-identical output, so no scientific quantity is lost by the figure exclusion. The only wording nit \u2014 'Henrich triangle index' as the attribution for HRV_HTI (the RR triangular index, which installs to HRV_HTI in the reference output) \u2014 is a common literature phrasing, changes no defined quantity, and no acceptance rule depends on the attribution; the graded contract names the column exactly (HRV_HTI) and is defined by the reference preset. The comparison enforces the full 60-column identity and per-index values; changed-method outputs and wrong associations are rejected."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Reference observation hrv_indices.csv: 95 columns equal to the union of 25+10+60, empty fields at the 5 undefined indices, sha256 e2dc559a...; oracle and independent solution both reproduce sha256-identical outputs",
+          "Grader checks: hrv_indices_values (95-column exact set against reference) and combined_consistency (combined = column union of the submission's own three domain files, values within the same rule including empty-field status); domain files additionally required to be mutually consistent",
+          "Probes: p9 (dropped HRV_SampEn from combined) fails hrv_indices_values and combined_consistency while remaining a well-formed 2-row CSV; p6 (domain/combined disagreement) fails combined_consistency at 1.500e+00; p8 (NaN token in a required field) fails structure and dependent checks with a valid report and exit 0; p12 (identical 25%-of-bound shift in both dependent files) passes, confirming consistent application across dependent outputs",
+          "hrv_indices frequency block identical to hrv_freq.csv values in the reference profile, confirming normalize=True default equality between the standalone and combined call paths"
+        ],
+        "output_paths": [
+          "hrv_indices.csv"
+        ],
+        "rationale": "The combined table is the faithful projection of nk.hrv(peaks, sampling_rate=100) (call-84-14): the column-wise concatenation of the three domain outputs at the same defaults (no RSA block, since peaks carry no RSP columns \u2014 verified by the 95-column union), retained as a distinct endpoint because it is a distinct interpreted result cell of the source. The comparison is doubly constrained: against the reference (exact 95-column set, values, 5 empty fields) and against the submission's own three domain files, so a consistent-but-wrong or an inconsistent-but-correct table cannot pass. A stable identity mapping across dependent outputs is enforced by name-keyed comparison and the cross-file consistency check, and the tolerance is applied identically in both relations (p12 positive, p6 negative)."
+      }
+    ]
+  },
+  "source_coverage": {
+    "decision": "approve",
+    "omitted_scientific_endpoints": [],
+    "rationale": "All four scientific endpoints in the source narrative and preparation inventory are retained as graded outputs: hrv_time.csv (call-57-11), hrv_freq.csv (call-66-11, normalize=True which is also the 0.2.13 default), hrv_nonlinear.csv (call-73-16) and hrv_indices.csv (call-84-14), each a distinct interpreted result cell. The source_operations ledger accounts for every literal call site: nk.data (supplied input, byte-identical staging with sha256 verification), data.head (presentation only, no scientific quantity), nk.ecg_peaks (support \u2014 deliberately not supplied to the solver so it performs R-peak detection itself, preserving the original science and the sole determinant of the beat population) and the four hrv calls (results; hrv_indices kept as a result rather than redundant because it is a distinct exported, interpreted cell). Exclusions are scientifically grounded: figures rendered by show=True are plot-only (the underlying indices are all exported), peaks/info are intermediates not requested as outputs. No endpoint was recovered after setup needing fresh review, and no eligible branch was dropped or weakened. The offline data-path adaptation (nk.data('/inputs/https/...')) is route-only, documented in trial/source.diff, with two byte-identical replays; the source reads the same staged bytes that are supplied to the solver. Public descriptions of the four files match the hash-verified reference profiles (25/10/60/95 columns, empty fields only at the 5 undefined indices).",
+    "remaining_validation": [],
+    "scientific_scope_changes": [],
+    "unsupported_evidence_claims": []
+  }
+}

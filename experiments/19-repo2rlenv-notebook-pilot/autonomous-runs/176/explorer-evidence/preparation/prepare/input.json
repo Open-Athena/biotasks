@@ -1,0 +1,61 @@
+{
+  "baseline_script": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3\n#     language: python\n#     name: python3\n# ---\n\n# # Heart Rate Variability (HRV)\n\n# NeuroKit2 is the most comprehensive package when it comes to HRV indices, and this example shows how to use NeuroKit2 to compute heart rate variability (HRV) indices in the time-, frequency-, and non-linear domain.\n#\n# For a comprehensive review of the most up-to-date HRV indices, a discussion of their significance in psychology, and a step-by-step guide for HRV analysis using **NeuroKit2**, the [Heart Rate Variability in Psychology: A Review of HRV Indices and an Analysis Tutorial](https://doi.org/10.3390/s21123998) paper is a good place to start. \n\n# ## Compute HRV features\n\n# Load the NeuroKit package\nimport neurokit2 as nk\n\n# Note: this cell is hidden using the \"remove-input\" tag\n# Make bigger images\nimport matplotlib.pyplot as plt\n\n\nplt.rcParams[\"figure.figsize\"] = [15, 5]\nplt.rcParams[\"font.size\"] = 14\n\n# ## Download Dataset\n\n# First, let's download the resting rate data (sampled at 100Hz) using `nk.data()`.\n\ndata = nk.data(\"bio_resting_5min_100hz\")\ndata.head()  # Print first 5 rows\n\n# You can see that it consists of three different signals, pertaining to ECG, PPG (an alternative determinant of heart rate as compared to ECG), and RSP (respiration). Now, let's extract the ECG signal in the shape of a vector (i.e., a one-dimensional array), and find the peaks using [ecg_peaks()](https://neuropsychology.github.io/NeuroKit/functions/ecg.html#ecg-peaks).\n\n# Find peaks\npeaks, info = nk.ecg_peaks(data[\"ECG\"], sampling_rate=100)\n\n# *Note: It is critical that you specify the correct sampling rate of your signal throughout many processing functions, as this allows NeuroKit to have a time reference.*\n\n# This produces two elements, `peaks` which is a DataFrame of same length as the input signal in which occurences of R-peaks are marked with 1 in a list of zeros. `info` is a dictionary of the sample points at which these R-peaks occur. \n#\n# HRV is the temporal variation between consecutive heartbeats (**RR intervals**). Here, we will use `peaks` i.e. occurrences of the heartbeat peaks, as the input argument in the following HRV functions to extract the indices. \n\n# ## Time-Domain Analysis\n\n# First, let's extract the time-domain indices.\n\n# Extract clean EDA and SCR features\nhrv_time = nk.hrv_time(peaks, sampling_rate=100, show=True)\nhrv_time\n\n# These features include the RMSSD (square root of the mean of the sum of successive differences between adjacent RR intervals), MeanNN (mean of RR intervals) so on and so forth. You can also visualize the distribution of R-R intervals by specifying `show=True` in [hrv_time()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html#hrv-time).\n\n# ## Frequency-Domain Analysis\n\n# Now, let's extract the frequency domain features, which involve extracting for example the spectral power density pertaining to different frequency bands. Again, you can visualize the power across frequency bands by specifying `show=True` in [hrv_frequency()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html#hrv-frequency).\n\nhrv_freq = nk.hrv_frequency(peaks, sampling_rate=100, show=True, normalize=True)\nhrv_freq\n\n# ## Non-Linear Domain Analysis\n\n# Now, let's compute the non-linear indices with [hrv_nonlinear()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html#hrv-nonlinear).\n\nhrv_nonlinear = nk.hrv_nonlinear(peaks, sampling_rate=100, show=True)\nhrv_nonlinear\n\n# This will produce a Poincar\u00e9 plot which plots each RR interval against the next successive one.\n#\n# Note that there exist many more [**complexity indices**](https://neuropsychology.github.io/NeuroKit/functions/complexity.html), that are available in NeuroKit2, and that could be applied to HRV. The ``hrv_nonlinear()`` function only includes the most commonly used indices.\n\n# ## All Domains\n\n# Finally, if you'd like to extract HRV indices from all three domains, you can simply input `peaks` into [hrv()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html), where you can specify `show=True` to visualize the combination of plots depicting the RR intervals distribution, power spectral density for frequency domains, and the poincare scattergram.\n\nhrv_indices = nk.hrv(peaks, sampling_rate=100, show=True)\nhrv_indices\n",
+  "conversion": {
+    "code_cells": 8,
+    "converter": "jupytext",
+    "converter_version": "1.19.6",
+    "directory_normalizations": [],
+    "documentation_execution_policy": {},
+    "equivalence_basis": "Python statements after recorded presentation and directory normalization",
+    "executable_ast_sha256": "d281128db21f3f7154412d9569b2804904d91522a4040938025c2a91531c84b1",
+    "executed": false,
+    "format": "py:nomarker",
+    "ignored_cell_editor_metadata": [],
+    "ignored_editor_metadata": {},
+    "ignored_presentation_tags": [
+      {
+        "cell_index": 4,
+        "tags": [
+          "remove-input"
+        ]
+      }
+    ],
+    "markdown_cells": 18,
+    "markdown_representation": "line_comments",
+    "ordered_code_equivalence": true,
+    "presentation_normalizations": [],
+    "profile": "python-narrative-v6",
+    "script_sha256": "ca70f4196402ccbf531e8e6b69b5d147340d2c9675610c5025256cbc66ac89e0",
+    "source_sha256": "478c706ad92fb919d576871c96dd6e5b2712962bbf9a858ecfe89cbf8923a1c4",
+    "stored_outputs_used_as_evidence": false
+  },
+  "limits": {
+    "base_image": "python:3.13.13-slim-bookworm",
+    "gpu": false,
+    "network": "Internet during setup only; reference is offline",
+    "reference_seconds": 600,
+    "setup_seconds": 1800,
+    "task_cpus": 4,
+    "task_disk_gib": 10,
+    "task_memory_gib": 8
+  },
+  "source": {
+    "id": "neurokit-hrv",
+    "license": "MIT",
+    "provenance": {
+      "data_lineage": "Source nk.data resting physiology recording, sampled at 100 Hz.",
+      "data_redistribution_review": "Not established independently; generated task bundles and staged data remain private pending review.",
+      "notebook": {
+        "license": "MIT",
+        "license_url": "https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/LICENSE",
+        "revision": "ff419d983568ef492eb8d229af643c0ef0100b32",
+        "sha256": "478c706ad92fb919d576871c96dd6e5b2712962bbf9a858ecfe89cbf8923a1c4",
+        "url": "https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/docs/examples/ecg_hrv/ecg_hrv.ipynb"
+      }
+    },
+    "source_revision": "ff419d983568ef492eb8d229af643c0ef0100b32",
+    "source_sha256": "478c706ad92fb919d576871c96dd6e5b2712962bbf9a858ecfe89cbf8923a1c4",
+    "title": "Time-, frequency- and nonlinear-domain heart-rate variability",
+    "url": "https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/docs/examples/ecg_hrv/ecg_hrv.ipynb"
+  }
+}

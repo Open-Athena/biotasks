@@ -1,17 +1,17 @@
 {
-  "observed_at": "2026-10-25T15:32:03.278524+00:00",
+  "observed_at": "2026-10-25T19:28:29.360680+00:00",
   "source_count": 10,
   "counts": {
-    "generated_candidate_rejected": 6,
-    "published": 3,
+    "generated_candidate_rejected": 5,
+    "published": 4,
     "native_complete_qualification_hold": 1
   },
   "runtime_minutes_all_outcomes": {
-    "min": 4.48,
+    "min": 21.21,
     "max": 109.15
   },
   "native_completed_runtime_minutes": {
-    "min": 40.82,
+    "min": 37.0,
     "max": 77.02
   },
   "records": [
@@ -95,25 +95,33 @@
       "public_runtime_revision": "1bdab9917ad5a5b490dbdf9e5fd88942925e553b"
     },
     {
-      "campaign": 136,
+      "campaign": 176,
       "domain": "Physiological signals",
       "source_url": "https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/docs/examples/ecg_hrv/ecg_hrv.ipynb",
       "source_id": "neurokit-hrv",
-      "factory_revision_recorded": "ff00123ef5aff1eb5e25879ad1d55c54d08e3ecd",
-      "classification": "generated_candidate_rejected",
-      "audited_state": "generated_input_adapter_rejection",
-      "original_pipeline_status": "rejected",
+      "factory_revision_recorded": "387988c364e2672b5eb4901c8ea2ebfd52156ba7",
+      "classification": "published",
+      "audited_state": "qualified_published_anonymous_download_verified",
+      "original_pipeline_status": "validated",
       "operator_interventions": 0,
-      "pipeline_minutes": 4.48,
-      "accounted_model_request_attempts": 25,
-      "native_complete": false,
-      "published": false,
+      "pipeline_minutes": 37.0,
+      "accounted_model_request_attempts": 119,
+      "native_complete": true,
+      "published": true,
       "full_original_archive_verified": true,
-      "source_archive_manifest_sha256": "8478db63e98af2805447897048c0978c164b59f62ba05b3db87345b197425932",
-      "public_result_path": "panel-rounds/026/result-136.json",
-      "public_result_sha256": "16d8c8cfcc9ea8338d628d973536c2ddcc7b2a0e951dd3f82e95833d8d0de031",
-      "public_performance_path": "panel-rounds/026/performance-136.json",
-      "public_performance_sha256": "e881f22181c2da6a76c80ce9630e1abe73070d77baa62dc508bf67219ad32b45"
+      "source_archive_manifest_sha256": "be2a4d8d9de31999117625aa991b18b889b383b3b223a23a5c14c3837a907491",
+      "public_result_path": "panel-rounds/080/result-176.json",
+      "public_result_sha256": "d756b9860f2ee492ba01b6b8b1cded8753d3e7b820c7aebc570e5a5559dda9b5",
+      "public_performance_path": "panel-rounds/080/performance-176.json",
+      "public_performance_sha256": "1a3f1e0f37652e87e982456e30454a1f9b22b3bd70d1b004aa98819a04fbff6d",
+      "public_runtime_revision": "215c13d8ef0c69b4c7cd0e7b1e093e5231dfd71b",
+      "previous_scientific_outcome": {
+        "campaign": 136,
+        "classification": "generated_candidate_rejected",
+        "public_result_path": "panel-rounds/026/result-136.json",
+        "public_result_sha256": "16d8c8cfcc9ea8338d628d973536c2ddcc7b2a0e951dd3f82e95833d8d0de031",
+        "retained": true
+      }
     },
     {
       "campaign": 168,
@@ -263,22 +271,7 @@
       "public_performance_sha256": "f016e270f6042f4440526da4873ef61b1f26751c089374dfc0d8ffe94bdc95f7"
     }
   ],
-  "excluded_active_repeats": [
-    {
-      "campaign": 173,
-      "source_id": "bioframe-motifs-to-peaks",
-      "state": "submitted",
-      "not_a_completed_scientific_outcome": true,
-      "source_assets_identical_to": 169,
-      "public_runtime_revision": "675839ae1a2f8139db37908b17c2630b1111c410",
-      "freeze_path": "panel-rounds/077/freeze-173.json",
-      "only_runtime_changes": [
-        "experiments/19-repo2rlenv-notebook-pilot/grading_session.py",
-        "experiments/19-repo2rlenv-notebook-pilot/test_grading.py"
-      ],
-      "no_previous_proposal_review_or_diagnostic_hints": true
-    }
-  ],
+  "excluded_active_repeats": [],
   "limits": [
     "Latest independently archived scientific outcome per source across development versions; subsequent infrastructure failures are explicit separately. Not a common-version holdout or success-rate estimate.",
     "Generated-candidate failures are factory outcomes, not proof of broken source notebooks.",
@@ -397,6 +390,17 @@
       "native_complete": false,
       "published": false,
       "does_not_replace_selected_completed_outcome": 169
+    },
+    {
+      "campaign": 175,
+      "source_id": "bioframe-motifs-to-peaks",
+      "classification": "infrastructure_failed",
+      "stage": "grading",
+      "http_status": 502,
+      "boundary": "SDK file upload during independent authoring; delivery outcome/target not recorded",
+      "public_result_path": "panel-rounds/079/result-175.json",
+      "public_result_sha256": "3cfdd62c108b3a5361bf8d692ade36af4a6d4fd76d9fe7a9734badd29f3330c3",
+      "notebook_rejected": false
     }
   ],
   "retained_previous_unqualified_examples": [

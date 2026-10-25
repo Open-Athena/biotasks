@@ -1,0 +1,205 @@
+{
+  "limits": {
+    "base_image": "python:3.13.13-slim-bookworm",
+    "campaign_seconds": 7200,
+    "gpu": false,
+    "max_requests": null,
+    "max_tests": 2,
+    "network": "Internet during setup only; reference is offline",
+    "reference_seconds": 600,
+    "request_timeout_seconds": 600,
+    "setup_seconds": 1800,
+    "task_cpus": 4,
+    "task_disk_gib": 10,
+    "task_memory_gib": 8
+  },
+  "paths": {
+    "exports.py": "/work/frozen/exports.py",
+    "original.py": "/work/frozen/original.py",
+    "plan.json": "/work/frozen/plan.json",
+    "reference_cwd": "/work/run",
+    "setup": "/work/setup"
+  },
+  "preparation": {
+    "conversion": {
+      "code_cells": 8,
+      "converter": "jupytext",
+      "converter_version": "1.19.6",
+      "directory_normalizations": [],
+      "documentation_execution_policy": {},
+      "equivalence_basis": "Python statements after recorded presentation and directory normalization",
+      "executable_ast_sha256": "d281128db21f3f7154412d9569b2804904d91522a4040938025c2a91531c84b1",
+      "executed": false,
+      "format": "py:nomarker",
+      "ignored_cell_editor_metadata": [],
+      "ignored_editor_metadata": {},
+      "ignored_presentation_tags": [
+        {
+          "cell_index": 4,
+          "tags": [
+            "remove-input"
+          ]
+        }
+      ],
+      "markdown_cells": 18,
+      "markdown_representation": "line_comments",
+      "ordered_code_equivalence": true,
+      "presentation_normalizations": [],
+      "profile": "python-narrative-v6",
+      "script_sha256": "ca70f4196402ccbf531e8e6b69b5d147340d2c9675610c5025256cbc66ac89e0",
+      "source_sha256": "478c706ad92fb919d576871c96dd6e5b2712962bbf9a858ecfe89cbf8923a1c4",
+      "stored_outputs_used_as_evidence": false
+    },
+    "plan": {
+      "artifacts": [
+        {
+          "description": "Time-domain HRV indices (e.g., RMSSD, MeanNN, SDNN) for the resting ECG recording.",
+          "path": "hrv_time.csv",
+          "source_evidence": "Produced by `hrv_time = nk.hrv_time(peaks, sampling_rate=100, show=True)` and displayed as the conclusion of the 'Time-Domain Analysis' section; the narrative interprets these indices directly ('These features include the RMSSD ... MeanNN ...'). The existing variable `hrv_time` (a one-row DataFrame of index names/values) holds it at completion."
+        },
+        {
+          "description": "Frequency-domain HRV indices (spectral power density in HF, LF, VLF bands, normalized) for the same recording.",
+          "path": "hrv_freq.csv",
+          "source_evidence": "Produced by `hrv_freq = nk.hrv_frequency(peaks, sampling_rate=100, show=True, normalize=True)` and displayed as the result of the 'Frequency-Domain Analysis' section ('extract ... the spectral power density pertaining to different frequency bands'). The existing variable `hrv_freq` holds it at completion."
+        },
+        {
+          "description": "Non-linear-domain HRV indices (e.g., Poincar\u00e9 SD1/SD2, entropy measures) for the same recording.",
+          "path": "hrv_nonlinear.csv",
+          "source_evidence": "Produced by `hrv_nonlinear = nk.hrv_nonlinear(peaks, sampling_rate=100, show=True)` and displayed as the result of the 'Non-Linear Domain Analysis' section ('let's compute the non-linear indices'). The existing variable `hrv_nonlinear` holds it at completion."
+        },
+        {
+          "description": "Combined HRV indices across time, frequency, and non-linear domains.",
+          "path": "hrv_indices.csv",
+          "source_evidence": "Produced by `hrv_indices = nk.hrv(peaks, sampling_rate=100, show=True)` and displayed as the result of the 'All Domains' section ('extract HRV indices from all three domains'). The existing variable `hrv_indices` holds it at completion."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "Raw recording (`data`) and R-peak extraction outputs (`peaks`, `info`): inputs/intermediates that feed the HRV computations, not interpreted as independent scientific results.",
+        "Figures rendered by `show=True` in each HRV call (RR-interval distribution, PSD, Poincar\u00e9 plot): values exist only inside the plotting calls and are not separately captured; the underlying indices are exported via the DataFrames instead. Plotting calls are left unchanged and no figure capture is added."
+      ],
+      "explanation": "The notebook's scientific endpoints are the HRV index tables in each of the four result cells: time-domain (`hrv_time`), frequency-domain (`hrv_freq`), non-linear-domain (`hrv_nonlinear`), and the combined all-domain table (`hrv_indices`). Each is a named pandas DataFrame interpreted directly as a final result in the narrative, and each still holds its value at script completion. The export code appends after the untouched baseline and simply serializes these existing DataFrames to CSV files under /work/outputs; no scientific computation, filtering, or re-analysis is added. Signals, peak vectors, and plotting outputs are excluded as intermediates or plot-only artifacts.",
+      "export_code": "import pathlib as _pl\n\n_output_dir = _pl.Path(\"/work/outputs\")\n_output_dir.mkdir(parents=True, exist_ok=True)\n\nhrv_time.to_csv(_output_dir / \"hrv_time.csv\", index=False)\nhrv_freq.to_csv(_output_dir / \"hrv_freq.csv\", index=False)\nhrv_nonlinear.to_csv(_output_dir / \"hrv_nonlinear.csv\", index=False)\nhrv_indices.to_csv(_output_dir / \"hrv_indices.csv\", index=False)\n",
+      "unresolved_assumptions": [
+        "The four HRV DataFrames are assumed to be single-row pandas DataFrames keyed by index-name columns (standard NeuroKit2 output); this is not verified by execution.",
+        "NeuroKit2 version installed at execution time determines the exact set of index columns emitted; no column list is asserted here."
+      ]
+    },
+    "source": {
+      "id": "neurokit-hrv",
+      "license": "MIT",
+      "provenance": {
+        "data_lineage": "Source nk.data resting physiology recording, sampled at 100 Hz.",
+        "data_redistribution_review": "Not established independently; generated task bundles and staged data remain private pending review.",
+        "notebook": {
+          "license": "MIT",
+          "license_url": "https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/LICENSE",
+          "revision": "ff419d983568ef492eb8d229af643c0ef0100b32",
+          "sha256": "478c706ad92fb919d576871c96dd6e5b2712962bbf9a858ecfe89cbf8923a1c4",
+          "url": "https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/docs/examples/ecg_hrv/ecg_hrv.ipynb"
+        }
+      },
+      "source_revision": "ff419d983568ef492eb8d229af643c0ef0100b32",
+      "source_sha256": "478c706ad92fb919d576871c96dd6e5b2712962bbf9a858ecfe89cbf8923a1c4",
+      "title": "Time-, frequency- and nonlinear-domain heart-rate variability",
+      "url": "https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/docs/examples/ecg_hrv/ecg_hrv.ipynb"
+    }
+  },
+  "source_imports": {
+    "analysis": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 24,
+        "statement": "import neurokit2 as nk"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 28,
+        "statement": "import matplotlib.pyplot as plt"
+      }
+    ],
+    "exports": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 1,
+        "statement": "import pathlib as _pl"
+      }
+    ],
+    "scope": "Literal source statements and locations only; dynamic imports, native libraries and availability remain unverified."
+  },
+  "source_operations": {
+    "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+    "operations": [
+      {
+        "column": 7,
+        "end_column": 40,
+        "end_line": 38,
+        "function": "nk.data",
+        "id": "call-38-7",
+        "line": 38,
+        "source": "nk.data(\"bio_resting_5min_100hz\")"
+      },
+      {
+        "column": 0,
+        "end_column": 11,
+        "end_line": 39,
+        "function": "data.head",
+        "id": "call-39-0",
+        "line": 39,
+        "source": "data.head()"
+      },
+      {
+        "column": 14,
+        "end_column": 58,
+        "end_line": 44,
+        "function": "nk.ecg_peaks",
+        "id": "call-44-14",
+        "line": 44,
+        "source": "nk.ecg_peaks(data[\"ECG\"], sampling_rate=100)"
+      },
+      {
+        "column": 11,
+        "end_column": 59,
+        "end_line": 57,
+        "function": "nk.hrv_time",
+        "id": "call-57-11",
+        "line": 57,
+        "source": "nk.hrv_time(peaks, sampling_rate=100, show=True)"
+      },
+      {
+        "column": 11,
+        "end_column": 80,
+        "end_line": 66,
+        "function": "nk.hrv_frequency",
+        "id": "call-66-11",
+        "line": 66,
+        "source": "nk.hrv_frequency(peaks, sampling_rate=100, show=True, normalize=True)"
+      },
+      {
+        "column": 16,
+        "end_column": 69,
+        "end_line": 73,
+        "function": "nk.hrv_nonlinear",
+        "id": "call-73-16",
+        "line": 73,
+        "source": "nk.hrv_nonlinear(peaks, sampling_rate=100, show=True)"
+      },
+      {
+        "column": 14,
+        "end_column": 57,
+        "end_line": 84,
+        "function": "nk.hrv",
+        "id": "call-84-14",
+        "line": 84,
+        "source": "nk.hrv(peaks, sampling_rate=100, show=True)"
+      }
+    ],
+    "source_sha256": "ca70f4196402ccbf531e8e6b69b5d147340d2c9675610c5025256cbc66ac89e0"
+  }
+}

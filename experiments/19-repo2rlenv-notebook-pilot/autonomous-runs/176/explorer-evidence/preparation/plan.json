@@ -1,0 +1,35 @@
+{
+  "artifacts": [
+    {
+      "description": "Time-domain HRV indices (e.g., RMSSD, MeanNN, SDNN) for the resting ECG recording.",
+      "path": "hrv_time.csv",
+      "source_evidence": "Produced by `hrv_time = nk.hrv_time(peaks, sampling_rate=100, show=True)` and displayed as the conclusion of the 'Time-Domain Analysis' section; the narrative interprets these indices directly ('These features include the RMSSD ... MeanNN ...'). The existing variable `hrv_time` (a one-row DataFrame of index names/values) holds it at completion."
+    },
+    {
+      "description": "Frequency-domain HRV indices (spectral power density in HF, LF, VLF bands, normalized) for the same recording.",
+      "path": "hrv_freq.csv",
+      "source_evidence": "Produced by `hrv_freq = nk.hrv_frequency(peaks, sampling_rate=100, show=True, normalize=True)` and displayed as the result of the 'Frequency-Domain Analysis' section ('extract ... the spectral power density pertaining to different frequency bands'). The existing variable `hrv_freq` holds it at completion."
+    },
+    {
+      "description": "Non-linear-domain HRV indices (e.g., Poincar\u00e9 SD1/SD2, entropy measures) for the same recording.",
+      "path": "hrv_nonlinear.csv",
+      "source_evidence": "Produced by `hrv_nonlinear = nk.hrv_nonlinear(peaks, sampling_rate=100, show=True)` and displayed as the result of the 'Non-Linear Domain Analysis' section ('let's compute the non-linear indices'). The existing variable `hrv_nonlinear` holds it at completion."
+    },
+    {
+      "description": "Combined HRV indices across time, frequency, and non-linear domains.",
+      "path": "hrv_indices.csv",
+      "source_evidence": "Produced by `hrv_indices = nk.hrv(peaks, sampling_rate=100, show=True)` and displayed as the result of the 'All Domains' section ('extract HRV indices from all three domains'). The existing variable `hrv_indices` holds it at completion."
+    }
+  ],
+  "disposition": "prepare",
+  "excluded_outputs": [
+    "Raw recording (`data`) and R-peak extraction outputs (`peaks`, `info`): inputs/intermediates that feed the HRV computations, not interpreted as independent scientific results.",
+    "Figures rendered by `show=True` in each HRV call (RR-interval distribution, PSD, Poincar\u00e9 plot): values exist only inside the plotting calls and are not separately captured; the underlying indices are exported via the DataFrames instead. Plotting calls are left unchanged and no figure capture is added."
+  ],
+  "explanation": "The notebook's scientific endpoints are the HRV index tables in each of the four result cells: time-domain (`hrv_time`), frequency-domain (`hrv_freq`), non-linear-domain (`hrv_nonlinear`), and the combined all-domain table (`hrv_indices`). Each is a named pandas DataFrame interpreted directly as a final result in the narrative, and each still holds its value at script completion. The export code appends after the untouched baseline and simply serializes these existing DataFrames to CSV files under /work/outputs; no scientific computation, filtering, or re-analysis is added. Signals, peak vectors, and plotting outputs are excluded as intermediates or plot-only artifacts.",
+  "export_code": "import pathlib as _pl\n\n_output_dir = _pl.Path(\"/work/outputs\")\n_output_dir.mkdir(parents=True, exist_ok=True)\n\nhrv_time.to_csv(_output_dir / \"hrv_time.csv\", index=False)\nhrv_freq.to_csv(_output_dir / \"hrv_freq.csv\", index=False)\nhrv_nonlinear.to_csv(_output_dir / \"hrv_nonlinear.csv\", index=False)\nhrv_indices.to_csv(_output_dir / \"hrv_indices.csv\", index=False)\n",
+  "unresolved_assumptions": [
+    "The four HRV DataFrames are assumed to be single-row pandas DataFrames keyed by index-name columns (standard NeuroKit2 output); this is not verified by execution.",
+    "NeuroKit2 version installed at execution time determines the exact set of index columns emitted; no column list is asserted here."
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "hrv_freq.csv",
+      "hrv_indices.csv",
+      "hrv_nonlinear.csv",
+      "hrv_time.csv"
+    ],
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "bio_resting_5min_100hz.csv"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "checks": [
+    {
+      "artifacts": [
+        "hrv_time.csv",
+        "hrv_freq.csv",
+        "hrv_nonlinear.csv",
+        "hrv_indices.csv"
+      ],
+      "id": "structure",
+      "kind": "structural",
+      "public_requirement": "Each of the four declared output files exists at its declared path (relative to the submission output root, with no extra directory layer), is readable as UTF-8 comma-separated text, and consists of a header row followed by exactly one data row. Header names are non-empty and unique. Every data field is either empty or a decimal representation of a finite number; NaN, inf, -inf or any other nonfinite/non-numeric token fails. The data row has the same number of fields as the header. Files with more than one data row, a missing data row, quoting that cannot be parsed, or duplicated header names fail."
+    },
+    {
+      "artifacts": [
+        "hrv_time.csv"
+      ],
+      "id": "hrv_time_values",
+      "kind": "scientific",
+      "public_requirement": "hrv_time.csv reports the time-domain HRV indices of the NN (R-R) interval series derived from the default NeuroKit2-0.2.13 R-peak detection on the raw ECG column at 100 Hz. The header must contain exactly the reference column set (same HRV_ index names, no missing index, no extra column, no index column, no renamed index). Each reference-defined index (including MeanNN, SDNN, SDANN1/SDNNI1, RMSSD, SDSD, CVNN, CVSD, MedianNN, MadNN, MCVNN, IQRNN, SDRMSSD, Prc20NN, Prc80NN, pNN50, pNN20, MinNN, MaxNN, HTI, TINN) must carry a finite value; the indices undefined for a 5-minute recording (SDANN2, SDNNI2, SDANN5, SDNNI5) must be empty fields. Values agree with the reference when |s-r| <= 1e-9 + 1e-9*|r| (r = reference value). Missing values must not be zero, empty, NaN or otherwise silently accepted where a value is required."
+    },
+    {
+      "artifacts": [
+        "hrv_freq.csv"
+      ],
+      "id": "hrv_freq_values",
+      "kind": "scientific",
+      "public_requirement": "hrv_freq.csv reports the frequency-domain HRV indices computed from the 100 Hz interpolated NN series using Welch's method with the normalization by the maximum PSD value, as defined by the reference preset's default settings. The header must contain exactly the reference column set (same HRV_ index names, no missing, no extra, no renamed index). ULF is undefined for this 5-minute recording and must be an empty field; VLF, LF, HF, VHF, TP, LFHF, LFn, HFn and LnHF must carry finite values. Values agree with the reference when |s-r| <= 1e-9 + 1e-9*|r| (r = reference value). An unnormalized-PSD result or any other value change exceeding this bound fails."
+    },
+    {
+      "artifacts": [
+        "hrv_nonlinear.csv"
+      ],
+      "id": "hrv_nonlinear_values",
+      "kind": "scientific",
+      "public_requirement": "hrv_nonlinear.csv reports the non-linear HRV indices of the same NN series at the reference preset's default settings (Poincar\u00e9 SD1/SD2/SD1SD2/S; CSI, CVI, CSI_Modified; PIP, IALS, PSS, PAS; GI, SI, AI, PI; asymmetric Poincar\u00e9 decomposition C1d/C1a, SD1d/SD1a, C2d/C2a, SD2d/SD2a, Cd/Ca, SDNNd/SDNNa; DFA_alpha1/alpha2 and the MFDFA alpha1/alpha2 summary statistics; ApEn, SampEn, ShanEn, FuzzyEn, MSEn, CMSEn, RCMSEn; CD, HFD, KFD, LZC; Symbolic_EqualProb4_0V/1V/2LV/2UV). The header must contain exactly the reference column set, with every index carrying a finite value. Values agree with the reference when |s-r| <= 1e-9 + 1e-9*|r| (r = reference value). Different method settings (entropy tolerance, DFA window ranges, symbolic pattern length, etc.) that change any value beyond this bound fail."
+    },
+    {
+      "artifacts": [
+        "hrv_indices.csv"
+      ],
+      "id": "hrv_indices_values",
+      "kind": "scientific",
+      "public_requirement": "hrv_indices.csv reports the combined all-domain table: the three domain outputs obtained from the domain functions at their default settings (including PSD normalization at the default) concatenated column-wise, with no respiration-derived indices. The header must contain exactly the reference column set (95 HRV_ index names, no missing, no extra, no renamed index). Empty fields appear exactly for the indices undefined for this 5-minute recording; all other indices carry finite values. Values agree with the reference when |s-r| <= 1e-9 + 1e-9*|r| (r = reference value)."
+    },
+    {
+      "artifacts": [
+        "hrv_time.csv",
+        "hrv_freq.csv",
+        "hrv_nonlinear.csv",
+        "hrv_indices.csv"
+      ],
+      "id": "combined_consistency",
+      "kind": "scientific",
+      "public_requirement": "The submission is internally consistent across the four files: the combined table hrv_indices.csv contains exactly the index columns of the union of the three domain files (hrv_time.csv, hrv_freq.csv, hrv_nonlinear.csv), and each shared index carries the same value (or the same empty status) in the combined table as in the corresponding domain file, within |s-r| <= 1e-9 + 1e-9*|r| of each other. A combined table that omits domain indices, adds indices absent from all domain files, or disagrees numerically with any domain file on any shared index fails. This check verifies the cross-file identity of the exported indices, not agreement with reference values (which is covered by the per-file value checks)."
+    }
+  ],
+  "output_paths": [
+    "hrv_freq.csv",
+    "hrv_indices.csv",
+    "hrv_nonlinear.csv",
+    "hrv_time.csv"
+  ],
+  "paths": {
+    "reference_outputs": "/work/reference",
+    "working_directory": "/work/probe"
+  },
+  "public_instruction": "# Heart rate variability (HRV) indices for a 5-minute resting ECG recording\n\n## Objective\n\nYou are given a 5-minute multi-channel physiological recording of a participant at rest (ECG, PPG, RSP), sampled at 100 Hz. Using the **ECG channel**, determine R-peak occurrences, derive the R\u2013R (NN) interval series, and compute the participant's heart-rate-variability indices in the time domain, the frequency domain, the non-linear domain, and as a combined all-domain summary.\n\nThe reference pipeline is the standard, default HRV computation of **NeuroKit2 version 0.2.13** (`nk.hrv_time`, `nk.hrv_frequency` with `normalize=True`, `nk.hrv_nonlinear`, `nk.hrv` with `sampling_rate=100`). A reference execution environment (Python 3.13 with `neurokit2==0.2.13`, `numpy==2.5.4`, `scipy==1.18.1`, `pandas==2.3.3`) is available in the sandbox for convenience, but you may use any implementation that produces the requested quantities. Output values must be reported for the same indices, with the same definitions, as this preset.\n\n## Input\n\n`inputs/bio_resting_5min_100hz.csv` \u2014 a comma-separated file with a header row and three numeric columns `ECG`, `PPG`, `RSP`, giving samples of a resting recording at **100 Hz** (consecutive rows are consecutive samples, 10 ms apart; 30,000 rows). Use the `ECG` column only.\n\n## Method\n\n1. **R-peak detection.** Detect R-peak sample indices in the raw ECG column with the default NeuroKit2 R-peak finder (`method=\"neurokit\"`), at `sampling_rate=100`. Do **not** apply artifact correction to the detected peaks (`correct_artifacts=False`) and do not substitute a different detector or a pre-cleaned series; the detected peak set defines the beat population for all subsequent indices.\n2. **R\u2013R intervals.** From the detected peak indices, form the successive-difference NN interval series in **milliseconds**, based on the 100 Hz sampling.\n3. **Time-domain indices.** Compute the standard time-domain HRV statistics of the NN series (ms units): mean (MeanNN), standard deviation (SDNN), RMSSD/SDSD, coefficient-of-variation indices, median/MAD/IQR, 20th/80th percentiles, pNN50/pNN20 (percent of successive differences exceeding 50 ms / 20 ms), minimum/maximum NN, Henrich triangle index and TINN, and the SDANN/SDNNI statistics over **1-minute** windows. Indices that require longer recordings than 5 minutes (SDANN2, SDNNI2, SDANN5, SDNNI5) are undefined for this input and must be reported as empty.\n4. **Frequency-domain indices.** Interpolate the NN series onto a uniform 100 Hz grid, estimate the power spectral density with **Welch's method** (Hann window, mean averaging, spectral density scaling, no per-segment detrending), **normalize the PSD by its maximum value**, and integrate band power over: ULF 0\u20130.0033 Hz (undefined for a 5-minute recording \u2192 empty), VLF 0.0033\u20130.04 Hz, LF 0.04\u20130.15 Hz, HF 0.15\u20130.4 Hz, VHF 0.4\u20130.5 Hz. Report the band powers, the total power (sum over the bands), the LF/HF ratio, the LF and HF fractions of total power (`LFn`, `HFn`), and the natural logarithm of HF power (`LnHF`).\n5. **Non-linear indices.** Compute the standard default non-linear indices of the NN series: Poincar\u00e9 SD1, SD2, their ratio and ellipse area; CSI, CVI and modified CSI; PIP, IALS, PSS, PAS; Guzik and Porta indices (GI, SI, AI, PI); asymmetric Poincar\u00e9 decomposition (C1d/C1a, SD1d/SD1a, C2d/C2a, SD2d/SD2a, Cd/Ca, SDNNd/SDNNa); DFA short- and long-term scaling exponents (alpha1, alpha2) and the multifractal-DFA alpha1/alpha2 summary statistics (Width, Peak, Mean, Max, Delta, Asymmetry, Fluctuation, Increment); approximate, sample, Shannon, fuzzy and multiscale entropies (ApEn, SampEn, ShanEn, FuzzyEn, MSEn, CMSEn, RCMSEn); correlation dimension (CD), Higuchi and Katz fractal dimensions (HFD, KFD), Lempel-Ziv complexity (LZC), and the equal-probability 4-symbol symbolic-dynamics proportions (0V, 1V, 2LV, 2UV patterns).\n6. **Combined table.** Produce the same three domain outputs obtained from the domain functions used at their **default settings** (including PSD normalization at the default) and concatenate them column-wise into one table. No respiration-derived indices are included (no RSP columns are passed).\n\nFor any index whose NeuroKit2-0.2.13 default settings matter (entropy tolerance `r`, DFA window ranges, MST/max-scale for multiscale entropy, symbolic pattern length), the reference preset's defaults \u2014 not the original literature conventions \u2014 define the requested quantity.\n\n## Outputs\n\nWrite four comma-separated files (header row of index names, one value row, no index column), with empty fields for undefined indices:\n\n- `outputs/hrv_time.csv` \u2014 the time-domain indices.\n- `outputs/hrv_freq.csv` \u2014 the frequency-domain indices (with PSD normalized by maximum, as above).\n- `outputs/hrv_nonlinear.csv` \u2014 the non-linear indices.\n- `outputs/hrv_indices.csv` \u2014 the combined table of the three domains at default settings.\n\nIndex names follow the `HRV_` prefix convention of the reference preset (e.g., `HRV_MeanNN`, `HRV_RMSSD`, `HRV_LF`, `HRV_SD1`, `HRV_SampEn`). Each output must report a value (or an empty field, where undefined) for every index that the reference preset's default computation returns for this input.\n\n## Resources\n\nOffline execution, 4 CPUs, 8 GiB RAM, \u2264 10 GiB disk; your program must finish within 600 seconds. Reference execution of this analysis completes in well under one minute on the provided environment.\n\n## Acceptance rules\n\n# Acceptance rules (addendum)\n\n## Files and paths\nFour output files are required, each read at its declared path relative to the supplied output root (no extra directory layer, no fallback search):\n\n- `hrv_time.csv` \u2014 time-domain indices\n- `hrv_freq.csv` \u2014 frequency-domain indices (PSD normalized by maximum)\n- `hrv_nonlinear.csv` \u2014 non-linear indices\n- `hrv_indices.csv` \u2014 combined all-domain table\n\nAny missing file, unreadable file, or file placed at any other path (including under an extra `outputs/` subdirectory) fails the corresponding checks.\n\n## File format\nEach file is a comma-separated UTF-8 text file: one header row of `HRV_` index names followed by exactly one data row, with no index column. Any other shape (no data row, more than one data row, ragged row, extra blank line after the single record ends, duplicated or empty header names) fails the structural check. Quoted fields are decoded with standard CSV rules. Every data field must be either an empty field or a decimal numeric literal that parses to a finite value; `NaN`, `inf`, nonfinite tokens, and any non-numeric content fail. Column order within the header is not graded; column identity is by exact case-sensitive `HRV_` index name.\n\n## Column sets\nFor each file, the set of column names must equal the reference set for that file exactly: every reference index present (no missing values masked by omission), no extra columns, and no renamed indices. The reference sets are the NeuroKit2-0.2.13 default index sets for this input: 25 columns in `hrv_time.csv` (`HRV_MeanNN` through `HRV_TINN`), 10 in `hrv_freq.csv` (`HRV_ULF` through `HRV_LnHF`), 60 in `hrv_nonlinear.csv`, and 95 in `hrv_indices.csv` (the column union of the three domain files; no respiration-derived indices).\n\n## Undefined indices (empty fields)\nIndices that the reference computation returns as undefined for a 5-minute recording \u2014 `HRV_ULF`, `HRV_SDANN2`, `HRV_SDNNI2`, `HRV_SDANN5`, `HRV_SDNNI5` \u2014 must be written as empty fields. Zero, `NaN`, or any numeric substitute in place of an undefined index fails, as does reporting a value in the reference-position empty field. Conversely, every index with a reference value must carry a numeric field; an empty field there fails.\n\n## Numeric comparison\nValues are compared after parsing, on the decoded scientific value, per column matched by index name.\n\nA submission value `s` matches the reference value `r` when\n\n  |s \u2212 r| \u2264 1e-9 + 1e-9 \u00b7 |r|   (reference value as denominator; both sides in the same reported units)\n\nThis bound is a limit on observable output differences. It accepts small serialization/hand-off round-off of the written decimal representation (an ordinary CSV write/read round trip of the reported values must not change grading), but any deviation beyond it \u2014 including one milli in a millisecond-unit index, a percent-level change produced by different preprocessing settings (e.g. artifact-corrected or substituted R peaks, unnormalized PSD, different entropy tolerance or DFA window settings), or values from a different beat population \u2014 fails. The comparison is symmetric in absolute terms but anchored to the reference magnitude; scientific quantities are compared in the units stated for each index (milliseconds for NN-based time-domain indices, dimensionless normalized powers/ratios for frequency and non-linear domains).\n\nEmpty-field positions must match exactly; a submission with a value where the reference is undefined, or an empty field where the reference has a value, fails regardless of the numeric comparison.\n\n## Cross-file consistency\n`hrv_indices.csv` is graded against the submission's own three domain files: its column set must equal the union of the submission's `hrv_time.csv`, `hrv_freq.csv` and `hrv_nonlinear.csv` column sets, and each shared index must carry the same value, under the same numeric rule, as in the corresponding domain file (empty-field status included). The three domain files must also be mutually consistent on any index name they share. A correct-looking combined table cannot compensate for value errors in the domain files; each file is graded separately, and every check must pass.\n\n## Verdict\nAll checks (structure, the four per-file value checks, and cross-file consistency) must pass. The grader reports pass/fail per check and always exits 0 after writing its report; a crash or malformed submission is a failed check, not a successful run.",
+  "reference_seconds": 600,
+  "verifier_seconds": 120
+}
