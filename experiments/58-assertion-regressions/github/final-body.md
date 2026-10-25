@@ -1,0 +1,7 @@
+The declared installed Biopython candidate completed with **zero exports**. Disabling the official new-test-function filter admitted PR #5372, but both native stages failed during collection after `git clean -fdx` removed its built C extensions. Zero F2P/P2P and zero independent exported-task controls. This was not a timeout or evidence that the PR lacks a regression. [Final evidence](https://github.com/Open-Athena/biotasks/blob/0555f803/experiments/58-assertion-regressions/final-summary.json). Subissue of #33.
+
+The candidate used the existing `require_new_test_funcs=false` option and #59’s explicit generic pytest path adapter. The actual absolute test path was valid and the hook restored upstream afterward. Fresh bootstrap changed the environment and test working directory relative to #57; this comparison does not isolate only the filter/path changes. Bootstrap smoke/fresh-image flags remained false. Original tests, parser, reward and native deadlines were retained; no added repair LLM or per-task fix.
+
+**Cost:** 13 original bootstrap calls / **$0.655983**, plus **0.557071111 allocated CPUh** for primary and cleanup. Billing, both anonymous HF readbacks, empty owned resources, preserved public base and byte-inert completed installed CLI replay are verified. Exact manifests/receipts and logs are linked in comments.
+
+[#60](https://github.com/Open-Athena/biotasks/issues/60) investigates generic revision-aware rebuilding offline. No retry or new native/model admission. Keep this issue and epic open for review; no accepted fresh task or release.
