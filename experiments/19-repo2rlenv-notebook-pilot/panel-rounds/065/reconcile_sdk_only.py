@@ -109,15 +109,24 @@ def main():
                 source.extractfile(EXPERIMENT + name).read()
             ).hexdigest()
     assert source_hashes["run_autonomous.py"] == CONTROLLER
-    assert source_hashes["reference_setup.py"] == (
-        "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2"
-    )
     # The second exact runner differs only by importing operation_inventory
     # and adding its static source annotations to the worker's input context.
     # Its single image creator and all session/resource/lifecycle code are equal.
-    assert source_hashes["run_reference_setup.py"] in {
-        "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc",
-        "fc83bf2ecd9f201b4bfd8c47cb07740619d09c66fc8df5a37435eb95af5b2d0b",
+    # The newest exact pair adds fail-closed network-result checks and catches a
+    # typed export-repair rejection. Creation and final owner cleanup are equal.
+    assert (source_hashes["run_reference_setup.py"], source_hashes["reference_setup.py"]) in {
+        (
+            "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc",
+            "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
+        ),
+        (
+            "fc83bf2ecd9f201b4bfd8c47cb07740619d09c66fc8df5a37435eb95af5b2d0b",
+            "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
+        ),
+        (
+            "9a2354335a74410931129d58526c16d121ddce2f86b0b35806dd75378d4d60f8",
+            "d85850aea0d2f70242d45d1abb898aac5b9b7742aaf1d14371bee775d2fea8b7",
+        ),
     }
     # This reviewed SDK path creates from an image once per recorded stage,
     # without persistent snapshot creation or native Harbor dispatch at this prefix.

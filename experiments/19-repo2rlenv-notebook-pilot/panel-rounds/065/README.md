@@ -8,3 +8,6 @@ Ten focused positive/negative checks cover resource size, owner counts, distinct
 
 
 The160 runner variant differs from154 only by importing the existing static `operation_inventory` and adding its source annotations to setup context. Exact controller/session bytes and the single resource creator are unchanged. After fresh four-owner cleanup, the same four-full-lifetimes bound retains3USD/releases1USD. The additional admitted runner hash is exact and recorded in the applied proof; no arbitrary newer runner or extra-owner execution is admitted.
+
+
+The exact typed-repair creator/session pair is also admitted after full frozen-source comparison: only network-result validation and handling a typed export-repair rejection differ; resource creation and owner cleanup are equal. [Source comparison](../070/typed-repair-source-family.json). Four- and five-SDK lifetime checks now have 53 passing combined tests, including the two comparison-repair targets, mismatched views, unknown/mixed source pairs and incomplete resources. Run 167's four-full-lifetimes dry run retains $3 against $2.769, preparing a $1 release. Original failed records and prior narrower-profile refusals remain unchanged; this is a new explicit admission, not a projection or deletion of receipts. No application yet.

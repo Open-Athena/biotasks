@@ -1,0 +1,54 @@
+--- frozen160/run_reference_setup.py
++++ frozen168/run_reference_setup.py
+@@ -401,11 +401,22 @@
+                 30,
+                 f"network-{self.operation}",
+             )
+-            probes = json.loads(result["log"])
++            log = result.get("log")
++            record.update(
++                probe_exit_code=result.get("exit_code"),
++                probe_timed_out=result.get("timed_out", False),
++                probe_log_sha256=hashlib.sha256(log.encode()).hexdigest()
++                if isinstance(log, str)
++                else None,
++            )
++            if result.get("exit_code") != 0 or result.get("timed_out") or not isinstance(log, str):
++                raise RuntimeError("Network probe did not complete with a text result")
++            try:
++                probes = json.loads(log)
++            except json.JSONDecodeError as error:
++                raise RuntimeError("Network probe returned invalid JSON") from error
+             record["probes"] = probes
+-            if result["exit_code"] or probes != [
+-                {"host": h, "port": p, "reachable": not blocked} for h, p in TARGETS
+-            ]:
++            if probes != [{"host": h, "port": p, "reachable": not blocked} for h, p in TARGETS]:
+                 raise RuntimeError("Network probe did not establish the required state")
+             record.update(
+                 state="verified",
+--- frozen160/reference_setup.py
++++ frozen168/reference_setup.py
+@@ -17,7 +17,7 @@
+ 
+ from pydantic import Field
+ from reference_environment import validate_environment, write_environment
+-from reference_protocol import ReferencePlan, StrictModel, materialize
++from reference_protocol import ReferencePlan, RuntimeExportRepairRejected, StrictModel, materialize
+ from repo2rlenv.execution.lifecycle import save_record
+ 
+ 
+@@ -684,6 +684,13 @@
+                                 status="exports_corrected_requires_retest",
+                                 export_code_sha256=digest(revised.exports.encode()),
+                             )
++                    except RuntimeExportRepairRejected as error:
++                        repair.update(
++                            status="preparation_repair_rejected",
++                            error_type=type(error).__name__,
++                            error=str(error),
++                            further_preparation_repair_available=False,
++                        )
+                     except BaseException as error:
+                         repair.update(status="incomplete", error_type=type(error).__name__)
+                         raise

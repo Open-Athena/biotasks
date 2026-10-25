@@ -65,6 +65,18 @@ def test_full_concurrent_lifetimes_are_priced():
     assert module.audit_shape(*evidence()) == Decimal("3.461250")
 
 
+def test_one_public_question_repair_prices_the_same_five_lifetimes():
+    pipeline, claims, cleanup = evidence()
+    repair = pipeline["quality_repair"]
+    repair["target"] = "public_question"
+    repair["validation_status"] = "independent_comparison_unresolved"
+    repair["effective_materialization"] += "-question-repair"
+    assert module.audit_shape(pipeline, claims, cleanup) == Decimal("3.461250")
+    repair["effective_materialization"] += "-second"
+    with pytest.raises(AssertionError):
+        module.audit_shape(pipeline, claims, cleanup)
+
+
 @pytest.mark.parametrize(
     "defect",
     [

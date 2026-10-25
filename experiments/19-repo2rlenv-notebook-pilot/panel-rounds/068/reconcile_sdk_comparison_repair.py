@@ -24,13 +24,25 @@ def audit_shape(pipeline, claims, cleanup):
     assert pipeline["status"] == "rejected"
     repair = pipeline["quality_repair"]
     prefix = repair["original_materialization"].removesuffix("/materialization")
-    assert repair["kind"] == "comparison_diagnosis"
-    assert repair["target"] == "independent_solution"
+    assert repair["kind"] in {"comparison_diagnosis", "public_question_diagnosis"}
+    assert repair["target"] in {"independent_solution", "public_question"}
     assert repair["allowance_consumed"] is True
-    assert repair["validation_status"] == "question_review_blocked"
+    assert repair["validation_status"] in {
+        "question_review_blocked",
+        "independent_comparison_unresolved",
+        "repair_blocked",
+        "grader_blocked",
+        "probe_author_blocked",
+        "grader_requires_further_work",
+    }
     assert repair["original_materialization"] == prefix + "/materialization"
     assert repair["original_grading"] == prefix + "/grading"
-    assert repair["effective_materialization"] == repair["original_materialization"]
+    expected_materialization = (
+        repair["original_materialization"]
+        if repair["target"] == "independent_solution"
+        else prefix + "/materialization-question-repair"
+    )
+    assert repair["effective_materialization"] == expected_materialization
     assert repair["effective_grading"] == prefix + "/grading-comparison-repair"
     stages = pipeline["stages"]
     assert [s["name"] for s in stages] == [
@@ -119,15 +131,22 @@ def main():
                 source.extractfile(EXPERIMENT + name).read()
             ).hexdigest()
     assert source_hashes["run_autonomous.py"] == CONTROLLER
-    assert source_hashes["reference_setup.py"] == (
-        "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2"
-    )
     # The second exact runner differs only by importing operation_inventory
     # and adding its static source annotations to the worker's input context.
     # Its single image creator and all session/resource/lifecycle code are equal.
-    assert source_hashes["run_reference_setup.py"] in {
-        "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc",
-        "fc83bf2ecd9f201b4bfd8c47cb07740619d09c66fc8df5a37435eb95af5b2d0b",
+    assert (source_hashes["run_reference_setup.py"], source_hashes["reference_setup.py"]) in {
+        (
+            "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc",
+            "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
+        ),
+        (
+            "fc83bf2ecd9f201b4bfd8c47cb07740619d09c66fc8df5a37435eb95af5b2d0b",
+            "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
+        ),
+        (
+            "9a2354335a74410931129d58526c16d121ddce2f86b0b35806dd75378d4d60f8",
+            "d85850aea0d2f70242d45d1abb898aac5b9b7742aaf1d14371bee775d2fea8b7",
+        ),
     }
     # This reviewed SDK path creates from an image once per recorded stage,
     # without persistent snapshot creation or native Harbor dispatch at this prefix.
@@ -144,6 +163,10 @@ def main():
     }
     assert not any(n.startswith("native/") for n in manifest)
     claims = [original(f + "/sandbox-claim.json") for f in FOLDERS]
+    assert (
+        pipeline["quality_repair"]["validation_status"]
+        == original("grading-comparison-repair/result.json")["status"]
+    )
     bound = audit_shape(pipeline, claims, clean)
     assert {r["path"] for r in clean["original_cleanup_evidence"]} == {
         f + "/cleanup.json" for f in FOLDERS
@@ -175,7 +198,7 @@ def main():
     row.update(
         ceiling_usd="4.00",
         state="terminal_sdk_only_all_lifetimes_bound_reconciled",
-        reconciliation="Five verified deleted SDK sandboxes with one documented independent-comparison repair, each priced for7500s even if all overlap; retain4USD against3.46125USD. No snapshot/native dispatch or credits assumed. See "
+        reconciliation="Five verified deleted SDK sandboxes with one documented comparison repair, each priced for7500s even if all overlap; retain4USD against3.46125USD. No snapshot/native dispatch or credits assumed. See "
         + args.proof.relative_to(args.ledger.parent).as_posix(),
     )
     held = sum(Decimal(r["ceiling_usd"]) for r in ledger["reservations"])

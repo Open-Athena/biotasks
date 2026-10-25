@@ -4800,3 +4800,10 @@ The committed154lifetime auditor applied the unchanged dry-run bound and retaine
 
 
 Source-only 170 passed the unchanged compatibility, exact-hash, funding and typed pool-admission checks and was submitted with no other campaign active. All 217 runtime paths remain present; exactly the three reviewed generic prompt templates differ from 169. Original notebook/source assets match 168, with no old task or operator diagnostics. Private input ref `12249efa665f49befe039241e9b764caee9748e6` is not pushed; public runtime `a546bf1b`. This is pending scientific evidence, not a successful prompt improvement. [Freeze/admission](panel-rounds/072/submission-170.json).
+
+
+## 25 October 2026 — current reference progresses; preserve funded cross-domain validation
+
+Source-only170 completed preparation18.5s and setup740.0s; clean offline replay was running in the next bounded observation. No operator task edits or new quality allowances. This is provisional execution, not accepted controls or publication.
+
+A complete frozen160→168 source comparison shows only fail-closed network-result checks and the typed export-repair-rejection handler changed; image resource creation and owner cleanup ASTs are identical. The financial profiles now admit that exact creator/session pair, never arbitrary/mixed versions. The five-SDK profile distinguishes either existing single-repair target by exact derived-view paths and binds its validation status to the original grading result. All resources are still priced concurrently for the whole7500seconds.53positive/negative checks pass. Original037/065narrow-profile refusals stand; no receipt was discarded. Fresh167/168ID/owner absence is verified. Dry runs prepare1USDrelease each from their existing4/5USDholds, with no application at this checkpoint. Currentrates/billing were rechecked against official pages; all10GBdisk is charged in the bound without free allowances.

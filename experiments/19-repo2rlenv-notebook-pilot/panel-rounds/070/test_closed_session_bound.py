@@ -49,6 +49,22 @@ def test_extra_implementation_is_refused():
         module.admitted_implementation(sources)
 
 
+def test_known_typed_repair_pair_and_mixed_versions():
+    sources = implementation()
+    sources["run_reference_setup.py"] = (
+        "9a2354335a74410931129d58526c16d121ddce2f86b0b35806dd75378d4d60f8"
+    )
+    with pytest.raises(AssertionError):
+        module.admitted_implementation(sources)
+    sources["reference_setup.py"] = (
+        "d85850aea0d2f70242d45d1abb898aac5b9b7742aaf1d14371bee775d2fea8b7"
+    )
+    assert module.admitted_implementation(sources) == sources
+    sources["run_reference_setup.py"] = implementation()["run_reference_setup.py"]
+    with pytest.raises(AssertionError):
+        module.admitted_implementation(sources)
+
+
 def evidence():
     start = 1790000000
     session = {"started": start, "finished": start + 100, "cleanup_verified": True}
