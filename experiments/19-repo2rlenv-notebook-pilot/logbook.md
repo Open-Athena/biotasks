@@ -4753,3 +4753,6 @@ Source-only168 passed the unchanged frozen-input, compatibility, funding and typ
 
 
 The Pyteomics139 metadata follow-up streamed the44,601,786-byte source-hosted archive without retaining/extracting raw biological data. Its13members contain no explicitly named license/readme/notice file. This adds archive-structure evidence, not a finding that no grant exists elsewhere; data redistribution remains unestablished and the publication hold is unchanged. The current documentation now distinguishes active168 from the last selected Scanpy150 outcome. The unchanged065financial auditor refused167's unrecognized setup implementation, so no additional money was released.
+
+
+A further bounded read-only observation of168 shows preparationcompleted17.4s, setupcompleted563.5s and clean replaycompleted372.0s; specificationisrunning. No quality repair or operator scientific edits. These are provisional live pipeline records, not a sealed final result or release qualification. [Observation](panel-rounds/069/live-observations/33aeaf65819e8292aca9e33e67cb11c9bd6a1066c4901a559d42359aa211ee5f.json).
