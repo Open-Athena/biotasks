@@ -349,19 +349,15 @@ def sealed(pipeline, monkeypatch):
         backend_config_sha256=sha(backend),
     )
     p.plan["backend"]["config"] = str(backend)
+    p.group["notices"]["sha256"] = sha(p.root / p.group["notices"]["path"])
     p.plan["plan_identity"] = json_sha({k: v for k, v in p.plan.items() if k != "plan_identity"})
     write_json(p.root / "plan.json", p.plan)
-    monkeypatch.setattr(
-        completed_import,
-        "profiles",
-        lambda: [
-            {
-                "generation_code_identity": "a" * 64,
-                "validation_code_identity": code_identity(),
-                "assets_sha256": {"family.json": p.group["payload_sha256"]["family.json"]},
-            }
-        ],
-    )
+    profile = {
+        "generation_code_identity": "a" * 64,
+        "validation_code_identity": code_identity(),
+        "assets_sha256": {"family.json": p.group["payload_sha256"]["family.json"]},
+    }
+    monkeypatch.setattr(completed_import, "profiles", lambda: [profile])
     assert finish(p) == "complete"
     monkeypatch.setattr(p, "client", lambda *a, **k: pytest.fail("No completed-import transport"))
     return p, remote

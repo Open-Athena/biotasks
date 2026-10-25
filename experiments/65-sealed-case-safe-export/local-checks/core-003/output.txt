@@ -1,0 +1,118 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/65
+configfile: pyproject.toml
+plugins: platformdirs-4.12.2, anyio-4.15.1
+collected 32 items
+
+tests/test_generation_cache_identity.py .........                        [ 28%]
+tests/test_generation_lifecycle.py .............F........F               [100%]
+
+=================================== FAILURES ===================================
+_______ test_import_verifies_full_evidence_without_transport_or_mutation _______
+
+sealed = (<biotasks.generation.generation_pipeline.GenerationPipeline object at 0x7fa628dc55e0>, {'submitted': ['fixture-genera...core-003/test_import_verifies_full_evid0/fixture-generation-cleanup.tar.zst')}, 'fault': False, 'missing': False, ...})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa628e00390>
+
+    def test_import_verifies_full_evidence_without_transport_or_mutation(sealed, monkeypatch):
+        p, remote = sealed
+        before = inventory(p.root)
+        count = len(remote["submitted"])
+        monkeypatch.setattr(
+            completed_import.GenerationPipeline,
+            "client",
+            lambda *a, **k: pytest.fail("No import transport"),
+        )
+>       assert run_generation.verify(p.root, allow_legacy=True) == p.plan
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_generation_lifecycle.py:379: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/65/experiments/65-sealed-case-safe-export/inputs-private/pytest-core-003/test_import_verifies_full_evid0')
+allow_legacy = True
+
+    def verify(root: Path, *, allow_legacy: bool = False) -> dict[str, Any]:
+        plan = read_json(root / "plan.json")
+        original = copy.deepcopy(plan)
+        identity = original.pop("plan_identity")
+        require(json_sha(original) == identity, "Generation plan changed")
+        require(plan["validation_code_identity"] == code_identity(), "Shared lifecycle code changed")
+        require(
+            sha(Path(plan["backend"]["config"])) == plan["backend_config_sha256"],
+            "SDK configuration changed",
+        )
+        if "generation_code_identity" in plan:
+            if plan["generation_code_identity"] != resources.code_identity():
+                require(allow_legacy, "Generation implementation changed")
+                from biotasks.generation import completed_import
+    
+                completed_import.verify(root, plan)
+        else:
+            # A known old receipt is import-only. No active old plan may be driven by
+            # a differently packaged implementation or silently upgraded in place.
+            legacy = json.loads((files("biotasks.generation") / "legacy-profile.json").read_bytes())
+            require(
+                allow_legacy and all(plan.get(key) == value for key, value in legacy.items()),
+                "Unsupported historical generation profile",
+            )
+        group = plan["group"]
+        for name, digest in group["payload_sha256"].items():
+            require(sha(root / group["payload_directory"] / name) == digest, "Frozen payload changed")
+        require(
+>           sha(root / group["notices"]["path"]) == group["notices"]["sha256"], "Source notices changed"
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        )
+E       KeyError: 'sha256'
+
+src/biotasks/generation/run_generation.py:44: KeyError
+________ test_import_rejects_unsealed_unknown_or_tampered_state[asset] _________
+
+sealed = (<biotasks.generation.generation_pipeline.GenerationPipeline object at 0x7fa628ba0e10>, {'submitted': ['fixture-genera...core-003/test_import_rejects_unsealed_u8/fixture-generation-cleanup.tar.zst')}, 'fault': False, 'missing': False, ...})
+kind = 'asset'
+
+    @pytest.mark.parametrize(
+        "kind", ["intent", "partial", "held", "evidence", "lineage", "model", "cpu", "unknown", "asset"]
+    )
+    def test_import_rejects_unsealed_unknown_or_tampered_state(sealed, kind):
+        p, _ = sealed
+        directory = p.directory
+        if kind in {"intent", "partial"}:
+            journal = read_json(directory / "journal.json")
+            if kind == "intent":
+                journal["intent"] = {"stage": "cleanup_verified"}
+            else:
+                journal["stages"].pop()
+            write_json(directory / "journal.json", journal)
+        elif kind == "held":
+            write_json(directory / "held.json", {"reason": "scientific disagreement"})
+        elif kind == "evidence":
+            (directory / "cleanup-proof.json").write_text("{}\n")
+        elif kind == "lineage":
+            member = read_json(directory / "readback.json")["source_members"][0]["path"]
+            target = directory / "generation-source" / member
+            assert target.is_file()
+            target.write_text("changed raw generation")
+        elif kind in {"model", "cpu"}:
+            value = read_json(p.ledger)
+            entry = next(
+                x
+                for x in value["events"]
+                if x["kind"]
+                == ("model_run_reservation" if kind == "model" else "reserved_cpu_admission")
+            )
+            entry["state"] = "unresolved"
+            write_json(p.ledger, value)
+        elif kind == "unknown":
+            p.plan["generation_code_identity"] = "b" * 64
+        elif kind == "asset":
+            p.plan["group"]["payload_sha256"]["family.json"] = "0" * 64
+>       with pytest.raises(ValidationError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValidationError
+
+tests/test_generation_lifecycle.py:421: Failed
+=========================== short test summary info ============================
+FAILED tests/test_generation_lifecycle.py::test_import_verifies_full_evidence_without_transport_or_mutation
+FAILED tests/test_generation_lifecycle.py::test_import_rejects_unsealed_unknown_or_tampered_state[asset]
+========================= 2 failed, 30 passed in 5.83s =========================
