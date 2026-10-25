@@ -299,7 +299,7 @@ def test_runtime_export_feedback_requires_definite_append_phase_evidence(
         runtime_export_feedback(current, analysis, script, record)
 
 
-@pytest.mark.parametrize("mode", ["repair", "spent", "last_test", "source", "resource"])
+@pytest.mark.parametrize("mode", ["repair", "spent", "rejected", "last_test", "source", "resource"])
 def test_runtime_repair_preserves_failed_trial_and_requires_remaining_test(tmp_path, mode):
     from reference_protocol import materialize
     from repo2rlenv.execution.lifecycle import save_record
@@ -343,6 +343,10 @@ def test_runtime_repair_preserves_failed_trial_and_requires_remaining_test(tmp_p
         assert s.tests == 1
         assert json.loads((s.root / "trials/1/result.json").read_text())["execution"]["log"] == log
         calls.append(feedback)
+        if mode == "rejected":
+            from reference_protocol import RuntimeExportRepairRejected
+
+            raise RuntimeExportRepairRejected("Synthetic invalid repair response")
         if mode == "spent":
             return None
         revised = prepared().plan
@@ -382,8 +386,14 @@ def test_runtime_repair_preserves_failed_trial_and_requires_remaining_test(tmp_p
             assert "exhausted" in json.loads(await s.test_reference())["error"]
         else:
             assert s.frozen.name == "frozen" and s.effective_preparation is None
+            if mode == "rejected":
+                assert reply["runtime_export_repair"]["status"] == "preparation_repair_rejected"
+                assert (
+                    reply["runtime_export_repair"]["further_preparation_repair_available"] is False
+                )
+                assert s.tests == 1 and s.repair_exports is None and s.last_pass is None
         assert (s.root / "trials/1/result.json").read_bytes() == saved
-        assert len(calls) == (1 if mode in {"repair", "spent"} else 0)
+        assert len(calls) == (1 if mode in {"repair", "spent", "rejected"} else 0)
 
     asyncio.run(run())
 

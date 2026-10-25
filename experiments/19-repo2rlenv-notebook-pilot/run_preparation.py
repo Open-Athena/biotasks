@@ -16,14 +16,19 @@ import httpx
 from design_stage import completion_transport
 from model_profile import native_effort
 from openai import AsyncOpenAI
-from reference_protocol import ReferencePlan, materialize
+from reference_protocol import (
+    ExportRepair,
+    ReferencePlan,
+    RuntimeExportRepairRejected,
+    materialize,
+)
 from reference_stage import stage
 from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.quality.loop.client import RunBudget
 from repo2rlenv.tasksmith.author.budget import AuthorBudget
 
-from biotasks.chat_author import ChatLimits
+from biotasks.chat_author import ArtifactValidationExhausted, ChatLimits
 from biotasks.inference_gate import Allowance, RequestLedger
 
 
@@ -172,14 +177,18 @@ async def repair_runtime_exports(
         request_timeout_sec=config["request_timeout_seconds"],
     )
 
-    async def validate(plan):
-        if (
-            plan.disposition != "prepare"
-            or plan.artifacts != prepared.plan.artifacts
-            or plan.excluded_outputs != prepared.plan.excluded_outputs
-        ):
-            raise ValueError("Runtime repair must preserve the selected endpoints and exclusions")
+    def repaired_plan(repair):
+        if repair.export_code is None:
+            raise ValueError("A declined repair supplies no replacement export code")
+        # The worker must not restate frozen descriptions, source evidence or
+        # exclusions. Preserve all original metadata, not just endpoint paths.
+        plan = prepared.plan.model_copy(update={"export_code": repair.export_code})
         materialize(prepared.baseline, plan)
+        return plan
+
+    async def validate(repair):
+        if repair.export_code is not None:
+            repaired_plan(repair)
 
     client = None
     try:
@@ -192,10 +201,10 @@ async def repair_runtime_exports(
                 http_client=httpx.AsyncClient(follow_redirects=False),
             )
             complete = completion_transport(client)
-        plan = await stage(
-            schema=ReferencePlan,
+        repair = await stage(
+            schema=ExportRepair,
             name="prepare",
-            prompt_name="notebook-reference-prepare",
+            prompt_name="notebook-reference-export-repair",
             context=context,
             root=root / "prepare",
             ledger=ledger,
@@ -209,12 +218,37 @@ async def repair_runtime_exports(
             output_format="json_schema",
             response_recovery=False,
         )
+        save_record(root / "repair.json", repair.model_dump())
+        if repair.export_code is None:
+            save_record(
+                root / "result.json",
+                {
+                    "status": "runtime_export_repair_declined",
+                    "explanation": repair.explanation,
+                    "original_source_and_plan_unchanged": True,
+                    "additional_requests_allowed": False,
+                },
+            )
+            raise RuntimeExportRepairRejected(repair.explanation)
+        plan = repaired_plan(repair)
         script, diff = materialize(prepared.baseline, plan)
         save_record(root / "plan.json", plan.model_dump())
         (root / "exports.py").write_text(plan.export_code)
         (root / "reference.py").write_text(script)
         (root / "source.diff").write_text(diff)
         return root
+    except ArtifactValidationExhausted as error:
+        save_record(
+            root / "result.json",
+            {
+                "status": "runtime_export_repair_rejected",
+                "error_type": type(error).__name__,
+                "validation_feedback": error.feedback,
+                "original_source_and_plan_unchanged": True,
+                "additional_requests_allowed": False,
+            },
+        )
+        raise RuntimeExportRepairRejected(error.feedback) from error
     finally:
         if client is not None:
             await client.close()

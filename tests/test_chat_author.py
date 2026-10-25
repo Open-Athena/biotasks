@@ -8,6 +8,7 @@ from copy import deepcopy
 import pytest
 
 from biotasks.chat_author import (
+    ArtifactValidationExhausted,
     ChatLimits,
     GLMChatAuthor,
     IncompleteCompletion,
@@ -123,6 +124,45 @@ def options(tmp_path, handlers, *, turns=4):
 
 async def committed(**_kwargs):
     return "Artifact committed."
+
+
+@pytest.mark.parametrize("output_format", ["tools", "json_schema"])
+def test_rejected_artifact_reports_validation_feedback_without_extra_requests(
+    tmp_path, output_format
+):
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        if output_format == "tools":
+            return reply(arguments={"value": 1})
+        return {
+            "choices": [
+                {
+                    "finish_reason": "stop",
+                    "message": {"role": "assistant", "content": '{"value": 1}'},
+                }
+            ]
+        }
+
+    async def rejected(**_kwargs):
+        return "Artifact rejected: immutable endpoint metadata changed"
+
+    author, ledger = make_author(tmp_path, complete, requests=1, output_format=output_format)
+    with pytest.raises(ArtifactValidationExhausted) as failure:
+        asyncio.run(
+            author(
+                **options(
+                    tmp_path,
+                    {"submit_artifact": rejected, "revise_artifact": rejected},
+                    turns=1,
+                )
+            )
+        )
+    assert failure.value.feedback == "Artifact rejected: immutable endpoint metadata changed"
+    assert len(calls) == 1
+    with sqlite3.connect(ledger.path) as db:
+        assert db.execute("SELECT COUNT(*) FROM calls").fetchone()[0] == 1
 
 
 def empty_reply(*, finish="tool_calls", calls=None):

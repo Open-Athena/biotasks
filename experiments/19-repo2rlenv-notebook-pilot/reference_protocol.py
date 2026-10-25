@@ -62,6 +62,20 @@ class ReferencePlan(StrictModel):
         return self
 
 
+class ExportRepair(StrictModel):
+    """Only appended serialization code can change; the controller retains scope."""
+
+    export_code: str | None = Field(
+        min_length=1,
+        description="Complete replacement export block, or null if no faithful repair is possible.",
+    )
+    explanation: str = Field(min_length=1)
+
+
+class RuntimeExportRepairRejected(ValueError):
+    """The one allowed repair produced no valid replacement; no retry is added."""
+
+
 class ReferenceReview(StrictModel):
     decision: Literal["approve", "revise", "reject"]
     rationale: str = Field(min_length=1)

@@ -4697,3 +4697,9 @@ Reserve5USDfor original COBRApy165on the exact216-file runtime used by164, prese
 ### 2026-10-25 — original COBRApy165 admitted with no factory or policy delta
 
 Funded preflight validates216runtimeidentities exactly equal164and original133source/assets. Typed admission found no other live campaigns;165is submitted within its existing5USDreservation. The pending shared-setup-budget proposal is not adopted: this run retains the agreed two reference tests and all original limits. No earlier task, expected answer or operator diagnosis is supplied.200USDheld/0free within200authorized. See round062/submission-165.json.
+
+### 2026-10-25 — COBRApy165 export repair reveals redundant metadata roundtrip
+
+Original165failed in3.34minutes/16recordedrequests. Its11.93second reference reached appended exports, whose DataFrame-ID serializer failed. The one allowed preparation repair proposed new code but also appended observed evidence to frozen metadata; exact-plan equality rejected the response and a generic model-allowance exception escaped. This was not a new setup request cap. All240sciencefiles/19rootfiles and fresh one-owner cleanup are verified. The unchanged financial auditor releasesonly4never-dispatchedstages, keeping setup1USD;196held/4free within200authorized. Original response/proposal is not edited or executed.
+
+The new versioned repair prompt/schema returns only export_code (or null to decline) and explanation; the controller preserves every original metadata field. A typed invalid/declined one-shot repair returns feedback to setup without another model call, repair or test. All213project tests,100preparation/setup tests, Ruff,ty and pre-commit pass; initial local test-fixture omissions were corrected without changing budgets. This is local validation, not a fresh model result. The shared setup-execution-budget proposal remains pending and is not adopted. See round062 and factory-checks/minimal-runtime-export-repair.

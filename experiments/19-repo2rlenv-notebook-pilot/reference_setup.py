@@ -17,7 +17,7 @@ from typing import Literal
 
 from pydantic import Field
 from reference_environment import validate_environment, write_environment
-from reference_protocol import ReferencePlan, StrictModel, materialize
+from reference_protocol import ReferencePlan, RuntimeExportRepairRejected, StrictModel, materialize
 from repo2rlenv.execution.lifecycle import save_record
 
 
@@ -684,6 +684,13 @@ class SetupSession:
                                 status="exports_corrected_requires_retest",
                                 export_code_sha256=digest(revised.exports.encode()),
                             )
+                    except RuntimeExportRepairRejected as error:
+                        repair.update(
+                            status="preparation_repair_rejected",
+                            error_type=type(error).__name__,
+                            error=str(error),
+                            further_preparation_repair_available=False,
+                        )
                     except BaseException as error:
                         repair.update(status="incomplete", error_type=type(error).__name__)
                         raise

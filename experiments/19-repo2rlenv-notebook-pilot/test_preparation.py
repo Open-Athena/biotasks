@@ -267,10 +267,13 @@ def test_repair_allowance_does_not_add_transport_or_empty_retries(tmp_path, mode
     assert result["scientific_analysis_executed"] is False
 
 
-@pytest.mark.parametrize("mode", ["valid", "spent", "scope", "syntax", "empty", "timeout"])
+@pytest.mark.parametrize(
+    "mode", ["valid", "spent", "scope", "syntax", "decline", "empty", "timeout"]
+)
 def test_runtime_repair_shares_original_allowance_and_preserves_inputs(tmp_path, mode):
     import sqlite3
 
+    from reference_protocol import RuntimeExportRepairRejected
     from reference_setup import PreparedReference
     from run_preparation import repair_runtime_exports
 
@@ -315,13 +318,23 @@ def test_runtime_repair_shares_original_allowance_and_preserves_inputs(tmp_path,
     async def correct(payload):
         repairs.append(payload)
         assert payload["response_format"]["type"] == "json_schema"
+        assert set(payload["response_format"]["json_schema"]["schema"]["properties"]) == {
+            "export_code",
+            "explanation",
+        }
         context = json.loads(payload["messages"][1]["content"])
         assert context["runtime_validation"]["previous_plan"] == plan
-        candidate = {**plan, "export_code": "print('corrected export')\n"}
+        candidate = {
+            "export_code": "print('corrected export')\n",
+            "explanation": "Correct the observed export serialization only.",
+        }
         if mode == "scope":
             candidate["excluded_outputs"] = ["Drop a scientific branch"]
         if mode == "syntax":
             candidate["export_code"] = "("
+        if mode == "decline":
+            candidate["export_code"] = None
+            candidate["explanation"] = "A faithful serialization repair is not possible."
         if mode == "timeout":
             raise TimeoutError("Synthetic runtime-repair transport failure")
         reply = response(candidate)
@@ -343,13 +356,26 @@ def test_runtime_repair_shares_original_allowance_and_preserves_inputs(tmp_path,
             fixed = PreparedReference.load(effective)
             assert fixed.baseline == PreparedReference.load(original).baseline
             assert fixed.exports == "print('corrected export')\n"
+            assert fixed.plan.model_dump(exclude={"export_code"}) == {
+                k: v for k, v in plan.items() if k != "export_code"
+            }
             assert len(repairs) == 1
         else:
             assert effective is None and not repairs
     else:
-        with pytest.raises(RuntimeError):
+        with pytest.raises(
+            RuntimeExportRepairRejected if mode in {"scope", "syntax", "decline"} else RuntimeError
+        ):
             asyncio.run(action)
         assert len(repairs) == 1
+        if mode in {"scope", "syntax"}:
+            rejected = json.loads((original / "runtime-repair/result.json").read_text())
+            assert rejected["status"] == "runtime_export_repair_rejected"
+            assert rejected["additional_requests_allowed"] is False
+        if mode == "decline":
+            rejected = json.loads((original / "runtime-repair/result.json").read_text())
+            assert rejected["status"] == "runtime_export_repair_declined"
+            assert not (original / "runtime-repair/plan.json").exists()
     # No additional request is available, even after a failed/uncertain repair.
     assert (
         asyncio.run(

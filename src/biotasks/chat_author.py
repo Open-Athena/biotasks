@@ -37,6 +37,14 @@ class IncompleteCompletion(RuntimeError):
     """A preserved response cannot execute tools; recovery must be explicit."""
 
 
+class ArtifactValidationExhausted(RuntimeError):
+    """An artifact was rejected within the existing, now spent stage allowance."""
+
+    def __init__(self, feedback: str):
+        self.feedback = feedback
+        super().__init__("Artifact validation did not succeed within the stage allowance")
+
+
 class OutputTokenLimit(IncompleteCompletion):
     """A received and accounted response stopped at the provider's token limit."""
 
@@ -246,6 +254,7 @@ class GLMChatAuthor:
         )
         seen_call_ids = set()
         turn = 0
+        last_artifact_validation = None
         while max_turns is None or turn < max_turns:
             turn += 1
             remaining = self.deadline - time.time()
@@ -497,6 +506,7 @@ class GLMChatAuthor:
                 event("artifact_validation", output=result)
                 if result.startswith("Artifact committed."):
                     return {"messages": messages, "turns": turn, "cost": 0.0}
+                last_artifact_validation = result
                 # The upstream validator still supplies its original feedback,
                 # but merge-patch instructions do not apply to this interface.
                 feedback = result.replace(
@@ -594,6 +604,8 @@ class GLMChatAuthor:
             committed = name in {"submit_artifact", "revise_artifact"} and result.startswith(
                 "Artifact committed."
             )
+            if name in {"submit_artifact", "revise_artifact"} and not committed:
+                last_artifact_validation = result
             raw_result = request_root / "tool-result.json"
             self.save_record(raw_result, {"call_id": call["id"], "name": name, "output": result})
             truncated = (
@@ -620,4 +632,6 @@ class GLMChatAuthor:
             messages.append({"role": "tool", "tool_call_id": call["id"], "content": result})
             if committed:
                 return {"messages": messages, "turns": turn, "cost": 0.0}
+        if last_artifact_validation is not None:
+            raise ArtifactValidationExhausted(last_artifact_validation)
         raise RuntimeError("Design worker exhausted its model-call allowance")
