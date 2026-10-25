@@ -1,0 +1,216 @@
+{
+  "limits": {
+    "base_image": "python:3.13.13-slim-bookworm",
+    "campaign_seconds": 7200,
+    "gpu": false,
+    "max_requests": null,
+    "max_tests": 2,
+    "network": "Internet during setup only; reference is offline",
+    "reference_seconds": 600,
+    "request_timeout_seconds": 600,
+    "setup_seconds": 1800,
+    "task_cpus": 4,
+    "task_disk_gib": 10,
+    "task_memory_gib": 8
+  },
+  "paths": {
+    "exports.py": "/work/frozen/exports.py",
+    "original.py": "/work/frozen/original.py",
+    "plan.json": "/work/frozen/plan.json",
+    "reference_cwd": "/work/run",
+    "setup": "/work/setup"
+  },
+  "preparation": {
+    "conversion": {
+      "code_cells": 9,
+      "converter": "jupytext",
+      "converter_version": "1.19.6",
+      "directory_normalizations": [],
+      "documentation_execution_policy": {},
+      "equivalence_basis": "Python statements after recorded presentation and directory normalization",
+      "executable_ast_sha256": "cf5e51ceb70864476356feb013cb27b611299c82768edfe80d96d723f615f182",
+      "executed": false,
+      "format": "py:nomarker",
+      "ignored_cell_editor_metadata": [],
+      "ignored_editor_metadata": {},
+      "ignored_presentation_tags": [],
+      "markdown_cells": 13,
+      "markdown_representation": "line_comments",
+      "ordered_code_equivalence": true,
+      "presentation_normalizations": [],
+      "profile": "python-narrative-v6",
+      "script_sha256": "ef782563dff5d24c1f56d86e0dbbf53a36245109e025754f04a1626530b3382f",
+      "source_sha256": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9",
+      "stored_outputs_used_as_evidence": false
+    },
+    "plan": {
+      "artifacts": [
+        {
+          "description": "Plan7 profile HMM built from the LuxC multiple sequence alignment, in HMMER ASCII format.",
+          "path": "LuxC.hmm",
+          "source_evidence": "The '## Saving the resulting HMM' section identifies the HMM as the end product to keep ('save it to a file to avoid having to rebuild it every time'). The script produces it via `hmm, _, _ = builder.build_msa(msa, background)` and serializes it with `hmm.write`; the `hmm` variable is still in scope at completion."
+        },
+        {
+          "description": "Domain hits of the LuxC pHMM against the LuxC.faa protein database, in HMMER domtblout tabular format.",
+          "path": "LuxC.domtbl",
+          "source_evidence": "The final narrative states the goal: 'save the results in tabular format similar to what hmmsearch would have produced'. The script produces this via `hits = pipeline.search_hmm(hmm, seq_file)` and writes them with `hits.write(f, format='domains')`; the `hits` variable is still in scope at completion."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "hmm.consensus display: only a quick property inspection of the built HMM; its content is contained in the exported HMM file, so no separate endpoint.",
+        "Printed top-hit domain alignment (ali = hits[0].domains[0].alignment): a single illustrative look at one hit; the full domain-level results are already exported in LuxC.domtbl, and selecting individual hits would add no independent endpoint."
+      ],
+      "explanation": "The notebook's scientific endpoints are the pHMM built from the LuxC alignment (narrative: 'save the resulting HMM... to avoid having to rebuild it every time') and the database search results (narrative: 'save the results in tabular format similar to what hmmsearch would have produced'). Both already exist in the variables `hmm` and `hits` at script completion and are re-serialized as-is to /work/outputs using the same native writers (hmm.write, hits.write(format='domains')) the source itself uses. No analysis is changed or recomputed; the original LuxC.hmm/LuxC.domtbl writes in the working directory are left untouched.",
+      "export_code": "import os\n\n_export_dir = \"/work/outputs\"\nos.makedirs(_export_dir, exist_ok=True)\n\nwith open(os.path.join(_export_dir, \"LuxC.hmm\"), \"wb\") as _hmm_export_file:\n    hmm.write(_hmm_export_file)\n\nwith open(os.path.join(_export_dir, \"LuxC.domtbl\"), \"wb\") as _domtbl_export_file:\n    hits.write(_domtbl_export_file, format=\"domains\")",
+      "unresolved_assumptions": [
+        "The data files data/msa/LuxC.sto and data/seqs/LuxC.faa are expected to be staged by the execution environment; the reference run needs them readable at the relative paths used by the source.",
+        "The domtbl and HMM file sizes are expected to be small, but this is unverified since the search result count is unknown without execution."
+      ]
+    },
+    "source": {
+      "id": "pyhmmer-msa-to-hmm",
+      "license": "MIT",
+      "provenance": {
+        "data_lineage": "Repository LuxC alignment and protein sequences; lineage/terms need source-specific review.",
+        "data_redistribution_review": "Not established independently; generated task bundles and staged data remain private pending review.",
+        "notebook": {
+          "license": "MIT",
+          "license_url": "https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/COPYING",
+          "revision": "90d2f28303d9fe795c4e1ffc1e05b9d634319b51",
+          "sha256": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9",
+          "url": "https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/docs/examples/msa_to_hmm.ipynb"
+        }
+      },
+      "source_revision": "90d2f28303d9fe795c4e1ffc1e05b9d634319b51",
+      "source_sha256": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9",
+      "title": "Build a profile HMM from an alignment and search protein sequences",
+      "url": "https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/docs/examples/msa_to_hmm.ipynb"
+    }
+  },
+  "source_imports": {
+    "analysis": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 17,
+        "statement": "import pyhmmer"
+      }
+    ],
+    "exports": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 1,
+        "statement": "import os"
+      }
+    ],
+    "scope": "Literal source statements and locations only; dynamic imports, native libraries and availability remain unverified."
+  },
+  "source_operations": {
+    "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+    "operations": [
+      {
+        "column": 11,
+        "function": "pyhmmer.easel.Alphabet.amino",
+        "id": "call-20-11",
+        "line": 20,
+        "source": "pyhmmer.easel.Alphabet.amino()"
+      },
+      {
+        "column": 5,
+        "function": "pyhmmer.easel.MSAFile",
+        "id": "call-26-5",
+        "line": 26,
+        "source": "pyhmmer.easel.MSAFile(\"data/msa/LuxC.sto\", digital=True, alphabet=alphabet)"
+      },
+      {
+        "column": 10,
+        "function": "msa_file.read",
+        "id": "call-27-10",
+        "line": 27,
+        "source": "msa_file.read()"
+      },
+      {
+        "column": 10,
+        "function": "pyhmmer.plan7.Builder",
+        "id": "call-52-10",
+        "line": 52,
+        "source": "pyhmmer.plan7.Builder(alphabet)"
+      },
+      {
+        "column": 13,
+        "function": "pyhmmer.plan7.Background",
+        "id": "call-53-13",
+        "line": 53,
+        "source": "pyhmmer.plan7.Background(alphabet)"
+      },
+      {
+        "column": 12,
+        "function": "builder.build_msa",
+        "id": "call-54-12",
+        "line": 54,
+        "source": "builder.build_msa(msa, background)"
+      },
+      {
+        "column": 5,
+        "function": "open",
+        "id": "call-86-5",
+        "line": 86,
+        "source": "open(\"LuxC.hmm\", \"wb\")"
+      },
+      {
+        "column": 4,
+        "function": "hmm.write",
+        "id": "call-87-4",
+        "line": 87,
+        "source": "hmm.write(output_file)"
+      },
+      {
+        "column": 11,
+        "function": "pyhmmer.plan7.Pipeline",
+        "id": "call-93-11",
+        "line": 93,
+        "source": "pyhmmer.plan7.Pipeline(alphabet, background=background)"
+      },
+      {
+        "column": 5,
+        "function": "pyhmmer.easel.SequenceFile",
+        "id": "call-94-5",
+        "line": 94,
+        "source": "pyhmmer.easel.SequenceFile(\"data/seqs/LuxC.faa\", digital=True, alphabet=alphabet)"
+      },
+      {
+        "column": 11,
+        "function": "pipeline.search_hmm",
+        "id": "call-95-11",
+        "line": 95,
+        "source": "pipeline.search_hmm(hmm, seq_file)"
+      },
+      {
+        "column": 0,
+        "function": "print",
+        "id": "call-100-0",
+        "line": 100,
+        "source": "print(ali)"
+      },
+      {
+        "column": 5,
+        "function": "open",
+        "id": "call-104-5",
+        "line": 104,
+        "source": "open(\"LuxC.domtbl\", \"wb\")"
+      },
+      {
+        "column": 4,
+        "function": "hits.write",
+        "id": "call-105-4",
+        "line": 105,
+        "source": "hits.write(f, format=\"domains\")"
+      }
+    ],
+    "source_sha256": "ef782563dff5d24c1f56d86e0dbbf53a36245109e025754f04a1626530b3382f"
+  }
+}

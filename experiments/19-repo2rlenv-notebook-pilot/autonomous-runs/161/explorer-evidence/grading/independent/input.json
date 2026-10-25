@@ -1,0 +1,37 @@
+{
+  "environment": "psutil==7.2.2\npyhmmer==0.12.3\n",
+  "input_paths": [
+    "data/msa/LuxC.sto",
+    "data/seqs/LuxC.faa"
+  ],
+  "output_paths": [
+    "LuxC.domtbl",
+    "LuxC.hmm"
+  ],
+  "paths": {
+    "inputs": "/work/task-inputs",
+    "working_directory": "/work/probe"
+  },
+  "policy": {
+    "dependency_answers": "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "supplied_intermediates": "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  },
+  "public_instruction": "# Build a profile HMM for the Pfam LuxC (acyl-CoA reductase) family and search a protein sequence database\n\n## Background\n\nBacterial bioluminescence is produced by a `lux` operon whose fatty-acid reductase complex supplies the aldehyde substrate of the luciferase reaction. One component is the acyl-CoA reductase encoded by `luxC`, catalogued in Pfam as family PF05893 (\"Acyl-CoA reductase (LuxC)\"). Profile hidden Markov models are the standard method for representing such a protein family: a profile HMM is built from a curated multiple sequence alignment of family members and is then used to search a protein sequence database, reporting for each significant match its statistics and the coordinates of the matched domain in both the model and the target amino-acid sequence.\n\nYour task is to reproduce both steps: build a Plan7 profile HMM for the family from the curated seed alignment, then search the protein database with it and report the full ranked domain hit table.\n\n## Inputs (under `inputs/`)\n\n| Path | Content |\n|---|---|\n| `inputs/data/msa/LuxC.sto` | Stockholm 1.0 multiple sequence alignment \u2014 the curated Pfam seed alignment for the family. Its header lines include `#=GF ID LuxC`, `#=GF AC PF05893.5` and `#=GF DE Acyl-CoA reductase (LuxC)`. This is the only aligned file. |\n| `inputs/data/seqs/LuxC.faa` | Unaligned protein sequences in FASTA format (UniProtKB/Swiss-Prot records of LuxC-family enzymes from bioluminescent bacteria) \u2014 the target search database. |\n\n## Task A \u2014 build the profile HMM (primary)\n\nFrom the multiple sequence alignment, over the amino-acid alphabet, build a Plan7 profile HMM with all construction parameters at the reference implementation's defaults (the defaults of `hmmbuild --amino`): default sequence weighting and effective sequence number determination, default model architecture determination from the alignment columns (default symmetric residue fraction, no annotation-driven manual column assignment), and default Dirichlet mixture priors. The HMM takes its NAME from the alignment name, its ACC from the alignment accession, and copies any family-specific threshold lines annotated in the alignment (GA/TC/NC), leaving them unset when not annotated.\n\nSave the model in standard HMMER3 ASCII format (format declaration line `HMMER3/f`), including the statistical-parameter/calibration section and the full model body, as `outputs/LuxC.hmm`. This is the model that Task B must search with, and it is a scientific deliverable in its own right, not just an intermediate.\n\n## Task B \u2014 search the protein database with the built HMM\n\nSearch `inputs/data/seqs/LuxC.faa` with the HMM under the default settings of the reference search pipeline (the defaults of `hmmsearch`): default E-value reporting thresholds of 10.0 for both full sequences and domains, no bit-score reporting threshold, and no GA/TC/NC cutoff applied \u2014 the alignment-annotated family thresholds must not change which hits are reported.\n\nWrite the full rank-ordered domain hit table to `outputs/LuxC.domtbl` in standard `--domtblout` tabular format, including its `#`-comment preamble lines, one row per reported domain hit, with the canonical field order (tab-separated):\n\n```\ntarget name, accession, tlen, query name, query accession, qlen,\nE-value, score, bias, #, of, c-Evalue, i-Evalue, score, bias,\nhmm from, hmm to, ali from, ali to, env from, env to, acc,\ndescription of target\n```\n\nRows appear in the search tool's canonical rank order (by decreasing full-sequence score with its tie-breaking rules). The target of each row is the first whitespace-delimited token of the FASTA record, and the description column is the remainder of the FASTA header line (empty if the record has no description).\n\n## Outputs\n\n- `outputs/LuxC.hmm` \u2014 the profile HMM in HMMER3/f ASCII format.\n- `outputs/LuxC.domtbl` \u2014 the full domain hit table in hmmsearch `--domtblout` format.\n\n## Environment and resource limits\n\nOffline Python 3 environment with `pyhmmer` 0.12.3 (Plan7/HMMER software) installed; equivalent alternative tools are acceptable if their outputs meet the contracts above. Both output files are small (the HMM is a few hundred kilobytes at most, the hit table a few kilobytes). Runtime limit: 600 seconds (the computation itself takes seconds). Provenance lines stamped with the build date/command (e.g. HMMER DATE/COM lines) are generated by the tool and do not carry scientific content.",
+  "reference_seconds": 600
+}

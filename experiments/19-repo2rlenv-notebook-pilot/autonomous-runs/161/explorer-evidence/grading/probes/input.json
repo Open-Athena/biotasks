@@ -1,0 +1,70 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "LuxC.domtbl",
+      "LuxC.hmm"
+    ],
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "data/msa/LuxC.sto",
+        "data/seqs/LuxC.faa"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "checks": [
+    {
+      "artifacts": [
+        "LuxC.hmm"
+      ],
+      "id": "hmm_ascii_format",
+      "kind": "structural",
+      "public_requirement": "LuxC.hmm is decodable text whose first line is a HMMER3/f format declaration; the native HMMER3 reader parses it and finds exactly one model (a second model or reader-rejected content fails); and outside the first (banner) line and the DATE/COM provenance lines, the file's lines correspond line-for-line, in count and per-line whitespace-separated token count, to the canonical re-serialization of the decoded model, so unexpected, extra or missing model content cannot pass."
+    },
+    {
+      "artifacts": [
+        "LuxC.hmm"
+      ],
+      "id": "hmm_model_content",
+      "kind": "scientific",
+      "public_requirement": "The decoded Plan7 profile HMM equals the reference model exactly (no numeric tolerance), compared through canonical re-serialization of the decoded model with the DATE and COM provenance lines excluded. This includes NAME, ACC, DESC, model length, architecture flags, NSEQ/EFFN/CKSUM, the GA/TC/NC family cutoff lines copied from the seed alignment, the STATS LOCAL MSV/VITERBI/FORWARD calibration parameters, and every per-position match/insert emission and transition parameter at its stored precision. A provenance-only difference (DATE/COM values, HMMER version banner) is acceptable; any model-body difference, including a single changed parameter digit, is a wrong answer. The model NAME and ACC must equal the alignment name and accession of the supplied Stockholm input."
+    },
+    {
+      "artifacts": [
+        "LuxC.domtbl"
+      ],
+      "id": "domtbl_table_format",
+      "kind": "structural",
+      "public_requirement": "LuxC.domtbl carries the canonical hmmsearch --domtblout '#'-comment preamble, compared exactly against the reference preamble, followed by data rows only. Every data row splits into the 22 fixed whitespace-delimited domtblout fields in the canonical order plus the final free-text description of target; integer fields are integers and numeric fields parse as finite values (nonfinite or negative E-values fail)."
+    },
+    {
+      "artifacts": [
+        "LuxC.domtbl"
+      ],
+      "id": "domtbl_hit_rows",
+      "kind": "scientific",
+      "public_requirement": "The domain hit table matches the reference row-by-row in the search tool's canonical rank order: rows are matched by position (a re-sorted table fails) with exact row multiplicity (extra, missing or duplicated rows fail). Per row, identity/accession columns, tlen, qlen, domain index/count, all six model/alignment/envelope coordinates, both bit scores, both bias values and the per-domain posterior accuracy match exactly (no tolerance); the full-sequence, c- and i-Evalue columns match the reference value within a 10% relative tolerance of the reference value (zero equals zero exactly). The description column equals the reference description and the FASTA-header remainder of the corresponding record of the supplied sequence database, tlen equals that record's sequence length, and a target name that is not a record of the supplied database FASTA fails."
+    }
+  ],
+  "output_paths": [
+    "LuxC.domtbl",
+    "LuxC.hmm"
+  ],
+  "paths": {
+    "reference_outputs": "/work/reference",
+    "working_directory": "/work/probe"
+  },
+  "public_instruction": "# Build a profile HMM for the Pfam LuxC (acyl-CoA reductase) family and search a protein sequence database\n\n## Background\n\nBacterial bioluminescence is produced by a `lux` operon whose fatty-acid reductase complex supplies the aldehyde substrate of the luciferase reaction. One component is the acyl-CoA reductase encoded by `luxC`, catalogued in Pfam as family PF05893 (\"Acyl-CoA reductase (LuxC)\"). Profile hidden Markov models are the standard method for representing such a protein family: a profile HMM is built from a curated multiple sequence alignment of family members and is then used to search a protein sequence database, reporting for each significant match its statistics and the coordinates of the matched domain in both the model and the target amino-acid sequence.\n\nYour task is to reproduce both steps: build a Plan7 profile HMM for the family from the curated seed alignment, then search the protein database with it and report the full ranked domain hit table.\n\n## Inputs (under `inputs/`)\n\n| Path | Content |\n|---|---|\n| `inputs/data/msa/LuxC.sto` | Stockholm 1.0 multiple sequence alignment \u2014 the curated Pfam seed alignment for the family. Its header lines include `#=GF ID LuxC`, `#=GF AC PF05893.5` and `#=GF DE Acyl-CoA reductase (LuxC)`. This is the only aligned file. |\n| `inputs/data/seqs/LuxC.faa` | Unaligned protein sequences in FASTA format (UniProtKB/Swiss-Prot records of LuxC-family enzymes from bioluminescent bacteria) \u2014 the target search database. |\n\n## Task A \u2014 build the profile HMM (primary)\n\nFrom the multiple sequence alignment, over the amino-acid alphabet, build a Plan7 profile HMM with all construction parameters at the reference implementation's defaults (the defaults of `hmmbuild --amino`): default sequence weighting and effective sequence number determination, default model architecture determination from the alignment columns (default symmetric residue fraction, no annotation-driven manual column assignment), and default Dirichlet mixture priors. The HMM takes its NAME from the alignment name, its ACC from the alignment accession, and copies any family-specific threshold lines annotated in the alignment (GA/TC/NC), leaving them unset when not annotated.\n\nSave the model in standard HMMER3 ASCII format (format declaration line `HMMER3/f`), including the statistical-parameter/calibration section and the full model body, as `outputs/LuxC.hmm`. This is the model that Task B must search with, and it is a scientific deliverable in its own right, not just an intermediate.\n\n## Task B \u2014 search the protein database with the built HMM\n\nSearch `inputs/data/seqs/LuxC.faa` with the HMM under the default settings of the reference search pipeline (the defaults of `hmmsearch`): default E-value reporting thresholds of 10.0 for both full sequences and domains, no bit-score reporting threshold, and no GA/TC/NC cutoff applied \u2014 the alignment-annotated family thresholds must not change which hits are reported.\n\nWrite the full rank-ordered domain hit table to `outputs/LuxC.domtbl` in standard `--domtblout` tabular format, including its `#`-comment preamble lines, one row per reported domain hit, with the canonical field order (tab-separated):\n\n```\ntarget name, accession, tlen, query name, query accession, qlen,\nE-value, score, bias, #, of, c-Evalue, i-Evalue, score, bias,\nhmm from, hmm to, ali from, ali to, env from, env to, acc,\ndescription of target\n```\n\nRows appear in the search tool's canonical rank order (by decreasing full-sequence score with its tie-breaking rules). The target of each row is the first whitespace-delimited token of the FASTA record, and the description column is the remainder of the FASTA header line (empty if the record has no description).\n\n## Outputs\n\n- `outputs/LuxC.hmm` \u2014 the profile HMM in HMMER3/f ASCII format.\n- `outputs/LuxC.domtbl` \u2014 the full domain hit table in hmmsearch `--domtblout` format.\n\n## Environment and resource limits\n\nOffline Python 3 environment with `pyhmmer` 0.12.3 (Plan7/HMMER software) installed; equivalent alternative tools are acceptable if their outputs meet the contracts above. Both output files are small (the HMM is a few hundred kilobytes at most, the hit table a few kilobytes). Runtime limit: 600 seconds (the computation itself takes seconds). Provenance lines stamped with the build date/command (e.g. HMMER DATE/COM lines) are generated by the tool and do not carry scientific content.\n\n## Acceptance rules\n\n## Acceptance rules (grading addendum)\n\nBoth required outputs are compared as decoded scientific content, read dynamically from the reference; no answers, dimensions or hashes are embedded in the grader.\n\n### `outputs/LuxC.hmm` (profile HMM)\n\n1. **Format (structural).** The file must be decodable text whose first line is a `HMMER3/f` format declaration, it must be parsed successfully by an available native HMMER3 reader, and it must contain exactly one model \u2014 a file with a second model or content the native reader does not accept as part of the model fails. Apart from the first (banner) line and the tool-stamped provenance lines starting `DATE ` and `COM ` (HMMER DATE/COM: build timestamp and command, which carry no scientific content), the remaining non-provenance lines must correspond line-for-line, in count and whitespace-separated token count per line, to the canonical re-serialization of the decoded model, so that unexpected, extra or missing model content cannot pass. Any other line-order or formatting differences are irrelevant as long as the decoded-model rule below holds.\n2. **Model content (scientific).** The decoded Plan7 model must equal the reference model exactly, compared through canonical re-serialization of the decoded (parsed) model with the `DATE `/`COM ` provenance lines excluded \u2014 exact, with no numeric tolerance. This covers NAME, ACC, DESC, model length, architecture flags, NSEQ/EFFN/CKSUM, the GA/TC/NC family cutoff lines copied from the alignment, the STATS LOCAL MSV/VITERBI/FORWARD calibration parameters, and every per-position match/insert emission and transition parameter with its stored precision. A provenance-only difference (DATE/COM values, HMMER version banner text) is acceptable; any difference in the model body is a wrong answer. The model NAME and ACC must also equal the alignment name and accession (`#=GF ID`/`#=GF AC`) of the supplied Stockholm input. Values are compared as decoded by the installed HMMER3 parser; promoting a stored value to a wider floating-point type or printing different decimals is not a difference provided the decoded canonical form matches.\n\n### `outputs/LuxC.domtbl` (domain hit table)\n\n3. **Table format (structural).** The file must carry the canonical `--dom tblout` `#`-comment preamble (compared exactly against the reference preamble) followed by data rows only. Each data row must split into the 22 fixed whitespace-delimited fields in the canonical order given in the task statement \u2014 target name, accession, tlen, query name, query accession, qlen, E-value, score, bias, `#`, `of`, c-Evalue, i-Evalue, score, bias, hmm from, hmm to, ali from, ali to, env from, env to, acc \u2014 plus the final free-text description of target. Integer fields must be integers, numeric fields must parse as finite (non-NaN, non-infinite, non-negative where the quantity is an E-value) values; violations fail.\n4. **Hit rows (scientific).** Data rows are compared one-to-one in the file's canonical rank order (rows are matched by position; a re-sorted or reordered table is a wrong answer), and every row must have the same multiplicity as the reference \u2014 extra, missing or duplicated rows fail. For each aligned row: identity/accession columns (target, query, accessions), lengths (`tlen`, `qlen`), domain index/count, all six coordinates (`hmm from/to`, `ali from/to`, `env from/to`), both bit scores, both bias values and the per-domain posterior accuracy must match the reference exactly (no tolerance). The three E-value columns (full-sequence E-value, c-Evalue, i-Evalue) must match the reference value within a relative tolerance of 10% of the reference value (zero must equal zero exactly); values outside that band are wrong answers. The description column must equal the reference description and the remainder of the FASTA header line of the corresponding record of the supplied sequence database, and `tlen` must equal that record's sequence length; a target name that is not a record of the supplied database FASTA fails.\n\nGeneral: every check must pass; missing files, unreadable files, malformed rows or nonfinite numbers are failed checks, not crashes; both output files are required at the declared paths under the output root.",
+  "reference_seconds": 600,
+  "verifier_seconds": 120
+}

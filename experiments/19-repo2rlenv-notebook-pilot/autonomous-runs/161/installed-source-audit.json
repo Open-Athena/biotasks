@@ -1,0 +1,3299 @@
+{
+  "scope": "Hash-matched installed Python test sources; bounded subject-text discovery, not an exhaustive semantic/binary proof.",
+  "source_distribution_sha256": "0a4b2f5d8c6c106fce8eb77603387aff94ad8ff8ff1c8094f30fb18cb7694d6e",
+  "record": {
+    "campaign": 161,
+    "subjects_derived_from_task_paths": [
+      "LuxC"
+    ],
+    "files_read": 33,
+    "matching_files": 10,
+    "gaps": [],
+    "files": [
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/__init__.py",
+        "sha256": "0d70a19144b87d3e54cd6607717b6c11defc35c5e7c4ccacae3c225d7e24eedc",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_doctest.py",
+        "sha256": "7ebe2cd7bc7068d0184e9510c231f4541ebdc8ab6d82dc8df81a297b5602522b",
+        "installed_identity_verified": true,
+        "hits": [
+          {
+            "line": 69,
+            "context": [
+              {
+                "line": 67,
+                "text": "    with pyhmmer.easel.SequenceFile(seq_path, digital=True, alphabet=thioesterase.alphabet) as seq_file:"
+              },
+              {
+                "line": 68,
+                "text": "        proteins = seq_file.read_block()"
+              },
+              {
+                "line": 69,
+                "text": "    msa_path = os.path.join(data, \"msa\", \"LuxC.faa\")"
+              },
+              {
+                "line": 70,
+                "text": "    with pyhmmer.easel.MSAFile(msa_path, \"afa\") as msa_file:"
+              },
+              {
+                "line": 71,
+                "text": "        luxc = msa_file.read()"
+              },
+              {
+                "line": 72,
+                "text": "    seq_path = os.path.join(data, \"seqs\", \"LuxC.faa\")"
+              },
+              {
+                "line": 73,
+                "text": "    with pyhmmer.easel.SequenceFile(seq_path, digital=True) as seq_file:"
+              },
+              {
+                "line": 74,
+                "text": "        reductase = next(seq for seq in seq_file if \"P12748\" in seq.name)"
+              },
+              {
+                "line": 75,
+                "text": ""
+              },
+              {
+                "line": 76,
+                "text": "    def setUp(self):"
+              },
+              {
+                "line": 77,
+                "text": "        warnings.simplefilter(\"ignore\")"
+              }
+            ]
+          },
+          {
+            "line": 71,
+            "context": [
+              {
+                "line": 69,
+                "text": "    msa_path = os.path.join(data, \"msa\", \"LuxC.faa\")"
+              },
+              {
+                "line": 70,
+                "text": "    with pyhmmer.easel.MSAFile(msa_path, \"afa\") as msa_file:"
+              },
+              {
+                "line": 71,
+                "text": "        luxc = msa_file.read()"
+              },
+              {
+                "line": 72,
+                "text": "    seq_path = os.path.join(data, \"seqs\", \"LuxC.faa\")"
+              },
+              {
+                "line": 73,
+                "text": "    with pyhmmer.easel.SequenceFile(seq_path, digital=True) as seq_file:"
+              },
+              {
+                "line": 74,
+                "text": "        reductase = next(seq for seq in seq_file if \"P12748\" in seq.name)"
+              },
+              {
+                "line": 75,
+                "text": ""
+              },
+              {
+                "line": 76,
+                "text": "    def setUp(self):"
+              },
+              {
+                "line": 77,
+                "text": "        warnings.simplefilter(\"ignore\")"
+              },
+              {
+                "line": 78,
+                "text": "        os.chdir(os.path.realpath(os.path.join(__file__, \"..\", \"..\")))"
+              },
+              {
+                "line": 79,
+                "text": "        # mock the HMMPGMD client to show usage examples without having"
+              }
+            ]
+          },
+          {
+            "line": 72,
+            "context": [
+              {
+                "line": 70,
+                "text": "    with pyhmmer.easel.MSAFile(msa_path, \"afa\") as msa_file:"
+              },
+              {
+                "line": 71,
+                "text": "        luxc = msa_file.read()"
+              },
+              {
+                "line": 72,
+                "text": "    seq_path = os.path.join(data, \"seqs\", \"LuxC.faa\")"
+              },
+              {
+                "line": 73,
+                "text": "    with pyhmmer.easel.SequenceFile(seq_path, digital=True) as seq_file:"
+              },
+              {
+                "line": 74,
+                "text": "        reductase = next(seq for seq in seq_file if \"P12748\" in seq.name)"
+              },
+              {
+                "line": 75,
+                "text": ""
+              },
+              {
+                "line": 76,
+                "text": "    def setUp(self):"
+              },
+              {
+                "line": 77,
+                "text": "        warnings.simplefilter(\"ignore\")"
+              },
+              {
+                "line": 78,
+                "text": "        os.chdir(os.path.realpath(os.path.join(__file__, \"..\", \"..\")))"
+              },
+              {
+                "line": 79,
+                "text": "        # mock the HMMPGMD client to show usage examples without having"
+              },
+              {
+                "line": 80,
+                "text": "        # to actually spawn an HMMPGMD server in the background"
+              }
+            ]
+          },
+          {
+            "line": 109,
+            "context": [
+              {
+                "line": 107,
+                "text": "                thioesterase=thioesterase,"
+              },
+              {
+                "line": 108,
+                "text": "                proteins=proteins,"
+              },
+              {
+                "line": 109,
+                "text": "                luxc=luxc,"
+              },
+              {
+                "line": 110,
+                "text": "                reductase=reductase,"
+              },
+              {
+                "line": 111,
+                "text": "                pyhmmer=pyhmmer,"
+              },
+              {
+                "line": 112,
+                "text": "                **module.__dict__"
+              },
+              {
+                "line": 113,
+                "text": "            )"
+              },
+              {
+                "line": 114,
+                "text": "            tests.addTests("
+              },
+              {
+                "line": 115,
+                "text": "                doctest.DocTestSuite("
+              },
+              {
+                "line": 116,
+                "text": "                    module,"
+              },
+              {
+                "line": 117,
+                "text": "                    globs=globs,"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_easel/__init__.py",
+        "sha256": "d17d46d6b159e33bbbb5a5fadd59d6923ed4924d220b678eb9f8173b06c46778",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_easel/test_alphabet.py",
+        "sha256": "96a16be03df5df64af880986caf973911cc9c34d5a8426b10972609a2944f80d",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_easel/test_bitfield.py",
+        "sha256": "1dad9c794450a48c2672407703e276a47dd61f84c2b093267657e6f9299da48b",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_easel/test_block.py",
+        "sha256": "fbb2ff8acff03bd568700ecf5fc93229b87c5d21ab6064cc68875a305a1fa740",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_easel/test_gencode.py",
+        "sha256": "a736ece9d6bb9022d7e1b5117d0d3a7a98b8ba2e24b372b58e812e573db2a868",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_easel/test_keyhash.py",
+        "sha256": "54c67a6ba382fe87d86eb33fd6c4f87baea826a7f908a5dac3419a6331b10ad0",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_easel/test_matrix.py",
+        "sha256": "5ccc6469ee38e5776d3f1279af4247320686dde75ebde0ee56cf77044561f24b",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_easel/test_msa.py",
+        "sha256": "72e51ace89b288020ce5c6e4720605312092f2b00d5aefbb4e1ddc96e743757e",
+        "installed_identity_verified": true,
+        "hits": [
+          {
+            "line": 453,
+            "context": [
+              {
+                "line": 451,
+                "text": ""
+              },
+              {
+                "line": 452,
+                "text": "    @unittest.skipUnless(resource_files, \"importlib.resources.files not available\")"
+              },
+              {
+                "line": 453,
+                "text": "    def test_identity_filter_luxc(self):"
+              },
+              {
+                "line": 454,
+                "text": "        luxc = resource_files(__package__).joinpath(\"data\", \"msa\", \"LuxC.sto\")"
+              },
+              {
+                "line": 455,
+                "text": "        msa = self.read_msa(luxc)"
+              },
+              {
+                "line": 456,
+                "text": "        filtered = msa.identity_filter()"
+              },
+              {
+                "line": 457,
+                "text": ""
+              },
+              {
+                "line": 458,
+                "text": "        weighted = resource_files(__package__).joinpath(\"data\", \"msa\", \"LuxC.weighted.sto\")"
+              },
+              {
+                "line": 459,
+                "text": "        expected = self.read_msa(weighted)"
+              },
+              {
+                "line": 460,
+                "text": ""
+              },
+              {
+                "line": 461,
+                "text": "        self.assertEqual(len(filtered.sequences), len(expected.sequences))"
+              }
+            ]
+          },
+          {
+            "line": 454,
+            "context": [
+              {
+                "line": 452,
+                "text": "    @unittest.skipUnless(resource_files, \"importlib.resources.files not available\")"
+              },
+              {
+                "line": 453,
+                "text": "    def test_identity_filter_luxc(self):"
+              },
+              {
+                "line": 454,
+                "text": "        luxc = resource_files(__package__).joinpath(\"data\", \"msa\", \"LuxC.sto\")"
+              },
+              {
+                "line": 455,
+                "text": "        msa = self.read_msa(luxc)"
+              },
+              {
+                "line": 456,
+                "text": "        filtered = msa.identity_filter()"
+              },
+              {
+                "line": 457,
+                "text": ""
+              },
+              {
+                "line": 458,
+                "text": "        weighted = resource_files(__package__).joinpath(\"data\", \"msa\", \"LuxC.weighted.sto\")"
+              },
+              {
+                "line": 459,
+                "text": "        expected = self.read_msa(weighted)"
+              },
+              {
+                "line": 460,
+                "text": ""
+              },
+              {
+                "line": 461,
+                "text": "        self.assertEqual(len(filtered.sequences), len(expected.sequences))"
+              },
+              {
+                "line": 462,
+                "text": "        self.assertEqual(len(filtered.names), len(expected.names))"
+              }
+            ]
+          },
+          {
+            "line": 455,
+            "context": [
+              {
+                "line": 453,
+                "text": "    def test_identity_filter_luxc(self):"
+              },
+              {
+                "line": 454,
+                "text": "        luxc = resource_files(__package__).joinpath(\"data\", \"msa\", \"LuxC.sto\")"
+              },
+              {
+                "line": 455,
+                "text": "        msa = self.read_msa(luxc)"
+              },
+              {
+                "line": 456,
+                "text": "        filtered = msa.identity_filter()"
+              },
+              {
+                "line": 457,
+                "text": ""
+              },
+              {
+                "line": 458,
+                "text": "        weighted = resource_files(__package__).joinpath(\"data\", \"msa\", \"LuxC.weighted.sto\")"
+              },
+              {
+                "line": 459,
+                "text": "        expected = self.read_msa(weighted)"
+              },
+              {
+                "line": 460,
+                "text": ""
+              },
+              {
+                "line": 461,
+                "text": "        self.assertEqual(len(filtered.sequences), len(expected.sequences))"
+              },
+              {
+                "line": 462,
+                "text": "        self.assertEqual(len(filtered.names), len(expected.names))"
+              },
+              {
+                "line": 463,
+                "text": "        for s1, s2 in zip(filtered.sequences, expected.sequences):"
+              }
+            ]
+          },
+          {
+            "line": 458,
+            "context": [
+              {
+                "line": 456,
+                "text": "        filtered = msa.identity_filter()"
+              },
+              {
+                "line": 457,
+                "text": ""
+              },
+              {
+                "line": 458,
+                "text": "        weighted = resource_files(__package__).joinpath(\"data\", \"msa\", \"LuxC.weighted.sto\")"
+              },
+              {
+                "line": 459,
+                "text": "        expected = self.read_msa(weighted)"
+              },
+              {
+                "line": 460,
+                "text": ""
+              },
+              {
+                "line": 461,
+                "text": "        self.assertEqual(len(filtered.sequences), len(expected.sequences))"
+              },
+              {
+                "line": 462,
+                "text": "        self.assertEqual(len(filtered.names), len(expected.names))"
+              },
+              {
+                "line": 463,
+                "text": "        for s1, s2 in zip(filtered.sequences, expected.sequences):"
+              },
+              {
+                "line": 464,
+                "text": "            self.assertEqual(s1, s2)"
+              },
+              {
+                "line": 465,
+                "text": ""
+              },
+              {
+                "line": 466,
+                "text": "    def test_reverse_complement(self):"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_easel/test_msafile.py",
+        "sha256": "c18a0711804705764953bf7d8a0e47d066994fe85ce0f2d037cda94dcb97e8bf",
+        "installed_identity_verified": true,
+        "hits": [
+          {
+            "line": 87,
+            "context": [
+              {
+                "line": 85,
+                "text": "    @unittest.skipIf(platform.system() == \"Windows\", \"unsupported on Windows\")"
+              },
+              {
+                "line": 86,
+                "text": "    def test_msa_index_path_format_error(self):"
+              },
+              {
+                "line": 87,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"msa\", \"LuxC.sto\")"
+              },
+              {
+                "line": 88,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 89,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 90,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".sto.ssi\")):"
+              },
+              {
+                "line": 91,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 92,
+                "text": "        with easel.MSAFile(luxc, \"afa\") as msa_file:"
+              },
+              {
+                "line": 93,
+                "text": "            self.assertIsNotNone(msa_file.index)"
+              },
+              {
+                "line": 94,
+                "text": "            self.assertIsNotNone(msa_file.indexed)"
+              },
+              {
+                "line": 95,
+                "text": "            with self.assertRaises(ValueError):"
+              }
+            ]
+          },
+          {
+            "line": 88,
+            "context": [
+              {
+                "line": 86,
+                "text": "    def test_msa_index_path_format_error(self):"
+              },
+              {
+                "line": 87,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"msa\", \"LuxC.sto\")"
+              },
+              {
+                "line": 88,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 89,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 90,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".sto.ssi\")):"
+              },
+              {
+                "line": 91,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 92,
+                "text": "        with easel.MSAFile(luxc, \"afa\") as msa_file:"
+              },
+              {
+                "line": 93,
+                "text": "            self.assertIsNotNone(msa_file.index)"
+              },
+              {
+                "line": 94,
+                "text": "            self.assertIsNotNone(msa_file.indexed)"
+              },
+              {
+                "line": 95,
+                "text": "            with self.assertRaises(ValueError):"
+              },
+              {
+                "line": 96,
+                "text": "                msa = msa_file.indexed['LuxC']"
+              }
+            ]
+          },
+          {
+            "line": 90,
+            "context": [
+              {
+                "line": 88,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 89,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 90,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".sto.ssi\")):"
+              },
+              {
+                "line": 91,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 92,
+                "text": "        with easel.MSAFile(luxc, \"afa\") as msa_file:"
+              },
+              {
+                "line": 93,
+                "text": "            self.assertIsNotNone(msa_file.index)"
+              },
+              {
+                "line": 94,
+                "text": "            self.assertIsNotNone(msa_file.indexed)"
+              },
+              {
+                "line": 95,
+                "text": "            with self.assertRaises(ValueError):"
+              },
+              {
+                "line": 96,
+                "text": "                msa = msa_file.indexed['LuxC']"
+              },
+              {
+                "line": 97,
+                "text": ""
+              },
+              {
+                "line": 98,
+                "text": "    @unittest.skipUnless(resource_files, \"importlib.resources.files not available\")"
+              }
+            ]
+          },
+          {
+            "line": 92,
+            "context": [
+              {
+                "line": 90,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".sto.ssi\")):"
+              },
+              {
+                "line": 91,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 92,
+                "text": "        with easel.MSAFile(luxc, \"afa\") as msa_file:"
+              },
+              {
+                "line": 93,
+                "text": "            self.assertIsNotNone(msa_file.index)"
+              },
+              {
+                "line": 94,
+                "text": "            self.assertIsNotNone(msa_file.indexed)"
+              },
+              {
+                "line": 95,
+                "text": "            with self.assertRaises(ValueError):"
+              },
+              {
+                "line": 96,
+                "text": "                msa = msa_file.indexed['LuxC']"
+              },
+              {
+                "line": 97,
+                "text": ""
+              },
+              {
+                "line": 98,
+                "text": "    @unittest.skipUnless(resource_files, \"importlib.resources.files not available\")"
+              },
+              {
+                "line": 99,
+                "text": "    @unittest.skipIf(platform.system() == \"Windows\", \"unsupported on Windows\")"
+              },
+              {
+                "line": 100,
+                "text": "    def test_msa_index_path(self):"
+              }
+            ]
+          },
+          {
+            "line": 96,
+            "context": [
+              {
+                "line": 94,
+                "text": "            self.assertIsNotNone(msa_file.indexed)"
+              },
+              {
+                "line": 95,
+                "text": "            with self.assertRaises(ValueError):"
+              },
+              {
+                "line": 96,
+                "text": "                msa = msa_file.indexed['LuxC']"
+              },
+              {
+                "line": 97,
+                "text": ""
+              },
+              {
+                "line": 98,
+                "text": "    @unittest.skipUnless(resource_files, \"importlib.resources.files not available\")"
+              },
+              {
+                "line": 99,
+                "text": "    @unittest.skipIf(platform.system() == \"Windows\", \"unsupported on Windows\")"
+              },
+              {
+                "line": 100,
+                "text": "    def test_msa_index_path(self):"
+              },
+              {
+                "line": 101,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"msa\", \"LuxC.sto\")"
+              },
+              {
+                "line": 102,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 103,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 104,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".sto.ssi\")):"
+              }
+            ]
+          },
+          {
+            "line": 101,
+            "context": [
+              {
+                "line": 99,
+                "text": "    @unittest.skipIf(platform.system() == \"Windows\", \"unsupported on Windows\")"
+              },
+              {
+                "line": 100,
+                "text": "    def test_msa_index_path(self):"
+              },
+              {
+                "line": 101,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"msa\", \"LuxC.sto\")"
+              },
+              {
+                "line": 102,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 103,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 104,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".sto.ssi\")):"
+              },
+              {
+                "line": 105,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 106,
+                "text": "        with easel.MSAFile(luxc, \"stockholm\") as msa_file:"
+              },
+              {
+                "line": 107,
+                "text": "            self.assertIsNotNone(msa_file.index)"
+              },
+              {
+                "line": 108,
+                "text": "            self.assertIsNotNone(msa_file.indexed)"
+              },
+              {
+                "line": 109,
+                "text": ""
+              }
+            ]
+          },
+          {
+            "line": 102,
+            "context": [
+              {
+                "line": 100,
+                "text": "    def test_msa_index_path(self):"
+              },
+              {
+                "line": 101,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"msa\", \"LuxC.sto\")"
+              },
+              {
+                "line": 102,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 103,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 104,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".sto.ssi\")):"
+              },
+              {
+                "line": 105,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 106,
+                "text": "        with easel.MSAFile(luxc, \"stockholm\") as msa_file:"
+              },
+              {
+                "line": 107,
+                "text": "            self.assertIsNotNone(msa_file.index)"
+              },
+              {
+                "line": 108,
+                "text": "            self.assertIsNotNone(msa_file.indexed)"
+              },
+              {
+                "line": 109,
+                "text": ""
+              },
+              {
+                "line": 110,
+                "text": "            self.assertEqual(len(msa_file.indexed), 1)"
+              }
+            ]
+          },
+          {
+            "line": 104,
+            "context": [
+              {
+                "line": 102,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 103,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 104,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".sto.ssi\")):"
+              },
+              {
+                "line": 105,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 106,
+                "text": "        with easel.MSAFile(luxc, \"stockholm\") as msa_file:"
+              },
+              {
+                "line": 107,
+                "text": "            self.assertIsNotNone(msa_file.index)"
+              },
+              {
+                "line": 108,
+                "text": "            self.assertIsNotNone(msa_file.indexed)"
+              },
+              {
+                "line": 109,
+                "text": ""
+              },
+              {
+                "line": 110,
+                "text": "            self.assertEqual(len(msa_file.indexed), 1)"
+              },
+              {
+                "line": 111,
+                "text": "            keys = list(msa_file.indexed)"
+              },
+              {
+                "line": 112,
+                "text": "            self.assertEqual(len(keys), 1)"
+              }
+            ]
+          },
+          {
+            "line": 106,
+            "context": [
+              {
+                "line": 104,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".sto.ssi\")):"
+              },
+              {
+                "line": 105,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 106,
+                "text": "        with easel.MSAFile(luxc, \"stockholm\") as msa_file:"
+              },
+              {
+                "line": 107,
+                "text": "            self.assertIsNotNone(msa_file.index)"
+              },
+              {
+                "line": 108,
+                "text": "            self.assertIsNotNone(msa_file.indexed)"
+              },
+              {
+                "line": 109,
+                "text": ""
+              },
+              {
+                "line": 110,
+                "text": "            self.assertEqual(len(msa_file.indexed), 1)"
+              },
+              {
+                "line": 111,
+                "text": "            keys = list(msa_file.indexed)"
+              },
+              {
+                "line": 112,
+                "text": "            self.assertEqual(len(keys), 1)"
+              },
+              {
+                "line": 113,
+                "text": ""
+              },
+              {
+                "line": 114,
+                "text": "            msa = msa_file.indexed['LuxC']"
+              }
+            ]
+          },
+          {
+            "line": 114,
+            "context": [
+              {
+                "line": 112,
+                "text": "            self.assertEqual(len(keys), 1)"
+              },
+              {
+                "line": 113,
+                "text": ""
+              },
+              {
+                "line": 114,
+                "text": "            msa = msa_file.indexed['LuxC']"
+              },
+              {
+                "line": 115,
+                "text": "            self.assertEqual(msa.name, 'LuxC')"
+              },
+              {
+                "line": 116,
+                "text": ""
+              },
+              {
+                "line": 117,
+                "text": "            with self.assertRaises(KeyError):"
+              },
+              {
+                "line": 118,
+                "text": "                msa = msa_file.indexed['does not exist']"
+              },
+              {
+                "line": 119,
+                "text": ""
+              },
+              {
+                "line": 120,
+                "text": "    @unittest.skipUnless(resource_files, \"importlib.resources.files not available\")"
+              },
+              {
+                "line": 121,
+                "text": "    @unittest.skipIf(platform.system() == \"Windows\", \"unsupported on Windows\")"
+              },
+              {
+                "line": 122,
+                "text": "    def test_msa_index_fileobj(self):"
+              }
+            ]
+          },
+          {
+            "line": 115,
+            "context": [
+              {
+                "line": 113,
+                "text": ""
+              },
+              {
+                "line": 114,
+                "text": "            msa = msa_file.indexed['LuxC']"
+              },
+              {
+                "line": 115,
+                "text": "            self.assertEqual(msa.name, 'LuxC')"
+              },
+              {
+                "line": 116,
+                "text": ""
+              },
+              {
+                "line": 117,
+                "text": "            with self.assertRaises(KeyError):"
+              },
+              {
+                "line": 118,
+                "text": "                msa = msa_file.indexed['does not exist']"
+              },
+              {
+                "line": 119,
+                "text": ""
+              },
+              {
+                "line": 120,
+                "text": "    @unittest.skipUnless(resource_files, \"importlib.resources.files not available\")"
+              },
+              {
+                "line": 121,
+                "text": "    @unittest.skipIf(platform.system() == \"Windows\", \"unsupported on Windows\")"
+              },
+              {
+                "line": 122,
+                "text": "    def test_msa_index_fileobj(self):"
+              },
+              {
+                "line": 123,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"msa\", \"LuxC.sto\")"
+              }
+            ]
+          },
+          {
+            "line": 123,
+            "context": [
+              {
+                "line": 121,
+                "text": "    @unittest.skipIf(platform.system() == \"Windows\", \"unsupported on Windows\")"
+              },
+              {
+                "line": 122,
+                "text": "    def test_msa_index_fileobj(self):"
+              },
+              {
+                "line": 123,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"msa\", \"LuxC.sto\")"
+              },
+              {
+                "line": 124,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 125,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 126,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".sto.ssi\")):"
+              },
+              {
+                "line": 127,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 128,
+                "text": ""
+              },
+              {
+                "line": 129,
+                "text": "        with luxc.open(\"rb\") as src:"
+              },
+              {
+                "line": 130,
+                "text": "            with easel.MSAFile(src, \"stockholm\") as msa_file:"
+              },
+              {
+                "line": 131,
+                "text": "                self.assertIsNone(msa_file.index)"
+              }
+            ]
+          },
+          {
+            "line": 124,
+            "context": [
+              {
+                "line": 122,
+                "text": "    def test_msa_index_fileobj(self):"
+              },
+              {
+                "line": 123,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"msa\", \"LuxC.sto\")"
+              },
+              {
+                "line": 124,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 125,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 126,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".sto.ssi\")):"
+              },
+              {
+                "line": 127,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 128,
+                "text": ""
+              },
+              {
+                "line": 129,
+                "text": "        with luxc.open(\"rb\") as src:"
+              },
+              {
+                "line": 130,
+                "text": "            with easel.MSAFile(src, \"stockholm\") as msa_file:"
+              },
+              {
+                "line": 131,
+                "text": "                self.assertIsNone(msa_file.index)"
+              },
+              {
+                "line": 132,
+                "text": "                self.assertIsNone(msa_file.indexed)"
+              }
+            ]
+          },
+          {
+            "line": 126,
+            "context": [
+              {
+                "line": 124,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 125,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 126,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".sto.ssi\")):"
+              },
+              {
+                "line": 127,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 128,
+                "text": ""
+              },
+              {
+                "line": 129,
+                "text": "        with luxc.open(\"rb\") as src:"
+              },
+              {
+                "line": 130,
+                "text": "            with easel.MSAFile(src, \"stockholm\") as msa_file:"
+              },
+              {
+                "line": 131,
+                "text": "                self.assertIsNone(msa_file.index)"
+              },
+              {
+                "line": 132,
+                "text": "                self.assertIsNone(msa_file.indexed)"
+              },
+              {
+                "line": 133,
+                "text": ""
+              },
+              {
+                "line": 134,
+                "text": "        with easel.SSIReader(luxc.with_suffix(\".sto.ssi\")) as index:"
+              }
+            ]
+          },
+          {
+            "line": 129,
+            "context": [
+              {
+                "line": 127,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 128,
+                "text": ""
+              },
+              {
+                "line": 129,
+                "text": "        with luxc.open(\"rb\") as src:"
+              },
+              {
+                "line": 130,
+                "text": "            with easel.MSAFile(src, \"stockholm\") as msa_file:"
+              },
+              {
+                "line": 131,
+                "text": "                self.assertIsNone(msa_file.index)"
+              },
+              {
+                "line": 132,
+                "text": "                self.assertIsNone(msa_file.indexed)"
+              },
+              {
+                "line": 133,
+                "text": ""
+              },
+              {
+                "line": 134,
+                "text": "        with easel.SSIReader(luxc.with_suffix(\".sto.ssi\")) as index:"
+              },
+              {
+                "line": 135,
+                "text": "            with luxc.open(\"rb\") as src:"
+              },
+              {
+                "line": 136,
+                "text": "                with easel.MSAFile(src, \"stockholm\", index=index) as msa_file:"
+              },
+              {
+                "line": 137,
+                "text": "                    self.assertIsNotNone(msa_file.index)"
+              }
+            ]
+          },
+          {
+            "line": 134,
+            "context": [
+              {
+                "line": 132,
+                "text": "                self.assertIsNone(msa_file.indexed)"
+              },
+              {
+                "line": 133,
+                "text": ""
+              },
+              {
+                "line": 134,
+                "text": "        with easel.SSIReader(luxc.with_suffix(\".sto.ssi\")) as index:"
+              },
+              {
+                "line": 135,
+                "text": "            with luxc.open(\"rb\") as src:"
+              },
+              {
+                "line": 136,
+                "text": "                with easel.MSAFile(src, \"stockholm\", index=index) as msa_file:"
+              },
+              {
+                "line": 137,
+                "text": "                    self.assertIsNotNone(msa_file.index)"
+              },
+              {
+                "line": 138,
+                "text": "                    self.assertIsNotNone(msa_file.indexed)"
+              },
+              {
+                "line": 139,
+                "text": ""
+              },
+              {
+                "line": 140,
+                "text": "                    self.assertEqual(len(msa_file.indexed), 1)"
+              },
+              {
+                "line": 141,
+                "text": "                    keys = list(msa_file.indexed)"
+              },
+              {
+                "line": 142,
+                "text": "                    self.assertEqual(len(keys), 1)"
+              }
+            ]
+          },
+          {
+            "line": 135,
+            "context": [
+              {
+                "line": 133,
+                "text": ""
+              },
+              {
+                "line": 134,
+                "text": "        with easel.SSIReader(luxc.with_suffix(\".sto.ssi\")) as index:"
+              },
+              {
+                "line": 135,
+                "text": "            with luxc.open(\"rb\") as src:"
+              },
+              {
+                "line": 136,
+                "text": "                with easel.MSAFile(src, \"stockholm\", index=index) as msa_file:"
+              },
+              {
+                "line": 137,
+                "text": "                    self.assertIsNotNone(msa_file.index)"
+              },
+              {
+                "line": 138,
+                "text": "                    self.assertIsNotNone(msa_file.indexed)"
+              },
+              {
+                "line": 139,
+                "text": ""
+              },
+              {
+                "line": 140,
+                "text": "                    self.assertEqual(len(msa_file.indexed), 1)"
+              },
+              {
+                "line": 141,
+                "text": "                    keys = list(msa_file.indexed)"
+              },
+              {
+                "line": 142,
+                "text": "                    self.assertEqual(len(keys), 1)"
+              },
+              {
+                "line": 143,
+                "text": ""
+              }
+            ]
+          },
+          {
+            "line": 144,
+            "context": [
+              {
+                "line": 142,
+                "text": "                    self.assertEqual(len(keys), 1)"
+              },
+              {
+                "line": 143,
+                "text": ""
+              },
+              {
+                "line": 144,
+                "text": "                    msa = msa_file.indexed['LuxC']"
+              },
+              {
+                "line": 145,
+                "text": "                    self.assertEqual(msa.name, 'LuxC')"
+              },
+              {
+                "line": 146,
+                "text": ""
+              },
+              {
+                "line": 147,
+                "text": "                    with self.assertRaises(KeyError):"
+              },
+              {
+                "line": 148,
+                "text": "                        msa = msa_file.indexed['does not exist']"
+              },
+              {
+                "line": 149,
+                "text": ""
+              },
+              {
+                "line": 150,
+                "text": ""
+              },
+              {
+                "line": 151,
+                "text": ""
+              },
+              {
+                "line": 152,
+                "text": "class _TestReadFilename(object):"
+              }
+            ]
+          },
+          {
+            "line": 145,
+            "context": [
+              {
+                "line": 143,
+                "text": ""
+              },
+              {
+                "line": 144,
+                "text": "                    msa = msa_file.indexed['LuxC']"
+              },
+              {
+                "line": 145,
+                "text": "                    self.assertEqual(msa.name, 'LuxC')"
+              },
+              {
+                "line": 146,
+                "text": ""
+              },
+              {
+                "line": 147,
+                "text": "                    with self.assertRaises(KeyError):"
+              },
+              {
+                "line": 148,
+                "text": "                        msa = msa_file.indexed['does not exist']"
+              },
+              {
+                "line": 149,
+                "text": ""
+              },
+              {
+                "line": 150,
+                "text": ""
+              },
+              {
+                "line": 151,
+                "text": ""
+              },
+              {
+                "line": 152,
+                "text": "class _TestReadFilename(object):"
+              },
+              {
+                "line": 153,
+                "text": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_easel/test_randomness.py",
+        "sha256": "915ae914a64500a14b720a348b460e87b4528044befd505310189610ef8d0a7d",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_easel/test_sequence.py",
+        "sha256": "497c6279838dced456567529405937dc4eea7628de781897333af41d9c88ec77",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_easel/test_sequencefile.py",
+        "sha256": "ebddf6b45e7e08f7eaf62f088ada386b92a465556d47f3f89ffbe0830d8800ea",
+        "installed_identity_verified": true,
+        "hits": [
+          {
+            "line": 76,
+            "context": [
+              {
+                "line": 74,
+                "text": "    @unittest.skipUnless(resource_files, \"importlib.resources.files not available\")"
+              },
+              {
+                "line": 75,
+                "text": "    def test_ignore_gaps(self):"
+              },
+              {
+                "line": 76,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"msa\", \"LuxC.faa\")"
+              },
+              {
+                "line": 77,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 78,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 79,
+                "text": "        # fails if not ignoring gaps (since if contains gaps)"
+              },
+              {
+                "line": 80,
+                "text": "        with easel.SequenceFile(luxc, \"fasta\") as seq_file:"
+              },
+              {
+                "line": 81,
+                "text": "            self.assertRaises(ValueError, seq_file.read)"
+              },
+              {
+                "line": 82,
+                "text": "        # succeeds if ignoring gaps"
+              },
+              {
+                "line": 83,
+                "text": "        with easel.SequenceFile(luxc, \"afa\") as seq_file:"
+              },
+              {
+                "line": 84,
+                "text": "            sequences = list(seq_file)"
+              }
+            ]
+          },
+          {
+            "line": 77,
+            "context": [
+              {
+                "line": 75,
+                "text": "    def test_ignore_gaps(self):"
+              },
+              {
+                "line": 76,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"msa\", \"LuxC.faa\")"
+              },
+              {
+                "line": 77,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 78,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 79,
+                "text": "        # fails if not ignoring gaps (since if contains gaps)"
+              },
+              {
+                "line": 80,
+                "text": "        with easel.SequenceFile(luxc, \"fasta\") as seq_file:"
+              },
+              {
+                "line": 81,
+                "text": "            self.assertRaises(ValueError, seq_file.read)"
+              },
+              {
+                "line": 82,
+                "text": "        # succeeds if ignoring gaps"
+              },
+              {
+                "line": 83,
+                "text": "        with easel.SequenceFile(luxc, \"afa\") as seq_file:"
+              },
+              {
+                "line": 84,
+                "text": "            sequences = list(seq_file)"
+              },
+              {
+                "line": 85,
+                "text": "            self.assertEqual(len(sequences), 13)"
+              }
+            ]
+          },
+          {
+            "line": 80,
+            "context": [
+              {
+                "line": 78,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 79,
+                "text": "        # fails if not ignoring gaps (since if contains gaps)"
+              },
+              {
+                "line": 80,
+                "text": "        with easel.SequenceFile(luxc, \"fasta\") as seq_file:"
+              },
+              {
+                "line": 81,
+                "text": "            self.assertRaises(ValueError, seq_file.read)"
+              },
+              {
+                "line": 82,
+                "text": "        # succeeds if ignoring gaps"
+              },
+              {
+                "line": 83,
+                "text": "        with easel.SequenceFile(luxc, \"afa\") as seq_file:"
+              },
+              {
+                "line": 84,
+                "text": "            sequences = list(seq_file)"
+              },
+              {
+                "line": 85,
+                "text": "            self.assertEqual(len(sequences), 13)"
+              },
+              {
+                "line": 86,
+                "text": ""
+              },
+              {
+                "line": 87,
+                "text": "    @unittest.skipUnless(resource_files, \"importlib.resources.files not available\")"
+              },
+              {
+                "line": 88,
+                "text": "    @unittest.skipIf(platform.system() == \"Windows\", \"unsupported on Windows\")"
+              }
+            ]
+          },
+          {
+            "line": 83,
+            "context": [
+              {
+                "line": 81,
+                "text": "            self.assertRaises(ValueError, seq_file.read)"
+              },
+              {
+                "line": 82,
+                "text": "        # succeeds if ignoring gaps"
+              },
+              {
+                "line": 83,
+                "text": "        with easel.SequenceFile(luxc, \"afa\") as seq_file:"
+              },
+              {
+                "line": 84,
+                "text": "            sequences = list(seq_file)"
+              },
+              {
+                "line": 85,
+                "text": "            self.assertEqual(len(sequences), 13)"
+              },
+              {
+                "line": 86,
+                "text": ""
+              },
+              {
+                "line": 87,
+                "text": "    @unittest.skipUnless(resource_files, \"importlib.resources.files not available\")"
+              },
+              {
+                "line": 88,
+                "text": "    @unittest.skipIf(platform.system() == \"Windows\", \"unsupported on Windows\")"
+              },
+              {
+                "line": 89,
+                "text": "    def test_sequence_index_path(self):"
+              },
+              {
+                "line": 90,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"seqs\", \"938293.PRJEB85.HG003687.faa\")"
+              },
+              {
+                "line": 91,
+                "text": "        if not os.path.exists(luxc):"
+              }
+            ]
+          },
+          {
+            "line": 90,
+            "context": [
+              {
+                "line": 88,
+                "text": "    @unittest.skipIf(platform.system() == \"Windows\", \"unsupported on Windows\")"
+              },
+              {
+                "line": 89,
+                "text": "    def test_sequence_index_path(self):"
+              },
+              {
+                "line": 90,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"seqs\", \"938293.PRJEB85.HG003687.faa\")"
+              },
+              {
+                "line": 91,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 92,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 93,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".faa.ssi\")):"
+              },
+              {
+                "line": 94,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 95,
+                "text": "        with easel.SequenceFile(luxc, \"fasta\") as seq_file:"
+              },
+              {
+                "line": 96,
+                "text": "            self.assertIsNotNone(seq_file.index)"
+              },
+              {
+                "line": 97,
+                "text": "            self.assertIsNotNone(seq_file.indexed)"
+              },
+              {
+                "line": 98,
+                "text": "            "
+              }
+            ]
+          },
+          {
+            "line": 91,
+            "context": [
+              {
+                "line": 89,
+                "text": "    def test_sequence_index_path(self):"
+              },
+              {
+                "line": 90,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"seqs\", \"938293.PRJEB85.HG003687.faa\")"
+              },
+              {
+                "line": 91,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 92,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 93,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".faa.ssi\")):"
+              },
+              {
+                "line": 94,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 95,
+                "text": "        with easel.SequenceFile(luxc, \"fasta\") as seq_file:"
+              },
+              {
+                "line": 96,
+                "text": "            self.assertIsNotNone(seq_file.index)"
+              },
+              {
+                "line": 97,
+                "text": "            self.assertIsNotNone(seq_file.indexed)"
+              },
+              {
+                "line": 98,
+                "text": "            "
+              },
+              {
+                "line": 99,
+                "text": "            self.assertEqual(len(seq_file.indexed), 2100)"
+              }
+            ]
+          },
+          {
+            "line": 93,
+            "context": [
+              {
+                "line": 91,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 92,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 93,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".faa.ssi\")):"
+              },
+              {
+                "line": 94,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 95,
+                "text": "        with easel.SequenceFile(luxc, \"fasta\") as seq_file:"
+              },
+              {
+                "line": 96,
+                "text": "            self.assertIsNotNone(seq_file.index)"
+              },
+              {
+                "line": 97,
+                "text": "            self.assertIsNotNone(seq_file.indexed)"
+              },
+              {
+                "line": 98,
+                "text": "            "
+              },
+              {
+                "line": 99,
+                "text": "            self.assertEqual(len(seq_file.indexed), 2100)"
+              },
+              {
+                "line": 100,
+                "text": "            keys = list(seq_file.indexed)"
+              },
+              {
+                "line": 101,
+                "text": "            self.assertEqual(len(keys), 2100)"
+              }
+            ]
+          },
+          {
+            "line": 95,
+            "context": [
+              {
+                "line": 93,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".faa.ssi\")):"
+              },
+              {
+                "line": 94,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 95,
+                "text": "        with easel.SequenceFile(luxc, \"fasta\") as seq_file:"
+              },
+              {
+                "line": 96,
+                "text": "            self.assertIsNotNone(seq_file.index)"
+              },
+              {
+                "line": 97,
+                "text": "            self.assertIsNotNone(seq_file.indexed)"
+              },
+              {
+                "line": 98,
+                "text": "            "
+              },
+              {
+                "line": 99,
+                "text": "            self.assertEqual(len(seq_file.indexed), 2100)"
+              },
+              {
+                "line": 100,
+                "text": "            keys = list(seq_file.indexed)"
+              },
+              {
+                "line": 101,
+                "text": "            self.assertEqual(len(keys), 2100)"
+              },
+              {
+                "line": 102,
+                "text": "            "
+              },
+              {
+                "line": 103,
+                "text": "            seq = seq_file.indexed['938293.PRJEB85.HG003684_3']"
+              }
+            ]
+          },
+          {
+            "line": 113,
+            "context": [
+              {
+                "line": 111,
+                "text": "    @unittest.skipIf(platform.system() == \"Windows\", \"unsupported on Windows\")"
+              },
+              {
+                "line": 112,
+                "text": "    def test_sequence_index_path_format_error(self):"
+              },
+              {
+                "line": 113,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"seqs\", \"938293.PRJEB85.HG003687.faa\")"
+              },
+              {
+                "line": 114,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 115,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 116,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".faa.ssi\")):"
+              },
+              {
+                "line": 117,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 118,
+                "text": "        with easel.SequenceFile(luxc, \"uniprot\") as seq_file:"
+              },
+              {
+                "line": 119,
+                "text": "            self.assertIsNotNone(seq_file.index)"
+              },
+              {
+                "line": 120,
+                "text": "            self.assertIsNotNone(seq_file.indexed)"
+              },
+              {
+                "line": 121,
+                "text": "            with self.assertRaises(ValueError):"
+              }
+            ]
+          },
+          {
+            "line": 114,
+            "context": [
+              {
+                "line": 112,
+                "text": "    def test_sequence_index_path_format_error(self):"
+              },
+              {
+                "line": 113,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"seqs\", \"938293.PRJEB85.HG003687.faa\")"
+              },
+              {
+                "line": 114,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 115,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 116,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".faa.ssi\")):"
+              },
+              {
+                "line": 117,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 118,
+                "text": "        with easel.SequenceFile(luxc, \"uniprot\") as seq_file:"
+              },
+              {
+                "line": 119,
+                "text": "            self.assertIsNotNone(seq_file.index)"
+              },
+              {
+                "line": 120,
+                "text": "            self.assertIsNotNone(seq_file.indexed)"
+              },
+              {
+                "line": 121,
+                "text": "            with self.assertRaises(ValueError):"
+              },
+              {
+                "line": 122,
+                "text": "                seq = seq_file.indexed['938293.PRJEB85.HG003684_1']"
+              }
+            ]
+          },
+          {
+            "line": 116,
+            "context": [
+              {
+                "line": 114,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 115,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 116,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".faa.ssi\")):"
+              },
+              {
+                "line": 117,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 118,
+                "text": "        with easel.SequenceFile(luxc, \"uniprot\") as seq_file:"
+              },
+              {
+                "line": 119,
+                "text": "            self.assertIsNotNone(seq_file.index)"
+              },
+              {
+                "line": 120,
+                "text": "            self.assertIsNotNone(seq_file.indexed)"
+              },
+              {
+                "line": 121,
+                "text": "            with self.assertRaises(ValueError):"
+              },
+              {
+                "line": 122,
+                "text": "                seq = seq_file.indexed['938293.PRJEB85.HG003684_1']"
+              },
+              {
+                "line": 123,
+                "text": ""
+              },
+              {
+                "line": 124,
+                "text": "    @unittest.skipUnless(resource_files, \"importlib.resources.files not available\")"
+              }
+            ]
+          },
+          {
+            "line": 118,
+            "context": [
+              {
+                "line": 116,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".faa.ssi\")):"
+              },
+              {
+                "line": 117,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 118,
+                "text": "        with easel.SequenceFile(luxc, \"uniprot\") as seq_file:"
+              },
+              {
+                "line": 119,
+                "text": "            self.assertIsNotNone(seq_file.index)"
+              },
+              {
+                "line": 120,
+                "text": "            self.assertIsNotNone(seq_file.indexed)"
+              },
+              {
+                "line": 121,
+                "text": "            with self.assertRaises(ValueError):"
+              },
+              {
+                "line": 122,
+                "text": "                seq = seq_file.indexed['938293.PRJEB85.HG003684_1']"
+              },
+              {
+                "line": 123,
+                "text": ""
+              },
+              {
+                "line": 124,
+                "text": "    @unittest.skipUnless(resource_files, \"importlib.resources.files not available\")"
+              },
+              {
+                "line": 125,
+                "text": "    @unittest.skipIf(platform.system() == \"Windows\", \"unsupported on Windows\")"
+              },
+              {
+                "line": 126,
+                "text": "    def test_sequence_index_fileobj(self):"
+              }
+            ]
+          },
+          {
+            "line": 127,
+            "context": [
+              {
+                "line": 125,
+                "text": "    @unittest.skipIf(platform.system() == \"Windows\", \"unsupported on Windows\")"
+              },
+              {
+                "line": 126,
+                "text": "    def test_sequence_index_fileobj(self):"
+              },
+              {
+                "line": 127,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"seqs\", \"938293.PRJEB85.HG003687.faa\")"
+              },
+              {
+                "line": 128,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 129,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 130,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".faa.ssi\")):"
+              },
+              {
+                "line": 131,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 132,
+                "text": ""
+              },
+              {
+                "line": 133,
+                "text": "        with luxc.open(\"rb\") as src:"
+              },
+              {
+                "line": 134,
+                "text": "            with easel.SequenceFile(src, \"fasta\") as seq_file:"
+              },
+              {
+                "line": 135,
+                "text": "                self.assertIsNone(seq_file.index)"
+              }
+            ]
+          },
+          {
+            "line": 128,
+            "context": [
+              {
+                "line": 126,
+                "text": "    def test_sequence_index_fileobj(self):"
+              },
+              {
+                "line": 127,
+                "text": "        luxc = resource_files(\"pyhmmer.tests\").joinpath(\"data\", \"seqs\", \"938293.PRJEB85.HG003687.faa\")"
+              },
+              {
+                "line": 128,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 129,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 130,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".faa.ssi\")):"
+              },
+              {
+                "line": 131,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 132,
+                "text": ""
+              },
+              {
+                "line": 133,
+                "text": "        with luxc.open(\"rb\") as src:"
+              },
+              {
+                "line": 134,
+                "text": "            with easel.SequenceFile(src, \"fasta\") as seq_file:"
+              },
+              {
+                "line": 135,
+                "text": "                self.assertIsNone(seq_file.index)"
+              },
+              {
+                "line": 136,
+                "text": "                self.assertIsNone(seq_file.indexed)"
+              }
+            ]
+          },
+          {
+            "line": 130,
+            "context": [
+              {
+                "line": 128,
+                "text": "        if not os.path.exists(luxc):"
+              },
+              {
+                "line": 129,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 130,
+                "text": "        if not os.path.exists(luxc.with_suffix(\".faa.ssi\")):"
+              },
+              {
+                "line": 131,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 132,
+                "text": ""
+              },
+              {
+                "line": 133,
+                "text": "        with luxc.open(\"rb\") as src:"
+              },
+              {
+                "line": 134,
+                "text": "            with easel.SequenceFile(src, \"fasta\") as seq_file:"
+              },
+              {
+                "line": 135,
+                "text": "                self.assertIsNone(seq_file.index)"
+              },
+              {
+                "line": 136,
+                "text": "                self.assertIsNone(seq_file.indexed)"
+              },
+              {
+                "line": 137,
+                "text": ""
+              },
+              {
+                "line": 138,
+                "text": "        with easel.SSIReader(luxc.with_suffix(\".faa.ssi\")) as index:"
+              }
+            ]
+          },
+          {
+            "line": 133,
+            "context": [
+              {
+                "line": 131,
+                "text": "            self.skipTest(\"missing data files\")"
+              },
+              {
+                "line": 132,
+                "text": ""
+              },
+              {
+                "line": 133,
+                "text": "        with luxc.open(\"rb\") as src:"
+              },
+              {
+                "line": 134,
+                "text": "            with easel.SequenceFile(src, \"fasta\") as seq_file:"
+              },
+              {
+                "line": 135,
+                "text": "                self.assertIsNone(seq_file.index)"
+              },
+              {
+                "line": 136,
+                "text": "                self.assertIsNone(seq_file.indexed)"
+              },
+              {
+                "line": 137,
+                "text": ""
+              },
+              {
+                "line": 138,
+                "text": "        with easel.SSIReader(luxc.with_suffix(\".faa.ssi\")) as index:"
+              },
+              {
+                "line": 139,
+                "text": "            with luxc.open(\"rb\") as src:"
+              },
+              {
+                "line": 140,
+                "text": "                with easel.SequenceFile(src, \"fasta\", index=index) as seq_file:"
+              },
+              {
+                "line": 141,
+                "text": "                    self.assertIsNotNone(seq_file.index)"
+              }
+            ]
+          },
+          {
+            "line": 138,
+            "context": [
+              {
+                "line": 136,
+                "text": "                self.assertIsNone(seq_file.indexed)"
+              },
+              {
+                "line": 137,
+                "text": ""
+              },
+              {
+                "line": 138,
+                "text": "        with easel.SSIReader(luxc.with_suffix(\".faa.ssi\")) as index:"
+              },
+              {
+                "line": 139,
+                "text": "            with luxc.open(\"rb\") as src:"
+              },
+              {
+                "line": 140,
+                "text": "                with easel.SequenceFile(src, \"fasta\", index=index) as seq_file:"
+              },
+              {
+                "line": 141,
+                "text": "                    self.assertIsNotNone(seq_file.index)"
+              },
+              {
+                "line": 142,
+                "text": "                    self.assertIsNotNone(seq_file.indexed)"
+              },
+              {
+                "line": 143,
+                "text": "                    "
+              },
+              {
+                "line": 144,
+                "text": "                    self.assertEqual(len(seq_file.indexed), 2100)"
+              },
+              {
+                "line": 145,
+                "text": "                    keys = list(seq_file.indexed)"
+              },
+              {
+                "line": 146,
+                "text": "                    self.assertEqual(len(keys), 2100)"
+              }
+            ]
+          },
+          {
+            "line": 139,
+            "context": [
+              {
+                "line": 137,
+                "text": ""
+              },
+              {
+                "line": 138,
+                "text": "        with easel.SSIReader(luxc.with_suffix(\".faa.ssi\")) as index:"
+              },
+              {
+                "line": 139,
+                "text": "            with luxc.open(\"rb\") as src:"
+              },
+              {
+                "line": 140,
+                "text": "                with easel.SequenceFile(src, \"fasta\", index=index) as seq_file:"
+              },
+              {
+                "line": 141,
+                "text": "                    self.assertIsNotNone(seq_file.index)"
+              },
+              {
+                "line": 142,
+                "text": "                    self.assertIsNotNone(seq_file.indexed)"
+              },
+              {
+                "line": 143,
+                "text": "                    "
+              },
+              {
+                "line": 144,
+                "text": "                    self.assertEqual(len(seq_file.indexed), 2100)"
+              },
+              {
+                "line": 145,
+                "text": "                    keys = list(seq_file.indexed)"
+              },
+              {
+                "line": 146,
+                "text": "                    self.assertEqual(len(keys), 2100)"
+              },
+              {
+                "line": 147,
+                "text": "                    "
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_easel/test_ssi.py",
+        "sha256": "d2841f71a0bfbc4b444219e13fbc02cd15f42af9fb4293130d8c22495429a25a",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_easel/test_vector.py",
+        "sha256": "285cd455d3d7e15851cfe72ec0c7696f75a4d3daf31c7db6b1f5574a8a1b1964",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_errors.py",
+        "sha256": "4b723e1fc9de5ff38008de9e40b37d25ae689dfd61706151b78b623e665007d5",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_hmmer.py",
+        "sha256": "974cf871bcbab6b0ad9d58431d5c746a26e320195e4a78928ba7ab7e984ffb7a",
+        "installed_identity_verified": true,
+        "hits": [
+          {
+            "line": 807,
+            "context": [
+              {
+                "line": 805,
+                "text": ""
+              },
+              {
+                "line": 806,
+                "text": "    @unittest.skipUnless(resource_files, \"importlib.resources not available\")"
+              },
+              {
+                "line": 807,
+                "text": "    def test_luxc(self):"
+              },
+              {
+                "line": 808,
+                "text": "        hmm_path = resource_files(__package__).joinpath(\"data\", \"hmms\", \"txt\", \"LuxC.hmm\")"
+              },
+              {
+                "line": 809,
+                "text": "        seqs_path = resource_files(__package__).joinpath(\"data\", \"seqs\", \"LuxC.faa\")"
+              },
+              {
+                "line": 810,
+                "text": "        ref_path = resource_files(__package__).joinpath(\"data\", \"msa\", \"LuxC.hmmalign.sto\")"
+              },
+              {
+                "line": 811,
+                "text": ""
+              },
+              {
+                "line": 812,
+                "text": "        with HMMFile(hmm_path) as hmm_file:"
+              },
+              {
+                "line": 813,
+                "text": "            hmm = hmm_file.read()"
+              },
+              {
+                "line": 814,
+                "text": "        with SequenceFile(seqs_path, digital=True, alphabet=hmm.alphabet) as seqs_file:"
+              },
+              {
+                "line": 815,
+                "text": "            seqs = seqs_file.read_block()"
+              }
+            ]
+          },
+          {
+            "line": 808,
+            "context": [
+              {
+                "line": 806,
+                "text": "    @unittest.skipUnless(resource_files, \"importlib.resources not available\")"
+              },
+              {
+                "line": 807,
+                "text": "    def test_luxc(self):"
+              },
+              {
+                "line": 808,
+                "text": "        hmm_path = resource_files(__package__).joinpath(\"data\", \"hmms\", \"txt\", \"LuxC.hmm\")"
+              },
+              {
+                "line": 809,
+                "text": "        seqs_path = resource_files(__package__).joinpath(\"data\", \"seqs\", \"LuxC.faa\")"
+              },
+              {
+                "line": 810,
+                "text": "        ref_path = resource_files(__package__).joinpath(\"data\", \"msa\", \"LuxC.hmmalign.sto\")"
+              },
+              {
+                "line": 811,
+                "text": ""
+              },
+              {
+                "line": 812,
+                "text": "        with HMMFile(hmm_path) as hmm_file:"
+              },
+              {
+                "line": 813,
+                "text": "            hmm = hmm_file.read()"
+              },
+              {
+                "line": 814,
+                "text": "        with SequenceFile(seqs_path, digital=True, alphabet=hmm.alphabet) as seqs_file:"
+              },
+              {
+                "line": 815,
+                "text": "            seqs = seqs_file.read_block()"
+              },
+              {
+                "line": 816,
+                "text": "        with MSAFile(ref_path) as ref_file:"
+              }
+            ]
+          },
+          {
+            "line": 809,
+            "context": [
+              {
+                "line": 807,
+                "text": "    def test_luxc(self):"
+              },
+              {
+                "line": 808,
+                "text": "        hmm_path = resource_files(__package__).joinpath(\"data\", \"hmms\", \"txt\", \"LuxC.hmm\")"
+              },
+              {
+                "line": 809,
+                "text": "        seqs_path = resource_files(__package__).joinpath(\"data\", \"seqs\", \"LuxC.faa\")"
+              },
+              {
+                "line": 810,
+                "text": "        ref_path = resource_files(__package__).joinpath(\"data\", \"msa\", \"LuxC.hmmalign.sto\")"
+              },
+              {
+                "line": 811,
+                "text": ""
+              },
+              {
+                "line": 812,
+                "text": "        with HMMFile(hmm_path) as hmm_file:"
+              },
+              {
+                "line": 813,
+                "text": "            hmm = hmm_file.read()"
+              },
+              {
+                "line": 814,
+                "text": "        with SequenceFile(seqs_path, digital=True, alphabet=hmm.alphabet) as seqs_file:"
+              },
+              {
+                "line": 815,
+                "text": "            seqs = seqs_file.read_block()"
+              },
+              {
+                "line": 816,
+                "text": "        with MSAFile(ref_path) as ref_file:"
+              },
+              {
+                "line": 817,
+                "text": "            ref = ref_file.read()"
+              }
+            ]
+          },
+          {
+            "line": 810,
+            "context": [
+              {
+                "line": 808,
+                "text": "        hmm_path = resource_files(__package__).joinpath(\"data\", \"hmms\", \"txt\", \"LuxC.hmm\")"
+              },
+              {
+                "line": 809,
+                "text": "        seqs_path = resource_files(__package__).joinpath(\"data\", \"seqs\", \"LuxC.faa\")"
+              },
+              {
+                "line": 810,
+                "text": "        ref_path = resource_files(__package__).joinpath(\"data\", \"msa\", \"LuxC.hmmalign.sto\")"
+              },
+              {
+                "line": 811,
+                "text": ""
+              },
+              {
+                "line": 812,
+                "text": "        with HMMFile(hmm_path) as hmm_file:"
+              },
+              {
+                "line": 813,
+                "text": "            hmm = hmm_file.read()"
+              },
+              {
+                "line": 814,
+                "text": "        with SequenceFile(seqs_path, digital=True, alphabet=hmm.alphabet) as seqs_file:"
+              },
+              {
+                "line": 815,
+                "text": "            seqs = seqs_file.read_block()"
+              },
+              {
+                "line": 816,
+                "text": "        with MSAFile(ref_path) as ref_file:"
+              },
+              {
+                "line": 817,
+                "text": "            ref = ref_file.read()"
+              },
+              {
+                "line": 818,
+                "text": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_plan7/__init__.py",
+        "sha256": "6211e785e9cae267f324c7182c5d557280cd3ff3bc4fcce80a991eb1035e0d7c",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_plan7/test_alignment.py",
+        "sha256": "1faea576399f047762ab263aacb532cafc71dc82fe61f78f7362dad7e79cdea9",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_plan7/test_background.py",
+        "sha256": "0933422bd3b470c89a0b7d8d52249089a101de3e8ffce91584ebc924cc53e147",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_plan7/test_block.py",
+        "sha256": "cccf082080f3b31499799272aa182e511ba88f0a0f94822df2e86ddf8e8ac8c5",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_plan7/test_builder.py",
+        "sha256": "3d2b62fa93bc2dff63f9027378ae42c030482f2f5712b184f0e7ef1229760b9d",
+        "installed_identity_verified": true,
+        "hits": [
+          {
+            "line": 215,
+            "context": [
+              {
+                "line": 213,
+                "text": "        self.assertRaises(AlphabetMismatch, builder.build_msa, self.msa, bg)"
+              },
+              {
+                "line": 214,
+                "text": ""
+              },
+              {
+                "line": 215,
+                "text": "    def test_luxc(self):"
+              },
+              {
+                "line": 216,
+                "text": "        # create a new protein builder"
+              },
+              {
+                "line": 217,
+                "text": "        abc = Alphabet.amino()"
+              },
+              {
+                "line": 218,
+                "text": "        builder = Builder(alphabet=abc)"
+              },
+              {
+                "line": 219,
+                "text": "        # open the MSA"
+              },
+              {
+                "line": 220,
+                "text": "        msa_path = resource_files(__package__).joinpath(\"data\", \"msa\", \"LuxC.sto\")"
+              },
+              {
+                "line": 221,
+                "text": "        with MSAFile(msa_path, digital=True, alphabet=abc) as msa_file:"
+              },
+              {
+                "line": 222,
+                "text": "            msa = msa_file.read()"
+              },
+              {
+                "line": 223,
+                "text": "            msa.name = \"LuxC\""
+              }
+            ]
+          },
+          {
+            "line": 220,
+            "context": [
+              {
+                "line": 218,
+                "text": "        builder = Builder(alphabet=abc)"
+              },
+              {
+                "line": 219,
+                "text": "        # open the MSA"
+              },
+              {
+                "line": 220,
+                "text": "        msa_path = resource_files(__package__).joinpath(\"data\", \"msa\", \"LuxC.sto\")"
+              },
+              {
+                "line": 221,
+                "text": "        with MSAFile(msa_path, digital=True, alphabet=abc) as msa_file:"
+              },
+              {
+                "line": 222,
+                "text": "            msa = msa_file.read()"
+              },
+              {
+                "line": 223,
+                "text": "            msa.name = \"LuxC\""
+              },
+              {
+                "line": 224,
+                "text": "        # read the expected HMM"
+              },
+              {
+                "line": 225,
+                "text": "        hmm_path = resource_files(__package__).joinpath(\"data\", \"hmms\", \"txt\", \"LuxC.hmm\")"
+              },
+              {
+                "line": 226,
+                "text": "        with HMMFile(hmm_path) as hmm_file:"
+              },
+              {
+                "line": 227,
+                "text": "            hmm_hmmbuild = hmm_file.read()"
+              },
+              {
+                "line": 228,
+                "text": "            hmm_hmmbuild.creation_time = None"
+              }
+            ]
+          },
+          {
+            "line": 223,
+            "context": [
+              {
+                "line": 221,
+                "text": "        with MSAFile(msa_path, digital=True, alphabet=abc) as msa_file:"
+              },
+              {
+                "line": 222,
+                "text": "            msa = msa_file.read()"
+              },
+              {
+                "line": 223,
+                "text": "            msa.name = \"LuxC\""
+              },
+              {
+                "line": 224,
+                "text": "        # read the expected HMM"
+              },
+              {
+                "line": 225,
+                "text": "        hmm_path = resource_files(__package__).joinpath(\"data\", \"hmms\", \"txt\", \"LuxC.hmm\")"
+              },
+              {
+                "line": 226,
+                "text": "        with HMMFile(hmm_path) as hmm_file:"
+              },
+              {
+                "line": 227,
+                "text": "            hmm_hmmbuild = hmm_file.read()"
+              },
+              {
+                "line": 228,
+                "text": "            hmm_hmmbuild.creation_time = None"
+              },
+              {
+                "line": 229,
+                "text": "        # build the HMM from the MSA"
+              },
+              {
+                "line": 230,
+                "text": "        hmm_pyhmmer, _, _ = builder.build_msa(msa, Background(abc))"
+              },
+              {
+                "line": 231,
+                "text": "        hmm_pyhmmer.command_line = hmm_pyhmmer.creation_time = None"
+              }
+            ]
+          },
+          {
+            "line": 225,
+            "context": [
+              {
+                "line": 223,
+                "text": "            msa.name = \"LuxC\""
+              },
+              {
+                "line": 224,
+                "text": "        # read the expected HMM"
+              },
+              {
+                "line": 225,
+                "text": "        hmm_path = resource_files(__package__).joinpath(\"data\", \"hmms\", \"txt\", \"LuxC.hmm\")"
+              },
+              {
+                "line": 226,
+                "text": "        with HMMFile(hmm_path) as hmm_file:"
+              },
+              {
+                "line": 227,
+                "text": "            hmm_hmmbuild = hmm_file.read()"
+              },
+              {
+                "line": 228,
+                "text": "            hmm_hmmbuild.creation_time = None"
+              },
+              {
+                "line": 229,
+                "text": "        # build the HMM from the MSA"
+              },
+              {
+                "line": 230,
+                "text": "        hmm_pyhmmer, _, _ = builder.build_msa(msa, Background(abc))"
+              },
+              {
+                "line": 231,
+                "text": "        hmm_pyhmmer.command_line = hmm_pyhmmer.creation_time = None"
+              },
+              {
+                "line": 232,
+                "text": "        # check M and the transition probabilities (which were the issue in v0.4.9)"
+              },
+              {
+                "line": 233,
+                "text": "        # NOTE: exact equality cannot be checked because the `hmmbuild` HMM was"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_plan7/test_hit.py",
+        "sha256": "f95fedf006f958c036b22486c7065a04644e15a95682dd228585d289e51a7287",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_plan7/test_hmm.py",
+        "sha256": "f1359aee93ec943bad9fa36cff6bf0b479f2711b02f2f4cd31b8b54ee7d1bbfa",
+        "installed_identity_verified": true,
+        "hits": [
+          {
+            "line": 35,
+            "context": [
+              {
+                "line": 33,
+                "text": "        self.assertIs(hmm.checksum, None)"
+              },
+              {
+                "line": 34,
+                "text": ""
+              },
+              {
+                "line": 35,
+                "text": "        hmm_path = resource_files(__package__).joinpath(\"data\", \"hmms\", \"txt\", \"LuxC.hmm\")"
+              },
+              {
+                "line": 36,
+                "text": "        with HMMFile(hmm_path) as hmm_file:"
+              },
+              {
+                "line": 37,
+                "text": "            hmm = next(hmm_file)"
+              },
+              {
+                "line": 38,
+                "text": "        self.assertEqual(hmm.checksum, 395769323)"
+              },
+              {
+                "line": 39,
+                "text": ""
+              },
+              {
+                "line": 40,
+                "text": "    def test_composition(self):"
+              },
+              {
+                "line": 41,
+                "text": "        abc = Alphabet.dna()"
+              },
+              {
+                "line": 42,
+                "text": "        hmm = HMM(abc, 100, \"test\")"
+              },
+              {
+                "line": 43,
+                "text": "        self.assertIs(hmm.composition, None)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_plan7/test_hmmfile.py",
+        "sha256": "aaafa2ff1ef16003068b70ff658a1fa228b548cbfb2ffb93c6dcc7dbafbf1b2c",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_plan7/test_optimizedprofile.py",
+        "sha256": "97e18be0bcec2d69e6aafe6cfa2c22e87082d61234fae2ddd42d64c30c58726d",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_plan7/test_pipeline.py",
+        "sha256": "55d38407a8a517fe8ddb8086745a709222add9f072464b822e0e38b215c8fe86",
+        "installed_identity_verified": true,
+        "hits": [
+          {
+            "line": 31,
+            "context": [
+              {
+                "line": 29,
+                "text": "            cls.references = f.read_block()"
+              },
+              {
+                "line": 30,
+                "text": ""
+              },
+              {
+                "line": 31,
+                "text": "        cls.msa_path = resource_files(__package__).joinpath(\"data\", \"msa\", \"LuxC.sto\")"
+              },
+              {
+                "line": 32,
+                "text": "        with MSAFile(cls.msa_path, digital=True, alphabet=cls.alphabet) as msa_f:"
+              },
+              {
+                "line": 33,
+                "text": "            cls.msa = msa_f.read()"
+              },
+              {
+                "line": 34,
+                "text": ""
+              },
+              {
+                "line": 35,
+                "text": "    def test_search_hmm_alphabet_mismatch(self):"
+              },
+              {
+                "line": 36,
+                "text": "        rng = pyhmmer.easel.Randomness(0)"
+              },
+              {
+                "line": 37,
+                "text": "        pipeline = Pipeline(alphabet=Alphabet.dna())"
+              },
+              {
+                "line": 38,
+                "text": ""
+              },
+              {
+                "line": 39,
+                "text": "        # mismatch between pipeline alphabet and database alphabet"
+              }
+            ]
+          },
+          {
+            "line": 271,
+            "context": [
+              {
+                "line": 269,
+                "text": "        # compared to a 'gold standard' run of `jackhmmer`."
+              },
+              {
+                "line": 270,
+                "text": ""
+              },
+              {
+                "line": 271,
+                "text": "        query_path = resource_files(__package__).joinpath(\"data\", \"seqs\", \"LuxC.faa\")"
+              },
+              {
+                "line": 272,
+                "text": "        with SequenceFile(query_path, digital=True, alphabet=self.alphabet) as f:"
+              },
+              {
+                "line": 273,
+                "text": "            query = next(seq for seq in f if \"P12748\" in seq.name)"
+              },
+              {
+                "line": 274,
+                "text": ""
+              },
+              {
+                "line": 275,
+                "text": "        pipeline = Pipeline(alphabet=self.alphabet, incE=0.001, incdomE=0.001)"
+              },
+              {
+                "line": 276,
+                "text": "        search_iterator = pipeline.iterate_seq(query, self.references)"
+              },
+              {
+                "line": 277,
+                "text": ""
+              },
+              {
+                "line": 278,
+                "text": "        for n in range(3):"
+              },
+              {
+                "line": 279,
+                "text": "            self.assertEqual(search_iterator.iteration, n)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_plan7/test_profile.py",
+        "sha256": "2ed1f3dc7e68b5733a86d0553db8fd6d46ac10fd68a0d2777201f80260ac4860",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_plan7/test_tophits.py",
+        "sha256": "0a41708dd58083e4fe12a1dab390a51b45600f157a2f6c7797a666d6e6bbcd2f",
+        "installed_identity_verified": true,
+        "hits": []
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_plan7/test_tracealigner.py",
+        "sha256": "f89871b292ccbcb766f096042dbd5c39ac16196a813c8a188f2a198a03622421",
+        "installed_identity_verified": true,
+        "hits": [
+          {
+            "line": 22,
+            "context": [
+              {
+                "line": 20,
+                "text": ""
+              },
+              {
+                "line": 21,
+                "text": "    def setUp(self):"
+              },
+              {
+                "line": 22,
+                "text": "        hmm_path = resource_files(__package__).joinpath(\"data\", \"hmms\", \"txt\", \"LuxC.hmm\")"
+              },
+              {
+                "line": 23,
+                "text": "        seqs_path = resource_files(__package__).joinpath(\"data\", \"seqs\", \"LuxC.faa\")"
+              },
+              {
+                "line": 24,
+                "text": ""
+              },
+              {
+                "line": 25,
+                "text": "        with HMMFile(hmm_path) as hmm_file:"
+              },
+              {
+                "line": 26,
+                "text": "            self.hmm = next(hmm_file)"
+              },
+              {
+                "line": 27,
+                "text": "        with SequenceFile(seqs_path, digital=True, alphabet=self.hmm.alphabet) as seqs_file:"
+              },
+              {
+                "line": 28,
+                "text": "            self.seqs = seqs_file.read_block()"
+              },
+              {
+                "line": 29,
+                "text": ""
+              },
+              {
+                "line": 30,
+                "text": "    def test_align_traces(self):"
+              }
+            ]
+          },
+          {
+            "line": 23,
+            "context": [
+              {
+                "line": 21,
+                "text": "    def setUp(self):"
+              },
+              {
+                "line": 22,
+                "text": "        hmm_path = resource_files(__package__).joinpath(\"data\", \"hmms\", \"txt\", \"LuxC.hmm\")"
+              },
+              {
+                "line": 23,
+                "text": "        seqs_path = resource_files(__package__).joinpath(\"data\", \"seqs\", \"LuxC.faa\")"
+              },
+              {
+                "line": 24,
+                "text": ""
+              },
+              {
+                "line": 25,
+                "text": "        with HMMFile(hmm_path) as hmm_file:"
+              },
+              {
+                "line": 26,
+                "text": "            self.hmm = next(hmm_file)"
+              },
+              {
+                "line": 27,
+                "text": "        with SequenceFile(seqs_path, digital=True, alphabet=self.hmm.alphabet) as seqs_file:"
+              },
+              {
+                "line": 28,
+                "text": "            self.seqs = seqs_file.read_block()"
+              },
+              {
+                "line": 29,
+                "text": ""
+              },
+              {
+                "line": 30,
+                "text": "    def test_align_traces(self):"
+              },
+              {
+                "line": 31,
+                "text": "        # hmmalign tests/data/hmms/txt/LuxC.hmm tests/data/seqs/LuxC.faa"
+              }
+            ]
+          },
+          {
+            "line": 31,
+            "context": [
+              {
+                "line": 29,
+                "text": ""
+              },
+              {
+                "line": 30,
+                "text": "    def test_align_traces(self):"
+              },
+              {
+                "line": 31,
+                "text": "        # hmmalign tests/data/hmms/txt/LuxC.hmm tests/data/seqs/LuxC.faa"
+              },
+              {
+                "line": 32,
+                "text": "        aligner = TraceAligner()"
+              },
+              {
+                "line": 33,
+                "text": "        traces = aligner.compute_traces(self.hmm, self.seqs)"
+              },
+              {
+                "line": 34,
+                "text": "        self.assertEqual(len(traces), len(self.seqs))"
+              },
+              {
+                "line": 35,
+                "text": "        msa = aligner.align_traces(self.hmm, self.seqs, traces, all_consensus_cols=True)"
+              },
+              {
+                "line": 36,
+                "text": "        self.assertEqual(len(msa.sequences), len(self.seqs))"
+              },
+              {
+                "line": 37,
+                "text": "        self.assertEqual(len(msa), 567)"
+              },
+              {
+                "line": 38,
+                "text": ""
+              },
+              {
+                "line": 39,
+                "text": "    def test_align_traces_trim(self):"
+              }
+            ]
+          },
+          {
+            "line": 40,
+            "context": [
+              {
+                "line": 38,
+                "text": ""
+              },
+              {
+                "line": 39,
+                "text": "    def test_align_traces_trim(self):"
+              },
+              {
+                "line": 40,
+                "text": "        # hmmalign --trim tests/data/hmms/txt/LuxC.hmm tests/data/seqs/LuxC.faa"
+              },
+              {
+                "line": 41,
+                "text": "        aligner = TraceAligner()"
+              },
+              {
+                "line": 42,
+                "text": "        traces = aligner.compute_traces(self.hmm, self.seqs)"
+              },
+              {
+                "line": 43,
+                "text": "        self.assertEqual(len(traces), len(self.seqs))"
+              },
+              {
+                "line": 44,
+                "text": "        msa = aligner.align_traces(self.hmm, self.seqs, traces, all_consensus_cols=True, trim=True)"
+              },
+              {
+                "line": 45,
+                "text": "        self.assertEqual(len(msa.sequences), len(self.seqs))"
+              },
+              {
+                "line": 46,
+                "text": "        self.assertEqual(len(msa), 429)"
+              },
+              {
+                "line": 47,
+                "text": ""
+              },
+              {
+                "line": 48,
+                "text": "    def test_align_traces_mismatch(self):"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/test_plan7/test_traces.py",
+        "sha256": "98acd2a57e274b1372a2daa5adbefe493d78f4b490176559add2452276c7064d",
+        "installed_identity_verified": true,
+        "hits": [
+          {
+            "line": 30,
+            "context": [
+              {
+                "line": 28,
+                "text": "    @unittest.skipUnless(resource_files, \"importlib.resources.files not available\")"
+              },
+              {
+                "line": 29,
+                "text": "    def test_aligner_traces(self):"
+              },
+              {
+                "line": 30,
+                "text": "        hmm_path = resource_files(__package__).joinpath(\"data\", \"hmms\", \"txt\", \"LuxC.hmm\")"
+              },
+              {
+                "line": 31,
+                "text": "        seqs_path = resource_files(__package__).joinpath(\"data\", \"seqs\", \"LuxC.faa\")"
+              },
+              {
+                "line": 32,
+                "text": ""
+              },
+              {
+                "line": 33,
+                "text": "        with HMMFile(hmm_path) as hmm_file:"
+              },
+              {
+                "line": 34,
+                "text": "            hmm = next(hmm_file)"
+              },
+              {
+                "line": 35,
+                "text": "        with SequenceFile(seqs_path, digital=True, alphabet=hmm.alphabet) as seqs_file:"
+              },
+              {
+                "line": 36,
+                "text": "            seqs = seqs_file.read_block()"
+              },
+              {
+                "line": 37,
+                "text": ""
+              },
+              {
+                "line": 38,
+                "text": "        aligner = TraceAligner()"
+              }
+            ]
+          },
+          {
+            "line": 31,
+            "context": [
+              {
+                "line": 29,
+                "text": "    def test_aligner_traces(self):"
+              },
+              {
+                "line": 30,
+                "text": "        hmm_path = resource_files(__package__).joinpath(\"data\", \"hmms\", \"txt\", \"LuxC.hmm\")"
+              },
+              {
+                "line": 31,
+                "text": "        seqs_path = resource_files(__package__).joinpath(\"data\", \"seqs\", \"LuxC.faa\")"
+              },
+              {
+                "line": 32,
+                "text": ""
+              },
+              {
+                "line": 33,
+                "text": "        with HMMFile(hmm_path) as hmm_file:"
+              },
+              {
+                "line": 34,
+                "text": "            hmm = next(hmm_file)"
+              },
+              {
+                "line": 35,
+                "text": "        with SequenceFile(seqs_path, digital=True, alphabet=hmm.alphabet) as seqs_file:"
+              },
+              {
+                "line": 36,
+                "text": "            seqs = seqs_file.read_block()"
+              },
+              {
+                "line": 37,
+                "text": ""
+              },
+              {
+                "line": 38,
+                "text": "        aligner = TraceAligner()"
+              },
+              {
+                "line": 39,
+                "text": "        traces = aligner.compute_traces(hmm, seqs)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/utils.py",
+        "sha256": "3cfb91efdf5055a210c2cf5818d0605f86bb1e2316caec173e5254d0ef0c645a",
+        "installed_identity_verified": true,
+        "hits": []
+      }
+    ],
+    "source_archive_manifest_sha256": "79e288a0ff5081686912af90fc61cf32cfc3407dd1d8ab3fc33d53098c806e79",
+    "new_model_calls_resources_or_scientific_execution": 0,
+    "scope": "Read-only installed Python/stub text matched to pinned release and actual installed hashes, using task input/output name stems. Hits are discovery evidence, not automatic answer-exposure decisions; no binary or numerical equivalence audit."
+  },
+  "assessment": "All ten matched installed Python test modules were read against their exact installed SHA256 identities. Model-comparison tests refer to the removed HMM file; remaining alignment/index tests expose input data or different computations. The iterative-search test uses a different target database; the hmmalign tests contain no requested domain-hit statistics. No remaining complete model body or same-input hit table was found in this bounded audit.",
+  "input_checksum_assessment": "test_hmm.py line38 embeds a checksum also graded in the model. The pinned plan7.pyx checksum documentation (lines2682\u20132687) identifies it as calculated from the supplied alignment, rather than an inferred model parameter. This input-identity metadata does not supply the model emissions/transitions or domain-hit results. It is retained, rather than treating every already-derivable input property as an answer exposure."
+}

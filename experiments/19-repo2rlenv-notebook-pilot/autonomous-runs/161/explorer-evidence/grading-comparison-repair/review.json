@@ -1,0 +1,64 @@
+{
+  "asset_value_assessments": [],
+  "decision": "accept_for_packaging",
+  "issues": [],
+  "question_issues": [],
+  "rationale": "Grader candidate for the LuxC profile-HMM build/search task is suitable for packaging. Public question is source-faithful and precise: both endpoints (outputs/LuxC.hmm HMMER3/f, outputs/LuxC.domtbl hmmsearch --domtblout) match the source notebook's calls and reference outputs; input claims (#=GF ID LuxC, #=GF AC PF05893.5, #=GF DE Acyl-CoA reductase (LuxC); sp|/tr| bioluminescent plus metagenome-derived FASTA records) verified against recorded byte-level previews and the 12 reference rows I read directly \u2014 no base-question defect. Grader reads reference and submission dynamically, embeds no answers, requires both outputs, and turns parse failures into failed checks. Comparison basis: exact decoded-Plan7-model equality via canonical re-serialization excluding only DATE/COM provenance; domtbl positional rank-order matching exact on identity/lengths/coordinates/scores/bias/accuracy with 10% relative tolerance on E-value columns only, justified by the observed one-digit cross-implementation E-value divergence (2.3e-169 vs 2.4e-169 in the independent run) \u2014 last-digit quantization, not a wrong-method accommodation, since all other fields in that run are byte-exact. Trusted inputs used via BIOTASKS_TRUSTED_INPUT_DIR to ground NAME/ACC and target identity/tlen/description. 17 controls on candidate hash f8d0ef3b all met expected outcome, including 8 wrong-answer probes each failing exactly the intended scientific check with structural checks passing, and 2 valid-representation probes (DATE/COM edit; tab separators) passing. Answer isolation: packaged prebuilt LuxC.hmm removed with receipt (excluded_files_absent=true) and revalidated in the cleaned environment; remaining LuxC-named fixtures are input copies or different-input fixtures without hit statistics; no packaged LuxC domtbl. asset_value_hints findings empty. Source coverage: both endpoints retained; only presentation-only inspections excluded. Both issue lists empty.",
+  "scientific_admission": {
+    "answer_isolation": {
+      "blockers": [],
+      "decision": "approve",
+      "evidence": [
+        "dependency-exclusions.json declares pyhmmer/tests/data/hmms/txt/LuxC.hmm (model body byte-identical to the exported endpoint apart from HMMER version/DATE/COM lines, verified by direct diff); the applied receipt records excluded_files_absent=true",
+        "All 17 controls executed and met expected outcomes in the post-removal environment on candidate sha256 f8d0ef3b..., including the reference acceptance and the independently executed solution (outputs abf5095d.../89a96c75...), so fresh reference, comparison and control evidence exists after the declared environment change",
+        "dependency-assets-summary inspected 372 installed files across both distributions; remaining LuxC-named assets are byte-identical input copies (msa/LuxC.sto, seqs/LuxC.faa), different-input fixtures (LuxC.weighted.sto, LuxC.sto.ssi, msa/LuxC.faa 5993B) or a no-score hmmalign alignment; packaged tables/ holds only PF02826, RREFam, bmyD and A0A089QRB9 tables \u2014 no LuxC domtbl",
+        "asset_value_hints findings list is empty; grader_code reads only reference_dir, submission_dir and BIOTASKS_TRUSTED_INPUT_DIR paths, never package-data paths",
+        "derive_code projects the reference outputs only into destination/reference/ and stages only the two hash-verified inputs under inputs/; the independent solver run without answer access reproduced a validating domtbl"
+      ],
+      "output_paths": [
+        "LuxC.domtbl",
+        "LuxC.hmm"
+      ],
+      "rationale": "No solver-visible asset discloses either requested answer: the only known packaged answer copy (the prebuilt LuxC.hmm) was removed with a controller receipt and the cleaned environment was revalidated by fresh reference, independent-solution and boundary controls; the remaining LuxC-named installed fixtures are legitimate input copies or different-input fixtures without hit statistics, and the catalog coverage over the 372 installed regular files of both distributions reports no exposure path."
+    },
+    "comparisons": [
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Reference b8d3db64... and both controlled replays (54d83757..., 5095caad...) plus the recomputed (40062600...) and independent (abf5095d...) HMMs reproduce the canonical model body exactly, differing only in DATE/COM, matching the grader's line-prefix exclusion",
+          "check_hmm_format enforces the HMMER3/f banner, the single-model rule (second read non-None fails), native parse and line/token-count structure against the model's own canonical re-serialization; check_hmm_content compares canonical bodies exactly with no tolerance, covering NSEQ/EFFN/CKSUM, GA/TC/NC cutoffs, STATS MSV/VITERBI/FORWARD and all per-position emission/transition parameters at stored precision",
+          "NAME/ACC are grounded against the trusted Stockholm #=GF ID LuxC / #=GF AC PF05893.5, and the model identity matches the domtbl query-name (LuxC) and query-accession (PF05893.5) columns I verified directly in the reference rows, giving a consistent identity mapping across the two dependent outputs",
+          "Executed negatives reach the scientific rule and fail only hmm_model_content while hmm_ascii_format passes: emission-digit change (2.07294->2.17294, token count preserved) cites body line 25; keystat change (NSEQ 13->12, CKSUM, STATS MSV) cites body line 11; the double-model probe fails only the structural one-model rule; the DATE/COM rewrite probe passes all checks"
+        ],
+        "output_paths": [
+          "LuxC.hmm"
+        ],
+        "rationale": "Decoded-Plan7-model comparison via native-reader canonical re-serialization with only DATE/COM excluded is scientifically equivalent to exact model equality plus permitted provenance variance: the reference's cross-run byte differences are confined to those lines while the model body is recovered exactly at stored precision. There is no permissive numeric rule on the model itself; valid-answer acceptance (reference, recomputed, independent solution) and consequential wrong-answer rejection (keystat, emission-digit, double-model probes) are all demonstrated by executed controls, with the wrong answers rejected through the decoded-model comparison rather than crashes or parse failures."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Reference fc3da85a... read directly: 3-line hmmsearch --domtblout preamble, exactly 12 data rows, one per LuxC.faa record, targets are UniProtKB-style sp|ACC|NAME / tr|ACC|NAME tokens, descriptions equal the FASTA header remainders and tlen equal the record sequence lengths; the recomputed run is byte-identical and the independent run differs only in one E-value digit on one row (2.3e-169 vs 2.4e-169)",
+          "check_domtbl_format requires the exact reference preamble and 22 fixed fields via split(None, 22) plus the free-text description, typed integer fields and finite non-negative E-values; check_domtbl_hits matches rows positionally in canonical rank order with exact equality on identity/accession columns, tlen, qlen, domain index/count, all six coordinates, both bit scores, both bias values and accuracy, and grounds target, tlen and description against the trusted FASTA via BIOTASKS_TRUSTED_INPUT_DIR so an invented target cannot pass",
+          "Executed negatives fail only domtbl_hit_rows while domtbl_table_format passes: out-of-band E-values (2e-169 -> 9e-155), coordinate/score/accuracy change (column 16 is 3 vs 2), row reorder (positional target mismatch), row deletion (11 vs 12), description truncation",
+          "domtbl-separator-representation (tabs replacing the space runs between the 22 fixed fields and the description; no reference field value or description contains a tab) passes all checks, matching the public rule that --domtblout content is whitespace-delimited",
+          "The 10% relative E-value tolerance applies only to the three E-value columns with zero-equals-zero exact; reference, recomputed and independent runs agree to one exponent digit there and byte-exactly on every other column class, and the out-of-band mutation is decisively rejected, so the band discriminates rather than always passing"
+        ],
+        "output_paths": [
+          "LuxC.domtbl"
+        ],
+        "rationale": "Positional one-to-one rank-order comparison with exact equality on all decisive hit attributes, grounded in the trusted FASTA inputs and consistent with the HMM identity from the other output, is the correct scientific-equivalence contract for a hmmsearch domain table: the only legitimate cross-implementation variation observed is last-digit E-value quantization, which the stated 10% band tolerates while identity, row set, ordering, coordinates, scores, bias and accuracy must match exactly. Wrong outputs fail through row and field comparisons rather than crashes, malformed files or parse failures, as demonstrated by the executed probes on the current candidate hash."
+      }
+    ]
+  },
+  "source_coverage": {
+    "decision": "approve",
+    "omitted_scientific_endpoints": [],
+    "rationale": "Both scientific endpoints from the source notebook are retained and graded: the Plan7 profile HMM (LuxC.hmm, via Builder.build_msa with default settings and hmm.write) and the full rank-ordered domain hit table (LuxC.domtbl, via Pipeline.search_hmm with hmmsearch-default settings and hits.write(format='domains')). The two exclusions in plan.json (the hmm.consensus display and the printed top-hit domain alignment) are presentation-only inspections whose content is fully contained in the exported artifacts: the printed alignment's coordinates are a strict subset of the corresponding domtbl row, and hmm.consensus is a property of the saved model. All 14 call-graph operations are accounted for in operation_coverage with consistent support/supplied_input/result/presentation roles and no redundant, diagnostic or omitted scientific branch to challenge; the export code re-serializes the source's own in-scope variables rather than inventing analysis. The task brief's framing of hmmbuild/hmmsearch defaults, GA/TC/NC propagation from the alignment and the non-scientific status of DATE/COM provenance lines was verified against the source narrative, the grader's checks and the recorded reference outputs; the construction-stage correction of the original proposal's input-header claim (PF05893.5) is accurate per the recorded input preview.",
+    "remaining_validation": [],
+    "scientific_scope_changes": [],
+    "unsupported_evidence_claims": []
+  }
+}

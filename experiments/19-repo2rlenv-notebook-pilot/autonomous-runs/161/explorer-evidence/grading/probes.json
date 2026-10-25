@@ -1,0 +1,175 @@
+{
+  "concerns": [
+    "The public rule says HMM values are compared \"as decoded by the installed HMMER3 parser; promoting a stored value to a wider floating-point type or printing different decimals is not a difference provided the decoded canonical form matches.\" This is essentially untestable in the native HMMER3 ASCII format: check 1 simultaneously requires the file's non-provenance lines to correspond line-for-line to the canonical re-serialization the tool emits, which fixes the decimal precision of every parameter. I could not construct a valid wider-precision/different-decimal HMM encoding from the available evidence, so the only justifiable representation alternative for LuxC.hmm is the DATE/COM provenance edit; no such alternative was invented.",
+    "The domtbl preamble is compared exactly against the reference preamble, so a legitimate-real-world preamble variant (e.g. a different program-version banner) would fail structurally; this is stricter than the \"provenance carries no scientific content\" rule used for LuxC.hmm, but no contract ambiguity worth a probe was identified.",
+    "The HMMER3 ASCII writer's match-emission line has fixed column alignment (26 whitespace-delimited tokens including the trailing map/consensus columns). My emission-digit probe preserves that token count exactly, so the failure it induces is scientific (decoded-model mismatch), not structural.",
+    "Preamble exactness plus per-row position matching means a table re-sorted by any secondary key is rejected; this is stated unambiguously and the reorder probe relies on that stated rule (matched by position)."
+  ],
+  "disposition": "ready",
+  "probes": [
+    {
+      "check_ids": [
+        "hmm_model_content"
+      ],
+      "evidence": [
+        {
+          "path": "LuxC.hmm",
+          "quote": "NSEQ  13\nEFFN  1.989990"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "hmm-keystat-change",
+      "rationale": "Changes the scientific key statistics of the profile HMM while preserving line count, structural field counts and every model-body line: NSEQ 13\u219212, CKSUM\u2192fake value, STATS LOCAL MSV intercept perturbed. The decoded Plan7 model therefore differs from the reference in NSEQ/CKSUM/MSV calibration, which check 2 requires to match exactly (no tolerance). The native HMM reader still parses the file and finds exactly one model (verified locally with pyhmmer.plan7.HMMFile), so the failure is scientific, not a cascading parse failure.",
+      "script": "import os\n\nROOT = os.environ.get(\"PROBE_ROOT\", \"/case/submission\")\nPATH = os.path.join(ROOT, \"LuxC.hmm\")\n\nwith open(PATH, \"r\") as fh:\n    text = fh.read()\nlines = text.splitlines()\nnseq = cksum = msv = 0\nout = []\nfor line in lines:\n    if line.startswith(\"NSEQ  \") and not nseq:\n        line = \"NSEQ  12\"; nseq = 1\n    elif line.startswith(\"CKSUM \"):\n        line = \"CKSUM 123456789\"; cksum = 1\n    elif line.startswith(\"STATS LOCAL MSV\"):\n        line = \"STATS LOCAL MSV      -11.5000  0.69925\"; msv = 1\n    out.append(line)\nassert nseq and cksum and msv, (nseq, cksum, msv)\nassert lines.index(\"NSEQ  13\") < lines.index(\"CKSUM 395769323\")\nnew = \"\\n\".join(out) + \"\\n\"\nassert \"\\n//\" in new\ntmp = PATH + \".probe_tmp\"\nwith open(tmp, \"w\") as fh:\n    fh.write(new)\nos.replace(tmp, PATH)\nprint(\"mutated NSEQ/CKSUM/MSV lines in LuxC.hmm\")\n"
+    },
+    {
+      "check_ids": [
+        "hmm_model_content"
+      ],
+      "evidence": [
+        {
+          "path": "LuxC.hmm",
+          "quote": "      1   2.07294  4.36058  3.81125  2.93462  3.48431  3.76914  4.04102  2.43908  3.16681  1.75164  3.46932  3.15811  4.14526  3.45003  3.09626  3.02978  2.97564  2.15870  4.95927  3.74369      1 l - - -"
+        }
+      ],
+      "focus": "model_behavior",
+      "kind": "wrong_solution",
+      "name": "hmm-emission-parameter-change",
+      "rationale": "Changes exactly one match-state emission parameter digit at its stored precision (2.07294 \u2192 2.17294 at model position 1), preserving column alignment, line count, and token count (26), so the file stays structurally canonical and decodes as one model. Only the decoded model body differs, exercising the exact no-tolerance comparison of per-position emission parameters in check 2.",
+      "script": "import os\n\nROOT = os.environ.get(\"PROBE_ROOT\", \"/case/submission\")\nPATH = os.path.join(ROOT, \"LuxC.hmm\")\n\nwith open(PATH, \"r\") as fh:\n    text = fh.read()\nlines = text.splitlines()\ncands = [i for i, l in enumerate(lines) if l.startswith(\"      1   2.07294\")]\nassert len(cands) == 1, \"expected exactly one first match emission line\"\ni = cands[0]\nassert lines[i - 1].startswith(\"        \"), \"unexpected line above first match state\"\nassert lines[i + 3].split()[0] == \"2\", \"unexpected position-2 line\"\nlines[i] = lines[i].replace(\"1   2.07294\", \"1   2.17294\", 1)\nassert lines[i].split()[1] == \"2.17294\" and lines[i].split()[0] == \"1\"\nassert len(lines[i].split()) == 26, len(lines[i].split())\ntmp = PATH + \".probe_tmp\"\nwith open(tmp, \"w\") as fh:\n    fh.write(\"\\n\".join(lines) + \"\\n\")\nos.replace(tmp, PATH)\nprint(\"mutated match emission at model position 1\")\n"
+    },
+    {
+      "check_ids": [
+        "hmm_ascii_format"
+      ],
+      "evidence": [
+        {
+          "path": "LuxC.hmm",
+          "quote": "HMMER3/f [3.4 | Aug 2023]\nNAME  LuxC"
+        }
+      ],
+      "focus": "compiled_execution",
+      "kind": "wrong_solution",
+      "name": "hmm-double-model",
+      "rationale": "Duplicates the whole model (including the banner), so the native HMMER3 reader finds two models, violating the \"exactly one model\" rule in check 1. Since the second model is a verbatim copy of the decoded first model, this specifically targets the structural one-model rule and not the decoded-content rule.",
+      "script": "import os\n\nROOT = os.environ.get(\"PROBE_ROOT\", \"/case/submission\")\nPATH = os.path.join(ROOT, \"LuxC.hmm\")\n\nwith open(PATH, \"r\") as fh:\n    text = fh.read()\nassert text.startswith(\"HMMER3/f\") and text.count(\"HMMER3/f\") == 1\nnew = text + text\nassert new.count(\"HMMER3/f\") == 2 and new.count(\"HMM  \") == text.count(\"HMM  \") * 2\ntmp = PATH + \".probe_tmp\"\nwith open(tmp, \"w\") as fh:\n    fh.write(new)\nos.replace(tmp, PATH)\nprint(\"duplicated model in LuxC.hmm\")\n"
+    },
+    {
+      "check_ids": [
+        "domtbl_hit_rows"
+      ],
+      "evidence": [
+        {
+          "path": "LuxC.domtbl",
+          "quote": "tr|B6ESM7|B6ESM7_ALISL         -            476 LuxC                 PF05893.5    400    2e-169  553.3   0.0   1   1  2.3e-169  2.3e-169  553.1   0.0     2   400    50   442    49   442 0.99"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "domtbl-evalue-tolerance",
+      "rationale": "With row identity, row count and the other scientific columns preserved, changes only the full-sequence E-value (2e-169 \u2192 9e-155) and the c-Evalue (2.3e-169 \u2192 5e-165), placing both far outside the stated \u00b110% relative tolerance band (no zero-valued E-value is touched, so the exact-zero rule is not confounded). The row still splits into 22 fixed fields plus description and parses as finite non-negative numbers, so only the E-value tolerance rule of check 4 is violated.",
+      "script": "import os\n\nROOT = os.environ.get(\"PROBE_ROOT\", \"/case/submission\")\nPATH = os.path.join(ROOT, \"LuxC.domtbl\")\n\nwith open(PATH, \"r\") as fh:\n    lines = [l.rstrip(\"\\n\") for l in fh]\nrows = [i for i, l in enumerate(lines) if l and not l.startswith(\"#\")]\nassert len(rows) == 12\ni = rows[0]\nf = lines[i].split(None, 22)\nassert len(f) == 23, len(f)\nassert f[6] == \"2e-169\" and f[11] == \"2.3e-169\" and f[12] == \"2.3e-169\", (f[6], f[11])\nf[6] = \"9e-155\"      # ~45x reference: far outside the 10% relative tolerance band\nf[11] = \"5e-165\"     # ~0.43x reference c-Evalue: outside the band by ~57%\nlines[i] = \" \".join(f[:22]) + \" \" + f[22]\nassert lines[i].split(None, 22)[6] == \"9e-155\"\ntmp = PATH + \".probe_tmp\"\nwith open(tmp, \"w\") as fh:\n    fh.write(\"\\n\".join(lines))\nos.replace(tmp, PATH)\nprint(\"perturbed E-value columns of first row\")\n"
+    },
+    {
+      "check_ids": [
+        "domtbl_hit_rows"
+      ],
+      "evidence": [
+        {
+          "path": "LuxC.domtbl",
+          "quote": "tr|B6ESM7|B6ESM7_ALISL         -            476 LuxC                 PF05893.5    400    2e-169  553.3   0.0   1   1  2.3e-169  2.3e-169  553.1   0.0     2   400    50   442    49   442 0.99"
+        }
+      ],
+      "focus": "model_behavior",
+      "kind": "wrong_solution",
+      "name": "domtbl-score-coord-change",
+      "rationale": "Preserves the target identity, row count, description and E-values, but changes the no-tolerance scientific columns of check 4: full-sequence bit score 553.3\u2192523.6, per-domain bit score 553.1\u2192554.9, hmm-from coordinate 2\u21923, and posterior accuracy 0.99\u21920.45. This isolates the exact-match requirement for scores, coordinates and accuracy.",
+      "script": "import os\n\nROOT = os.environ.get(\"PROBE_ROOT\", \"/case/submission\")\nPATH = os.path.join(ROOT, \"LuxC.domtbl\")\n\nwith open(PATH, \"r\") as fh:\n    lines = [l.rstrip(\"\\n\") for l in fh]\nrows = [i for i, l in enumerate(lines) if l and not l.startswith(\"#\")]\nassert len(rows) == 12\ni = rows[0]\nf = lines[i].split(None, 22)\nassert len(f) == 23, len(f)\nassert f[7] == \"553.3\" and f[13] == \"553.1\" and f[15] == \"2\" and f[16] == \"400\" and f[21] == \"0.99\", f[7:22]\nf[7] = \"523.6\"    # full-sequence bit score changed\nf[13] = \"554.9\"   # domain bit score changed\nf[15] = \"3\"       # hmm-from coordinate changed\nf[21] = \"0.45\"    # per-domain posterior accuracy changed\nlines[i] = \" \".join(f[:22]) + \" \" + f[22]\ng = lines[i].split(None, 22)\nassert g[7] == \"523.6\" and g[13] == \"554.9\" and g[0] == f[0] and g[2] == f[2]\ntmp = PATH + \".probe_tmp\"\nwith open(tmp, \"w\") as fh:\n    fh.write(\"\\n\".join(lines))\nos.replace(tmp, PATH)\nprint(\"changed scores/coordinates/accuracy of first row\")\n"
+    },
+    {
+      "check_ids": [
+        "domtbl_hit_rows"
+      ],
+      "evidence": [
+        {
+          "path": "LuxC.domtbl",
+          "quote": "tr|A0A2H5XB72|A0A2H5XB72_9BACT        -            502 LuxC                 PF05893.5    400    9.8e-57   182.2   0.0   1   1  1.2e-56   1.2e-56   182.0   0.0     2   400    20   424    19   424 0.90 Long-chain-fatty-acyl-CoA reductase OS=bacterium HR17 OX=2035412 GN=luxC PE=3 SV=1"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "domtbl-desc-truncate",
+      "rationale": "With all 22 scientific columns and the row count untouched, truncates the description of the last row so it no longer equals the remainder of the corresponding FASTA header line, violating the description-column rule of check 4. Post-mutation the row still parses into the 22 fixed fields plus a free-text description, so this is a scientific, not structural, defect.",
+      "script": "import os\n\nROOT = os.environ.get(\"PROBE_ROOT\", \"/case/submission\")\nPATH = os.path.join(ROOT, \"LuxC.domtbl\")\n\nwith open(PATH, \"r\") as fh:\n    lines = [l.rstrip(\"\\n\") for l in fh]\nrows = [i for i, l in enumerate(lines) if l and not l.startswith(\"#\")]\nassert len(rows) == 12\ni = rows[-1]\nf = lines[i].split(None, 22)\nassert len(f) == 23, len(f)\nassert f[0] == \"tr|A0A2H5XB72|A0A2H5XB72_9BACT\", f[0]\nassert f[22].strip().startswith(\"Long-chain-fatty-acyl-CoA reductase\"), f[22]\ndesc = f[22].rstrip()\ntail = desc.rsplit(\" \", 1)[1]\nassert tail == \"SV=1\", tail\nf[22] = desc.rsplit(\" \", 1)[0]\nassert f[22].endswith(\"PE=3\"), f[22]\nlines[i] = \" \".join(f[:22]) + \" \" + f[22]\nassert len(lines[i].split(None, 22)) == 23\ntmp = PATH + \".probe_tmp\"\nwith open(tmp, \"w\") as fh:\n    fh.write(\"\\n\".join(lines))\nos.replace(tmp, PATH)\nprint(\"truncated description of last data row\")\n"
+    },
+    {
+      "check_ids": [
+        "domtbl_hit_rows"
+      ],
+      "evidence": [
+        {
+          "path": "LuxC.domtbl",
+          "quote": "tr|B6ESM7|B6ESM7_ALISL         -            476 LuxC                 PF05893.5    400    2e-169  553.3   0.0   1   1  2.3e-169  2.3e-169  553.1   0.0     2   400    50   442    49   442 0.99"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "domtbl-row-missing",
+      "rationale": "Deletes exactly one of the 12 rows (the same row kept intact in the description probe), so the table has a missing hit and row multiplicity no longer matches the reference, violating the multiplicity clause of check 4 while each remaining row stays intact and well-formed.",
+      "script": "import os\n\nROOT = os.environ.get(\"PROBE_ROOT\", \"/case/submission\")\nPATH = os.path.join(ROOT, \"LuxC.domtbl\")\n\nwith open(PATH, \"r\") as fh:\n    lines = [l.rstrip(\"\\n\") for l in fh]\nrows = [i for i, l in enumerate(lines) if l and not l.startswith(\"#\")]\nassert len(rows) == 12\ndel lines[rows[-1]]\nrows2 = [i for i, l in enumerate(lines) if l and not l.startswith(\"#\")]\nassert len(rows2) == 11\ntmp = PATH + \".probe_tmp\"\nwith open(tmp, \"w\") as fh:\n    fh.write(\"\\n\".join(lines))\nos.replace(tmp, PATH)\nprint(\"removed last data row\")\n"
+    },
+    {
+      "check_ids": [
+        "domtbl_hit_rows"
+      ],
+      "evidence": [
+        {
+          "path": "LuxC.domtbl",
+          "quote": "tr|B6ESM7|B6ESM7_ALISL         -            476 LuxC                 PF05893.5    400    2e-169  553.3   0.0   1   1  2.3e-169  2.3e-169  553.1   0.0     2   400    50   442    49   442 0.99"
+        }
+      ],
+      "focus": "lazy_output",
+      "kind": "wrong_solution",
+      "name": "domtbl-row-reorder",
+      "rationale": "Swaps the first two rank-ordered rows (which breaks the canonical rank order since the rank-1 entry has a higher full-sequence score), so the position-matched row comparison of check 4 aligns each out-of-place row against the wrong reference row. Both rows stay individually well-formed and the row count is unchanged.",
+      "script": "import os\n\nROOT = os.environ.get(\"PROBE_ROOT\", \"/case/submission\")\nPATH = os.path.join(ROOT, \"LuxC.domtbl\")\n\nwith open(PATH, \"r\") as fh:\n    lines = [l.rstrip(\"\\n\") for l in fh]\nrows = [i for i, l in enumerate(lines) if l and not l.startswith(\"#\")]\nassert len(rows) == 12\ni, j = rows[0], rows[1]\nassert lines[i].startswith(\"tr|B6ESM7|B6ESM7_ALISL\") and lines[j].startswith(\"sp|P12748|LUXC_ALIFS\")\nlines[i], lines[j] = lines[j], lines[i]\nassert lines[i].startswith(\"sp|P12748|\") and lines[j].startswith(\"tr|B6ESM7|\")\ntmp = PATH + \".probe_tmp\"\nwith open(tmp, \"w\") as fh:\n    fh.write(\"\\n\".join(lines))\nos.replace(tmp, PATH)\nprint(\"swapped first two rows out of canonical rank order\")\n"
+    },
+    {
+      "check_ids": [
+        "hmm_ascii_format",
+        "hmm_model_content",
+        "domtbl_table_format",
+        "domtbl_hit_rows"
+      ],
+      "evidence": [
+        {
+          "path": "LuxC.hmm",
+          "quote": "DATE  Sun Oct 25 03:59:57 2026\nCOM   [1] /work/reference.py"
+        }
+      ],
+      "focus": "model_behavior",
+      "kind": "valid_alternative",
+      "name": "hmm-provenance-date-com",
+      "rationale": "Rewrites the tool-stamped DATE and COM provenance lines to other values. The public rule states explicitly that DATE/COM lines carry no scientific content and a provenance-only difference is acceptable. No model parameter, header, or body line is touched; the file still decodes as one model and every other line is byte-identical, so all four checks must pass.",
+      "script": "import os\n\nROOT = os.environ.get(\"PROBE_ROOT\", \"/case/submission\")\nPATH = os.path.join(ROOT, \"LuxC.hmm\")\n\nwith open(PATH, \"r\") as fh:\n    text = fh.read()\nlines = text.splitlines()\nn = 0\nfor k, l in enumerate(lines):\n    if l.startswith(\"DATE \"):\n        lines[k] = \"DATE  Mon Jan  1 00:00:00 2001\"; n += 1\n    elif l.startswith(\"COM \"):\n        lines[k] = \"COM   [1] /some/other/tool.py\"; n += 1\nassert n == 2, n\ntmp = PATH + \".probe_tmp\"\nwith open(tmp, \"w\") as fh:\n    fh.write(\"\\n\".join(lines) + \"\\n\")\nos.replace(tmp, PATH)\nprint(\"changed DATE/COM provenance lines in LuxC.hmm\")\n"
+    },
+    {
+      "check_ids": [
+        "domtbl_table_format",
+        "domtbl_hit_rows"
+      ],
+      "evidence": [
+        {
+          "path": "LuxC.domtbl",
+          "quote": "# target name                  accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target"
+        }
+      ],
+      "focus": "model_behavior",
+      "kind": "valid_alternative",
+      "name": "domtbl-separator-representation",
+      "rationale": "Rewrites all data-row separators from the varying run-length space alignment to single tab characters between the 22 fixed columns and the description. The task statement makes the field separation whitespace-based (\"22 fixed whitespace-delimited fields\" plus the free-text description); since no description string contains a tab character and no leading/trailing whitespace is introduced, the decoded field values and description remain byte-identical, so this is a valid representation alternative that must pass all checks.",
+      "script": "import os\n\nROOT = os.environ.get(\"PROBE_ROOT\", \"/case/submission\")\nPATH = os.path.join(ROOT, \"LuxC.domtbl\")\n\nwith open(PATH, \"r\") as fh:\n    lines = [l.rstrip(\"\\n\") for l in fh]\nrows = [i for i, l in enumerate(lines) if l and not l.startswith(\"#\")]\nassert len(rows) == 12\nfor i in rows:\n    f = lines[i].split(None, 22)\n    assert len(f) == 23, len(f)\n    assert \"\\t\" not in \"\".join(f)\n    lines[i] = \"\\t\".join(f[:22]) + \"\\t\" + f[22]\nfirst = lines[rows[0]].split(None, 22)\nassert \"\\t\".join(first[:22]).count(\"\\t\") == 21\ntmp = PATH + \".probe_tmp\"\nwith open(tmp, \"w\") as fh:\n    fh.write(\"\\n\".join(lines))\nos.replace(tmp, PATH)\nprint(\"changed run-length space separators to tabs in all data rows\")\n"
+    }
+  ]
+}

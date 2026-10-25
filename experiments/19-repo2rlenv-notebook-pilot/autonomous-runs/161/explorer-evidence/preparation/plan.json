@@ -1,0 +1,25 @@
+{
+  "artifacts": [
+    {
+      "description": "Plan7 profile HMM built from the LuxC multiple sequence alignment, in HMMER ASCII format.",
+      "path": "LuxC.hmm",
+      "source_evidence": "The '## Saving the resulting HMM' section identifies the HMM as the end product to keep ('save it to a file to avoid having to rebuild it every time'). The script produces it via `hmm, _, _ = builder.build_msa(msa, background)` and serializes it with `hmm.write`; the `hmm` variable is still in scope at completion."
+    },
+    {
+      "description": "Domain hits of the LuxC pHMM against the LuxC.faa protein database, in HMMER domtblout tabular format.",
+      "path": "LuxC.domtbl",
+      "source_evidence": "The final narrative states the goal: 'save the results in tabular format similar to what hmmsearch would have produced'. The script produces this via `hits = pipeline.search_hmm(hmm, seq_file)` and writes them with `hits.write(f, format='domains')`; the `hits` variable is still in scope at completion."
+    }
+  ],
+  "disposition": "prepare",
+  "excluded_outputs": [
+    "hmm.consensus display: only a quick property inspection of the built HMM; its content is contained in the exported HMM file, so no separate endpoint.",
+    "Printed top-hit domain alignment (ali = hits[0].domains[0].alignment): a single illustrative look at one hit; the full domain-level results are already exported in LuxC.domtbl, and selecting individual hits would add no independent endpoint."
+  ],
+  "explanation": "The notebook's scientific endpoints are the pHMM built from the LuxC alignment (narrative: 'save the resulting HMM... to avoid having to rebuild it every time') and the database search results (narrative: 'save the results in tabular format similar to what hmmsearch would have produced'). Both already exist in the variables `hmm` and `hits` at script completion and are re-serialized as-is to /work/outputs using the same native writers (hmm.write, hits.write(format='domains')) the source itself uses. No analysis is changed or recomputed; the original LuxC.hmm/LuxC.domtbl writes in the working directory are left untouched.",
+  "export_code": "import os\n\n_export_dir = \"/work/outputs\"\nos.makedirs(_export_dir, exist_ok=True)\n\nwith open(os.path.join(_export_dir, \"LuxC.hmm\"), \"wb\") as _hmm_export_file:\n    hmm.write(_hmm_export_file)\n\nwith open(os.path.join(_export_dir, \"LuxC.domtbl\"), \"wb\") as _domtbl_export_file:\n    hits.write(_domtbl_export_file, format=\"domains\")",
+  "unresolved_assumptions": [
+    "The data files data/msa/LuxC.sto and data/seqs/LuxC.faa are expected to be staged by the execution environment; the reference run needs them readable at the relative paths used by the source.",
+    "The domtbl and HMM file sizes are expected to be small, but this is unverified since the search result count is unknown without execution."
+  ]
+}

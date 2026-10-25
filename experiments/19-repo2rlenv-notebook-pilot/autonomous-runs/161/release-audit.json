@@ -1,0 +1,79 @@
+{
+  "observed_at": "2026-10-25T05:30:37.912333+00:00",
+  "accepted_for_release": true,
+  "native_acceptance": {
+    "bundle_hash": "sha256:b22ee8fc3593a58a3339ffac6a23200ee1fc4c3e69844d44dddaa2bea175b133",
+    "native_trials": [
+      {
+        "agent": "oracle",
+        "reward": 1.0,
+        "exception_type": null,
+        "bundle_hash": "sha256:b22ee8fc3593a58a3339ffac6a23200ee1fc4c3e69844d44dddaa2bea175b133",
+        "result_sha256": "49772d044ed4d93ce42d03af1e9ab3430f6f716dafbafcf666ddcaf52ea1de1a"
+      },
+      {
+        "agent": "nop",
+        "reward": 0.0,
+        "exception_type": null,
+        "bundle_hash": "sha256:b22ee8fc3593a58a3339ffac6a23200ee1fc4c3e69844d44dddaa2bea175b133",
+        "result_sha256": "fe9eaed7b86fc42986473a30169c7f7ba1ddc64fc7e8c5150b0f47cb78257fdf"
+      },
+      {
+        "agent": "terminus-2",
+        "reward": 1.0,
+        "exception_type": null,
+        "bundle_hash": "sha256:b22ee8fc3593a58a3339ffac6a23200ee1fc4c3e69844d44dddaa2bea175b133",
+        "result_sha256": "59b6251a779d82cdda0492b92eb7f28b3b0c624656e9ca9153fb3ce6c190b2ed"
+      }
+    ],
+    "scientific_controls": 17,
+    "source_coverage_review_verified": true,
+    "scientific_admission_review_verified": true,
+    "asset_value_hints_review_verified": true,
+    "executed_scientific_negative_coverage_verified": true,
+    "accepted": true
+  },
+  "source_archive_manifest_sha256": "79e288a0ff5081686912af90fc61cf32cfc3407dd1d8ab3fc33d53098c806e79",
+  "source_notebook_sha256": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9",
+  "source_notices_sha256": "ada44fb45260569695180a38fc7b3f41ffa20c857781fdcab134d72bf52974f3",
+  "exact_listed_input_identities_verified": true,
+  "notebook_license": "MIT",
+  "data_notices": [
+    "Pfam CC0-1.0",
+    "UniProt CC-BY-4.0; original accession attribution retained"
+  ],
+  "known_expected_answer_fixture": [
+    {
+      "distribution": "pyhmmer",
+      "path": "pyhmmer/tests/data/hmms/txt/LuxC.hmm",
+      "sha256": "e7a4dd57c83fb17cc12640f20c4f02f126d8230b16d6c6ef596bf791c8075865"
+    }
+  ],
+  "setup_removal_and_reference_retest_verified": true,
+  "post_removal_inventory_excludes_declared_fixture": true,
+  "native_docker_build_enforces_same_exact_file_removal": true,
+  "task_installation_cache_disabled": true,
+  "native_helper_sha256": "dc40fd8f4f22a25b110d5feaa5af5799bc3b57c37457b724d07e2e73184ea511",
+  "installed_text_audit": {
+    "files": 33,
+    "matching_files": 10,
+    "gaps": [],
+    "record_sha256": "a61df0a82b4f0e070deb5beb52000f546c6c9b4cea5f983177e45bc206ea5bc1",
+    "source_distribution_sha256": "0a4b2f5d8c6c106fce8eb77603387aff94ad8ff8ff1c8094f30fb18cb7694d6e",
+    "assessment": "All ten matched installed Python test modules were read against their exact installed SHA256 identities. Model-comparison tests refer to the removed HMM file; remaining alignment/index tests expose input data or different computations. The iterative-search test uses a different target database; the hmmalign tests contain no requested domain-hit statistics. No remaining complete model body or same-input hit table was found in this bounded audit.",
+    "input_checksum": "test_hmm.py line38 embeds a checksum also graded in the model. The pinned plan7.pyx checksum documentation (lines2682\u20132687) identifies it as calculated from the supplied alignment, rather than an inferred model parameter. This input-identity metadata does not supply the model emissions/transitions or domain-hit results. It is retained, rather than treating every already-derivable input property as an answer exposure."
+  },
+  "solver_trajectory_sha256": "1087c4d72c3dec939c8606481fce1aa2f00aea3f410cc3648fd82d16608e4922",
+  "solver_trace_review": "Recorded tool commands inspect inputs and installed API/tests, build the profile from the supplied alignment using Builder.build_msa, search the supplied protein database using hmmsearch, and copy their own computed /tmp outputs into the output root. No recorded retrieval/copy of the removed precomputed HMM. Later local assertion errors do not overwrite these outputs. This is a bounded trajectory audit, not proof against covert behavior.",
+  "limitations": [
+    "All workers share GLM-5.3. The independent solution uses the same PyHMMER/HMMER engine; no different-engine portability is established.",
+    "Installed asset discovery and the supplemental text audit are bounded and subject/name-scoped, not an exhaustive semantic or binary-filesystem proof.",
+    "Native absence of the declared fixture follows exact enforced helper and passing builds; no new sandbox or model call was used for release qualification.",
+    "The input checksums/names/lengths are derivable input properties; their presence does not by itself establish leakage of downstream scientific results.",
+    "Original intake review flags remain historical; bundled exact-identity reviewed_inputs/publication_status record later data-term review.",
+    "Computational reproduction does not establish biological validity or contamination-free benchmark suitability. Requested native-high effort/served weights remain unverified."
+  ],
+  "scientific_artifacts_edited": false,
+  "new_model_calls": 0,
+  "new_sandboxes": 0
+}

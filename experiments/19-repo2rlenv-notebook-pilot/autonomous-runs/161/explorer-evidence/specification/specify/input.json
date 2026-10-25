@@ -1,0 +1,889 @@
+{
+  "evidence_boundary": "Passing reference and structural audit, plus the supplied finite replay observations. Row-multiset fingerprints describe serialization, not scientific equivalence: row order may encode rank, sequence or alignment. No independent reproduction or calibrated grader. No full data tables in context. Read-only package-source tools are available. Read-only reference-text inspection is available for the recorded output catalog.",
+  "file_sha256": {
+    "candidate/analysis.py": "4ebc4609f17d040bc58684e1f58b30cb487d8b68b04a4682b8298182c8faa617",
+    "candidate/dependency-exclusions.json": "387a3eee267932458dd9c4ddc6b95b92bbade35052db34ad2971f932d54b9934",
+    "candidate/inputs.json": "63f172e38bc85a9f10a5b4f0163fa9e879da76e89fbac9e6bfaf7cd8fb2ce3c3",
+    "candidate/pyproject.toml": "165a096393426691f8f88c95fed1ddafe0454fa5cfa36969a959450ca0642808",
+    "inputs/exports.py": "2cf01d619112955889c6faf137b7d2a73283ecfdb7dc84991f90cf920511ffa5",
+    "inputs/original.py": "ef782563dff5d24c1f56d86e0dbbf53a36245109e025754f04a1626530b3382f",
+    "inputs/plan.json": "b51ccffd2a76d071b68d8d19d79ecea0da48b5263a9e1f06e602cf7ec5027b06",
+    "outcome.json": "2d91ce6baae33527728dad168188ad689d8d1f4d8ce332c54acf81b49f49dc52",
+    "output-audit.json": "2341d4c6b60e651971ae20cab5951e3eeee341651c05fa702557914ae8f1f7c6",
+    "provenance.json": "3f671c1083b8cd3c91d613210298477696729a66fbddc081950cbf7bb80d5947",
+    "result.json": "a0a4cc9fb3c49f670bb80f7b0d55193f9327e5ad2cf8e21699f4fbd0c720e091",
+    "trial/dependency-assets-summary.json": "b46e731993051f6556f43b5e4061456ff00fbe1a0fc62fca7a4818861bc4bc52",
+    "trial/dependency-exclusions-applied.json": "1bcd03502ca2068b98168e1b288992a652776252e6838f40ef763e361ab4caca",
+    "trial/environment.txt": "d606f86df011d59f4a6785354cd7bd9b7ad73a99b547452a7c58636bef544212",
+    "trial/inputs-before.json": "7da58ed87047d405a133e433c9bc73412071e82156832560475952363aec0b6a",
+    "trial/reference.py": "f0f5b4bad5aa262aa541112f1d0d4967a9701433644fb05aac978c04b45f2ec1",
+    "trial/result.json": "a97a2bf834bb4fc60113adca22c4c9626c33689677415133976749d6e6f85364",
+    "trial/source.diff": "10c1f347043f2e59c82ca28e0ab9c6e5be01deba5940c3ae3d91d7818cb89792",
+    "trial/uv.lock": "d89c082bcf9c64ad6bbebac54044f79bc9aaedbd4903bc806cb9ec34cbcd1a33"
+  },
+  "files": {
+    "candidate/analysis.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3 (ipykernel)\n#     language: python\n#     name: python3\n# ---\n\n# # Build an HMM from a multiple sequence alignment\n\nimport pyhmmer\npyhmmer.__version__\n\nalphabet = pyhmmer.easel.Alphabet.amino()\n\n# ## Loading the alignment\n\n# A new HMM can be built from a single sequence, or from a multiple sequence alignment. Let's load an alignment in digital mode so that we can build our HMM. We can use a `MSAFile` to read an alignment from a file in one of the supported formats (such as [Stockholm](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-stockholm), [Clustal](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-clustal), [aligned FASTA](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-fasta), *etc*; see the `MSAFile` documentation for the complete list):\n\nwith pyhmmer.easel.MSAFile(\"/inputs/data/msa/LuxC.sto\", digital=True, alphabet=alphabet) as msa_file:\n    msa = msa_file.read()\n\n# <div class=\"alert alert-info\">\n#\n# Note\n#     \n# In this example, we load a multiple sequence alignment from a file, but if your program produces alignment and you wish to make an HMM out of them, you can instantiate a `TextMSA` object yourself, e.g.:\n#     \n# ```python\n# seq1 = pyhmmer.easel.TextSequence(name=\"seq1\", sequence=\"WVPKQDFT\")\n# seq2 = pyhmmer.easel.TextSequence(name=\"seq2\", sequence=\"WL--PQGE\")\n# msa  = pyhmmer.easel.TextMSA(name=\"msa\", sequences=[seq1, seq2])\n# ```\n#\n# Because we need a `DigitalMSA` to build the HMM, you will have to convert it first:\n#     \n# ```python\n# msa_d = msa.digitize(alphabet) \n# ```\n# </div>\n\n# ## Building an HMM\n#\n# Now that we have a multiple alignment loaded in memory, we can build a pHMM using a `pyhmmer.plan7.Builder`. This also requires a Plan7 background model to compute the transition probabilities.\n\nbuilder = pyhmmer.plan7.Builder(alphabet)\nbackground = pyhmmer.plan7.Background(alphabet)\nhmm, _, _ = builder.build_msa(msa, background)\n\n# <div class=\"alert alert-warning\">\n#\n# Warning\n#     \n# HMMs must always have a name. The `Builder` will attempt to use the `MSA` name, but in the event your alignment file does not contain a name for the whole alignment (for instance, a `#=GF ID` line in a [Stockholm file](https://en.wikipedia.org/wiki/Stockholm_format)), this method will fail:\n#     \n# ```python\n# >>> anonymous_msa = pyhmmer.easel.TextMSA(sequences=[seq1, seq2])\n# >>> builder.build_msa(anonymous_msa)\n# Traceback (most recent call last):\n#   File \"<stdin>\", line 1, in <module>\n# ValueError: Could not build HMM: Unable to name the HMM.\n# ```    \n#\n# If your alignment is missing a name, you can assign one manually by setting the `MSA.name` property, e.g.:\n#\n# ```python\n# msa.name = \"protein_family_01\"\n# ```\n#     \n# </div>\n\n# We can have a look at the consensus sequence of the HMM with the `consensus` property:\n\nhmm.consensus\n\n# ## Saving the resulting HMM\n\n# Now that we have an HMM, we can save it to a file to avoid having to rebuild it every time. Using the `HMM.write` method lets us write the HMM in ASCII or binary format to an arbitrary file. The resulting file will also be compatible with the `hmmsearch` binary if you wish to use that one instead of PyHMMER.\n\nwith open(\"LuxC.hmm\", \"wb\") as output_file:\n    hmm.write(output_file)\n\n# ## Applying the HMM to a sequence database\n\n# Once a pHMM has been obtained, it can be applied to a sequence database with the `pyhmmer.plan7.Pipeline` object. Let's iterate over the protein sequences in a FASTA to see if our new HMM gets any hits:\n\npipeline = pyhmmer.plan7.Pipeline(alphabet, background=background)\nwith pyhmmer.easel.SequenceFile(\"/inputs/data/seqs/LuxC.faa\", digital=True, alphabet=alphabet) as seq_file:\n    hits = pipeline.search_hmm(hmm, seq_file)\n\n# We can then query the `TopHits` object to access the domain hits in the sequences:\n\nali = hits[0].domains[0].alignment\nprint(ali)\n\n# Finally, we can save the results in tabular format similar to what `hmmsearch` would have produced:\n\nwith open(\"LuxC.domtbl\", \"wb\") as f:\n    hits.write(f, format=\"domains\")\n",
+    "candidate/dependency-exclusions.json": {
+      "files": [
+        {
+          "distribution": "pyhmmer",
+          "path": "pyhmmer/tests/data/hmms/txt/LuxC.hmm",
+          "reason": "Packaged pyhmmer test fixture containing a prebuilt LuxC Plan7 HMM. After the controlled reference run I diffed it against the exported endpoint /work/outputs/LuxC.hmm: the only differences are HMMER version, DATE and COM provenance lines; the entire model body (NAME/ACC/DESC, length, to-line, state emissions/transitions) is byte-identical, so this fixture supplies the full scientific answer for the HMM-building endpoint. The notebook builds the HMM itself with builder.build_msa from the staged LuxC.sto input (now read from /inputs), so this precomputed copy is not needed for the analysis. Removal was validated in a fresh passing reference test.",
+          "sha256": "e7a4dd57c83fb17cc12640f20c4f02f126d8230b16d6c6ef596bf791c8075865"
+        }
+      ]
+    },
+    "candidate/inputs.json": {
+      "files": [
+        {
+          "local_path": "/inputs/data/msa/LuxC.sto",
+          "source": "https://raw.githubusercontent.com/althonos/pyhmmer/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/src/pyhmmer/tests/data/msa/LuxC.sto"
+        },
+        {
+          "local_path": "/inputs/data/seqs/LuxC.faa",
+          "source": "https://raw.githubusercontent.com/althonos/pyhmmer/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/src/pyhmmer/tests/data/seqs/LuxC.faa"
+        }
+      ]
+    },
+    "candidate/pyproject.toml": "[project]\nname = \"pyhmmer-msa-to-hmm-setup\"\nversion = \"0.1.0\"\nrequires-python = \">=3.13\"\ndependencies = [\n    \"pyhmmer==0.12.3\",\n]\n",
+    "inputs/exports.py": "import os\n\n_export_dir = \"/work/outputs\"\nos.makedirs(_export_dir, exist_ok=True)\n\nwith open(os.path.join(_export_dir, \"LuxC.hmm\"), \"wb\") as _hmm_export_file:\n    hmm.write(_hmm_export_file)\n\nwith open(os.path.join(_export_dir, \"LuxC.domtbl\"), \"wb\") as _domtbl_export_file:\n    hits.write(_domtbl_export_file, format=\"domains\")",
+    "inputs/original.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3 (ipykernel)\n#     language: python\n#     name: python3\n# ---\n\n# # Build an HMM from a multiple sequence alignment\n\nimport pyhmmer\npyhmmer.__version__\n\nalphabet = pyhmmer.easel.Alphabet.amino()\n\n# ## Loading the alignment\n\n# A new HMM can be built from a single sequence, or from a multiple sequence alignment. Let's load an alignment in digital mode so that we can build our HMM. We can use a `MSAFile` to read an alignment from a file in one of the supported formats (such as [Stockholm](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-stockholm), [Clustal](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-clustal), [aligned FASTA](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-fasta), *etc*; see the `MSAFile` documentation for the complete list):\n\nwith pyhmmer.easel.MSAFile(\"data/msa/LuxC.sto\", digital=True, alphabet=alphabet) as msa_file:\n    msa = msa_file.read()\n\n# <div class=\"alert alert-info\">\n#\n# Note\n#     \n# In this example, we load a multiple sequence alignment from a file, but if your program produces alignment and you wish to make an HMM out of them, you can instantiate a `TextMSA` object yourself, e.g.:\n#     \n# ```python\n# seq1 = pyhmmer.easel.TextSequence(name=\"seq1\", sequence=\"WVPKQDFT\")\n# seq2 = pyhmmer.easel.TextSequence(name=\"seq2\", sequence=\"WL--PQGE\")\n# msa  = pyhmmer.easel.TextMSA(name=\"msa\", sequences=[seq1, seq2])\n# ```\n#\n# Because we need a `DigitalMSA` to build the HMM, you will have to convert it first:\n#     \n# ```python\n# msa_d = msa.digitize(alphabet) \n# ```\n# </div>\n\n# ## Building an HMM\n#\n# Now that we have a multiple alignment loaded in memory, we can build a pHMM using a `pyhmmer.plan7.Builder`. This also requires a Plan7 background model to compute the transition probabilities.\n\nbuilder = pyhmmer.plan7.Builder(alphabet)\nbackground = pyhmmer.plan7.Background(alphabet)\nhmm, _, _ = builder.build_msa(msa, background)\n\n# <div class=\"alert alert-warning\">\n#\n# Warning\n#     \n# HMMs must always have a name. The `Builder` will attempt to use the `MSA` name, but in the event your alignment file does not contain a name for the whole alignment (for instance, a `#=GF ID` line in a [Stockholm file](https://en.wikipedia.org/wiki/Stockholm_format)), this method will fail:\n#     \n# ```python\n# >>> anonymous_msa = pyhmmer.easel.TextMSA(sequences=[seq1, seq2])\n# >>> builder.build_msa(anonymous_msa)\n# Traceback (most recent call last):\n#   File \"<stdin>\", line 1, in <module>\n# ValueError: Could not build HMM: Unable to name the HMM.\n# ```    \n#\n# If your alignment is missing a name, you can assign one manually by setting the `MSA.name` property, e.g.:\n#\n# ```python\n# msa.name = \"protein_family_01\"\n# ```\n#     \n# </div>\n\n# We can have a look at the consensus sequence of the HMM with the `consensus` property:\n\nhmm.consensus\n\n# ## Saving the resulting HMM\n\n# Now that we have an HMM, we can save it to a file to avoid having to rebuild it every time. Using the `HMM.write` method lets us write the HMM in ASCII or binary format to an arbitrary file. The resulting file will also be compatible with the `hmmsearch` binary if you wish to use that one instead of PyHMMER.\n\nwith open(\"LuxC.hmm\", \"wb\") as output_file:\n    hmm.write(output_file)\n\n# ## Applying the HMM to a sequence database\n\n# Once a pHMM has been obtained, it can be applied to a sequence database with the `pyhmmer.plan7.Pipeline` object. Let's iterate over the protein sequences in a FASTA to see if our new HMM gets any hits:\n\npipeline = pyhmmer.plan7.Pipeline(alphabet, background=background)\nwith pyhmmer.easel.SequenceFile(\"data/seqs/LuxC.faa\", digital=True, alphabet=alphabet) as seq_file:\n    hits = pipeline.search_hmm(hmm, seq_file)\n\n# We can then query the `TopHits` object to access the domain hits in the sequences:\n\nali = hits[0].domains[0].alignment\nprint(ali)\n\n# Finally, we can save the results in tabular format similar to what `hmmsearch` would have produced:\n\nwith open(\"LuxC.domtbl\", \"wb\") as f:\n    hits.write(f, format=\"domains\")\n",
+    "inputs/plan.json": {
+      "artifacts": [
+        {
+          "description": "Plan7 profile HMM built from the LuxC multiple sequence alignment, in HMMER ASCII format.",
+          "path": "LuxC.hmm",
+          "source_evidence": "The '## Saving the resulting HMM' section identifies the HMM as the end product to keep ('save it to a file to avoid having to rebuild it every time'). The script produces it via `hmm, _, _ = builder.build_msa(msa, background)` and serializes it with `hmm.write`; the `hmm` variable is still in scope at completion."
+        },
+        {
+          "description": "Domain hits of the LuxC pHMM against the LuxC.faa protein database, in HMMER domtblout tabular format.",
+          "path": "LuxC.domtbl",
+          "source_evidence": "The final narrative states the goal: 'save the results in tabular format similar to what hmmsearch would have produced'. The script produces this via `hits = pipeline.search_hmm(hmm, seq_file)` and writes them with `hits.write(f, format='domains')`; the `hits` variable is still in scope at completion."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "hmm.consensus display: only a quick property inspection of the built HMM; its content is contained in the exported HMM file, so no separate endpoint.",
+        "Printed top-hit domain alignment (ali = hits[0].domains[0].alignment): a single illustrative look at one hit; the full domain-level results are already exported in LuxC.domtbl, and selecting individual hits would add no independent endpoint."
+      ],
+      "explanation": "The notebook's scientific endpoints are the pHMM built from the LuxC alignment (narrative: 'save the resulting HMM... to avoid having to rebuild it every time') and the database search results (narrative: 'save the results in tabular format similar to what hmmsearch would have produced'). Both already exist in the variables `hmm` and `hits` at script completion and are re-serialized as-is to /work/outputs using the same native writers (hmm.write, hits.write(format='domains')) the source itself uses. No analysis is changed or recomputed; the original LuxC.hmm/LuxC.domtbl writes in the working directory are left untouched.",
+      "export_code": "import os\n\n_export_dir = \"/work/outputs\"\nos.makedirs(_export_dir, exist_ok=True)\n\nwith open(os.path.join(_export_dir, \"LuxC.hmm\"), \"wb\") as _hmm_export_file:\n    hmm.write(_hmm_export_file)\n\nwith open(os.path.join(_export_dir, \"LuxC.domtbl\"), \"wb\") as _domtbl_export_file:\n    hits.write(_domtbl_export_file, format=\"domains\")",
+      "unresolved_assumptions": [
+        "The data files data/msa/LuxC.sto and data/seqs/LuxC.faa are expected to be staged by the execution environment; the reference run needs them readable at the relative paths used by the source.",
+        "The domtbl and HMM file sizes are expected to be small, but this is unverified since the search result count is unknown without execution."
+      ]
+    },
+    "outcome.json": {
+      "dependency_asset_review": "Catalog: 372 installed regular files inspected across psutil (18 files, 0 candidates) and pyhmmer (354 files, 96 candidates). LuxC-related packaged fixtures were each inspected: (1) pyhmmer/tests/data/hmms/txt/LuxC.hmm \u2014 full scientific answer for the LuxC.hmm endpoint (model body byte-identical to the exported output after HMMER version/DATE/COM provenance lines; verified by direct diff after the first controlled run); declared for removal and the removal was validated in a fresh passing reference test (controller receipt files_removed=1, excluded_files_absent=true). (2) pyhmmer/tests/data/msa/LuxC.sto and seqs/LuxC.faa \u2014 byte-identical copies of the required scientific inputs, which the analysis legitimately reads from the staged /inputs copies; left in place since removal is not required for offline execution (the source reads its own staged inputs). (3) pyhmmer/tests/data/msa/LuxC.hmmalign.sto \u2014 a Stockholm alignment output of hmmalign with no scores/E-values/domtbl fields; it does not represent either exported endpoint and was not removed. (4) LuxC.weighted.sto, LuxC.sto.ssi, msa/LuxC.faa (different, 5993-byte file) \u2014 different-input fixtures, not answer exposures. The packaged tables/ directory contains only PF02826, RREFam, bmyD and A0A089QRB9 tables, none for LuxC, so no domtbl answer is bundled. No package-code references to tests/data exist in runtime modules, so the removal does not affect the analysis. Remaining uncertainty: the catalog review targeted LuxC-named and test/example assets from the two installed distributions; it is not an exhaustive semantic audit of every package file.",
+      "disposition": "tested",
+      "explanation": "The pyhmmer \"Build a profile HMM from an alignment and search protein sequences\" notebook runs to completion offline. Inputs were staged from the pyhmmer repository at the notebook's pinned source revision (data/msa/LuxC.sto, sha256 e2cf20e9\u2026, Stockholm 1.0 with #=GF ID LuxC, 12 sequences; data/seqs/LuxC.faa, sha256 7ce47aa\u2026, 12 unaligned LuxC proteins; matching the relative paths and revision the example uses). Environment: pyhmmer==0.12.3 (the version of the pinned source revision) with its psutil dependency, installed via uv from wheels on Python 3.13.13; no system packages needed. The controller-executed offline reference completed with exit code 0, produced both reviewed endpoints in /work/outputs \u2014 LuxC.hmm (187,150 bytes; model body identical across runs, differing only in DATE/COM provenance lines) and LuxC.domtbl (4,093 bytes, sha256 fc3da85a\u2026, identical across both controlled runs, indicating reproducible hit scores and E-values) \u2014 and both declared input files remained byte-identical after execution. The printed top-hit alignment executed as in the source. A packaged full answer (pyhmmer/tests/data/hmms/txt/LuxC.hmm) was identified by diff against the exported endpoint and declared as a dependency exclusion, and a fresh reference test with the removal applied completed successfully.",
+      "source_adaptations": [
+        "Two input-path literals in analysis.py were changed from relative notebook paths to the persistent staged-input paths: pyhmmer.easel.MSAFile(\"data/msa/LuxC.sto\") \u2192 \"/inputs/data/msa/LuxC.sto\" and pyhmmer.easel.SequenceFile(\"data/seqs/LuxC.faa\") \u2192 \"/inputs/data/seqs/LuxC.faa\". The bytes read are identical (sha256-verified against the pyhmmer repository at the notebook's pinned revision 90d2f28); only the file location differs, because the controller recreates the run directory and the original relative paths would not resolve. No other statement, algorithm, parameter or output was changed."
+      ],
+      "unresolved_assumptions": [
+        "The LuxC data files were sourced from the pyhmmer repository's packaged test data at the pinned revision (the docs/examples directory contains no copy of its own); their sha256 checksums are pinned and verified in the staging recipe. This is the same lineage the documented example uses, given the notebook imports only pyhmmer and references these exact relative paths.",
+        "pyhmmer 0.12.3 was selected because it is the version declared by the source revision's pyproject.toml on the checked-out commit; it installed as a wheel (no source build needed) and is presumed binary-compatible with the tested HMMER behavior on CPython 3.13.13.",
+        "The exported LuxC.hmm is byte-reproducible except for provenance lines (HMMER version, DATE, COM command), which is inherent to the HMMER3 ASCII format; the model body was observed identical across both controlled runs."
+      ]
+    },
+    "output-audit.json": {
+      "outputs": [
+        {
+          "bytes": 187150,
+          "download_hash_verified": true,
+          "file": "LuxC.hmm",
+          "sha256": "b8d3db66460ca7611b6e157a62d03fa4efe4ce97c3744bdb28eb744544e3e6f4",
+          "structural_profile": {
+            "format": "unsupported",
+            "limitations": [
+              "No structural reader for this file type."
+            ]
+          }
+        },
+        {
+          "bytes": 4093,
+          "download_hash_verified": true,
+          "file": "LuxC.domtbl",
+          "sha256": "fc3da85a5d9a7c8bdb7ed7d3ff8d1114488e3707abf8f7311bd83a24186b563b",
+          "structural_profile": {
+            "format": "unsupported",
+            "limitations": [
+              "No structural reader for this file type."
+            ]
+          }
+        }
+      ],
+      "scope": "Structural observations only"
+    },
+    "provenance.json": {
+      "id": "pyhmmer-msa-to-hmm",
+      "license": "MIT",
+      "provenance": {
+        "data_lineage": "Repository LuxC alignment and protein sequences; lineage/terms need source-specific review.",
+        "data_redistribution_review": "Not established independently; generated task bundles and staged data remain private pending review.",
+        "notebook": {
+          "license": "MIT",
+          "license_url": "https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/COPYING",
+          "revision": "90d2f28303d9fe795c4e1ffc1e05b9d634319b51",
+          "sha256": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9",
+          "url": "https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/docs/examples/msa_to_hmm.ipynb"
+        }
+      },
+      "source_revision": "90d2f28303d9fe795c4e1ffc1e05b9d634319b51",
+      "source_sha256": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9",
+      "title": "Build a profile HMM from an alignment and search protein sequences",
+      "url": "https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/docs/examples/msa_to_hmm.ipynb"
+    },
+    "result.json": {
+      "cleanup_verified": true,
+      "construction_run": false,
+      "effective_frozen_directory": "setup/frozen",
+      "effective_preparation_directory": null,
+      "finished": 1792900872.8461773,
+      "last_passing_test": {
+        "dependency_asset_candidates": 96,
+        "hashes": {
+          "analysis.py": "4ebc4609f17d040bc58684e1f58b30cb487d8b68b04a4682b8298182c8faa617",
+          "dependency-exclusions.json": "387a3eee267932458dd9c4ddc6b95b92bbade35052db34ad2971f932d54b9934",
+          "inputs.json": "63f172e38bc85a9f10a5b4f0163fa9e879da76e89fbac9e6bfaf7cd8fb2ce3c3",
+          "pyproject.toml": "165a096393426691f8f88c95fed1ddafe0454fa5cfa36969a959450ca0642808",
+          "stage-inputs.sh": "7f4f311bb6c77d0f03b7bf696a67c5088ae1113c8d9e1d08fe26346effec77bd",
+          "system-packages.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+        },
+        "source_changed": true,
+        "test": 2
+      },
+      "reference_test_requests": 2,
+      "reference_tests": 2,
+      "semantic_fidelity_validated": false,
+      "setup_seconds_remaining": 1735.7693542744964,
+      "solver_run": false,
+      "started": 1792900576.7615237,
+      "status": "reference_executed_requires_review"
+    },
+    "trial/dependency-assets-summary.json": {
+      "candidate_files": 96,
+      "distribution_coverage": [
+        {
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "psutil",
+          "installed_regular_files_inspected": 18
+        },
+        {
+          "candidate_files": 96,
+          "dedicated_test_distribution_hint": false,
+          "distribution": "pyhmmer",
+          "installed_regular_files_inspected": 354
+        }
+      ],
+      "installed_files_inspected": 372,
+      "priority_matches": [
+        {
+          "bytes": 5993,
+          "distribution": "pyhmmer",
+          "eligible_for_declared_removal": true,
+          "matches": [
+            {
+              "output": "LuxC.hmm",
+              "reasons": [
+                "same_stem"
+              ]
+            },
+            {
+              "output": "LuxC.domtbl",
+              "reasons": [
+                "same_stem"
+              ]
+            }
+          ],
+          "packaged_test_or_example": true,
+          "path": "pyhmmer/tests/data/msa/LuxC.faa",
+          "sha256": "b8c6e5a6c2b05f8c7aa63cc012ebad16fb1d74b0f19628a16828c3d61e1e2698",
+          "source_import_group_matches": [],
+          "source_import_matches": []
+        },
+        {
+          "bytes": 15954,
+          "distribution": "pyhmmer",
+          "eligible_for_declared_removal": true,
+          "matches": [
+            {
+              "output": "LuxC.hmm",
+              "reasons": [
+                "same_stem"
+              ]
+            },
+            {
+              "output": "LuxC.domtbl",
+              "reasons": [
+                "same_stem"
+              ]
+            }
+          ],
+          "packaged_test_or_example": true,
+          "path": "pyhmmer/tests/data/msa/LuxC.hmmalign.sto",
+          "sha256": "d0a997a87b371b7348170176ca510cc7346d4fc3494b295d2da96ea9254ac4af",
+          "source_import_group_matches": [],
+          "source_import_matches": []
+        },
+        {
+          "bytes": 8548,
+          "distribution": "pyhmmer",
+          "eligible_for_declared_removal": true,
+          "matches": [
+            {
+              "output": "LuxC.hmm",
+              "reasons": [
+                "same_stem"
+              ]
+            },
+            {
+              "output": "LuxC.domtbl",
+              "reasons": [
+                "same_stem"
+              ]
+            }
+          ],
+          "packaged_test_or_example": true,
+          "path": "pyhmmer/tests/data/msa/LuxC.sto",
+          "sha256": "e2cf20e9c15473a9ee33634415327e64b2e77b482dd6e43f759123c22f2e0edc",
+          "source_import_group_matches": [],
+          "source_import_matches": []
+        },
+        {
+          "bytes": 176,
+          "distribution": "pyhmmer",
+          "eligible_for_declared_removal": true,
+          "matches": [
+            {
+              "output": "LuxC.hmm",
+              "reasons": [
+                "same_stem"
+              ]
+            },
+            {
+              "output": "LuxC.domtbl",
+              "reasons": [
+                "same_stem"
+              ]
+            }
+          ],
+          "packaged_test_or_example": true,
+          "path": "pyhmmer/tests/data/msa/LuxC.sto.ssi",
+          "sha256": "2db3c6e0e32d8594a3f2da2b5867a77151fe580b3d0b9b7d0d4f9c162fa2bd84",
+          "source_import_group_matches": [],
+          "source_import_matches": []
+        },
+        {
+          "bytes": 9318,
+          "distribution": "pyhmmer",
+          "eligible_for_declared_removal": true,
+          "matches": [
+            {
+              "output": "LuxC.hmm",
+              "reasons": [
+                "same_stem"
+              ]
+            },
+            {
+              "output": "LuxC.domtbl",
+              "reasons": [
+                "same_stem"
+              ]
+            }
+          ],
+          "packaged_test_or_example": true,
+          "path": "pyhmmer/tests/data/msa/LuxC.weighted.sto",
+          "sha256": "b7633ea12a2e2b876bc2b9d5fd5021be4aa1e4e2edd5185ccf0c5434a7a00ecb",
+          "source_import_group_matches": [],
+          "source_import_matches": []
+        },
+        {
+          "bytes": 7302,
+          "distribution": "pyhmmer",
+          "eligible_for_declared_removal": true,
+          "matches": [
+            {
+              "output": "LuxC.hmm",
+              "reasons": [
+                "same_stem"
+              ]
+            },
+            {
+              "output": "LuxC.domtbl",
+              "reasons": [
+                "same_stem"
+              ]
+            }
+          ],
+          "packaged_test_or_example": true,
+          "path": "pyhmmer/tests/data/seqs/LuxC.faa",
+          "sha256": "7ce47aaed2c5e1eba1c683dc0be3efa11ee34038eb498cc09287c61c62b697d0",
+          "source_import_group_matches": [],
+          "source_import_matches": []
+        }
+      ],
+      "scope": "Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit.",
+      "source_import_terms": [
+        "pyhmmer"
+      ]
+    },
+    "trial/dependency-exclusions-applied.json": {
+      "excluded_files_absent": true,
+      "files": [
+        {
+          "distribution": "pyhmmer",
+          "path": "pyhmmer/tests/data/hmms/txt/LuxC.hmm",
+          "sha256": "e7a4dd57c83fb17cc12640f20c4f02f126d8230b16d6c6ef596bf791c8075865"
+        }
+      ]
+    },
+    "trial/environment.txt": "psutil==7.2.2\npyhmmer==0.12.3\n",
+    "trial/inputs-before.json": {
+      "files": [
+        {
+          "bytes": 8548,
+          "input_preview": {
+            "byte_prefix_truncated": true,
+            "compression": "none",
+            "displayed_lines_truncated": true,
+            "sample_sha256": "21940b924d49e7351665026a21d7d9e5e853d1076e73c1d38dab51d03313d478",
+            "sampled_bytes": 4096,
+            "scope": "Byte prefix only; no inferred header, schema or record count.",
+            "status": "utf8_text_prefix",
+            "text": "# STOCKHOLM 1.0\n#=GF ID   LuxC\n#=GF AC   PF05893.5\n#=GF DE   Acyl-CoA reductase (LuxC)\n#=GF AU   Moxon SJ\n"
+          },
+          "local_path": "/inputs/data/msa/LuxC.sto",
+          "sha256": "e2cf20e9c15473a9ee33634415327e64b2e77b482dd6e43f759123c22f2e0edc",
+          "source": "https://raw.githubusercontent.com/althonos/pyhmmer/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/src/pyhmmer/tests/data/msa/LuxC.sto"
+        },
+        {
+          "bytes": 7302,
+          "input_preview": {
+            "byte_prefix_truncated": true,
+            "compression": "none",
+            "displayed_lines_truncated": true,
+            "sample_sha256": "8fe9db09cabe8fd885e0299238c021f9ee6b9c7ab00e849ecaf37bb233ceeb83",
+            "sampled_bytes": 4096,
+            "scope": "Byte prefix only; no inferred header, schema or record count.",
+            "status": "utf8_text_prefix",
+            "text": ">sp|P19841|LUXC_PHOPO Long-chain acyl-protein thioester reductase OS=Photobacterium phosphoreum OX=659 GN=luxC PE=1 SV=3\nMCNAEFKGDCMIKKIPMIIGGAERDTSEHEYRELTLNSYKVSIPIINQDDVEAIKSQSVE\nNNLNINQIVNFLYTVGQKWKSENYSRRLTYIRDLVRFLGYSPEMAKLEANWISMILSSKS\nALYDIVETELGSRHIVDEWLPQGDCYVKAMPKGKSVHLLAGNVPLSGVTSIIRAILTKNE\nCIIKTSSADPFTAIALASSFIDTDEHHPISRSMSVMYWSHNEDIAIPQQIMNCADVVVSW\n"
+          },
+          "local_path": "/inputs/data/seqs/LuxC.faa",
+          "sha256": "7ce47aaed2c5e1eba1c683dc0be3efa11ee34038eb498cc09287c61c62b697d0",
+          "source": "https://raw.githubusercontent.com/althonos/pyhmmer/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/src/pyhmmer/tests/data/seqs/LuxC.faa"
+        }
+      ]
+    },
+    "trial/reference.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3 (ipykernel)\n#     language: python\n#     name: python3\n# ---\n\n# # Build an HMM from a multiple sequence alignment\n\nimport pyhmmer\npyhmmer.__version__\n\nalphabet = pyhmmer.easel.Alphabet.amino()\n\n# ## Loading the alignment\n\n# A new HMM can be built from a single sequence, or from a multiple sequence alignment. Let's load an alignment in digital mode so that we can build our HMM. We can use a `MSAFile` to read an alignment from a file in one of the supported formats (such as [Stockholm](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-stockholm), [Clustal](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-clustal), [aligned FASTA](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-fasta), *etc*; see the `MSAFile` documentation for the complete list):\n\nwith pyhmmer.easel.MSAFile(\"/inputs/data/msa/LuxC.sto\", digital=True, alphabet=alphabet) as msa_file:\n    msa = msa_file.read()\n\n# <div class=\"alert alert-info\">\n#\n# Note\n#     \n# In this example, we load a multiple sequence alignment from a file, but if your program produces alignment and you wish to make an HMM out of them, you can instantiate a `TextMSA` object yourself, e.g.:\n#     \n# ```python\n# seq1 = pyhmmer.easel.TextSequence(name=\"seq1\", sequence=\"WVPKQDFT\")\n# seq2 = pyhmmer.easel.TextSequence(name=\"seq2\", sequence=\"WL--PQGE\")\n# msa  = pyhmmer.easel.TextMSA(name=\"msa\", sequences=[seq1, seq2])\n# ```\n#\n# Because we need a `DigitalMSA` to build the HMM, you will have to convert it first:\n#     \n# ```python\n# msa_d = msa.digitize(alphabet) \n# ```\n# </div>\n\n# ## Building an HMM\n#\n# Now that we have a multiple alignment loaded in memory, we can build a pHMM using a `pyhmmer.plan7.Builder`. This also requires a Plan7 background model to compute the transition probabilities.\n\nbuilder = pyhmmer.plan7.Builder(alphabet)\nbackground = pyhmmer.plan7.Background(alphabet)\nhmm, _, _ = builder.build_msa(msa, background)\n\n# <div class=\"alert alert-warning\">\n#\n# Warning\n#     \n# HMMs must always have a name. The `Builder` will attempt to use the `MSA` name, but in the event your alignment file does not contain a name for the whole alignment (for instance, a `#=GF ID` line in a [Stockholm file](https://en.wikipedia.org/wiki/Stockholm_format)), this method will fail:\n#     \n# ```python\n# >>> anonymous_msa = pyhmmer.easel.TextMSA(sequences=[seq1, seq2])\n# >>> builder.build_msa(anonymous_msa)\n# Traceback (most recent call last):\n#   File \"<stdin>\", line 1, in <module>\n# ValueError: Could not build HMM: Unable to name the HMM.\n# ```    \n#\n# If your alignment is missing a name, you can assign one manually by setting the `MSA.name` property, e.g.:\n#\n# ```python\n# msa.name = \"protein_family_01\"\n# ```\n#     \n# </div>\n\n# We can have a look at the consensus sequence of the HMM with the `consensus` property:\n\nhmm.consensus\n\n# ## Saving the resulting HMM\n\n# Now that we have an HMM, we can save it to a file to avoid having to rebuild it every time. Using the `HMM.write` method lets us write the HMM in ASCII or binary format to an arbitrary file. The resulting file will also be compatible with the `hmmsearch` binary if you wish to use that one instead of PyHMMER.\n\nwith open(\"LuxC.hmm\", \"wb\") as output_file:\n    hmm.write(output_file)\n\n# ## Applying the HMM to a sequence database\n\n# Once a pHMM has been obtained, it can be applied to a sequence database with the `pyhmmer.plan7.Pipeline` object. Let's iterate over the protein sequences in a FASTA to see if our new HMM gets any hits:\n\npipeline = pyhmmer.plan7.Pipeline(alphabet, background=background)\nwith pyhmmer.easel.SequenceFile(\"/inputs/data/seqs/LuxC.faa\", digital=True, alphabet=alphabet) as seq_file:\n    hits = pipeline.search_hmm(hmm, seq_file)\n\n# We can then query the `TopHits` object to access the domain hits in the sequences:\n\nali = hits[0].domains[0].alignment\nprint(ali)\n\n# Finally, we can save the results in tabular format similar to what `hmmsearch` would have produced:\n\nwith open(\"LuxC.domtbl\", \"wb\") as f:\n    hits.write(f, format=\"domains\")\n\n\nimport os\n\n_export_dir = \"/work/outputs\"\nos.makedirs(_export_dir, exist_ok=True)\n\nwith open(os.path.join(_export_dir, \"LuxC.hmm\"), \"wb\") as _hmm_export_file:\n    hmm.write(_hmm_export_file)\n\nwith open(os.path.join(_export_dir, \"LuxC.domtbl\"), \"wb\") as _domtbl_export_file:\n    hits.write(_domtbl_export_file, format=\"domains\")",
+    "trial/result.json": {
+      "artifacts": {
+        "artifacts": [
+          {
+            "bytes": 187150,
+            "exists": true,
+            "path": "LuxC.hmm",
+            "sha256": "b8d3db66460ca7611b6e157a62d03fa4efe4ce97c3744bdb28eb744544e3e6f4"
+          },
+          {
+            "bytes": 4093,
+            "exists": true,
+            "path": "LuxC.domtbl",
+            "sha256": "fc3da85a5d9a7c8bdb7ed7d3ff8d1114488e3707abf8f7311bd83a24186b563b"
+          }
+        ],
+        "declared_artifacts_present": true,
+        "semantic_fidelity_validated": false
+      },
+      "candidate_sha256": {
+        "analysis.py": "4ebc4609f17d040bc58684e1f58b30cb487d8b68b04a4682b8298182c8faa617",
+        "dependency-exclusions.json": "387a3eee267932458dd9c4ddc6b95b92bbade35052db34ad2971f932d54b9934",
+        "inputs.json": "63f172e38bc85a9f10a5b4f0163fa9e879da76e89fbac9e6bfaf7cd8fb2ce3c3",
+        "pyproject.toml": "165a096393426691f8f88c95fed1ddafe0454fa5cfa36969a959450ca0642808",
+        "stage-inputs.sh": "7f4f311bb6c77d0f03b7bf696a67c5088ae1113c8d9e1d08fe26346effec77bd",
+        "system-packages.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      "dependency_assets": {
+        "candidate_files": 96,
+        "catalog_sha256": "f747ef35800cafcee876eb44a67ac4a36adb8e879efd2b1ebfd0e201ee083d78",
+        "distribution_coverage": [
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "psutil",
+            "installed_regular_files_inspected": 18
+          },
+          {
+            "candidate_files": 96,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "pyhmmer",
+            "installed_regular_files_inspected": 354
+          }
+        ],
+        "full_catalog": "/work/dependency-assets.json",
+        "installed_files_inspected": 372,
+        "priority_matches": [
+          {
+            "bytes": 5993,
+            "distribution": "pyhmmer",
+            "eligible_for_declared_removal": true,
+            "matches": [
+              {
+                "output": "LuxC.hmm",
+                "reasons": [
+                  "same_stem"
+                ]
+              },
+              {
+                "output": "LuxC.domtbl",
+                "reasons": [
+                  "same_stem"
+                ]
+              }
+            ],
+            "packaged_test_or_example": true,
+            "path": "pyhmmer/tests/data/msa/LuxC.faa",
+            "sha256": "b8c6e5a6c2b05f8c7aa63cc012ebad16fb1d74b0f19628a16828c3d61e1e2698",
+            "source_import_group_matches": [],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 15954,
+            "distribution": "pyhmmer",
+            "eligible_for_declared_removal": true,
+            "matches": [
+              {
+                "output": "LuxC.hmm",
+                "reasons": [
+                  "same_stem"
+                ]
+              },
+              {
+                "output": "LuxC.domtbl",
+                "reasons": [
+                  "same_stem"
+                ]
+              }
+            ],
+            "packaged_test_or_example": true,
+            "path": "pyhmmer/tests/data/msa/LuxC.hmmalign.sto",
+            "sha256": "d0a997a87b371b7348170176ca510cc7346d4fc3494b295d2da96ea9254ac4af",
+            "source_import_group_matches": [],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 8548,
+            "distribution": "pyhmmer",
+            "eligible_for_declared_removal": true,
+            "matches": [
+              {
+                "output": "LuxC.hmm",
+                "reasons": [
+                  "same_stem"
+                ]
+              },
+              {
+                "output": "LuxC.domtbl",
+                "reasons": [
+                  "same_stem"
+                ]
+              }
+            ],
+            "packaged_test_or_example": true,
+            "path": "pyhmmer/tests/data/msa/LuxC.sto",
+            "sha256": "e2cf20e9c15473a9ee33634415327e64b2e77b482dd6e43f759123c22f2e0edc",
+            "source_import_group_matches": [],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 176,
+            "distribution": "pyhmmer",
+            "eligible_for_declared_removal": true,
+            "matches": [
+              {
+                "output": "LuxC.hmm",
+                "reasons": [
+                  "same_stem"
+                ]
+              },
+              {
+                "output": "LuxC.domtbl",
+                "reasons": [
+                  "same_stem"
+                ]
+              }
+            ],
+            "packaged_test_or_example": true,
+            "path": "pyhmmer/tests/data/msa/LuxC.sto.ssi",
+            "sha256": "2db3c6e0e32d8594a3f2da2b5867a77151fe580b3d0b9b7d0d4f9c162fa2bd84",
+            "source_import_group_matches": [],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 9318,
+            "distribution": "pyhmmer",
+            "eligible_for_declared_removal": true,
+            "matches": [
+              {
+                "output": "LuxC.hmm",
+                "reasons": [
+                  "same_stem"
+                ]
+              },
+              {
+                "output": "LuxC.domtbl",
+                "reasons": [
+                  "same_stem"
+                ]
+              }
+            ],
+            "packaged_test_or_example": true,
+            "path": "pyhmmer/tests/data/msa/LuxC.weighted.sto",
+            "sha256": "b7633ea12a2e2b876bc2b9d5fd5021be4aa1e4e2edd5185ccf0c5434a7a00ecb",
+            "source_import_group_matches": [],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 7302,
+            "distribution": "pyhmmer",
+            "eligible_for_declared_removal": true,
+            "matches": [
+              {
+                "output": "LuxC.hmm",
+                "reasons": [
+                  "same_stem"
+                ]
+              },
+              {
+                "output": "LuxC.domtbl",
+                "reasons": [
+                  "same_stem"
+                ]
+              }
+            ],
+            "packaged_test_or_example": true,
+            "path": "pyhmmer/tests/data/seqs/LuxC.faa",
+            "sha256": "7ce47aaed2c5e1eba1c683dc0be3efa11ee34038eb498cc09287c61c62b697d0",
+            "source_import_group_matches": [],
+            "source_import_matches": []
+          }
+        ],
+        "scope": "Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit.",
+        "source_import_terms": [
+          "pyhmmer"
+        ]
+      },
+      "execution": {
+        "argv": [
+          "env",
+          "MPLBACKEND=Agg",
+          "/work/venv/bin/python",
+          "/work/reference.py"
+        ],
+        "directory": "/work/run",
+        "elapsed_seconds": 0.2658226490020752,
+        "exit_code": 0,
+        "finished": 1792900797.884678,
+        "label": "command-caefa4c38725466984ae615ab49213ed",
+        "log": "                    LuxC   2 anlkleeildlleevaqrlkdeeysrr..yirelakilgyeeemlkalka...lmallskeaLkdllereLgqpeildeflprkesyekaqpkglvvhllagNvpllpvmsileglLvknvnllkvSssdpflaaallksladvdadhtlarsisvvyw.kssdtkleeeivqnaDvviawGGeeAikaivkklkpgvdlikfGpkiSlavvdkeaalekaaeavAkDicvydQqAClSpqvvfvesddeaklrefaeeLaeaLekrakilPkaelsideaaaisskraeaklkyllseekkvvsekdqkwtvilseeqellnsPlsrtvnvkavpdiedvveyvtknrtlQtvglavkeselkelaeklaaaGverivevGemnlfrsGephDgvyaLqrlvrl 400\n                             +nl+l++++++l++v+qr+++eey+rr  yir+l+++lgy++em+k l+a   +m l+sk+aL+d+++++Lg+ +i+de++p++++y+ka+pkg++vhllagNvpl++v+sil+++L+kn++++k+Ss+dpf+a+al++s++dv+adh+++rs+sv+yw +++d++l+++i+++aDvv awGG+eAik++vk+++++vd++kfGpk+Sl+++d+++++++aa++vA+Dic+ydQqAC+S+q++++    ++kl+ f +eL+++L+ +akilPk ++++de+aa++ +++e     +l+++++v ++++q+w++i+s+ +++ n+Plsr+v++++v++ied++++++kn+t Qtv++a++es++k+++e la++G+erive+G++n+fr+G++hDg+++Lq+lv++\n  tr|B6ESM7|B6ESM7_ALISL  50 NNLRLNQVVNFLYTVGQRWRSEEYTRRrtYIRDLTNFLGYSNEMAK-LEAnwiAMLLCSKSALYDIVQHDLGSLHIIDEWIPQGDCYIKALPKGKSVHLLAGNVPLSGVTSILRAILTKNECIIKTSSTDPFTATALVSSFIDVNADHPITRSMSVMYWsHNEDMSLPKKIMNHADVV-AWGGDEAIKWAVKHSPHHVDIVKFGPKKSLSIIDDPEDITAAATGVAHDICFYDQQACFSTQNIYYI---GNKLNLFIDELEKKLNVYAKILPKGCQNFDEKAAFTLTEKE-----CLFAGYQVRKGENQSWIIIQSPLDAFGNQPLSRSVYIHQVSSIEDILPFINKNTT-QTVSIAPWESSFKYRDE-LAKHGAERIVESGMNNIFRVGGAHDGMRPLQYLVNY 442\n                             899*******************************************.8*99*****************************************************************************************************************************98.*******************************************************************...9****************************************.....*****************************************************87.*****************.**********************************86 PP\n\n",
+        "log_sha256": "c5fb0541613b38e9c3056af274da8522e7e72fdbaf07db5016beefadaf239606",
+        "peak_child_rss_kib": 29824,
+        "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+        "started": 1792900797.6188552,
+        "timed_out": false,
+        "timeout_seconds": 600
+      },
+      "input_observations": {
+        "files": [
+          {
+            "bytes": 8548,
+            "input_preview": {
+              "byte_prefix_truncated": true,
+              "compression": "none",
+              "displayed_lines_truncated": true,
+              "sample_sha256": "21940b924d49e7351665026a21d7d9e5e853d1076e73c1d38dab51d03313d478",
+              "sampled_bytes": 4096,
+              "scope": "Byte prefix only; no inferred header, schema or record count.",
+              "status": "utf8_text_prefix",
+              "text": "# STOCKHOLM 1.0\n#=GF ID   LuxC\n#=GF AC   PF05893.5\n#=GF DE   Acyl-CoA reductase (LuxC)\n#=GF AU   Moxon SJ\n"
+            },
+            "local_path": "/inputs/data/msa/LuxC.sto",
+            "sha256": "e2cf20e9c15473a9ee33634415327e64b2e77b482dd6e43f759123c22f2e0edc",
+            "source": "https://raw.githubusercontent.com/althonos/pyhmmer/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/src/pyhmmer/tests/data/msa/LuxC.sto"
+          },
+          {
+            "bytes": 7302,
+            "input_preview": {
+              "byte_prefix_truncated": true,
+              "compression": "none",
+              "displayed_lines_truncated": true,
+              "sample_sha256": "8fe9db09cabe8fd885e0299238c021f9ee6b9c7ab00e849ecaf37bb233ceeb83",
+              "sampled_bytes": 4096,
+              "scope": "Byte prefix only; no inferred header, schema or record count.",
+              "status": "utf8_text_prefix",
+              "text": ">sp|P19841|LUXC_PHOPO Long-chain acyl-protein thioester reductase OS=Photobacterium phosphoreum OX=659 GN=luxC PE=1 SV=3\nMCNAEFKGDCMIKKIPMIIGGAERDTSEHEYRELTLNSYKVSIPIINQDDVEAIKSQSVE\nNNLNINQIVNFLYTVGQKWKSENYSRRLTYIRDLVRFLGYSPEMAKLEANWISMILSSKS\nALYDIVETELGSRHIVDEWLPQGDCYVKAMPKGKSVHLLAGNVPLSGVTSIIRAILTKNE\nCIIKTSSADPFTAIALASSFIDTDEHHPISRSMSVMYWSHNEDIAIPQQIMNCADVVVSW\n"
+            },
+            "local_path": "/inputs/data/seqs/LuxC.faa",
+            "sha256": "7ce47aaed2c5e1eba1c683dc0be3efa11ee34038eb498cc09287c61c62b697d0",
+            "source": "https://raw.githubusercontent.com/althonos/pyhmmer/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/src/pyhmmer/tests/data/seqs/LuxC.faa"
+          }
+        ]
+      },
+      "inputs_after": {
+        "files": 2,
+        "staged_inputs_verified": true
+      },
+      "reference_tests_remaining": 0,
+      "reference_tests_used": 2,
+      "semantic_fidelity_validated": false,
+      "setup": {
+        "argv": [
+          "sh",
+          "-eu",
+          "/work/setup.sh"
+        ],
+        "directory": "/work",
+        "elapsed_seconds": 1.0673460960388184,
+        "exit_code": 0,
+        "finished": 1792900775.0759895,
+        "label": "command-0f56a3dcb77349abab2c04e3e3d0888f",
+        "log": "Requirement already satisfied: uv==0.12.21 in /usr/local/lib/python3.13/site-packages (0.12.21)\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nResolved 3 packages in 148ms\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nCreating virtual environment at: venv\nResolved 3 packages in 0.77ms\nDownloading pyhmmer (3.8MiB)\n Downloaded pyhmmer\nPrepared 2 packages in 206ms\nInstalled 2 packages in 89ms\n + psutil==7.2.2\n + pyhmmer==0.12.3\nUsing Python 3.13.13 environment at: venv\nstaged msa/LuxC.sto (8548 bytes, sha256 e2cf20e9c15473a9...)\nstaged seqs/LuxC.faa (7302 bytes, sha256 7ce47aaed2c5e1eb...)\nln: failed to create symbolic link '/work/run/data/msa/LuxC.sto': No such file or directory\n/work/run/data/msa:\ntotal 0\nlrwxrwxrwx 1 root root 25 Oct 25 03:59 LuxC.sto -> /inputs/data/msa/LuxC.sto\n\n/work/run/data/seqs:\ntotal 0\nlrwxrwxrwx 1 root root 26 Oct 25 03:59 LuxC.faa -> /inputs/data/seqs/LuxC.faa\n{\"files_removed\": 1, \"excluded_files_absent\": true}\n",
+        "log_sha256": "06608140c81d19dcdd03c53bd77655d6bca623820c73947c32f07ee974506ec1",
+        "peak_child_rss_kib": 41052,
+        "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+        "started": 1792900774.0086434,
+        "timed_out": false,
+        "timeout_seconds": 1742
+      },
+      "status": "reference_executed",
+      "test": 2
+    },
+    "trial/source.diff": "--- original.py\n+++ analysis.py\n@@ -23,7 +23,7 @@\n \n # A new HMM can be built from a single sequence, or from a multiple sequence alignment. Let's load an alignment in digital mode so that we can build our HMM. We can use a `MSAFile` to read an alignment from a file in one of the supported formats (such as [Stockholm](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-stockholm), [Clustal](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-clustal), [aligned FASTA](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-fasta), *etc*; see the `MSAFile` documentation for the complete list):\n \n-with pyhmmer.easel.MSAFile(\"data/msa/LuxC.sto\", digital=True, alphabet=alphabet) as msa_file:\n+with pyhmmer.easel.MSAFile(\"/inputs/data/msa/LuxC.sto\", digital=True, alphabet=alphabet) as msa_file:\n     msa = msa_file.read()\n \n # <div class=\"alert alert-info\">\n@@ -91,7 +91,7 @@\n # Once a pHMM has been obtained, it can be applied to a sequence database with the `pyhmmer.plan7.Pipeline` object. Let's iterate over the protein sequences in a FASTA to see if our new HMM gets any hits:\n \n pipeline = pyhmmer.plan7.Pipeline(alphabet, background=background)\n-with pyhmmer.easel.SequenceFile(\"data/seqs/LuxC.faa\", digital=True, alphabet=alphabet) as seq_file:\n+with pyhmmer.easel.SequenceFile(\"/inputs/data/seqs/LuxC.faa\", digital=True, alphabet=alphabet) as seq_file:\n     hits = pipeline.search_hmm(hmm, seq_file)\n \n # We can then query the `TopHits` object to access the domain hits in the sequences:\n"
+  },
+  "package_inspection": {
+    "boundary": "Read-only release-source inspection for recorded installed versions. Archives are hash-verified against the retained reference lock. No installation, imports, execution, shell, or arbitrary URLs. Universal wheels contain Python source; sdists are corresponding release source, not evidence of the exact installed binary or its build options. Direct-reference, editable, ambiguous or unparsed records do not authorize a registry fallback or arbitrary URL retrieval. Unavailable source remains an explicit evidence gap.",
+    "packages": {
+      "psutil": {
+        "distribution": {
+          "hash": "sha256:0746f5f8d406af344fd547f1c8daa5f5c33dbc293bb8d6a16d80b4bb88f59372",
+          "size": 493740,
+          "url": "https://files.pythonhosted.org/packages/aa/c6/d1ddf4abb55e93cebc4f2ed8b5d6dbad109ecb8d63748dd2b20ab5e57ebe/psutil-7.2.2.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "7.2.2"
+      },
+      "pyhmmer": {
+        "distribution": {
+          "hash": "sha256:0a4b2f5d8c6c106fce8eb77603387aff94ad8ff8ff1c8094f30fb18cb7694d6e",
+          "size": 4654141,
+          "url": "https://files.pythonhosted.org/packages/07/b5/7d102e032dbe4ae8f7a85780428a483485ff6b1a18b56b7e4026bc4a1315/pyhmmer-0.12.3.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "0.12.3"
+      }
+    },
+    "unparsed_environment_records": []
+  },
+  "reference_inspection": {
+    "boundary": "Read-only UTF-8 text inspection of these recorded reference outputs only. Every read verifies the complete file hash and size before returning text. No execution, imports, filesystem writes, arbitrary paths or input-file access. Binary content remains an explicit inspection gap. Observed text establishes file contents, not scientific correctness or portable comparison tolerances. Text reads default to columns 1\u20131000 of each selected line; reported slices are incomplete fragments. Explicit larger windows or end_column:null are allowed. Reference values are private evidence, not material to copy into solver instructions.",
+    "files": {
+      "LuxC.domtbl": {
+        "bytes": 4093,
+        "sha256": "fc3da85a5d9a7c8bdb7ed7d3ff8d1114488e3707abf8f7311bd83a24186b563b"
+      },
+      "LuxC.hmm": {
+        "bytes": 187150,
+        "sha256": "b8d3db66460ca7611b6e157a62d03fa4efe4ce97c3744bdb28eb744544e3e6f4"
+      }
+    }
+  },
+  "repeatability_observations": {
+    "all_output_differences_limited_to_table_serialization_or_row_order": false,
+    "all_outputs_byte_identical_to_original": false,
+    "cleanup_verified": true,
+    "comparison_rules_validated": false,
+    "construction_run": false,
+    "finished": 1792900937.5244257,
+    "limitations": "Finite repeated runs, not a grading contract or portability proof. Fresh processes/workspaces share the rebuilt environment and caches; base image tag is reused, not an immutable image digest.",
+    "model_calls": 0,
+    "output_observations": [
+      [
+        {
+          "baseline_sha256": "b8d3db66460ca7611b6e157a62d03fa4efe4ce97c3744bdb28eb744544e3e6f4",
+          "byte_identical": false,
+          "path": "LuxC.hmm",
+          "replay_sha256": "54d8375734f5be58a967adf9d170fdd298763e22103fa8c05b3215a93236313b",
+          "table_observation": {
+            "baseline": null,
+            "replay": null,
+            "same_header_and_row_multiset": false,
+            "scientific_equivalence_established": false
+          }
+        },
+        {
+          "baseline_sha256": "fc3da85a5d9a7c8bdb7ed7d3ff8d1114488e3707abf8f7311bd83a24186b563b",
+          "byte_identical": true,
+          "path": "LuxC.domtbl",
+          "replay_sha256": "fc3da85a5d9a7c8bdb7ed7d3ff8d1114488e3707abf8f7311bd83a24186b563b"
+        }
+      ],
+      [
+        {
+          "baseline_sha256": "b8d3db66460ca7611b6e157a62d03fa4efe4ce97c3744bdb28eb744544e3e6f4",
+          "byte_identical": false,
+          "path": "LuxC.hmm",
+          "replay_sha256": "5095caad2b35ef142b8e76a48c9e6fffa518c5db4003ed58cdca962c0ccde386",
+          "table_observation": {
+            "baseline": null,
+            "replay": null,
+            "same_header_and_row_multiset": false,
+            "scientific_equivalence_established": false
+          }
+        },
+        {
+          "baseline_sha256": "fc3da85a5d9a7c8bdb7ed7d3ff8d1114488e3707abf8f7311bd83a24186b563b",
+          "byte_identical": true,
+          "path": "LuxC.domtbl",
+          "replay_sha256": "fc3da85a5d9a7c8bdb7ed7d3ff8d1114488e3707abf8f7311bd83a24186b563b"
+        }
+      ]
+    ],
+    "reference_tests": 2,
+    "semantic_fidelity_validated": false,
+    "solver_run": false,
+    "started": 1792900872.8688078,
+    "status": "repeatability_observed_requires_comparison_review"
+  },
+  "retained_evidence": {
+    "trial/uv.lock": {
+      "bytes": 10569,
+      "reason": "Full lock retained as evidence; exact resolved package versions are supplied in trial/environment.txt. Wheel URLs and hashes are omitted from model context.",
+      "sha256": "d89c082bcf9c64ad6bbebac54044f79bc9aaedbd4903bc806cb9ec34cbcd1a33"
+    }
+  },
+  "source_operations": {
+    "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+    "operations": [
+      {
+        "column": 11,
+        "function": "pyhmmer.easel.Alphabet.amino",
+        "id": "call-20-11",
+        "line": 20,
+        "source": "pyhmmer.easel.Alphabet.amino()"
+      },
+      {
+        "column": 5,
+        "function": "pyhmmer.easel.MSAFile",
+        "id": "call-26-5",
+        "line": 26,
+        "source": "pyhmmer.easel.MSAFile(\"data/msa/LuxC.sto\", digital=True, alphabet=alphabet)"
+      },
+      {
+        "column": 10,
+        "function": "msa_file.read",
+        "id": "call-27-10",
+        "line": 27,
+        "source": "msa_file.read()"
+      },
+      {
+        "column": 10,
+        "function": "pyhmmer.plan7.Builder",
+        "id": "call-52-10",
+        "line": 52,
+        "source": "pyhmmer.plan7.Builder(alphabet)"
+      },
+      {
+        "column": 13,
+        "function": "pyhmmer.plan7.Background",
+        "id": "call-53-13",
+        "line": 53,
+        "source": "pyhmmer.plan7.Background(alphabet)"
+      },
+      {
+        "column": 12,
+        "function": "builder.build_msa",
+        "id": "call-54-12",
+        "line": 54,
+        "source": "builder.build_msa(msa, background)"
+      },
+      {
+        "column": 5,
+        "function": "open",
+        "id": "call-86-5",
+        "line": 86,
+        "source": "open(\"LuxC.hmm\", \"wb\")"
+      },
+      {
+        "column": 4,
+        "function": "hmm.write",
+        "id": "call-87-4",
+        "line": 87,
+        "source": "hmm.write(output_file)"
+      },
+      {
+        "column": 11,
+        "function": "pyhmmer.plan7.Pipeline",
+        "id": "call-93-11",
+        "line": 93,
+        "source": "pyhmmer.plan7.Pipeline(alphabet, background=background)"
+      },
+      {
+        "column": 5,
+        "function": "pyhmmer.easel.SequenceFile",
+        "id": "call-94-5",
+        "line": 94,
+        "source": "pyhmmer.easel.SequenceFile(\"data/seqs/LuxC.faa\", digital=True, alphabet=alphabet)"
+      },
+      {
+        "column": 11,
+        "function": "pipeline.search_hmm",
+        "id": "call-95-11",
+        "line": 95,
+        "source": "pipeline.search_hmm(hmm, seq_file)"
+      },
+      {
+        "column": 0,
+        "function": "print",
+        "id": "call-100-0",
+        "line": 100,
+        "source": "print(ali)"
+      },
+      {
+        "column": 5,
+        "function": "open",
+        "id": "call-104-5",
+        "line": 104,
+        "source": "open(\"LuxC.domtbl\", \"wb\")"
+      },
+      {
+        "column": 4,
+        "function": "hits.write",
+        "id": "call-105-4",
+        "line": 105,
+        "source": "hits.write(f, format=\"domains\")"
+      }
+    ],
+    "source_sha256": "ef782563dff5d24c1f56d86e0dbbf53a36245109e025754f04a1626530b3382f"
+  },
+  "task_policy": {
+    "dependency_answers": "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "supplied_intermediates": "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "files": [
+    {
+      "distribution": "pyhmmer",
+      "path": "pyhmmer/tests/data/hmms/txt/LuxC.hmm",
+      "sha256": "e7a4dd57c83fb17cc12640f20c4f02f126d8230b16d6c6ef596bf791c8075865",
+      "reason": "Packaged pyhmmer test fixture containing a prebuilt LuxC Plan7 HMM. After the controlled reference run I diffed it against the exported endpoint /work/outputs/LuxC.hmm: the only differences are HMMER version, DATE and COM provenance lines; the entire model body (NAME/ACC/DESC, length, to-line, state emissions/transitions) is byte-identical, so this fixture supplies the full scientific answer for the HMM-building endpoint. The notebook builds the HMM itself with builder.build_msa from the staged LuxC.sto input (now read from /inputs), so this precomputed copy is not needed for the analysis. Removal was validated in a fresh passing reference test."
+    }
+  ]
+}
