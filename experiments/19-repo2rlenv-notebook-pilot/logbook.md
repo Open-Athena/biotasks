@@ -4889,3 +4889,10 @@ A general policy-convergence change preserves the existing45-second control dead
 
 
 The source-bound policy-convergence provider check passes three cases in 19.78 seconds on SDK 0.211.2: real online/offline connectivity, synthetic stalled resolver with child reaping, and invalid-probe rejection. Real policies matched on their first probes; natural delay and the 173 cause remain unestablished. Original/fresh exact-ID/owner cleanup pass. No models or biological computation. The unchanged037 auditor releases only the 1 USD never-dispatched native allowance from173, retains four full used-stage holds and funds this 1 USD check within197 held/3 unallocated of200 authorized. A local evidence recorder initially required byte-equal config JSON; the runtime only sorts keys. Parsed values/source identities are identical; both exact byte versions are retained.
+
+
+## 25 October 2026 — fund a fresh source-only network-control validation
+
+The resource auditor now explicitly accepts only the same known six-stage/four-SDK topology ending either in rejected grading/SUCCEEDED or infrastructure_failed grading/FAILED, with a completed prefix and matching failure stage.95positive/negative tests retain exact source, resource, lifetime, archive and cleanup gates. Original158 refusal and failure remain preserved. Fresh four-owner absence and exact admitted sources support the unchanged full-overlap bound, then every complete closed session plus300seconds at each end: retain1USD against0.33380041369753USD, release3 of its prior4hold. No prices, credits or scientific outcomes changed.
+
+Reserve the unchanged full5USD for174 within existing200authorization (199held/1unallocated). It will start from original169 Bioframe source assets, without any prior proposal, reviewer finding, answer or diagnostic hint. Only the generic bounded network-policy convergence and its tests differ from173; model/resource/time and shared repair rules remain unchanged. Not yet frozen or submitted.
