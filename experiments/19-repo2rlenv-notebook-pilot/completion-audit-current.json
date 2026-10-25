@@ -1,167 +1,37 @@
 {
-  "observed_at": "2026-10-23T10:46:47.215025+00:00",
-  "goal": "Finish issue19under the latest agreed scope: a reasonable autonomous factory over roughly10diversePythonnotebooks; do not redefine completion as one passingcase or rejectingallinputs.",
-  "completion": "Unproven; keepgoalactive,issueOPEN,PR23DRAFT/unmerged.",
-  "requirements": [
-    {
-      "requirement": "Fresh source-only notebook proceeds without manual scientific task edits.",
-      "status": "Demonstrated for selected successful cases, not broadly reliable.",
-      "evidence": [
-        "autonomous-runs/055/independent-acceptance.json",
-        "autonomous-runs/063/independent-acceptance.json",
-        "panel-rounds/001/freeze.json",
-        "autonomous-runs/080/independent-acceptance.json",
-        "autonomous-runs/090/independent-acceptance.json"
-      ],
-      "gap": "Three distinctpanel seeds validated acrossversions, not broad common-version reliability.081cleanuphandofffailed despite scores."
-    },
-    {
-      "requirement": "All eligible source endpoints in one scientifically validated task.",
-      "status": "Demonstrated in accepted055/063; unproven acrosspanel.",
-      "evidence": [
-        "autonomous-runs/063/final-review.json",
-        "autonomous-runs/071/review-diagnosis.json",
-        "autonomous-runs/090/final-review.json"
-      ],
-      "gap": "071numericalcontrolspassbutsourcebranchesomitted; genericpromptclarificationneeds livebroadvalidation."
-    },
-    {
-      "requirement": "Offline real-data execution under approved resources/time and explicit source rejection.",
-      "status": "All ten terminal and clean:2validated(090public,095private),1supported unavailable-input rejection,4generated-candidate rejections,3incomplete.",
-      "evidence": [
-        "factory-checks/reference-computation-accounting/result.json",
-        "factory-checks/timeout-aligned-reference-tools/result.json",
-        "panel-rounds/010/freeze.json",
-        "factory-checks/bounded-cleanup-readback/result.json",
-        "autonomous-runs/087/pipeline.json",
-        "autonomous-runs/087/independent-comparison-conflict.json",
-        "autonomous-runs/087/diagnosis.json"
-      ],
-      "gap": "Round015187-filefactory nowhas096/103submitted; no newtaskacceptanceyet. Fivecasesremainunfunded andmaynotlaunch."
-    },
-    {
-      "requirement": "Deterministic artifact reward, independent executable checks and nativecontrols/blindattempt.",
-      "status": "Verified for acceptedtasks; not yetbroad.",
-      "evidence": [
-        "autonomous-runs/063/independent-acceptance.json",
-        "autonomous-runs/055/independent-acceptance.json",
-        "autonomous-runs/080/independent-acceptance.json",
-        "autonomous-runs/090/independent-acceptance.json"
-      ],
-      "gap": "Syntheticfactorychecksarenotscientificacceptance; allnewvalidtasksmustpassfullgates."
-    },
-    {
-      "requirement": "PublicHarborrelease and independent download.",
-      "status": "Verified for MDAnalysis063 and NeuroKit090, with exact original input/license binding and immutable public download.",
-      "evidence": [
-        "autonomous-runs/063/publication.json",
-        "autonomous-runs/063/hub-download-verification.json",
-        "autonomous-runs/090/publication.json",
-        "autonomous-runs/090/hub-download-verification.json",
-        "autonomous-runs/090/source-notice-and-environment-audit.json"
-      ],
-      "gap": "Older055frozenbundle remains unchanged/private.090is a fresh validated replacement, not a post-trial patch."
-    },
-    {
-      "requirement": "Latest usable notebook/task/attempt/pipeline viewer with prompts/inputs/outputs.",
-      "status": "NeuroKit090 latest explorer verified: five views, fourteen pipeline stages, nine solver steps, no mobile overflow or JavaScript errors.",
-      "evidence": [
-        "explorer/source-manifest.json",
-        "explorer/checks.json"
-      ],
-      "gap": "Do not replace the public viewer with unreviewed imaging inputs or count private scientific acceptance as a public release."
-    },
-    {
-      "requirement": "Budgets, cleanup, reproducibility and current issue reporting.",
-      "status": "015098/099active;100/101/102fundedqueue;threeunfunded.096publicationheldforformatreview;103rejected/clean.99.25held/0.75unallocated.",
-      "evidence": [
-        "aggregate-budget.json",
-        "budget-reconciliation-materialization003-004-rounding.json",
-        "panel-rounds/010/freeze.json",
-        "autonomous-runs/087/provider-cleanup.json",
-        "autonomous-runs/089/submission.json",
-        "panel-rounds/014/progress.json"
-      ],
-      "gap": "Originalcohort95stillrunning; future015notexecuted. Conservativeholdsnotinvoices."
-    }
-  ],
-  "language_scope": "Pythononlyreconfirmed;Rdeferred,not a hiddenmissingdeliverable.",
-  "policy": "Factoryonlygeneralchanges, GLM5.3nativehighrequested, no scientificoperatorpatches, no seed-specific methodcode, no toleranceweakening toforcepass.",
-  "current_regressions": {
-    "076": "Reference and clean replay completed; downstream controller omitted input roots and stopped before construction. No scientific acceptance.",
-    "077": "Terminal model APIConnectionError during blind independent authoring;45original bounded diagnostics verified,4original/freshcleanupreceipts. Not scientific validation or source rejection.",
-    "078": "Never submitted; original freeze preserved and hold transferred after the concrete general bootstrap defect was diagnosed.",
-    "079": "Terminal model APIConnectionError during setup;17original bounded diagnostics verified,originalsetupcleanup plus4freshowners absent. Not source rejection.",
-    "080": "Independentlyvalidated:13finalcontrols/native1/0/1,1376files49,638,075bytesfullreadback,7original/freshcleanup,0taskedits.26.9pipeline/30.6hostminutes. Privatependingpublicationreview.",
-    "081": "Scientific20finalcontrols and raw native1/0/1 pass, but supervisorcleanup409race abortscollector.1582-file full autonomousarchive+selected original raw native results readback;7freshownersempty. NotunattendedE2Esuccess.",
-    "082": "Terminal generated-probe repair_blocked; full 1,600-file archive independently verified, four original/fresh cleanups empty. Not source rejection or scientific acceptance.",
-    "083": "Terminalgeneratedsetuprejection after two realreferencePython dispatches failed before scientificwork(offline registryrequest,thenbadAPIpropertyassignment).19originalboundeddiagnosticsverified/1original+4freshcleanup. Not source rejection evidence.",
-    "084": "Never submitted; frozen round013 payload retained, reservation transferred to086 for the combined general factory.",
-    "085": "Never submitted; frozen round013 payload retained, reservation transferred to087 for the combined general factory.",
-    "086": "Terminal generated-candidate rejection: all16finalcontrols pass, finalreviewrevise. Sourcecoverageapprove, 1470-file/37553487-byte fullreadback verified,4original/freshcleanups. Newkind correction exercised live; not scientificacceptance.",
-    "087": "Incomplete: original reference+two byte-identical replays passed, independent partition/labels/DE comparison unresolved, correction setup refused before dispatch by time admission.59bounded original diagnostics verified;5original/freshcleanups empty. Not source rejection or native acceptance.",
-    "088": "Terminal incomplete:11/12controls,independent comparison unresolved on two endpoints;worker question correction generated, fresh grading setup refused by remaining-operation-time check.61bounded originals verified,5original/freshcleanups empty,notfullarchive.",
-    "089": "Terminal context-headroom exhaustion during independent authoring. Actualrequestsentnotokencap;serverreported261844prompt+300completion=262144total.997-file359540679-byte originalarchive independentlyverified,4original/freshcleanups empty. Not a source rejection.",
-    "090": "Independently accepted:18controls/native1/0/1;1641files52636031bytes full readback;7original/freshcleanups;publicHF561e1e47ac4e9273af1e55aa8a923fa9310eae31 anonymous download verified. Original input and frozen fullMITnotice matched.0operator task edits.",
-    "091": "Generated public-evidence claim rejection despite14/14controls and sourcecoverageapprove.60bounded originals/bothreviews preserved;4original/freshcleanups clear.",
-    "092": "Generatedprobe/reviewrejectionafterquestioncorrection:17/19controls;unaffectedchecknamedasfailureandineffectiveinvalidmutation. Reviewissue/rationaleplaceholder.62originalboundeddiagnosticsprivate;5original/freshcleanups clear.",
-    "093": "Generated public-contract rejection:16/16finalcontrols/sourcecoverageapprove; parsedfloat/headerwhitespace descriptions conflict with grader.60bounded originals privatelypreserved;4original/freshcleanups empty.",
-    "094": "Supported source-input rejection: originalURLs independently404/NoSuchBucket, upstreamcorroboration,0reference tests,17bounded originalsverified,1originalcleanup/4freshownersclear.",
-    "095": "Independentlyaccepted17controls/native1/0/1,1086files42786144bytesfullreadback,7original/freshcleanup,0operatorinterventions,1147.6spipeline. PrivatebecauseoriginalMRIinputterms remainunresolved.",
-    "103": "Terminalcomparisonconflict;diagnosticGLMdeclinedquestionrevisionbecauseitfoundindependentimplementationerror.7/8basiccontrols,51bounded originalfilesprivateverified,4original/freshcleanupclear. Not source rejection.",
-    "096": "Original21controls/native1/0/1 andsourceGLMreviewpassed;1515-filearchive/7cleanupsverified. Additionalformatclaimcontradictsprimaryguide;releasewithheldforGLMworkerreview,no manualtaskedit. Fullsemanticacceptanceunproven."
+  "checked_at": "2026-10-25T19:47:12.332739+00:00",
+  "complete": false,
+  "current_audit": "panel-rounds/032/completion-audit.md",
+  "current_panel": "panel-rounds/032/current-panel-summary.json",
+  "latest_qualified_run": 176,
+  "latest_release_revision": "513ffba4566b439df39f3e01b3bd291b88276c80",
+  "selected_outcomes_across_development_versions": {
+    "published": 4,
+    "redistribution_hold": 1,
+    "generated_candidate_rejections": 5
   },
-  "current_common_version_panel": {
-    "progress": "panel-rounds/014/progress.json",
-    "total_cases": 10,
-    "source_originals_unchanged": true,
-    "runtime_files": 185,
-    "terminal_generated_rejections": [
-      86,
-      91,
-      92,
-      93
-    ],
-    "active": [],
-    "reserved_queue": [],
-    "completion": "All ten terminal and clean:2validated(090public,095private),1supported unavailable-input rejection,4generated-candidate rejections,3incomplete.",
-    "terminal_incomplete": [
-      87,
-      88,
-      89
-    ],
+  "same_runtime_round": {
+    "runtime_files": 219,
     "validated": [
-      90,
-      95
+      176
     ],
-    "terminal_supported_source_rejections": [
-      94
-    ]
+    "infrastructure_incomplete": [
+      175
+    ],
+    "queued_unfunded": 8,
+    "active": []
   },
-  "next_common_version_panel": {
-    "progress": "panel-rounds/015/progress.json",
-    "active": [
-      98,
-      99
-    ],
-    "funded_queue": [
-      100,
-      101,
-      102
-    ],
-    "unfunded": [
-      97,
-      104,
-      105
-    ],
-    "runtime_files": 187,
-    "scientific_acceptance_demonstrated": false,
-    "generated_rejections": [
-      103
-    ],
-    "validated": [],
-    "native_validated_pending_semantic_review": [
-      96
-    ]
-  }
+  "budget": {
+    "total_authorized_usd": "200.00",
+    "conservative_holds_usd": "196.00",
+    "unallocated_usd": "4.00",
+    "actual_invoice_usd": null
+  },
+  "remaining": [
+    "Validate the general upload retry against real provider transport, then adopt only in a freshly frozen campaign.",
+    "Run the remaining diverse source-only cases and assess reliability honestly.",
+    "Complete general installed-answer environment-repair routing; resolve redistribution terms before held-source publication.",
+    "Keep PR23 draft/unmerged; no research-branch merge."
+  ],
+  "new_models_or_resources_for_audit": 0
 }

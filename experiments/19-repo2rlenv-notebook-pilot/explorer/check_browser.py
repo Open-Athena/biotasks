@@ -16,7 +16,14 @@ with sync_playwright() as p:
     browser = p.chromium.launch(
         executable_path="/home/exedev/.local/bin/chromium",
         headless=True,
-        args=["--no-sandbox", "--disable-gpu", "--renderer-process-limit=1"],
+        # This static viewer needs no software GPU process on the shared VM.
+        args=[
+            "--no-sandbox",
+            "--disable-gpu",
+            "--renderer-process-limit=1",
+            "--no-zygote",
+            "--disable-software-rasterizer",
+        ],
     )
     page = browser.new_page()
     errors = []
