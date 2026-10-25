@@ -23,6 +23,52 @@ class InvalidStagedInputs(ValueError):
     """A declared input cannot be admitted; the setup worker may fix its recipe."""
 
 
+def workspace_paths(workspace, quarantine):
+    workspace, quarantine = Path(workspace), Path(quarantine)
+    if (
+        not workspace.is_absolute()
+        or not quarantine.is_absolute()
+        or workspace.parent.resolve() != workspace.parent
+        or quarantine.parent.resolve() != quarantine.parent
+        or workspace == quarantine
+        or workspace.is_relative_to(quarantine)
+        or quarantine.is_relative_to(workspace)
+    ):
+        raise ValueError("Workspace isolation needs separate canonical absolute paths")
+    return workspace, quarantine
+
+
+def isolate_workspace(workspace, quarantine):
+    """Move authoring state aside without deleting or following its contents."""
+    workspace, quarantine = workspace_paths(workspace, quarantine)
+    if workspace.is_symlink() or not workspace.is_dir():
+        raise ValueError("The authoring workspace must be a regular directory")
+    quarantine.mkdir(mode=0o700)
+    workspace.rename(quarantine / "original")
+    return {"state": "isolated", "workspace": str(workspace)}
+
+
+def restore_workspace(workspace, quarantine):
+    """Preserve unexpected staging writes before restoring the original state."""
+    workspace, quarantine = workspace_paths(workspace, quarantine)
+    original = quarantine / "original"
+    if quarantine.is_symlink() or original.is_symlink() or not original.is_dir():
+        raise ValueError("Original authoring state is unavailable for restoration")
+    recreated = workspace.exists() or workspace.is_symlink()
+    preserved = quarantine / "staging-created"
+    if recreated:
+        if preserved.exists() or preserved.is_symlink():
+            raise ValueError("Unexpected staging state already exists; refusing to overwrite it")
+        workspace.rename(preserved)
+    original.rename(workspace)
+    return {
+        "state": "restored",
+        "workspace": str(workspace),
+        "authoring_path_recreated": recreated,
+        "preserved_staging_path": str(preserved) if recreated else None,
+    }
+
+
 def stage_inputs(manifest_path):
     manifest = json.loads(Path(manifest_path).read_text())
     root = Path("/inputs")
@@ -268,7 +314,15 @@ def inventory(plan_path):
 
 
 if __name__ == "__main__":
-    if sys.argv[1] == "stage-inputs":
+    if sys.argv[1] in {"isolate-authoring-workspace", "restore-authoring-workspace"}:
+        if len(sys.argv) != 3 or not re.fullmatch(r"[0-9a-f]{32}", sys.argv[2]):
+            raise ValueError("Workspace isolation requires a controller-generated token")
+        operation = isolate_workspace if sys.argv[1].startswith("isolate-") else restore_workspace
+        print(
+            json.dumps(operation("/work/setup", "/work/setup-isolation-" + sys.argv[2])),
+            flush=True,
+        )
+    elif sys.argv[1] == "stage-inputs":
         stage_inputs(sys.argv[2])
     elif sys.argv[1] == "verify-inputs":
         verify_inputs()

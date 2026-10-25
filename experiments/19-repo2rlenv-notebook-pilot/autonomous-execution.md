@@ -58,6 +58,17 @@ existing finite wall-time boundaries without added byte/token/request caps.
 Reference and solver computation are limited to 600 seconds, verifier to 120.
 The setup worker retains two reference tests. Validation has one shared quality-repair allowance; no external operator supplies repair feedback.
 
+## Controlled setup staging
+
+During dependency build and input staging, the existing setup test temporarily
+moves the canonical authoring workspace aside and restores it before worker
+feedback. A scratch-dependent recipe can then fail inside the same GLM session
+before consuming a scientific reference attempt. Unexpected recreation is
+preserved and rejected; failed or uncertain restoration blocks execution. The
+original candidate hash check remains. This is a limited inherited-state check;
+the separate fresh-sandbox replay is still required. Model, setup-time, reference
+and scientific repair allowances remain unchanged.
+
 ## Preparation repair at the execution boundary
 
 The first preparation response is a `ReferencePlan`, validated against its JSON

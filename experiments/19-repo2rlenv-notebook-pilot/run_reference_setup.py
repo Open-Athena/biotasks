@@ -729,6 +729,9 @@ async def run(
                     if session.effective_preparation is not None
                     else None,
                 )
+                if remote.uncertain:
+                    result["incomplete_reason"] = "remote_state_uncertain"
+                    raise RuntimeError("Setup worker finalized with uncertain remote state")
                 if (
                     outcome.disposition == "blocked"
                     and session.tests == 0

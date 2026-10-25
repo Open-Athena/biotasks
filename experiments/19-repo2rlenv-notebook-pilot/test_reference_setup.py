@@ -16,6 +16,7 @@ from reference_remote import snapshot_inputs, verify_staging
 from reference_setup import (
     TEST_TOOL,
     PreparedReference,
+    SetupBudgetExceeded,
     SetupOutcome,
     SetupSession,
     direct_source_invocation,
@@ -68,6 +69,7 @@ class FakeRemote:
         self.missing_output = missing_output
         self.mutated_input = mutated_input
         self.manual_packages = {"base-runtime"}
+        self.isolated_workspaces = {}
 
     async def upload(self, local, remote):
         self.files[remote] = local.read_bytes()
@@ -114,6 +116,25 @@ class FakeRemote:
         self.blocked = blocked
 
     async def helper(self, args, label):
+        if args[0] == "isolate-authoring-workspace":
+            self.events.append((label, self.blocked, None))
+            saved = {k: v for k, v in self.files.items() if k.startswith("/work/setup/")}
+            self.isolated_workspaces[args[1]] = {"original": saved}
+            self.files = {k: v for k, v in self.files.items() if k not in saved}
+            return {"state": "isolated", "workspace": "/work/setup"}
+        if args[0] == "restore-authoring-workspace":
+            self.events.append((label, self.blocked, None))
+            saved = self.isolated_workspaces[args[1]]
+            unexpected = {k: v for k, v in self.files.items() if k.startswith("/work/setup/")}
+            saved["staging_created"] = unexpected
+            self.files = {k: v for k, v in self.files.items() if k not in unexpected}
+            self.files.update(saved["original"])
+            return {
+                "state": "restored",
+                "workspace": "/work/setup",
+                "authoring_path_recreated": bool(unexpected),
+                "preserved_staging_path": "synthetic preserved directory" if unexpected else None,
+            }
         if args[0] == "snapshot-inputs":
             self.files["/work/setup-inputs.json"] = b'{"files": []}'
             return {"files": []}
@@ -145,6 +166,148 @@ def session(tmp_path, remote=None):
         reference_seconds=10,
         max_tests=1,
     )
+
+
+def test_authoring_scratch_dependency_fails_before_reference_and_can_be_corrected(tmp_path):
+    scratch = "/work/setup/authoring-only.txt"
+
+    class ScratchRecipe(FakeRemote):
+        async def command(self, argv, seconds, label, **kwargs):
+            if label.startswith("setup-"):
+                recipe = self.files["/work/stage-inputs.sh"]
+                if b"authoring-only.txt" in recipe and scratch not in self.files:
+                    return {"exit_code": 1, "log": "Staging source is absent"}
+            return await super().command(argv, seconds, label, **kwargs)
+
+    async def run():
+        remote = ScratchRecipe()
+        remote.files[scratch] = b"synthetic original input\n"
+        remote.files["/work/setup/stage-inputs.sh"] = (
+            b"cp /work/setup/authoring-only.txt /inputs/input.txt\n"
+        )
+        s = session(tmp_path, remote)
+        await s.initialize()
+        response = json.loads(await s.test_reference())
+        assert response["status"] == "setup_failed"
+        assert s.tests == 0 and s.last_pass is None
+        assert not any(label.startswith("reference-") for label, _, _ in remote.events)
+        assert remote.files[scratch] == b"synthetic original input\n"
+        # The same worker can correct its recipe, retaining the computation
+        # allowance and the frozen scientific source/exports.
+        source = remote.files["/work/setup/analysis.py"]
+        remote.files["/work/setup/stage-inputs.sh"] = b"printf 'input\\n' > /inputs/input.txt\n"
+        assert json.loads(await s.test_reference())["status"] == "reference_executed"
+        assert s.tests == 1 and remote.files["/work/setup/analysis.py"] == source
+        assert (tmp_path / "trials/1/result.json").exists()
+        assert (tmp_path / "trials/2/result.json").exists()
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize(
+    "failure",
+    [
+        "build",
+        "uncertain_build",
+        "restore",
+        "build_restore",
+        "cancel",
+        "cancel_restore",
+        "budget",
+        "isolate",
+    ],
+)
+def test_isolation_failure_paths_preserve_primary_error_and_block_science(tmp_path, failure):
+    class Fault(FakeRemote):
+        async def command(self, argv, seconds, label, **kwargs):
+            if label.startswith("setup-"):
+                if failure in {"cancel", "cancel_restore"}:
+                    raise asyncio.CancelledError()
+                if failure == "budget":
+                    raise SetupBudgetExceeded("synthetic setup budget exhausted")
+                if failure in {"build", "uncertain_build", "build_restore"}:
+                    self.uncertain = failure == "uncertain_build"
+                    raise RuntimeError("primary build failure")
+            return await super().command(argv, seconds, label, **kwargs)
+
+        async def helper(self, args, label):
+            if args[0] == "isolate-authoring-workspace" and failure == "isolate":
+                raise RuntimeError("isolation failed")
+            if args[0] == "restore-authoring-workspace" and failure in {
+                "restore",
+                "build_restore",
+                "cancel_restore",
+            }:
+                raise RuntimeError("secondary restoration failure")
+            return await super().helper(args, label)
+
+    async def run():
+        remote = Fault()
+        original = remote.files["/work/setup/analysis.py"]
+        s = session(tmp_path, remote)
+        await s.initialize()
+        if failure == "budget":
+            assert json.loads(await s.test_reference())["status"] == "setup_budget_exhausted"
+        else:
+            error = asyncio.CancelledError if failure.startswith("cancel") else RuntimeError
+            message = (
+                None
+                if failure.startswith("cancel")
+                else (
+                    "isolation failed"
+                    if failure == "isolate"
+                    else "secondary restoration failure"
+                    if failure == "restore"
+                    else "primary build failure"
+                )
+            )
+            with pytest.raises(error, match=message):
+                await s.test_reference()
+        assert s.tests == 0 and s.last_pass is None
+        assert not any(label.startswith("reference-") for label, _, _ in remote.events)
+        receipt = json.loads((tmp_path / "trials/1/workspace-isolation.json").read_text())
+        unsafe = failure in {
+            "uncertain_build",
+            "restore",
+            "build_restore",
+            "cancel_restore",
+            "isolate",
+        }
+        assert remote.uncertain is unsafe
+        if not unsafe or failure == "isolate":
+            assert remote.files["/work/setup/analysis.py"] == original
+        if failure == "uncertain_build":
+            assert receipt["state"] == "restoration_skipped_uncertain"
+            assert not any(label.startswith("workspace-restore-") for label, _, _ in remote.events)
+        if failure in {"restore", "build_restore", "cancel_restore"}:
+            assert receipt["state"] == "restoration_failed"
+            assert receipt["restore_error_type"] == "RuntimeError"
+        assert (tmp_path / "trials/1/result.json").exists()
+
+    asyncio.run(run())
+
+
+def test_staging_cannot_hide_candidate_edits_by_recreating_authoring_directory(tmp_path):
+    class Recreated(FakeRemote):
+        async def command(self, argv, seconds, label, **kwargs):
+            if label.startswith("setup-"):
+                self.files["/work/setup/analysis.py"] = b"unapproved source edit\n"
+            return await super().command(argv, seconds, label, **kwargs)
+
+    async def run():
+        remote = Recreated()
+        original = remote.files["/work/setup/analysis.py"]
+        s = session(tmp_path, remote)
+        await s.initialize()
+        result = json.loads(await s.test_reference())
+        assert result["status"] == "candidate_invalid"
+        assert "reserved authoring workspace" in result["error"]
+        assert s.tests == 0 and s.last_pass is None
+        assert remote.files["/work/setup/analysis.py"] == original
+        preserved = next(iter(remote.isolated_workspaces.values()))["staging_created"]
+        assert preserved["/work/setup/analysis.py"] == b"unapproved source edit\n"
+
+    asyncio.run(run())
 
 
 @pytest.mark.parametrize("installed_by_staging", [False, True])
@@ -1012,9 +1175,9 @@ def test_failed_offline_policy_prevents_analysis(tmp_path):
 
 @pytest.mark.parametrize("transport", ["blocking", "async_session"])
 @pytest.mark.parametrize("export_failure", [False, True])
-@pytest.mark.parametrize("setup_exhausted", [False, True])
+@pytest.mark.parametrize("blocked_reason", [None, "budget", "uncertain"])
 def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
-    tmp_path, monkeypatch, export_failure, setup_exhausted, transport
+    tmp_path, monkeypatch, export_failure, blocked_reason, transport
 ):
     from types import SimpleNamespace
 
@@ -1074,9 +1237,12 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
         assert [call["source"] for call in original["operations"]] == [
             "original_measurement(result)"
         ]
-        if setup_exhausted:
+        if blocked_reason:
             session = kwargs["validate"].__self__
-            session.setup_remaining = -30.18
+            if blocked_reason == "budget":
+                session.setup_remaining = -30.18
+            else:
+                session.remote.uncertain = True
             assert session.tests == 0
             return successful_outcome().model_copy(update={"disposition": "blocked"})
         raise RuntimeError("fixture stage failure")
@@ -1098,10 +1264,16 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
         "max_tests": 1,
         "command_transport": transport,
     }
-    error = runner.SetupBudgetExceeded if setup_exhausted and not export_failure else RuntimeError
+    error = (
+        runner.SetupBudgetExceeded
+        if blocked_reason == "budget" and not export_failure
+        else RuntimeError
+    )
     message = (
         "before any controlled reference dispatch"
-        if setup_exhausted and not export_failure
+        if blocked_reason == "budget" and not export_failure
+        else "uncertain remote state"
+        if blocked_reason == "uncertain" and not export_failure
         else "fixture (stage|export) failure"
     )
     with pytest.raises(error, match=message):
@@ -1124,9 +1296,13 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
     result = json.loads((tmp_path / "run/result.json").read_text())
     assert result["status"] == "incomplete" and result["cleanup_verified"]
     assert result["construction_run"] is False and result["solver_run"] is False
-    if setup_exhausted:
+    if blocked_reason == "budget":
         assert result["incomplete_reason"] == "setup_budget_exhausted_before_reference"
         assert result["error_type"] == "SetupBudgetExceeded"
         assert result["reference_tests"] == 0
         assert result["setup_seconds_remaining"] == -30.18
+        assert json.loads((tmp_path / "run/outcome.json").read_text())["disposition"] == "blocked"
+    if blocked_reason == "uncertain":
+        assert result["incomplete_reason"] == "remote_state_uncertain"
+        assert result["error_type"] == "RuntimeError"
         assert json.loads((tmp_path / "run/outcome.json").read_text())["disposition"] == "blocked"

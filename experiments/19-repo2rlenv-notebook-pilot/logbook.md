@@ -4912,3 +4912,10 @@ The setup prompt already requires recorded-source staging independent of explora
 
 
 The unchanged037 source-bound reservation auditor releases only174's three never-dispatched stages, retaining both full used-stage holds. Aggregate196held/4unallocated within200authorized once; no invoice/credits or full-campaign guard change. No hosts or task sandboxes remain.
+
+
+## 25 October 2026 — expose authoring scratch inside the existing setup session
+
+The controlled test now moves the canonical authoring workspace aside only during environment build/staging, preserving and restoring original files before worker feedback. A scratch-dependent recipe fails before scientific dispatch, retaining the original attempt allowance. Unexpected recreation is preserved/rejected; failures/cancellation/uncertainty cannot admit science or mask an original error. A post-stage guard also keeps uncertain finalization an infrastructure outcome rather than a normal worker refusal. No generated task or source file was edited.
+
+The original scratch regression fails before the change; four unsafe-finalization cases also fail the old controller.96focused checks pass before the final guard; all290affected checks pass on the final source, with Ruff. Actual filesystem tests cover absent scratch, self-contained staging, restored original bytes and preserved unexpected directory/file/symlink writes. The prompt explains this limited workspace boundary; fresh replay remains mandatory. A source-bound synthetic provider check is prepared, not yet launched.

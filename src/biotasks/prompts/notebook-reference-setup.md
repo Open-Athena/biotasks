@@ -125,6 +125,12 @@ all declared data and caches from their recorded sources; it cannot rely on file
 downloaded during exploratory shell work. Those directories persist through the
 subsequent offline reference execution, not between setup tests.
 
+The controller also makes the authoring workspace `/work/setup` unavailable
+during the controlled environment build and input staging, then restores it
+before returning feedback. Do not recreate or write that reserved directory in
+your recipe. This exposes authoring-workspace dependencies; the later fresh
+sandbox replay remains necessary to check other inherited state.
+
 Confirm where each input-loading function actually looks for cached data in the
 reference process. Use installed package sources or a focused lookup-path check;
 do not assume a newly created temporary directory is that cache. Staging files

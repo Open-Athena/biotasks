@@ -11,6 +11,8 @@ import json
 import re
 import shlex
 import time
+import uuid
+from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
@@ -451,6 +453,74 @@ class SetupSession:
             await self.remote.download("/work/setup/" + name, directory / name)
         return inspect_candidate(directory, self.prepared)
 
+    @asynccontextmanager
+    async def isolated_authoring_workspace(self, directory):
+        """Expose scratch dependencies inside the existing worker feedback loop."""
+        token = uuid.uuid4().hex
+        path = directory / "workspace-isolation.json"
+        record = {"started": time.time(), "state": "incomplete", "token": token}
+        save_record(path, record)
+        try:
+            hidden = await self.remote.helper(
+                ["isolate-authoring-workspace", token],
+                f"workspace-isolate-{self.test_requests}",
+            )
+            if hidden != {"state": "isolated", "workspace": "/work/setup"}:
+                raise RuntimeError("Authoring-workspace isolation was not established")
+        except BaseException as error:
+            self.remote.uncertain = True
+            record.update(error_type=type(error).__name__, finished=time.time())
+            save_record(path, record)
+            raise
+        record["state"] = "isolated"
+        save_record(path, record)
+        primary = None
+        try:
+            yield
+        except BaseException as error:
+            primary = error
+            record["build_error_type"] = type(error).__name__
+            raise
+        finally:
+            try:
+                if self.remote.uncertain:
+                    record["state"] = "restoration_skipped_uncertain"
+                    if primary is None:
+                        raise RuntimeError(
+                            "Cannot restore authoring state after uncertain execution"
+                        )
+                else:
+                    try:
+                        restored = await self.remote.helper(
+                            ["restore-authoring-workspace", token],
+                            f"workspace-restore-{self.test_requests}",
+                        )
+                        if (
+                            restored.get("state") != "restored"
+                            or restored.get("workspace") != "/work/setup"
+                            or type(restored.get("authoring_path_recreated")) is not bool
+                        ):
+                            raise RuntimeError(
+                                "Authoring-workspace restoration was not established"
+                            )
+                        record.update(state="restored", restoration=restored)
+                    except BaseException as error:
+                        self.remote.uncertain = True
+                        record.update(
+                            state="restoration_failed", restore_error_type=type(error).__name__
+                        )
+                        if primary is None:
+                            raise
+                    else:
+                        if restored["authoring_path_recreated"] and primary is None:
+                            raise ValueError(
+                                "Staging recreated the reserved authoring workspace; "
+                                "use the declared data/cache roots and recorded sources"
+                            )
+            finally:
+                record["finished"] = time.time()
+                save_record(path, record)
+
     async def test_reference(self):
         if self.tests >= self.max_tests:
             return json.dumps({"error": "Reference-test allowance exhausted; report the blocker."})
@@ -503,12 +573,13 @@ class SetupSession:
                 ("dependency_assets.py", "dependency_assets.py"),
             ]:
                 await self.remote.upload(directory / name, "/work/" + target)
-            setup = await self.setup_command(
-                ["sh", "-eu", "/work/setup.sh"],
-                int(self.setup_remaining),
-                f"setup-{self.test_requests}",
-            )
-            record["setup"] = setup
+            async with self.isolated_authoring_workspace(directory):
+                setup = await self.setup_command(
+                    ["sh", "-eu", "/work/setup.sh"],
+                    int(self.setup_remaining),
+                    f"setup-{self.test_requests}",
+                )
+                record["setup"] = setup
             if setup["exit_code"] != 0:
                 record["status"] = "setup_failed"
                 return json.dumps(record)
