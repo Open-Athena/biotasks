@@ -1,0 +1,46 @@
+{
+  "assessment": "Verified against source, package evidence, and recorded output catalogs: the scientific endpoints are faithful to the notebook (all-textbook deletion scans), the exclusions are source-backed, and the cobra 0.32.1 details behind the public and private contracts check out (textbook.xml.gz ships inside the wheel; load_model tries the local Cobrapy repository first, making the proposed offline input staging faithful; the deletion implementation's product-then-frozenset enumeration yields exactly the with-repetition pair population 95 + C(95,2) = 4560 rows; reference exports carry an incidental 0..n-1 position column and set-repr ids that the proposed key normalization correctly discards). Two specification problems must be corrected before assets are frozen, both centered on how numerical noise and replay observations are specified. (1) The public rule that sign of near-zero optima must be preserved, combined with the handoff's demand that a probe clipping a ~1e-15 negative optimum to 0 must fail, forces any viable tolerance below the solver's own noise scale, contradicting the brief's open software choice; the same reference run already reports the same nominal quantity (ATPM single knockout) as 0.916647463751049 in one file and 0.916647463751082 in another. (2) The handoff's measured-facts section states as fact that replay differences go beyond row order, an inference the row-multiset fingerprints cannot establish, because each exported row embeds an order-dependent 0..n-1 position column renumbered under reordering, so a pure reorder changes the multiset even with identical values. Both are correctable specification issues; the underlying quantities, populations and comparison architecture are sound.",
+  "disposition": "revise",
+  "findings": [
+    {
+      "evidence": [
+        {
+          "path": "proposal/task_brief",
+          "quote": "sign of near-zero optima must be preserved"
+        },
+        {
+          "path": "proposal/validation_handoff",
+          "quote": "clip one near-zero negative optimum to 0; drop one row; duplicate one key; swap identifier ordering in one double-scan row \u2014 each must fail."
+        },
+        {
+          "path": "output-audit.json",
+          "quote": "\"minimum\": -3.743396437539173e-15"
+        },
+        {
+          "path": "output-audit.json",
+          "quote": "\"maximum\": 0.916647463751049"
+        },
+        {
+          "path": "output-audit.json",
+          "quote": "\"maximum\": 0.916647463751082"
+        }
+      ],
+      "problem": "The public and private grading rules make LP numerical noise part of the answer key. The recorded optima include noise-scale values (single-gene minimum \u2248 -3.7e-15; double-reaction minimum \u2248 -1.2e-13; audit examples as small as \u22481e-16), and the same reference run already reports different values for the same nominal knockout: the ATPM single-deletion growth appears as 0.916647463751049 in the single-reaction scan and 0.916647463751082 in the double-reaction scan, a \u22483e-14 discrepancy. The brief's requirement that the sign of near-zero optima must be preserved, combined with the handoff's demand that a probe clipping one near-zero negative optimum to 0 must fail, implies any working tolerance must lie below \u22481e-15\u20131e-13 \u2014 i.e., below the solver's own noise floor. Under the brief's open software choice, an alternative solver stack implementing the stated scientific definitions exactly would produce noise-scale values (including signs) that differ from GLPK's arithmetic trajectory and would thus fail a grader whose tolerance cannot accept a numerically equivalent correct answer. This is an unresolved target-definition problem being deferred into tolerances rather than specified.",
+      "required_change": "Revise both documents before freezing: (1) calibrate the growth tolerance above the measured noise floor using the already-planned per-key replay join and the observed cross-scan discrepancies, and state that grading uses |submitted \u2212 reference| \u2264 TOL in which noise-magnitude values (including their sign) are treated as equivalent; (2) replace the clip-one-near-zero-negative-optimum-to-0 mutation probe with a substantive wrong-answer control (e.g. altering a clearly nonzero growth value such as a \u22480.21/0.70/0.92 optimum, or a status flip), so every required-to-fail control remains consistent with the calibrated tolerance; (3) soften the public 'sign of near-zero optima must be preserved' wording to match the calibrated rule (solvers may report values exactly as computed, but grading tolerance must dominate solver-noise sign)."
+    },
+    {
+      "evidence": [
+        {
+          "path": "proposal/validation_handoff",
+          "quote": "an incidental integer position column (`genes`/`reactions`/`reaction_pair`, values 0..n-1)"
+        },
+        {
+          "path": "proposal/validation_handoff",
+          "quote": "Replays: all three repeated runs byte-differ and have *different* row-multiset fingerprints, so differences go beyond row order (value serialization and/or solver-noise variation across runs). No tolerance can be justified yet."
+        }
+      ],
+      "problem": "The handoff's measured-facts section asserts, as a measured fact, that replay differences go beyond row order. The recorded reference CSVs embed an order-dependent position column (values 0..n-1) that is renumbered when row order changes, so a pure reordering between runs necessarily changes every row and hence the row multiset even with bit-identical scientific values. The different row-multiset fingerprints therefore cannot establish that solver-noise variation exists, and the claim that differences go beyond row order is an unmeasured inference presented as an observation, which could bias tolerance calibration in either direction (against a justified tolerance, or in favor of an unjustifiably tight one).",
+      "required_change": "Correct the measured-facts entry to state only what was recorded (byte differences and different row-multiset fingerprints, attributable to reordering via the position column and/or value differences, not yet distinguishable), and note that the planned per-key join across the recorded replay catalogs is the actual measurement that must establish whether value spread exists. No tolerance conclusion should be drawn from row-multiset fingerprints."
+    }
+  ]
+}

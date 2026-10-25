@@ -1,0 +1,28 @@
+{
+  "assessment": "The proposal's scientific core is well-defined and source-verified. The solver-facing question fixes the correct full populations (all genes, all single reactions, all unordered 1- and 2-reaction combinations with repetition) \u2014 verified against cobra 0.32.1 `deletion.py`, which enumerates pairs as `{frozenset(comb) for comb in product(*element_lists)}`; the recorded 4560 = 95 + C(95,2) rows confirm this reading. Input provenance is verified in the pinned wheel: `DEFAULT_REPOSITORIES` puts the local `Cobrapy` repository first (reading `cobra/data/textbook.xml.gz` via importlib.resources), so the staged gunzipped SBML is byte-identical to what the reference parsed, and the model input does not disclose any deletion answer. Exclusions (subset demos, the iJO1366 multiprocessing timing benchmark, printed lookups of already-exported tables) are source-backed; the full-model double gene deletion was never a source branch, and no eligible science is dropped. The same-reaction row in file 3 is a faithful recomputation of the single scan, not a new branch. Noise-magnitude optima of either sign are correctly not treated as an exact answer key, and the handoff correctly recognizes that the replay row-multiset fingerprints are confounded by the embedded position column and defers tolerance to a measured calibration with a real evidenced lower bound. Uncalibrated TOL and pending staged-input/grader construction are executable-validation items, not spec blockers. One concrete defect must be fixed before the rules are frozen: the required-to-fail probe \"swap identifier ordering in one double-scan row\" is normalized away by the proposed key construction (sort the two identifier fields) and therefore cannot fail as written; the rule set needs either an explicit submission-side order check or a redesigned probe.",
+  "disposition": "revise",
+  "findings": [
+    {
+      "evidence": [
+        {
+          "path": "proposal/validation_handoff",
+          "quote": "Required-to-fail grader probes (revised per review; every one must fail):"
+        },
+        {
+          "path": "proposal/validation_handoff",
+          "quote": "swap identifier ordering in one double-scan row (breaking the normalized-key convention);"
+        },
+        {
+          "path": "proposal/validation_handoff",
+          "quote": "for file 3, sort the two identifier fields and treat an empty second field as the single-deletion (same-reaction) row."
+        },
+        {
+          "path": "proposal/task_brief",
+          "quote": "with the two identifiers in lexicographically non-decreasing order, and the second identifier column left **empty** for the single-deletion (same-reaction) rows."
+        }
+      ],
+      "problem": "The proposed grader is internally inconsistent about reaction-pair identifier ordering. Rule 1 constructs the grading key by sorting the two submitted identifier fields, so a submission row that swaps the order of a pair (e.g. `TKT1,ATPM` instead of `ATPM,TKT1`) produces the identical normalized key and would pass key-set equality (rule 2), status (rule 3) and tolerance (rule 4) checks. Yet the required-to-fail probe list asserts that swapping identifier ordering in one double-scan row must cause the submission to fail. As specified, that probe cannot fail, which means either the probe is invalid or a check enforcing the public lexicographic-order output convention is missing, and the assertion 'every one must fail' would be false at grading-construction time.",
+      "required_change": "Reconcile the comparison rules with the probe before freezing the grader: either (a) add an explicit submission-side format check that both identifier columns of file 3 are in the publicly specified lexicographically non-decreasing order (empty second field permitted only for same-reaction rows), rejecting any row that violates it \u2014 making the order-swap probe fail; or (b) withdraw the order-swap probe and replace it with a mutation that actually changes the normalized key (e.g. substituting a valid but wrong reaction identifier in one pair, distinct from the existing 'extra key' probe). Update the validation handoff accordingly so every listed probe is demonstrably fatal under the final rule set."
+    }
+  ]
+}
