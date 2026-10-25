@@ -5,9 +5,13 @@ tasks. Inspired by [Marin](https://github.com/marin-community/marin), it combine
 research through code, experiments and recorded results with focused, reusable
 pipelines and helpers.
 
-The project is in early development. The implemented CLI lists and reads bundled
-prompt templates. It does not render prompts, call models, generate tasks or
-validate scientific results.
+The project is in early development. The CLI inspects prompt templates and
+exposes bounded official Repo2RLEnv PR generation, local export and independent
+native controls on reserved Iris CPUs. Original bootstrap model calls are
+explicitly admitted; the workflow adds no model repair loop. It preserves task
+files, records separate control outcomes, verifies archives and cleans owned
+resources. See [generation](docs/generation.md) and
+[validation](docs/validation.md) for supported inputs and limits.
 
 `main` holds reasonably established tools, tests and the documentation needed to
 use and maintain them. Experiments and their evidence live on permanent research
