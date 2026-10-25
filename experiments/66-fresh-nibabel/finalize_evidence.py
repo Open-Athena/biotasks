@@ -58,6 +58,7 @@ summary = dict(
     nop_reward=0, oracle_reward=1, nop_exit=1, oracle_exit=0, untracked_failures_both=0,
     tracked_positive_pair=True, eligible_for_this_control_profile=True,
     selected_test_scope='nibabel/tests/test_parrec.py', whole_repository_test_suite_verified=False,
+    input_origin='Packaged phantom header fixtures adapted in memory by the original PR; no new observed biological samples; acquisition/simulation provenance not independently established',
     dataset_release=False, model_calls=13, model_actual_usd='0.473580', task_repairs=0,
     allocation_cpu_hours=allocation, total_allocated_cpu_hours=sum(allocation.values()),
     all_four_hf_anonymous_readbacks_verified=True, publications=publications,
