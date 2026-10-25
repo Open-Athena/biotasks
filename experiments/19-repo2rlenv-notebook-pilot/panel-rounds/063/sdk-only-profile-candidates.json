@@ -1,0 +1,59 @@
+{
+  "observed_at": "2026-10-25T06:25:42.681217+00:00",
+  "baseline_existing_completed_profile_campaign": 155,
+  "records": [
+    {
+      "campaign": 155,
+      "controller_sha256": "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188",
+      "sdk_creation_call_ast_sha256": "62fc5ef88bd915ad2a7ba363ecb6d9aeeb6c78e501701c55d2d004d715bb41b3",
+      "upstream_archive_sha256": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0"
+    },
+    {
+      "campaign": 154,
+      "controller_sha256": "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188",
+      "sdk_creation_call_ast_sha256": "62fc5ef88bd915ad2a7ba363ecb6d9aeeb6c78e501701c55d2d004d715bb41b3",
+      "upstream_archive_sha256": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+      "pipeline_status": "rejected",
+      "paid_sdk_owners": 4,
+      "current_hold_usd": "4.00"
+    },
+    {
+      "campaign": 159,
+      "controller_sha256": "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188",
+      "sdk_creation_call_ast_sha256": "62fc5ef88bd915ad2a7ba363ecb6d9aeeb6c78e501701c55d2d004d715bb41b3",
+      "upstream_archive_sha256": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+      "pipeline_status": "rejected",
+      "paid_sdk_owners": 5,
+      "current_hold_usd": "5.00"
+    },
+    {
+      "campaign": 160,
+      "controller_sha256": "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188",
+      "sdk_creation_call_ast_sha256": "62fc5ef88bd915ad2a7ba363ecb6d9aeeb6c78e501701c55d2d004d715bb41b3",
+      "upstream_archive_sha256": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+      "pipeline_status": "rejected",
+      "paid_sdk_owners": 4,
+      "current_hold_usd": "4.00"
+    }
+  ],
+  "new_profile_implemented": false,
+  "financial_releases_applied": false,
+  "new_models_resources_or_policy_changes": false,
+  "finding": "These terminal non-native cases share the exact controller, SDK image-creation call and upstream archive with the already-audited155. The original seven-stage auditor remains unchanged and still refuses them. A separate SDK-only profile would need complete original resource/lifetime/owner/creation/cleanup guards, appropriate negative controls and fresh absence checks before any release.",
+  "candidate_bound_not_applied": {
+    "price_source": "https://www.daytona.io/pricing",
+    "billing_source": "https://www.daytona.io/docs/billing/",
+    "observed_date": "2026-10-25",
+    "linux_profile": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "hourly_full_profile_usd": "0.332280",
+    "two_profiles_for_7500_seconds_usd": "1.384500",
+    "proposed_retained_hold_usd": "2.00",
+    "credits_or_free_storage_assumed": false,
+    "status": "Unadopted mathematical bound; original lifecycle/SDK-only execution-shape proof remains required. Not an invoice."
+  }
+}
