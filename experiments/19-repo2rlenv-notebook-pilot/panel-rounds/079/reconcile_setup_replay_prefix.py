@@ -12,6 +12,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "070"))
 from closed_session_bound import RATE, closed_session_bound  # noqa: E402
 
+sys.path.insert(
+    0, str(Path(__file__).resolve().parents[2] / "factory-checks/native-preparation-deadline")
+)
+from audit_prefix import audit_no_dispatch, frozen_sources  # noqa: E402
+
 FOLDERS = ("setup-raw", "replay")
 # Reviewed exact source family: one image-created SDK sandbox per stage; the
 # controller reaches only preparation/setup/replay, before review/native work.
@@ -72,11 +77,23 @@ def profile_config(profile):
             ["preparation", "setup", "replay", "specification"],
             CURRENT_SPECIFICATION_SOURCES,
         )
-    assert profile in {"grading", "workspace_grading"}
+    assert profile in {
+        "grading",
+        "workspace_grading",
+        "current_grading_rejection",
+        "current_native_preparation_failure",
+    }
+    grading_sources = {
+        "grading": GRADING_SOURCES,
+        "workspace_grading": WORKSPACE_GRADING_SOURCES,
+        "current_grading_rejection": CURRENT_SPECIFICATION_SOURCES,
+        "current_native_preparation_failure": CURRENT_SPECIFICATION_SOURCES,
+    }
     return (
         (*FOLDERS, "materialization-raw", "grading"),
-        ["preparation", "setup", "replay", "specification", "construction", "grading"],
-        GRADING_SOURCES if profile == "grading" else WORKSPACE_GRADING_SOURCES,
+        ["preparation", "setup", "replay", "specification", "construction", "grading"]
+        + (["native"] if profile == "current_native_preparation_failure" else []),
+        grading_sources[profile],
     )
 
 
@@ -87,7 +104,11 @@ def digest(raw):
 def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay"):
     folders, names, expected_sources = profile_config(profile)
     assert sources == expected_sources
-    rejected = profile in {"legacy_specification_rejection", "current_specification_rejection"}
+    rejected = profile in {
+        "legacy_specification_rejection",
+        "current_specification_rejection",
+        "current_grading_rejection",
+    }
     assert pipeline["status"] == ("rejected" if rejected else "infrastructure_failed")
     if rejected:
         assert not pipeline.get("failed_stage")
@@ -97,7 +118,13 @@ def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay")
     if repair:
         # This exact controller's proposal revision/review uses direct model
         # calls, not another sandbox. Other repairs are not admitted here.
-        assert profile in {"grading", "workspace_grading", "current_specification_rejection"}
+        assert profile in {
+            "grading",
+            "workspace_grading",
+            "current_specification_rejection",
+            "current_grading_rejection",
+            "current_native_preparation_failure",
+        }
         assert repair["kind"] == "specification_review"
         assert repair["target"] == "task_specification" and repair["allowance_consumed"] is True
         if profile == "current_specification_rejection":
@@ -159,6 +186,8 @@ def main():
             "setup_replay",
             "grading",
             "workspace_grading",
+            "current_grading_rejection",
+            "current_native_preparation_failure",
             "current_specification_rejection",
             "legacy_setup_replay",
             "legacy_specification_rejection",
@@ -218,8 +247,13 @@ def main():
     assert {n for n in manifest if n.endswith("/sandbox-claim.json")} == {
         f + "/sandbox-claim.json" for f in folders
     }
-    forbidden = ("native/",)
-    if a.profile not in {"grading", "workspace_grading"}:
+    forbidden = () if a.profile == "current_native_preparation_failure" else ("native/",)
+    if a.profile not in {
+        "grading",
+        "workspace_grading",
+        "current_grading_rejection",
+        "current_native_preparation_failure",
+    }:
         forbidden += ("materialization", "grading")
         if a.profile not in {"legacy_specification_rejection", "current_specification_rejection"}:
             forbidden += ("specification/",)
@@ -243,6 +277,22 @@ def main():
         sessions[folder] = original(folder + "/result.json")
     pipeline = original("pipeline.json")
     coarse, upper, records = audit(pipeline, sources, claims, sessions, clean, profile=a.profile)
+    native_preparation = None
+    if a.profile == "current_native_preparation_failure":
+        # A native failure alone is insufficient: prove the exact frozen runner
+        # never dispatched a supervisor, then price every preceding SDK session.
+        native_sources = frozen_sources(payload, submission["inputs"]["files"])
+        native_claims = [
+            original(name) for name in sorted(manifest) if name.startswith("native/trial-claims/")
+        ]
+        native_preparation = audit_no_dispatch(
+            pipeline,
+            original("native/result.json"),
+            original("native/oracle/trial.json"),
+            native_claims,
+            list(manifest),
+            native_sources,
+        )
     observations = [
         json.loads(p.read_text())
         for p in (launch / "typed-observations").glob(f"{a.number:03}-*.json")
@@ -250,7 +300,12 @@ def main():
     terminal = max(observations, key=lambda r: r["observed_at"])
     assert terminal["terminal"] and terminal["state"] == (
         "SUCCEEDED"
-        if a.profile in {"legacy_specification_rejection", "current_specification_rejection"}
+        if a.profile
+        in {
+            "legacy_specification_rejection",
+            "current_specification_rejection",
+            "current_grading_rejection",
+        }
         else "FAILED"
     )
     assert terminal["claim_sha256"] == digest(claim_raw)
@@ -263,9 +318,13 @@ def main():
         for r in ledger["reservations"]
         if r["scope"].startswith(f"autonomous-panel-{a.number:03}:")
     )
-    assert (
-        row["ceiling_usd"] == f"{len(folders):.2f}"
-        and row["state"] == "unused_stage_allowances_released_used_holds_unchanged"
+    native_unused = a.profile == "current_native_preparation_failure"
+    prior_hold = len(folders) + int(native_unused)
+    assert row["ceiling_usd"] == f"{prior_hold:.2f}"
+    assert row["state"] == (
+        "terminal_native_preparation_failure_full_reservation_held"
+        if native_unused
+        else "unused_stage_allowances_released_used_holds_unchanged"
     )
     row.update(
         ceiling_usd="1.00",
@@ -273,7 +332,7 @@ def main():
         reconciliation="All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Retain1USD; no invoices or credits assumed. See "
         + a.proof.relative_to(a.ledger.parent).as_posix(),
     )
-    released = Decimal(len(folders) - 1)
+    released = Decimal(prior_hold - 1)
     ledger.update(
         reserved_upper_bound_usd=f"{held - released:.2f}",
         unallocated_usd=f"{Decimal(ledger['ceiling_before_credits']) - held + released:.2f}",
@@ -298,6 +357,7 @@ def main():
         coarse_full_lifetimes_bound_usd=str(coarse),
         resource_upper_bound_usd=str(upper),
         records=records,
+        native_preparation_non_dispatch=native_preparation,
         retained_usd="1.00",
         released_usd=f"{released:.2f}",
         aggregate_held_usd=ledger["reserved_upper_bound_usd"],

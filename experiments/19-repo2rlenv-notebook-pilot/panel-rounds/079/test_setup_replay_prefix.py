@@ -93,7 +93,7 @@ def grading_evidence(profile="grading"):
         for f, i in zip(folders, [1, 2, 4, 5], strict=True)
     }
     clean["owners"] = list(folders)
-    return p, sources, claims, sessions, clean
+    return p, dict(sources), claims, sessions, clean
 
 
 @pytest.mark.parametrize("profile", ["grading", "workspace_grading"])
@@ -147,6 +147,110 @@ def test_different_complete_source_families_cannot_be_crosswired(profile):
     other = "workspace_grading" if profile == "grading" else "grading"
     with pytest.raises(AssertionError):
         module.audit(p, sources, claims, sessions, clean, profile=other)
+
+
+def current_grading_evidence():
+    p, sources, claims, sessions, clean = grading_evidence("current_grading_rejection")
+    p.update(status="rejected")
+    p.pop("failed_stage")
+    p["stages"][-1]["status"] = "rejected"
+    return p, sources, claims, sessions, clean
+
+
+def current_native_evidence():
+    p, sources, claims, sessions, clean = grading_evidence("current_native_preparation_failure")
+    p["failed_stage"] = "native"
+    p["stages"][-2]["status"] = "completed"
+    p["stages"][-1]["status"] = "incomplete"
+    return p, sources, claims, sessions, clean
+
+
+def test_native_preparation_clock_profile_prices_four_sessions_only():
+    # Financial main additionally requires the independent exact-source
+    # no-dispatch proof; a native failure does not establish that by itself.
+    coarse, upper, records = module.audit(
+        *current_native_evidence(), profile="current_native_preparation_failure"
+    )
+    assert coarse == Decimal("2.769000") and upper < 1
+    assert len(records) == 4
+
+
+@pytest.mark.parametrize("defect", ["source", "grading", "extra_session", "native_completed"])
+def test_native_preparation_clock_profile_refuses_other_sources_or_incomplete_prefix(defect):
+    p, sources, claims, sessions, clean = current_native_evidence()
+    if defect == "source":
+        sources.pop("upload_transfer.py")
+    elif defect == "grading":
+        p["stages"][-2]["status"] = "incomplete"
+    elif defect == "extra_session":
+        claims["native"] = claims["grading"]
+    else:
+        p["stages"][-1]["status"] = "completed"
+    with pytest.raises(AssertionError):
+        module.audit(
+            p, sources, claims, sessions, clean, profile="current_native_preparation_failure"
+        )
+
+
+@pytest.mark.parametrize("repair", [True, False])
+def test_current_grading_rejection_prices_all_four_closed_sessions(repair):
+    args = current_grading_evidence()
+    if not repair:
+        args[0].pop("quality_repair")
+    coarse, upper, records = module.audit(*args, profile="current_grading_rejection")
+    assert coarse == Decimal("2.769000") and upper < 1
+    assert len(records) == 4
+
+
+@pytest.mark.parametrize(
+    "defect",
+    [
+        "source",
+        "missing_transfer",
+        "infrastructure_failure",
+        "failed_stage",
+        "native",
+        "extra_session",
+        "unfinished_grading",
+        "wrong_repair",
+        "unvalidated_repair",
+        "outside_stage",
+        "missing_cleanup",
+        "profile",
+    ],
+)
+def test_current_grading_rejection_refuses_other_sources_topologies_and_outcomes(defect):
+    p, sources, claims, sessions, clean = copy.deepcopy(current_grading_evidence())
+    if defect == "source":
+        sources["run_reference_setup.py"] = module.WORKSPACE_GRADING_SOURCES[
+            "run_reference_setup.py"
+        ]
+    elif defect == "missing_transfer":
+        sources.pop("upload_transfer.py")
+    elif defect == "infrastructure_failure":
+        p["status"] = "infrastructure_failed"
+    elif defect == "failed_stage":
+        p["failed_stage"] = "grading"
+    elif defect == "native":
+        p["stages"].append({"name": "native"})
+    elif defect == "extra_session":
+        claims["native"] = claims["grading"]
+    elif defect == "unfinished_grading":
+        p["stages"][-1]["status"] = "incomplete"
+    elif defect == "wrong_repair":
+        p["quality_repair"]["kind"] = "comparison_diagnosis"
+    elif defect == "unvalidated_repair":
+        p["quality_repair"]["validation_status"] = "revise"
+    elif defect == "outside_stage":
+        sessions["grading"]["started"] = 150
+    elif defect == "missing_cleanup":
+        clean["original_all_cleanup_passed"] = False
+    else:
+        with pytest.raises(AssertionError):
+            module.audit(p, sources, claims, sessions, clean, profile="workspace_grading")
+        return
+    with pytest.raises(AssertionError):
+        module.audit(p, sources, claims, sessions, clean, profile="current_grading_rejection")
 
 
 @pytest.mark.parametrize("profile", ["legacy_setup_replay", "legacy_specification_rejection"])
