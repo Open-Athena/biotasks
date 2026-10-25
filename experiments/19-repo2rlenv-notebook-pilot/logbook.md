@@ -4750,3 +4750,6 @@ Reserve the resulting full5USD for original Scanpy168, retaining150's original n
 
 
 Source-only168 passed the unchanged frozen-input, compatibility, funding and typed pool-admission checks and was submitted with no other campaign active. Its217-file runtime differs from167 only in source_operations.py and its regression tests; both source assets match150 exactly. Input commit676da932e3d8416115e8a60350bcce7dea023438 is a private ref, not pushed. Public runtimebae6a7a2; the full5USDreservation remains unchanged. [Freeze](panel-rounds/069/freeze-168.json), [admission](panel-rounds/069/submission-168.json). No viewer or scientific artifact edits.
+
+
+The Pyteomics139 metadata follow-up streamed the44,601,786-byte source-hosted archive without retaining/extracting raw biological data. Its13members contain no explicitly named license/readme/notice file. This adds archive-structure evidence, not a finding that no grant exists elsewhere; data redistribution remains unestablished and the publication hold is unchanged. The current documentation now distinguishes active168 from the last selected Scanpy150 outcome. The unchanged065financial auditor refused167's unrecognized setup implementation, so no additional money was released.
