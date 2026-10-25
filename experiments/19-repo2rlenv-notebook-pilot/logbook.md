@@ -4685,3 +4685,11 @@ Reserve5USDfor original Scanpy164after the unchanged auditor releases163’s fou
 ### 2026-10-25 — original Scanpy164 admitted
 
 Funded preflight validates all216runtimeidentities, unchanged original150assets, source-bound provider compatibility and existing policy. Exactly four runtime paths differ from163: the general setup prompt and read-only release gate/helper/regression test. Typed admission found no other live campaigns; full source-only164 is submitted within its existing5USDreservation. No extra tests, repairs, model/token limits, source methods or data reductions were introduced.199USDheld/1free within200authorized. The new setup prompt’s benefit is not established yet. See round060.
+
+### 2026-10-25 — Scanpy164 repeats setup-only failure; budget policy not changed
+
+Original164stopped in7.43minutes/29requests, after registry resolution and process-cache lookup exhausted its two reference dispatches before scientific execution. GLM submitted further cache corrections but did not claim them validated. The general preflight prompt’s benefit is not established. All414sciencefiles/22rootfiles and fresh one-owner cleanup are verified; the unchanged financial auditor releasesonly4never-dispatched stages and retains the used setup1USDhold.195USDreserved/5unallocated within200authorized. No active workers. Asked the user whether to replace the two-test cap with one shared30minuteexecutionbudget for setup commands/reference tests, preserving per-reference600seconds, overall time/spending/source/repair rules. This remains a proposal; no dependent code or run is adopted while awaiting the answer.
+
+### 2026-10-25 — reserve a different domain while the setup-budget proposal is pending
+
+Reserve5USDfor original COBRApy165on the exact216-file runtime used by164, preserving the existing two-reference-test policy. This is source-only cross-domain validation, not adoption of the pending shared-budget proposal. Original133source/metadata/notices and common model/resource/time/repair limits remain; no prior task, answer or diagnostic hint is supplied. The unchanged164unused-stage audit releasesonlyfournever-dispatchedallowances.200USDreserved/0free within200authorized.165not submitted; source freeze and typed admission still required.
