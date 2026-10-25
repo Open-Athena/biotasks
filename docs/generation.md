@@ -202,3 +202,23 @@ explicitly compared profile. The command does not establish broad repository
 yield, training readiness, sandbox security or a fix for native timeout/retry
 semantics. Report discovery, exports, completed workflows, control flags and
 release readiness separately.
+
+## Completed generations after a local connector update
+
+An explicit `completed` case may import a generation from a bundled known
+profile after a local connector update. It must retain its original plan,
+payload, complete seven-stage journal and evidence, raw/cache inventories,
+publication readbacks, complete model billing and settled CPU/model reservations.
+Active, partial, held, unknown or changed generations are rejected. The import
+only verifies old evidence; it cannot submit, observe, reconcile or complete the
+old run. Normal `fresh` resume still requires the exact current implementation.
+A new consumer plan records the original and consuming code identities. It does
+not count the imported task as newly generated and makes no model call.
+
+Docker image tags are lowercase, while original repository/cache names can
+retain case. Local export resolves one matching repository identity, rejects
+ambiguous or unsafe caches, and normalizes cache directory names only in its
+disposable staging copy for the unchanged upstream inline exporter. Original
+cache JSON, raw task/grading assets and source lineage remain unchanged. The
+recorded mapping and staging inventory expose this infrastructure adaptation;
+missing recipes or mismatched repository/image/ref identities remain errors.

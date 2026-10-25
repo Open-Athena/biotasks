@@ -24,10 +24,11 @@ def verify(root: Path, *, allow_legacy: bool = False) -> dict[str, Any]:
         "SDK configuration changed",
     )
     if "generation_code_identity" in plan:
-        require(
-            plan["generation_code_identity"] == resources.code_identity(),
-            "Generation implementation changed",
-        )
+        if plan["generation_code_identity"] != resources.code_identity():
+            require(allow_legacy, "Generation implementation changed")
+            from biotasks.generation import completed_import
+
+            completed_import.verify(root, plan)
     else:
         # A known old receipt is import-only. No active old plan may be driven by
         # a differently packaged implementation or silently upgraded in place.

@@ -9,6 +9,7 @@ inputs. Only a fully audited directory is atomically made available to validate.
 import importlib
 import json
 import os
+import re
 import shutil
 import sys
 import tomllib
@@ -116,19 +117,35 @@ def cache_bindings(native, raw, cache):
             "Only native local bootstrap images are supported",
         )
         owner, name, short = native._parse_local_tag(image)
-        root = cache / (owner + "__" + name)
-        matches = (
-            sorted(p for p in root.iterdir() if p.is_dir() and p.name.startswith(short[:12]))
-            if root.is_dir()
-            else []
+        key = owner + "__" + name
+        require(
+            re.fullmatch(r"[a-z0-9_.-]+__[a-z0-9_.-]+", key)
+            and re.fullmatch(r"[0-9a-f]{12,40}", short),
+            "Invalid bootstrap image identity",
         )
+        roots = [p for p in cache.iterdir() if p.name.casefold() == key]
+        require(len(roots) == 1, "Missing or ambiguous bootstrap repository cache")
+        root = roots[0]
+        require(
+            re.fullmatch(r"[A-Za-z0-9_.-]+__[A-Za-z0-9_.-]+", root.name)
+            and root.is_dir()
+            and not root.is_symlink(),
+            "Unsafe bootstrap repository cache",
+        )
+        matches = sorted(p for p in root.iterdir() if p.name.startswith(short[:12]))
         require(len(matches) == 1, "Missing or ambiguous bootstrap cache identity")
+        require(matches[0].is_dir() and not matches[0].is_symlink(), "Unsafe bootstrap slot")
         path = matches[0] / "bootstrap.json"
+        require(path.is_file() and not path.is_symlink(), "Unsafe bootstrap record")
         saved = read_json(path)
         require(
-            saved.get("repo") == owner + "/" + name
+            isinstance(saved.get("repo"), str)
+            and re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", saved["repo"])
+            and saved["repo"].casefold() == owner + "/" + name
             and saved.get("image_tag") == image
-            and saved.get("ref", "").startswith(short),
+            and isinstance(saved.get("ref"), str)
+            and re.fullmatch(r"[0-9a-f]{40}", saved["ref"])
+            and saved["ref"].startswith(short),
             "Bootstrap cache/image identity differs",
         )
         require(
@@ -142,6 +159,7 @@ def cache_bindings(native, raw, cache):
                 "sha256": sha(path),
                 "repo": saved["repo"],
                 "ref": saved["ref"],
+                "staging_root": key,
             }
         )
     return tasks, bindings
@@ -239,6 +257,13 @@ def _prepare(config, native, failpoint):
         and inventory(stage / "workspace/bootstrap") == cache_files,
         "Staged inputs differ",
     )
+    mappings = {row["cache"].split("/", 1)[0]: row["staging_root"] for row in caches}
+    for original, canonical in sorted(mappings.items()):
+        if original != canonical:
+            target = stage / "workspace/bootstrap" / canonical
+            require(not target.exists(), "Staged bootstrap cache collision")
+            (stage / "workspace/bootstrap" / original).rename(target)
+    staged_cache = inventory(stage / "workspace/bootstrap")
     failpoint("before_native_export")
     cwd = Path.cwd()
     try:
@@ -250,6 +275,10 @@ def _prepare(config, native, failpoint):
     finally:
         os.chdir(cwd)
     failpoint("after_native_export")
+    require(
+        inventory(stage / "workspace/bootstrap") == staged_cache,
+        "Native exporter changed staged bootstrap evidence",
+    )
     require(native_result.tasks_rewritten == len(tasks), "Not all raw exports were prepared")
     require(not native_result.image_pushed, "Local preparation pushed an image")
     prepared = inventory(stage / "prepared")
@@ -296,6 +325,8 @@ def _prepare(config, native, failpoint):
         "native_result": asdict(native_result),
         "changed_files": changed,
         "prepared_files": prepared,
+        "cache_root_mapping": mappings,
+        "staged_cache_files": staged_cache,
         "validation_manifest_sha256": sha(stage / "validation-manifest.json"),
         "upstream_source_modified": False,
         "model_calls": 0,
