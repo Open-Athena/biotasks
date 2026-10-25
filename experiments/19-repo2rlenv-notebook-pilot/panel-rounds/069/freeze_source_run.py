@@ -22,7 +22,12 @@ def main():
     parser.add_argument("--prior", type=int, required=True)
     parser.add_argument("--private-root", type=Path, required=True)
     parser.add_argument("--baseline-round", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True, help="Directory for a new public freeze")
     args = parser.parse_args()
+    output = args.output.resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    assert not (output / f"freeze-{args.number:03}.json").exists()
+    assert not (output / "runtime-identity.json").exists()
     repo = Path(__file__).resolve().parents[4]
     experiment = repo / "experiments/19-repo2rlenv-notebook-pilot"
     sys.path.insert(0, str(experiment))
@@ -88,11 +93,10 @@ def main():
     for name, raw in files.items():
         (destination / name).write_bytes(raw)
     manifest = json.loads(files["inputs.json"])
-    output = Path(__file__).parent
     seed = json.loads(files["seeds.json"])[0]
     freeze = {
         "campaign": args.number,
-        "source_id": seed.get("id", seed["title"]),
+        "source_id": seed.get("id") or seed.get("title") or seed["url"],
         "input_revision": revision,
         "private_input_ref_not_pushed": True,
         "public_runtime_revision": public_revision,

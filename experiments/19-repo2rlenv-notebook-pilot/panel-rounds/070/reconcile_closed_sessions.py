@@ -8,7 +8,7 @@ from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
 
-from closed_session_bound import RATE, closed_session_bound
+from closed_session_bound import RATE, admitted_profile, closed_session_bound
 
 
 def digest(raw):
@@ -27,11 +27,9 @@ def main():
     assert not args.proof.exists()
     previous_raw = args.prior_proof.read_bytes()
     previous = json.loads(previous_raw)
-    assert previous["applied"] and previous["retained_usd"] == "4.00"
-    assert (
-        previous["profile"]
-        == "sdk_only_five_full_lifetimes_one_comparison_repair_no_serial_assumption"
-    )
+    folders, prior_retained, prior_implementation = admitted_profile(previous)
+    prior_helper = Path(__file__).resolve().parents[1] / prior_implementation
+    assert digest(prior_helper.read_bytes()) == previous["helper_sha256"]
     number = previous["campaign"]
     archive = args.private_root / f"archives/{number:03}"
     manifest_raw = (archive / "sealed-manifest.json").read_bytes()
@@ -59,6 +57,8 @@ def main():
         assert checked[name] == expected
     pipeline = original("pipeline.json")
     assert pipeline["status"] == "rejected"
+    if len(folders) == 4:
+        assert not pipeline.get("quality_repair")
     expected_sources = {
         "run_autonomous.py": "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188",
         "run_reference_setup.py": "fc83bf2ecd9f201b4bfd8c47cb07740619d09c66fc8df5a37435eb95af5b2d0b",
@@ -91,12 +91,13 @@ def main():
     usage_raw = args.usage.read_bytes()
     usage = json.loads(usage_raw)
     assert usage["campaign"] == number and usage["source_archive_manifest_sha256"] == manifest_hash
-    folders = {"setup-raw", "replay", "materialization-raw", "grading", "grading-comparison-repair"}
     assert {name for name in manifest if name.endswith("/sandbox-claim.json")} == {
         name + "/sandbox-claim.json" for name in folders
     }
     assert not any(name.startswith("native/") for name in manifest)
-    assert len(usage["records"]) == 5 and {r["stage"] for r in usage["records"]} == folders
+    assert (
+        len(usage["records"]) == len(folders) and {r["stage"] for r in usage["records"]} == folders
+    )
     owners, ids, records = [], [], []
     for observation in usage["records"]:
         folder = observation["stage"]
@@ -124,7 +125,7 @@ def main():
             config["cleanup_seconds"],
         )
         records.append({"stage": folder, **result})
-    assert len(set(ids)) == len(set(owners)) == 5 and set(owners) == set(clean["owners"])
+    assert len(set(ids)) == len(set(owners)) == len(folders) and set(owners) == set(clean["owners"])
     upper = sum(Decimal(r["resource_upper_bound_usd"]) for r in records)
     assert 0 < upper < 1
     before = args.ledger.read_bytes()
@@ -142,12 +143,13 @@ def main():
     row.update(
         ceiling_usd="1.00",
         state="terminal_full_closed_sdk_lifetimes_bound_reconciled",
-        reconciliation="Exact known creator, all five closed controller lifetimes priced at full resources plus300s at each end, cross-checked with original-ID provider usage and fresh cleanup. Retain1USD; no credits or final invoice assumption. See "
+        reconciliation="Exact known creator, all recorded closed controller lifetimes priced at full resources plus300s at each end, cross-checked with original-ID provider usage and fresh cleanup. Retain1USD; no credits or final invoice assumption. See "
         + args.proof.relative_to(args.ledger.parent).as_posix(),
     )
+    released = prior_retained - Decimal(1)
     ledger.update(
-        reserved_upper_bound_usd=f"{held - 3:.2f}",
-        unallocated_usd=f"{Decimal(ledger['ceiling_before_credits']) - held + 3:.2f}",
+        reserved_upper_bound_usd=f"{held - released:.2f}",
+        unallocated_usd=f"{Decimal(ledger['ceiling_before_credits']) - held + released:.2f}",
     )
     after = (json.dumps(ledger, indent=2) + "\n").encode()
     proof = {
@@ -171,7 +173,7 @@ def main():
         "hourly_full_resource_rate_usd": str(RATE),
         "resource_upper_bound_usd": str(upper),
         "retained_usd": "1.00",
-        "released_usd": "3.00",
+        "released_usd": f"{released:.2f}",
         "aggregate_reserved_usd": ledger["reserved_upper_bound_usd"],
         "unallocated_usd": ledger["unallocated_usd"],
         "actual_provider_invoice_usd": None,

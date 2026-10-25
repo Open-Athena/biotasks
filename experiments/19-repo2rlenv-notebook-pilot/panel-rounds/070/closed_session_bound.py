@@ -52,3 +52,24 @@ def closed_session_bound(session, pipeline, periods, cleanup_seconds):
         "resource_upper_bound_usd": str(bound),
         "provider_reported_price_usd": str(total_reported),
     }
+
+
+def admitted_profile(previous):
+    """Only the two already audited SDK-only topologies are eligible."""
+    base = ("setup-raw", "replay", "materialization-raw", "grading")
+    shapes = {
+        "sdk_only_four_full_lifetimes_no_serial_assumption": (
+            base,
+            "3.00",
+            "065/reconcile_sdk_only.py",
+        ),
+        "sdk_only_five_full_lifetimes_one_comparison_repair_no_serial_assumption": (
+            (*base, "grading-comparison-repair"),
+            "4.00",
+            "068/reconcile_sdk_comparison_repair.py",
+        ),
+    }
+    assert previous["applied"] is True and previous["profile"] in shapes
+    folders, retained, implementation = shapes[previous["profile"]]
+    assert previous["retained_usd"] == retained and previous["priced_sandboxes"] == len(folders)
+    return set(folders), Decimal(retained), implementation

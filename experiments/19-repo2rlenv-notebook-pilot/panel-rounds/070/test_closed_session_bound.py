@@ -102,3 +102,37 @@ def test_refuse_incomplete_or_inconsistent_lifetimes(defect):
         margin = 0
     with pytest.raises(AssertionError):
         module.closed_session_bound(session, pipeline, periods, margin)
+
+
+@pytest.mark.parametrize(
+    "count,retained,key",
+    [
+        (4, "3.00", "sdk_only_four_full_lifetimes_no_serial_assumption"),
+        (5, "4.00", "sdk_only_five_full_lifetimes_one_comparison_repair_no_serial_assumption"),
+    ],
+)
+def test_admit_exact_previous_profile(count, retained, key):
+    folders, amount, _ = module.admitted_profile(
+        {"applied": True, "profile": key, "retained_usd": retained, "priced_sandboxes": count}
+    )
+    assert len(folders) == count and amount == Decimal(retained)
+
+
+@pytest.mark.parametrize("defect", ["count", "amount", "unapplied", "unknown"])
+def test_refuse_other_previous_profile(defect):
+    previous = {
+        "applied": True,
+        "profile": "sdk_only_four_full_lifetimes_no_serial_assumption",
+        "retained_usd": "3.00",
+        "priced_sandboxes": 4,
+    }
+    if defect == "count":
+        previous["priced_sandboxes"] = 5
+    elif defect == "amount":
+        previous["retained_usd"] = "5.00"
+    elif defect == "unapplied":
+        previous["applied"] = False
+    else:
+        previous["profile"] = "unknown"
+    with pytest.raises(AssertionError):
+        module.admitted_profile(previous)
