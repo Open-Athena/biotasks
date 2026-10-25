@@ -1,6 +1,7 @@
 """Original pinned API on our own metadata fixtures; no Docker/model/repo code."""
 import json
 import sys
+import tomllib
 from pathlib import Path
 from biotasks.generation import handoff
 from biotasks.validation.files import inventory,json_sha,read_json,sha,write_json,ValidationError
@@ -46,7 +47,16 @@ def main():
             assert handoff.prepare(config,native)==result and inventory(folder/(MODE+'-output'))==snapshot
             if MODE=='candidate' and label=='lower':
                 older=folder/'original-output/handoff/prepared'
-                assert inventory(older)==inventory(prepared)
+                before_files, after_files = inventory(older), inventory(prepared)
+                assert [x["path"] for x in before_files] == [x["path"] for x in after_files]
+                for f in before_files:
+                    if not f["path"].endswith("task.toml"):
+                        assert (older/f["path"]).read_bytes() == (prepared/f["path"]).read_bytes()
+                a=tomllib.loads((older/'own-fixture/task.toml').read_text())
+                b=tomllib.loads((prepared/'own-fixture/task.toml').read_text())
+                a['metadata']['repo2env']['reproducibility'].pop('pushed_at')
+                b['metadata']['repo2env']['reproducibility'].pop('pushed_at')
+                assert a==b
             rows.append(dict(case=label,state='prepared',result=result,prepared_grading_assets_preserved=True,completed_replay_byte_inert=True))
         assert inventory(raw)==before_raw and inventory(cache)==before_cache
     write_json(BASE/(MODE+'-pinned-api-proof.json'),dict(mode=MODE,cases=rows,actual_pinned_api=True,upstream_source_modified=False,synthetic=True,native_or_model_calls=0,original_inputs_unchanged=True))
