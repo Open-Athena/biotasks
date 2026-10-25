@@ -1,0 +1,60 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+##############################################################################
+##  DendroPy Phylogenetic Computing Library.
+##
+##  Copyright 2010-2026 Jeet Sukumaran, Mark T. Holder, and Matthew Andres Moreno.
+##  All rights reserved.
+##
+##  See "LICENSE.rst" for terms and conditions of usage.
+##
+##  If you use this work or any portion thereof in published work,
+##  please cite it as:
+##
+##     Moreno, M. A., Holder, M. T., & Sukumaran, J. (2024). DendroPy 5: a
+##     mature Python library for phylogenetic computing. Journal of Open
+##     Source Software, 9(101), 6943, https://doi.org/10.21105/joss.06943
+##
+##############################################################################
+
+"""
+Tests statistical routines.
+"""
+
+import unittest
+import os
+import sys
+sys.path.insert(0, os.path.dirname(__file__))
+from support import dendropytest
+from dendropy.calculate import statistics
+from dendropy.utility import messaging
+
+_LOG = messaging.get_logger(__name__)
+
+class HpdCalculationTests(dendropytest.ExtendedTestCase):
+    """
+    Test reference values as given by ``hpd.emp``, in the "TeachingDemos" package
+    of R.
+    """
+
+    def testEmpiricalUnimodalHpd1(self):
+        # Normal[mu=100, sd=1)
+        v = [100.93356, 100.66576, 99.44097, 100.60761, 103.65723, 101.15563,
+                99.09657, 100.39654, 98.77339, 101.13712, 99.33979, 99.99060,
+                100.39395, 101.68240, 100.99664, 99.17798, 100.83020, 98.90373,
+                100.30441, 99.49553, 100.52652, 99.76291, 99.95605, 99.63605,
+                99.21535, 100.51619, 100.55036, 101.21747, 101.04181, 97.76084,
+                100.19069, 99.46182, 100.47579, 99.56889, 100.23977, 101.22907,
+                97.85931, 100.86051, 99.56121, 100.44109, 100.02328, 98.62446,
+                100.11008, 100.12700, 99.27087, 100.72895, 99.06796, 99.38019,
+                99.79908, 100.82761, 101.26901, 99.88911, 98.09761, 99.16706,
+                98.98752, 100.10088, 100.58883, 99.42982, 101.90322, 101.22817,
+                101.36052, 97.70629, 100.15950, 99.39458, 100.19414, 103.43317,
+                100.32429, 98.90429, 101.28049, 99.82948, 100.96041, 99.46024,
+                98.22509, 101.63878, 100.66998, 101.82238, 99.49847, 100.41055,
+                98.71792, 99.66001, 98.53177, 99.11997, 100.14802, 98.96423,
+                101.93145, 100.09478, 100.85930, 99.82181, 101.50284, 99.93301,
+                99.57168, 98.19978, 100.90708, 99.25086, 101.74170, 99.86034,
+                99.85785, 99.89154, 99.62313, 99.41994,]
+        #==> 101.82238 97.70629
