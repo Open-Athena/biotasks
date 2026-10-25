@@ -1,0 +1,61 @@
+{
+  "checked_at": "2026-10-25T22:05:23.679113+00:00",
+  "status": "offline_candidate_validated_not_live_adopted",
+  "checks": [
+    {
+      "name": "transport",
+      "passed": 115,
+      "exit_status": 0,
+      "full_private_log_sha256": "478cfe4d0947efad25e1fbdc1f1c0bb44fb5976ed2361b6f80f8757f92159764",
+      "peak_rss_kib": 67436,
+      "real_models_or_provider_dispatches": 0
+    },
+    {
+      "name": "worker_regressions",
+      "passed": 148,
+      "exit_status": 0,
+      "full_private_log_sha256": "61ad4053f92c94800ecc6caabf6b8265da5b6158c11ec4ef7413bc1697f4daaf",
+      "peak_rss_kib": 163972,
+      "real_models_or_provider_dispatches": 0
+    },
+    {
+      "name": "runtime_pin",
+      "passed": 12,
+      "exit_status": 0,
+      "full_private_log_sha256": "03633d3b2828202a4d39515f5b56cb3913363c59fba2e9bf95236ca687519d27",
+      "peak_rss_kib": 35372,
+      "real_models_or_provider_dispatches": 0
+    }
+  ],
+  "total_passed": 275,
+  "ruff_lint_and_format": "pass",
+  "focused_type_check": "pass",
+  "candidate_source_sha256": {
+    "src/biotasks/chat_author.py": "64a53f44bffe0cbd449b5ac450c7452d8f52a0088de1ec2e8ee720545131d4c9",
+    "tests/test_chat_author.py": "586df28fdf395385b055b7d71141fd9d6024ba24bd4616c2b95586ae2ffc80fa",
+    "experiments/19-repo2rlenv-notebook-pilot/panel-rounds/069/freeze_source_run.py": "66710b3a41340db3f49d7e6452d63f5d4b83128002bd8af48449e3b7f812e426",
+    "experiments/19-repo2rlenv-notebook-pilot/panel-rounds/069/test_freeze_source_run.py": "82cffe35d102acd63b9956ae88efcc3380f68e853a7322fa7977c952cae23bf6"
+  },
+  "preserved_unsuccessful_check_attempts": [
+    {
+      "attempt": "upstream_runtime_python",
+      "outcome": "pytest was not installed; no tests executed"
+    },
+    {
+      "attempt": "sandboxed_combined_worker_suite",
+      "outcome": "Interrupted after 134 progress dots while awaiting a local asyncio.to_thread file copy before provider/model dispatch; no complete suite result or final peak RSS claimed."
+    },
+    {
+      "attempt": "sandboxed_isolated_worker_test",
+      "outcome": "Timed-out local asyncio wait reproduced with thread/main-loop stack retained. The same affected suite passes outside the restricted process sandbox with unchanged source and all mock handlers."
+    }
+  ],
+  "limits": [
+    "This does not demonstrate that GLM uses the clearer feedback successfully in a live run.",
+    "No scientific acceptance, tolerance, deadline, request, model or repair policy changed.",
+    "The original current221-file cohort remains pinned and is not retroactively repaired."
+  ],
+  "new_models_hosts_sandboxes": 0,
+  "aggregate_authorization_usd": "200.00",
+  "budget_changed": false
+}

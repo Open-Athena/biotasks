@@ -1,4 +1,4 @@
-"""Freeze current runtime with exact source assets from an earlier source-only payload.
+"""Freeze a public runtime with exact source assets from an earlier source-only payload.
 
 Creates a private Git input ref and local payload, never dispatches a worker.
 The public revision supplies runtime; only configured source assets are copied.
@@ -14,6 +14,26 @@ import sys
 import tarfile
 import tempfile
 from pathlib import Path, PurePosixPath
+
+
+def runtime_commit(repo, requested="HEAD"):
+    """Keep an older public ancestor selectable without mixing in later edits."""
+    revision = (
+        subprocess.check_output(
+            ["git", "rev-parse", "--verify", "--end-of-options", requested + "^{commit}"],
+            cwd=repo,
+        )
+        .decode()
+        .strip()
+    )
+    # Private input commits are children of public history, not its ancestors.
+    # Never use an unrelated/private input ref as the public runtime parent.
+    subprocess.run(
+        ["git", "merge-base", "--is-ancestor", revision, "HEAD"],
+        cwd=repo,
+        check=True,
+    )
+    return revision
 
 
 def reviewed_runtime_delta(runtime, baseline, expected):
@@ -38,6 +58,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("number", type=int)
     parser.add_argument("--prior", type=int, required=True)
+    parser.add_argument(
+        "--runtime-revision",
+        default="HEAD",
+        help="Public commit in current branch history; defaults to HEAD. Pin an older "
+        "revision to finish a frozen cohort while developing later general changes.",
+    )
     parser.add_argument("--private-root", type=Path, required=True)
     parser.add_argument("--baseline-round", type=Path, required=True)
     parser.add_argument(
@@ -63,7 +89,7 @@ def main():
         return subprocess.check_output(["git", *command], cwd=repo, input=data, env=env)
 
     assert not git("status", "--porcelain").strip()
-    public_revision = git("rev-parse", "HEAD").decode().strip()
+    public_revision = runtime_commit(repo, args.runtime_revision)
     launch = args.private_root / "launch"
     prior = launch / f"{args.prior:03}-payload"
     destination = launch / f"{args.number:03}-payload"

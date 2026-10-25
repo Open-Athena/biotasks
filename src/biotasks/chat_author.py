@@ -593,8 +593,30 @@ class GLMChatAuthor:
                 if name not in permitted:
                     result = "Tool unavailable. Use one of the currently supplied tools."
                 else:
-                    inspect.signature(handlers[name]).bind(**arguments)
-                    result = None
+                    schema = next(
+                        tool["function"]["parameters"]
+                        for tool in available_tools
+                        if tool["function"]["name"] == name
+                    )
+                    if (
+                        name in {"submit_artifact", "revise_artifact"}
+                        and schema.get("additionalProperties") is False
+                        and isinstance(schema.get("properties"), dict)
+                        and "arguments" not in schema["properties"]
+                        and set(arguments) == {"arguments"}
+                    ):
+                        fields = ", ".join(schema["properties"])
+                        result = (
+                            f"Invalid tool arguments: {name} expects its fields directly "
+                            f"in the tool argument object ({fields}). You supplied an extra "
+                            "'arguments' wrapper. The outer function.arguments JSON has "
+                            "already been decoded. Call the tool with the fields themselves; "
+                            "do not wrap or JSON-encode the artifact inside an 'arguments' "
+                            "field. Nothing was submitted, unwrapped or committed."
+                        )
+                    else:
+                        inspect.signature(handlers[name]).bind(**arguments)
+                        result = None
             except (ValueError, TypeError):
                 result = "Invalid tool arguments. Follow the supplied JSON object schema."
             if result is None:

@@ -126,6 +126,90 @@ async def committed(**_kwargs):
     return "Artifact committed."
 
 
+@pytest.mark.parametrize("name", ["submit_artifact", "revise_artifact"])
+@pytest.mark.parametrize("wrapped", [True, False])
+def test_extra_arguments_wrapper_requires_model_correction(tmp_path, name, wrapped):
+    """Reject the observed wire shape; never accept its embedded artifact."""
+    artifact = {"decision": "revise", "rationale": "Recorded evidence is missing."}
+    correct = artifact if name == "submit_artifact" else {"patch": artifact}
+    original_arguments = {"arguments": json.dumps(correct) if wrapped else correct}
+    expected = []
+    requests = []
+
+    async def complete(payload):
+        requests.append(deepcopy(payload))
+        if len(requests) == 1:
+            return reply(name, original_arguments, call_id="wrapped")
+        feedback = payload["messages"][-1]["content"]
+        assert "extra 'arguments' wrapper" in feedback
+        assert "Nothing was submitted, unwrapped or committed" in feedback
+        assert expected == []
+        return reply(name, correct, call_id="corrected")
+
+    async def submit(**value):
+        expected.append(value)
+        assert value == correct
+        return "Artifact committed."
+
+    author, _ = make_author(tmp_path, complete, requests=2)
+    args = options(tmp_path, {"submit_artifact": submit, "revise_artifact": submit}, turns=2)
+    for tool in args["tools"]:
+        field_names = (
+            ["decision", "rationale"]
+            if tool["function"]["name"] == "submit_artifact"
+            else ["patch"]
+        )
+        tool["function"]["parameters"].update(
+            additionalProperties=False,
+            properties={key: {} for key in field_names},
+        )
+    result = asyncio.run(author(**args))
+    assert result["turns"] == 2
+    assert expected == [correct]
+    assert len(args["budget"].reservations) == 2
+    original_call = requests[1]["messages"][2]["tool_calls"][0]
+    assert original_call["function"]["arguments"] == json.dumps(original_arguments)
+    events = [json.loads(line) for line in args["trace"].read_text().splitlines()]
+    assert [event["arguments"] for event in events if event["kind"] == "tool_request"] == [correct]
+    assert not any("retry_requested" in event["kind"] for event in events)
+
+
+def test_legitimate_arguments_field_is_not_treated_as_wrapper(tmp_path):
+    calls = []
+
+    async def complete(_payload):
+        return reply(arguments={"arguments": "A legitimate schema field"})
+
+    async def submit(arguments):
+        calls.append(arguments)
+        return "Artifact committed."
+
+    author, _ = make_author(tmp_path, complete, requests=1)
+    args = options(tmp_path, {"submit_artifact": submit, "revise_artifact": committed}, turns=1)
+    args["tools"][0]["function"]["parameters"].update(
+        additionalProperties=False, properties={"arguments": {"type": "string"}}
+    )
+    asyncio.run(author(**args))
+    assert calls == ["A legitimate schema field"]
+
+
+def test_wrapper_rejection_does_not_extend_the_stage_allowance(tmp_path):
+    async def complete(_payload):
+        return reply(arguments={"arguments": '{"decision":"revise"}'})
+
+    async def forbidden(**_kwargs):
+        pytest.fail("Malformed arguments must never reach the artifact handler")
+
+    author, _ = make_author(tmp_path, complete, requests=1)
+    args = options(tmp_path, {"submit_artifact": forbidden, "revise_artifact": forbidden}, turns=1)
+    args["tools"][0]["function"]["parameters"].update(
+        additionalProperties=False, properties={"decision": {"type": "string"}}
+    )
+    with pytest.raises(ArtifactValidationExhausted, match="Artifact validation"):
+        asyncio.run(author(**args))
+    assert len(args["budget"].reservations) == 1
+
+
 @pytest.mark.parametrize("output_format", ["tools", "json_schema"])
 def test_rejected_artifact_reports_validation_feedback_without_extra_requests(
     tmp_path, output_format
