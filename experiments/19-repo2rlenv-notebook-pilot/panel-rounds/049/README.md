@@ -2,7 +2,7 @@
 
 All ten original notebook/seed identities match, and their execution policies equal the configuration used by active158/159 after excluding source paths and campaign names. This checks input compatibility only; it does not establish runnable dependencies, scientific validity or a fresh ten-source result.
 
-| Domain | Original source evidence | Current common-version status |
+| Domain | Original source evidence | Status when this input check was recorded |
 | --- | --- | --- |
 | Constraint-based metabolism | [Notebook](https://github.com/opencobra/cobrapy/blob/a9c5ced29670bed5035fb19e87e7b0b588adb62d/documentation_builder/deletions.ipynb) | Original inputs inspected; not funded or launched |
 | Protein sequence profiles | [Notebook](https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/docs/examples/msa_to_hmm.ipynb) | Original inputs inspected; not funded or launched |
@@ -18,3 +18,5 @@ All ten original notebook/seed identities match, and their execution policies eq
 The unchanged runtime remains generic; the source list belongs to this experiment. No notebook code, task design, data reduction, dependency recipe or answer is supplied by this input check. Source-specific release rights still require qualification. R remains deferred.
 
 [Exact source identities and scope](common-input-readiness.json). Reproduce with `inspect_common_panel_inputs.py` against the preserved private payloads; this performs no network, model or scientific execution.
+
+The input snapshot above predates158's infrastructure failure. The [current assessment](../032/current-panel-assessment.md) tracks later159/160execution and retains the original source/policy compatibility evidence.
