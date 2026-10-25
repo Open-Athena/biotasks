@@ -1,10 +1,10 @@
 {
-  "observed_at": "2026-10-24T23:55:21.129128+00:00",
+  "observed_at": "2026-10-25T01:28:20.758278+00:00",
   "source_count": 10,
   "counts": {
     "published": 2,
-    "native_complete_qualification_hold": 4,
-    "generated_candidate_rejected": 4,
+    "native_complete_qualification_hold": 5,
+    "generated_candidate_rejected": 3,
     "infrastructure_incomplete": 0
   },
   "runtime_minutes_all_outcomes": {
@@ -164,25 +164,25 @@
       "public_performance_sha256": "a6b2c612252566733f08b0cc798f169d2c24c2cb74f13f64b19697ec7b798fdc"
     },
     {
-      "campaign": 154,
+      "campaign": 156,
       "domain": "Molecular dynamics",
       "source_url": "https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/doc/source/examples/analysis/alignment_and_rms/rmsd.ipynb",
       "source_id": "mdanalysis-rmsd",
-      "factory_revision_recorded": "895f78fe2c108f372f29e83809c5e038718d73fa",
-      "classification": "generated_candidate_rejected",
-      "audited_state": "generated_public_contract_disagreement_rejected_before_quality_diagnosis",
-      "original_pipeline_status": "rejected",
+      "factory_revision_recorded": "fbb94aabc00ad0f087617757375e3be48989f9a4",
+      "classification": "native_complete_qualification_hold",
+      "audited_state": "native_passed_retained_answer_fixture_hold",
+      "original_pipeline_status": "validated",
       "operator_interventions": 0,
-      "pipeline_minutes": 26.4,
-      "accounted_model_request_attempts": 69,
-      "native_complete": false,
+      "pipeline_minutes": 40.53,
+      "accounted_model_request_attempts": 108,
+      "native_complete": true,
       "published": false,
       "full_original_archive_verified": true,
-      "source_archive_manifest_sha256": "b7d9a90dea8742a8aa11b33901cf181f84303d9785d9ae1f2423c6b79ddbdc85",
-      "public_result_path": "panel-rounds/038/result-154.json",
-      "public_result_sha256": "e713d632eb6a87a672ad7c2224c2bb9ed5e50d6e84bece1e9ba03fbfd94cb201",
-      "public_performance_path": "panel-rounds/038/performance-154.json",
-      "public_performance_sha256": "e6a8eeae7ff6bc15ad169dacfe87143dd691d03db3d492b84f9a7ef0ecb3ae9e"
+      "source_archive_manifest_sha256": "4bb69138b27523236507215a1e6a6fda2264207d6d32f12e03eb53a7f3dacb14",
+      "public_result_path": "panel-rounds/044/result-156.json",
+      "public_result_sha256": "9f6923c41dd08059513ab2ed5bde0eeeb5390b352435132c1a80b49bbe378f8e",
+      "public_performance_path": "panel-rounds/044/performance-156.json",
+      "public_performance_sha256": "a7a20d7324053f020248e61569d1129235a4bf1a1141c8e84457527ed25af54f"
     },
     {
       "campaign": 142,
@@ -227,16 +227,26 @@
       "public_performance_sha256": "f016e270f6042f4440526da4873ef61b1f26751c089374dfc0d8ffe94bdc95f7"
     }
   ],
-  "excluded_active_repeats": [
-    156,
-    157
-  ],
+  "excluded_active_repeats": [],
   "limits": [
-    "Latest independently archived outcome per source across development versions; not a common-version holdout or success-rate estimate.",
+    "Latest independently archived scientific outcome per source across development versions; subsequent infrastructure failures are explicit separately. Not a common-version holdout or success-rate estimate.",
     "Generated-candidate failures are factory outcomes, not proof of broken source notebooks.",
-    "The provider-cleanup interruption is incomplete infrastructure, not a model solve failure.",
+    "Provider transport failures are incomplete infrastructure, not notebook rejection or model solve failure.",
     "Measured pipeline intervals exclude bootstrap, archive readback and publication. Request claims are not invoices or a fixed number of stages.",
     "R support deferred; imaging execution/access hold excluded.",
     "No new models, scientific execution or resources were used by this read-only rollup."
+  ],
+  "separate_latest_infrastructure_attempts": [
+    {
+      "campaign": 157,
+      "source_id": "matchms-spectral-matching",
+      "classification": "infrastructure_failed",
+      "http_status": 502,
+      "stage": "setup",
+      "prior_qualified_release_campaign": 147,
+      "public_result_path": "panel-rounds/045/result-157.json",
+      "public_result_sha256": "24241f8aebbce990a63d220f9a131cb14cabb88fefa1be2a610aa0da38d195f0",
+      "notebook_rejected": false
+    }
   ]
 }

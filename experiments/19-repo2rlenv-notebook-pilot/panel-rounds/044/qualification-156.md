@@ -1,0 +1,7 @@
+# MDAnalysis156 qualification hold
+
+The unchanged notebook completed all seven stages in 40.53 minutes with 108 recorded model requests, all21 final controls passing and native reference/empty/GLM rewards1/0/1 without exceptions. All five scientific endpoints were retained, with zero operator scientific edits.
+
+Publication remains blocked. The [installed-source audit](installed-fixture-audit-156.json) verifies that MDAnalysisTests2.11.0 `analysis/test_align.py` is still present and contains6.820321761927005 for the same backbone, input files and first/last trajectory frames. The final requested frame97 Backbone value is6.820321761026975: a difference of about9e-10, within the public tolerance. The exact released-source bytes match the actual installed catalog SHA256. Only `test_rms.py` was excluded. The review claimed that removed module was the sole matching fixture; this evidence contradicts that approval. This does not establish that the solver read the fixture or that the notebook source is broken.
+
+The original candidate is unchanged and unpublished. The complete1602-file scientific archive and99-file root export are independently verified; original cleanup receipts and fresh seven-owner/exact-ID absence are verified. [Outcome](result-156.json), [timing](performance-156.json). Further work must improve the general final-output/installed-asset audit rather than manually patch this candidate.
