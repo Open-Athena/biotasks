@@ -1,0 +1,5 @@
+# Preserve the failed replay and fund a bounded compatibility check
+
+The unchanged unused-stage auditor verifies original162’s terminal infrastructure failure, exact frozen controller/reservation code, complete original science/root archives and fresh two-owner/ID absence. Retain both$1dispatchedstageholds; release only$3construction/grading/native stages never dispatched. No original scientific outcome or used-stage allowance changes. [Proof](unused-stages-162.json).
+
+Reserve$1for the existing owned-sandbox compatibility lifecycle, testing the same public positive/offline targets, a synthetically stalled resolver/child reaping and a deliberately invalid probe that must block further commands. One4CPU/8GiB/10GiBCPU-only sandbox,300secondswork+180cleanup, zero models/biological computation or Iris host.161maybetheonlyotherlivepoolslot. No launch before frozen source/config and typed admission are checked. Aggregate198USDheld/2USDfree within200authorized; queued163remains reserved but unsubmitted and cannot adopt unverified code.
