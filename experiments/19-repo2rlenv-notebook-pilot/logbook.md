@@ -4635,3 +4635,9 @@ Reserve5USDfor unchanged original COBRApy162to test the two general prompt clari
 ### 2026-10-25 — original COBRApy162 admitted
 
 Funded preflight passed and typed admission found only161live.162starts from byte-identical original133source/metadata/notices with the common execution policy. Its213runtime identities differ from160only in the two general canonical prompt clarifications; no earlier task, answer or operator diagnosis is supplied. Aggregate199USDheld/1USDfree within200authorized. No permission, stage, resource or repair allowance changed. See round055.
+
+### 2026-10-25 — reserve a fresh Scanpy source without additional authorization
+
+The existing handled-timeout auditor verifies150’s whole lifecycle/actual timeout/7ownerabsence and retains2USDagainst unchanged1.384500bound, releasing3USDexcess. Its comparison hold and timeout remain. The existing unused-stage auditor verifies160’s4dispatchedstages/4ownerabsence and releasesonly1USDnever-dispatchednative while retainingallused-stageholds; its answer-exposure rejection remains. No profile changed. See round056.
+
+Reserve the5USDheadroom for unchanged original Scanpy163on the same general runtime/prompts as162. No prior task, answer, expected labels or operator diagnosis is provided. It is not submitted and must wait for one of161/162to finish and cleanup to verify. Aggregate200USDheld/0free within200authorized; no invoice/credits inferred. See round057.
