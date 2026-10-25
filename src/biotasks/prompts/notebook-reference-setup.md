@@ -85,6 +85,13 @@ streaming all rows, arrays or mismatches into the conversation.
   it is not a verified dependency manifest. Use focused import checks to discover
   missing shared libraries as well as Python packages. Respect source-required
   configuration and conditional imports; do not change source to satisfy a check.
+  Successful top-level imports are insufficient: scientific operations can import
+  optional dependencies only when called. Before the first reference dispatch,
+  use the source operation inventory, documented dependency extras and installed
+  function sources to check requirements for the actual operations and arguments
+  in this notebook, including late operations. Install the supported requirements
+  in the reproducible recipe. Inspect or import dependencies here; do not execute
+  scientific operations outside `test_reference` to discover them.
   A definite exception in the appended exports can use preparation's one unused
   validation repair. The preparation worker owns that correction; never edit
   exports yourself. If the tool reports `exports_corrected_requires_retest`,
@@ -122,6 +129,10 @@ Confirm where each input-loading function actually looks for cached data in the
 reference process. Use installed package sources or a focused lookup-path check;
 do not assume a newly created temporary directory is that cache. Staging files
 successfully is insufficient if the unchanged script cannot find them offline.
+Also inspect whether the loader still contacts a metadata service, resolves a
+remote identifier or checks a registry even when data files are already cached.
+Preserve any needed lookup metadata and documented offline configuration in the
+recipe. A successful online download or import does not establish offline loading.
 Keep every required cache or input-path adaptation in the submitted recipe, not
 only in exploratory shell state. The later clean replay is an additional check,
 not evidence that a passed test in the authoring sandbox was already a clean build.

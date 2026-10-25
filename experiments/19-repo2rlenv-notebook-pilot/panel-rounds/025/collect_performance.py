@@ -62,7 +62,8 @@ author_operations = {(stage, charge["operation"]) for stage, charge in charges}
 result = {
     "source_archive_manifest_sha256": manifest_sha,
     "pipeline_status": pipeline["status"],
-    "source_id": (pipeline.get("source") or {}).get("id"),
+    "source_id": (pipeline.get("source") or {}).get("id")
+    or (pipeline.get("source") or {}).get("url"),
     "elapsed_pipeline_seconds": round(pipeline["finished"] - pipeline["started"], 3),
     "stage_elapsed_seconds": stages,
     "stage_status": {stage["name"]: stage["status"] for stage in pipeline["stages"]},

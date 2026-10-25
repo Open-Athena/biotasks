@@ -1,0 +1,46 @@
+{
+  "source_archive_manifest_sha256": "298551b4d4d53a93c5cf51d9ff98f4657ab79c2cdfc8e739b0ecb6f10020cc82",
+  "pipeline_status": "rejected",
+  "source_id": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb",
+  "elapsed_pipeline_seconds": 727.223,
+  "stage_elapsed_seconds": {
+    "preparation": 19.278,
+    "setup": 703.167
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "rejected"
+  },
+  "accounted_model_request_attempts": 51,
+  "request_ledgers": [
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "774a44530f5be2716af17cc6a9ee0a9de72e2d11b7fab4d9bba1fc8acf5224d6",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "7342a5734e37f8f0c179e57b661ede5e06ed00d08ffe1bd1a30e63c1633c539e",
+      "count": 50,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 50
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 51,
+  "distinct_author_response_operations_within_stage": 51,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 0
+}
