@@ -12,3 +12,6 @@ Applied proofs are `question-repair-161-applied.json` and `sdk-comparison-159-ap
 
 
 The SDK-only five-resource profile now admits either of the existing single comparison-repair routes, with exact effective-materialization paths and the recorded terminal validation status bound to its original result. It prices all five resources for the whole 7,500 seconds regardless of target or overlap. The newer exact creator/session pair only changes fail-closed network result handling and a typed export-repair exception; resource creation/cleanup are equal. [Complete source comparison](../070/typed-repair-source-family.diff). Original narrow-profile refusals and evidence remain unchanged. Run 168's explicit five-SDK dry run retains $4 against $3.46125, preparing a $1 release. This does not lower any execution guard or claim science acceptance. No application yet.
+
+
+[Run 168 application](sdk-only-168-applied.json) rechecks the committed explicit profile and original evidence before changing the ledger. Its later complete closed-session refinement is separate in [round 070](../070/README.md). Scientific outcomes and all original receipts remain unchanged.

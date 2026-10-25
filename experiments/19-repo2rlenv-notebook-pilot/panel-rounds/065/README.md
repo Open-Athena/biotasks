@@ -11,3 +11,6 @@ The160 runner variant differs from154 only by importing the existing static `ope
 
 
 The exact typed-repair creator/session pair is also admitted after full frozen-source comparison: only network-result validation and handling a typed export-repair rejection differ; resource creation and owner cleanup are equal. [Source comparison](../070/typed-repair-source-family.json). Four- and five-SDK lifetime checks now have 53 passing combined tests, including the two comparison-repair targets, mismatched views, unknown/mixed source pairs and incomplete resources. Run 167's four-full-lifetimes dry run retains $3 against $2.769, preparing a $1 release. Original failed records and prior narrower-profile refusals remain unchanged; this is a new explicit admission, not a projection or deletion of receipts. No application yet.
+
+
+[Run 167 application](sdk-only-167-applied.json) rechecks the committed explicit profile and original evidence before changing the ledger. Its later complete closed-session refinement is separate in [round 070](../070/README.md). Scientific outcomes and all original receipts remain unchanged.
