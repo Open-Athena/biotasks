@@ -1,0 +1,39 @@
+{
+  "observed_at": "2026-10-25T01:18:54Z",
+  "trigger": {
+    "campaign": 157,
+    "failure_category": "provider_http_error",
+    "http_status": 502,
+    "original_evidence_preserved": true
+  },
+  "behavior": "One generation retry shared with timeout/connection recovery, only when explicitly enabled; HTTP 502/503/504 only. Original deadline, request slots, repairs and prior tool results retained. No replay of controller tools. No retry of authentication, rate-limit, generic server, context or tool errors under this rule.",
+  "checks": {
+    "command": "PYTHONPATH=src .venv/bin/python -m pytest tests/test_chat_author.py -q --tb=short",
+    "passed": 107,
+    "seconds": 3.06,
+    "peak_rss_kib": 66540,
+    "ruff": "passed",
+    "canonical_prompt_readback": "passed",
+    "live_generation_retry_tested": false
+  },
+  "development_failures": [
+    {
+      "failed": 12,
+      "passed": 95,
+      "reason": "New negative-test fixtures omitted mandatory revise_artifact handler; corrected test fixture only."
+    },
+    {
+      "failed": 6,
+      "passed": 101,
+      "reason": "Same fixture omission in the bound-parameterized cases; corrected."
+    }
+  ],
+  "source_sha256": {
+    "src/biotasks/chat_author.py": "287c08d538bc29c93d66411571bb430461de5c9022b17cf308d239589685b4fc",
+    "src/biotasks/prompts/worker-generation-retry.md": "29a51420000fadb913618f7ffb0406fa3a14c04806998d36d24dc0380e5177f0",
+    "tests/test_chat_author.py": "45f9e8238c87906a323c37ea9bea73ca980db45b488d77728ab6610bf1fb22b7"
+  },
+  "no_scientific_artifact_edits": true,
+  "no_new_model_calls_hosts_or_sandboxes": true,
+  "existing156157_frozen_runtime_unchanged": true
+}

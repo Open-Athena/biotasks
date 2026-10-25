@@ -5,8 +5,9 @@ This module does not choose a task, validate its science, or launch a sandbox.
 Only the approved free GLM model is supported; monetary receipts are zero while
 every attempted HTTP request consumes a durable RequestLedger slot.
 
-An explicit generation-retry notice enables one retry after a timeout or typed
-model connection failure per author instance. The callback must not execute
+An explicit generation-retry notice enables one retry after a timeout, typed
+model connection failure or transient HTTP 502/503/504 per author instance.
+The callback must not execute
 tools or other external actions itself.
 The uncertain request/hold is retained; tool history and original bounds remain.
 """
@@ -343,13 +344,13 @@ class GLMChatAuthor:
                             )
                             messages = reduced
                             continue
-                    raise RuntimeError(
-                        "Model provider rejected the request; inspect the retained receipt"
-                    ) from None
                 if isinstance(exc, asyncio.CancelledError):
                     raise
+                transient_http = failure.get(
+                    "failure_category"
+                ) == "provider_http_error" and failure.get("http_status") in {502, 503, 504}
                 if (
-                    isinstance(exc, (TimeoutError, ModelConnectionError))
+                    (isinstance(exc, (TimeoutError, ModelConnectionError)) or transient_http)
                     and self.generation_retry_notice is not None
                     and self.generation_retries_used == 0
                     and (max_turns is None or turn < max_turns)
@@ -358,19 +359,26 @@ class GLMChatAuthor:
                     # Only pure model generation is repeated. No response from
                     # this attempt reached tool dispatch; prior actions/results
                     # stay in the conversation. The original request and its
-                    # bookkeeping hold remain uncertain, never refunded.
+                    # bookkeeping hold remain uncertain for transport loss.
+                    # A received HTTP rejection is accounted separately.
                     self.generation_retries_used += 1
+                    if transient_http:
+                        budget.settle(operation, 0.0)
                     messages.append({"role": "user", "content": self.generation_retry_notice})
                     event(
                         "generation_retry_requested",
-                        uncertain_call_id=call_id,
+                        **{"rejected_call_id" if transient_http else "uncertain_call_id": call_id},
                         error_type=type(exc).__name__,
                         retry_number=self.generation_retries_used,
-                        backend_outcome="unknown",
+                        backend_outcome="http_error_received" if transient_http else "unknown",
                         actions_executed=0,
                         allowance_reset=False,
                     )
                     continue
+                if "http_status" in failure:
+                    raise RuntimeError(
+                        "Model provider rejected the request; inspect the retained receipt"
+                    ) from None
                 raise RuntimeError("Model transport failed; inspect the retained receipt") from None
             if self.limits.max_response_bytes is not None and (
                 len(json.dumps(response, ensure_ascii=False).encode())

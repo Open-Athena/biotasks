@@ -536,6 +536,113 @@ def test_timeout_and_connection_share_one_retry_across_resubmissions(tmp_path, f
         ]
 
 
+class ProviderHTTPError(Exception):
+    def __init__(self, status):
+        self.status_code = status
+        self.body = {"error": {"message": "PRIVATE provider response"}}
+
+
+@pytest.mark.parametrize("status", [502, 503, 504])
+def test_transient_http_retry_preserves_actions_and_definite_failure(tmp_path, status):
+    payloads, actions = [], []
+
+    async def complete(payload):
+        payloads.append(deepcopy(payload))
+        if len(payloads) == 1:
+            return reply("shell", call_id="inspected")
+        if len(payloads) == 2:
+            raise ProviderHTTPError(status)
+        return reply(call_id="submitted")
+
+    async def shell():
+        actions.append("inspection completed")
+        return "recorded observation"
+
+    author, ledger = make_author(
+        tmp_path, complete, generation_retry_notice="Continue recorded work"
+    )
+    args = options(
+        tmp_path, {"shell": shell, "submit_artifact": committed, "revise_artifact": committed}
+    )
+    asyncio.run(author(**args))
+    assert actions == ["inspection completed"] and len(payloads) == 3
+    assert payloads[2]["messages"][:-1] == payloads[1]["messages"]
+    assert args["budget"].settlements == ["1", "2", "3"]
+    with sqlite3.connect(ledger.path) as db:
+        assert db.execute("SELECT state FROM calls ORDER BY id").fetchall() == [
+            ("response_received",),
+            ("http_error_received",),
+            ("response_received",),
+        ]
+    failure = json.loads((tmp_path / "trace/2/failure.json").read_text())
+    assert failure["http_status"] == status and "PRIVATE" not in json.dumps(failure)
+    events = [json.loads(line) for line in (tmp_path / "trace.jsonl").read_text().splitlines()]
+    event = next(e for e in events if e["kind"] == "generation_retry_requested")
+    assert event["rejected_call_id"] == 2 and event["backend_outcome"] == "http_error_received"
+    assert event["actions_executed"] == 0 and event["allowance_reset"] is False
+
+
+@pytest.mark.parametrize("status", [400, 401, 403, 429, 500, 501])
+def test_generation_retry_does_not_retry_other_http_statuses(tmp_path, status):
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        raise ProviderHTTPError(status)
+
+    author, ledger = make_author(tmp_path, complete, generation_retry_notice="Continue")
+    with pytest.raises(RuntimeError, match="provider rejected"):
+        asyncio.run(
+            author(
+                **options(tmp_path, {"submit_artifact": committed, "revise_artifact": committed})
+            )
+        )
+    assert len(calls) == 1 and author.generation_retries_used == 0
+    with sqlite3.connect(ledger.path) as db:
+        assert db.execute("SELECT state FROM calls").fetchall() == [("http_error_received",)]
+
+
+@pytest.mark.parametrize(
+    "bound", ["once", "turn", "ledger", "deadline", "no_notice", "timeout_first"]
+)
+def test_transient_http_retry_shares_existing_recovery_and_bounds(tmp_path, bound):
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        if bound == "deadline":
+            author.deadline = time.time() - 1
+        if bound == "timeout_first" and len(calls) == 1:
+            raise TimeoutError()
+        raise ProviderHTTPError(502)
+
+    author, ledger = make_author(
+        tmp_path,
+        complete,
+        requests=1 if bound == "ledger" else 4,
+        generation_retry_notice=None if bound == "no_notice" else "Continue",
+    )
+    with pytest.raises(RuntimeError):
+        asyncio.run(
+            author(
+                **options(
+                    tmp_path,
+                    {"submit_artifact": committed, "revise_artifact": committed},
+                    turns=1 if bound == "turn" else 4,
+                )
+            )
+        )
+    assert len(calls) == (2 if bound in {"once", "timeout_first"} else 1)
+    assert author.generation_retries_used <= 1
+    with sqlite3.connect(ledger.path) as db:
+        states = db.execute("SELECT state FROM calls ORDER BY id").fetchall()
+    assert states == (
+        [("uncertain",), ("http_error_received",)]
+        if bound == "timeout_first"
+        else [("http_error_received",)] * len(calls)
+    )
+
+
 def test_model_retry_never_replays_a_failing_tool(tmp_path):
     actions, calls = [], []
 
