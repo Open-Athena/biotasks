@@ -1,7 +1,9 @@
 """Execute worker-generated derivations and an oracle with private answers hidden."""
 
+import hashlib
 import json
 import shutil
+import subprocess
 from pathlib import Path
 
 from grading_remote import AUTHOR, ORACLE, hashes, owned, run_as
@@ -29,6 +31,23 @@ def inventory(root):
 
 def main():
     candidate = json.loads((PRIVATE / "materialization.json").read_text())
+    # These fields are supplied by the trusted controller after checking the
+    # worker's observation-bound declaration, never chosen from filenames here.
+    receipt_path = PRIVATE / "final-environment-removals.json"
+    subprocess.run(
+        [
+            "/work/venv/bin/python",
+            "/work/dependency_assets.py",
+            "finalize",
+            str(PRIVATE / "materialization.json"),
+            str(receipt_path),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    excluded = candidate["effective_dependency_exclusions"]
+    receipt = json.loads(receipt_path.read_text())
     sources = json.loads(Path("/work/original-inputs.json").read_text())
     verify_sources(sources)
     original = hashes(Path("/work/reference"))
@@ -56,7 +75,11 @@ def main():
         work,
         candidate["seconds"],
     )
-    result = {"status": "incomplete", "derivation": execution}
+    result = {
+        "status": "incomplete",
+        "derivation": execution,
+        "environment_removal_receipt": receipt,
+    }
     try:
         verify_sources(sources)
         if hashes(Path("/work/reference")) != original:
@@ -142,6 +165,46 @@ def main():
             raise ValueError("Oracle artifact inventory differs from declaration")
         if hashes(task / "inputs") != {p["path"]: p["sha256"] for p in result["inputs"]}:
             raise ValueError("Oracle modified supplied inputs")
+        subprocess.run(
+            [
+                "/work/venv/bin/python",
+                "/work/dependency_assets.py",
+                "verify-absence",
+                str(PRIVATE / "materialization.json"),
+                str(receipt_path),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        catalog = PRIVATE / "dependency-assets-final.json"
+        outputs_path = PRIVATE / "final-outputs.json"
+        outputs_path.write_text(json.dumps(result["reference"]))
+        source_path = PRIVATE / "original-source.py"
+        source_path.write_text(candidate["original_source"])
+        subprocess.run(
+            [
+                "/work/venv/bin/python",
+                "/work/dependency_assets.py",
+                "inspect",
+                str(outputs_path),
+                str(catalog),
+                str(source_path),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        assets = json.loads(catalog.read_text())
+        result["environment"] = {
+            "exclusions": excluded,
+            "removal_receipt": json.loads(receipt_path.read_text()),
+            "asset_catalog": {
+                "bytes": catalog.stat().st_size,
+                "sha256": hashlib.sha256(catalog.read_bytes()).hexdigest(),
+            },
+            "asset_summary": assets["summary"],
+        }
         result["status"] = "executed_requires_scientific_validation"
         return result
     finally:

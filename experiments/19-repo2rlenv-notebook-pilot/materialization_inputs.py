@@ -31,6 +31,34 @@ def load_materialized(directory):
                 raise ValueError("Question revision identity changed: " + name)
         verify_revision(directory, candidate)
     execution = json.loads((directory / "manifest.json").read_text())
+    if candidate.get("environment_review") is not None or "environment" in execution:
+        from materialization_environment import effective_exclusions
+
+        environment = execution["environment"]
+        # The frozen base is checked separately by each environment consumer;
+        # here bind the final review to archived artifacts/catalog and receipt.
+        additional = candidate["environment_review"]["additional_exclusions"]
+        from materialization_environment import exclusion_key
+
+        added = {exclusion_key(row) for row in additional}
+        base = {
+            "files": [
+                row for row in environment["exclusions"]["files"] if exclusion_key(row) not in added
+            ]
+        }
+        effective_exclusions(base, candidate, execution)
+        name = "dependency-assets-final.json"
+        catalog = environment["asset_catalog"]
+        if (
+            name not in recorded
+            or (directory / name).is_symlink()
+            or (directory / name).stat().st_size != catalog["bytes"]
+            or sha256(directory / name) != catalog["sha256"]
+            or recorded[name]["sha256"] != catalog["sha256"]
+            or recorded[name]["bytes"] != catalog["bytes"]
+            or json.loads((directory / name).read_text())["summary"] != environment["asset_summary"]
+        ):
+            raise ValueError("Final installed-asset catalog identity changed")
     result = json.loads((directory / "result.json").read_text())
     if (
         candidate["disposition"] != "ready"

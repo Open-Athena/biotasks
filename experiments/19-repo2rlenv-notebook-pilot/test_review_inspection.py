@@ -62,6 +62,49 @@ def test_review_deadline_is_not_extended_by_inspection(tmp_path):
         asyncio.run(inspection.handlers["read_reference_file"](path="output.txt"))
 
 
+def test_reviewer_uses_final_endpoint_catalog_and_applied_manifest(tmp_path, monkeypatch):
+    import asset_value_hints
+    from materialization_environment import binding, removal_receipt
+
+    source = snapshot(tmp_path)
+    base = {"files": []}
+    source["dependency_exclusions"] = base
+    summary = {"priority_matches": [{"path": "synthetic/final-answer.txt"}]}
+    execution = {
+        "inputs": [],
+        "reference": source["outputs"],
+        "oracle_outputs": source["outputs"],
+        "environment": {
+            "exclusions": base,
+            "removal_receipt": removal_receipt(base),
+            "asset_catalog": {"sha256": "a" * 64, "bytes": 42},
+            "asset_summary": summary,
+        },
+    }
+    source["materialization"] = {
+        "execution": execution,
+        "candidate": {
+            "environment_review": {
+                **binding(execution),
+                "assessment": "Synthetic final inventory, not an independent clearance",
+                "additional_exclusions": [],
+            }
+        },
+    }
+
+    async def hints(packages, references, priority, exclusions):
+        assert priority == summary["priority_matches"] and exclusions == []
+        return {"findings": [], "scope": "Synthetic inspection"}
+
+    monkeypatch.setattr(asset_value_hints, "build_hints", hints)
+    inspection = ReviewInspection(source, tmp_path / "inspection", time.time() + 60)
+    asyncio.run(inspection.prepare_asset_value_hints())
+    assert inspection.context["final_environment_review"]["executed_exclusions"] == removal_receipt(
+        base
+    )
+    assert "not independent" in inspection.context["final_environment_review"]["scope"]
+
+
 def test_input_samples_remain_bound_to_original_receipt_and_distinct_from_output(tmp_path):
     from grading_session import source_input_observations
 

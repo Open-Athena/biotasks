@@ -12,6 +12,7 @@ from dependency_assets import (
     inspect_assets,
     shared_import_groups,
     validate_manifest,
+    verify_absence,
 )
 from reference_replay import load_dependency_exclusions
 
@@ -44,6 +45,89 @@ def test_removal_checks_installed_identity_and_preserves_inputs(tmp_path):
     # A stale manifest cannot claim a fresh removal succeeded.
     with pytest.raises(ValueError, match="regular files"):
         apply_manifest({"files": [item]}, distribution=distribution, roots=[root])
+
+
+@pytest.mark.parametrize("restored", ["file", "symlink", "unowned", "outside", None])
+def test_prior_removals_are_rechecked_without_deleting_other_files(tmp_path, restored):
+    root, asset, retained, item, distribution = fixture(tmp_path)
+    manifest = {"files": [item]}
+    receipt = apply_manifest(manifest, distribution=distribution, roots=[root])
+    assert verify_absence(manifest, distribution=distribution, roots=[root]) == receipt
+    if restored == "file":
+        asset.write_bytes(b"answer restored")
+    elif restored == "symlink":
+        asset.symlink_to(retained)
+    elif restored == "unowned":
+        item["path"] = "example/tests/unowned.txt"
+    elif restored == "outside":
+        root = tmp_path / "another-environment"
+    else:
+        assert retained.read_bytes() == b"required real input"
+        return
+    with pytest.raises(ValueError):
+        verify_absence(manifest, distribution=distribution, roots=[root])
+    assert retained.read_bytes() == b"required real input"
+
+
+def test_finalize_and_readonly_recheck_use_actual_isolated_venv_metadata(tmp_path):
+    import json
+    import subprocess
+    import venv
+
+    environment = tmp_path / "task-venv"
+    venv.EnvBuilder(with_pip=False).create(environment)
+    python = environment / "bin/python"
+    packages = Path(
+        subprocess.check_output(
+            [str(python), "-c", "import sysconfig; print(sysconfig.get_path('purelib'))"],
+            text=True,
+        ).strip()
+    )
+    asset = packages / "example/tests/expected.txt"
+    asset.parent.mkdir(parents=True)
+    asset.write_bytes(b"synthetic expected answer")
+    data = asset.with_name("input.txt")
+    data.write_bytes(b"synthetic required input")
+    metadata = packages / "example_tests-0.1.dist-info"
+    metadata.mkdir()
+    (metadata / "METADATA").write_text("Name: example-tests\nVersion: 0.1\n")
+    (metadata / "RECORD").write_text("example/tests/expected.txt,,\nexample/tests/input.txt,,\n")
+    declaration = {
+        "files": [
+            {
+                "distribution": "example-tests",
+                "path": "example/tests/expected.txt",
+                "sha256": hashlib.sha256(asset.read_bytes()).hexdigest(),
+                "reason": "Synthetic worker-selected unused expected-answer fixture",
+            }
+        ]
+    }
+    request = tmp_path / "request.json"
+    request.write_text(
+        json.dumps(
+            {
+                "new_dependency_exclusions": declaration,
+                "effective_dependency_exclusions": declaration,
+            }
+        )
+    )
+    receipt = tmp_path / "receipt.json"
+    helper = Path(__file__).with_name("dependency_assets.py")
+    for phase in ("finalize", "verify-absence"):
+        subprocess.run(
+            [str(python), str(helper), phase, str(request), str(receipt)],
+            check=True,
+            capture_output=True,
+        )
+        assert json.loads(receipt.read_text())["excluded_files_absent"]
+        assert not asset.exists() and data.read_bytes() == b"synthetic required input"
+    asset.write_bytes(b"restored synthetic answer")
+    failed = subprocess.run(
+        [str(python), str(helper), "verify-absence", str(request), str(receipt)],
+        capture_output=True,
+    )
+    assert failed.returncode != 0
+    assert asset.read_bytes() == b"restored synthetic answer"
 
 
 def test_installed_catalog_exposes_answer_candidates_without_selecting_or_deleting(tmp_path):

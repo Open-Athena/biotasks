@@ -74,12 +74,17 @@ def test_source_corruption_and_unsafe_output_links_fail(tmp_path):
 
 
 @pytest.mark.parametrize("mode", ["fresh", "finalize", "construct_with_prior"])
-def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp_path, mode):
+@pytest.mark.parametrize("remove_fixture", [False, True])
+@pytest.mark.parametrize("corrupt_first_catalog", [False, True])
+def test_materialization_controller_preserves_candidate_and_checks_downloads(
+    tmp_path, mode, remove_fixture, corrupt_first_catalog
+):
     import asyncio
     import json
     import time
     from types import SimpleNamespace
 
+    from materialization_environment import binding, removal_receipt
     from task_materialization import run_materialization
 
     source = tmp_path / "source"
@@ -120,31 +125,91 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
         )
     )
     uploads = []
+    calls = []
+    executions = []
+    catalog_downloads = []
+    removals = (
+        [
+            {
+                "distribution": "example",
+                "path": "example/tests/expected.txt",
+                "sha256": "a" * 64,
+                "reason": "Synthetic worker observed an unused answer fixture",
+            }
+        ]
+        if remove_fixture
+        else []
+    )
+    request = {}
+    catalog = {"files": [], "summary": {"priority_matches": [], "candidate_files": 0}}
+    catalog_raw = (json.dumps(catalog, indent=2) + "\n").encode()
+    controlled = {
+        "status": "executed_requires_scientific_validation",
+        "inputs": [item],
+        "reference": [item],
+        "oracle_outputs": [item],
+        "environment_removal_receipt": removal_receipt({"files": []}),
+        "environment": {
+            "exclusions": {"files": []},
+            "removal_receipt": removal_receipt({"files": []}),
+            "asset_catalog": {
+                "sha256": hashlib.sha256(catalog_raw).hexdigest(),
+                "bytes": len(catalog_raw),
+            },
+            "asset_summary": catalog["summary"],
+        },
+    }
 
     async def upload(local, remote):
         uploads.append(remote)
+        if remote == "/work/grading-private/materialization.json":
+            request.update(json.loads(local.read_text()))
 
     async def download(remote, local):
-        local.write_bytes(data)
+        content = data
+        if remote.endswith("dependency-assets-final.json"):
+            catalog_downloads.append(remote)
+            content = (
+                b"CORRUPTED"
+                if corrupt_first_catalog and len(catalog_downloads) == 1
+                else catalog_raw
+            )
+        local.write_bytes(content)
 
     async def command(argv, seconds, label):
+        nonlocal catalog_raw
         assert argv[-1] == "/work/materialization_remote.py"
+        executions.append(label)
+        merged = request["effective_dependency_exclusions"]
+        catalog["summary"]["candidate_files"] = int(not merged["files"])
+        catalog_raw = (json.dumps(catalog, indent=2) + "\n").encode()
+        controlled["environment_removal_receipt"] = removal_receipt(merged)
+        controlled["environment"].update(
+            exclusions=merged,
+            removal_receipt=removal_receipt(merged),
+            asset_catalog={
+                "sha256": hashlib.sha256(catalog_raw).hexdigest(),
+                "bytes": len(catalog_raw),
+            },
+        )
         return {
             "exit_code": 0,
-            "log": json.dumps(
-                {
-                    "status": "executed_requires_scientific_validation",
-                    "inputs": [item],
-                    "reference": [item],
-                    "oracle_outputs": [item],
-                }
-            ),
+            "log": json.dumps(controlled),
         }
 
     async def shell(command, timeout_sec=120):
         raise AssertionError("Synthetic author needs no shell")
 
     async def complete(payload):
+        calls.append(payload)
+        if len(calls) > 3:
+            raise AssertionError("Unexpected extra synthetic worker request")
+        if len(calls) > 1:
+            candidate["environment_review"] = {
+                **binding(controlled),
+                "assessment": "Synthetic observed empty candidate inventory",
+                "additional_exclusions": removals,
+            }
         model_input = json.loads(payload["messages"][1]["content"])
         assert model_input["source_operations"]["operations"][0]["function"] == "analyze"
         tool_names = {t["function"]["name"] for t in payload["tools"]}
@@ -156,6 +221,7 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
         if mode == "construct_with_prior":
             assert "Inspect the actual input keys" in payload["messages"][0]["content"]
             assert "prior_worker_draft" in payload["messages"][1]["content"]
+        review_only = mode == "construct_with_prior" and len(calls) > 1
         return {
             "choices": [
                 {
@@ -165,11 +231,21 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
                         "content": None,
                         "tool_calls": [
                             {
-                                "id": "submit",
+                                "id": "submit-" + str(len(calls)),
                                 "type": "function",
                                 "function": {
-                                    "name": "submit_artifact",
-                                    "arguments": json.dumps(candidate),
+                                    "name": "revise_artifact" if review_only else "submit_artifact",
+                                    "arguments": json.dumps(
+                                        {
+                                            "patch": {
+                                                "environment_review": candidate[
+                                                    "environment_review"
+                                                ]
+                                            }
+                                        }
+                                        if review_only
+                                        else candidate
+                                    ),
                                 },
                             }
                         ],
@@ -216,6 +292,14 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
         "review": "Observed scientific uncertainty",
     }
     assert result["oracle_executed"]
+    assert len(calls) == (3 if remove_fixture else 2)
+    assert len(executions) == (2 if remove_fixture or corrupt_first_catalog else 1)
+    assert (
+        json.loads((root / "materialized/manifest.json").read_text())["environment"]["exclusions"][
+            "files"
+        ]
+        == removals
+    )
     assert not result["numerical_comparison_validated"]
     assert json.loads((root / "materialization-candidate.json").read_text()) == candidate
     assert (root / "materialized/reference/value.txt").read_bytes() == data

@@ -63,7 +63,29 @@ class ReviewInspection:
                 raise ValueError("Reviewer installed-asset evidence identity changed: " + name)
             return json.loads(path.read_text())
 
-        summary = recorded("trial/dependency-assets-summary.json")
+        materialized = snapshot.get("materialization")
+        environment = materialized["execution"].get("environment") if materialized else None
+        if environment is not None:
+            from materialization_environment import effective_exclusions
+
+            exclusions = effective_exclusions(
+                snapshot.get("dependency_exclusions"),
+                materialized["candidate"],
+                materialized["execution"],
+            )["files"]
+            summary = environment["asset_summary"]
+            self.context["final_environment_review"] = {
+                "worker_review": materialized["candidate"]["environment_review"],
+                "executed_exclusions": environment["removal_receipt"],
+                "asset_catalog": environment["asset_catalog"],
+                "scope": "Worker scientific assessment plus controller-observed cleanup; not independent answer-isolation approval.",
+            }
+        else:
+            summary = recorded("trial/dependency-assets-summary.json")
+            applied = recorded("trial/dependency-exclusions-applied.json")
+            exclusions = (
+                applied["files"] if applied and applied.get("excluded_files_absent") else []
+            )
         if summary is None:
             hints = {
                 "status": "installed_asset_summary_unavailable",
@@ -71,10 +93,6 @@ class ReviewInspection:
                 "scope": "Missing recorded catalog is a gap, not answer-isolation approval.",
             }
         else:
-            applied = recorded("trial/dependency-exclusions-applied.json")
-            exclusions = (
-                applied["files"] if applied and applied.get("excluded_files_absent") else []
-            )
             hints = await build_hints(
                 self.packages, self.references, summary["priority_matches"], exclusions
             )

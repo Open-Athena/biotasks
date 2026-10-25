@@ -33,6 +33,20 @@ class OperationUse(StrictModel):
     rationale: str = Field(min_length=1)
 
 
+class DependencyExclusion(StrictModel):
+    distribution: str
+    path: str
+    sha256: str
+    reason: str = Field(min_length=1)
+
+
+class FinalEnvironmentReview(StrictModel):
+    artifact_inventory_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    asset_catalog_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    assessment: str = Field(min_length=1)
+    additional_exclusions: list[DependencyExclusion]
+
+
 class Materialization(StrictModel):
     disposition: Literal["ready", "blocked"]
     instruction: str
@@ -48,6 +62,9 @@ class Materialization(StrictModel):
     # Historical artifacts remain readable. Current construction validates this
     # against a controller-generated inventory of every original source call.
     operation_coverage: list[OperationUse] = Field(default_factory=list)
+    # Older sealed artifacts remain readable. A current construction session
+    # requires this only after controlled execution has supplied the identities.
+    environment_review: FinalEnvironmentReview | None = None
 
     @model_validator(mode="after")
     def valid_bundle(self):

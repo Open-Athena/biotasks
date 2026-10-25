@@ -95,7 +95,7 @@ def package(
     from materialization_inputs import load_materialized
     from reference_replay import sha256
 
-    load_materialized(materialization)
+    _, materialized_execution = load_materialized(materialization)
     if any(c["candidate_sha256"] != sha256(grading / "final-candidate.json") for c in controls):
         raise ValueError("Controls belong to a different grader candidate")
     expected_instruction = (
@@ -127,6 +127,9 @@ def package(
     exclusions = load_dependency_exclusions(
         environment, {item["path"]: item["sha256"] for item in environment_manifest["files"]}
     )
+    from materialization_environment import effective_exclusions
+
+    exclusions = effective_exclusions(exclusions, candidate.model_dump(), materialized_execution)
     # This infrastructure wrapper never authors scientific task code or values.
     docker = ["FROM python:3.13.13-slim-bookworm", "ENV DEBIAN_FRONTEND=noninteractive"]
     if packages:

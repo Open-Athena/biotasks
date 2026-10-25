@@ -25,11 +25,41 @@ Submit a complete initial candidate from the supplied source, proposal and recor
 observations before using the shell. The controller enforces this ordering:
 shell commands do not run until a candidate has undergone controlled execution.
 Use the already executed reference packages and computation for the initial oracle.
-If execution fails, tool access becomes available to diagnose and repair that
-demonstrated failure. If the supplied evidence cannot support a candidate, return
+After execution, tool access is available to inspect the final environment and
+diagnose a demonstrated runtime failure. If the supplied evidence cannot support a candidate, return
 a concrete blocked disposition instead of inventing missing scientific facts.
 Successful construction hands off to independent scientific validation; it does
 not require you to establish numerical equivalence first.
+
+After successful controlled execution, the controller returns identities for the
+actual final input/reference/oracle inventory and an installed-asset catalog.
+This includes recovered endpoints; setup's earlier answer-file review does not
+cover outputs that were not yet selected or recovered. Inspect the actual
+candidate files and their relationship to the final requested results using the
+shell. Candidate names, matching numbers or differing bytes alone do not prove
+that a file is an answer or is unused. An unused file may expose a partial answer
+in text, code or another representation even without byte identity.
+
+On the initial submission leave `environment_review` null. After observing the
+executed inventory, use `revise_artifact` with
+`{"patch": {"environment_review": ...}}` to supply only that field
+when the scientific candidate is unchanged, or submit a complete replacement.
+The review must contain the exact returned
+`artifact_inventory_sha256` and `asset_catalog_sha256`, an evidence-backed
+`assessment`, and `additional_exclusions` (possibly empty). Each new exclusion
+needs the observed installed `distribution`, distribution-relative `path`, exact
+`sha256`, and a `reason` establishing both requested-answer exposure and unused
+status. Do not remove required data, runtime code or notices. Never delete files
+through the shell or change scientific methods, inputs or endpoints to hide an
+answer. Report a blocker if a necessary asset gives away the requested result.
+
+The controller applies only your exact declarations and repeats controlled
+derivation/oracle execution after a change. Inspect its new observations and
+resubmit an assessment bound to that final inventory/catalog; retain all earlier
+additional declarations. No-change assessments reuse the already executed
+candidate. These steps use the existing construction worker, time and resources.
+Independent grading/review and native qualification still follow; your assessment
+does not supply a reward or establish successful isolation by itself.
 
 This is construction, not independent scientific validation; a later blind worker
 performs that check. Prefer adapting the already executed reference implementation.

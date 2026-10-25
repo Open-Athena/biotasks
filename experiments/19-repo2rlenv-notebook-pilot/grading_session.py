@@ -93,6 +93,21 @@ class GradingSession:
     def __init__(self, *, remote, snapshot, root, config):
         self.remote, self.snapshot, self.root, self.config = remote, snapshot, root, config
         self.paths = [p["path"] for p in snapshot["outputs"]]
+        from materialization_environment import effective_exclusions
+
+        materialized = snapshot.get("materialization")
+        self.final_environment = (
+            materialized["execution"].get("environment") if materialized else None
+        )
+        self.exclusions = (
+            effective_exclusions(
+                snapshot.get("dependency_exclusions"),
+                materialized["candidate"],
+                materialized["execution"],
+            )
+            if materialized
+            else snapshot.get("dependency_exclusions")
+        )
         self.case_number = 0
         self.candidate_number = 0
         self.probe_validation_number = 0
@@ -201,7 +216,7 @@ class GradingSession:
                 self.snapshot["system_packages"],
                 verify_inputs=False,
                 locked=True,
-                dependency_cleanup=self.snapshot.get("dependency_exclusions") is not None,
+                dependency_cleanup=self.exclusions is not None,
             )
         )
         staging = self.root / "no-input-staging.sh"
@@ -238,9 +253,11 @@ class GradingSession:
             (staging, "/work/stage-inputs.sh"),
         ]:
             await self.remote.upload(local, target)
-        if self.snapshot.get("dependency_exclusions") is not None:
+        if self.exclusions is not None:
+            effective = self.root / "effective-dependency-exclusions.json"
+            save_record(effective, self.exclusions)
             await self.remote.upload(
-                source / "candidate/dependency-exclusions.json",
+                effective,
                 "/work/environment/dependency-exclusions.json",
             )
             await self.remote.upload(
@@ -255,10 +272,16 @@ class GradingSession:
             await self.remote.download("/work/environment/" + name, self.root / name)
             if sha256(self.root / name) != self.snapshot["hashes"]["trial/" + name]:
                 raise RuntimeError("Grading environment differs from the reference")
-        if self.snapshot.get("dependency_exclusions") is not None:
+        if self.exclusions is not None:
             name = "dependency-exclusions-applied.json"
             await self.remote.download("/work/environment/" + name, self.root / name)
-            if sha256(self.root / name) != self.snapshot["hashes"]["trial/" + name]:
+            from materialization_environment import removal_receipt
+
+            if (
+                json.loads((self.root / name).read_text()) != removal_receipt(self.exclusions)
+                if self.final_environment is not None
+                else sha256(self.root / name) != self.snapshot["hashes"]["trial/" + name]
+            ):
                 raise RuntimeError("Grading dependency removal differs from the reference")
         root = Path(
             self.snapshot.get(

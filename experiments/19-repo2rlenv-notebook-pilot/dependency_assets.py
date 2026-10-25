@@ -5,6 +5,7 @@ exact installed ownership/content and records deletion. It never selects files.
 """
 
 import ast
+import csv
 import hashlib
 import importlib.metadata
 import json
@@ -278,10 +279,42 @@ def apply_manifest(value, *, distribution=importlib.metadata.distribution, roots
     return {"files": [item for _, item in pending], "excluded_files_absent": True}
 
 
+def verify_absence(value, *, distribution=importlib.metadata.distribution, roots=None):
+    """Recheck prior explicit removals without treating missing files as new removals."""
+    validate_manifest(value)
+    roots = roots or [Path(sysconfig.get_path(key)).resolve() for key in ("purelib", "platlib")]
+    files = []
+    for item in value["files"]:
+        installed = distribution(item["distribution"])
+        # Distribution.files can filter out files that no longer exist. The
+        # installed RECORD retains ownership after a verified deletion.
+        record = installed.read_text("RECORD") if hasattr(installed, "read_text") else None
+        owned = (
+            {row[0] for row in csv.reader(record.splitlines()) if row}
+            if record is not None
+            else {str(path) for path in installed.files or []}
+        )
+        if item["path"] not in owned:
+            raise ValueError("Excluded file is not owned by the declared distribution")
+        path = Path(installed.locate_file(item["path"]))
+        if not any(path.is_relative_to(root) for root in roots) or path.resolve() != path:
+            raise ValueError("Excluded file escaped the installed environment")
+        if path.exists() or path.is_symlink():
+            raise ValueError("Previously excluded dependency asset is present")
+        files.append({key: item[key] for key in ("distribution", "path", "sha256")})
+    return {"files": files, "excluded_files_absent": True}
+
+
 if __name__ == "__main__":
     if sys.prefix == sys.base_prefix:
         raise RuntimeError("Apply dependency exclusions using the task virtual environment")
-    if sys.argv[1] == "inspect":
+    if sys.argv[1] in {"finalize", "verify-absence"}:
+        request = json.loads(Path(sys.argv[2]).read_text())
+        if sys.argv[1] == "finalize":
+            apply_manifest(request["new_dependency_exclusions"])
+        result = verify_absence(request["effective_dependency_exclusions"])
+        Path(sys.argv[3]).write_text(json.dumps(result, indent=2) + "\n")
+    elif sys.argv[1] == "inspect":
         result = inspect_assets(
             json.loads(Path(sys.argv[2]).read_text()),
             source=Path(sys.argv[4]).read_text() if len(sys.argv) > 4 else None,

@@ -6,6 +6,15 @@ from pathlib import Path
 
 import httpx
 from design_stage import completion_transport
+from materialization_environment import (
+    binding,
+    check_review,
+    digest,
+    effective_exclusions,
+    exclusion_key,
+    merge_exclusions,
+    removal_receipt,
+)
 from materialization_protocol import Materialization
 from model_profile import native_effort
 from openai import AsyncOpenAI
@@ -31,7 +40,8 @@ def candidate_repair_shell(shell, attempts):
             return (
                 "No command executed. Submit a complete reference-based candidate first. "
                 "The controller will execute it and report failures. Shell access then "
-                "becomes available for repair. Use the supplied source and observations; "
+                "becomes available for final-environment inspection and repair. "
+                "Use the supplied source and observations; "
                 "leave independent scientific comparison to validation. If those inputs "
                 "cannot support a candidate, submit a blocked disposition with the reason."
             )
@@ -108,21 +118,57 @@ async def run_materialization(
         )
         complete = completion_transport(client)
     attempts = []
+    applied_additions = []
+    last_execution = None
+    last_execution_key = None
+    last_catalog = None
 
     async def validate(candidate):
+        nonlocal applied_additions, last_execution, last_execution_key, last_catalog
         if candidate.disposition == "blocked":
             return
         check_operation_coverage(candidate, context["source_operations"])
+        review = candidate.environment_review.model_dump() if candidate.environment_review else None
+        if review is not None:
+            if last_execution is None:
+                raise ValueError("Execute an initial candidate before assessing its environment")
+            check_review(review, last_execution)
+        additional = review["additional_exclusions"] if review else applied_additions
+        merged = merge_exclusions(
+            session.snapshot.get("dependency_exclusions"),
+            additional,
+            already_applied=applied_additions,
+        )
+        scientific = candidate.model_dump(exclude={"environment_review"})
+        execution_key = digest({"candidate": scientific, "exclusions": merged})
+        if execution_key == last_execution_key:
+            # An assessment alone changes neither science nor environment. Its
+            # identities still have to match this actual controlled execution.
+            effective_exclusions(
+                session.snapshot.get("dependency_exclusions"),
+                candidate.model_dump(),
+                last_execution,
+            )
+            return
         folder = root / "materialization" / str(len(attempts) + 1)
         folder.mkdir(parents=True)
         record = candidate.model_dump()
         record["seconds"] = config["reference_seconds"]
+        removed = {exclusion_key(row) for row in applied_additions}
+        record["new_dependency_exclusions"] = {
+            "files": [row for row in additional if exclusion_key(row) not in removed]
+        }
+        record["effective_dependency_exclusions"] = merged
+        record["original_source"] = context["source_evidence"]["inputs/original.py"]
         save_record(folder / "candidate.json", record)
         await session.remote.upload(
             folder / "candidate.json", "/work/grading-private/materialization.json"
         )
-        for name in ("materialization_remote.py", "grading_remote.py"):
+        for name in ("materialization_remote.py", "grading_remote.py", "dependency_assets.py"):
             await session.remote.upload(HERE / name, "/work/" + name)
+        # Any fresh attempt can replace the remote products, even if it fails.
+        # A prior successful candidate can no longer reuse those paths blindly.
+        last_execution_key = None
         started = time.time()
         reply = await session.command(
             ["python", "/work/materialization_remote.py"],
@@ -133,12 +179,51 @@ async def run_materialization(
         attempts.append(result)
         if reply["exit_code"] == 0:
             result["execution"] = json.loads(reply["log"])
+            if result["execution"].get("environment_removal_receipt") == removal_receipt(merged):
+                applied_additions = additional
         save_record(folder / "result.json", result)
         if (
             reply["exit_code"]
             or result["execution"]["status"] != "executed_requires_scientific_validation"
         ):
             raise ValueError("Materialization/oracle execution failed: " + json.dumps(result))
+        last_execution = result["execution"]
+        last_catalog = folder / "dependency-assets-final.json"
+        await session.remote.download(
+            "/work/grading-private/dependency-assets-final.json", last_catalog
+        )
+        catalog = last_execution["environment"]["asset_catalog"]
+        if (
+            last_catalog.stat().st_size != catalog["bytes"]
+            or sha256(last_catalog) != catalog["sha256"]
+        ):
+            raise ValueError("Final installed-asset catalog identity mismatch")
+        last_execution_key = execution_key
+        try:
+            effective_exclusions(
+                session.snapshot.get("dependency_exclusions"),
+                candidate.model_dump(),
+                last_execution,
+            )
+        except ValueError as error:
+            raise ValueError(
+                str(error)
+                + "\nControlled science execution succeeded. Inspect actual installed asset "
+                "candidates against ALL final outputs, including recovered endpoints. "
+                "Submit an evidence-backed environment_review; matches alone do not prove "
+                "answer relevance or unused status. Additional exclusions require exact "
+                "distribution/path/SHA256/reason and trigger fresh controlled execution. "
+                "The original source, inputs, methods and selected endpoints stay fixed. "
+                "Current observations: "
+                + json.dumps(
+                    {
+                        **binding(last_execution),
+                        "asset_summary": last_execution["environment"]["asset_summary"],
+                        "already_applied_additional_exclusions": applied_additions,
+                        "working_reference_outputs": "/work/author/derive-case/bundle/reference",
+                    }
+                )
+            ) from error
 
     try:
         candidate = await stage(
@@ -168,8 +253,12 @@ async def run_materialization(
         save_record(root / "materialization-candidate.json", candidate.model_dump())
         if candidate.disposition == "blocked":
             return {"status": "materialization_blocked"}
-        execution = attempts[-1]["execution"]
+        execution = last_execution
         saved = root / "materialized"
+        saved.mkdir(exist_ok=True)
+        if last_catalog is None:
+            raise ValueError("Missing final installed-asset catalog")
+        (saved / "dependency-assets-final.json").write_bytes(last_catalog.read_bytes())
         for kind, remote_root in (
             ("inputs", "/work/grading-private/materialized/inputs"),
             ("reference", "/work/grading-private/materialized/reference"),

@@ -135,6 +135,25 @@ review/revision outcomes are recorded against the frozen factory in each run
 receipt; reviewer readiness alone does not establish scientific acceptance.
 Frozen campaigns 170/171 do not contain this later change.
 
+## Final task environment
+
+The next-version construction loop checks installed answer-bearing assets after
+executing the final selected/recovered endpoint inventory. Its existing worker
+receives controller-observed artifact/catalog hashes and inspects the actual
+candidate files. It may declare additional unused answer files by distribution,
+path, exact content hash and evidence-backed reason. The controller selects no
+files and preserves all original reference evidence and base exclusions.
+
+An environment change requires fresh controlled derivation and isolated oracle
+execution, then a review bound to the resulting inventory/catalog. An assessment
+alone reuses the verified computation; a failed attempt invalidates that cache.
+The combined manifest reaches fresh grading, independent inspection and native
+packaging. The assessment remains advisory: later scientific validation, controls,
+review and native qualification are still mandatory. This is pre-freeze work in
+the existing construction session, without an extra stage, global quality repair,
+setup-reference test, model allowance or extended resource/time limit. It is not
+contained in the original frozen campaigns177–184; live adoption remains pending.
+
 ## Scientific quality repair
 
 If the allowance was not used at specification, the controller may route it to a demonstrated

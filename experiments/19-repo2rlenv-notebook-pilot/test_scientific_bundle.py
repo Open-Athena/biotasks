@@ -14,8 +14,9 @@ def save(path, value):
 
 @pytest.mark.parametrize("question_revision", [False, True])
 @pytest.mark.parametrize("exclusions", [False, True])
+@pytest.mark.parametrize("final_environment", [False, True])
 def test_bundle_keeps_answers_private_and_requires_exact_controls(
-    tmp_path, monkeypatch, question_revision, exclusions
+    tmp_path, monkeypatch, question_revision, exclusions, final_environment
 ):
     materialized, grading, environment = [
         tmp_path / p for p in ("materialized", "grading", "environment")
@@ -36,6 +37,32 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(
         reference=[dict(item, path="y.txt")],
         oracle_outputs=[dict(item, path="y.txt")],
     )
+    entry = dict(
+        distribution="fixture",
+        path="fixture/tests/expected.txt",
+        sha256="a" * 64,
+        reason="PRIVATE observed expected output; unused fixture",
+    )
+    catalog_raw = b'{"files": [], "summary": {"priority_matches": []}}'
+    if final_environment:
+        from materialization_environment import binding, merge_exclusions, removal_receipt
+
+        additional = [dict(entry, path="fixture/tests/final-expected.txt")]
+        merged = merge_exclusions({"files": [entry] if exclusions else []}, additional)
+        manifest["environment"] = {
+            "exclusions": merged,
+            "removal_receipt": removal_receipt(merged),
+            "asset_summary": {"priority_matches": []},
+            "asset_catalog": {
+                "sha256": hashlib.sha256(catalog_raw).hexdigest(),
+                "bytes": len(catalog_raw),
+            },
+        }
+        candidate["environment_review"] = {
+            **binding(manifest),
+            "assessment": "PRIVATE synthetic final-output assessment",
+            "additional_exclusions": additional,
+        }
     result = dict(status="materialized_requires_scientific_validation", cleanup_verified=True)
     records = []
     for name, value in [
@@ -50,6 +77,16 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(
                 path=name,
                 bytes=path.stat().st_size,
                 sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+            )
+        )
+    if final_environment:
+        path = materialized / "dependency-assets-final.json"
+        path.write_bytes(catalog_raw)
+        records.append(
+            dict(
+                path=path.name,
+                bytes=len(catalog_raw),
+                sha256=hashlib.sha256(catalog_raw).hexdigest(),
             )
         )
     save(materialized / "artifact-manifest.json", dict(original_small_files=records))
@@ -103,18 +140,17 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(
     )
     (environment / "trial").mkdir()
     (environment / "trial/uv.lock").write_text("fixture")
-    if exclusions:
-        entry = dict(
-            distribution="fixture",
-            path="fixture/tests/expected.txt",
-            sha256="a" * 64,
-            reason="PRIVATE observed expected output; unused fixture",
+    if exclusions or final_environment:
+        save(
+            environment / "candidate/dependency-exclusions.json",
+            {"files": [entry] if exclusions else []},
         )
-        save(environment / "candidate/dependency-exclusions.json", {"files": [entry]})
         save(
             environment / "trial/dependency-exclusions-applied.json",
             {
-                "files": [{key: entry[key] for key in ("distribution", "path", "sha256")}],
+                "files": [{key: entry[key] for key in ("distribution", "path", "sha256")}]
+                if exclusions
+                else [],
                 "excluded_files_absent": True,
             },
         )
@@ -155,7 +191,7 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(
     assert "`/workspace/inputs/`" in instruction
     assert "`/workspace/outputs/`" in instruction
     assert "COPY inputs/ /workspace/inputs/" in (task / "environment/Dockerfile").read_text()
-    if exclusions:
+    if exclusions or final_environment:
         docker = (task / "environment/Dockerfile").read_text()
         assert "UV_NO_CACHE=1" in docker and "--no-cache-dir" in docker
         assert "/opt/venv/bin/python /opt/task-environment/dependency_assets.py" in docker
@@ -163,6 +199,13 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(
         public_manifest = (task / "environment/dependency-exclusions.json").read_text()
         assert "PRIVATE" not in public_manifest
         assert "reason" not in json.loads(public_manifest)["files"][0]
+        assert len(json.loads(public_manifest)["files"]) == int(exclusions) + int(final_environment)
+        if final_environment:
+            assert any(
+                row["path"] == "fixture/tests/final-expected.txt"
+                for row in json.loads(public_manifest)["files"]
+            )
+            assert not (task / "environment/dependency-assets-final.json").exists()
         assert (task / "environment/dependency_assets.py").read_bytes() == (
             environment / "trial/dependency_assets.py"
         ).read_bytes()
