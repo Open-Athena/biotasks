@@ -4585,3 +4585,7 @@ Refresh original-ID/owner cleanup for closed133/139and apply the unchanged stric
 ## 2026-10-25 — submit paired source-only validation
 
 Freeze158 from unchanged156 source assets and159 from unchanged157 source assets against public runtime b69ae30f. Private input refs6d95f764/14e0bdc8 remain unpublished; neither payload contains earlier generated tasks, reference answers or operator diagnoses. Typed pool admission found zero active hosts before158 and only158 before159. Submit both once through the existing Iris/Daytona launcher, retaining4CPU/8GiB/10GiB/noGPU,600-second reference/solver limits, GLM native-high requested and existing repair rules. Reserve $5 each within $199 total holds and $200 authorized. Both hosts are RUNNING; outcomes are pending. PR23 remains OPEN/DRAFT at4df0e2eb; no merge, qualification or publication claim.
+
+## 2026-10-25 — ten-source common-policy input check
+
+Verify all ten original notebooks against their existing seed and payload identities. All execution policies equal active158/159 after excluding campaign names and source-path/notices slots. Seed records contain source metadata, not authored task bodies. This prepares a coherent ten-domain comparison without changing notebooks or supplying scientific design. Eight remaining cases are not funded or launched; no current-version execution result is claimed. Exact identities, the reproducible metadata check and source links are in panel-rounds/049.
