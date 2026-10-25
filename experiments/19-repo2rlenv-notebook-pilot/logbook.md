@@ -4924,3 +4924,10 @@ The original scratch regression fails before the change; four unsafe-finalizatio
 ### 2026-10-25 — Account workspace controls within setup time
 
 A new fake-clock regression failed before the refinement: the isolation/restoration operations did not decrement the existing setup allowance. Both now use the existing budgeted command path, charging observed elapsed time without adding a tool or allowance. All291affected checks pass (10.51seconds, peak167288KiB); Ruff passes. One initial check selection used nonexistent filenames and ran no tests; the corrected selection passed. No model, biology or provider execution occurred in these checks. Original174 remains incomplete. See factory-checks/authoring-workspace-isolation/setup-budget-validation.json.
+
+
+### 2026-10-25 — Real workspace controls and bounded funding
+
+All three synthetic workspace/provider checks passed in32.82seconds; actual online/offline controls and original/fresh sandbox absence verified. A local import-only failure created no provider root; its admission was preserved before correcting PYTHONPATH. No model or biology ran. Completed network and workspace checks share1USDcovering two full480-second profiles bounded0.088608USD, without declaring prior usage free.
+
+A separate two-SDK terminal setup/replay resource profile leaves existing four/five/native auditors unchanged. Exact frozen174controller/creator/session/replay/network implementations, complete original archives, typedFAILED, two claims, original/fresh cleanup and closed session clocks were checked. Both full7500-second profiles bound1.384500USD; complete observed lifetimes plus300seconds at EACH end bound0.14375886552690USD. Retain1USD, release1USD;195held/5unallocated before the next full reservation.61positive/negative checks pass across this and unchanged accounting profiles; Ruff passes. No invoice/credit assumed and original174remains infrastructure_failed. See panel-rounds/079/closed-174-applied.json.

@@ -1,0 +1,9 @@
+# Source-only workspace-isolation validation
+
+The existing setup test hides the canonical authoring directory during build/staging and restores it before feedback. Both controls consume the existing setup time; scratch dependence fails before a scientific reference attempt. Fresh replay remains required. All291affected offline checks and three real synthetic provider cases pass, including online/offline controls and independent cleanup. Only the six listed runtime paths may differ from round078; all original169source/provenance assets are reused without previous generated tasks, feedback or failed recipes.
+
+The separate two-SDK accounting profile admits an exact reviewed resource implementation and a terminal preparation/setup/replay prefix. Existing four/five/native auditors are unchanged. It verifies complete sealed originals, frozen source/configuration identities, typed host failure, exactly two4CPU/8GiB/10GiB image-created claims, original/fresh cleanup, and all closed controller lifetimes plus300seconds at EACH end. It refuses unknown source families, later stages, altered resources, duplicate owners, missing cleanup, invalid clocks and bounds at or above1USD.61positive/negative accounting checks pass (peak35776KiB); Ruff passes.
+
+For original174, the coarse two-full7500-second bound is1.384500USD; complete closed lifetimes with both-end margins bound0.14375886552690USD. Retain1USD and release1USD of the previous2USDhold; original infrastructure_failed remains unchanged. This is neither a provider invoice nor an assumed credit. Combined with the existing shared compatibility hold,5USDbecomes available for a full new campaign.
+
+Campaign175 retains the full5USD reservation and all existing scientific, resource, timing, model and repair policies. No reference or task is manually edited. Preparation and provider compatibility evidence do not establish fresh end-to-end qualification.
