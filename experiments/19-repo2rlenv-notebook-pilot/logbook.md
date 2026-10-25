@@ -4665,3 +4665,7 @@ The autonomous run completed in 56.47 minutes with 190 recorded model requests a
 ### 2026-10-25 — original Scanpy163 admitted within its existing reservation
 
 Typed admission found no other live campaigns after161 original/fresh eight-owner cleanup was recorded. The frozen214-file runtime includes the source-bound, live-tested general bounded network fix; source inputs match150 exactly. No prior task, labels, answers or operator diagnosis are supplied. The initial safe deferral is preserved. No extra authorization or budget was added: 198 USD reserved, 2 unallocated within200 authorized. See round057/submission-163.json.
+
+### 2026-10-25 — repeat existing scientific admission checks at release
+
+Staging previously rechecked source coverage but did not repeat the live controller’s scientific comparison/answer-isolation and value-hint predicates. The read-only release gate now binds the final review to its exact recorded candidate/response, including later repair submissions, and requires executed negatives for every scientific check. Sixty-three affected offline checks pass; the exact archived161 bundle passes the stronger gate with17controls and native1/0/1. No model, scientific edit or sandbox was used; active163 stays frozen. See factory-checks/release-review/validation.json.

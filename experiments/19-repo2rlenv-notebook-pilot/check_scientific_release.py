@@ -5,7 +5,7 @@ import json
 import sys
 from pathlib import Path
 
-from grading_protocol import Review, check_review_source_coverage
+from release_review import check_final_review
 from repo2rlenv.emitter.bundle import inspect_bundle
 from scientific_bundle import runtime_instruction
 
@@ -63,14 +63,7 @@ result = read(grading / "result.json")
 assert result["status"] == "grader_candidate_validated" and result["cleanup_verified"]
 controls = read(grading / "final-controls.json")
 candidate = read(grading / "final-candidate.json")
-review = Review.model_validate(
-    read(
-        grading
-        / ("review-repair.json" if (grading / "review-repair.json").exists() else "review.json")
-    )
-)
-check_review_source_coverage(review)
-assert review.decision == "accept_for_packaging" and not review.issues
+check_final_review(grading)
 assert controls and all(c["passed_control"] for c in controls)
 assert all(c["candidate_sha256"] == digest(grading / "final-candidate.json") for c in controls)
 assert {"reference", "recomputed", "alternative", "empty", "misplaced", "missing", "probe"} <= {
@@ -88,6 +81,9 @@ print(
             native_trials=records,
             scientific_controls=len(controls),
             source_coverage_review_verified=True,
+            scientific_admission_review_verified=True,
+            asset_value_hints_review_verified=True,
+            executed_scientific_negative_coverage_verified=True,
             accepted=True,
         ),
         indent=2,
