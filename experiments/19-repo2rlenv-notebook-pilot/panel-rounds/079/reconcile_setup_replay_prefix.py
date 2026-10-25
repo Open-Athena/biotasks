@@ -1,4 +1,4 @@
-"""Price a known terminal two-SDK setup/replay prefix; keep other profiles separate."""
+"""Price explicit terminal SDK prefixes; keep older/native profiles separate."""
 
 import argparse
 import hashlib
@@ -24,37 +24,95 @@ SOURCES = {
     "preflight.py": "b9c0facbfded6d72a46cd927393417f88eeda8e092744d84a85a54c4c8bd3003",
     "daytona_session.py": "6b9da0f5bf020dd9330f80a80586b0b0cca494c80576b2543416b636fb99751a",
 }
+GRADING_SOURCES = {
+    **SOURCES,
+    # Earlier bounded-network implementation; image creation/cleanup is identical.
+    "run_reference_setup.py": "9a2354335a74410931129d58526c16d121ddce2f86b0b35806dd75378d4d60f8",
+}
+LEGACY_REPLAY_SOURCES = {
+    **SOURCES,
+    "run_autonomous.py": "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188",
+    "run_reference_setup.py": "fc83bf2ecd9f201b4bfd8c47cb07740619d09c66fc8df5a37435eb95af5b2d0b",
+    "reference_setup.py": "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
+    "preflight.py": "e6f49af20e00306d137a3027ee7e29a5369f93fbd82530925d071601b5afd77b",
+}
+LEGACY_SPECIFICATION_SOURCES = {
+    **GRADING_SOURCES,
+    "run_autonomous.py": LEGACY_REPLAY_SOURCES["run_autonomous.py"],
+}
+
+
+def profile_config(profile):
+    if profile == "setup_replay":
+        return FOLDERS, ["preparation", "setup", "replay"], SOURCES
+    if profile == "legacy_setup_replay":
+        return FOLDERS, ["preparation", "setup", "replay"], LEGACY_REPLAY_SOURCES
+    if profile == "legacy_specification_rejection":
+        return (
+            FOLDERS,
+            ["preparation", "setup", "replay", "specification"],
+            LEGACY_SPECIFICATION_SOURCES,
+        )
+    assert profile == "grading"
+    return (
+        (*FOLDERS, "materialization-raw", "grading"),
+        ["preparation", "setup", "replay", "specification", "construction", "grading"],
+        GRADING_SOURCES,
+    )
 
 
 def digest(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
-def audit(pipeline, sources, claims, sessions, clean):
-    assert sources == SOURCES
-    assert pipeline["status"] == "infrastructure_failed"
-    assert pipeline["failed_stage"] == "replay" and not pipeline.get("quality_repair")
+def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay"):
+    folders, names, expected_sources = profile_config(profile)
+    assert sources == expected_sources
+    rejected = profile == "legacy_specification_rejection"
+    assert pipeline["status"] == ("rejected" if rejected else "infrastructure_failed")
+    if rejected:
+        assert not pipeline.get("failed_stage")
+    else:
+        assert pipeline["failed_stage"] == names[-1]
+    repair = pipeline.get("quality_repair")
+    if repair:
+        # This exact controller's proposal revision/review uses direct model
+        # calls, not another sandbox. Other repairs are not admitted here.
+        assert profile == "grading"
+        assert repair["kind"] == "specification_review"
+        assert repair["target"] == "task_specification" and repair["allowance_consumed"] is True
+        assert repair["validation_status"] == "ready"
     stages = pipeline["stages"]
-    assert [s["name"] for s in stages] == ["preparation", "setup", "replay"]
-    assert [s["status"] for s in stages] == ["completed", "completed", "incomplete"]
+    assert [s["name"] for s in stages] == names
+    assert [s["status"] for s in stages] == [
+        *(["completed"] * (len(names) - 1)),
+        "rejected" if rejected else "incomplete",
+    ]
     assert pipeline["started"] <= stages[0]["started"]
     assert stages[-1]["finished"] <= pipeline["finished"]
     assert 0 < pipeline["finished"] - pipeline["started"] <= 7200
     assert all(s["started"] <= s["finished"] for s in stages)
     assert all(a["finished"] <= b["started"] for a, b in zip(stages, stages[1:], strict=False))
-    assert set(claims) == set(sessions) == set(FOLDERS)
-    assert len({c["id"] for c in claims.values()}) == 2
-    assert len({c["owner"] for c in claims.values()}) == 2
+    assert set(claims) == set(sessions) == set(folders)
+    assert len({c["id"] for c in claims.values()}) == len(folders)
+    assert len({c["owner"] for c in claims.values()}) == len(folders)
     assert set(clean["owners"]) == {c["owner"] for c in claims.values()}
     assert clean["complete"] and clean["original_all_cleanup_passed"]
     assert clean["fresh_original_ids_absent"] and not clean["sandboxes"]
     for claim in claims.values():
         assert claim["state"] == "created"
         assert claim["resources"] == {"cpu": 4, "memory": 8, "disk": 10}
-    coarse = 2 * RATE * 7500 / 3600
-    assert coarse == Decimal("1.384500") < 2
+    stage_names = (
+        ("setup", "replay") if len(folders) == 2 else ("setup", "replay", "construction", "grading")
+    )
+    for folder, name in zip(folders, stage_names, strict=True):
+        stage = next(s for s in stages if s["name"] == name)
+        assert stage["started"] <= sessions[folder]["started"]
+        assert sessions[folder]["finished"] <= stage["finished"]
+    coarse = len(folders) * RATE * 7500 / 3600
+    assert coarse < len(folders)
     records = {
-        folder: closed_session_bound(sessions[folder], pipeline, [], 300) for folder in FOLDERS
+        folder: closed_session_bound(sessions[folder], pipeline, [], 300) for folder in folders
     }
     upper = sum(Decimal(r["resource_upper_bound_usd"]) for r in records.values())
     assert 0 < upper < 1
@@ -68,7 +126,18 @@ def main():
     p.add_argument("--ledger", type=Path, required=True)
     p.add_argument("--proof", type=Path, required=True)
     p.add_argument("--apply", action="store_true")
+    p.add_argument(
+        "--profile",
+        choices=[
+            "setup_replay",
+            "grading",
+            "legacy_setup_replay",
+            "legacy_specification_rejection",
+        ],
+        default="setup_replay",
+    )
     a = p.parse_args()
+    folders, _, _ = profile_config(a.profile)
     assert not a.proof.exists()
     archive = a.private_root / f"archives/{a.number:03}"
     raw = (archive / "sealed-manifest.json").read_bytes()
@@ -118,16 +187,19 @@ def main():
         (payload / "campaign-config.json").read_bytes()
     )
     assert {n for n in manifest if n.endswith("/sandbox-claim.json")} == {
-        f + "/sandbox-claim.json" for f in FOLDERS
+        f + "/sandbox-claim.json" for f in folders
     }
-    assert not any(
-        n.startswith(("native/", "specification/", "materialization", "grading")) for n in manifest
-    )
+    forbidden = ("native/",)
+    if a.profile != "grading":
+        forbidden += ("materialization", "grading")
+        if a.profile != "legacy_specification_rejection":
+            forbidden += ("specification/",)
+    assert not any(n.startswith(forbidden) for n in manifest)
     assert {r["path"] for r in clean["original_cleanup_evidence"]} == {
-        f + "/cleanup.json" for f in FOLDERS
+        f + "/cleanup.json" for f in folders
     }
     claims, sessions = {}, {}
-    for folder in FOLDERS:
+    for folder in folders:
         claims[folder] = original(folder + "/sandbox-claim.json")
         stage = original(folder + "/configuration.json")
         assert stage["campaign"] == claims[folder]["owner"]
@@ -141,13 +213,15 @@ def main():
         ]
         sessions[folder] = original(folder + "/result.json")
     pipeline = original("pipeline.json")
-    coarse, upper, records = audit(pipeline, sources, claims, sessions, clean)
+    coarse, upper, records = audit(pipeline, sources, claims, sessions, clean, profile=a.profile)
     observations = [
         json.loads(p.read_text())
         for p in (launch / "typed-observations").glob(f"{a.number:03}-*.json")
     ]
     terminal = max(observations, key=lambda r: r["observed_at"])
-    assert terminal["terminal"] and terminal["state"] == "FAILED"
+    assert terminal["terminal"] and terminal["state"] == (
+        "SUCCEEDED" if a.profile == "legacy_specification_rejection" else "FAILED"
+    )
     assert terminal["claim_sha256"] == digest(claim_raw)
     before = a.ledger.read_bytes()
     ledger = json.loads(before)
@@ -159,23 +233,25 @@ def main():
         if r["scope"].startswith(f"autonomous-panel-{a.number:03}:")
     )
     assert (
-        row["ceiling_usd"] == "2.00"
+        row["ceiling_usd"] == f"{len(folders):.2f}"
         and row["state"] == "unused_stage_allowances_released_used_holds_unchanged"
     )
     row.update(
         ceiling_usd="1.00",
-        state="terminal_two_sdk_closed_lifetimes_reconciled",
-        reconciliation="Both complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Retain1USD; no invoices or credits assumed. See "
+        state="terminal_known_sdk_prefix_closed_lifetimes_reconciled",
+        reconciliation="All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Retain1USD; no invoices or credits assumed. See "
         + a.proof.relative_to(a.ledger.parent).as_posix(),
     )
+    released = Decimal(len(folders) - 1)
     ledger.update(
-        reserved_upper_bound_usd=f"{held - 1:.2f}",
-        unallocated_usd=f"{Decimal(ledger['ceiling_before_credits']) - held + 1:.2f}",
+        reserved_upper_bound_usd=f"{held - released:.2f}",
+        unallocated_usd=f"{Decimal(ledger['ceiling_before_credits']) - held + released:.2f}",
     )
     after = (json.dumps(ledger, indent=2) + "\n").encode()
     proof = dict(
         observed_at=datetime.now(UTC).isoformat(),
         campaign=a.number,
+        profile=a.profile,
         applied=a.apply,
         helper_sha256=digest(Path(__file__).read_bytes()),
         clock_helper_sha256=digest(
@@ -192,7 +268,7 @@ def main():
         resource_upper_bound_usd=str(upper),
         records=records,
         retained_usd="1.00",
-        released_usd="1.00",
+        released_usd=f"{released:.2f}",
         aggregate_held_usd=ledger["reserved_upper_bound_usd"],
         unallocated_usd=ledger["unallocated_usd"],
         actual_provider_invoice_usd=None,
