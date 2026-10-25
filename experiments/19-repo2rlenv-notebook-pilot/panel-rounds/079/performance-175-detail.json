@@ -1,0 +1,132 @@
+{
+  "source_archive_manifest_sha256": "5f556afca0ec07b7a1746d0d4a751afebee649912f1e49bfdec9e92747e81fb4",
+  "pipeline_status": "infrastructure_failed",
+  "source_id": "bioframe-motifs-to-peaks",
+  "elapsed_pipeline_seconds": 2296.996,
+  "stage_elapsed_seconds": {
+    "preparation": 10.028,
+    "setup": 412.725,
+    "replay": 86.914,
+    "specification": 1200.12,
+    "construction": 436.525,
+    "grading": 144.248
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "completed",
+    "replay": "completed",
+    "specification": "completed",
+    "construction": "completed",
+    "grading": "incomplete"
+  },
+  "accounted_model_request_attempts": 91,
+  "request_ledgers": [
+    {
+      "path": "grading/requests.sqlite",
+      "sha256": "3ec06b404f28cb2a04a87cdce9300962ab616c323e57a6efa2c5be68aaa923ad",
+      "count": 5,
+      "calls": [
+        {
+          "scope": "independent",
+          "state": "response_received",
+          "count": 5
+        }
+      ]
+    },
+    {
+      "path": "materialization-raw/requests.sqlite",
+      "sha256": "7d31aa45f95c4e41c9523233e5e0452dde256d33369f7a018c001d0c2e45a07f",
+      "count": 7,
+      "calls": [
+        {
+          "scope": "materialize",
+          "state": "response_received",
+          "count": 7
+        }
+      ]
+    },
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "68ee1f28fd2778ece89aa92a7e4697c5c6458a309438a1cd63235634438b65f4",
+      "count": 2,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "path": "replay/requests.sqlite",
+      "sha256": "e2f280d7b17f832639376556a77f40ca2dc283bfd9df736e7768584274fcf1fa",
+      "count": 0,
+      "calls": []
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "e8f4772d731dd0f08c6e5da7832a8914ccd0b3a911d1b90431fe90f49449af85",
+      "count": 26,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 26
+        }
+      ]
+    },
+    {
+      "path": "specification-review-revised/requests.sqlite",
+      "sha256": "90709454eb1bf9be41cad8815d39136b1bf510af800146d0eec19c4004a86179",
+      "count": 20,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 20
+        }
+      ]
+    },
+    {
+      "path": "specification-review/requests.sqlite",
+      "sha256": "9ea15f3aee1776962018aaf020356a16e8c9dcaa48f3f5cd3bbac84db6cb1d78",
+      "count": 12,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 12
+        }
+      ]
+    },
+    {
+      "path": "specification-revision/requests.sqlite",
+      "sha256": "982bb564841cb21c1a93b6a0932cac11dc63ec8759aea69ba34b01b35f273288",
+      "count": 2,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "path": "specification/requests.sqlite",
+      "sha256": "a98ddfb8eb46d4252e59cb8918378526ec4626885b66c7ee6c1cc88a1d504432",
+      "count": 17,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 17
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 91,
+  "distinct_author_response_operations_within_stage": 91,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 1
+}

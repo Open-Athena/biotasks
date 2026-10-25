@@ -4941,3 +4941,10 @@ Live175completed controlled setup and clean replay (412.7s/86.9s), and entered i
 ### 2026-10-25 — Both current-runtime references replayed
 
 Bioframe175andNeuroKit176have both completed setup and separate clean replay without operator scientific edits. Bioframe durations412.7s/86.9s; NeuroKit399.1s/62.2s. Bioframe's initial independent review requested revision; its existing GLM revision was freshly reviewed ready, consuming the shared quality allowance, and construction started. NeuroKit entered specification. These are live metadata observations, not qualified tasks or terminal archive proof. The common219-file runtime and task policies are identical. See panel-rounds/080/current-observations.json.
+
+
+### 2026-10-25 — Original175upload failure and general recovery candidate
+
+Original175is terminalFAILED/infrastructure_failed at grading: the pinnedSDKreturned"Failed to upload files:502"during independent authoring.1172science files/61276274bytes and62root files/1310494bytes are verified, with fresh four-owner absence.38.28pipeline minutes/91recorded requests. No accepted scientific controls/native solver/publication; prior completed169remains selected. No natural successful retry, upload target or delivery outcome is inferred.
+
+A general identical-file upload candidate freezes bytes and receipts, retries only structured server5xxwithin the existing envelope, and fails closed on cancellation/exhaustion. Commands are never repeated and their original budget is rechecked after preparatory transfer. The real pinnedSDKregression fails before the change;53focused/358affected offline checks pass. No new models/provider resources. NativeHarbor separate transfers remain unchanged. Live validation and fresh source-only adoption remain pending. See factory-checks/upload-retry/README.md.

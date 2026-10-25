@@ -36,6 +36,7 @@ from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.execution.read_retry import transient_connection_error
 from repo2rlenv.quality.loop.client import RunBudget
 from repo2rlenv.tasksmith.author.budget import AuthorBudget
+from upload_transfer import upload_same_file
 
 from biotasks.chat_author import ChatLimits
 from biotasks.inference_gate import Allowance, RequestLedger
@@ -165,6 +166,7 @@ class Remote:
         self.session_process = session_process
         self.uncertain = False
         self.operation = 0
+        self.uploads = 0
 
     def remaining(self, requested):
         if self.uncertain:
@@ -177,7 +179,16 @@ class Remote:
         return requested
 
     async def upload(self, local, remote):
-        await asyncio.to_thread(self.worker.upload, local, remote)
+        self.remaining(1)
+        if not local.is_file() or local.is_symlink():
+            raise ValueError("Upload requires a regular local file")
+        self.uploads += 1
+        receipt = self.root / "uploads" / f"{self.uploads:04d}" / "upload.json"
+        self.uncertain = True
+        # Cancellation or exhaustion leaves continuation blocked. A late file
+        # write cannot execute code; owner cleanup still belongs to the stage.
+        await upload_same_file(self.worker, local, remote, receipt, self.deadline)
+        self.uncertain = False
 
     async def download(self, remote, local):
         local.parent.mkdir(parents=True, exist_ok=True)
@@ -202,7 +213,19 @@ class Remote:
         }
         save_record(directory / "operation.json", record)
         # Generated setup may overwrite files; reinstall the controller's runner.
-        await self.upload(HERE / "reference_remote.py", "/work/remote.py")
+        try:
+            await self.upload(HERE / "reference_remote.py", "/work/remote.py")
+            self.remaining(seconds)
+        except BaseException as error:
+            record.update(
+                state="not_dispatched", error_type=type(error).__name__, finished=time.time()
+            )
+            save_record(directory / "operation.json", record)
+            raise
+        record["reconciliation_deadline"] = min(
+            self.deadline - 15, time.time() + seconds + COMMAND_RETURN_ALLOWANCE_SECONDS
+        )
+        save_record(directory / "operation.json", record)
         self.uncertain = True
         env = [
             "env",
