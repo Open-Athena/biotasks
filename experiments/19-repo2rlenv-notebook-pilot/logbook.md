@@ -4902,3 +4902,10 @@ Reserve the unchanged full5USD for174 within existing200authorization (199held/1
 
 
 174 is submitted after exact219-file freeze/readback, source identities matching169, newer source-bound network compatibility/cleanup and typed pool admission with no earlier live host. Only generic network-control code/tests differ from173. No previous proposal, critique, answer or diagnostic hint enters the worker. Public runtimec51243fd and private inputa10bac8c24bbf5efd9732c6239f2c64453e43a72 remain separate; private ref is not pushed. Model/resource/time/repair limits unchanged,199held/1unallocated within200authorized once. The complete scientific result remains pending.
+
+
+## 25 October 2026 — clean replay exposes a nonreproducible staging recipe
+
+174 ended incomplete during replay: the frozen recipe copied original inputs from authoring scratch under /work/setup, which was absent in the fresh sandbox. The completed setup command exited1 before replayed science. All four observed network policies matched their first probes; natural delay remains unestablished. Source-only preparation/setup ran24requests in6.17pipeline minutes;404science files/9,738,513bytes and29root files/1,003,394bytes plus fresh two-owner absence are verified. No source rejection, grading, native solver or publication. The original status and staging recipe remain preserved;169remains the selected completed Bioframe result.
+
+The setup prompt already requires recorded-source staging independent of exploratory shell state. The controller resets declared data/cache/environment roots but leaves the authoring workspace visible, so this defect was not exposed inside the worker session. Next: make that existing workspace unavailable during controlled build/staging and restore it before worker feedback, preserving current time/test allowances and the separate clean replay. This is a general authoring-boundary change, not a manual task/data fix. No such change is adopted yet.
