@@ -13,7 +13,25 @@ import subprocess
 import sys
 import tarfile
 import tempfile
-from pathlib import Path
+from pathlib import Path, PurePosixPath
+
+
+def reviewed_runtime_delta(runtime, baseline, expected):
+    """Added/deleted templates and code need the same explicit review as edits."""
+    names = runtime.keys() | baseline.keys()
+    for name in names:
+        path = PurePosixPath(name)
+        assert name and name == path.as_posix() and not path.is_absolute()
+        assert ".." not in path.parts and name != "."
+    assert isinstance(expected, list) and all(type(name) is str for name in expected)
+    assert len(expected) == len(set(expected)) and set(expected) <= names
+    changed = sorted(name for name in names if runtime.get(name) != baseline.get(name))
+    assert changed == sorted(expected), "Runtime delta differs from reviewed paths"
+    return (
+        changed,
+        sorted(runtime.keys() - baseline.keys()),
+        sorted(baseline.keys() - runtime.keys()),
+    )
 
 
 def main():
@@ -77,7 +95,6 @@ def main():
             .decode()
             .strip()
         )
-        git("update-ref", f"refs/biotasks19/private-inputs/{args.number:03}", revision, "")
     files = frozen_payload(
         repo, revision=revision, upstream_archive=prior / "upstream.tar.gz", config=config
     )
@@ -91,13 +108,12 @@ def main():
     baseline = json.loads((args.baseline_round / "runtime-identity.json").read_text())[
         "runtime_files"
     ]
-    assert runtime.keys() == baseline.keys()
-    changed = sorted(name for name in runtime if runtime[name] != baseline[name])
     expected_raw = args.expected_runtime_changes.read_bytes()
     expected = json.loads(expected_raw)
-    assert isinstance(expected, list) and all(type(name) is str for name in expected)
-    assert len(expected) == len(set(expected)) and set(expected) <= runtime.keys()
-    assert changed == sorted(expected)
+    changed, added, removed = reviewed_runtime_delta(runtime, baseline, expected)
+    # Failed preflight must not register an input ref that prevents a corrected
+    # preparation. Existing refs are never overwritten; publication stays private.
+    git("update-ref", f"refs/biotasks19/private-inputs/{args.number:03}", revision, "")
     destination.mkdir(mode=0o700)
     for name, raw in files.items():
         (destination / name).write_bytes(raw)
@@ -115,6 +131,8 @@ def main():
         "runtime_file_count": len(runtime),
         "source_assets_identical_to": args.prior,
         "only_runtime_changes_from_baseline": changed,
+        "added_runtime_paths": added,
+        "removed_runtime_paths": removed,
         "expected_runtime_changes_sha256": hashlib.sha256(expected_raw).hexdigest(),
         "reserved_usd": "5.00",
         "no_prior_generated_task_answer_or_diagnostic_hints": True,

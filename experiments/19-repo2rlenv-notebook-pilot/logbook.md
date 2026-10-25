@@ -4813,3 +4813,15 @@ The committed exact profiles applied for167/168, retaining3/4USD respectively be
 
 
 Source-onlyMatchms171 passed frozen-input/known-provider/funding checks and typed pool admission with only170active. Both use exactlythe same217runtimefilehashes. Source assets match159; all configuration differences are campaign and originalsource paths. Publicruntime1bdab991; privateinputref8e0213ca3e0157d5402bf1f5e7ec45df24b5da53notpushed.198USDheld/2freewithin200authorizedonce; no executionlimit changed.170has passed reference/replay/specification and reachedconstruction, provisional only. No operator scientific feedback was supplied. [Shared runtime](panel-rounds/073/common-runtime-proof.json).
+
+
+## 25 October 2026 — review scientific proposals before freezing task assets
+
+Read-only inspection of 170's emitted specification (`bb2c64ebdd124e6f2e191233cf1f38ff0a90b62f9e2ce04352c8322aa853aff8`) found that the general wording changes did not prevent the writer from proposing exact nuisance-realization comparisons or making contradictory numerical claims. This is provisional output, not a final scientific outcome; the running pipeline receives no operator feedback and will validate or reject it itself. Both 170 and 171 have reached grading after successful reference, replay, specification and construction. No new qualified release exists.
+
+A separate version-controlled GLM specification review is implemented for the next factory version, before construction freezes task assets. It sees hash-bound source/execution evidence and operative proposals without the writer's self-review or previous critique. Findings require exact supplied quotations; this does not certify their scientific reasoning. A correctable proposal can spend the existing one quality allowance on a full GLM revision and fresh review. Using it disables all later grader/comparison repairs. No new sandbox stage, financial/resource allowance, campaign deadline or request/token/byte cap is introduced. Original/revised proposals and reviews remain separate, and a changed parent hash invalidates review. No scientific task was manually fixed.
+
+The freezer now checks a reviewed union of edits, additions and removals, recording added/deleted paths and registering a private input ref only after preflight passes.165affected offline checks passed;65routing checks passed after simplifying the common worker-call path;213project tests and all Ruff/type/pre-commit hooks passed. An initial restricted-sandbox async handoff stalled and was stopped; normal thread permissions passed, without a production workaround. These are implementation checks, not model proof. Current 170/171 runtimes remain unchanged. [Evidence and pending model boundary](factory-checks/specification-review/README.md).
+
+
+Two additional checks exercise the actual grading controller (not only the pipeline's passed flag): after early use of the allowance, neither grader nor public-question repair runs. Both pass. The proposed review implementation remains unvalidated by a model; no active campaign imports the working checkout.

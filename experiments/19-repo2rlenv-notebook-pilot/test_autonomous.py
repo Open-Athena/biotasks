@@ -135,6 +135,7 @@ def test_setup_time_admission_receipt_survives_bounded_diagnostics(tmp_path, sta
         "independent-repair",
         "independent-repair-blocked",
         "independent-repair-failed",
+        "early-repair-grading",
     ],
 )
 @pytest.mark.parametrize("reviewed", [False, True])
@@ -207,6 +208,9 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
                 return {"status": "materialization_blocked"}
             (root / "materialized").mkdir(parents=True)
             return {"status": "materialized_requires_scientific_validation"}
+        if failure == "early-repair-grading":
+            assert config["allow_quality_repair"] is False
+            return {"status": "public_question_defect", "final_controls_passed": False}
         if failure == "grading":
             result = {"status": "independent_solution_blocked", "final_controls_passed": False}
             m.write(root / "result.json", result)
@@ -265,6 +269,27 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
 
     async def specify(config, *, root, **kwargs):
         assert config["reasoning_effort"] == "high"
+        if config.get("specification_review"):
+            revise = failure == "early-repair-grading" and root.name == "specification-review"
+            m.write(
+                root / "specification-review.json",
+                {
+                    "disposition": "revise" if revise else "ready",
+                    "assessment": "Fixture review",
+                    "findings": [
+                        {
+                            "problem": "Fixture public-contract defect",
+                            "evidence": [
+                                {"path": "proposal/task_brief", "quote": "Public task requirement."}
+                            ],
+                            "required_change": "Clarify the fixture quantity",
+                        }
+                    ]
+                    if revise
+                    else [],
+                },
+            )
+            return
         called.append("specify")
         if config.get("comparison_repair"):
             assert config["inspect_packages"] and config["output_format"] == "tools"
@@ -303,7 +328,15 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
                 },
             )
             return
-        m.write(root / "specification.json", {"disposition": "draft_ready"})
+        m.write(
+            root / "specification.json",
+            {
+                "disposition": "draft_ready",
+                "review": "Fixture source review",
+                "task_brief": "Public task requirement.",
+                "validation_handoff": "Fixture validation",
+            },
+        )
 
     def native(config, *, root):
         assert config["reasoning_effort"] == "high"
@@ -323,7 +356,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         "run_preparation": {"run": prepare, "repair_runtime_exports": prepare},
         "run_reference_setup": {"run": remote},
         "run_specification": {"run": specify},
-        "specification_inputs": {"specification_context": lambda *a, **k: {}},
+        "specification_inputs": {"specification_context": lambda *a, **k: {"files": {}}},
         "run_scientific_native": {"run": native},
         "iris_bootstrap": {"export_on_host": lambda *a, **k: None},
     }.items():
@@ -451,10 +484,27 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             "independent-repair": "validated",
             "independent-repair-blocked": "rejected",
             "independent-repair-failed": "rejected",
+            "early-repair-grading": "rejected",
         }[failure]
     )
     if failure in {"blocked", "infrastructure"}:
         assert called == ["prepare"]
+    elif failure == "early-repair-grading":
+        assert called == [
+            "prepare",
+            "run_reference_setup.py",
+            "run_reference_replay.py",
+            "specify",
+            "specify",
+            "run_notebook_grader.py",
+            "run_notebook_grader.py",
+        ]
+        assert receipt["quality_repair"]["kind"] == "specification_review"
+        assert receipt["quality_repair"]["allowance_consumed"]
+        assert receipt["effective_specification"] == "run/specification-revision"
+        assert not (tmp_path / "run/comparison-repair").exists()
+        assert receipt["daytona_reserved_usd"] == 4
+        assert receipt["rejection"]["stage"] == "grading"
     elif failure and failure.startswith(("question", "independent-repair")):
         assert called.count("specify") == (1 if failure == "question-used" else 2)
         assert called.count("run_notebook_grader.py") == (

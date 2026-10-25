@@ -1,6 +1,7 @@
 """Review executed evidence in one specification session; no construction."""
 
 import asyncio
+import hashlib
 import json
 import os
 import sqlite3
@@ -21,7 +22,12 @@ from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.quality.loop.client import RunBudget
 from repo2rlenv.tasksmith.author.budget import AuthorBudget
 from specification_inputs import specification_context
-from specification_protocol import TaskSpecification
+from specification_protocol import (
+    SpecificationReview,
+    TaskSpecification,
+    specification_review_context,
+    validate_specification_review,
+)
 
 from biotasks.chat_author import ChatLimits
 from biotasks.inference_gate import Allowance, RequestLedger
@@ -31,8 +37,11 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
     config = {**config, "reasoning_effort": native_effort(config)}
     question_repair = config.get("question_repair", False)
     comparison_repair = config.get("comparison_repair", False)
-    if question_repair and comparison_repair:
-        raise ValueError("Select one comparison-repair interface")
+    specification_review = config.get("specification_review", False)
+    if sum(bool(flag) for flag in (question_repair, comparison_repair, specification_review)) > 1:
+        raise ValueError("Select one specification/review interface")
+    if bool(config.get("specification_proposal_file")) != bool(specification_review):
+        raise ValueError("Specification review requires its explicit recorded proposal")
     if (question_repair or comparison_repair) and not config.get("revision_context_file"):
         raise ValueError("Comparison repair requires recorded comparison evidence")
     if config["entrypoint"] != "run_specification.py":
@@ -62,6 +71,13 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
         if config.get("revision_context_file")
         else None,
     )
+    if specification_review:
+        proposal_raw = (experiment / config["specification_proposal_file"]).read_bytes()
+        context = specification_review_context(
+            context,
+            json.loads(proposal_raw),
+            parent_sha256=hashlib.sha256(proposal_raw).hexdigest(),
+        )
     expected = json.loads((experiment / config["input_file"]).read_text())
     if context != expected:
         raise ValueError("Specification context differs from the reviewed input bundle")
@@ -115,6 +131,7 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
         output_format=output_format,
         package_inspection_enabled=inspect_packages,
         reference_inspection_enabled=inspect_reference,
+        specification_review_enabled=specification_review,
         output_token_policy="No client max_tokens; provider limits/defaults apply.",
         provider_generation_limit_verified=False,
     )
@@ -134,14 +151,21 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
         async def validate_comparison(value):
             validate_diagnosis(value, context["revision_context"])
 
+        async def validate_review(value):
+            validate_specification_review(value, context)
+
         plan = await stage(
-            schema=ComparisonRepair
+            schema=SpecificationReview
+            if specification_review
+            else ComparisonRepair
             if comparison_repair
             else ContractText
             if question_repair
             else TaskSpecification,
             name="specify",
-            prompt_name="notebook-comparison-repair"
+            prompt_name="notebook-specification-review"
+            if specification_review
+            else "notebook-comparison-repair"
             if comparison_repair
             else "notebook-question-repair"
             if question_repair
@@ -158,9 +182,15 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
             output_format=output_format,
             extra_tools=extra_tools or None,
             extra_handlers=extra_handlers or None,
-            validate=validate_comparison if comparison_repair else None,
+            validate=validate_review
+            if specification_review
+            else validate_comparison
+            if comparison_repair
+            else None,
         )
-        if comparison_repair:
+        if specification_review:
+            save_record(root / "specification-review.json", plan.model_dump())
+        elif comparison_repair:
             save_record(root / "comparison-repair.json", plan.model_dump())
         elif question_repair:
             save_record(root / "question-repair.json", plan.model_dump())

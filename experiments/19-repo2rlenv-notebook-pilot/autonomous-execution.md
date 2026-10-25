@@ -87,9 +87,33 @@ repair. Transport or unexpected controller failures remain incomplete outcomes.
 Reference execution, clean replay, scientific comparison, native controls and
 release qualification remain separate gates after any accepted repair.
 
+## Specification review before construction
+
+The specification stage now includes an independent GLM review before task assets
+are constructed. The reviewer sees source/execution evidence, the proposed public
+question and validation handoff, with the writer's self-review and previous review
+feedback withheld. Read-only package/reference inspection remains available.
+Blocking findings must quote supplied evidence exactly. This grounds findings;
+it is not a programmatic proof of their scientific correctness.
+
+A ready review permits construction. An explicit rejection stops the candidate.
+A correctable proposal can consume the existing single scientific quality-repair
+allowance here: GLM revises the complete proposal under the same source/policy,
+then a fresh review checks it. Original proposal, critique, revision and second
+review remain separate. A second unresolved review or declined revision rejects;
+there is no additional proposal-repair round. Downstream materialization uses the
+reviewed effective proposal. If this repair was used, later grader/comparison
+repairs are disabled. Review does not supply an executable reward or replace any
+independent implementation, negative controls, native trials or release gate.
+
+This adds model sessions within the existing campaign deadline, with no new
+sandbox stage, resource allowance or request/token/byte cap. The implementation
+has offline routing and evidence-grounding tests; fresh model validation is still
+pending. Frozen campaigns 170/171 do not contain this later change.
+
 ## Scientific quality repair
 
-The controller may route the one quality-repair allowance to a demonstrated
+If the allowance was not used at specification, the controller may route it to a demonstrated
 generated-contract defect or an independent implementation defect. The retained
 conflict must bind the exact grader and original probe suite, and the previous
 sandbox must have verified cleanup. Routing retains the passing reference-control

@@ -682,6 +682,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     joint_revision=False,
     probe_failure=False,
     probe_coverage_gap=False,
+    quality_allowance_used=False,
 ):
     import grading_session as module
 
@@ -694,6 +695,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     config.pop("resume_contract_directory", None)
     config.pop("contract_feedback_file", None)
     config["inspect_review_evidence"] = inspect_review
+    if quality_allowance_used:
+        config["allow_quality_repair"] = False
     frozen_grader = resume == "frozen"
     if frozen_grader:
         resume = False
@@ -1258,6 +1261,15 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     result = asyncio.run(exercise())
     if inspect_review:
         assert (original_reference / "trial/result.json").read_bytes() == original_trial_result
+    if quality_allowance_used:
+        assert calls == ["independent", "grader", "probes", "review"]
+        assert result["status"] == (
+            "question_review_blocked" if question_defect else "grader_requires_further_work"
+        )
+        assert not (tmp_path / "repair.json").exists()
+        assert not (tmp_path / "public-question-defect.json").exists()
+        assert not result["harbor_packaging_validated"]
+        return
     if question_defect:
         assert result["status"] == "public_question_defect"
         assert calls == ["independent", "grader", "probes", "review"]
@@ -1353,6 +1365,24 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     if semantic_feedback:
         expected_candidate["rationale"] = "Supported comparison; no unsupported measurement claim"
     assert json.loads((tmp_path / "final-candidate.json").read_text()) == expected_candidate
+
+
+@pytest.mark.parametrize("question_defect", [False, True])
+def test_earlier_specification_review_cannot_replenish_grading_repairs(
+    tmp_path, monkeypatch, question_defect
+):
+    test_orchestration_separates_probe_author_and_gates_acceptance(
+        tmp_path,
+        monkeypatch,
+        repair=True,
+        derived=True,
+        resume=False,
+        reuse_probes=False,
+        contract_only=False,
+        comparison_conflict=False,
+        quality_allowance_used=True,
+        question_defect=question_defect,
+    )
 
 
 def test_coverage_supplement_uses_one_repair_and_fresh_full_validation(tmp_path, monkeypatch):

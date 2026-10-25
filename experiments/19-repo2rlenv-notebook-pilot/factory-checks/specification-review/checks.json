@@ -1,0 +1,48 @@
+{
+  "observed_at": "2026-10-25T12:51:34.132553+00:00",
+  "scope": "Offline orchestration, quote grounding, evidence identity and packaged prompt validation. No model calls, biological computation, sandbox or Iris host created by these checks.",
+  "source_sha256": {
+    "experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py": "90037510e244c3012fd2024a092f1d327028b2fa6f2c62f42018b31a78623b4b",
+    "experiments/19-repo2rlenv-notebook-pilot/run_specification.py": "c617d2317eefac031faa747b81a2417b895bf1ff53b8b0adfad248fc0334b33f",
+    "experiments/19-repo2rlenv-notebook-pilot/specification_protocol.py": "0b28a24f2c1be58ea6dbd1f73fe20dafaddf9857795ff65d1c0aa5193f665825",
+    "experiments/19-repo2rlenv-notebook-pilot/test_autonomous.py": "4f0108442e59303692c918259c399dd1bb91fa6685843666b88aa32f76152666",
+    "experiments/19-repo2rlenv-notebook-pilot/test_specification_review.py": "cc356f4eccfde077f0a34a5d91ca6a545e1718e78bcf06a0e72da1af0c4309f2",
+    "experiments/19-repo2rlenv-notebook-pilot/panel-rounds/069/freeze_source_run.py": "b1e0af70d512ca2457cd352f3a9f0c6a6d5216a6bf96997563a1270c780cf0dc",
+    "experiments/19-repo2rlenv-notebook-pilot/panel-rounds/069/test_freeze_source_run.py": "776ed444cccd5bc17d02fc91e442745f270bb4c02161f31c0510215e8322ded7",
+    "src/biotasks/prompts/notebook-specification-review.md": "bfb09b66b19b3eb6275fd59a6bc5fe8136087a51a0ac94672b31ee993b22c31a",
+    "experiments/19-repo2rlenv-notebook-pilot/test_grading.py": "3a86ba39cac47535627cd2cafe4f88d9584f250408b754753025d9e85a7db4c3"
+  },
+  "affected_checks": {
+    "passed": 165,
+    "seconds": 5.29,
+    "coverage": "Specification/review, legacy comparison/question repairs, source/read-only interfaces, reviewed payload additions/deletions, fake autonomous terminal states."
+  },
+  "final_common_call_refactor": {
+    "passed": 65,
+    "seconds": 2.95,
+    "coverage": "All early-review and autonomous routing cases rerun after consolidating the worker call path."
+  },
+  "project_tests": {
+    "passed": 213,
+    "seconds": 17.27,
+    "coverage": "Default offline tests, including installed package/prompt resources and CLI outside checkout."
+  },
+  "pre_commit": {
+    "ruff_lint": "passed",
+    "ruff_format": "passed",
+    "ty": "passed"
+  },
+  "experimental_ruff": "passed",
+  "restricted_sandbox_stall": "Initial focused run stopped at an async thread handoff. Repeated under normal local thread permissions; no production workaround or worker rerun.",
+  "scientific_review_model_validated": false,
+  "full_autonomous_model_validation": false,
+  "active_frozen_campaigns_170_171_use_this_change": false,
+  "one_shared_quality_repair_preserved": true,
+  "resource_time_request_token_byte_limits_changed": false,
+  "operator_scientific_artifacts_edited": false,
+  "actual_grading_allowance_checks": {
+    "passed": 2,
+    "seconds": 2.97,
+    "coverage": "Actual grading controller refuses both grader and public-question repairs after the shared allowance is consumed."
+  }
+}

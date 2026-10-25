@@ -145,6 +145,13 @@ def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
         "replay/replay/setup-result.json",
         "specification/specification.json",
         "specification/result.json",
+        "specification-review/specification-review.json",
+        "specification-review/result.json",
+        "specification-revision/specification.json",
+        "specification-revision/result.json",
+        "specification-review-revised/specification-review.json",
+        "specification-review-revised/result.json",
+        "specification-review-feedback.json",
         "materialization-raw/result.json",
         "materialization-raw/cleanup.json",
         "materialization-raw/materialization-candidate.json",
@@ -201,7 +208,16 @@ def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
                 continue
             if operation.get("process", {}).get("exit_code") not in (None, 0):
                 selected += ((path.parent / "output.log").relative_to(root).as_posix(),)
-    for stage in ("preparation", "setup-raw", "specification", "materialization-raw", "grading"):
+    for stage in (
+        "preparation",
+        "setup-raw",
+        "specification",
+        "specification-review",
+        "specification-revision",
+        "specification-review-revised",
+        "materialization-raw",
+        "grading",
+    ):
         # A one-call author may return a rejected draft without a transport or
         # tool failure. Preserve upstream's actual validation feedback as well
         # as the generic exhausted-allowance error in bounded diagnostics.
@@ -271,6 +287,129 @@ class Pipeline:
             **({"inspect_review_evidence": True} if entrypoint == "run_notebook_grader.py" else {}),
             **extra,
         )
+
+    async def review_specification(self, *, spec, reference, policy, replay, base, specify):
+        """Review before freezing assets; share the single later quality allowance."""
+        from specification_inputs import specification_context
+        from specification_protocol import SpecificationReview, specification_review_context
+
+        def evidence(**extra):
+            return specification_context(
+                reference,
+                policy,
+                inspect_packages=True,
+                inspect_reference=True,
+                repeatability=read(replay / "result.json"),
+                **extra,
+            )
+
+        async def call(name, context, **extra):
+            destination = self.root / name
+            input_file = self.root / (name + "-input.json")
+            write(input_file, context)
+            await specify(
+                self.config_for(
+                    name,
+                    "run_specification.py",
+                    reference_directory=self.relative(reference),
+                    policy_file=base["policy_file"],
+                    input_file=self.relative(input_file),
+                    repeatability_file=self.relative(replay / "result.json"),
+                    inspect_packages=True,
+                    inspect_reference=True,
+                    output_format="tools",
+                    **extra,
+                ),
+                root=destination,
+                endpoint=self.endpoint,
+                credential=self.credential,
+                deadline=self.deadline - 300,
+            )
+            return destination
+
+        async def review(proposal, name):
+            destination = self.root / name
+            parent_sha256 = digest(proposal / "specification.json")
+            context = specification_review_context(
+                evidence(), read(proposal / "specification.json"), parent_sha256=parent_sha256
+            )
+            entry = {
+                "specification_directory": self.relative(proposal),
+                "specification_sha256": parent_sha256,
+                "review_directory": self.relative(destination),
+                "status": "running",
+            }
+            self.receipt.setdefault("specification_reviews", []).append(entry)
+            write(self.root / "pipeline.json", self.receipt)
+            await call(
+                name,
+                context,
+                specification_review=True,
+                specification_proposal_file=self.relative(proposal / "specification.json"),
+            )
+            if digest(proposal / "specification.json") != parent_sha256:
+                raise ValueError("Specification changed during its review")
+            value = SpecificationReview.model_validate(
+                read(destination / "specification-review.json")
+            )
+            entry.update(status="completed", disposition=value.disposition)
+            write(self.root / "pipeline.json", self.receipt)
+            return value, destination
+
+        initial, review_root = await review(spec, "specification-review")
+        if initial.disposition == "reject":
+            raise Rejected(
+                "specification",
+                "scientific_review_rejected",
+                str(review_root / "specification-review.json"),
+            )
+        if initial.disposition == "revise":
+            if self.receipt.get("quality_repair"):
+                raise Rejected(
+                    "specification",
+                    "quality_allowance_exhausted",
+                    str(review_root / "specification-review.json"),
+                )
+            self.receipt["quality_repair"] = {
+                "kind": "specification_review",
+                "target": "task_specification",
+                "allowance_consumed": True,
+                "original_specification": self.relative(spec),
+                "original_review": self.relative(review_root),
+            }
+            write(self.root / "pipeline.json", self.receipt)
+            feedback = {
+                "kind": "specification_review_repair",
+                "previous_proposal": {
+                    key: read(spec / "specification.json")[key]
+                    for key in ("task_brief", "validation_handoff")
+                },
+                "independent_review": initial.model_dump(),
+            }
+            feedback_file = self.root / "specification-review-feedback.json"
+            write(feedback_file, feedback)
+            revised = await call(
+                "specification-revision",
+                evidence(revision_context=feedback),
+                revision_context_file=self.relative(feedback_file),
+            )
+            require_worker(revised / "specification.json", "draft_ready", stage="specification")
+            final, final_root = await review(revised, "specification-review-revised")
+            self.receipt["quality_repair"].update(
+                effective_specification=self.relative(revised),
+                effective_review=self.relative(final_root),
+                validation_status=final.disposition,
+            )
+            write(self.root / "pipeline.json", self.receipt)
+            if final.disposition != "ready":
+                raise Rejected(
+                    "specification",
+                    "scientific_review_unresolved",
+                    str(final_root / "specification-review.json"),
+                )
+            spec = revised
+        self.receipt["effective_specification"] = self.relative(spec)
+        return spec
 
     async def step(self, name, action, *, paid=False):
         self.current = name
@@ -436,6 +575,7 @@ class Pipeline:
             )
 
             async def specification():
+                nonlocal spec
                 context = specification_context(
                     reference,
                     policy,
@@ -465,6 +605,14 @@ class Pipeline:
                 require_worker(spec / "specification.json", "draft_ready", stage="specification")
                 (spec / "README.md").write_text(
                     "Automatic handoff of the unchanged worker proposal. No operator review or additional scientific instructions.\n"
+                )
+                spec = await self.review_specification(
+                    spec=spec,
+                    reference=reference,
+                    policy=policy,
+                    replay=replay,
+                    base=base,
+                    specify=specify,
                 )
 
             await self.step("specification", specification)
@@ -501,6 +649,7 @@ class Pipeline:
                     mat_raw / "materialized", Path("/work/grading-inputs/grading/materialized")
                 )
                 config = self.config_for("grading", "run_notebook_grader.py", **base)
+                config["allow_quality_repair"] = not bool(self.receipt.get("quality_repair"))
                 config["max_tests"] = None
                 result = await remote(
                     config,
@@ -513,6 +662,7 @@ class Pipeline:
                     result["status"]
                     in {"independent_comparison_unresolved", "public_question_defect"}
                     and not (grade / "repair.json").exists()
+                    and not self.receipt.get("quality_repair")
                 ):
                     from comparison_repair import (
                         freeze_comparison_revision,
@@ -641,6 +791,7 @@ class Pipeline:
                         "repair_blocked",
                         "grader_requires_further_work",
                         "question_review_blocked",
+                        "public_question_defect",
                     }
                     if result["status"] not in allowed:
                         raise ValueError("Unrecognized validation outcome")
