@@ -16,6 +16,39 @@ module = module_from_spec(spec)
 spec.loader.exec_module(module)
 
 
+def implementation():
+    return {
+        "run_autonomous.py": "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188",
+        "run_reference_setup.py": "fc83bf2ecd9f201b4bfd8c47cb07740619d09c66fc8df5a37435eb95af5b2d0b",
+        "reference_setup.py": "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
+    }
+
+
+@pytest.mark.parametrize("annotated", [False, True])
+def test_exact_known_creators_share_resource_lifecycle(annotated):
+    sources = implementation()
+    if not annotated:
+        sources["run_reference_setup.py"] = (
+            "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc"
+        )
+    assert module.admitted_implementation(sources) == sources
+
+
+@pytest.mark.parametrize("name", tuple(implementation()))
+def test_unknown_creator_or_lifecycle_is_refused(name):
+    sources = implementation()
+    sources[name] = "0" * 64
+    with pytest.raises(AssertionError):
+        module.admitted_implementation(sources)
+
+
+def test_extra_implementation_is_refused():
+    sources = implementation()
+    sources["other_creator.py"] = "0" * 64
+    with pytest.raises(AssertionError):
+        module.admitted_implementation(sources)
+
+
 def evidence():
     start = 1790000000
     session = {"started": start, "finished": start + 100, "cleanup_verified": True}
@@ -51,6 +84,15 @@ def test_provider_gaps_do_not_reduce_the_bound():
     )
 
 
+def test_unavailable_analytics_cannot_reduce_complete_lifetime_bound():
+    session, pipeline, periods, margin = evidence()
+    observed = module.closed_session_bound(session, pipeline, periods, margin)
+    absent = module.closed_session_bound(session, pipeline, [], margin)
+    assert absent["resource_upper_bound_usd"] == observed["resource_upper_bound_usd"]
+    assert absent["priced_seconds"] == observed["priced_seconds"]
+    assert absent["provider_reported_price_usd"] is None
+
+
 @pytest.mark.parametrize(
     "defect",
     [
@@ -60,7 +102,7 @@ def test_provider_gaps_do_not_reduce_the_bound():
         "before_pipeline",
         "after_pipeline",
         "no_cleanup",
-        "no_periods",
+        "invalid_periods",
         "gpu",
         "larger_resource",
         "negative_price",
@@ -84,8 +126,8 @@ def test_refuse_incomplete_or_inconsistent_lifetimes(defect):
         session["finished"] += 100
     elif defect == "no_cleanup":
         session["cleanup_verified"] = False
-    elif defect == "no_periods":
-        periods.clear()
+    elif defect == "invalid_periods":
+        periods = None
     elif defect == "gpu":
         periods[0]["gpu"] = 1
     elif defect == "larger_resource":

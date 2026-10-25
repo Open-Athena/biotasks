@@ -8,7 +8,12 @@ from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
 
-from closed_session_bound import RATE, admitted_profile, closed_session_bound
+from closed_session_bound import (
+    RATE,
+    admitted_implementation,
+    admitted_profile,
+    closed_session_bound,
+)
 
 
 def digest(raw):
@@ -19,11 +24,17 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--private-root", type=Path, required=True)
     parser.add_argument("--prior-proof", type=Path, required=True)
-    parser.add_argument("--usage", type=Path, required=True)
+    parser.add_argument("--usage", type=Path)
+    parser.add_argument(
+        "--without-analytics",
+        action="store_true",
+        help="Use complete source-verified controller lifetimes only; no provider price claim",
+    )
     parser.add_argument("--ledger", type=Path, required=True)
     parser.add_argument("--proof", type=Path, required=True)
     parser.add_argument("--apply", action="store_true")
     args = parser.parse_args()
+    assert bool(args.usage) != args.without_analytics
     assert not args.proof.exists()
     previous_raw = args.prior_proof.read_bytes()
     previous = json.loads(previous_raw)
@@ -59,12 +70,7 @@ def main():
     assert pipeline["status"] == "rejected"
     if len(folders) == 4:
         assert not pipeline.get("quality_repair")
-    expected_sources = {
-        "run_autonomous.py": "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188",
-        "run_reference_setup.py": "fc83bf2ecd9f201b4bfd8c47cb07740619d09c66fc8df5a37435eb95af5b2d0b",
-        "reference_setup.py": "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
-    }
-    assert previous["frozen_implementation_sha256"] == expected_sources
+    expected_sources = admitted_implementation(previous["frozen_implementation_sha256"])
     launch = args.private_root / "launch"
     claim_raw = (launch / f"{number:03}-submission.json").read_bytes()
     claim = json.loads(claim_raw)
@@ -88,26 +94,32 @@ def main():
     assert clean["source_configuration_sha256"] == digest(config_raw)
     assert clean["complete"] and clean["original_all_cleanup_passed"]
     assert clean["fresh_original_ids_absent"] and not clean["sandboxes"]
-    usage_raw = args.usage.read_bytes()
-    usage = json.loads(usage_raw)
-    assert usage["campaign"] == number and usage["source_archive_manifest_sha256"] == manifest_hash
+    usage_raw = args.usage.read_bytes() if args.usage else None
+    usage = json.loads(usage_raw) if usage_raw is not None else None
+    if usage is not None:
+        assert usage["campaign"] == number
+        assert usage["source_archive_manifest_sha256"] == manifest_hash
     assert {name for name in manifest if name.endswith("/sandbox-claim.json")} == {
         name + "/sandbox-claim.json" for name in folders
     }
     assert not any(name.startswith("native/") for name in manifest)
-    assert (
-        len(usage["records"]) == len(folders) and {r["stage"] for r in usage["records"]} == folders
-    )
+    if usage is not None:
+        assert len(usage["records"]) == len(folders)
+        assert {r["stage"] for r in usage["records"]} == folders
     owners, ids, records = [], [], []
-    for observation in usage["records"]:
-        folder = observation["stage"]
+    for folder in sorted(folders):
         created = original(folder + "/sandbox-claim.json")
         cleanup = original(folder + "/cleanup.json")
         assert created["state"] == "created"
         assert created["resources"] == {"cpu": 4, "memory": 8, "disk": 10}
-        assert observation["http_status"] == 200
-        assert observation["original_claim_sha256"] == checked[folder + "/sandbox-claim.json"]
-        assert observation["sandbox_id"] == created["id"]
+        periods = []
+        if usage is not None:
+            observation = next(r for r in usage["records"] if r["stage"] == folder)
+            assert observation["http_status"] == 200
+            assert observation["original_claim_sha256"] == checked[folder + "/sandbox-claim.json"]
+            assert observation["sandbox_id"] == created["id"]
+            periods = observation["records"]
+            assert periods
         assert (
             cleanup["passed"]
             and not cleanup.get("creation_uncertain")
@@ -121,7 +133,7 @@ def main():
         result = closed_session_bound(
             original(folder + "/result.json"),
             pipeline,
-            observation["records"],
+            periods,
             config["cleanup_seconds"],
         )
         records.append({"stage": folder, **result})
@@ -143,7 +155,7 @@ def main():
     row.update(
         ceiling_usd="1.00",
         state="terminal_full_closed_sdk_lifetimes_bound_reconciled",
-        reconciliation="Exact known creator, all recorded closed controller lifetimes priced at full resources plus300s at each end, cross-checked with original-ID provider usage and fresh cleanup. Retain1USD; no credits or final invoice assumption. See "
+        reconciliation="Exact known creator, all recorded closed controller lifetimes priced at full resources plus300s at each end and fresh cleanup. Provider analytics is recorded separately when available and never shortens a lifetime. Retain1USD; no credits or final invoice assumption. See "
         + args.proof.relative_to(args.ledger.parent).as_posix(),
     )
     released = prior_retained - Decimal(1)
@@ -168,7 +180,10 @@ def main():
         "known_implementation_sha256": expected_sources,
         "fresh_cleanup_sha256": digest(clean_raw),
         "fresh_cleanup_observed_at": clean["observed_at"],
-        "usage_receipt_sha256": digest(usage_raw),
+        "usage_receipt_sha256": digest(usage_raw) if usage_raw is not None else None,
+        "provider_usage_crosscheck": "available"
+        if usage is not None
+        else "unavailable_not_used_in_bound",
         "records": records,
         "hourly_full_resource_rate_usd": str(RATE),
         "resource_upper_bound_usd": str(upper),

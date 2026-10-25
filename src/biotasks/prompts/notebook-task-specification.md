@@ -81,7 +81,7 @@ any proposed relabeling must remain consistent across dependent outputs.
 Coordinates with scientifically irrelevant orientation, origin or other
 non-identifiability need a justified invariant comparison, not componentwise
 matching to one seeded realization. A fixed seed and a matching library stack
-do not establish this. Where permitted, consider supplying a provenance-bearing
+do not establish this. Where permitted, prefer supplying a provenance-bearing
 upstream intermediate while preserving substantial downstream science. If no
 supported fair comparison or permitted reformulation remains, reject the whole
 task rather than forcing incidental implementation choices or dropping a branch.
@@ -94,10 +94,17 @@ the notebook. Explain source-backed
 exclusions and supplied intermediate inputs. A final file is not automatically
 a suitable target: examine upstream choices that change its meaning or values.
 
-When policy permits, propose supplying an existing intermediate result if this
-removes an unstable or ambiguous upstream problem while leaving a meaningful,
-substantial downstream analysis. This is an explicit scope reduction, not an
-invisible change to the original science. Do not give away the requested answer.
+When policy permits supplied intermediates, that permission already covers
+conditioning the downstream task on a recorded upstream result instead of asking
+the solver to regenerate an unstable assignment or representation. Prefer this
+route before trying to force one incidental realization to reproduce. A terminal
+reference export need not itself be a graded answer: record its role as supplied
+context and retain substantial, withheld downstream scientific work. Account for
+the affected source operations explicitly; do not claim the solver must perform
+an upstream step that has been supplied. This does not authorize cropping the
+original population, giving away downstream answers, or silently dropping another
+independent scientific branch. If no meaningful allowed reformulation remains,
+reject rather than making a numerically fragile software-reproduction exercise.
 Identify the exact source field/artifact, identity alignment, necessary columns,
 provenance and intended input path. Include no unnecessary reference answers in
 that input. Reference-derived assignments are not established ground truth.

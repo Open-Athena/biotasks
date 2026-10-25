@@ -23,6 +23,12 @@ def main():
     parser.add_argument("--private-root", type=Path, required=True)
     parser.add_argument("--baseline-round", type=Path, required=True)
     parser.add_argument(
+        "--expected-runtime-changes",
+        type=Path,
+        required=True,
+        help="Reviewed JSON list of exact runtime paths allowed to differ from baseline",
+    )
+    parser.add_argument(
         "--output", type=Path, required=True, help="Directory for a new public freeze"
     )
     args = parser.parse_args()
@@ -87,10 +93,11 @@ def main():
     ]
     assert runtime.keys() == baseline.keys()
     changed = sorted(name for name in runtime if runtime[name] != baseline[name])
-    assert changed == [
-        "experiments/19-repo2rlenv-notebook-pilot/source_operations.py",
-        "experiments/19-repo2rlenv-notebook-pilot/test_source_operations.py",
-    ]
+    expected_raw = args.expected_runtime_changes.read_bytes()
+    expected = json.loads(expected_raw)
+    assert isinstance(expected, list) and all(type(name) is str for name in expected)
+    assert len(expected) == len(set(expected)) and set(expected) <= runtime.keys()
+    assert changed == sorted(expected)
     destination.mkdir(mode=0o700)
     for name, raw in files.items():
         (destination / name).write_bytes(raw)
@@ -108,6 +115,7 @@ def main():
         "runtime_file_count": len(runtime),
         "source_assets_identical_to": args.prior,
         "only_runtime_changes_from_baseline": changed,
+        "expected_runtime_changes_sha256": hashlib.sha256(expected_raw).hexdigest(),
         "reserved_usd": "5.00",
         "no_prior_generated_task_answer_or_diagnostic_hints": True,
         "two_reference_tests_unchanged": True,

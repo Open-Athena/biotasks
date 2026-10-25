@@ -20,9 +20,24 @@ the hidden reference or an implementation not identified as normative in the
 question cannot supply a missing public convention. A clearly identified public
 standard or versioned reference procedure may determine behavior by reference;
 verify its applicability rather than duplicating implementation details. If
-multiple consequential choices satisfy the existing wording,
-choose `public_question` and disclose the necessary convention rather than
+multiple scientifically different choices satisfy the existing wording,
+`public_question` may disclose the necessary scientific convention rather than
 forcing the independent implementation to copy an undisclosed choice.
+
+First distinguish a missing scientific definition from valid numerical ways to
+compute the same quantity. Do not repair the latter by requiring an incidental
+working dtype, arithmetic order, kernel or full library execution path merely to
+match one private realization. A fixed seed, same-stack agreement or exact
+partition after relabeling does not establish that an unstable assignment or
+non-identifiable coordinate system is a defensible answer key. Keep a legitimate
+measurement/precision requirement distinct from implementation details that only
+force the reference's trajectory. Do not withdraw software openness to conceal
+that problem or widen tolerances to accept different scientific answers.
+If a fair reformulation needs supplied upstream context, different selected
+outputs or other changes to frozen assets, this repair route cannot perform it:
+return `none` with `disposition: blocked`, identifying the owning-stage action.
+The existing public question can be corrected here only when the fixed
+scientific target and acceptance criteria remain defensible.
 
 Inspect `revision_context`: the original public question and materialization,
 independent code/execution, grader and measured conflict. Original source and

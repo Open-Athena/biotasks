@@ -1,0 +1,13 @@
+--- frozen154/run_reference_setup.py
++++ frozen160/run_reference_setup.py
+@@ -584,8 +584,10 @@
+                 )
+                 await session.initialize()
+                 from reference_setup import import_inventory
++                from source_operations import operation_inventory
+ 
+                 context = {
++                    "source_operations": operation_inventory(prepared.baseline),
+                     "source_imports": {
+                         "analysis": import_inventory(prepared.baseline),
+                         "exports": import_inventory(prepared.exports),

@@ -146,6 +146,16 @@ Return `disposition: blocked` when the evidence cannot support a defensible
 comparator or another unresolved defect prevents constructing one. Explain that
 specific limitation, rather than treating candidate readiness as task acceptance.
 
+Check that the target identifies a scientific quantity before calibrating its
+precision. Do not turn one arbitrary coordinate system or numerically sensitive
+assignment into an exact answer key. Consistent relabeling handles changed names,
+not genuinely different valid realizations; a fixed seed or matching library
+stack does not settle that distinction. If source-provenanced upstream context
+is needed to make the downstream question well-defined, request that owning-stage
+reformulation and block this frozen candidate. Do not compensate by prescribing
+incidental internal arithmetic or accepting different scientific results through
+a wider numerical tolerance.
+
 An equivalence rule must account for every accepted record and value. Retaining
 correct answers while appending unsupported values is not a valid alternative.
 Check coverage and multiplicity as well as membership; do not replace the requested

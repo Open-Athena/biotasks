@@ -6,6 +6,26 @@ from decimal import Decimal
 RATE = 4 * Decimal("0.0504") + 8 * Decimal("0.0162") + 10 * Decimal("0.000108")
 
 
+def admitted_implementation(sources):
+    """Two exact creators with identical resource creation and cleanup logic.
+
+    The later creator only adds static source-operation context to the worker.
+    Both were already admitted by the preceding four-SDK lifetime auditor.
+    """
+    assert set(sources) == {"run_autonomous.py", "run_reference_setup.py", "reference_setup.py"}
+    assert sources["run_autonomous.py"] == (
+        "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188"
+    )
+    assert sources["reference_setup.py"] == (
+        "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2"
+    )
+    assert sources["run_reference_setup.py"] in {
+        "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc",
+        "fc83bf2ecd9f201b4bfd8c47cb07740619d09c66fc8df5a37435eb95af5b2d0b",
+    }
+    return dict(sources)
+
+
 def number(value):
     assert type(value) in (int, float, str)
     result = Decimal(str(value))
@@ -18,7 +38,9 @@ def closed_session_bound(session, pipeline, periods, cleanup_seconds):
     assert session["cleanup_verified"] is True
     start, finish = (number(session[key]) for key in ("started", "finished"))
     assert number(pipeline["started"]) <= start < finish <= number(pipeline["finished"])
-    assert periods
+    # Analytics is an optional independent cross-check, never the accounting
+    # clock. Even no returned usage periods cannot shorten a closed lifetime.
+    assert isinstance(periods, list)
     intervals = []
     total_reported = Decimal(0)
     for period in periods:
@@ -50,7 +72,7 @@ def closed_session_bound(session, pipeline, periods, cleanup_seconds):
         "session_finished_after_cleanup": str(finish),
         "priced_seconds": str(priced_seconds),
         "resource_upper_bound_usd": str(bound),
-        "provider_reported_price_usd": str(total_reported),
+        "provider_reported_price_usd": str(total_reported) if periods else None,
     }
 
 
