@@ -1,0 +1,69 @@
+--- a/src/repo2rlenv/execution/harbor.py
++++ b/src/repo2rlenv/execution/harbor.py
+@@ -323,7 +323,7 @@
+             raise ValueError("Stored trial evidence changed")
+         return evidence
+     output.mkdir(parents=True, exist_ok=False)
+-    record.update(started_at=now(), state="claimed")
++    record.update(started_at=now(), state="claimed", trial_dispatched=False)
+     save_record(receipt, record)
+     if model is not None:
+         started = time.monotonic()
+@@ -376,18 +376,33 @@
+     remote_dir = "/work/trials/" + trial_id
+     remote_jobs = "/evidence/trials/" + trial_id
+     try:
++        preparation_started = time.monotonic()
++        trial_deadline = preparation_started + timeout_sec
++
++        def remaining_trial_seconds():
++            remaining = math.floor(trial_deadline - time.monotonic())
++            if remaining <= 0:
++                raise TimeoutError("Task preparation exhausted the existing trial allowance")
++            return remaining
++
+         archive = output / "task.tar.gz"
+         with tarfile.open(archive, "w:gz") as stream:
+             stream.add(task, arcname=task.name)
+-        worker.exec(["mkdir", "-p", "/work/trials", "/evidence/trials"], timeout=30).checked(
++        worker.exec(
++            ["mkdir", "-p", "/work/trials", "/evidence/trials"],
++            timeout=min(30, remaining_trial_seconds()),
++        ).checked(
+             "Trial directories"
+         )
+-        worker.exec(["mkdir", remote_dir, remote_jobs], timeout=30).checked(
++        worker.exec(
++            ["mkdir", remote_dir, remote_jobs], timeout=min(30, remaining_trial_seconds())
++        ).checked(
+             "Claim unique remote trial"
+         )
+         worker.upload(archive, remote_dir + "/task.tar.gz")
+         worker.exec(
+-            ["tar", "-xzf", remote_dir + "/task.tar.gz", "-C", remote_dir], timeout=30
++            ["tar", "-xzf", remote_dir + "/task.tar.gz", "-C", remote_dir],
++            timeout=remaining_trial_seconds(),
+         ).checked("Unpack owned task")
+         command = [
+             str(Path(python).with_name("harbor")) if python != "python" else "harbor",
+@@ -444,10 +459,17 @@
+         for resource, value in (resource_overrides or {}).items():
+             command.extend(["--override-" + resource.replace("_", "-"), str(value)])
+         command.extend(route_arguments)
+-        record.update(state="dispatched", trial_dispatched=True, command=command)
++        job_timeout = remaining_trial_seconds()
++        if job_timeout < 30:
++            raise TimeoutError("Insufficient original trial allowance after task preparation")
++        record.update(
++            state="dispatched", trial_dispatched=True, command=command,
++            preparation_elapsed_seconds=time.monotonic() - preparation_started,
++            supervisor_timeout_sec=job_timeout,
++        )
+         save_record(receipt, record)
+-        launch_job(worker, remote_dir, command, timeout_sec=timeout_sec, env=env, python=python)
+-        status = observe_job(worker, remote_dir, timeout_sec=timeout_sec + 100)
++        launch_job(worker, remote_dir, command, timeout_sec=job_timeout, env=env, python=python)
++        status = observe_job(worker, remote_dir, timeout_sec=job_timeout + 100)
+         return _collect_trial(worker, output, record, ledger, status)
+     except BaseException:
+         record.update(state="interrupted", interrupted_at=now())

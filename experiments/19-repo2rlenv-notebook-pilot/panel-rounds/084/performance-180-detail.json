@@ -1,0 +1,141 @@
+{
+  "source_archive_manifest_sha256": "05411c969a4812160420323ca0eef6c1a1ab3b7e4346297d48c31ad75a81ce2b",
+  "pipeline_status": "infrastructure_failed",
+  "source_id": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb",
+  "elapsed_pipeline_seconds": 5357.236,
+  "stage_elapsed_seconds": {
+    "preparation": 23.809,
+    "setup": 664.326,
+    "replay": 355.934,
+    "specification": 934.376,
+    "construction": 257.04,
+    "grading": 2949.879,
+    "native": 165.76
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "completed",
+    "replay": "completed",
+    "specification": "completed",
+    "construction": "completed",
+    "grading": "completed",
+    "native": "incomplete"
+  },
+  "accounted_model_request_attempts": 202,
+  "request_ledgers": [
+    {
+      "path": "grading/requests.sqlite",
+      "sha256": "1bb19109d492c601d73bbd0c03ef45919a5c5dba25d93f29f25c8f5e11e03973",
+      "count": 129,
+      "calls": [
+        {
+          "scope": "grader",
+          "state": "response_received",
+          "count": 23
+        },
+        {
+          "scope": "independent",
+          "state": "response_received",
+          "count": 23
+        },
+        {
+          "scope": "probes",
+          "state": "response_received",
+          "count": 14
+        },
+        {
+          "scope": "repair",
+          "state": "response_received",
+          "count": 1
+        },
+        {
+          "scope": "review",
+          "state": "response_received",
+          "count": 48
+        },
+        {
+          "scope": "review-repair",
+          "state": "response_received",
+          "count": 20
+        }
+      ]
+    },
+    {
+      "path": "materialization-raw/requests.sqlite",
+      "sha256": "f211f9adbb16e6db304c9a415c64d8763e1177307e987c94aa262e0dfa48e9bf",
+      "count": 2,
+      "calls": [
+        {
+          "scope": "materialize",
+          "state": "response_received",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "path": "native/requests.sqlite",
+      "sha256": "294e5dd947a547359c12254f21af071e99eee2edfa09a23f4b2a84d86455846d",
+      "count": 0,
+      "calls": []
+    },
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "774a44530f5be2716af17cc6a9ee0a9de72e2d11b7fab4d9bba1fc8acf5224d6",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "replay/requests.sqlite",
+      "sha256": "e2f280d7b17f832639376556a77f40ca2dc283bfd9df736e7768584274fcf1fa",
+      "count": 0,
+      "calls": []
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "2aea4951a20259682f363de6b96fe9f9fff10871c955d6d88be5a4e7ffb2a814",
+      "count": 31,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 31
+        }
+      ]
+    },
+    {
+      "path": "specification-review/requests.sqlite",
+      "sha256": "567a08855a1981dd8230ac52980b218c7c38c16bb5c8ef4ef6bb6ae1aa438f9e",
+      "count": 15,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 15
+        }
+      ]
+    },
+    {
+      "path": "specification/requests.sqlite",
+      "sha256": "8ab7d54d84e9b0de8454a39a99fc633a652493edd019a97bb2afe88eb3cc3679",
+      "count": 24,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 24
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 202,
+  "distinct_author_response_operations_within_stage": 202,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 1
+}

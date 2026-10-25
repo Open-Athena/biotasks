@@ -1,0 +1,5 @@
+# Scanpy 180: native preparation failed after pre-Harbor grading passed
+
+Original reference, replay, specification and construction passed. The repaired grader passed all 13 final controls (32 control cases across versions), and review accepted packaging. Native preparation then timed out extracting the exact task archive at upstream's fixed 30-second limit. The first input was only partially extracted. No Harbor supervisor, native control or blind solver was dispatched; no reward or publication follows.
+
+Complete 2414 science files/1802725101 bytes and 71 root files/1338025 bytes are independently verified. Four original SDK cleanups and fresh exact-ID/owner absence pass. Exact frozen-source reconstruction and the original interrupted oracle prove native non-dispatch; no nonexistent native cleanup receipt is invented.89.29 pipeline minutes/202 recorded requests, excluding bootstrap/export/readback. [Outcome](result-180.json), [original failure](native-preparation-failure-180.json), [cleanup](../../autonomous-runs/180/provider-cleanup.json).

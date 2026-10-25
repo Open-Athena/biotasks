@@ -1,0 +1,29 @@
+{
+  "campaign": 182,
+  "scope": "Read-only original-source/reference comparison; no science execution, repairs, model calls or publication.",
+  "source_archive_manifest_sha256": "45c4b7825d14b912a903134ed8ab0131c0657ac86d886240b5ab6e7bc9209b51",
+  "package": "MDAnalysisTests",
+  "version": "2.9.0",
+  "distribution_sha256": "8e4942ec3aaef5e93aeb39690293764ab9995550135ff1bd0df2f40cb95c0626",
+  "source_member": "mdanalysistests-2.9.0/MDAnalysisTests/analysis/test_align.py",
+  "source_member_sha256": "6f99185651f117bf0b93b259ad5d3fd7086fd032d77d21c3564bce300075cd3c",
+  "literal_line": 261,
+  "source_context_confirms_superposed_first_last_frame_rmsd": true,
+  "reference_path": "materialization/reference/rmsd_backbone_groups.csv",
+  "reference_sha256": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+  "reference_rows": 98,
+  "reference_final_backbone_rmsd": 6.820321761026975,
+  "packaged_expected_rmsd": 6.820321761927005,
+  "measured_absolute_difference": 9.000302725326037e-10,
+  "declared_setup_exclusions": {
+    "files": [
+      {
+        "distribution": "MDAnalysisTests",
+        "path": "MDAnalysisTests/analysis/test_rms.py",
+        "sha256": "2ba84a0110e18b718096351717a62238689f7373a1ddf77956d2c5faf2497728",
+        "reason": "This MDAnalysisTests unit-test module performs the same scientific computation as the notebook on the identical AdK inputs (mda.Universe(PSF, DCD) with rms.RMSD) and embeds expected answer values that coincide with this analysis's exported results. Specifically, the TestRMSD fixture 'correct_values' [[49, 50, 4.68953]] equals the mass-weighted C-alpha RMSD at frame 49 in rmsd_mass_weighted.csv (4.689532149658401, agreement to all 5 test-relevant significant digits), and test_rmsd_single_frame's expected value 0.91544906 (RMSD of 'name CA' at frame 5) also matches a value in the same exported trace. These are direct partial answers to the exported RMSD endpoints. The original analysis never imports or uses any MDAnalysisTests test module - it only imports PSF, DCD, CRD constants from MDAnalysis.tests.datafiles, which re-export from MDAnalysisTests/datafiles.py and MDAnalysisTests/data/*; hence removing this test module does not affect the analysis. Kept in place: MDAnalysisTests/datafiles.py, all MDAnalysisTests/data files (including adk.psf, adk_dims.dcd, adk_open.crd, which are the required scientific inputs), and MDAnalysis/tests/datafiles.py (required import shim for the source's import statement). Other numeric-coincidence hits audited (2.1, 4.387, 1.6147, 1.8701, 0.83137828, 3.219116, 2.637614561, 11.35541916 etc.) were inspected in context and are unrelated test parameters or covariance-matrix elements, not values of this analysis; no 98-row RMSD-trace data fixtures exist in MDAnalysisTests/data."
+      }
+    ]
+  },
+  "interpretation": "A retained test-source literal for the same first/last backbone RMSD numerically matches the final recovered endpoint. Original setup exclusion coverage does not include this second test module. Review approximation of the difference is not reused; the numerical difference above is measured directly."
+}

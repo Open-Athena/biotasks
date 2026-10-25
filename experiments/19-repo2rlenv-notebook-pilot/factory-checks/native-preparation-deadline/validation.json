@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-10-25T22:45:17.298519+00:00",
+  "status": "offline_candidate_validated_not_live_adopted",
+  "checks": [
+    {
+      "name": "native_preparation",
+      "passed": 6,
+      "exit_status": 0,
+      "peak_rss_kib": 57640,
+      "private_complete_log_sha256": "aa729635295e4a640cacffe72bdafc034a7e9f288ccc52f856dd3bd5824335a2"
+    },
+    {
+      "name": "definite_non_dispatch",
+      "passed": 12,
+      "exit_status": 0,
+      "peak_rss_kib": 34676,
+      "private_complete_log_sha256": "e03cd48700fb9253e039a8ca89512a928617141b5bf2c1bd4c6e2c6148ed416a"
+    }
+  ],
+  "total_passed": 18,
+  "pinned_harbor_wheel_sha256": "4c4c6571b3d160ed0cb45b82918136751fb08e7b8596412723ac00dde12eeabb",
+  "baseline_failure_reproduced": "Real pinned runner with a simulated45-second extraction hits its hardcoded30-second limit. The actual archived180traceback independently confirms the same failing call.",
+  "candidate_behavior": "Extraction can use the existing trial allowance; measured preparation time is subtracted before supervisor launch. No reset of the trial budget, solver600seconds, verifier120seconds, offline policy, resources or model settings.",
+  "new_models_or_resources": 0,
+  "scientific_artifacts_changed": false,
+  "preserved_check_failures": [
+    "Initial fixture lacked Harbor and masked the import error as a missing receipt; rerun with the exact existing pinned wheel passed.",
+    "A misplaced test assertion failed and was corrected before the final6-test pass.",
+    "The first prefix-test collection lacked the local module path; path-independent module loading corrected it."
+  ],
+  "actual_original_evidence": "../../panel-rounds/084/native-preparation-failure-180.json",
+  "source_identity": {
+    "baseline_patched_upstream_sha256": "517c8748fa5c1fc6b456907d0d0fe5283cbcdb1756a6d7fba0f0d485a34f8eac",
+    "candidate_patched_upstream_sha256": "bb1bdd1aa3246ba773575eb596b40b5b7eb7baca6f7e7a851c20015d6313e05b",
+    "candidate_patch_sha256": "9d028497faa52caf8dcbeb2f75bb4b3045c68f2b4031c339a46ed8ac8b01ca00",
+    "canonical_upstream_pin_changed": true,
+    "live_campaigns_changed": false,
+    "new_time_allowance": false,
+    "candidate_patch_path": "patches/0015-native-preparation-deadline.patch"
+  },
+  "live_adoption_validated": false
+}

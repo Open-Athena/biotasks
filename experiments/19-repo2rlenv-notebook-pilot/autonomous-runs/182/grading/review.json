@@ -1,0 +1,82 @@
+{
+  "asset_value_assessments": [
+    {
+      "decision": "answer_exposure",
+      "evidence": [
+        "Asset-value hint 2e49134588ac0537eaec079da3ca18e3a49038765ed2f9b589ceb22376d6d787",
+        "Verified source read of mdanalysistests-2.9.0/MDAnalysisTests/analysis/test_align.py lines 235-265",
+        "Reference read of rmsd_backbone_groups.csv line 99",
+        "Package search: same literal in excluded MDAnalysisTests/analysis/test_rms.py line 102",
+        "trial/dependency-exclusions-applied.json: only test_rms.py excluded, test_align.py retained"
+      ],
+      "hint_id": "2e49134588ac0537eaec079da3ca18e3a49038765ed2f9b589ceb22376d6d787",
+      "rationale": "The matching literal at MDAnalysisTests/analysis/test_align.py:261 is not coincidental: the unit test asserts the backbone RMSD between the first and last (frame 97) AdK trajectory frames with optimal superposition, the identical computation that produces the requested rmsd_backbone_groups.csv Backbone cell in the final row. The literal (6.820321761927005) equals the recovered reference cell (6.820321761026975, deviation about 9e-11), far inside the public grading tolerance (5e-5 + 1e-5*|ref|), so it is a directly usable expected value for a graded endpoint cell of a setup-recovered output. The same literal appears in MDAnalysisTests/analysis/test_rms.py:102, excluded precisely on those grounds for the recorded exports, but test_align.py remains installed and the exclusion decision was scoped to values matching the three recorded CSVs before the two endpoints were recovered. The correct disposition is a new verified, content-identified exclusion of this file together with a rebuilt environment and fresh reference/control execution."
+    }
+  ],
+  "decision": "revise",
+  "issues": [
+    "Answer exposure in the retained environment: MDAnalysisTests/analysis/test_align.py:261 embeds expected backbone RMSD 6.820321761927005 between the first and last AdK frames, which equals the requested rmsd_backbone_groups.csv Backbone cell at the final frame (reference 6.820321761026975, deviation ~9e-11, deep inside the 5e-5 + 1e-5*|ref| tolerance). The same literal in MDAnalysisTests/analysis/test_rms.py:102 was declared and verified excluded, but test_align.py remains installed. Required repair within the existing exclusion allowance: declare a content-identified exclusion for MDAnalysisTests/analysis/test_align.py, rebuild and validate the cleaned environment, and re-run fresh reference plus all factory controls on the new candidate hash; this review stage cannot claim a new exclusion was applied without that fresh evidence.",
+    "Scope gap in the setup-time dependency_asset_review and dependency-exclusions.json: both were justified against the three recorded reference exports (cited matches 4.68953 and 0.91544906 in rmsd_mass_weighted.csv). The two subsequently recovered endpoints, rmsd_backbone_groups.csv and open_closed_backbone_rmsd.json, were never re-assessed against retained installed assets; the recovered backbone-groups trace contains a cell (6.820321761026975) matching a retained installed source literal. The environment review must be re-run against the full final endpoint set before publication.",
+    "Probe evidence quotes cite reference cell text that differs from the actual verified files: e.g. '/work/reference/rmsd_backbone_groups.csv' quoted '96.0,96.99999550792095,...' while the verified file's frame-96 row is '96.0,96.9999914562418,...'; rmsd_resid_weighted.csv is quoted with '0.9999999110320214/97.99998046846621' style Time values that differ from the verified file (e.g. 0.9999999119200186, 97.99999136816182), and the quoted row '0.0,0.9999999110320214,6.430443978091192,...' mixes the frame-0 Time with the frame-97 RMSD values. The executed mutations read the actual files (submission_before/after hashes and grader reports confirm), so the control outcomes stand, but the recorded evidence quotes must be corrected to agree with observed bytes on the revised candidate.",
+    "The reference-level cross-implementation claims in the candidate rationale (numpy Kabsch deviations, wrong-method separations, boundary behavior) are author diagnostics, not controller factory controls; that distinction is acceptable, but any revised submission must keep those diagnostics clearly separated from the controller's measured control records, and re-establish the calibration numbers if the environment changes after the exclusion repair."
+  ],
+  "question_issues": [],
+  "rationale": "The scientific construction, public question, grader and executed controls are sound: all five source branches are preserved (two by faithful endpoint recovery), the corrected mass-weighting claim matches the pinned MDAnalysis 2.9.0 source, the tolerance is calibrated against measured cross-implementation spread (about 30x above correct deviations, hundreds of times below the smallest executed methodological error), all 16 executed controls met expectations including per-series wrong-method rejection and path-placement rejection, and the independent solver agrees with the reference at <=1.5e-6 \u00c5. However, acceptance is blocked by a concrete answer-exposure finding in the current environment: the retained MDAnalysisTests/analysis/test_align.py embeds the expected backbone RMSD 6.820321761927005 between the first and last AdK trajectory frames with optimal superposition, which is the same computation as the requested rmsd_backbone_groups.csv Backbone cell at the final frame (reference 6.820321761026975, deviation ~9e-11, far inside the grading tolerance). The same literal in test_rms.py was excluded for the recorded exports, but the setup-time review was scoped to the three recorded exports and never cleared test_align.py against the recovered outputs. Because the permitted repair (a declared, content-identified exclusion plus environment rebuild and fresh reference/control execution) exists, the correct disposition is revise rather than blocked; this stage cannot apply or presume that exclusion itself. Secondary issues: probe evidence quotes citing inaccurate reference cell text must be corrected, and the dependency-asset review must be re-run against the final (post-recovery) endpoint set.",
+  "scientific_admission": {
+    "answer_isolation": {
+      "blockers": [
+        "MDAnalysisTests/analysis/test_align.py (retained in the executed environment, file sha256 6f99185651f117bf0b93b259ad5d3fd7086fd032d77d21c3564bce300075cd3c) embeds expected backbone RMSD 6.820321761927005 (first vs last AdK frame, superposition=True) that equals the requested rmsd_backbone_groups.csv Backbone cell at the final frame within the public tolerance. Requires a new declared exclusion and a rebuilt, revalidated environment before publication.",
+        "The declared dependency-asset review covered only the three recorded exports; the recovered endpoints (rmsd_backbone_groups.csv, open_closed_backbone_rmsd.json) were not re-assessed against retained installed assets, so remaining candidate literals (test_align.py has 179 floating literals) and other retained files were not systematically cleared against the recovered endpoint values; only targeted evidence exists (6.820321761927005 found and classified as exposure; a search for the open-closed scalar prefix 6.82368 found no other matches)."
+      ],
+      "decision": "defect",
+      "evidence": [
+        "Package search of mdanalysistests-2.9.0: the literal 6.820321761927005 matches MDAnalysisTests/analysis/test_align.py:261 (test_rmsd between first/last AdK backbone frames, superposition=True) and MDAnalysisTests/analysis/test_rms.py:102 (already-excluded file).",
+        "Verified source read of test_align.py lines 235-265: 'rmsd = rms.rmsd(first_frame, last_frame, superposition=True); assert_allclose(rmsd, 6.820321761927005, ... err_msg=\"RMSD calculation between 1st and last AdK frame gave wrong answer\"'.",
+        "Reference read of rmsd_backbone_groups.csv line 99 (hash d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d): '97.0,97.99999136816182,6.820321761026975,3.507119391295211,11.384735982399015,10.368205719261319' \u2014 same quantity, deviation ~9e-11, within 5e-5 + 1e-5*|ref|.",
+        "trial/dependency-exclusions.json records only MDAnalysisTests/analysis/test_rms.py excluded; test_align.py is listed as retained in trial/dependency-assets-summary.json priority_matches and is hash-verified present in the catalog.",
+        "outcome.json dependency_asset_review rationale cites only rmsd_mass_weighted.csv matches (4.68953, 0.91544906); no assessment of the recovered rmsd_backbone_groups.csv or open_closed_backbone_rmsd.json values against retained assets.",
+        "Negative searches: no matches for '6.82368' (open-closed scalar value) in the mdanalysistests package; the grader code reads only --reference-dir/--submission-dir, uses only stdlib, embeds no expected values, and takes row counts from the reference files."
+      ],
+      "output_paths": [
+        "open_closed_backbone_rmsd.json",
+        "rmsd_backbone_groups.csv",
+        "rmsd_atomgroup_core_ca.csv",
+        "rmsd_mass_weighted.csv",
+        "rmsd_resid_weighted.csv"
+      ],
+      "rationale": "The grader itself is well isolated (dynamically read reference directory, no embedded values, no reference-input reads, no execution of submission code). However, the current solver-visible environment retains an installed fixture that discloses a requested answer cell of a setup-recovered endpoint: test_align.py's embedded expected value for the first-vs-last-frame AdK backbone RMSD is the same quantity as the requested rmsd_backbone_groups.csv Backbone cell at the final frame and lies far inside the public tolerance. The open-closed scalar value is not embedded (targeted negative search), and the three recorded endpoints' known matches (test_rms.py) were removed, but the setup-time asset review never covered the recovered endpoints, so its negative claims do not extend to them, and the remaining 179 floating literals in test_align.py were not cleared against the recovered traces. An accessible fixture usable to check or fill a requested answer is exposure even though a solver could also recompute the value."
+    },
+    "comparisons": [
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Cross-implementation agreement executed as controller controls: the 'alternative' control (independent from-scratch solver, hashes 13dc4fc0.../b3d36e54.../c4a14494.../73fa5f76.../0813aec3...) passes with largest deviation 5.574e-09 (scalar) and <=5e-11 across all series cells; the 'recomputed' control (independently materialized oracle outputs /work/recomputed: 80ac472e... for the JSON, d5fd4c0b.../dc413717.../20841677.../55d28d1e... for the CSVs) passes with deviations 0.000e+00.",
+          "Reference determinism: the repeatability records show two fresh replays with byte-identical artifacts for the three recorded CSVs; the recovered endpoint hashes (d5fd4c0b... for rmsd_backbone_groups.csv, 3dc7aba9... in derive and 80ac472e... in the oracle for the scalar JSON) are reproduced exactly across independent executions.",
+          "Pinned-source verification of the corrected mass-weighting semantics: mdanalysis-2.9.0/MDAnalysis/analysis/rms.py lines 648, 670-690 \u2014 when weights_groupselections is unset it defaults to [self.weights] (line 674), and 'mass' resolves to atoms['mobile'].masses (line 686); the group columns of rmsd_mass_weighted.csv are therefore mass-weighted as the public brief states, and the stale notebook narrative was correctly overridden rather than copied.",
+          "Tolerance calibration is measurement-grounded: largest correct cross-implementation deviation (author-recorded Kabsch diagnostics in execution evidence operations 0045/0047 and the alternative control) ~1.5e-6 angstrom vs the tolerance 5e-5 + 1e-5*|ref| (about 30x margin), while the smallest executed methodological substitution (mass-weighted values in the backbone-groups series) fails in 97/98 rows; the resid-weighted-outside-tolerance probe offsets cells by 2x the inclusive bound and fails 97/98 rows, confirming boundary rejection.",
+          "Endpoint identity and placement: the 'misplaced' control with submission hashes keyed under an extra outputs/ layer fails all checks; the reference control passes with files directly at the declared relative paths, matching artifact_interface.path_rule; Time column fingerprints (a94d37f3d15babfe5db70110b501e2ead48de5cde71feea12de83b85b5aac0ce) match across the recorded CSVs and consistent Time values (0.9999999119200186 to 97.99999136816182) are confirmed in recovered and recorded series by direct reads.",
+          "Wrong-method separations executed and failing as required: backbone-series substituted by mass-weighted values (fails 97/98 rows in all four columns), core-CA series substituted by full-backbone CORE values (fails 97/98), mass-weighted substituted by resid-weighted (fails 97/98), scalar shifted +20% (deviation 1.365e+00 fails)."
+        ],
+        "output_paths": [
+          "open_closed_backbone_rmsd.json",
+          "rmsd_backbone_groups.csv",
+          "rmsd_atomgroup_core_ca.csv",
+          "rmsd_mass_weighted.csv",
+          "rmsd_resid_weighted.csv"
+        ],
+        "rationale": "All five endpoints are scientifically well-posed and equivalently compared. The public definitions match the reference computation, including the mass-weight propagation to group selections, verified directly in the pinned MDAnalysis 2.9.0 source; the two recovered endpoints are faithful reruns of unchanged source calls on hash-verified staged inputs in a fresh-universe state matching the call site. Numerical equivalence is supported by genuinely different implementations (the from-scratch Kabsch numpy program recorded in execution evidence operations 0045/0047 and the supplied independent solver), not byte replay alone. Frame/Time identity across CSVs is confirmed by matching Time fingerprints and consistent Time ranges; Time is graded as a number with 1e-6 absolute tolerance while the brief correctly discloses that 'ns' is an unattested label carried over from the notebook, so no false unit is enforced. The recovered backbone-groups final row being the same quantity asserted in an installed fixture also independently confirms that the recovered series is the genuinely-computed notebook result rather than an invented analysis."
+      }
+    ]
+  },
+  "source_coverage": {
+    "decision": "approve",
+    "omitted_scientific_endpoints": [],
+    "rationale": "The public task preserves all five scientific branches of the source notebook: the standalone open-vs-closed backbone RMSD scalar (call-92-0), the full-backbone CORE/LID/NMP series (calls 107-112 with labels 124-127), the AtomGroup-restricted CORE-CA series (calls 149-150), the mass-weighted series (calls 167-171), and the residue-number-weighted series (calls 198-205). The two results dropped by the append-only export boundary were recovered per the endpoint_recovery policy by rerunning the identical source calls on hash-verified staged inputs in a fresh-universe state matching the call site, recorded with separate provenance; the reference read of rmsd_backbone_groups.csv confirms its final data row is the same quantity asserted in an installed fixture, i.e. the recovered series is the genuinely-computed notebook result, not an invented analysis. Excluded items are presentation/diagnostic: the two line plots consume values already present in the tables, and the print of ag.charges.shape (call-191-0) is a diagnostic interjection. The operation_coverage ledger entries are consistent with the source_operations inventory and reference observations. This approval covers source scope only and does not clear the environment-exposure finding recorded elsewhere in this review.",
+    "remaining_validation": [
+      "After the required test_align.py exclusion, full re-execution of reference, empty, misplaced, missing, recomputed, alternative and all probe controls on the rebuilt environment and new candidate hash, with the dependency-asset review re-scoped to all five final endpoints and corrected probe evidence quotes."
+    ],
+    "scientific_scope_changes": [],
+    "unsupported_evidence_claims": []
+  }
+}
