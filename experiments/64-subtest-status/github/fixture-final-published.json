@@ -1,0 +1,12 @@
+{
+  "body": "**Reproduced offline:** failing/erroring unittest subtests are reported as PASSED parent methods by the pinned native/standalone parsers and the current upstream standalone parser. Six real pytest cases plus six independent stdlib oracle runs cover pass, failure, exception, skip, ordinary failure and awkward/repeated labels. Ordinary failures parse correctly; subtest failures are missed. [Full evidence](https://github.com/Open-Athena/biotasks/blob/3e1cd603/experiments/64-subtest-status/fixture-proof.json). Subissue of #33.\n\nA deliberately declared toy tracked-grade probe reports reward1/resolved true despite failed subtests; that is not an exported-task grade. The real command still exits nonzero and strict clean-command acceptance rejects it. Original #62 also retains four other full-suite failures, so parser coverage alone cannot establish an accepted task. No original logs, parser, reward, tests or native results were repaired.\n\nLatest upstream head4b29471c was checked by file/blob hashes: native parser is byte-identical and standalone parse_pytest has the same AST; no full-release parity claim. Initial oracle-stream setup failure is preserved; successful fixtures and scratch cleanup are separate evidence. Next: declare/test a generic parent/subcase identity contract or explicit unsupported status, with native/export parity before any adoption. Source/offline only, zero new native/model calls or allowance. Keep child/epic open; #65 controls and PR63 parser stay unchanged, no merge/release.\n",
+  "labels": [
+    {
+      "id": "LA_kwDOU1dZq88AAAAC5-HoiQ",
+      "name": "agent-generated",
+      "description": "Issue or PR with an agent-authored body, including human-reviewed drafts.",
+      "color": "5319E7"
+    }
+  ],
+  "state": "OPEN"
+}
