@@ -170,6 +170,65 @@ def test_known_legacy_resource_families_keep_distinct_outcome_shapes(profile):
         module.audit(p, sources, claims, sessions, clean, profile=profile)
 
 
+def current_specification_evidence():
+    p, _, claims, sessions, clean = evidence()
+    p.update(status="rejected", finished=1200)
+    p.pop("failed_stage")
+    p["stages"][-1]["status"] = "completed"
+    p["stages"].append(
+        {"name": "specification", "status": "rejected", "started": 1000, "finished": 1100}
+    )
+    p["quality_repair"] = {
+        "kind": "specification_review",
+        "target": "task_specification",
+        "allowance_consumed": True,
+        "validation_status": "revise",
+        "original_specification": "work/specification",
+        "original_review": "work/specification-review",
+        "effective_specification": "work/specification-revision",
+        "effective_review": "work/specification-review-revised",
+    }
+    return p, dict(module.CURRENT_SPECIFICATION_SOURCES), claims, sessions, clean
+
+
+@pytest.mark.parametrize("repair", [True, False])
+def test_current_specification_rejection_prices_only_two_original_sessions(repair):
+    args = current_specification_evidence()
+    if not repair:
+        args[0].pop("quality_repair")
+    coarse, upper, records = module.audit(*args, profile="current_specification_rejection")
+    assert coarse == Decimal("1.384500") and upper < 1
+    assert len(records) == 2
+
+
+@pytest.mark.parametrize(
+    "defect",
+    ["source", "missing_transfer", "ready", "wrong_review", "extra_session", "native", "profile"],
+)
+def test_current_specification_profile_rejects_changed_sources_and_other_outcomes(defect):
+    p, sources, claims, sessions, clean = copy.deepcopy(current_specification_evidence())
+    if defect == "source":
+        sources["run_reference_setup.py"] = module.SOURCES["run_reference_setup.py"]
+    elif defect == "missing_transfer":
+        sources.pop("upload_transfer.py")
+    elif defect == "ready":
+        p["quality_repair"]["validation_status"] = "ready"
+    elif defect == "wrong_review":
+        p["quality_repair"]["effective_review"] = "unrelated/specification-review-revised"
+    elif defect == "extra_session":
+        claims["grading"] = claims["setup-raw"]
+    elif defect == "native":
+        p["stages"].append({"name": "native"})
+    else:
+        with pytest.raises(AssertionError):
+            module.audit(
+                p, sources, claims, sessions, clean, profile="legacy_specification_rejection"
+            )
+        return
+    with pytest.raises(AssertionError):
+        module.audit(p, sources, claims, sessions, clean, profile="current_specification_rejection")
+
+
 @pytest.mark.parametrize(
     "defect",
     [

@@ -1,0 +1,23 @@
+{
+  "observed_at": "2026-10-25T21:18:58.396841+00:00",
+  "campaign": 179,
+  "source_archive_manifest_sha256": "da52f64a81438be8d56ced743ea576e1a88cca7194ca90fd2651af054e18b98c",
+  "artifact": {
+    "path": "reference/trial/outputs/processed_spectra.mgf",
+    "sha256": "748a6f65e5da01c26e34bf423089cc9c385100a0a685f8c3607e91ff2dfcd3c0",
+    "bytes": 5509996,
+    "complete_mgf_blocks": 1267,
+    "zero_peak_blocks": 0,
+    "peak_rows": 141608
+  },
+  "scope": "Streaming inspection of the existing verified original output, not a scientific recomputation or task edit. No new model or provider resources.",
+  "writer_source_inspected": [
+    {
+      "path": "matchms/utils.py",
+      "sha256": "7a824eb91ee274fae01cb3df99707823b7733bdef70429fabb5e574d363e1c9a",
+      "line": 149,
+      "filter_predicate": "x is not None"
+    }
+  ],
+  "interpretation": "Observed reference has1267MGF blocks and zero empty-peak blocks; it does not empirically test empty-peak behavior. The inspected helper filters None objects, rather than zero-length peak arrays; underlying writer emits one block per supplied spectrum. This corroborates why an unmeasured zero-peak-dropping claim is unsupported, not evidence of lost records in this reference."
+}

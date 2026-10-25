@@ -36,6 +36,12 @@ WORKSPACE_GRADING_SOURCES = {
     "run_reference_setup.py": "d69dd179b16f1ea16b385be6b838a2f88d21e57cfc5e6bf3701e5e8e36af5500",
     "reference_setup.py": "77a99214c1c23a5b8208830956a086d0544e5641fb95ede652192017c99cdd4e",
 }
+CURRENT_SPECIFICATION_SOURCES = {
+    **WORKSPACE_GRADING_SOURCES,
+    # Same image creation/cleanup, with source-bound identical upload recovery.
+    "run_reference_setup.py": "5349631f69d5426ce822882f2bc5df5ae3724efe7fbcd0ee0979681187472c30",
+    "upload_transfer.py": "816875df9e886e9499b29c28496df2bed9218fa24b98a64eb4343c1e3f48064c",
+}
 LEGACY_REPLAY_SOURCES = {
     **SOURCES,
     "run_autonomous.py": "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188",
@@ -60,6 +66,12 @@ def profile_config(profile):
             ["preparation", "setup", "replay", "specification"],
             LEGACY_SPECIFICATION_SOURCES,
         )
+    if profile == "current_specification_rejection":
+        return (
+            FOLDERS,
+            ["preparation", "setup", "replay", "specification"],
+            CURRENT_SPECIFICATION_SOURCES,
+        )
     assert profile in {"grading", "workspace_grading"}
     return (
         (*FOLDERS, "materialization-raw", "grading"),
@@ -75,7 +87,7 @@ def digest(raw):
 def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay"):
     folders, names, expected_sources = profile_config(profile)
     assert sources == expected_sources
-    rejected = profile == "legacy_specification_rejection"
+    rejected = profile in {"legacy_specification_rejection", "current_specification_rejection"}
     assert pipeline["status"] == ("rejected" if rejected else "infrastructure_failed")
     if rejected:
         assert not pipeline.get("failed_stage")
@@ -85,10 +97,18 @@ def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay")
     if repair:
         # This exact controller's proposal revision/review uses direct model
         # calls, not another sandbox. Other repairs are not admitted here.
-        assert profile in {"grading", "workspace_grading"}
+        assert profile in {"grading", "workspace_grading", "current_specification_rejection"}
         assert repair["kind"] == "specification_review"
         assert repair["target"] == "task_specification" and repair["allowance_consumed"] is True
-        assert repair["validation_status"] == "ready"
+        if profile == "current_specification_rejection":
+            assert repair["validation_status"] in {"revise", "reject"}
+            prefix = repair["original_specification"].removesuffix("/specification")
+            assert repair["original_specification"] == prefix + "/specification"
+            assert repair["original_review"] == prefix + "/specification-review"
+            assert repair["effective_specification"] == prefix + "/specification-revision"
+            assert repair["effective_review"] == prefix + "/specification-review-revised"
+        else:
+            assert repair["validation_status"] == "ready"
     stages = pipeline["stages"]
     assert [s["name"] for s in stages] == names
     assert [s["status"] for s in stages] == [
@@ -139,13 +159,14 @@ def main():
             "setup_replay",
             "grading",
             "workspace_grading",
+            "current_specification_rejection",
             "legacy_setup_replay",
             "legacy_specification_rejection",
         ],
         default="setup_replay",
     )
     a = p.parse_args()
-    folders, _, _ = profile_config(a.profile)
+    folders, _, expected_sources = profile_config(a.profile)
     assert not a.proof.exists()
     archive = a.private_root / f"archives/{a.number:03}"
     raw = (archive / "sealed-manifest.json").read_bytes()
@@ -186,7 +207,7 @@ def main():
             name: digest(
                 packet.extractfile("experiments/19-repo2rlenv-notebook-pilot/" + name).read()
             )
-            for name in SOURCES
+            for name in expected_sources
         }
     clean_raw = (archive / "fresh-provider-cleanup.json").read_bytes()
     clean = json.loads(clean_raw)
@@ -200,7 +221,7 @@ def main():
     forbidden = ("native/",)
     if a.profile not in {"grading", "workspace_grading"}:
         forbidden += ("materialization", "grading")
-        if a.profile != "legacy_specification_rejection":
+        if a.profile not in {"legacy_specification_rejection", "current_specification_rejection"}:
             forbidden += ("specification/",)
     assert not any(n.startswith(forbidden) for n in manifest)
     assert {r["path"] for r in clean["original_cleanup_evidence"]} == {
@@ -228,7 +249,9 @@ def main():
     ]
     terminal = max(observations, key=lambda r: r["observed_at"])
     assert terminal["terminal"] and terminal["state"] == (
-        "SUCCEEDED" if a.profile == "legacy_specification_rejection" else "FAILED"
+        "SUCCEEDED"
+        if a.profile in {"legacy_specification_rejection", "current_specification_rejection"}
+        else "FAILED"
     )
     assert terminal["claim_sha256"] == digest(claim_raw)
     before = a.ledger.read_bytes()
