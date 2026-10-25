@@ -1,0 +1,35 @@
+{
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "kind": "Unchanged official merged-PR descriptors; not all-history coverage",
+  "repo": "opencobra/cobrapy",
+  "limit": 1,
+  "since": "2026-10-01",
+  "until": "2026-10-24",
+  "require_new_test_funcs": false,
+  "candidates": [
+    {
+      "number": 1497,
+      "title": "fix: escape operator characters in GPR gene ids",
+      "body": "* [x] fix #1448\n* [x] description of feature/fix\n* [x] tests added/passed\n* [x] add an entry to the [next release](../release-notes/next-release.md)\n\n`GPR.from_string` escapes a few characters (`.`, `-`, `:`, ...) before handing the rule to `ast.parse`. Other characters that Python reads as operators or delimiters were not escaped, so a gene id like `a@b` became a `MatMult` node and raised `TypeError: unsupported operation 'MatMult'`. Since `Reaction.copy` rebuilds the GPR from its string, a reaction whose GPR was built from an AST with such ids could not be copied. `#` was worse: `a#b` silently became gene `a`.\n\nThis adds escapes for `@ + * % ^ ~ ! ? $ # , ; < > [ ] { }`, the same way as the existing ones. Rules that use only `and`/`or`/`&`/`|` and parentheses parse as before.\n\nTests: a round trip test for each character and a `Reaction.copy` test for the case in the issue. Both fail on `devel`. `tests/test_core/test_gpr.py`, `test_gene.py`, `test_core_reaction.py`, `tests/test_io` and `tests/test_manipulation` pass locally, and isort/black/flake8 are clean.\n",
+      "state": "MERGED",
+      "merged_at": "2026-10-12T06:37:05Z",
+      "base_ref": "devel",
+      "base_sha": "6f83a534569557f6a10bfdf6909522016985e47f",
+      "head_sha": "f70a6ea1c10a0d6677dc40fa1798988ca5bbd6db",
+      "is_draft": false,
+      "url": "https://github.com/opencobra/cobrapy/pull/1497",
+      "changed_files": [
+        "release-notes/next-release.md",
+        "src/cobra/core/gene.py",
+        "tests/test_core/test_gpr.py"
+      ]
+    }
+  ],
+  "discovery_binding": {
+    "native_config_sha256": "6407d8b62920b8175c73c62e288128c4552ec5cb235428d6cdc45a66cdb45ac5",
+    "source_receipt_sha256": "43ca4ea817de43204e6fc09d9f9da7e09bf959104a0926b847aab9eae5676a2c"
+  },
+  "model_calls": 0,
+  "remote_jobs": 0,
+  "snapshot_identity": "bd8598dd229203fa4d6fb91b31e5a51c4ca11b3809a11a81c2f11e590ef18ed4"
+}
