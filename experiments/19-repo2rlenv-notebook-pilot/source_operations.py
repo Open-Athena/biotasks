@@ -2,6 +2,7 @@
 
 import ast
 import hashlib
+from collections import Counter
 
 
 def operation_inventory(source):
@@ -13,14 +14,27 @@ def operation_inventory(source):
                     "id": f"call-{node.lineno}-{node.col_offset}",
                     "line": node.lineno,
                     "column": node.col_offset,
+                    "end_line": node.end_lineno,
+                    "end_column": node.end_col_offset,
                     "function": ast.unparse(node.func),
                     "source": ast.get_source_segment(source, node),
                 }
             )
+    starts = Counter(row["id"] for row in rows)
+    for row in rows:
+        if starts[row["id"]] > 1:
+            # Chained calls share a start but have different end positions.
+            # Keep existing IDs where unambiguous; never alias two call sites.
+            row["id"] += f"-to-{row['end_line']}-{row['end_column']}"
+    if len({row["id"] for row in rows}) != len(rows):
+        raise ValueError("Original source operation IDs must be distinct")
     return {
         "source_sha256": hashlib.sha256(source.encode()).hexdigest(),
         "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
-        "operations": sorted(rows, key=lambda row: (row["line"], row["column"])),
+        "operations": sorted(
+            rows,
+            key=lambda row: (row["line"], row["column"], row["end_line"], row["end_column"]),
+        ),
     }
 
 
@@ -33,6 +47,8 @@ def check_operation_coverage(candidate, inventory):
     if candidate.disposition != "ready":
         return
     known = {item["id"]: item for item in inventory["operations"]}
+    if len(known) != len(inventory["operations"]):
+        raise ValueError("Original source operation IDs must be distinct")
     uses = {}
     outputs = set()
     for item in candidate.operation_coverage:

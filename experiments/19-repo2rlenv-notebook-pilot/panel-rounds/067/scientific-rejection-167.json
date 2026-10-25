@@ -1,0 +1,36 @@
+{
+  "campaign": 167,
+  "decision": "revise",
+  "issues": [
+    "grader_code uses a flat TOL = 1e-8 in science_deletions() for every table, but the addendum and the double_reaction_deletions_results public requirement state (1e-8 + 1e-6 x |reference|) for double-deletion rows; the untested region between the two conventions (about 5e-7 at scale 0.87) means a submission inside the published bound would be rejected. Implement the published bound or fix the addendum/check text, then re-execute all controls.",
+    "single_reaction_deletions_results public_requirement says growth must be within 1e-8 absolute 'or within (1e-8 + 1e-6 x value scale) for values with magnitude above 1', contradicting the addendum's pure 1e-8 rule for single tables that the code implements; reconcile before packaging.",
+    "Omitted scientific endpoint: inputs/original.py line 64, double_gene_deletion(cobra_model, cobra_model.genes[-5:]).round(4), computes growth/status for 15 distinct unordered gene-pair conditions (with self-pairs) of the textbook model; it has no retained counterpart (no full double-gene scan is exported), is not framed as diagnostic or benchmark in the source, and is recoverable by faithful recomputation exactly as the printed wild-type value was. Recover it as a new artifact with fresh grader checks, probes and full re-execution, or supply source-backed ineligibility evidence.",
+    "trial/inputs/plan.json excluded_outputs claims the subset demonstrations are 'usage demonstrations of the same functions whose full textbook-model results are exported'; false for the genes[-5:] call since no full-model double_gene_deletion result is exported.",
+    "Base question and addendum contradict: the question says 'Do not round or clip values' including tiny near-zero numbers, while the addendum accepts pruning near-zero optima to 0.0 within 1e-8; align the wording with the graded rule.",
+    "outcome.json states '4465 double reaction pairs'; every executed table has 4560 rows; do not propagate the wrong count."
+  ],
+  "source_coverage": {
+    "decision": "revise",
+    "omitted_scientific_endpoints": [
+      "inputs/original.py line 64: double_gene_deletion(cobra_model, cobra_model.genes[-5:]).round(4) - the complete with-repetition scan over the last five genes of the textbook model, i.e. growth and status for 15 distinct unordered gene-pair knockout conditions including self-pairs. Different operation and entity population from the retained reaction-level scans (not a projection of any retained output), not framed by the source as diagnostic or benchmark (unlike the iJO1366 processes=2/1 timing runs), and recoverable by faithful recomputation, exactly as the printed wild-type optimum was recovered. Recover it as an additional artifact with separate provenance, or establish a source-backed ineligibility rationale; a grader check cannot substitute."
+    ],
+    "rationale": "Endpoint accounting is otherwise faithful: the three full scans (137 single-gene, 95 single-reaction, 4560 double-reaction with self-pairs) are retained and match the reference hashes; the printed wild-type optimum is recovered source-faithfully and independently confirmed; the positional slice calls genes[:20], reactions[:20] and reactions[2:7] are genuine projections of the retained full scans with identical call targets, arguments restricted by slicing, identical state and parameters; the iJO1366 processes=2/1 double-gene runs and their time() calls are an explicit timing benchmark, a defensible diagnostic exclusion; the knockout-indexer prints are views into the retained frames; the PFK, pfkA and pfkB demonstrations are contained in the retained scans. The unresolved defect is the textbook double-gene-deletion result at line 64: with no full double-gene scan exported, the projection rationale cannot apply, and the source assigns it no mechanical, teaching-only or diagnostic role, so the exclusion cannot be approved on the present record.",
+    "remaining_validation": [
+      "If the 15-condition endpoint is recovered: fresh reference materialization with provenance, a grader check pair with declared public requirement, wrong-result and representation probes, updated inventories, and full re-execution of all controls.",
+      "If ineligibility is asserted instead: source-backed evidence of a mechanically or diagnostically framed role for the line-64 call plus a corrected plan.json rationale; the population (last five genes, with-repetition pairs) is fully source-determined, so the current 'no scientific population defined by the source' claim does not establish that role.",
+      "Tolerance contract reconciliation: corrected addendum/check text or corrected grader code, a boundary probe at the tolerance edge, and a full control re-run on the revised candidate."
+    ],
+    "scientific_scope_changes": [
+      "The textbook-model double gene-pair deletion result (source line 64) was dropped from task scope; with no retained counterpart this is an unjustified scientific scope change rather than a documented projection or diagnostic exclusion."
+    ],
+    "unsupported_evidence_claims": [
+      "plan.json excluded_outputs calls the subset demonstrations 'usage demonstrations of the same functions whose full textbook-model results are exported'; false for the genes[-5:] call because no full-model double_gene_deletion result is exported.",
+      "operation_coverage books the line-64 call as a positional slice with no scientific population defined by the source; the population is fully source-determined, so this is an eligibility argument, not evidence of a diagnostic role.",
+      "outcome.json states 4465 double reaction pairs while every executed table contains 4560 rows; the incorrect count must not be copied into public descriptions."
+    ]
+  },
+  "repair_disposition": "blocked",
+  "review_original_sha256": "d0b5a83b9a883957262cb77a3b9ea2b1af30ed83c2541ee47080059aa34d4a81",
+  "repair_original_sha256": "581dcf71e7013fa850333b54a01b99f40455a737f63ef0576d2b3404e706ea22",
+  "interpretation": "Independent existing-policy review detected the same omitted branch before any operator feedback. Repair declined expansion beyond its frozen output/probe scope. No teaching-exclusion policy change was adopted; the optional question does not block progress under the existing rejection."
+}

@@ -78,6 +78,40 @@ def test_valid_retained_results_and_projection_accounting():
 
 
 @pytest.mark.parametrize(
+    "source",
+    [
+        "result = load_data(path).summarize().round(2)\n",
+        "result = (\n    load_data(path)\n    .summarize()\n    .round(2)\n)\n",
+    ],
+)
+def test_chained_calls_remain_distinct_even_with_the_same_start(source):
+    inventory = operation_inventory(source)
+    rows = inventory["operations"]
+    assert len(rows) == len({row["id"] for row in rows}) == 3
+    assert len({(row["line"], row["column"]) for row in rows}) == 1
+    assert len({(row["end_line"], row["end_column"]) for row in rows}) == 3
+    assert {row["source"].replace("\n", "").replace(" ", "") for row in rows} == {
+        "load_data(path)",
+        "load_data(path).summarize()",
+        "load_data(path).summarize().round(2)",
+    }
+    assert inventory == operation_inventory(source)
+
+
+def test_unambiguous_source_call_identifiers_remain_stable():
+    rows = operation_inventory("analyze(data)\nshow(data)\n")["operations"]
+    assert [row["id"] for row in rows] == ["call-1-0", "call-2-0"]
+
+
+def test_duplicate_inventory_id_cannot_silently_replace_an_operation():
+    inventory, candidate, _ = fixture()
+    hidden = dict(inventory["operations"][2], function="hidden", source="hidden(data)")
+    inventory["operations"].append(hidden)
+    with pytest.raises(ValueError, match="IDs must be distinct"):
+        check_operation_coverage(candidate, inventory)
+
+
+@pytest.mark.parametrize(
     "defect",
     [
         "missing",
