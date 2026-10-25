@@ -54,9 +54,9 @@ def test_prices_all_closed_time_plus_both_cleanup_margins():
     assert all(Decimal(r["priced_seconds"]) == 980 for r in records.values())
 
 
-def grading_evidence():
+def grading_evidence(profile="grading"):
     p, _, _, _, clean = evidence()
-    folders, names, sources = module.profile_config("grading")
+    folders, names, sources = module.profile_config(profile)
     p.update(
         failed_stage="grading",
         stages=[
@@ -96,8 +96,9 @@ def grading_evidence():
     return p, sources, claims, sessions, clean
 
 
-def test_explicit_early_review_profile_prices_four_complete_sessions():
-    coarse, upper, records = module.audit(*grading_evidence(), profile="grading")
+@pytest.mark.parametrize("profile", ["grading", "workspace_grading"])
+def test_explicit_early_review_profile_prices_four_complete_sessions(profile):
+    coarse, upper, records = module.audit(*grading_evidence(profile), profile=profile)
     assert coarse == Decimal("2.769000")
     assert len(records) == 4 and upper < 1
 
@@ -115,8 +116,9 @@ def test_explicit_early_review_profile_prices_four_complete_sessions():
         "outside_stage",
     ],
 )
-def test_grading_profile_does_not_admit_other_repairs_or_topologies(defect):
-    p, sources, claims, sessions, clean = copy.deepcopy(grading_evidence())
+@pytest.mark.parametrize("profile", ["grading", "workspace_grading"])
+def test_grading_profile_does_not_admit_other_repairs_or_topologies(defect, profile):
+    p, sources, claims, sessions, clean = copy.deepcopy(grading_evidence(profile))
     if defect == "source":
         sources["run_reference_setup.py"] = module.SOURCES["run_reference_setup.py"]
     if defect == "crosswired_profile":
@@ -136,7 +138,15 @@ def test_grading_profile_does_not_admit_other_repairs_or_topologies(defect):
     if defect == "outside_stage":
         sessions["grading"]["started"] = 150
     with pytest.raises(AssertionError):
-        module.audit(p, sources, claims, sessions, clean, profile="grading")
+        module.audit(p, sources, claims, sessions, clean, profile=profile)
+
+
+@pytest.mark.parametrize("profile", ["grading", "workspace_grading"])
+def test_different_complete_source_families_cannot_be_crosswired(profile):
+    p, sources, claims, sessions, clean = grading_evidence(profile)
+    other = "workspace_grading" if profile == "grading" else "grading"
+    with pytest.raises(AssertionError):
+        module.audit(p, sources, claims, sessions, clean, profile=other)
 
 
 @pytest.mark.parametrize("profile", ["legacy_setup_replay", "legacy_specification_rejection"])

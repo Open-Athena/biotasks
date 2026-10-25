@@ -29,6 +29,13 @@ GRADING_SOURCES = {
     # Earlier bounded-network implementation; image creation/cleanup is identical.
     "run_reference_setup.py": "9a2354335a74410931129d58526c16d121ddce2f86b0b35806dd75378d4d60f8",
 }
+WORKSPACE_GRADING_SOURCES = {
+    **SOURCES,
+    # Reviewed workspace isolation and cumulative setup-budget fixes. These
+    # retain one image-created sandbox per stage and the same cleanup boundary.
+    "run_reference_setup.py": "d69dd179b16f1ea16b385be6b838a2f88d21e57cfc5e6bf3701e5e8e36af5500",
+    "reference_setup.py": "77a99214c1c23a5b8208830956a086d0544e5641fb95ede652192017c99cdd4e",
+}
 LEGACY_REPLAY_SOURCES = {
     **SOURCES,
     "run_autonomous.py": "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188",
@@ -53,11 +60,11 @@ def profile_config(profile):
             ["preparation", "setup", "replay", "specification"],
             LEGACY_SPECIFICATION_SOURCES,
         )
-    assert profile == "grading"
+    assert profile in {"grading", "workspace_grading"}
     return (
         (*FOLDERS, "materialization-raw", "grading"),
         ["preparation", "setup", "replay", "specification", "construction", "grading"],
-        GRADING_SOURCES,
+        GRADING_SOURCES if profile == "grading" else WORKSPACE_GRADING_SOURCES,
     )
 
 
@@ -78,7 +85,7 @@ def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay")
     if repair:
         # This exact controller's proposal revision/review uses direct model
         # calls, not another sandbox. Other repairs are not admitted here.
-        assert profile == "grading"
+        assert profile in {"grading", "workspace_grading"}
         assert repair["kind"] == "specification_review"
         assert repair["target"] == "task_specification" and repair["allowance_consumed"] is True
         assert repair["validation_status"] == "ready"
@@ -131,6 +138,7 @@ def main():
         choices=[
             "setup_replay",
             "grading",
+            "workspace_grading",
             "legacy_setup_replay",
             "legacy_specification_rejection",
         ],
@@ -190,7 +198,7 @@ def main():
         f + "/sandbox-claim.json" for f in folders
     }
     forbidden = ("native/",)
-    if a.profile != "grading":
+    if a.profile not in {"grading", "workspace_grading"}:
         forbidden += ("materialization", "grading")
         if a.profile != "legacy_specification_rejection":
             forbidden += ("specification/",)
