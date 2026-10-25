@@ -1,0 +1,58 @@
+{
+  "asset_value_assessments": [],
+  "decision": "revise",
+  "issues": [
+    "False addendum claim about the supplied inputs (Identity conventions): it states the two samples' barcode sets are disjoint (verified from the supplied inputs) so no cell_id receives a numeric disambiguation suffix. Contradicted by the controller's own recorded evidence (current/0030, stdout lines 22-24): 'TTACAGGCAGATTCGT-1 -> [TTACAGGCAGATTCGT-1, TTACAGGCAGATTCGT-1-1] [s1d1, s1d3]' (and the same for TGCCGAGGTGGTAATA-1 and ACATCCCTCCTACGAA-1) \u2014 these barcodes occur in both samples, so -1-suffixed cell_id values exist over the concatenated object. The base public question's conditional phrasing is correct; the addendum's absolute claim must be corrected (the grader's _make_unique convention itself is correct).",
+    "Public-rule / grader-implementation mismatch on de_pvalues: the check entry and addendum require pvals_adj to be consistent with Benjamini-Hochberg applied to pvals within each group (non-decreasing with raw p-values; BH self-consistency). The executed grader implements only the pairwise value rule (p_close on raw and adjusted values); no BH recomputation or monotonicity check exists in the code. Either remove that sentence from the public rule or implement it \u2014 as written the public contract promises an unexecuted control.",
+    "Minor false explanatory claim in the addendum's numeric-tolerance section: ordinary native CSV serialization is said to need not preserve more than 7 significant decimal digits. Python's default float repr carries ~17 significant digits and round-trips; 7 digits describes float32-style serialization. The 1e-3 + 1e-3*|ref| boundary itself is validated (v-numeric-promotion-serialization passed at 10 significant digits), but the stated rationale about plain native serialization is inaccurate and should be reworded."
+  ],
+  "question_issues": [],
+  "rationale": "Executed controls are strong: all 17 controls ran freshly on the current candidate (reference, recomputed, empty, misplaced, 2x missing, 10 probes), the grader re-derives the retained-cell population and gene universe from the trusted inputs (BIOTASKS_TRUSTED_INPUT_DIR), and the negative probes are genuine wrong-results failing their target checks without reliance on crashes (sample swap, UMAP shift, cluster merge, relabeled Monocytes, TPT1 typo, halved scores, moderate and subnormal-boundary p-value mutations, sample-suffixed cell_id). However, three defects block acceptance as-written: (1) the addendum asserts a false fact about the supplied inputs ('barcode sets are disjoint') that the controller's recorded diagnostics contradict; (2) the public de_pvalues rule states a BH-coherence/monotonicity control the grader never executes, overstating the executed contract; (3) an inaccurate claim about native float serialization. These are addendum/public-rule wording defects that need repair and re-execution of affected controls on the revised candidate; none require a reference, tolerance, or endpoint change. Revise.",
+  "scientific_admission": {
+    "answer_isolation": {
+      "blockers": [],
+      "decision": "approve",
+      "evidence": [
+        "Solver-visible inputs are exactly the two checksummed h5 matrices (trial/result.json: s1d1 sha256 322c30a7..., s1d3 sha256 ca40b287..., matched by execution.inputs).",
+        "derive_code, executed exit 0, copies only the two input files into destination/inputs/; reference CSVs are projected into destination/reference/ for the comparison stage, not the solver workspace.",
+        "Installed-asset audit (outcome.json dependency_asset_review): no site-packages file contains dataset identifiers (22716739, s1d1_filtered, s1d3_filtered); only unrelated bundled examples (10x_pbmc68k_reduced.h5ad, krumsiek11, toggleswitch) and h5py test files; no CSV over 5MB in site-packages.",
+        "dependency-exclusions.json empty with excluded_files_absent=true, zero removals; scanpy yielded 0 candidate files in dependency-assets-summary.",
+        "asset_value_hints priority match numba/tests/test_annotations.py inspected: literal_count 0, a packaged test matching the word 'annotations' from a future import, unrelated to the exported results; both reference files numeric_cells_inspected with zero findings.",
+        "Independently executed solution ran offline from staged inputs only (recorded as executed_without_answer_access) and reproduced both endpoints byte-identically."
+      ],
+      "output_paths": [
+        "cell_clusters_annotation_umap.csv",
+        "rank_genes_groups_leiden_res_0.50.csv"
+      ],
+      "rationale": "Solver-visible evidence is the two original checksummed h5 inputs only; references live grader-side; installed-audits found no dataset or answer-value copies; the one priority asset match was directly inspected with zero literal findings. Residual uninspected mass is name-unrelated compiled tests/examples of unrelated distributions, covered by the dataset-identifier, data-format and large-CSV negative searches."
+    },
+    "comparisons": [
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "control_summary: 17/17 controls executed with expected outcomes on candidate sha256 f65ffa2a (reference, recomputed, empty, misplaced, 2x missing, 10 probes).",
+          "Grader re-derives the retained-cell population and gene universe from BIOTASKS_TRUSTED_INPUT_DIR; reference control confirms exact agreement (17,041 cells, 23,427 genes, 17 groups, 398,259 rows).",
+          "Negative probes are genuine scientific wrongs failing target checks without crashes: cluster merge ('submission label 0 spans 2 reference clusters'), Monocytes relabeled into Lymphocytes, sample swap (17,041 wrong labels), sample-suffixed cell_id, UMAP +5.0 shift, TPT1-renamed gene, 5,000 halved scores/logfoldchanges, moderate and subnormal-floor p-value mutations (5 floored rows failing the 1e-3 relative rule).",
+          "v-numeric-promotion-serialization (10 significant digits) passed all nine checks; DE groups are aligned via a bijective partition mapping applied consistently between the two files.",
+          "Independent same-stack solution (executed_without_answer_access) reproduced both endpoints byte-identically; repeatability record shows byte-identical outputs across two fresh replays."
+        ],
+        "output_paths": [
+          "cell_clusters_annotation_umap.csv",
+          "rank_genes_groups_leiden_res_0.50.csv"
+        ],
+        "rationale": "Executed comparisons are scientifically sound: identities grounded in the immutable trusted inputs, partitions compared bijectively, DE table aligned through the same induced leiden_res_0.50 mapping, and both the numeric boundary and the p-value zero-band rule exercised by passing and failing probes including the subnormal boundary case. The unimplemented BH-coherence public sentence is recorded as an issue, not treated as an executed control."
+      }
+    ]
+  },
+  "source_coverage": {
+    "decision": "approve",
+    "omitted_scientific_endpoints": [],
+    "rationale": "All terminal scientific results preserved in the derived scope are endpoints: the four Leiden clusterings, the level-1 lineage annotation, the UMAP embedding (output 1), and the full one-vs-rest Wilcoxon DE table (output 2). Exclusions are correctly classified: QC metrics/plots and scrublet doublet scores are inspection quantities never used to gate filtering or exported as findings; HVG, PCA, kNN graph and the counts layer are intermediates wholly consumed by the exported endpoints; dotplots and .head(5) displays present values already in the exported DE table; the filters define the exported populations (17,041 cells; 23,427 genes). The barcode-disjointness prose defect in the addendum is tracked as an issue and in the overall decision, not as scientific coverage.",
+    "remaining_validation": [
+      "Re-execute affected controls after the addendum/check-description wording repairs listed in issues; no reference data, pipeline, or grader comparison logic needs to change."
+    ],
+    "scientific_scope_changes": [],
+    "unsupported_evidence_claims": []
+  }
+}
