@@ -26,3 +26,6 @@ Analytics availability is now separated from the conservative mathematical bound
 
 
 The first run-154 dry run refused a preceding auditor checksum mismatch. Its original applied proof names the older, stricter round-065 auditor; only the current file had since gained a second exact creator hash. The follow-up retrieves that exact older file from immutable Git commit `a0acda1826450c5542e68588212d050e5773ed0a` and verifies the original proof's SHA256 unchanged. It does not substitute a newer auditor or bypass the checksum. The dry run prices every one of 154's four complete controller lifetimes and both margins at full resources: **$0.35910245272317**, retaining **$1** from its previous **$3** hold. Analytics is unavailable and no provider price is claimed. [Dry-run proof](closed-sessions-154-dry-run.json). This is prepared; application is recorded separately.
+
+
+[Application](closed-sessions-154-applied.json) rechecked all evidence with the committed helper and released $2, retaining $1 against the same $0.35910245272317 padded lifetime bound. No provider-price or invoice claim is made. Together with 169's $3 of never-dispatched stage allowances, this funds a full $5 source-only campaign reservation without increasing the $200 authorization or changing an execution guard.
