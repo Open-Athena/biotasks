@@ -1,0 +1,7 @@
+#58’s declared Biopython candidate reached PR validation, then both stages failed collection after cleanup removed its compiled C extensions. This child investigates generic rebuilding for the selected source revision. [Original diagnosis](https://github.com/Open-Athena/biotasks/blob/ab0788c2/experiments/58-assertion-regressions/compiled-artifact-diagnosis.json). Subissue of #33.
+
+**Offline finding:** eight real pytest processes with our own tiny C extension reproduce the problem. Original cleanup causes collection errors; preserving base or HEAD binaries gives stale results. Replaying the fixture’s original build command after selecting each revision yields one F2P and one P2P with the unchanged upstream parser. This is mechanism evidence, not biological validation or a generic runtime policy. Full evidence linked in comments.
+
+**Next:** qualify accepted recorded build commands, selected-source/import identity, build failure/deadline handling and execution parity. Source review finds gaps in native validation, exported base images and post-solver verification; fixing only generation is insufficient. No Biopython retry, per-task package/test repair, parser/reward change, added model stage or native/model admission. Original negative evidence remains unchanged.
+
+Same existing 32 CPUh/$90 ceiling, strictly below $100 extra; no new allowance. Fixture scratch removed, source/results retained. Keep child/epic open for review; logs in comments, no automatic merge or release.

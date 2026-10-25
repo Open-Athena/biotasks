@@ -1,0 +1,15 @@
+{
+  "revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "files": {
+    "src/repo2rlenv/pipelines/pr_runtime_validate.py": "1f8349718bc93315bf3e5cbb10d5823c832539a8ef680b5ee169e4562de3ea49",
+    "src/repo2rlenv/pipelines/pr_runtime.py": "0b748a897f1802fcaf4b59ab7ed54092c8715745b5dff14813c6389b1e134535",
+    "src/repo2rlenv/log_parsers/pytest_parser.py": "4fe90bbb7db103f54984d73a7c95b482027ed0d5738c8587b5904c86dbf4b580",
+    "src/repo2rlenv/registry/integration.py": "dc2947685479c1d3c093371a3a233ce78a0fc5e334514c58ed817fc8b9ebaf2d"
+  },
+  "native_stage": "reset/clean/apply/test, no rebuild",
+  "export_image": "bootstrap replay then base reset/clean, no later rebuild",
+  "verifier": "restore/apply hidden tests then test, no project rebuild",
+  "evidence_stage": "source review only; exported image/verifier not executed",
+  "runtime_candidate_integrated": false,
+  "native_model_admission": false
+}

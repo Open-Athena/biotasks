@@ -1,0 +1,173 @@
+{
+  "synthetic": true,
+  "observed_biological_inputs": false,
+  "real_pytest_processes": 8,
+  "source_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "routes": [
+    {
+      "route": "original_cleanup",
+      "stages": [
+        {
+          "stage": "pre",
+          "script": "set -uxo pipefail\ncd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\ngit clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache || true\necho R2E_START_TEST_OUTPUT\nset +x\n{\n/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python -B -m pytest -v -p no:cacheprovider test_regression.py\n} 2>&1\nset -x\necho R2E_END_TEST_OUTPUT",
+          "stdout": "HEAD is now at 777312b Base fixture\nRemoving bt60_core.cpython-313-x86_64-linux-gnu.so\nR2E_START_TEST_OUTPUT\n============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60\nconfigfile: pyproject.toml\ncollecting ... collected 0 items / 1 error\n\n==================================== ERRORS ====================================\n_ ERROR collecting experiments/60-build-lifecycle/inputs-private/compiled-001/workspace/test_regression.py _\nImportError while importing test module '/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace/test_regression.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\ntest_regression.py:1: in <module>\n    from bt60_core import answer\nE   ModuleNotFoundError: No module named 'bt60_core'\n=========================== short test summary info ============================\nERROR test_regression.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n=============================== 1 error in 0.06s ===============================\nR2E_END_TEST_OUTPUT\n",
+          "stderr": "+ cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+          "shell_exit": 0,
+          "parsed": {
+            "test_regression.py": "ERROR"
+          },
+          "seconds": 0.36619933901238255,
+          "selected_source_sha256": "442b61e23514c039484c1c0ff648d942a0a7d280c79cb02575b467b72ce7074d",
+          "binary_sha256": {}
+        },
+        {
+          "stage": "post",
+          "script": "set -uxo pipefail\ncd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\ngit clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache || true\ngit apply --verbose --reject - <<'EOF_R2E_VALIDATE'\ndiff --git a/value.h b/value.h\nindex 2801f65..16e99ea 100644\n--- a/value.h\n+++ b/value.h\n@@ -1 +1 @@\n-#define ANSWER 0\n+#define ANSWER 1\n\nEOF_R2E_VALIDATE\necho R2E_START_TEST_OUTPUT\nset +x\n{\n/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python -B -m pytest -v -p no:cacheprovider test_regression.py\n} 2>&1\nset -x\necho R2E_END_TEST_OUTPUT",
+          "stdout": "HEAD is now at 777312b Base fixture\nR2E_START_TEST_OUTPUT\n============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60\nconfigfile: pyproject.toml\ncollecting ... collected 0 items / 1 error\n\n==================================== ERRORS ====================================\n_ ERROR collecting experiments/60-build-lifecycle/inputs-private/compiled-001/workspace/test_regression.py _\nImportError while importing test module '/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace/test_regression.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\ntest_regression.py:1: in <module>\n    from bt60_core import answer\nE   ModuleNotFoundError: No module named 'bt60_core'\n=========================== short test summary info ============================\nERROR test_regression.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n=============================== 1 error in 0.06s ===============================\nR2E_END_TEST_OUTPUT\n",
+          "stderr": "+ cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch value.h...\nApplied patch value.h cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+          "shell_exit": 0,
+          "parsed": {
+            "test_regression.py": "ERROR"
+          },
+          "seconds": 0.39812116499524564,
+          "selected_source_sha256": "71a76d155936f802b0bba0ea36587b2e14b4740d84b5fb03134ee802e88d459b",
+          "binary_sha256": {}
+        }
+      ],
+      "fail_to_pass": [],
+      "pass_to_pass": []
+    },
+    {
+      "route": "preserve_base_binary",
+      "stages": [
+        {
+          "stage": "pre",
+          "script": "set -uxo pipefail\ncd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\ngit clean -fdx -e '*.so' -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache || true\necho R2E_START_TEST_OUTPUT\nset +x\n{\n/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python -B -m pytest -v -p no:cacheprovider test_regression.py\n} 2>&1\nset -x\necho R2E_END_TEST_OUTPUT",
+          "stdout": "HEAD is now at 777312b Base fixture\nR2E_START_TEST_OUTPUT\n============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60\nconfigfile: pyproject.toml\ncollecting ... collected 2 items\n\ntest_regression.py::test_regression FAILED                               [ 50%]\ntest_regression.py::test_stable PASSED                                   [100%]\n\n=================================== FAILURES ===================================\n_______________________________ test_regression ________________________________\n\n    def test_regression():\n>       assert answer() == 1\nE       assert 0 == 1\nE        +  where 0 = answer()\n\ntest_regression.py:4: AssertionError\n=========================== short test summary info ============================\nFAILED test_regression.py::test_regression - assert 0 == 1\n========================= 1 failed, 1 passed in 0.02s ==========================\nR2E_END_TEST_OUTPUT\n",
+          "stderr": "+ cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\n+ git clean -fdx -e '*.so' -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+          "shell_exit": 0,
+          "parsed": {
+            "test_regression.py::test_regression": "FAILED",
+            "test_regression.py::test_stable": "PASSED"
+          },
+          "seconds": 0.31530585800646804,
+          "selected_source_sha256": "442b61e23514c039484c1c0ff648d942a0a7d280c79cb02575b467b72ce7074d",
+          "binary_sha256": {
+            "bt60_core.cpython-313-x86_64-linux-gnu.so": "014468ea82f43d1445f81dff3dadfa4dd65686cd80d2f34dc47222ec8acf7800"
+          }
+        },
+        {
+          "stage": "post",
+          "script": "set -uxo pipefail\ncd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\ngit clean -fdx -e '*.so' -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache || true\ngit apply --verbose --reject - <<'EOF_R2E_VALIDATE'\ndiff --git a/value.h b/value.h\nindex 2801f65..16e99ea 100644\n--- a/value.h\n+++ b/value.h\n@@ -1 +1 @@\n-#define ANSWER 0\n+#define ANSWER 1\n\nEOF_R2E_VALIDATE\necho R2E_START_TEST_OUTPUT\nset +x\n{\n/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python -B -m pytest -v -p no:cacheprovider test_regression.py\n} 2>&1\nset -x\necho R2E_END_TEST_OUTPUT",
+          "stdout": "HEAD is now at 777312b Base fixture\nR2E_START_TEST_OUTPUT\n============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60\nconfigfile: pyproject.toml\ncollecting ... collected 2 items\n\ntest_regression.py::test_regression FAILED                               [ 50%]\ntest_regression.py::test_stable PASSED                                   [100%]\n\n=================================== FAILURES ===================================\n_______________________________ test_regression ________________________________\n\n    def test_regression():\n>       assert answer() == 1\nE       assert 0 == 1\nE        +  where 0 = answer()\n\ntest_regression.py:4: AssertionError\n=========================== short test summary info ============================\nFAILED test_regression.py::test_regression - assert 0 == 1\n========================= 1 failed, 1 passed in 0.02s ==========================\nR2E_END_TEST_OUTPUT\n",
+          "stderr": "+ cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\n+ git clean -fdx -e '*.so' -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch value.h...\nApplied patch value.h cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+          "shell_exit": 0,
+          "parsed": {
+            "test_regression.py::test_regression": "FAILED",
+            "test_regression.py::test_stable": "PASSED"
+          },
+          "seconds": 0.3515795569983311,
+          "selected_source_sha256": "71a76d155936f802b0bba0ea36587b2e14b4740d84b5fb03134ee802e88d459b",
+          "binary_sha256": {
+            "bt60_core.cpython-313-x86_64-linux-gnu.so": "014468ea82f43d1445f81dff3dadfa4dd65686cd80d2f34dc47222ec8acf7800"
+          }
+        }
+      ],
+      "fail_to_pass": [],
+      "pass_to_pass": [
+        "test_regression.py::test_stable"
+      ]
+    },
+    {
+      "route": "preserve_head_binary",
+      "stages": [
+        {
+          "stage": "pre",
+          "script": "set -uxo pipefail\ncd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\ngit clean -fdx -e '*.so' -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache || true\necho R2E_START_TEST_OUTPUT\nset +x\n{\n/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python -B -m pytest -v -p no:cacheprovider test_regression.py\n} 2>&1\nset -x\necho R2E_END_TEST_OUTPUT",
+          "stdout": "HEAD is now at 777312b Base fixture\nR2E_START_TEST_OUTPUT\n============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60\nconfigfile: pyproject.toml\ncollecting ... collected 2 items\n\ntest_regression.py::test_regression PASSED                               [ 50%]\ntest_regression.py::test_stable PASSED                                   [100%]\n\n============================== 2 passed in 0.01s ===============================\nR2E_END_TEST_OUTPUT\n",
+          "stderr": "+ cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\n+ git clean -fdx -e '*.so' -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+          "shell_exit": 0,
+          "parsed": {
+            "test_regression.py::test_regression": "PASSED",
+            "test_regression.py::test_stable": "PASSED"
+          },
+          "seconds": 0.3506155019858852,
+          "selected_source_sha256": "442b61e23514c039484c1c0ff648d942a0a7d280c79cb02575b467b72ce7074d",
+          "binary_sha256": {
+            "bt60_core.cpython-313-x86_64-linux-gnu.so": "d0fe8b0e7ec5927ee0d00cfcc722f2d1adb13e27fc5ebbc6ebe0f442f7434e55"
+          }
+        },
+        {
+          "stage": "post",
+          "script": "set -uxo pipefail\ncd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\ngit clean -fdx -e '*.so' -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache || true\ngit apply --verbose --reject - <<'EOF_R2E_VALIDATE'\ndiff --git a/value.h b/value.h\nindex 2801f65..16e99ea 100644\n--- a/value.h\n+++ b/value.h\n@@ -1 +1 @@\n-#define ANSWER 0\n+#define ANSWER 1\n\nEOF_R2E_VALIDATE\necho R2E_START_TEST_OUTPUT\nset +x\n{\n/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python -B -m pytest -v -p no:cacheprovider test_regression.py\n} 2>&1\nset -x\necho R2E_END_TEST_OUTPUT",
+          "stdout": "HEAD is now at 777312b Base fixture\nR2E_START_TEST_OUTPUT\n============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60\nconfigfile: pyproject.toml\ncollecting ... collected 2 items\n\ntest_regression.py::test_regression PASSED                               [ 50%]\ntest_regression.py::test_stable PASSED                                   [100%]\n\n============================== 2 passed in 0.01s ===============================\nR2E_END_TEST_OUTPUT\n",
+          "stderr": "+ cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\n+ git clean -fdx -e '*.so' -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch value.h...\nApplied patch value.h cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+          "shell_exit": 0,
+          "parsed": {
+            "test_regression.py::test_regression": "PASSED",
+            "test_regression.py::test_stable": "PASSED"
+          },
+          "seconds": 0.30967643202166073,
+          "selected_source_sha256": "71a76d155936f802b0bba0ea36587b2e14b4740d84b5fb03134ee802e88d459b",
+          "binary_sha256": {
+            "bt60_core.cpython-313-x86_64-linux-gnu.so": "d0fe8b0e7ec5927ee0d00cfcc722f2d1adb13e27fc5ebbc6ebe0f442f7434e55"
+          }
+        }
+      ],
+      "fail_to_pass": [],
+      "pass_to_pass": [
+        "test_regression.py::test_regression",
+        "test_regression.py::test_stable"
+      ]
+    },
+    {
+      "route": "recorded_rebuild",
+      "stages": [
+        {
+          "stage": "pre",
+          "script": "set -uxo pipefail\ncd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\ngit clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache || true\ngit diff --binary > /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/before.patch\n( /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python -B build.py ) || exit 78\ngit diff --binary > /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/after.patch\ncmp /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/before.patch /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/after.patch || exit 79\necho R2E_START_TEST_OUTPUT\nset +x\n{\n/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python -B -m pytest -v -p no:cacheprovider test_regression.py\n} 2>&1\nset -x\necho R2E_END_TEST_OUTPUT",
+          "stdout": "HEAD is now at 777312b Base fixture\nRemoving bt60_core.cpython-313-x86_64-linux-gnu.so\nR2E_START_TEST_OUTPUT\n============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60\nconfigfile: pyproject.toml\ncollecting ... collected 2 items\n\ntest_regression.py::test_regression FAILED                               [ 50%]\ntest_regression.py::test_stable PASSED                                   [100%]\n\n=================================== FAILURES ===================================\n_______________________________ test_regression ________________________________\n\n    def test_regression():\n>       assert answer() == 1\nE       assert 0 == 1\nE        +  where 0 = answer()\n\ntest_regression.py:4: AssertionError\n=========================== short test summary info ============================\nFAILED test_regression.py::test_regression - assert 0 == 1\n========================= 1 failed, 1 passed in 0.02s ==========================\nR2E_END_TEST_OUTPUT\n",
+          "stderr": "+ cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git diff --binary\n+ /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python -B build.py\n+ git diff --binary\n+ cmp /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/before.patch /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/after.patch\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+          "shell_exit": 0,
+          "parsed": {
+            "test_regression.py::test_regression": "FAILED",
+            "test_regression.py::test_stable": "PASSED"
+          },
+          "seconds": 0.45243301198934205,
+          "selected_source_sha256": "442b61e23514c039484c1c0ff648d942a0a7d280c79cb02575b467b72ce7074d",
+          "binary_sha256": {
+            "bt60_core.cpython-313-x86_64-linux-gnu.so": "014468ea82f43d1445f81dff3dadfa4dd65686cd80d2f34dc47222ec8acf7800"
+          }
+        },
+        {
+          "stage": "post",
+          "script": "set -uxo pipefail\ncd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\ngit reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\ngit clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache || true\ngit apply --verbose --reject - <<'EOF_R2E_VALIDATE'\ndiff --git a/value.h b/value.h\nindex 2801f65..16e99ea 100644\n--- a/value.h\n+++ b/value.h\n@@ -1 +1 @@\n-#define ANSWER 0\n+#define ANSWER 1\n\nEOF_R2E_VALIDATE\ngit diff --binary > /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/before.patch\n( /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python -B build.py ) || exit 78\ngit diff --binary > /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/after.patch\ncmp /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/before.patch /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/after.patch || exit 79\necho R2E_START_TEST_OUTPUT\nset +x\n{\n/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python -B -m pytest -v -p no:cacheprovider test_regression.py\n} 2>&1\nset -x\necho R2E_END_TEST_OUTPUT",
+          "stdout": "HEAD is now at 777312b Base fixture\nRemoving bt60_core.cpython-313-x86_64-linux-gnu.so\nR2E_START_TEST_OUTPUT\n============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60\nconfigfile: pyproject.toml\ncollecting ... collected 2 items\n\ntest_regression.py::test_regression PASSED                               [ 50%]\ntest_regression.py::test_stable PASSED                                   [100%]\n\n============================== 2 passed in 0.01s ===============================\nR2E_END_TEST_OUTPUT\n",
+          "stderr": "+ cd /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git config --global --add safe.directory /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/workspace\n+ git reset --hard 777312b2dc7c58f37c48ea455d98b97bd78fba25\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch value.h...\nApplied patch value.h cleanly.\n+ git diff --binary\n+ /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python -B build.py\n+ git diff --binary\n+ cmp /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/before.patch /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/60/experiments/60-build-lifecycle/inputs-private/compiled-001/after.patch\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+          "shell_exit": 0,
+          "parsed": {
+            "test_regression.py::test_regression": "PASSED",
+            "test_regression.py::test_stable": "PASSED"
+          },
+          "seconds": 0.4584010320249945,
+          "selected_source_sha256": "71a76d155936f802b0bba0ea36587b2e14b4740d84b5fb03134ee802e88d459b",
+          "binary_sha256": {
+            "bt60_core.cpython-313-x86_64-linux-gnu.so": "d0fe8b0e7ec5927ee0d00cfcc722f2d1adb13e27fc5ebbc6ebe0f442f7434e55"
+          }
+        }
+      ],
+      "fail_to_pass": [
+        "test_regression.py::test_regression"
+      ],
+      "pass_to_pass": [
+        "test_regression.py::test_stable"
+      ]
+    }
+  ],
+  "own_recorded_build_command": "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/58/.venv/bin/python -B build.py",
+  "scratch_removed": true,
+  "original_stage_changes": "Owned workspace substitution only; global git config redirected to own scratch. Candidate variants explicitly recorded.",
+  "native_jobs_or_model_calls": 0,
+  "scientific_acceptance": false,
+  "limits": "Mechanism fixture only; not arbitrary command classification, installed runtime integration, Docker export/verifier parity or a biological task result."
+}
