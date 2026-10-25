@@ -15,6 +15,7 @@ from closed_session_bound import (
     admitted_implementation,
     admitted_profile,
     closed_session_bound,
+    terminal_state,
 )
 
 
@@ -86,14 +87,14 @@ def main():
         original(name)
         assert checked[name] == expected
     pipeline = original("pipeline.json")
-    assert pipeline["status"] == "rejected"
+    expected_terminal = terminal_state(pipeline)
     if len(folders) == 4:
         assert not pipeline.get("quality_repair")
     expected_sources = admitted_implementation(previous["frozen_implementation_sha256"])
     launch = args.private_root / "launch"
     claim_raw = (launch / f"{number:03}-submission.json").read_bytes()
     claim = json.loads(claim_raw)
-    assert previous["terminal"]["state"] == "SUCCEEDED" and previous["terminal"]["terminal"]
+    assert previous["terminal"]["state"] == expected_terminal and previous["terminal"]["terminal"]
     assert previous["terminal"]["claim_sha256"] == digest(claim_raw)
     payload = launch / f"{number:03}-payload"
     packet = payload / "biotasks.tar"

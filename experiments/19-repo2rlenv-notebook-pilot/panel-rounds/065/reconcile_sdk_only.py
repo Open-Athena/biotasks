@@ -57,8 +57,8 @@ def admitted_implementation(sources):
     return dict(sources)
 
 
-def audit_shape(pipeline, claims, cleanup):
-    assert pipeline["status"] == "rejected"
+def terminal_state(pipeline):
+    """Match a final grading outcome to its required typed host state."""
     stages = pipeline["stages"]
     assert [s["name"] for s in stages] == [
         "preparation",
@@ -69,7 +69,17 @@ def audit_shape(pipeline, claims, cleanup):
         "grading",
     ]
     assert all(s["status"] == "completed" for s in stages[:-1])
-    assert stages[-1]["status"] == "rejected"
+    if pipeline["status"] == "rejected":
+        assert stages[-1]["status"] == "rejected"
+        return "SUCCEEDED"
+    assert pipeline["status"] == "infrastructure_failed"
+    assert pipeline.get("failed_stage") == "grading" and stages[-1]["status"] == "incomplete"
+    return "FAILED"
+
+
+def audit_shape(pipeline, claims, cleanup):
+    terminal_state(pipeline)
+    stages = pipeline["stages"]
     assert pipeline["started"] <= stages[0]["started"]
     assert stages[-1]["finished"] <= pipeline["finished"]
     assert 0 < pipeline["finished"] - pipeline["started"] <= 7200
@@ -178,7 +188,7 @@ def main():
         for p in (launch / "typed-observations").glob(f"{args.number:03}-*.json")
     ]
     terminal = max(observations, key=lambda r: r["observed_at"])
-    assert terminal["terminal"] and terminal["state"] == "SUCCEEDED"
+    assert terminal["terminal"] and terminal["state"] == terminal_state(pipeline)
     assert terminal["claim_sha256"] == hashlib.sha256(submission_raw).hexdigest()
     row = next(
         r

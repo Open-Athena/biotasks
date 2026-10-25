@@ -6,6 +6,26 @@ from decimal import Decimal
 RATE = 4 * Decimal("0.0504") + 8 * Decimal("0.0162") + 10 * Decimal("0.000108")
 
 
+def terminal_state(pipeline):
+    """Match a final grading outcome to its required typed host state."""
+    stages = pipeline["stages"]
+    assert [s["name"] for s in stages] == [
+        "preparation",
+        "setup",
+        "replay",
+        "specification",
+        "construction",
+        "grading",
+    ]
+    assert all(s["status"] == "completed" for s in stages[:-1])
+    if pipeline["status"] == "rejected":
+        assert stages[-1]["status"] == "rejected"
+        return "SUCCEEDED"
+    assert pipeline["status"] == "infrastructure_failed"
+    assert pipeline.get("failed_stage") == "grading" and stages[-1]["status"] == "incomplete"
+    return "FAILED"
+
+
 def admitted_implementation(sources):
     """Exact creator/session pairs with identical creation and cleanup logic.
 
