@@ -1,0 +1,34 @@
+{
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "kind": "Unchanged official merged-PR descriptors; not all-history coverage",
+  "repo": "nipy/nibabel",
+  "limit": 1,
+  "since": "2026-10-18",
+  "until": "2026-10-24",
+  "require_new_test_funcs": false,
+  "candidates": [
+    {
+      "number": 1574,
+      "title": "Raise PARRECError for an image information line with too few values",
+      "body": "An image information line cut short raised IndexError, or a ValueError from an array broadcast, instead of PARRECError. This change counts the values on each line and raises PARRECError when there are too few.\n\nOne behavior change: a V4.1 image line with 46 of its 48 values used to load without an error, with the diffusion field filled in from one value (giving [0, 0, 0]). It now raises. The bundled V4.1 sample still parses, and lines with extra values are still accepted. Two regression test cases fail on master and pass with this change.\n",
+      "state": "MERGED",
+      "merged_at": "2026-10-19T15:38:24Z",
+      "base_ref": "master",
+      "base_sha": "5ac55aacc9cd5de0859972b8c1a21e1a344c7592",
+      "head_sha": "bdb5ec2e58bbf4d3d196c5ee6acefdc06e8b4c9b",
+      "is_draft": false,
+      "url": "https://github.com/nipy/nibabel/pull/1574",
+      "changed_files": [
+        "nibabel/parrec.py",
+        "nibabel/tests/test_parrec.py"
+      ]
+    }
+  ],
+  "discovery_binding": {
+    "native_config_sha256": "9d86d8b3a5743c39cc3286d556c248b79e73608078449fa8e11ba4e13e9edd52",
+    "source_receipt_sha256": "43ca4ea817de43204e6fc09d9f9da7e09bf959104a0926b847aab9eae5676a2c"
+  },
+  "model_calls": 0,
+  "remote_jobs": 0,
+  "snapshot_identity": "51f43a0a9b71b992c5dfcb246bd3407f6bf74d3975553755db1fc8c0890034ac"
+}
