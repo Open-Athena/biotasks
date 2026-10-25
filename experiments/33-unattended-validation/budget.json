@@ -3,14 +3,14 @@
   "user_limit_exclusive_usd": 100,
   "operating_ceiling_usd": 90,
   "unused_margin_usd": 10,
-  "recorded_paid_cost_usd": 1.635174,
-  "outstanding_reservations_usd": 23.07,
-  "new_model_calls": 43,
-  "paid_model_execution_enabled": true,
+  "recorded_paid_cost_usd": 1.723023,
+  "outstanding_reservations_usd": 10.0,
+  "new_model_calls": 48,
+  "paid_model_execution_enabled": false,
   "admission_rule": "Before enabling paid model execution, verify model pricing and maximum request cost; atomically reserve a conservative bound, then reconcile provider-reported actual usage. Stop if accrued cost plus outstanding reservations plus the proposed bound exceeds 90 USD or cost is unknown.",
   "per_repository_settings": "Preserve official bootstrap settings: Sonnet 4.6 through OpenRouter, temperature 0.2, 2048 output-token cap, 20 calls, 5 USD estimated repository stop threshold; global admission remains required.",
   "additional_reserved_cpu_hour_ceiling": 32,
-  "additional_allocated_cpu_hours": 12.208171666330761,
+  "additional_allocated_cpu_hours": 13.678993888696034,
   "new_paid_capacity_allowed": false,
   "events": [
     {
@@ -646,44 +646,54 @@
       "run_id": "biotasks62-dendropy-001",
       "maximum_allocated_cpu_hours": 6,
       "new_paid_capacity": false,
-      "state": "reserved before submission",
+      "state": "terminal reconciled",
       "controller": "biotasks.validation.v1",
-      "role": "primary"
+      "role": "primary",
+      "actual_allocated_cpu_hours": 1.461783333354526
     },
     {
       "kind": "reserved_cpu_admission",
       "run_id": "biotasks62-dendropy-001-stop",
       "maximum_allocated_cpu_hours": 0.16666666666666666,
       "new_paid_capacity": false,
-      "state": "reserved before submission",
+      "state": "released unused",
       "controller": "biotasks.validation.v1",
-      "role": "stop"
+      "role": "stop",
+      "reason": "Verified empty/no-creation; no cleanup job"
     },
     {
       "kind": "reserved_cpu_admission",
       "run_id": "biotasks62-dendropy-001-cleanup",
       "maximum_allocated_cpu_hours": 0.16666666666666666,
       "new_paid_capacity": false,
-      "state": "reserved before submission",
+      "state": "terminal reconciled",
       "controller": "biotasks.validation.v1",
-      "role": "cleanup"
+      "role": "cleanup",
+      "actual_allocated_cpu_hours": 0.009038889010747274
     },
     {
       "kind": "model_run_reservation",
       "run_id": "biotasks62-dendropy-001",
       "maximum_usd": "13.07",
-      "outstanding_usd": "13.07",
-      "known_actual_usd": "0",
-      "known_calls": 0,
-      "call_count_complete": false,
-      "state": "reserved before submission",
+      "outstanding_usd": "0",
+      "known_actual_usd": "0.087849",
+      "known_calls": 5,
+      "call_count_complete": true,
+      "state": "terminal reconciled",
       "quote_sha256": "17c2c754bafd102743eb94ab1851fb9e60443c9786e5925a3dbc59f11f502900",
       "plan_identity": "25a52e34594805fdc258f12bcf3d05c5d8d541a63ac616681d7c5776fc46c98d",
       "model": "openrouter/anthropic/claude-sonnet-4.6",
       "scope": "Only the original upstream bootstrap calls; no repairs/fallback/retries",
-      "observations": []
+      "observations": [
+        {
+          "known_actual_usd": "0.087849",
+          "known_calls": 5,
+          "cost_complete": true,
+          "proof_sha256": "15a7c7ee332a158ca778c9e91342e131dc263ee7c670d729c011347dd1dca8d3"
+        }
+      ]
     }
   ],
-  "outstanding_cpu_hour_reservations": 6.333333333333334,
+  "outstanding_cpu_hour_reservations": 0,
   "cpu_accounting_rule": "Sum terminal admission actuals and still-reserved admission maxima; normalize floating subtraction residue by recomputation."
 }
