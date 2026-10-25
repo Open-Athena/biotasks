@@ -1,0 +1,571 @@
+{
+  "synthetic": true,
+  "observed_biological_inputs": false,
+  "python": "3.13.13 | packaged by conda-forge | (main, Apr  8 2026, 02:00:33) [GCC 14.3.0]",
+  "pytest": "9.1.1",
+  "actual_pytest_processes": 6,
+  "actual_stdlib_oracle_processes": 6,
+  "parsers_changed": false,
+  "fixtures": [
+    {
+      "case": "passing",
+      "pytest": {
+        "command": [
+          "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/65/.venv/bin/python",
+          "-B",
+          "-m",
+          "pytest",
+          "-v",
+          "--color=no",
+          "-p",
+          "no:cacheprovider",
+          "test_subtests.py"
+        ],
+        "exit": 0,
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/65/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/64\nconfigfile: pyproject.toml\ncollecting ... collected 3 items\n\ntest_subtests.py::Cases::test_parameters \ntest_subtests.py::Cases::test_parameters PASSED                          [ 33%]\ntest_subtests.py::Cases::test_plain PASSED                               [ 66%]\ntest_subtests.py::Cases::test_stable PASSED                              [100%]\n\n===================== 3 passed, 2 subtests passed in 0.01s =====================\n",
+        "stderr": ""
+      },
+      "stdlib_oracle": {
+        "successful": true,
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "subtests": [
+          {
+            "parent": "test_subtests.Cases.test_parameters",
+            "subtest": "test_parameters (test_subtests.Cases.test_parameters) (label='plain', index=0)",
+            "status": "PASSED"
+          },
+          {
+            "parent": "test_subtests.Cases.test_parameters",
+            "subtest": "test_parameters (test_subtests.Cases.test_parameters) (label='second', index=1)",
+            "status": "PASSED"
+          }
+        ]
+      },
+      "native_and_standalone_statuses": {
+        "native": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "PASSED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        },
+        "standalone": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "PASSED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        },
+        "current": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "PASSED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        }
+      },
+      "toy_declared_f2p": [
+        "test_subtests.py::Cases::test_parameters"
+      ],
+      "toy_declared_p2p": [
+        "test_subtests.py::Cases::test_stable",
+        "test_subtests.py::Cases::test_plain"
+      ],
+      "tracked_grade_probe": {
+        "standalone": {
+          "reward": 1.0,
+          "resolved": true,
+          "f2p_total": 1,
+          "f2p_passed": 1,
+          "f2p_rate": 1.0,
+          "p2p_total": 2,
+          "p2p_passed": 2,
+          "p2p_rate": 1.0,
+          "regressions": [],
+          "untracked_failed_count": 0,
+          "untracked_failed": []
+        },
+        "current": {
+          "reward": 1.0,
+          "resolved": true,
+          "f2p_total": 1,
+          "f2p_passed": 1,
+          "f2p_rate": 1.0,
+          "p2p_total": 2,
+          "p2p_passed": 2,
+          "p2p_rate": 1.0,
+          "regressions": [],
+          "untracked_failed_count": 0,
+          "untracked_failed": []
+        }
+      },
+      "subfailed_lines": []
+    },
+    {
+      "case": "failure",
+      "pytest": {
+        "command": [
+          "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/65/.venv/bin/python",
+          "-B",
+          "-m",
+          "pytest",
+          "-v",
+          "--color=no",
+          "-p",
+          "no:cacheprovider",
+          "test_subtests.py"
+        ],
+        "exit": 1,
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/65/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/64\nconfigfile: pyproject.toml\ncollecting ... collected 3 items\n\ntest_subtests.py::Cases::test_parameters \ntest_subtests.py::Cases::test_parameters PASSED                          [ 33%]\ntest_subtests.py::Cases::test_plain PASSED                               [ 66%]\ntest_subtests.py::Cases::test_stable PASSED                              [100%]\n\n=================================== FAILURES ===================================\n________________ Cases.test_parameters (label='plain', index=0) ________________\n\nself = <experiments.64-subtest-status.inputs-private.fixture-002.failure.test_subtests.Cases testMethod=test_parameters>\n\n    def test_parameters(self):\n        values = ['plain', 'second'] if CASE != 'awkward' else ['space value', 'FAILED) ][ odd', 'space value']\n        for index, value in enumerate(values):\n            with self.subTest(label=value, index=index):\n                if CASE in ('failure','awkward') and index == 0:\n>                   self.fail('own intentional subtest failure')\nE                   AssertionError: own intentional subtest failure\n\ntest_subtests.py:9: AssertionError\n=========================== short test summary info ============================\nSUBFAILED(label='plain', index=0) test_subtests.py::Cases::test_parameters - ...\n================ 1 failed, 3 passed, 1 subtests passed in 0.02s ================\n",
+        "stderr": ""
+      },
+      "stdlib_oracle": {
+        "successful": false,
+        "tests": 3,
+        "failures": 1,
+        "errors": 0,
+        "skips": 0,
+        "subtests": [
+          {
+            "parent": "test_subtests.Cases.test_parameters",
+            "subtest": "test_parameters (test_subtests.Cases.test_parameters) (label='plain', index=0)",
+            "status": "FAILED"
+          },
+          {
+            "parent": "test_subtests.Cases.test_parameters",
+            "subtest": "test_parameters (test_subtests.Cases.test_parameters) (label='second', index=1)",
+            "status": "PASSED"
+          }
+        ]
+      },
+      "native_and_standalone_statuses": {
+        "native": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "PASSED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        },
+        "standalone": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "PASSED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        },
+        "current": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "PASSED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        }
+      },
+      "toy_declared_f2p": [
+        "test_subtests.py::Cases::test_parameters"
+      ],
+      "toy_declared_p2p": [
+        "test_subtests.py::Cases::test_stable",
+        "test_subtests.py::Cases::test_plain"
+      ],
+      "tracked_grade_probe": {
+        "standalone": {
+          "reward": 1.0,
+          "resolved": true,
+          "f2p_total": 1,
+          "f2p_passed": 1,
+          "f2p_rate": 1.0,
+          "p2p_total": 2,
+          "p2p_passed": 2,
+          "p2p_rate": 1.0,
+          "regressions": [],
+          "untracked_failed_count": 0,
+          "untracked_failed": []
+        },
+        "current": {
+          "reward": 1.0,
+          "resolved": true,
+          "f2p_total": 1,
+          "f2p_passed": 1,
+          "f2p_rate": 1.0,
+          "p2p_total": 2,
+          "p2p_passed": 2,
+          "p2p_rate": 1.0,
+          "regressions": [],
+          "untracked_failed_count": 0,
+          "untracked_failed": []
+        }
+      },
+      "subfailed_lines": [
+        "SUBFAILED(label='plain', index=0) test_subtests.py::Cases::test_parameters - ..."
+      ]
+    },
+    {
+      "case": "error",
+      "pytest": {
+        "command": [
+          "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/65/.venv/bin/python",
+          "-B",
+          "-m",
+          "pytest",
+          "-v",
+          "--color=no",
+          "-p",
+          "no:cacheprovider",
+          "test_subtests.py"
+        ],
+        "exit": 1,
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/65/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/64\nconfigfile: pyproject.toml\ncollecting ... collected 3 items\n\ntest_subtests.py::Cases::test_parameters \ntest_subtests.py::Cases::test_parameters PASSED                          [ 33%]\ntest_subtests.py::Cases::test_plain PASSED                               [ 66%]\ntest_subtests.py::Cases::test_stable PASSED                              [100%]\n\n=================================== FAILURES ===================================\n________________ Cases.test_parameters (label='plain', index=0) ________________\n\nself = <experiments.64-subtest-status.inputs-private.fixture-002.error.test_subtests.Cases testMethod=test_parameters>\n\n    def test_parameters(self):\n        values = ['plain', 'second'] if CASE != 'awkward' else ['space value', 'FAILED) ][ odd', 'space value']\n        for index, value in enumerate(values):\n            with self.subTest(label=value, index=index):\n                if CASE in ('failure','awkward') and index == 0:\n                    self.fail('own intentional subtest failure')\n                if CASE == 'error' and index == 0:\n>                   raise ValueError('own intentional subtest error')\nE                   ValueError: own intentional subtest error\n\ntest_subtests.py:11: ValueError\n=========================== short test summary info ============================\nSUBFAILED(label='plain', index=0) test_subtests.py::Cases::test_parameters - ...\n================ 1 failed, 3 passed, 1 subtests passed in 0.01s ================\n",
+        "stderr": ""
+      },
+      "stdlib_oracle": {
+        "successful": false,
+        "tests": 3,
+        "failures": 0,
+        "errors": 1,
+        "skips": 0,
+        "subtests": [
+          {
+            "parent": "test_subtests.Cases.test_parameters",
+            "subtest": "test_parameters (test_subtests.Cases.test_parameters) (label='plain', index=0)",
+            "status": "ERROR"
+          },
+          {
+            "parent": "test_subtests.Cases.test_parameters",
+            "subtest": "test_parameters (test_subtests.Cases.test_parameters) (label='second', index=1)",
+            "status": "PASSED"
+          }
+        ]
+      },
+      "native_and_standalone_statuses": {
+        "native": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "PASSED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        },
+        "standalone": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "PASSED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        },
+        "current": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "PASSED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        }
+      },
+      "toy_declared_f2p": [
+        "test_subtests.py::Cases::test_parameters"
+      ],
+      "toy_declared_p2p": [
+        "test_subtests.py::Cases::test_stable",
+        "test_subtests.py::Cases::test_plain"
+      ],
+      "tracked_grade_probe": {
+        "standalone": {
+          "reward": 1.0,
+          "resolved": true,
+          "f2p_total": 1,
+          "f2p_passed": 1,
+          "f2p_rate": 1.0,
+          "p2p_total": 2,
+          "p2p_passed": 2,
+          "p2p_rate": 1.0,
+          "regressions": [],
+          "untracked_failed_count": 0,
+          "untracked_failed": []
+        },
+        "current": {
+          "reward": 1.0,
+          "resolved": true,
+          "f2p_total": 1,
+          "f2p_passed": 1,
+          "f2p_rate": 1.0,
+          "p2p_total": 2,
+          "p2p_passed": 2,
+          "p2p_rate": 1.0,
+          "regressions": [],
+          "untracked_failed_count": 0,
+          "untracked_failed": []
+        }
+      },
+      "subfailed_lines": [
+        "SUBFAILED(label='plain', index=0) test_subtests.py::Cases::test_parameters - ..."
+      ]
+    },
+    {
+      "case": "skip",
+      "pytest": {
+        "command": [
+          "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/65/.venv/bin/python",
+          "-B",
+          "-m",
+          "pytest",
+          "-v",
+          "--color=no",
+          "-p",
+          "no:cacheprovider",
+          "test_subtests.py"
+        ],
+        "exit": 0,
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/65/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/64\nconfigfile: pyproject.toml\ncollecting ... collected 3 items\n\ntest_subtests.py::Cases::test_parameters \ntest_subtests.py::Cases::test_parameters PASSED                          [ 33%]\ntest_subtests.py::Cases::test_plain PASSED                               [ 66%]\ntest_subtests.py::Cases::test_stable PASSED                              [100%]\n\n=========================== short test summary info ============================\nSUBSKIPPED(label='plain', index=0) [1] test_subtests.py:4: own intentional skip\n=============== 3 passed, 1 skipped, 1 subtests passed in 0.01s ================\n",
+        "stderr": ""
+      },
+      "stdlib_oracle": {
+        "successful": true,
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skips": 1,
+        "subtests": [
+          {
+            "parent": "test_subtests.Cases.test_parameters",
+            "subtest": "test_parameters (test_subtests.Cases.test_parameters) (label='second', index=1)",
+            "status": "PASSED"
+          }
+        ]
+      },
+      "native_and_standalone_statuses": {
+        "native": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "PASSED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        },
+        "standalone": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "PASSED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        },
+        "current": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "PASSED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        }
+      },
+      "toy_declared_f2p": [
+        "test_subtests.py::Cases::test_parameters"
+      ],
+      "toy_declared_p2p": [
+        "test_subtests.py::Cases::test_stable",
+        "test_subtests.py::Cases::test_plain"
+      ],
+      "tracked_grade_probe": {
+        "standalone": {
+          "reward": 1.0,
+          "resolved": true,
+          "f2p_total": 1,
+          "f2p_passed": 1,
+          "f2p_rate": 1.0,
+          "p2p_total": 2,
+          "p2p_passed": 2,
+          "p2p_rate": 1.0,
+          "regressions": [],
+          "untracked_failed_count": 0,
+          "untracked_failed": []
+        },
+        "current": {
+          "reward": 1.0,
+          "resolved": true,
+          "f2p_total": 1,
+          "f2p_passed": 1,
+          "f2p_rate": 1.0,
+          "p2p_total": 2,
+          "p2p_passed": 2,
+          "p2p_rate": 1.0,
+          "regressions": [],
+          "untracked_failed_count": 0,
+          "untracked_failed": []
+        }
+      },
+      "subfailed_lines": []
+    },
+    {
+      "case": "ordinary_failure",
+      "pytest": {
+        "command": [
+          "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/65/.venv/bin/python",
+          "-B",
+          "-m",
+          "pytest",
+          "-v",
+          "--color=no",
+          "-p",
+          "no:cacheprovider",
+          "test_subtests.py"
+        ],
+        "exit": 1,
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/65/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/64\nconfigfile: pyproject.toml\ncollecting ... collected 3 items\n\ntest_subtests.py::Cases::test_parameters \ntest_subtests.py::Cases::test_parameters PASSED                          [ 33%]\ntest_subtests.py::Cases::test_plain FAILED                               [ 66%]\ntest_subtests.py::Cases::test_stable PASSED                              [100%]\n\n=================================== FAILURES ===================================\n_______________________________ Cases.test_plain _______________________________\n\nself = <experiments.64-subtest-status.inputs-private.fixture-002.ordinary_failure.test_subtests.Cases testMethod=test_plain>\n\n    def test_plain(self):\n>       self.assertNotEqual(CASE, 'ordinary_failure')\nE       AssertionError: 'ordinary_failure' == 'ordinary_failure'\n\ntest_subtests.py:18: AssertionError\n=========================== short test summary info ============================\nFAILED test_subtests.py::Cases::test_plain - AssertionError: 'ordinary_failur...\n================ 1 failed, 2 passed, 2 subtests passed in 0.01s ================\n",
+        "stderr": ""
+      },
+      "stdlib_oracle": {
+        "successful": false,
+        "tests": 3,
+        "failures": 1,
+        "errors": 0,
+        "skips": 0,
+        "subtests": [
+          {
+            "parent": "test_subtests.Cases.test_parameters",
+            "subtest": "test_parameters (test_subtests.Cases.test_parameters) (label='plain', index=0)",
+            "status": "PASSED"
+          },
+          {
+            "parent": "test_subtests.Cases.test_parameters",
+            "subtest": "test_parameters (test_subtests.Cases.test_parameters) (label='second', index=1)",
+            "status": "PASSED"
+          }
+        ]
+      },
+      "native_and_standalone_statuses": {
+        "native": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "FAILED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        },
+        "standalone": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "FAILED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        },
+        "current": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "FAILED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        }
+      },
+      "toy_declared_f2p": [
+        "test_subtests.py::Cases::test_parameters"
+      ],
+      "toy_declared_p2p": [
+        "test_subtests.py::Cases::test_stable",
+        "test_subtests.py::Cases::test_plain"
+      ],
+      "tracked_grade_probe": {
+        "standalone": {
+          "reward": 0.5,
+          "resolved": false,
+          "f2p_total": 1,
+          "f2p_passed": 1,
+          "f2p_rate": 1.0,
+          "p2p_total": 2,
+          "p2p_passed": 1,
+          "p2p_rate": 0.5,
+          "regressions": [
+            "test_subtests.py::Cases::test_plain"
+          ],
+          "untracked_failed_count": 0,
+          "untracked_failed": []
+        },
+        "current": {
+          "reward": 0.5,
+          "resolved": false,
+          "f2p_total": 1,
+          "f2p_passed": 1,
+          "f2p_rate": 1.0,
+          "p2p_total": 2,
+          "p2p_passed": 1,
+          "p2p_rate": 0.5,
+          "regressions": [
+            "test_subtests.py::Cases::test_plain"
+          ],
+          "untracked_failed_count": 0,
+          "untracked_failed": []
+        }
+      },
+      "subfailed_lines": []
+    },
+    {
+      "case": "awkward",
+      "pytest": {
+        "command": [
+          "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/65/.venv/bin/python",
+          "-B",
+          "-m",
+          "pytest",
+          "-v",
+          "--color=no",
+          "-p",
+          "no:cacheprovider",
+          "test_subtests.py"
+        ],
+        "exit": 1,
+        "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0 -- /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/65/.venv/bin/python\nrootdir: /home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/64\nconfigfile: pyproject.toml\ncollecting ... collected 3 items\n\ntest_subtests.py::Cases::test_parameters \ntest_subtests.py::Cases::test_parameters PASSED                          [ 33%]\ntest_subtests.py::Cases::test_plain PASSED                               [ 66%]\ntest_subtests.py::Cases::test_stable PASSED                              [100%]\n\n=================================== FAILURES ===================================\n_____________ Cases.test_parameters (label='space value', index=0) _____________\n\nself = <experiments.64-subtest-status.inputs-private.fixture-002.awkward.test_subtests.Cases testMethod=test_parameters>\n\n    def test_parameters(self):\n        values = ['plain', 'second'] if CASE != 'awkward' else ['space value', 'FAILED) ][ odd', 'space value']\n        for index, value in enumerate(values):\n            with self.subTest(label=value, index=index):\n                if CASE in ('failure','awkward') and index == 0:\n>                   self.fail('own intentional subtest failure')\nE                   AssertionError: own intentional subtest failure\n\ntest_subtests.py:9: AssertionError\n=========================== short test summary info ============================\nSUBFAILED(label='space value', index=0) test_subtests.py::Cases::test_parameters\n================ 1 failed, 3 passed, 2 subtests passed in 0.02s ================\n",
+        "stderr": ""
+      },
+      "stdlib_oracle": {
+        "successful": false,
+        "tests": 3,
+        "failures": 1,
+        "errors": 0,
+        "skips": 0,
+        "subtests": [
+          {
+            "parent": "test_subtests.Cases.test_parameters",
+            "subtest": "test_parameters (test_subtests.Cases.test_parameters) (label='space value', index=0)",
+            "status": "FAILED"
+          },
+          {
+            "parent": "test_subtests.Cases.test_parameters",
+            "subtest": "test_parameters (test_subtests.Cases.test_parameters) (label='FAILED) ][ odd', index=1)",
+            "status": "PASSED"
+          },
+          {
+            "parent": "test_subtests.Cases.test_parameters",
+            "subtest": "test_parameters (test_subtests.Cases.test_parameters) (label='space value', index=2)",
+            "status": "PASSED"
+          }
+        ]
+      },
+      "native_and_standalone_statuses": {
+        "native": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "PASSED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        },
+        "standalone": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "PASSED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        },
+        "current": {
+          "test_subtests.py::Cases::test_parameters": "PASSED",
+          "test_subtests.py::Cases::test_plain": "PASSED",
+          "test_subtests.py::Cases::test_stable": "PASSED"
+        }
+      },
+      "toy_declared_f2p": [
+        "test_subtests.py::Cases::test_parameters"
+      ],
+      "toy_declared_p2p": [
+        "test_subtests.py::Cases::test_stable",
+        "test_subtests.py::Cases::test_plain"
+      ],
+      "tracked_grade_probe": {
+        "standalone": {
+          "reward": 1.0,
+          "resolved": true,
+          "f2p_total": 1,
+          "f2p_passed": 1,
+          "f2p_rate": 1.0,
+          "p2p_total": 2,
+          "p2p_passed": 2,
+          "p2p_rate": 1.0,
+          "regressions": [],
+          "untracked_failed_count": 0,
+          "untracked_failed": []
+        },
+        "current": {
+          "reward": 1.0,
+          "resolved": true,
+          "f2p_total": 1,
+          "f2p_passed": 1,
+          "f2p_rate": 1.0,
+          "p2p_total": 2,
+          "p2p_passed": 2,
+          "p2p_rate": 1.0,
+          "regressions": [],
+          "untracked_failed_count": 0,
+          "untracked_failed": []
+        }
+      },
+      "subfailed_lines": [
+        "SUBFAILED(label='space value', index=0) test_subtests.py::Cases::test_parameters"
+      ]
+    }
+  ],
+  "scratch_removed": true,
+  "native_or_model_calls": 0,
+  "scientific_acceptance": false,
+  "limits": "Own fixture grading probe declares toy tracked identities; it is not an exported biological task or native rerun. Original command exit remains nonzero on failed subtests; strict clean-command acceptance is not bypassed. No parser candidate deployed."
+}
