@@ -4631,3 +4631,7 @@ The comparison diagnosis now distinguishes an exact public quotation from eviden
 The strict financial profile remains unchanged and correctly refuses145’s ordinary600secondsolver timeout. A separately checkpointed companion admits only that handled native outcome with original-result verification, processreturncode0, retries0and the approved timeout. All original resource/interval/archive/cleanup/pinned-backend guards remain. Six refusal tests pass; dry run and fresh seven-owner cleanup verify the real case. Retain2USDagainst1.384500USDtwice-serial full-approved-lifetime bound, releasing3USDexcess reservation. Solver reward0and timeout remain original; this is not an invoice/credits or scientific approval. See round054.
 
 Reserve5USDfor unchanged original COBRApy162to test the two general prompt clarifications in another domain, preserving common limits and maximum2poolslots with161. Aggregate199USDheld/1USDfree within200authorized. No prior task, answer or operator diagnosis is supplied. Inputs must be frozen and admission verified before submission. See round055.
+
+### 2026-10-25 — original COBRApy162 admitted
+
+Funded preflight passed and typed admission found only161live.162starts from byte-identical original133source/metadata/notices with the common execution policy. Its213runtime identities differ from160only in the two general canonical prompt clarifications; no earlier task, answer or operator diagnosis is supplied. Aggregate199USDheld/1USDfree within200authorized. No permission, stage, resource or repair allowance changed. See round055.
