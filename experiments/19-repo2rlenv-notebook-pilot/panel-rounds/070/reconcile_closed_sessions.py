@@ -3,6 +3,8 @@
 import argparse
 import hashlib
 import json
+import re
+import subprocess
 import tarfile
 from datetime import UTC, datetime
 from decimal import Decimal
@@ -24,6 +26,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--private-root", type=Path, required=True)
     parser.add_argument("--prior-proof", type=Path, required=True)
+    parser.add_argument(
+        "--prior-helper-revision",
+        help="Exact Git commit retaining the preceding auditor, if its current file changed",
+    )
     parser.add_argument("--usage", type=Path)
     parser.add_argument(
         "--without-analytics",
@@ -40,7 +46,20 @@ def main():
     previous = json.loads(previous_raw)
     folders, prior_retained, prior_implementation = admitted_profile(previous)
     prior_helper = Path(__file__).resolve().parents[1] / prior_implementation
-    assert digest(prior_helper.read_bytes()) == previous["helper_sha256"]
+    if args.prior_helper_revision:
+        assert re.fullmatch(r"[0-9a-f]{40}", args.prior_helper_revision)
+        repository = Path(__file__).resolve().parents[4]
+        prior_raw = subprocess.check_output(
+            [
+                "git",
+                "show",
+                args.prior_helper_revision + ":" + prior_helper.relative_to(repository).as_posix(),
+            ],
+            cwd=repository,
+        )
+    else:
+        prior_raw = prior_helper.read_bytes()
+    assert digest(prior_raw) == previous["helper_sha256"]
     number = previous["campaign"]
     archive = args.private_root / f"archives/{number:03}"
     manifest_raw = (archive / "sealed-manifest.json").read_bytes()
@@ -175,6 +194,8 @@ def main():
         "source_ledger_sha256": digest(before),
         "result_ledger_sha256": digest(after),
         "prior_proof_sha256": digest(previous_raw),
+        "prior_helper_revision": args.prior_helper_revision,
+        "prior_helper_sha256": digest(prior_raw),
         "source_manifest_sha256": manifest_hash,
         "checked_originals": checked,
         "known_implementation_sha256": expected_sources,
