@@ -4681,3 +4681,7 @@ Original163spent12.12minutes/51recordedrequests and stopped after two controlled
 ### 2026-10-25 — reserve source-only validation of general setup preflight
 
 Reserve5USDfor original Scanpy164after the unchanged auditor releases163’s four never-dispatched stage allowances. Same original source/assets and common model/resource/time/two-test/repair policy. The only scientific-worker change is a general setup prompt clarification, with no source/package/method/answer constants or earlier diagnosis in the run input. The stronger independent release gate is also included; its74release regression tests pass in addition to the63admission/coverage checks.199USDreserved/1free within200authorized.164not submitted; source freeze, compatibility binding and typed admission remain prerequisites.
+
+### 2026-10-25 — original Scanpy164 admitted
+
+Funded preflight validates all216runtimeidentities, unchanged original150assets, source-bound provider compatibility and existing policy. Exactly four runtime paths differ from163: the general setup prompt and read-only release gate/helper/regression test. Typed admission found no other live campaigns; full source-only164 is submitted within its existing5USDreservation. No extra tests, repairs, model/token limits, source methods or data reductions were introduced.199USDheld/1free within200authorized. The new setup prompt’s benefit is not established yet. See round060.
