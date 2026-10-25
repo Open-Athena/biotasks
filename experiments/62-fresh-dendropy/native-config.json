@@ -1,0 +1,38 @@
+{
+  "repo": {
+    "url": "https://github.com/jeetsukumaran/DendroPy",
+    "ref": "ebb69ba6e3fe8067aa57ba912d324a405610361d",
+    "access": "public"
+  },
+  "pipeline": {
+    "name": "pr_runtime",
+    "options": {
+      "limit": 2,
+      "since": "2026-10-22",
+      "until": "2026-10-24",
+      "require_new_test_funcs": false
+    }
+  },
+  "llm": {
+    "provider": "openrouter",
+    "model": "anthropic/claude-sonnet-4.6",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "fallback": null
+  },
+  "bootstrap": {
+    "max_iterations": 20,
+    "max_seconds": 1800,
+    "max_llm_spend_usd": 5.0,
+    "cache_dir": "./workspace/bootstrap"
+  },
+  "auth": {
+    "use_gh_cli": false,
+    "use_hf_cli": false
+  },
+  "output": {
+    "destination": "/work/outputs/raw",
+    "org": "open-athena",
+    "dataset_name": "biotasks62-dendropy",
+    "visibility": "private"
+  }
+}

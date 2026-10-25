@@ -1,0 +1,26 @@
+[
+  {
+    "sha": "51879df18a6b75fef03f046658b79149f973ce14",
+    "filename": "src/dendropy/calculate/statistics.py",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "changes": 2,
+    "blob_url": "https://github.com/jeetsukumaran/DendroPy/blob/eb7e47e3b968a02c71cdc1d5b8385994fef211c2/src%2Fdendropy%2Fcalculate%2Fstatistics.py",
+    "raw_url": "https://github.com/jeetsukumaran/DendroPy/raw/eb7e47e3b968a02c71cdc1d5b8385994fef211c2/src%2Fdendropy%2Fcalculate%2Fstatistics.py",
+    "contents_url": "https://api.github.com/repos/jeetsukumaran/DendroPy/contents/src%2Fdendropy%2Fcalculate%2Fstatistics.py?ref=eb7e47e3b968a02c71cdc1d5b8385994fef211c2",
+    "patch": "@@ -120,7 +120,7 @@ def empirical_cdf(values, v):\n     \"\"\"\n     count = 0.0\n     for idx, v0 in enumerate(values):\n-        if v0 < v:\n+        if v0 <= v:\n             count += 1\n     return count / len(values)\n "
+  },
+  {
+    "sha": "85330e308d028226cd3435eb6b436683c65785c5",
+    "filename": "tests/unittests/test_statistics.py",
+    "status": "modified",
+    "additions": 14,
+    "deletions": 0,
+    "changes": 14,
+    "blob_url": "https://github.com/jeetsukumaran/DendroPy/blob/eb7e47e3b968a02c71cdc1d5b8385994fef211c2/tests%2Funittests%2Ftest_statistics.py",
+    "raw_url": "https://github.com/jeetsukumaran/DendroPy/raw/eb7e47e3b968a02c71cdc1d5b8385994fef211c2/tests%2Funittests%2Ftest_statistics.py",
+    "contents_url": "https://api.github.com/repos/jeetsukumaran/DendroPy/contents/tests%2Funittests%2Ftest_statistics.py?ref=eb7e47e3b968a02c71cdc1d5b8385994fef211c2",
+    "patch": "@@ -197,6 +197,20 @@ class TestMedian(unittest.TestCase):\n     def testMedian(self):\n         self.assertEqual(statistics.median([2, 9, 9, 7, 9, 2, 4, 5, 8]), 7)\n \n+class EmpiricalCdfTests(unittest.TestCase):\n+\n+    def test_tied_observations(self):\n+        values = [3, 1, 2, 2]\n+        for value, expected in [(0, 0.0), (1, 0.25), (1.5, 0.25),\n+                                (2, 0.75), (3, 1.0), (4, 1.0)]:\n+            with self.subTest(value=value):\n+                self.assertEqual(statistics.empirical_cdf(values, value), expected)\n+        self.assertEqual(values, [3, 1, 2, 2])\n+\n+    def test_constant_sample(self):\n+        self.assertEqual(statistics.empirical_cdf([7] * 20, 7), 1.0)\n+\n+\n class TestVarianceCovariance(unittest.TestCase):\n \n     def setUp(self):"
+  }
+]

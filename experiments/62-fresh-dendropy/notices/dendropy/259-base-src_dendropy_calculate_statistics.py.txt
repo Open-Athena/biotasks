@@ -1,0 +1,60 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+##############################################################################
+##  DendroPy Phylogenetic Computing Library.
+##
+##  Copyright 2010-2026 Jeet Sukumaran, Mark T. Holder, and Matthew Andres Moreno.
+##  All rights reserved.
+##
+##  See "LICENSE.rst" for terms and conditions of usage.
+##
+##  If you use this work or any portion thereof in published work,
+##  please cite it as:
+##
+##     Moreno, M. A., Holder, M. T., & Sukumaran, J. (2024). DendroPy 5: a
+##     mature Python library for phylogenetic computing. Journal of Open
+##     Source Software, 9(101), 6943, https://doi.org/10.21105/joss.06943
+##
+##############################################################################
+
+"""
+Functions to calculate some general statistics.
+"""
+
+from dendropy.calculate import probability
+from operator import itemgetter
+
+def _mean_and_variance_pop_n(values):
+    n = 0
+    s = 0.0
+    ss = 0.0
+    for v in values:
+        n += 1
+        s += v
+        ss += v*v
+    if n == 0:
+        raise IndexError("values in mean_and_variance cannot be empty")
+    mean = float(s)/n
+    var = (ss - mean*s)/n
+    return mean, var, n
+
+def mean_and_population_variance(values):
+    """Returns the mean and population variance while only passing over the
+    elements in values once."""
+    return _mean_and_variance_pop_n(values)[:2]
+
+def mean_and_sample_variance(values):
+    """Returns the mean and sample variance while only passing over the
+    elements in values once."""
+    mean, pop_var, n = _mean_and_variance_pop_n(values)
+    if n == 1:
+        return mean, float('inf')
+    samp_var = n*pop_var/(n-1)
+    return mean, samp_var
+
+def mode(values, bin_size=0.1):
+    """
+    Returns the mode of a set of values.
+    """
+    bins = {}

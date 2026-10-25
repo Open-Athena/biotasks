@@ -1,0 +1,50 @@
+{
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "kind": "Unchanged official merged-PR descriptors; not all-history coverage",
+  "repo": "jeetsukumaran/DendroPy",
+  "limit": 2,
+  "since": "2026-10-22",
+  "until": "2026-10-24",
+  "require_new_test_funcs": false,
+  "candidates": [
+    {
+      "number": 259,
+      "title": "Include tied observations in the empirical CDF",
+      "body": "`empirical_cdf()` documents the proportion of observations `<= v`, but currently counts only observations `< v`. For `[1, 2, 2, 3]`, querying `2` returns `0.25` instead of `0.75`; querying the sample maximum also fails to return `1`.\n\nInclude equal observations and add regressions for ties, a constant sample, unsorted input and thresholds outside the sample range. A separate check covers 630 queries against the bundled BEAST/MrBayes posterior samples using sorted ranks as the reference. The Python suites pass on 3.12 and 3.8 with optional PAUP interoperability disabled, and the configured linter passes.\n",
+      "state": "MERGED",
+      "merged_at": "2026-10-24T04:03:39Z",
+      "base_ref": "main",
+      "base_sha": "6a628f4c16d75ba2df6fd469258a746ffb047ae5",
+      "head_sha": "eb7e47e3b968a02c71cdc1d5b8385994fef211c2",
+      "is_draft": false,
+      "url": "https://github.com/jeetsukumaran/DendroPy/pull/259",
+      "changed_files": [
+        "src/dendropy/calculate/statistics.py",
+        "tests/unittests/test_statistics.py"
+      ]
+    },
+    {
+      "number": 257,
+      "title": "Validate zero-based posterior quantile ranks",
+      "body": "`quantile_5_95()` rejects a valid index of zero but accepts a negative index. This makes small posterior samples report the maximum twice, while somewhat larger samples lose an available interval:\n\n```python\nfrom dendropy.calculate import statistics\n\nprint(statistics.summarize([1, 2, 3, 4, 5])[\"quant_5_95\"])\nprint(statistics.summarize(list(range(20)))[\"quant_5_95\"])\n```\n\nBefore: `(5, 5)` and `None`. After: `None` and `(0, 18)`.\n\nChange the guard to reject negative indices. This keeps the existing rounded-order-statistic rule: a lower rank below one signals insufficient data, while the first observation is valid. The regressions cover both boundaries and retain the existing 30-sample result.\n\nOn two windows from the bundled BEAST primate posterior, the fix corrects 1,034 edge-length/node-age summary fields out of 1,288. All 254 already-correct fields and every other summary statistic remain identical. Running SumTrees on 5 and 20 trees now exports the appropriate missing or available interval, verified by reading the output back; 50- and 100-tree controls and all other exported annotations/branch lengths are preserved. These checks validate the existing summary rule, not posterior convergence or a new quantile estimator.\n\nThe affected tests, pinned Ruff check and all 164 smoke tests pass. The full Python 3.12 suite retains the same four external PAUP launch errors as unmodified upstream, with 977 other tests passing. The complete recorded-posterior and CLI workload also passes on Python 3.8.\n",
+      "state": "MERGED",
+      "merged_at": "2026-10-22T13:56:40Z",
+      "base_ref": "main",
+      "base_sha": "0b502f51b4da5c4ff713394a7b5a35a027d9c95a",
+      "head_sha": "5b5d4fa8059e8e6d41bc5a1759d5213382b4510e",
+      "is_draft": false,
+      "url": "https://github.com/jeetsukumaran/DendroPy/pull/257",
+      "changed_files": [
+        "src/dendropy/calculate/statistics.py",
+        "tests/unittests/test_statistics.py"
+      ]
+    }
+  ],
+  "discovery_binding": {
+    "native_config_sha256": "0cb71e7a7cf2aa9de6b349b275b6898325b2dd74eeadf09d34f3d4f4fcc9b602",
+    "source_receipt_sha256": "43ca4ea817de43204e6fc09d9f9da7e09bf959104a0926b847aab9eae5676a2c"
+  },
+  "model_calls": 0,
+  "remote_jobs": 0,
+  "snapshot_identity": "055f5aaf1d01abe5ada3183d1edf19e3de7859ebcf8e92520abeee390fac91a2"
+}
