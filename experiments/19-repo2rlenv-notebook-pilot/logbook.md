@@ -4756,3 +4756,10 @@ The Pyteomics139 metadata follow-up streamed the44,601,786-byte source-hosted ar
 
 
 A further bounded read-only observation of168 shows preparationcompleted17.4s, setupcompleted563.5s and clean replaycompleted372.0s; specificationisrunning. No quality repair or operator scientific edits. These are provisional live pipeline records, not a sealed final result or release qualification. [Observation](panel-rounds/069/live-observations/33aeaf65819e8292aca9e33e67cb11c9bd6a1066c4901a559d42359aa211ee5f.json).
+
+
+## 25 October 2026 — task construction reaches grading; closed lifecycle accounting
+
+168's live metadata shows specificationcompleted364.5s and constructioncompleted556.3s, with scientific gradingnowrunning. Earlier reference/replaypassed. This is provisional execution, not final controls, native validation, qualification or publication. No quality repair or operator science edits. [Observation](panel-rounds/069/live-observations/55b308cf908d41ef7afeb0a89fc120f1816bd8b2020eb091d31e1550c5efa744.json).
+
+A further159financial refinement checks the exact previously admitted creator, all five original resource claims and post-cleanup controller intervals, complete manifest/root readback, fresh ID/owner absence and independent documented provider usage. Charging full resources for every complete interval, plus300s at both ends of each, bounds0.74989935373912USD. Retain1USD/release3from4;197held/3free within200authorized. Provider reports0.4715297795USD for those five resources, not a final invoice or aggregate account total. Sixteen positive/negative tests, dry-run and application pass. No execution budget/guard, scientific record or active168allowance changed. [Proof](panel-rounds/070/README.md).

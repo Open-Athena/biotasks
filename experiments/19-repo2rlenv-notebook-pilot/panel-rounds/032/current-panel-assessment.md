@@ -34,7 +34,7 @@ All ten original inputs have common-policy/source-hash checks and now pass [curr
 
 The new value-hint hook executed in fresh final reviews: 95 Matchms candidates/zero findings, 52 MDAnalysis candidates/one finding assessed as answer exposure. Zero findings do not prove absence. The unused-answer environment repair must be routed to the owning stage before it can be performed; no manual exclusion or unsupported rebuild is claimed.
 
-**Budget:** $200 conservatively reserved / $0 unallocated within $200 authorized once, including the full $5 reservation for active Scanpy168. Separate completed161/159 full-lifetime resource audits released $4 after original/fresh cleanup verification; no invoice or credit assumption. [Audit](../068/README.md). Other terminal resources remain cleaned. No more full campaigns can be submitted without further valid reconciliation.
+**Budget:** $197 conservatively reserved / $3 unallocated within $200 authorized once, including the full $5 reservation for active Scanpy168. Separate completed161/159 full-lifetime resource audits released $4 after original/fresh cleanup verification; no invoice or credit assumption. [Audit](../068/README.md). A further [complete closed-session bound](../070/README.md) retains1USD against0.74989935373912USD for159 and releases3USD, independently cross-checked with provider usage. Other terminal resources remain cleaned. No more full campaigns can be submitted without further valid reconciliation.
 
 Latest qualified release is PyHMMER161; the explorer selects its exact captured source/task/attempt and pipeline artifacts. Keep issue 19 open and PR 23 draft/unmerged. [Machine-readable identities](current-panel-summary.json); [completion audit](completion-audit.md).
 
