@@ -10,7 +10,11 @@ from daytona.common.errors import DaytonaNotFoundError
 
 
 def client_fixture(monkeypatch, reachable=False):
-    monkeypatch.setattr(preflight.socket, "create_connection", MagicMock())
+    host = MagicMock()
+    host.stdout = json.dumps(
+        [{"host": h, "port": p, "reachable": True} for h, p in preflight.TARGETS]
+    )
+    monkeypatch.setattr(preflight.subprocess, "run", MagicMock(return_value=host))
     client = MagicMock()
     sandbox = client.create.return_value
     sandbox.id = "owned-id"
@@ -65,3 +69,19 @@ def test_probe_timeout_fails_closed_and_cleans_up(tmp_path, monkeypatch):
     assert not result["passed"] and result["cleanup_verified"]
     assert client.create.return_value.process.exec.call_count == 1
     client.delete.assert_called_once()
+
+
+def test_host_probe_timeout_has_no_provider_dispatch(tmp_path, monkeypatch):
+    client = client_fixture(monkeypatch)
+    monkeypatch.setattr(
+        preflight.subprocess,
+        "run",
+        MagicMock(
+            side_effect=preflight.subprocess.TimeoutExpired(["probe"], 20),
+        ),
+    )
+    with pytest.raises(preflight.subprocess.TimeoutExpired):
+        preflight.run(client, root=tmp_path, campaign="test", deadline=time.time() + 700)
+    client.create.assert_not_called()
+    result = json.loads((tmp_path / "infrastructure-preflight.json").read_text())
+    assert not result["passed"] and result["cleanup_verified"]

@@ -1,0 +1,54 @@
+{
+  "source_archive_manifest_sha256": "5c7bfcc7d462d442cece295e8322ef2ef7e41cd8841e6088706ee7c0bb6f5df6",
+  "pipeline_status": "infrastructure_failed",
+  "source_id": "cobrapy-deletions",
+  "elapsed_pipeline_seconds": 306.772,
+  "stage_elapsed_seconds": {
+    "preparation": 13.948,
+    "setup": 233.277,
+    "replay": 53.523
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "completed",
+    "replay": "incomplete"
+  },
+  "accounted_model_request_attempts": 23,
+  "request_ledgers": [
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "aeae78b9801bc7af276fae2fbb1a50ef537d0a2c2d0a8c0bca82daade1bbabaa",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "replay/requests.sqlite",
+      "sha256": "e2f280d7b17f832639376556a77f40ca2dc283bfd9df736e7768584274fcf1fa",
+      "count": 0,
+      "calls": []
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "7732c44f0811c7b74ff4fdb6612611c02c68e94b7a2181468441038fcd922848",
+      "count": 22,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 22
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 23,
+  "distinct_author_response_operations_within_stage": 23,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 0
+}

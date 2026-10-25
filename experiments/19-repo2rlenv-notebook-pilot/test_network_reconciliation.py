@@ -172,3 +172,30 @@ def test_recovery_cannot_extend_original_control_or_campaign_deadline(tmp_path, 
     evidence = receipt(tmp_path)
     assert evidence["control_deadline"] == 1045
     assert remote.deadline == original_deadline
+
+
+@pytest.mark.parametrize(
+    "result",
+    [
+        {"exit_code": -15, "timed_out": True, "log": ""},
+        {"exit_code": 1, "log": ""},
+        {"exit_code": 0, "log": "not JSON"},
+        {"exit_code": 0, "log": None},
+    ],
+)
+def test_incomplete_probe_is_preserved_and_never_json_success(tmp_path, result):
+    class IncompleteRemote(ProbedRemote):
+        async def command(self, *args, **kwargs):
+            self.probe_commands.append(args)
+            return result
+
+    remote = IncompleteRemote(Sandbox(False), tmp_path)
+    with pytest.raises(RuntimeError, match="Network probe"):
+        asyncio.run(remote.network(True))
+    evidence = receipt(tmp_path)
+    assert evidence["state"] == "uncertain" and remote.uncertain
+    assert evidence["probe_exit_code"] == result["exit_code"]
+    assert evidence["probe_timed_out"] == result.get("timed_out", False)
+    assert len(remote.probe_commands) == 1
+    with pytest.raises(RuntimeError, match="uncertain"):
+        remote.remaining(1)

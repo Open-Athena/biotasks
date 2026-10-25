@@ -401,11 +401,22 @@ class Remote:
                 30,
                 f"network-{self.operation}",
             )
-            probes = json.loads(result["log"])
+            log = result.get("log")
+            record.update(
+                probe_exit_code=result.get("exit_code"),
+                probe_timed_out=result.get("timed_out", False),
+                probe_log_sha256=hashlib.sha256(log.encode()).hexdigest()
+                if isinstance(log, str)
+                else None,
+            )
+            if result.get("exit_code") != 0 or result.get("timed_out") or not isinstance(log, str):
+                raise RuntimeError("Network probe did not complete with a text result")
+            try:
+                probes = json.loads(log)
+            except json.JSONDecodeError as error:
+                raise RuntimeError("Network probe returned invalid JSON") from error
             record["probes"] = probes
-            if result["exit_code"] or probes != [
-                {"host": h, "port": p, "reachable": not blocked} for h, p in TARGETS
-            ]:
+            if probes != [{"host": h, "port": p, "reachable": not blocked} for h, p in TARGETS]:
                 raise RuntimeError("Network probe did not establish the required state")
             record.update(
                 state="verified",

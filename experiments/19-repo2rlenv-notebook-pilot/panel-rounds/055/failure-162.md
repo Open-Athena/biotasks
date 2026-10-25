@@ -1,0 +1,7 @@
+# COBRApy162 incomplete during network verification
+
+The unchanged source completed preparation and setup. Before either scientific replay was dispatched, the offline TCP probe ran for30seconds, was terminated (exit-15), and produced empty output. The controller tried to parse that output before checking the process result, raisingJSONDecodeError. Original network readback/probe evidence remained uncertain; no offline success or later computation was claimed. This is an infrastructure failure, not a broken notebook or solver outcome.
+
+The original record does not contain a stack proving where the probe stalled. Unbounded hostname resolution is an identified gap: socket connection timeouts do not boundgetaddrinfo. The general fix bounds each connector in a subprocess (including resolution), reaps stalled children and rejects incomplete/malformed results before parsing. The existing target set, provider-policy confirmation and total network-control allowance are unchanged. Synthetic regressions cover a stalled resolver through the actual socket connector; they are not a reproduction of the original provider incident.
+
+The proposed prompt clarifications were never reached. No manual task/source edit or new scientific score. Pipeline5.11minutes/23recorded model requests. Full409-file scientific archive (5,155,062bytes) and29-file host export (1,002,764bytes) independently verified; original/fresh two-owner/ID absence verified. [Outcome](result-162.json), [timing](performance-162.json).

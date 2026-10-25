@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import json
 import shlex
-import socket
+import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -15,17 +16,39 @@ from repo2rlenv.execution.lifecycle import save_record
 # Independent public destinations; check reachability from the host first so an
 # unreachable service cannot by itself count as evidence of sandbox isolation.
 TARGETS = [("1.1.1.1", 443), ("example.com", 443)]
-PROBE = """import json, socket
+UNREACHABLE_EXIT_CODE = 10
+CONNECT_CODE = f"""import socket, sys
+try:
+    with socket.create_connection((sys.argv[1], int(sys.argv[2])), timeout=3):
+        pass
+except OSError:
+    raise SystemExit({UNREACHABLE_EXIT_CODE})
+"""
+
+
+def probe_source(connect_code=CONNECT_CODE, timeout_seconds=5):
+    """Bound hostname resolution too; socket's timeout covers only connection."""
+    return f"""import json, subprocess, sys
+connect_code = {connect_code!r}
 results = []
 for host, port in TARGETS:
     try:
-        with socket.create_connection((host, port), timeout=3):
-            reachable = True
-    except OSError:
+        child = subprocess.run(
+            [sys.executable, '-c', connect_code, host, str(port)],
+            timeout={timeout_seconds!r}, capture_output=True,
+        )
+    except subprocess.TimeoutExpired:
         reachable = False
-    results.append({'host': host, 'port': port, 'reachable': reachable})
+    else:
+        if child.returncode not in (0, {UNREACHABLE_EXIT_CODE}):
+            raise RuntimeError('TCP probe child failed: ' + str(child.returncode))
+        reachable = child.returncode == 0
+    results.append({{'host': host, 'port': port, 'reachable': reachable}})
 print(json.dumps(results))
 """
+
+
+PROBE = probe_source()
 
 
 def run(client, *, root: Path, campaign: str, deadline: float) -> dict:
@@ -46,11 +69,19 @@ def run(client, *, root: Path, campaign: str, deadline: float) -> dict:
     sandbox = None
     creation_started = False
     try:
-        host_results = []
-        for host, port in TARGETS:
-            with socket.create_connection((host, port), timeout=5):
-                host_results.append({"host": host, "port": port, "reachable": True})
+        host_probe = subprocess.run(
+            [sys.executable, "-c", "TARGETS = " + repr(TARGETS) + "\n" + PROBE],
+            capture_output=True,
+            text=True,
+            timeout=20,
+            check=True,
+        )
+        host_results = json.loads(host_probe.stdout)
         record["host_controls"] = host_results
+        if host_results != [
+            {"host": host, "port": port, "reachable": True} for host, port in TARGETS
+        ]:
+            raise RuntimeError("Host controls did not establish target reachability")
         creation_started = True
         sandbox = client.create(
             CreateSandboxFromImageParams(
@@ -85,7 +116,7 @@ def run(client, *, root: Path, campaign: str, deadline: float) -> dict:
                 "Provider resource/network configuration differs from approved profile"
             )
         command = "python -c " + shlex.quote("TARGETS = " + repr(TARGETS) + "\n" + PROBE)
-        # Allow daemon startup and DNS resolution in addition to socket timeouts.
+        # Allow daemon startup beyond the bounded child-process probes.
         # A timeout still fails closed; no retry can conceal an incomplete probe.
         probe = sandbox.process.exec(command, timeout=60)
         if probe.exit_code != 0:

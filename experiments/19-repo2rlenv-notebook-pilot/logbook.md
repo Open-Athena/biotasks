@@ -4641,3 +4641,9 @@ Funded preflight passed and typed admission found only161live.162starts from byt
 The existing handled-timeout auditor verifies150’s whole lifecycle/actual timeout/7ownerabsence and retains2USDagainst unchanged1.384500bound, releasing3USDexcess. Its comparison hold and timeout remain. The existing unused-stage auditor verifies160’s4dispatchedstages/4ownerabsence and releasesonly1USDnever-dispatchednative while retainingallused-stageholds; its answer-exposure rejection remains. No profile changed. See round056.
 
 Reserve the5USDheadroom for unchanged original Scanpy163on the same general runtime/prompts as162. No prior task, answer, expected labels or operator diagnosis is provided. It is not submitted and must wait for one of161/162to finish and cleanup to verify. Aggregate200USDheld/0free within200authorized; no invoice/credits inferred. See round057.
+
+### 2026-10-25 — preserve162network-probe failure; bound DNS and reject incomplete JSON
+
+Original162completedsetupthenfailedbeforereplaydispatch: offlineTCPprobeexited-15after30swithnooutput, andthecontrollerparsedJSONbeforecheckingcompletion. Originalstalledcallisunknown; unboundedDNSisagap/inference, notanobservedstack. Generalfixusesbounded/reapedconnectorchildren,samepublictargets/providerreadbackandoriginalallowances, rejectsfailed/nontext/malformedprobebeforeJSON.28focused+88integrationchecks,andrefined6actualsocket/syntheticDNS/childcleanupchecksPASS. No active161hotpatchornewprovider/modelrun. Original409sciencefiles/29rootfilesandfresh2ownercleanupverified. See round055/failure-162.md andfactory-checks/bounded-network-probe.
+
+Queued163freezehitonlylocalreportingKeyErrorbecausevalidseedusesURLratherthanoptionalID. Itsfulloriginalsource/payloadwascreatedbeforethatreportingerror; preserveitunchangedandusegeneralexistingURLfallback. No163job/model/sandboxwaslaunched. Originalsource/seedmustnotbepatchedtoaddanID. See round057/freeze-reporting-failure.json.
