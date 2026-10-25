@@ -4724,3 +4724,10 @@ The next general response-format experiment uses the existing upstream artifact 
 
 
 The isolated stall is in the fake uncertain-transport test’s thread/async wakeup under the execution sandbox; it is not an observed remote/provider failure. With normal local thread permissions, all110 preparation/setup/resource cases passed in6.11s, including the previously stalled case. No production transport workaround was introduced. The response-format hypothesis remains to be tested by GLM.
+
+
+## 25 October 2026 —167 accepted runtime repair and clean replay
+
+Read-only live observations show the actual repair response used `submit_artifact`; its replacement code compiles and all original plan metadata except export_code is unchanged. Setup test1 failed, test2 executed the repaired reference offline with source_changed=false, and setup completed. Clean replay and specification then completed, with construction running in the07:46UTC observation. No operator modified generated artifacts or supplied feedback between stages. This is provisional live execution evidence, not sealed end-to-end acceptance, scientific grading or publication. The exact observation is bound to the submitted input claim in [live observations](panel-rounds/067/live-observations).
+
+The operational document now describes the shared static/runtime preparation repair, the two-field artifact response, unchanged computation allowance and separate scientific quality repair. It also matches the existing generation-retry implementation’s transient502/503/504 handling; no runtime behavior or budget was changed by the documentation edit.

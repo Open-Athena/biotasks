@@ -50,11 +50,44 @@ are recorded in `aggregate-budget.json`; a new submission requires a funded slot
 GLM-5.3 requests
 native `high` reasoning; the served effective effort is unverified. Preparation
 has one initial call and at most one correction after programmatic validation
-rejects its response. Both responses and the validation feedback are preserved;
-a valid first response uses only one call. Other tool sessions retain their
+rejects its response or a controlled execution finds an export failure. This is
+one shared correction, not one correction per failure type. Both responses and
+the validation feedback are preserved; a second call is never automatic.
+Other tool sessions retain their
 existing finite wall-time boundaries without added byte/token/request caps.
 Reference and solver computation are limited to 600 seconds, verifier to 120.
 The setup worker retains two reference tests. Validation has one shared quality-repair allowance; no external operator supplies repair feedback.
+
+## Preparation repair at the execution boundary
+
+The first preparation response is a `ReferencePlan`, validated against its JSON
+schema and materialized as an append-only script. If that response fails static
+validation, its optional second call is consumed there. There is then no further
+preparation repair available during execution.
+
+If the first response is valid but a controlled reference test reaches a definite
+exception in the appended exports, the setup controller can spend that same unused
+second call. The repair worker receives the unchanged baseline, original plan and
+recorded runtime feedback. It has the existing artifact-submission tool, without
+shell or data access. Its response contains only replacement `export_code` (or
+`null` to decline) and an explanation. It does not restate endpoint metadata.
+
+The controller preserves all original paths, endpoint descriptions, source
+evidence, exclusions and other plan fields, replacing only the export block.
+The explanation and exact original request/response remain separate records.
+The replacement must compile and pass the existing preparation checks before it
+can be handed back to setup. Execution still uses the remaining allowance of
+two reference tests; a repair does not replenish it. A valid submission or
+successful compilation is not evidence that the reference ran successfully.
+
+A declined or statically invalid repair returns recorded rejection feedback to
+setup without crashing the host. The worker can then report an explicit blocker;
+it cannot edit the frozen scientific source or silently generate another export
+repair. Transport or unexpected controller failures remain incomplete outcomes.
+Reference execution, clean replay, scientific comparison, native controls and
+release qualification remain separate gates after any accepted repair.
+
+## Scientific quality repair
 
 The controller may route the one quality-repair allowance to a demonstrated
 generated-contract defect or an independent implementation defect. The retained
@@ -88,16 +121,20 @@ stay distinct, and `pipeline.json` records the effective materialization/grading
 paths for downstream use. This is a bounded attempt, not a guarantee of
 correction or broad software portability.
 
-The model adapter permits one retry after a timeout or typed SDK connection
-failure per author session using the packaged `worker-generation-retry` prompt.
-These failure types share one allowance. Only pure model generation is repeated:
+## Model response recovery
+
+The model adapter permits one retry after a timeout, typed SDK connection
+failure, or transient HTTP 502/503/504 per author session using the packaged
+`worker-generation-retry` prompt. These failure types share one allowance.
+Only pure model generation is repeated:
 no response from the failed request reached tool dispatch, and earlier tool actions are
 not replayed. The backend outcome and request hold remain uncertain, every new
 attempt claims a new ledger slot, and the original deadline and turn/request
-allowances still apply. Cancellation, unclassified transport failures, HTTP failures and
-uncertain remote tool executions are not retried by this policy. Preparation
+allowances still apply. Cancellation, unclassified transport failures, other HTTP
+failures and uncertain remote tool executions are not retried by this policy. Preparation
 does not use this timeout recovery or the empty-response retry: its optional
-second response is reserved for a programmatic validation failure. This adds
+second response is reserved for static validation or a definite runtime export
+failure, as described above. This adds
 no worker stage or quality-repair allowance.
 
 Terminal outcomes are:
