@@ -4936,3 +4936,8 @@ A separate two-SDK terminal setup/replay resource profile leaves existing four/f
 ### 2026-10-25 — Fresh replay passed; prepare another domain
 
 Live175completed controlled setup and clean replay (412.7s/86.9s), and entered independent specification review; full qualification remains pending. The prior scratch boundary is cleared without operator task edits. Prepare a parallel source-only NeuroKit regression from original136inputs on identical runtime, within the two-host pool.72accounting checks and exact frozen resource-family review support retained1USDholds for162/169/173, freeing the full5USDreservation without changing total200authorization. The older unused-stage auditor refused134/137/142because their quality repairs created five SDK owners; no release was forced. See panel-rounds/079/resource-family-review.json.
+
+
+### 2026-10-25 — Both current-runtime references replayed
+
+Bioframe175andNeuroKit176have both completed setup and separate clean replay without operator scientific edits. Bioframe durations412.7s/86.9s; NeuroKit399.1s/62.2s. Bioframe's initial independent review requested revision; its existing GLM revision was freshly reviewed ready, consuming the shared quality allowance, and construction started. NeuroKit entered specification. These are live metadata observations, not qualified tasks or terminal archive proof. The common219-file runtime and task policies are identical. See panel-rounds/080/current-observations.json.
