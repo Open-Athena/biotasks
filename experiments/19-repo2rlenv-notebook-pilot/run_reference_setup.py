@@ -395,29 +395,78 @@ class Remote:
             else:
                 if await read_state() is not blocked:
                     raise RuntimeError("Provider network policy differs from requested state")
-            self.uncertain = False
-            result = await self.command(
-                ["python", "-c", "TARGETS = " + repr(TARGETS) + "\n" + PROBE],
-                30,
-                f"network-{self.operation}",
-            )
-            log = result.get("log")
-            record.update(
-                probe_exit_code=result.get("exit_code"),
-                probe_timed_out=result.get("timed_out", False),
-                probe_log_sha256=hashlib.sha256(log.encode()).hexdigest()
-                if isinstance(log, str)
-                else None,
-            )
-            if result.get("exit_code") != 0 or result.get("timed_out") or not isinstance(log, str):
-                raise RuntimeError("Network probe did not complete with a text result")
-            try:
-                probes = json.loads(log)
-            except json.JSONDecodeError as error:
-                raise RuntimeError("Network probe returned invalid JSON") from error
-            record["probes"] = probes
-            if probes != [{"host": h, "port": p, "reachable": not blocked} for h, p in TARGETS]:
-                raise RuntimeError("Network probe did not establish the required state")
+            expected = [{"host": h, "port": p, "reachable": not blocked} for h, p in TARGETS]
+            while True:
+                seconds = min(30, int(control_deadline - time.time()))
+                if seconds < 1:
+                    raise TimeoutError("Network reconciliation exhausted its original allowance")
+                attempt = {"started": time.time(), "timeout_seconds": seconds}
+                record.setdefault("probe_attempts", []).append(attempt)
+                save_record(path, record)
+                # Only this controller-owned connectivity probe can run while
+                # policy is settling. No scientific command has been admitted.
+                self.uncertain = False
+                try:
+                    result = await self.command(
+                        ["python", "-c", "TARGETS = " + repr(TARGETS) + "\n" + PROBE],
+                        seconds,
+                        f"network-{self.operation}",
+                    )
+                except BaseException as error:
+                    attempt["error_type"] = type(error).__name__
+                    raise
+                finally:
+                    attempt["finished"] = time.time()
+                    save_record(path, record)
+                log = result.get("log")
+                observation = {
+                    "probe_exit_code": result.get("exit_code"),
+                    "probe_timed_out": result.get("timed_out", False),
+                    "probe_log_sha256": hashlib.sha256(log.encode()).hexdigest()
+                    if isinstance(log, str)
+                    else None,
+                }
+                attempt.update(observation)
+                record.update(observation)
+                save_record(path, record)
+                if (
+                    result.get("exit_code") != 0
+                    or result.get("timed_out")
+                    or not isinstance(log, str)
+                ):
+                    raise RuntimeError("Network probe did not complete with a text result")
+                try:
+                    probes = json.loads(log)
+                except json.JSONDecodeError as error:
+                    raise RuntimeError("Network probe returned invalid JSON") from error
+                attempt["probes"] = record["probes"] = probes
+                if not (
+                    isinstance(probes, list)
+                    and len(probes) == len(TARGETS)
+                    and all(
+                        isinstance(row, dict)
+                        and set(row) == {"host", "port", "reachable"}
+                        and row["host"] == host
+                        and type(row["port"]) is int
+                        and row["port"] == port
+                        and type(row["reachable"]) is bool
+                        for row, (host, port) in zip(probes, TARGETS, strict=True)
+                    )
+                ):
+                    raise RuntimeError("Network probe returned invalid target observations")
+                if time.time() >= control_deadline:
+                    raise TimeoutError("Network probe returned after its original allowance")
+                if probes == expected:
+                    break
+                # A confirmed setting is not proof of effective enforcement.
+                # Wait only for complete, valid observations to converge within
+                # the original allowance; malformed/uncertain executions stop.
+                self.uncertain = True
+                save_record(path, record)
+                delay = min(1.0, control_deadline - time.time())
+                if delay <= 0:
+                    raise TimeoutError("Network reconciliation exhausted its original allowance")
+                await asyncio.sleep(delay)
             record.update(
                 state="verified",
                 limitations="Representative outbound TCP probes, not exhaustive attestation",

@@ -30,7 +30,7 @@ All ten originals pass current deterministic conversion and ordered-code equival
 
 Keep issue 19 open and PR 23 draft/unmerged. Never merge the research branch. [Completion audit](completion-audit.md).
 
-[Fresh Bioframe173](../077/submission-173.json) is now confirmed running after typed admission found no earlier live host. Its original notebook/source metadata match 169 exactly. Only the general context builder and its regression tests differ from 172; the 219 runtime files are frozen. No 172 proposal, reviewer finding, peak-identity diagnosis or expected answer is supplied. The repaired end-to-end outcome remains unproven.
+[Fresh Bioframe173](../077/submission-173.json) started after typed admission found no earlier live host and is now terminal/incomplete. Its original notebook/source metadata match 169 exactly. Only the general context builder and its regression tests differ from 172; the 219 runtime files are frozen. No 172 proposal, reviewer finding, peak-identity diagnosis or expected answer is supplied. The repaired end-to-end outcome remains unproven.
 
 
 173 is now terminal and incomplete: construction passed the corrected typed-proposal handoff, but grading initialization found both outbound TCP targets reachable despite provider readback `network_block_all=true`. It correctly stopped before any grading-worker/scientific controls, native attempt or publication. Delayed versus ineffective provider enforcement is unestablished. All1,038original science files/61root files and fresh four-owner absence are verified. The previous completed Bioframe169 outcome remains selected. [Original173 result](../077/result-173.json). A general bounded policy-convergence change is under development; no revised factory or fresh campaign has yet run.

@@ -70,6 +70,19 @@ def receipt(root):
     return json.loads(paths[0].read_text())
 
 
+@pytest.fixture
+def control_clock(monkeypatch):
+    clock = [1000.0]
+    monkeypatch.setattr(run_reference_setup.time, "time", lambda: clock[0])
+
+    async def pause(seconds):
+        assert seconds > 0
+        clock[0] += seconds
+
+    monkeypatch.setattr(run_reference_setup.asyncio, "sleep", pause)
+    return clock
+
+
 @pytest.mark.parametrize("blocked", [True, False])
 @pytest.mark.parametrize("applied", [True, False])
 def test_lost_update_is_read_back_before_one_possible_repeat(tmp_path, blocked, applied):
@@ -144,12 +157,86 @@ def test_unknown_readback_is_not_treated_as_a_confirmed_mismatch(tmp_path):
     assert not remote.probe_commands and remote.uncertain
 
 
-def test_provider_readback_never_substitutes_for_actual_probes(tmp_path):
+def test_provider_readback_never_substitutes_for_actual_probes(tmp_path, control_clock):
     remote = ProbedRemote(Sandbox(False), tmp_path, bad_probe=True)
+    with pytest.raises(TimeoutError, match="original allowance"):
+        asyncio.run(remote.network(True))
+    assert len(remote.probe_commands) > 1 and remote.uncertain
+    assert control_clock[0] <= 1045
+    assert receipt(tmp_path)["state"] == "uncertain"
+
+
+@pytest.mark.parametrize("blocked", [True, False])
+def test_completed_probes_may_converge_within_original_allowance(tmp_path, control_clock, blocked):
+    class ConvergingRemote(ProbedRemote):
+        async def command(self, *args, **kwargs):
+            self.bad_probe = len(self.probe_commands) < 2
+            control_clock[0] += 0.25
+            return await super().command(*args, **kwargs)
+
+    sandbox = Sandbox(not blocked)
+    remote = ConvergingRemote(sandbox, tmp_path)
+    original_deadline = remote.deadline
+    asyncio.run(remote.network(blocked))
+    evidence = receipt(tmp_path)
+    assert evidence["state"] == "verified" and not remote.uncertain
+    assert [row["operation"] for row in evidence["events"]] == [
+        "update_network_settings",
+        "refresh_data",
+    ]
+    assert len(evidence["probe_attempts"]) == len(remote.probe_commands) == 3
+    assert evidence["probe_attempts"][0]["probes"] != evidence["probes"]
+    assert evidence["probe_attempts"][-1]["probes"] == evidence["probes"]
+    assert evidence["control_deadline"] == 1045 > evidence["finished"]
+    assert remote.deadline == original_deadline
+
+
+def test_success_returned_after_control_deadline_is_not_accepted(tmp_path, control_clock):
+    class LateRemote(ProbedRemote):
+        async def command(self, *args, **kwargs):
+            result = await super().command(*args, **kwargs)
+            control_clock[0] += 46
+            return result
+
+    remote = LateRemote(Sandbox(False), tmp_path)
+    with pytest.raises(TimeoutError, match="original allowance"):
+        asyncio.run(remote.network(True))
+    assert remote.uncertain and len(remote.probe_commands) == 1
+    assert receipt(tmp_path)["state"] == "uncertain"
+
+
+@pytest.mark.parametrize("defect", ["missing_target", "non_boolean", "unknown_target"])
+def test_malformed_completed_probe_is_not_a_convergence_retry(tmp_path, control_clock, defect):
+    class MalformedRemote(ProbedRemote):
+        async def command(self, *args, **kwargs):
+            result = await super().command(*args, **kwargs)
+            rows = json.loads(result["log"])
+            if defect == "missing_target":
+                rows.pop()
+            elif defect == "non_boolean":
+                rows[0]["reachable"] = 0
+            else:
+                rows[0]["host"] = "unrequested.invalid"
+            result["log"] = json.dumps(rows)
+            return result
+
+    remote = MalformedRemote(Sandbox(False), tmp_path)
     with pytest.raises(RuntimeError, match="Network probe"):
         asyncio.run(remote.network(True))
-    assert len(remote.probe_commands) == 1 and remote.uncertain
+    assert remote.uncertain and len(remote.probe_commands) == 1
     assert receipt(tmp_path)["state"] == "uncertain"
+
+
+def test_cancelled_convergence_wait_keeps_execution_blocked(tmp_path, control_clock, monkeypatch):
+    async def cancel(seconds):
+        raise asyncio.CancelledError()
+
+    monkeypatch.setattr(run_reference_setup.asyncio, "sleep", cancel)
+    remote = ProbedRemote(Sandbox(False), tmp_path, bad_probe=True)
+    with pytest.raises(asyncio.CancelledError):
+        asyncio.run(remote.network(True))
+    assert remote.uncertain and len(remote.probe_commands) == 1
+    assert receipt(tmp_path)["error_type"] == "CancelledError"
 
 
 def test_recovery_cannot_extend_original_control_or_campaign_deadline(tmp_path, monkeypatch):
