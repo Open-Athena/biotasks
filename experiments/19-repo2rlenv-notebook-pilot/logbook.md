@@ -4661,3 +4661,7 @@ Queued163initialunsubmittedpayload/source/refpreservedasseparateattemptbeforefix
 ### 2026-10-25 — PyHMMER161 completed; release qualification remains separate
 
 The autonomous run completed in 56.47 minutes with 190 recorded model requests and one quality repair. All 17 final controls pass; native reference/empty/GLM rewards are 1/0/1. Complete original science and root archives are independently verified, and all eight original owners/IDs are absent. A read-only audit of remaining installed package test sources is underway before publication; no task was manually edited. The full 5 USD hold remains. The queued, funded Scanpy163 admission previously deferred correctly until this cleanup evidence existed. Aggregate authorization remains 200 USD, counted once, with 198 reserved and 2 unallocated. See rounds052 and057.
+
+### 2026-10-25 — original Scanpy163 admitted within its existing reservation
+
+Typed admission found no other live campaigns after161 original/fresh eight-owner cleanup was recorded. The frozen214-file runtime includes the source-bound, live-tested general bounded network fix; source inputs match150 exactly. No prior task, labels, answers or operator diagnosis are supplied. The initial safe deferral is preserved. No extra authorization or budget was added: 198 USD reserved, 2 unallocated within200 authorized. See round057/submission-163.json.
