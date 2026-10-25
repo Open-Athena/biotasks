@@ -4605,3 +4605,7 @@ The002provider check passes all three injected-loss cases: existing empty-sessio
 ## 2026-10-25 — fresh160 submitted after source and compatibility validation
 
 Freeze160againstpublicruntimed4ba7374withoriginal158notebook/seed/noticesbytes. Onlydaytona_session.pyanditstestdifferfromthe158runtime; scientificpromptsandallother211runtimeidentitiesareunchanged. Avalidate-onlylaunchcheckverifiespayload/sourcehashes,originalconfigequalityexceptcampaign,funding,andlive002compatibility/cleanup. Typedadmissionfindsonly159active;submit160onceviaexistingIris/Daytonamechanism.Privateinput2930acbaremainspubliclyunpublished;novalues,fixtureidentitiesorpriorgeneratedtaskentertheseed.196held/4unallocatedwithin200authorized.Noqualificationclaim;159continuesunchanged.
+
+### 2026-10-25 — verify undispatched Matchms157 allowances
+
+The unchanged unused-stage auditor verifies a terminal infrastructure failure, one dispatched setup stage, complete original archive/root readback and fresh exact-ID/owner absence. Retain its full $1 used-stage allowance; release four never-dispatched stages. Aggregate holds are $192 with $8 unallocated, within the same $200 authorization. No actual invoice/credit claim and no scientific outcome changed. Existing159/160 continue; a new campaign still requires a free pool slot and explicit ledger allocation. See panel-rounds/051.
