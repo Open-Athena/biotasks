@@ -1,0 +1,48 @@
+{
+  "assessment": "The scientific core is sound and well-evidenced: the notebook's two terminal artifacts are the built profile HMM and the hmmsearch-style domain table, both re-exported unchanged in scope; the referenced replay runs reproduce `LuxC.domtbl` byte-identically, and the domtbl column semantics in the public question match the recorded reference file. The input handling, method preservation, and dependency-exclusion audit are consistent with the policy. I verified that pyhmmer 0.12.3's `plan7.Builder` defaults (weighting=\"pb\", effective_number=\"entropy\", symfrac=0.5, fixed seed 42 with reseed-on-build) match what the public brief describes for \"hmmbuild defaults\", so the method description is faithful to the recorded library behavior rather than guessed. The remaining blocker is that the equality-mode comparison rule for `LuxC.hmm` is the only rule not actually corroborated by evidence: the two reference replays produced byte-different `.hmm` files with `same_header_and_row_multiset: false`, and no line-level diff of the two replay artifacts survives in the retained evidence to confirm that only provenance lines (DATE/COM) actually differ. The handoff itself flags this as unconfirmed. That gap is correctable before freezing (re-diff the retained replay `.hmm` outputs, or relax that one comparison to per-field numeric tolerance calibrated against a real cross-implementation run as already planned for the domtbl). Two secondary, lower-severity inconsistencies (ungrammatical template fragments in the proposals, and treating \"e.g. a pipeline variant without `background=`\" as a detectable contrast when that actually reproduces the reference default) are handleable in the same revision. I could not verify the `.hmm` byte-stability claim directly because the replay artifacts are not separately inspectable here; this is left as a concrete, execution-stage correctable gap in the proposal, not a fundamental defect in the task's science.",
+  "disposition": "revise",
+  "findings": [
+    {
+      "evidence": [
+        {
+          "path": "proposal/validation_handoff",
+          "quote": "two existing replays suggest but do not prove for the `.hmm` case"
+        },
+        {
+          "path": "proposal/task_brief",
+          "quote": "must match the reference model"
+        }
+      ],
+      "problem": "The `LuxC.hmm` grading rule demands exact line-level equality of all non-DATE/COM content, but there is no retained evidence that this equality holds across reference replays or across implementations. The two recorded replay artifacts both have `byte_identical: false` and `same_header_and_row_multiset: false` for LuxC.hmm, and the controller recorded `scientific_equivalence_established: false` for that file. The handoff itself states the diff was never fingerprinted, and no replay-diff or cross-implementation run is recorded that certifies only provenance lines (DATE, COM) differ. The public question permits alternative software (e.g. C hmmbuild/hmmsearch), whose serialization may legitimately differ in last digits of calibration and per-position fields even when the same HMMER algorithms are used, so exact byte equality for every remaining line risks grading a correct scientific answer as wrong, or forcing the solver onto one implementation despite the open software choice.",
+      "required_change": "Before freezing the task and grader, resolve this one comparison rule by execution evidence: either (a) diff the two retained replay `LuxC.hmm` outputs line-by-line with DATE/COM normalized out and record the confirmation that all remaining lines are byte-stable, or (b) replace exact-equality for `LuxC.hmm` non-DATE/COM content with an explicitly calibrated numeric-field tolerance (parallel to what is already proposed for `LuxC.domtbl`), applied to header fields (NSEQ, EFFN, CKSUM, GA/TC/NC, STATS) and per-position lines. The proposal must not ship with `.hmm` exact-equality as the sole grading path while the handoff explicitly marks it unconfirmed."
+    },
+    {
+      "evidence": [
+        {
+          "path": "proposal/task_brief",
+          "quote": "and the standard relative-entropy-based prior/scoring calibration against the default Plan7 amino-acid background model, with no extrinsic to be taken"
+        },
+        {
+          "path": "proposal/task_brief",
+          "quote": "so nothing need be re-downloaded or resot to be run locally"
+        }
+      ],
+      "problem": "The solver-facing task text contains malformed placeholder/garbled fragments that make parts of the spec incoherent: analysis-method step 1 ends with the unreadable phrase 'with no extrinsic to be taken', and the inputs section contains 'nothing need be re-downloaded or resot to be run locally' ('resot' is not a word and the sentence asserts something undefined). These fragments invite solver confusion about whether any additional prior, calibration or local data step is required. The underlying method description otherwise matches the recorded pyhmmer defaults (weighting='pb', effective_number='entropy', symfrac=0.5, fixed seed 42), so this is a language defect, not a method defect.",
+      "required_change": "Rewrite the analysis-method step 1 clause and the inputs-section FYI sentence to state their intended requirements cleanly, e.g. that the HMM is calibrated with the default maximum-entropy mixture Dirichlet prior and default entropy-weighting with NO extrinsic overrides applied, and that the staged inputs are complete and byte-verified so no re-download or additional local data is needed. No scientific change is required; only the defective language must be corrected before the task is frozen."
+    },
+    {
+      "evidence": [
+        {
+          "path": "proposal/validation_handoff",
+          "quote": "A solver that skips the separate `Background` object and constructs `Pipeline` without supplying `background=`, which can shift `Z`"
+        },
+        {
+          "path": "inputs/original.py",
+          "quote": "background = pyhmmer.plan7.Background(alphabet)"
+        }
+      ],
+      "problem": "The proposed fault-probe list includes a contrast that does not actually change any output: the pyhmmer 0.12.3 implementation verifies (in plan7.pyx) that `Pipeline` constructs `Background(self.alphabet) if background is None`, which is precisely the same zero-argument default amino-acid background that the reference builds explicitly. A solver who omits `background=` in the Pipeline call therefore produces an identical result, so this probe is not a meaningful wrong-answer control and cannot 'shift Z'. Including it risks weakening the grader's fault-detection claim.",
+      "required_change": "Remove or replace the 'Pipeline without supplying background=' probe with a contrast that genuinely changes the output, e.g. a background constructed with non-default parameters, an E-value or domain threshold override, omitting `digital=True` on the SequenceFile, or a different symfrac/effective-sequence setting (which the source does verify changes `hmm_from`/`hmm_to` and the HMM header). The other listed probes (use of the prebuilt fixture HMM, non-default domain E-value cutoffs, rounding/format substitutions on `acc`) remain valid contrasts."
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "source_archive_manifest_sha256": "208f0d79a14e7ca4c60b8888088685bd4be504d853605c3596fa21a5a4a3d14a",
+  "pipeline_status": "rejected",
+  "source_id": "pyhmmer-msa-to-hmm",
+  "elapsed_pipeline_seconds": 917.583,
+  "stage_elapsed_seconds": {
+    "preparation": 6.826,
+    "setup": 204.308,
+    "replay": 57.507,
+    "specification": 643.525
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "completed",
+    "replay": "completed",
+    "specification": "rejected"
+  },
+  "accounted_model_request_attempts": 60,
+  "request_ledgers": [
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "0261cb203c4a89d0e1c58bc992c6625dfda6c7235bca8f8bcb591b5b7fc4714e",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "replay/requests.sqlite",
+      "sha256": "e2f280d7b17f832639376556a77f40ca2dc283bfd9df736e7768584274fcf1fa",
+      "count": 0,
+      "calls": []
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "2008c16490f0597e9f288309fa53f7d84a4453c22d4cf47f09a4e4f745027660",
+      "count": 16,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 16
+        }
+      ]
+    },
+    {
+      "path": "specification-review-revised/requests.sqlite",
+      "sha256": "8b923e601b0c4ee3dc781c1de20e39c29299d600caf89ead07c06876213b9805",
+      "count": 23,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 23
+        }
+      ]
+    },
+    {
+      "path": "specification-review/requests.sqlite",
+      "sha256": "e499ce44878afd16b04dad792f48d19d9bcff54d57478d8718b0530451483e93",
+      "count": 8,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 8
+        }
+      ]
+    },
+    {
+      "path": "specification-revision/requests.sqlite",
+      "sha256": "af0abbbd9040fd9e9efd54ea9ce1dac57d55862a44635e6f5abc45de16746037",
+      "count": 3,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "path": "specification/requests.sqlite",
+      "sha256": "85c44e44c3f55595f2a478c98b8ce76c8686169a58c866f8f671a2c54d2ba23a",
+      "count": 9,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 9
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 60,
+  "distinct_author_response_operations_within_stage": 60,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 1
+}
