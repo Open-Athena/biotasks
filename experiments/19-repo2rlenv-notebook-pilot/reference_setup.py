@@ -453,6 +453,14 @@ class SetupSession:
             await self.remote.download("/work/setup/" + name, directory / name)
         return inspect_candidate(directory, self.prepared)
 
+    async def workspace_control(self, operation, token, label):
+        reply = await self.setup_command(
+            ["python", "/work/remote.py", operation, token], 120, label
+        )
+        if reply["exit_code"] != 0 or reply.get("timed_out"):
+            raise RuntimeError("Authoring-workspace control failed: " + operation)
+        return json.loads(reply["log"])
+
     @asynccontextmanager
     async def isolated_authoring_workspace(self, directory):
         """Expose scratch dependencies inside the existing worker feedback loop."""
@@ -461,8 +469,9 @@ class SetupSession:
         record = {"started": time.time(), "state": "incomplete", "token": token}
         save_record(path, record)
         try:
-            hidden = await self.remote.helper(
-                ["isolate-authoring-workspace", token],
+            hidden = await self.workspace_control(
+                "isolate-authoring-workspace",
+                token,
                 f"workspace-isolate-{self.test_requests}",
             )
             if hidden != {"state": "isolated", "workspace": "/work/setup"}:
@@ -491,8 +500,9 @@ class SetupSession:
                         )
                 else:
                     try:
-                        restored = await self.remote.helper(
-                            ["restore-authoring-workspace", token],
+                        restored = await self.workspace_control(
+                            "restore-authoring-workspace",
+                            token,
                             f"workspace-restore-{self.test_requests}",
                         )
                         if (

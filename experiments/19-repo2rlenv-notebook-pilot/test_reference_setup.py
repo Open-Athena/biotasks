@@ -80,6 +80,11 @@ class FakeRemote:
 
     async def command(self, argv, seconds, label, *, cwd="/work"):
         self.events.append((label, self.blocked, cwd))
+        if argv[:2] == ["python", "/work/remote.py"] and argv[2] in {
+            "isolate-authoring-workspace",
+            "restore-authoring-workspace",
+        }:
+            return {"exit_code": 0, "log": json.dumps(await self.helper(argv[2:], label))}
         if argv == ["apt-mark", "showmanual"]:
             return {"exit_code": 0, "log": "\n".join(sorted(self.manual_packages)) + "\n"}
         if label.startswith("dependency-assets-"):
@@ -117,13 +122,11 @@ class FakeRemote:
 
     async def helper(self, args, label):
         if args[0] == "isolate-authoring-workspace":
-            self.events.append((label, self.blocked, None))
             saved = {k: v for k, v in self.files.items() if k.startswith("/work/setup/")}
             self.isolated_workspaces[args[1]] = {"original": saved}
             self.files = {k: v for k, v in self.files.items() if k not in saved}
             return {"state": "isolated", "workspace": "/work/setup"}
         if args[0] == "restore-authoring-workspace":
-            self.events.append((label, self.blocked, None))
             saved = self.isolated_workspaces[args[1]]
             unexpected = {k: v for k, v in self.files.items() if k.startswith("/work/setup/")}
             saved["staging_created"] = unexpected
@@ -200,6 +203,29 @@ def test_authoring_scratch_dependency_fails_before_reference_and_can_be_correcte
         assert s.tests == 1 and remote.files["/work/setup/analysis.py"] == source
         assert (tmp_path / "trials/1/result.json").exists()
         assert (tmp_path / "trials/2/result.json").exists()
+
+    asyncio.run(run())
+
+
+def test_workspace_controls_use_existing_cumulative_setup_budget(tmp_path, monkeypatch):
+    import reference_setup
+
+    clock = [1000.0]
+    monkeypatch.setattr(reference_setup.time, "monotonic", lambda: clock[0])
+
+    class TimedControls(FakeRemote):
+        async def helper(self, args, label):
+            if args[0] in {"isolate-authoring-workspace", "restore-authoring-workspace"}:
+                clock[0] += 3
+            return await super().helper(args, label)
+
+    async def run():
+        s = session(tmp_path, TimedControls())
+        await s.initialize()
+        before = s.setup_remaining
+        assert json.loads(await s.test_reference())["status"] == "reference_executed"
+        assert s.setup_remaining == before - 6
+        assert s.tests == 1
 
     asyncio.run(run())
 
