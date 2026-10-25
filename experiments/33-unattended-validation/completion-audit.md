@@ -1,39 +1,16 @@
 # Unattended pipeline acceptance audit
 
-Updated 2026-10-24 after completed fresh installed experiment #53. The full
-scientific objective remains active; no accepted fresh task/control pair or
-release readiness is established. Main is unchanged. Open/unmerged PR46 provides
-validation; drafts50/52 add installed generation and held retention; draft55
-removes unnecessary local-transition waits without changing native deadlines.
+Updated2026-10-25. The goal remains active: no accepted fresh task/control pair or release readiness is established. Main remains2a1950d2. Existing PR46 and drafts50/52/55 are open/unmerged with both CI checks green at their recorded heads. Clean consolidation20e14235 from main copies only final58source/tests/docs, plus an AGENTS capability description;167 tests, distribution/install, lint/format/types/hooks pass. Both runtime identities match the actual installed58candidate; consolidation has not changed the live run.
 
-| Requirement | Current evidence | Limit |
+| Requirement from protocol | Authoritative evidence inspected | Current conclusion and limit |
 | --- | --- | --- |
-| Frozen native source/settings | Pinned Repo2RLEnv source, worker/assets, original grading and model profile | Limited supported initializer/profile |
-| Submission/recovery/cleanup | Fault-boundary tests, original exact handles, actual terminal replay with external effects forbidden | Not exhaustive live-preemption coverage |
-| Historical controls | Unchanged Cobrapy clean nop0/oracle1, independently repeated | Not fresh task generation |
-| Fresh official generation |45 known Cobrapy1497 export;53 AnnData zero exports;57 Biopython zero exports before PR validation |45 clean build failed;53 source binding unresolved;57 new-assertion filter; selected integration windows |
-| Fresh installed negative lifecycle |53 source88a02827: complete billing, anonymous primary/cleanup HF readback, owned resources empty, protected base preserved, byte-inert replay | No export existed, so zero independent exported-task controls |
-| Held scientific disagreement |49/51 preserve original raw bytes and held journal; installed52 automatic retention,129 tests+CI | One declared disagreement family; no repaired reward |
-| Local wait scheduling |54/55 offline old/new comparison,152 tests+CI | Not installed into53; no native speed claim |
-| Actual patched source execution |56 original trace/source evidence plus real synthetic pip replacement and eight import-origin cases | AnnData exact transaction unproven; same-process native mapping/check not implemented |
-| Public evidence/cleanup |53 exact manifests/receipts in326e8e6f; both snapshots verified anonymous; actual original jobs terminal | Eligible evidence only; Matchms withheld |
-| Scientific/release claims | Original28 counts83/82/67 unchanged | No accepted fresh pair, population yield, price per valid task or production-readiness claim |
+| Preserve eligible evidence, original notices, inventories and verified HF readbacks | Original epic manifests/receipts;53/57/58 primary+cleanup manifests/anonymous receipts; source-bound branches | Completed for those eligible archives. Matchms remains withheld; publication is not release eligibility.62 is live and pending. |
+| Reconcile task/control identity without counting attempts as tasks | task-execution-ledger.json and task-file-ledger.json counts/identity_coverage |83 original exports,82 ever-positive,67 ever-clean;83 ten-file identities/base-head pairs,9 follow-up input inventories matched. No raw rehash claimed by this step;6 original builds remain absent, image availability/reconstruction not established by old digests. |
+| Investigate native/export boundary without per-task repair or added model stage | Generic comparison ledgers, repeated unchanged Cobrapy controls,56 provenance and60 real C-extension mechanisms | Known package/control paths cross the boundary. AnnData import binding and compiled rebuild lifecycle remain unresolved.60 is not a deployed runtime policy. |
+| Small resumable outer runner with exact identities/budget/cleanup | Sources1f6e7fe2/a3c7f83f/88a02827/656c49e2;58candidate eeda76c4/e488025c; fault-boundary tests and completed53/57/58actual installed inert replays | Automation handles first submission through negatives, billing, archive and cleanup. Historical native positive pairs exist. A fresh nonempty export through independent accepted controls is still unproven. Not exhaustive live-preemption or all-repository support. |
+| Frozen full generation/export/independent controls |53AnnData zeroexports;57Biopython structural skips;58Biopython one validation but both collectionERROR;62DendroPy frozen259/257 |62original controller82506 and fixed `/exedev/biotasks62-dendropy-001` currently live, no restart.61Cobrapy1497 deferred pre-admission because known export; no repeated generation merely for packaging. No fresh acceptance claim. |
+| Reviewable code, measurements, outcomes, budgets, eligible durable artifacts | Permanent research branches; source60fa0068eb; installed58proofs; current pipeline PR status JSON; consolidation20e14235 and promotion-001 logs | Code/tests reviewable; no research merge or main change. Current run/final costs/controls/cleanup pending. No population-yield, cost-per-valid-task or release claim. |
 
-Settled epic totals:11.651100555260976/32 allocated CPUh;30 original model calls,
-provider actual0.979191USD. Original57is fully complete with both HF readbacks, owned cleanup and inert completed replay;
-existing10USD storage reservation remains unreconciled. Same90USD operating
-ceiling, strictly below100USD extra, no new capacity. `budget.json` is the live
-admission ledger, not old launch snapshots. The model-enabled status is not an
-authorization gate. Every future runtime needs a declared source/input checkpoint,
-conservative atomic reservation, serial billing resolution and existing ceilings.
+`budget.json` remains authoritative: last reconciled actual1.635174USD/43calls and12.208171666CPUh.62currently reserves6.333333CPUh/$13.07; including both possible controls its additional maximum19CPUh projects31.208171666<32. Existing10USD storage reservation is unreconciled. Model/CPU reservations are not spend. Same90USD operating ceiling, strictly below100extra, reserved CPUs only, no new capacity or model/repair stage.
 
-Next: #58 installed declared candidate c1545913 / generation eeda76c4, frozen
-plan728827e8. Existing official boolean false plus separately qualified #59
-workspace-python path adapter, with supported55local-ready scheduling.166core
-checks and1distribution/install check pass; lint/types/hooks pass. Actual
-installed offline CLI replay is byte-inert and rejects old57plan without adoption.
-Same exact official descriptors/SDK/model/grading/resource profile. Original58is now admitted and confirmed running under its fixed handle, installed controller57429 and6.333333CPUh/13.07USDreservation. Native outcomes/finalbilling/readback/cleanup remain pending. The launchguard first verified original57completed replay and both HF receipts. Max19CPUh/13.07USDmodel
-within existing32/90limits, not new allowance. Filename-with-space parser
-identities remain unsupported, no parser/JUnit reward rescue. #56 remains
-separate; no AnnData retry, task repair, auto merge or release. Native accepted
-fresh pair and full scientific goal remain unproven.
+Do not complete or close the epic based on this audit. Await the original62execution and then verify task identities, native negative/oracle and clean-command outcomes, actual billing, public eligibility, HFreadbacks, owned cleanup and installed inert replay. If negative, preserve the finite result without repair/retry; retain exact remaining limitations rather than redefining success.
