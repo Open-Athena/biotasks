@@ -20,6 +20,43 @@ FOLDERS = ["setup-raw", "replay", "materialization-raw", "grading"]
 RATE = 4 * Decimal("0.0504") + 8 * Decimal("0.0162") + 10 * Decimal("0.000108")
 
 
+def admitted_implementation(sources):
+    """Exact creator/session pairs with identical creation and cleanup logic.
+
+    The later creator only adds static source-operation context to the worker.
+    The newest pair only adds fail-closed network-result checks and catches a
+    typed export-repair rejection. None changes resource creation or cleanup.
+    The earlier exact triple predates the full-budget guard refactor and one
+    source-path argument to dependency inspection; its creator is byte-identical.
+    Every pair must also have passed its preceding lifetime auditor.
+    """
+    assert set(sources) == {"run_autonomous.py", "run_reference_setup.py", "reference_setup.py"}
+    if sources == {
+        "run_autonomous.py": "972b6315182a86988dab558ec42e63891d2dd8a380ae224253d209f476db3b12",
+        "run_reference_setup.py": "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc",
+        "reference_setup.py": "a73ff8ccfbc5281a51ba55817316f33d8d3398d4227c4218f6bf0e553c3b2c83",
+    }:
+        return dict(sources)
+    assert sources["run_autonomous.py"] == (
+        "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188"
+    )
+    assert (sources["run_reference_setup.py"], sources["reference_setup.py"]) in {
+        (
+            "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc",
+            "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
+        ),
+        (
+            "fc83bf2ecd9f201b4bfd8c47cb07740619d09c66fc8df5a37435eb95af5b2d0b",
+            "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
+        ),
+        (
+            "9a2354335a74410931129d58526c16d121ddce2f86b0b35806dd75378d4d60f8",
+            "d85850aea0d2f70242d45d1abb898aac5b9b7742aaf1d14371bee775d2fea8b7",
+        ),
+    }
+    return dict(sources)
+
+
 def audit_shape(pipeline, claims, cleanup):
     assert pipeline["status"] == "rejected"
     stages = pipeline["stages"]
@@ -96,6 +133,7 @@ def main():
         frozen[name] = hashlib.sha256(raw).hexdigest()
     config = json.loads((payload / "campaign-config.json").read_text())
     assert config["campaign_seconds"] == 7200 and config["cleanup_seconds"] == 300
+    assert Decimal(config["daytona_budget_usd"]) == Decimal("5.00")
     assert config["task_policy"]["sandbox"] == {
         "cpus": 4,
         "memory_gib": 8,
@@ -108,26 +146,7 @@ def main():
             source_hashes[name] = hashlib.sha256(
                 source.extractfile(EXPERIMENT + name).read()
             ).hexdigest()
-    assert source_hashes["run_autonomous.py"] == CONTROLLER
-    # The second exact runner differs only by importing operation_inventory
-    # and adding its static source annotations to the worker's input context.
-    # Its single image creator and all session/resource/lifecycle code are equal.
-    # The newest exact pair adds fail-closed network-result checks and catches a
-    # typed export-repair rejection. Creation and final owner cleanup are equal.
-    assert (source_hashes["run_reference_setup.py"], source_hashes["reference_setup.py"]) in {
-        (
-            "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc",
-            "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
-        ),
-        (
-            "fc83bf2ecd9f201b4bfd8c47cb07740619d09c66fc8df5a37435eb95af5b2d0b",
-            "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
-        ),
-        (
-            "9a2354335a74410931129d58526c16d121ddce2f86b0b35806dd75378d4d60f8",
-            "d85850aea0d2f70242d45d1abb898aac5b9b7742aaf1d14371bee775d2fea8b7",
-        ),
-    }
+    admitted_implementation(source_hashes)
     # This reviewed SDK path creates from an image once per recorded stage,
     # without persistent snapshot creation or native Harbor dispatch at this prefix.
     pipeline = original("pipeline.json")

@@ -12,9 +12,17 @@ def admitted_implementation(sources):
     The later creator only adds static source-operation context to the worker.
     The newest pair only adds fail-closed network-result checks and catches a
     typed export-repair rejection. None changes resource creation or cleanup.
+    The earlier exact triple predates the full-budget guard refactor and one
+    source-path argument to dependency inspection; its creator is byte-identical.
     Every pair must also have passed its preceding lifetime auditor.
     """
     assert set(sources) == {"run_autonomous.py", "run_reference_setup.py", "reference_setup.py"}
+    if sources == {
+        "run_autonomous.py": "972b6315182a86988dab558ec42e63891d2dd8a380ae224253d209f476db3b12",
+        "run_reference_setup.py": "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc",
+        "reference_setup.py": "a73ff8ccfbc5281a51ba55817316f33d8d3398d4227c4218f6bf0e553c3b2c83",
+    }:
+        return dict(sources)
     assert sources["run_autonomous.py"] == (
         "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188"
     )
