@@ -25,7 +25,7 @@ The unchanged 221-file runtime has terminal specification rejections 177/178/179
 
 MDAnalysis 182passed 16 controls, but review found an installed answer fixture for a recovered endpoint and inaccurate probe evidence quotes. Setup had assessed only the initial three exports; construction recovered two more endpoints. The already-consumed global quality repair was not replenished. Complete 2144 science/73 root files and fresh four-owner absence are verified. [Rejection](../086/rejection-182.md), [independent original-source/reference comparison](../086/fixture-corroboration-182.json).
 
-Sgkit 183 is fully funded and queued; PyMC 184 remains unfunded. Both explicitly select the original public runtime with an empty reviewed delta. The newer tool-feedback and preparation-deadline candidates do not silently enter this round. Bioframe 175and NeuroKit 176used the earlier 219-file runtime;175 retains its original upload 502 failure. No common-version ten-case result exists yet. R remains deferred. [Source plan](../081/development-panel.json).
+Sgkit 183 is submitted with its full $5 reservation; PyMC 184 remains unfunded. Both explicitly select the original public runtime with an empty reviewed delta. The newer tool-feedback and preparation-deadline candidates do not silently enter this round. Bioframe 175and NeuroKit 176used the earlier 219-file runtime;175 retains its original upload 502 failure. No common-version ten-case result exists yet. R remains deferred. [Source plan](../081/development-panel.json).
 
 ## General changes and remaining evidence
 
