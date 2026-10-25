@@ -1,0 +1,7 @@
+# MDAnalysis160 generated-candidate rejection
+
+The unchanged original notebook retained all five scientific endpoints. Twenty executed controls passed, but the new final-output/installed-source audit flagged one possible answer fixture. The GLM reviewer verified it as the requested computation within the grader tolerance and marked answer isolation defective. This is the issue that earlier156missed; no operator supplied its identity to160.
+
+The allowed grading repair declined because removing an installed file requires a declared environment exclusion, a rebuilt environment and fresh reference/control evidence outside that role’s authority. The controller recorded `repair_blocked` and rejected the candidate. It did not publish an exposed task, loosen grading or manually remove the fixture. The repair model’s additional narrative claims are not independent execution evidence. General future improvement: route an environment defect to the stage that owns that environment, within an agreed repair budget, rather than asking a grading worker to cross its boundary. No such change was adopted in this run.
+
+Pipeline46.09minutes;125recorded model attempts. Full original archive1,724files/164,751,189bytes and host export59files/1,303,587bytes independently verified. Original/fresh exact-ID/four-owner cleanup is verified. No native solver or publication. The source notebook is not classified as broken. [Outcome](result-160.json), [timing](performance-160.json).
