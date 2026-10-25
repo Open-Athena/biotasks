@@ -9,7 +9,7 @@ from types import SimpleNamespace
 
 import pytest
 from daytona._async.process import AsyncProcess
-from daytona.common.errors import DaytonaNotFoundError
+from daytona.common.errors import DaytonaNotFoundError, DaytonaProcessNotFoundError
 from daytona_session import session_command
 from daytona_toolbox_api_client_async.models.command import Command
 from repo2rlenv.execution.base import RemoteCommandError
@@ -77,12 +77,14 @@ class CreationLoss(Process):
         lookup_failure=False,
         wrong_identity=False,
         existing_commands=False,
+        not_found=DaytonaNotFoundError,
     ):
         super().__init__(fast=True)
         self.creations, self.lookups = 0, 0
         self.absence, self.repeated_loss = absence, repeated_loss
         self.lookup_failure, self.wrong_identity = lookup_failure, wrong_identity
         self.existing_commands = existing_commands
+        self.not_found = not_found
 
     async def create_session(self, session, **kwargs):
         self.creations += 1
@@ -97,7 +99,7 @@ class CreationLoss(Process):
         if self.lookup_failure:
             raise ConnectionError("lookup outcome unknown")
         if self.absence:
-            raise DaytonaNotFoundError("No session")
+            raise self.not_found("No session")
         return SimpleNamespace(
             session_id="different" if self.wrong_identity else session,
             commands=["unexpected command"] if self.existing_commands else [],
@@ -105,8 +107,11 @@ class CreationLoss(Process):
 
 
 @pytest.mark.parametrize("absence", [False, True])
-def test_creation_loss_is_reconciled_before_the_only_command_submission(tmp_path, absence):
-    process = CreationLoss(absence=absence)
+@pytest.mark.parametrize("not_found", [DaytonaNotFoundError, DaytonaProcessNotFoundError])
+def test_creation_loss_is_reconciled_before_the_only_command_submission(
+    tmp_path, absence, not_found
+):
+    process = CreationLoss(absence=absence, not_found=not_found)
     result = asyncio.run(session_command(process, ["original"], timeout=10, directory=tmp_path))
     assert result.returncode == 0
     assert process.creations == (2 if absence else 1) and process.lookups == 1

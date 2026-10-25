@@ -13,6 +13,7 @@ import uuid
 from contextlib import asynccontextmanager
 
 from daytona import AsyncDaytona, SessionExecuteRequest
+from daytona.common.errors import DaytonaNotFoundError
 from repo2rlenv.execution.base import CommandResult
 from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.execution.read_retry import transient_connection_error
@@ -100,7 +101,7 @@ async def session_command(process, argv, *, timeout, directory):
                 except Exception as lookup_error:
                     observation["lookup_error_type"] = type(lookup_error).__name__
                     save_record(path, record)
-                    if type(lookup_error).__name__ == "DaytonaNotFoundError" and creation == 0:
+                    if isinstance(lookup_error, DaytonaNotFoundError) and creation == 0:
                         observation["state"] = "confirmed_absent"
                         save_record(path, record)
                         continue

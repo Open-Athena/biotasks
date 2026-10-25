@@ -3,8 +3,8 @@
   "ceiling_before_credits": "200.00",
   "authorization_date": "2026-10-13",
   "basis": "User authorized $100 total, then explicitly authorized $100 more on2026-10-23; aggregate authorization is$200 before credits. Routine approved-scope recovery/retries do not require repeated approval.",
-  "reserved_upper_bound_usd": "191.00",
-  "unallocated_usd": "9.00",
+  "reserved_upper_bound_usd": "192.00",
+  "unallocated_usd": "8.00",
   "reservations": [
     {
       "scope": "original pilot 001",
@@ -1052,9 +1052,16 @@
     {
       "scope": "session-create-recovery-001: bounded synthetic provider compatibility; no model or science",
       "ceiling_usd": "1.00",
-      "state": "reserved_not_launched",
+      "state": "incomplete_original_and_fresh_cleanup_verified_full_hold_retained",
       "configuration": "factory-checks/session-create-recovery/live-check-configuration.json",
       "basis": "Existing200USDauthorization; one offline4CPU8GiB10GiB sandbox for300splus180cleanup; one free poolslot while159mayremainactive. No Iris host, GPU, model or biological computation."
+    },
+    {
+      "scope": "session-create-recovery-002: synthetic API subclass compatibility after preserved failed001",
+      "ceiling_usd": "1.00",
+      "state": "reserved_not_launched",
+      "configuration": "factory-checks/session-create-recovery/live-check-configuration-002.json",
+      "basis": "Existing200USDauthorization. Oneoffline4CPU8GiB10GiBsandbox,300swork+180cleanup,noIris/GPU/model/science.001original/freshabsenceverified; maximum2activepoolslots including159."
     }
   ],
   "actual_provider_invoice_usd": null,
@@ -1064,7 +1071,7 @@
     "Any further run must reserve within the unallocated balance before submission."
   ],
   "reconciliation_date": "2026-10-23",
-  "current_summary": "191USDheld/9USDunallocatedwithin200authorized,including1USDforoneunlaunchedsyntheticcompatibilitycheck.159isactive;158isterminalwith4owner/IDabsenceverified.No invoiceorcreditsinferred.",
+  "current_summary": "192USDheld/8USDunallocatedwithin200authorized.159isactive;158failedandall4ownersareabsent.Compat001partialfailureisfullycleanedandits1USDholdretained;separate002checkreserves1USD.Noscientificclearance,invoiceorcreditsinferred.",
   "authorization_updates": [
     {
       "date": "2026-10-23",
