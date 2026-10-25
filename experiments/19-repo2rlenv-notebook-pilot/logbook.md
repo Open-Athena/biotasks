@@ -4797,3 +4797,6 @@ The run-154 source-only lifetime audit now separates its mathematically conserva
 
 
 The committed154lifetime auditor applied the unchanged dry-run bound and retained1USD against0.35910245272317USD, releasing2. Combined with169's3USD never-dispatched stages, reserve the full5USD for source-only170. It will use the original Scanpy notebook and source/rights metadata, with only the three general comparison/conditioning prompt changes from the paired168/169 runtime. No prior task, answer or operator diagnostic hint enters its inputs. All resource/model/time/repair limits and the two-slot ceiling remain.200USDheld/0unallocated within200authorized once;170not submitted at this checkpoint.
+
+
+Source-only 170 passed the unchanged compatibility, exact-hash, funding and typed pool-admission checks and was submitted with no other campaign active. All 217 runtime paths remain present; exactly the three reviewed generic prompt templates differ from 169. Original notebook/source assets match 168, with no old task or operator diagnostics. Private input ref `12249efa665f49befe039241e9b764caee9748e6` is not pushed; public runtime `a546bf1b`. This is pending scientific evidence, not a successful prompt improvement. [Freeze/admission](panel-rounds/072/submission-170.json).

@@ -25,6 +25,8 @@ The new general prompt candidate strengthens supplied-context selection, disting
 
 All ten originals pass current deterministic conversion and ordered-code equivalence. The call-ID correction preserves every literal call and passes 38 focused tests; this is bookkeeping evidence, not scientific validation. R remains deferred. Common-factory cross-domain reliability and a generally routed environment repair for installed answers remain incomplete.
 
-**Budget:** $200 authorized once; $200 conservatively reserved / $0 unallocated, including a full $5 reservation for source-only 170. Run 169’s never-dispatched stages and the complete padded run-154 lifetime bound funded it. These are reservation bounds, not invoices or credits. The completed runs are cleaned. A future full campaign still requires the unchanged $5 reservation.
+**Budget:** $200 authorized once; $200 conservatively reserved / $0 unallocated, including a full $5 reservation for active source-only 170. Run 169’s never-dispatched stages and the complete padded run-154 lifetime bound funded it. These are reservation bounds, not invoices or credits. The completed runs are cleaned. A future full campaign still requires the unchanged $5 reservation.
 
 Keep issue 19 open and PR 23 draft/unmerged. The research branch must not be merged. A separate optional packaging question is pending; it does not block scientific validation. [Machine-readable identities](current-panel-summary.json); [completion audit](completion-audit.md).
+
+Source-only 170 has been submitted with no other campaign active. It preserves 168’s original notebook/source assets and changes only three general comparison/conditioning prompt templates from 169’s runtime. Its outcome is pending; it does not replace the last selected rejection. [Freeze and admission](../072/submission-170.json).
