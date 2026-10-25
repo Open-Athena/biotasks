@@ -37,8 +37,7 @@ class Recording(unittest.TextTestResult):
  def addSubTest(self,test,subtest,error):
   self.subtests.append({'parent':test.id(),'subtest':str(subtest),'status':'PASSED' if error is None else 'FAILED' if issubclass(error[0],test.failureException) else 'ERROR'})
   super().addSubTest(test,subtest,error)
-result=Recording(io.StringIO(),True,2)
-unittest.defaultTestLoader.loadTestsFromModule(test_subtests).run(result)
+result=unittest.TextTestRunner(stream=io.StringIO(),verbosity=2,resultclass=Recording).run(unittest.defaultTestLoader.loadTestsFromModule(test_subtests))
 print(json.dumps({'successful':result.wasSuccessful(),'tests':result.testsRun,'failures':len(result.failures),'errors':len(result.errors),'skips':len(result.skipped),'subtests':result.subtests}))
 '''
 
@@ -58,14 +57,14 @@ def main():
         assert hashlib.sha256(path.read_bytes()).hexdigest()==item["sha256"]
     for label,path in [('native',SOURCE/'src/repo2rlenv/log_parsers/pytest_parser.py'),('standalone',SOURCE/'src/repo2rlenv/pipelines/_pr_runtime_verifier.py'),('current',BASE/'inputs-private/current-upstream/src/repo2rlenv/pipelines/_pr_runtime_verifier.py')]:
         ns={'__name__':'isolated_'+label};exec(compile(path.read_text(),str(path),'exec'),ns);sources[label]=(path,ns)
-    scratch=BASE/'inputs-private/fixture-001';scratch.mkdir(exist_ok=False)
+    scratch=BASE/'inputs-private/fixture-002';scratch.mkdir(exist_ok=False)
     report=[]
     try:
         for case in ['passing','failure','error','skip','ordinary_failure','awkward']:
             folder=scratch/case;folder.mkdir();(folder/'test_subtests.py').write_text(TEMPLATE.format(case=case))
             env=dict(os.environ,PYTEST_DISABLE_PLUGIN_AUTOLOAD='1',PYTHONDONTWRITEBYTECODE='1')
             real=execute([sys.executable,'-B','-m','pytest','-v','--color=no','-p','no:cacheprovider','test_subtests.py'],folder,env)
-            oracle_run=execute([sys.executable,'-B','-c',ORACLE],folder,env);assert oracle_run['exit']==0
+            oracle_run=execute([sys.executable,'-B','-c',ORACLE],folder,env);assert oracle_run['exit']==0, oracle_run
             oracle=json.loads(oracle_run['stdout']);assert oracle['tests']==3
             assert (real['exit']==0)==oracle['successful']
             parent='test_subtests.py::Cases::test_parameters';stable='test_subtests.py::Cases::test_stable';plain='test_subtests.py::Cases::test_plain'
