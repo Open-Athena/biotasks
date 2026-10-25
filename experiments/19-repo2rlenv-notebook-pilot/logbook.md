@@ -4899,3 +4899,6 @@ Reserve the unchanged full5USD for174 within existing200authorization (199held/1
 
 
 174 freezes exactly219runtime files with only run_reference_setup.py and test_network_reconciliation.py changed from173. Original notebook and source/provenance assets match169, with no previous proposal/review/diagnostic input. Public runtimec51243fd; private inputa10bac8c24bbf5efd9732c6239f2c64453e43a72 remains local. The source-bound launcher is updated only to require the newer network compatibility proof and record its configuration/result/cleanup hashes; all other admission and execution guards remain. Not submitted at this checkpoint.
+
+
+174 is submitted after exact219-file freeze/readback, source identities matching169, newer source-bound network compatibility/cleanup and typed pool admission with no earlier live host. Only generic network-control code/tests differ from173. No previous proposal, critique, answer or diagnostic hint enters the worker. Public runtimec51243fd and private inputa10bac8c24bbf5efd9732c6239f2c64453e43a72 remain separate; private ref is not pushed. Model/resource/time/repair limits unchanged,199held/1unallocated within200authorized once. The complete scientific result remains pending.
