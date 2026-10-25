@@ -24,6 +24,27 @@ def implementation():
     }
 
 
+@pytest.mark.parametrize("crosswire", [None, "controller", "runner", "setup"])
+def test_earlier_blocking_family_requires_its_complete_exact_triple(crosswire):
+    sources = {
+        "run_autonomous.py": "d90fd8c6f121d46c0f6bc6faea54172f18035887ba07dca076609f2e6d16bae9",
+        "run_reference_setup.py": "34ae1de16e432cb6926e9d0f56158a35d65bebe3b06b5c4769f86d53c145eb2a",
+        "reference_setup.py": "a73ff8ccfbc5281a51ba55817316f33d8d3398d4227c4218f6bf0e553c3b2c83",
+    }
+    names = {
+        "controller": "run_autonomous.py",
+        "runner": "run_reference_setup.py",
+        "setup": "reference_setup.py",
+    }
+    if crosswire is None:
+        assert module.admitted_implementation(sources) == sources
+    else:
+        name = names[crosswire]
+        sources[name] = implementation()[name]
+        with pytest.raises(AssertionError):
+            module.admitted_implementation(sources)
+
+
 @pytest.mark.parametrize("annotated", [False, True])
 def test_exact_known_creators_share_resource_lifecycle(annotated):
     sources = implementation()

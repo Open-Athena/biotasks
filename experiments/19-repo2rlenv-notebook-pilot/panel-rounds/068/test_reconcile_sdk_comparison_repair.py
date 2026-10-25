@@ -15,6 +15,18 @@ module = module_from_spec(spec)
 spec.loader.exec_module(module)
 
 
+def test_exact_earlier_blocking_family_is_admitted():
+    module.admit_sources(module.EARLY_BLOCKING_SOURCES)
+
+
+@pytest.mark.parametrize("name", tuple(module.EARLY_BLOCKING_SOURCES))
+def test_earlier_family_rejects_unknown_or_crosswired_source(name):
+    sources = dict(module.EARLY_BLOCKING_SOURCES)
+    sources[name] = module.CONTROLLER if name == "run_autonomous.py" else "0" * 64
+    with pytest.raises(AssertionError):
+        module.admit_sources(sources)
+
+
 def evidence():
     stages = ["preparation", "setup", "replay", "specification", "construction", "grading"]
     pipeline = {

@@ -38,6 +38,12 @@ def admitted_implementation(sources):
     """
     assert set(sources) == {"run_autonomous.py", "run_reference_setup.py", "reference_setup.py"}
     if sources == {
+        "run_autonomous.py": "d90fd8c6f121d46c0f6bc6faea54172f18035887ba07dca076609f2e6d16bae9",
+        "run_reference_setup.py": "34ae1de16e432cb6926e9d0f56158a35d65bebe3b06b5c4769f86d53c145eb2a",
+        "reference_setup.py": "a73ff8ccfbc5281a51ba55817316f33d8d3398d4227c4218f6bf0e553c3b2c83",
+    }:
+        return dict(sources)
+    if sources == {
         "run_autonomous.py": "972b6315182a86988dab558ec42e63891d2dd8a380ae224253d209f476db3b12",
         "run_reference_setup.py": "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc",
         "reference_setup.py": "a73ff8ccfbc5281a51ba55817316f33d8d3398d4227c4218f6bf0e553c3b2c83",

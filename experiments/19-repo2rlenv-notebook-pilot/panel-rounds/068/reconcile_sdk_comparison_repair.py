@@ -18,6 +18,34 @@ EXPERIMENT = "experiments/19-repo2rlenv-notebook-pilot/"
 CONTROLLER = "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188"
 FOLDERS = ["setup-raw", "replay", "materialization-raw", "grading", "grading-comparison-repair"]
 RATE = 4 * Decimal("0.0504") + 8 * Decimal("0.0162") + 10 * Decimal("0.000108")
+EARLY_BLOCKING_SOURCES = {
+    "run_autonomous.py": "d90fd8c6f121d46c0f6bc6faea54172f18035887ba07dca076609f2e6d16bae9",
+    "run_reference_setup.py": "34ae1de16e432cb6926e9d0f56158a35d65bebe3b06b5c4769f86d53c145eb2a",
+    "reference_setup.py": "a73ff8ccfbc5281a51ba55817316f33d8d3398d4227c4218f6bf0e553c3b2c83",
+}
+
+
+def admit_sources(sources):
+    assert set(sources) == set(EARLY_BLOCKING_SOURCES)
+    # This earlier blocking-command family has the same image creator and
+    # cleanup calls. Full source review and all five original claims still apply.
+    if sources == EARLY_BLOCKING_SOURCES:
+        return
+    assert sources["run_autonomous.py"] == CONTROLLER
+    assert (sources["run_reference_setup.py"], sources["reference_setup.py"]) in {
+        (
+            "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc",
+            "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
+        ),
+        (
+            "fc83bf2ecd9f201b4bfd8c47cb07740619d09c66fc8df5a37435eb95af5b2d0b",
+            "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
+        ),
+        (
+            "9a2354335a74410931129d58526c16d121ddce2f86b0b35806dd75378d4d60f8",
+            "d85850aea0d2f70242d45d1abb898aac5b9b7742aaf1d14371bee775d2fea8b7",
+        ),
+    }
 
 
 def audit_shape(pipeline, claims, cleanup):
@@ -130,24 +158,7 @@ def main():
             source_hashes[name] = hashlib.sha256(
                 source.extractfile(EXPERIMENT + name).read()
             ).hexdigest()
-    assert source_hashes["run_autonomous.py"] == CONTROLLER
-    # The second exact runner differs only by importing operation_inventory
-    # and adding its static source annotations to the worker's input context.
-    # Its single image creator and all session/resource/lifecycle code are equal.
-    assert (source_hashes["run_reference_setup.py"], source_hashes["reference_setup.py"]) in {
-        (
-            "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc",
-            "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
-        ),
-        (
-            "fc83bf2ecd9f201b4bfd8c47cb07740619d09c66fc8df5a37435eb95af5b2d0b",
-            "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
-        ),
-        (
-            "9a2354335a74410931129d58526c16d121ddce2f86b0b35806dd75378d4d60f8",
-            "d85850aea0d2f70242d45d1abb898aac5b9b7742aaf1d14371bee775d2fea8b7",
-        ),
-    }
+    admit_sources(source_hashes)
     # This reviewed SDK path creates from an image once per recorded stage,
     # without persistent snapshot creation or native Harbor dispatch at this prefix.
     pipeline = original("pipeline.json")
