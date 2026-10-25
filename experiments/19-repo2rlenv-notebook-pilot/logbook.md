@@ -4693,3 +4693,7 @@ Original164stopped in7.43minutes/29requests, after registry resolution and proce
 ### 2026-10-25 — reserve a different domain while the setup-budget proposal is pending
 
 Reserve5USDfor original COBRApy165on the exact216-file runtime used by164, preserving the existing two-reference-test policy. This is source-only cross-domain validation, not adoption of the pending shared-budget proposal. Original133source/metadata/notices and common model/resource/time/repair limits remain; no prior task, answer or diagnostic hint is supplied. The unchanged164unused-stage audit releasesonlyfournever-dispatchedallowances.200USDreserved/0free within200authorized.165not submitted; source freeze and typed admission still required.
+
+### 2026-10-25 — original COBRApy165 admitted with no factory or policy delta
+
+Funded preflight validates216runtimeidentities exactly equal164and original133source/assets. Typed admission found no other live campaigns;165is submitted within its existing5USDreservation. The pending shared-setup-budget proposal is not adopted: this run retains the agreed two reference tests and all original limits. No earlier task, expected answer or operator diagnosis is supplied.200USDheld/0free within200authorized. See round062/submission-165.json.
