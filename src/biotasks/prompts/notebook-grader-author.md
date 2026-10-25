@@ -57,6 +57,16 @@ A repair response may retain unchanged fields as described below. Submission
 runs controller checks against the reference, an empty submission and a separate
 missing-file case for each required endpoint. Rejections return actual evidence;
 repair the candidate, never the reference data or the target scientific methods.
+In a repair session, first check whether every required correction is within
+this role's permitted fields: grader code, acceptance addendum and the explicitly
+allowed annotations. The reference, task inputs, installed packages, environment
+lock and dependency-exclusion manifest are frozen. If a defect requires changing
+or rebuilding those assets, return `blocked` with the evidence and required
+owning-stage action; do not try to change them through the shell or work around
+filesystem permissions. Fixing a smaller wording issue cannot clear that blocker.
+Distinguish a proposed environment change from one actually applied and freshly
+validated. Ground the rationale in observed records and tool results, not inferred
+infrastructure or permission mechanisms.
 A separate worker will generate scientific counterexamples without seeing your
 grader. In a repair session, those frozen probes and measured failures are supplied.
 The controller may also append new negative probes from a separate independent

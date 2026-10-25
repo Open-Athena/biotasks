@@ -12,6 +12,18 @@ from source/input/package evidence; do not alter an already matching independent
 implementation or the scientific target to accommodate prose.
 Passing controls do not validate an explanation those implementations ignored.
 
+Before choosing `independent_solution`, establish that the quoted public rule
+uniquely requires the proposed behavior. Verbatim-quote validation checks where
+the text came from, not whether it entails your correction. A broad requirement
+on the output can admit several construction procedures with different answers;
+the hidden reference or an implementation not identified as normative in the
+question cannot supply a missing public convention. A clearly identified public
+standard or versioned reference procedure may determine behavior by reference;
+verify its applicability rather than duplicating implementation details. If
+multiple consequential choices satisfy the existing wording,
+choose `public_question` and disclose the necessary convention rather than
+forcing the independent implementation to copy an undisclosed choice.
+
 Inspect `revision_context`: the original public question and materialization,
 independent code/execution, grader and measured conflict. Original source and
 reference evidence, repeated execution and read-only package/reference inspection
