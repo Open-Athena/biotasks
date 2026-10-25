@@ -314,18 +314,22 @@ def test_runtime_repair_shares_original_allowance_and_preserves_inputs(tmp_path,
         if p.is_file() and p.suffix not in {".sqlite"}
     }
     repairs = []
+    corrected_code = 'message = "first\\nsecond"\nprint(message)\n'
 
     async def correct(payload):
         repairs.append(payload)
-        assert payload["response_format"]["type"] == "json_schema"
-        assert set(payload["response_format"]["json_schema"]["schema"]["properties"]) == {
+        assert "response_format" not in payload
+        submission = next(
+            t["function"] for t in payload["tools"] if t["function"]["name"] == "submit_artifact"
+        )
+        assert set(submission["parameters"]["properties"]) == {
             "export_code",
             "explanation",
         }
         context = json.loads(payload["messages"][1]["content"])
         assert context["runtime_validation"]["previous_plan"] == plan
         candidate = {
-            "export_code": "print('corrected export')\n",
+            "export_code": corrected_code,
             "explanation": "Correct the observed export serialization only.",
         }
         if mode == "scope":
@@ -337,8 +341,29 @@ def test_runtime_repair_shares_original_allowance_and_preserves_inputs(tmp_path,
             candidate["explanation"] = "A faithful serialization repair is not possible."
         if mode == "timeout":
             raise TimeoutError("Synthetic runtime-repair transport failure")
-        reply = response(candidate)
+        reply = {
+            "choices": [
+                {
+                    "finish_reason": "tool_calls",
+                    "message": {
+                        "role": "assistant",
+                        "content": None,
+                        "tool_calls": [
+                            {
+                                "id": "export-repair",
+                                "type": "function",
+                                "function": {
+                                    "name": "submit_artifact",
+                                    "arguments": json.dumps(candidate),
+                                },
+                            }
+                        ],
+                    },
+                }
+            ],
+        }
         if mode == "empty":
+            reply = response(candidate)
             reply["choices"][0]["message"]["content"] = None
         return reply
 
@@ -355,7 +380,7 @@ def test_runtime_repair_shares_original_allowance_and_preserves_inputs(tmp_path,
         if mode == "valid":
             fixed = PreparedReference.load(effective)
             assert fixed.baseline == PreparedReference.load(original).baseline
-            assert fixed.exports == "print('corrected export')\n"
+            assert fixed.exports == corrected_code
             assert fixed.plan.model_dump(exclude={"export_code"}) == {
                 k: v for k, v in plan.items() if k != "export_code"
             }

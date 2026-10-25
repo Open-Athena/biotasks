@@ -108,10 +108,16 @@ def main():
             source_hashes[name] = hashlib.sha256(
                 source.extractfile(EXPERIMENT + name).read()
             ).hexdigest()
-    assert source_hashes == {
-        "run_autonomous.py": CONTROLLER,
-        "run_reference_setup.py": "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc",
-        "reference_setup.py": "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2",
+    assert source_hashes["run_autonomous.py"] == CONTROLLER
+    assert source_hashes["reference_setup.py"] == (
+        "f71e80976057dc58d106e179076559a76658e160920d4b7620ac2c032ee607f2"
+    )
+    # The second exact runner differs only by importing operation_inventory
+    # and adding its static source annotations to the worker's input context.
+    # Its single image creator and all session/resource/lifecycle code are equal.
+    assert source_hashes["run_reference_setup.py"] in {
+        "e2c603cb81c65263572b6b3417ecf6828500a50e978809e579123b2da3e974fc",
+        "fc83bf2ecd9f201b4bfd8c47cb07740619d09c66fc8df5a37435eb95af5b2d0b",
     }
     # This reviewed SDK path creates from an image once per recorded stage,
     # without persistent snapshot creation or native Harbor dispatch at this prefix.

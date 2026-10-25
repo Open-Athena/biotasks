@@ -215,7 +215,10 @@ async def repair_runtime_exports(
             max_requests=1,
             validate=validate,
             recover_output_limit=False,
-            output_format="json_schema",
+            # Use the existing artifact tool for executable text. A received
+            # schema-constrained JSON response can still corrupt Python escapes;
+            # retain the exact tool arguments and validate them locally instead.
+            output_format="tools",
             response_recovery=False,
         )
         save_record(root / "repair.json", repair.model_dump())

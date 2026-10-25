@@ -1,0 +1,19 @@
+{
+  "observed_at": "2026-10-25T07:26:00.837789+00:00",
+  "trigger": "Original166 response is valid JSON but decoded code has zero newline characters and is not Python.",
+  "hypothesis": "Existing native artifact-tool submission may avoid constrained text code-escaping failure; provider/decoder responsibility not established.",
+  "change": "Use the existing upstream submit_artifact tool for only the one runtime export repair; same ExportRepair local schema, frozen metadata, syntax validation, model, scope, one shared repair and two reference tests. No shell tool or new requests.",
+  "files_sha256": {
+    "src/biotasks/prompts/notebook-reference-export-repair.md": "8c999c79f9e6c421c8cc7f1c117c4348ee73682e23923088395f9dcd1a96ac94",
+    "experiments/19-repo2rlenv-notebook-pilot/run_preparation.py": "af56fdffa2d921a9b93c5dd0543cf1112c7dd02dced0eb1f1757cce67012d320",
+    "experiments/19-repo2rlenv-notebook-pilot/test_preparation.py": "41b62fa16fc834735d5219fad609b634a972ab7a7b452d64447681a99fb6a7a3"
+  },
+  "focused_preparation_tests_passed": 21,
+  "resource_guard_tests_passed": 10,
+  "multiline_quote_and_escape_preservation_tested": true,
+  "ruff_lint_format": "passed",
+  "broader_100_case_run": "Initial sandboxed run interrupted after90 passes; isolated uncertainty test also stalled in asyncio.to_thread. The same full suite plus10 resource tests passed110/110 in6.11s with normal local thread/async permissions. No production setup or transport code change was needed.",
+  "fresh_model_validation": false,
+  "manual_generated_artifact_edits": 0,
+  "full_preparation_setup_resource_tests_passed": 110
+}

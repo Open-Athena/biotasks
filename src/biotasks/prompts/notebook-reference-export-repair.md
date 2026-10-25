@@ -10,7 +10,7 @@ Use those observations rather than inventing values, shapes or representations.
 
 ## Output
 
-Return one JSON object containing only `export_code` and `explanation`.
+Call `submit_artifact` once with only `export_code` and `explanation`.
 `export_code` is the complete replacement append-only export block, not a patch
 or the original script. Explain the observed error and the serialization fix.
 The controller keeps the original endpoint inventory, paths, descriptions,
@@ -18,7 +18,7 @@ source evidence, exclusions and other plan metadata unchanged. Do not restate
 those fields in your response.
 
 If the observed problem cannot be fixed faithfully within this frozen scope,
-return `export_code: null` and explain the blocker. Do not invent replacement
+submit `export_code: null` and explain the blocker. Do not invent replacement
 results or change the endpoint selection to make a repair possible.
 
 Save the same selected scientific results to the same declared output paths.
@@ -28,6 +28,9 @@ recompute an analysis, select new results, omit required results, stage data,
 install dependencies or recreate information computed only inside a plot.
 
 This is the existing single repair attempt, not another creation or validation
-campaign. There are no tools or runtime execution here. The execution worker
-must retest the replacement within its remaining allowance; successful JSON or
-compilation is not evidence that the scientific reference ran successfully.
+campaign. The artifact submission tool only records and validates your response;
+you have no shell, data access or runtime execution here. Preserve newlines and
+quoted strings in the decoded `export_code`; do not flatten Python into prose.
+The execution worker must retest the replacement within its remaining allowance;
+a valid submission or compilation is not evidence that the scientific reference
+ran successfully.
