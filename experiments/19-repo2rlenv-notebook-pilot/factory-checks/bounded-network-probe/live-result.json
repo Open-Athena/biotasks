@@ -1,0 +1,38 @@
+{
+  "cases": [
+    {
+      "name": "positive_then_offline_controls",
+      "passed": true,
+      "provider_readback_and_tcp_probe": true,
+      "same_targets": [
+        [
+          "1.1.1.1",
+          443
+        ],
+        [
+          "example.com",
+          443
+        ]
+      ]
+    },
+    {
+      "child_killed_and_reaped": true,
+      "name": "stalled_resolver",
+      "passed": true,
+      "synthetic_failure": true
+    },
+    {
+      "name": "invalid_probe_blocks_execution",
+      "passed": true,
+      "synthetic_failure": true,
+      "uncertain_state_retained": true
+    }
+  ],
+  "cleanup_verified": true,
+  "finished": 1792903992.0377278,
+  "new_model_calls": 0,
+  "scientific_computation": false,
+  "started": 1792903977.2380257,
+  "status": "compatibility_observed",
+  "synthetic_failure_injection": null
+}
