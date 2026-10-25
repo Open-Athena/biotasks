@@ -4613,3 +4613,11 @@ The unchanged unused-stage auditor verifies a terminal infrastructure failure, o
 ### 2026-10-25 — current converter across all ten original sources
 
 All ten hash-pinned original notebook inputs pass deterministic repeat conversion and ordered-code equivalence. The0.64second local metadata/source check executed no scientific code and created no models or resources. Initial arbitrary-ID filename reporting failure and partial receipts remain preserved. This strengthens source handling evidence only; it does not replace current-version reference/scientific runs. See panel-rounds/053.
+
+### 2026-10-25 — final reviews reject159/160; cross-domain161admitted
+
+159rejected an underspecified public tie/direction convention despite25passing controls after its one comparison repair.160retained five endpoints and passed20controls, but the general final-output/installed-source hook exposed the missed answer fixture; review marked exposure and the grading repair correctly declined an environment change outside its role. No source notebook was marked broken, no task was manually fixed, no native solver was launched and no new release was published. Complete original science/root archives and fresh five/four-owner cleanup are verified. See rounds048/050.
+
+The first161admission correctly deferred because160had just become terminal without a cleanup proof. After verification/publication, typed admission found no other live hosts and submitted the already-funded original PyHMMER161. All213runtime identities match160; original source/metadata/notices match134. Source-only inputs carry no earlier task, answer or diagnosis. Full5USDholds for159/160remain, with aggregate197USDheld/3USDfree within200authorized. See round052.
+
+Latest selected ten-source outcomes are one published, four qualification holds and five generated rejections. Earlier qualified releases remain preserved. Current-version ten-source intake/conversion success is not a scientific success rate. Reliable autonomous admission across the requested diversity remains incomplete.
