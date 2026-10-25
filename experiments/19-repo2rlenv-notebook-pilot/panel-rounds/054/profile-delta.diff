@@ -1,0 +1,61 @@
+--- strict-completed-profile
++++ handled-timeout-resource-profile
+@@ -1,4 +1,4 @@
+-"""Audit complete, serial seven-stage runs against a conservative resource bound.
++"""Audit complete serial runs, including handled solver timeouts, for resource cost.
+ 
+ This is post-run exposure accounting, not a provider invoice or a change to the
+ original execution ceilings. No model, scientific or provider calls occur here.
+@@ -14,6 +14,8 @@
+ from datetime import UTC, datetime
+ from decimal import Decimal
+ from pathlib import Path
++
++from native_resource_record import verify_native_resource_record
+ 
+ parser = argparse.ArgumentParser(description=__doc__)
+ parser.add_argument("numbers", type=int, nargs="+")
+@@ -146,10 +148,21 @@
+         and defaults["snapshot_template_name"].value is None
+     )
+     native_intervals = []
++    native_exceptions = {}
+     for agent in ["oracle", "nop", "terminus-2"]:
+         prefix = f"native/{agent}"
+         metadata = original(prefix + "/trial.json")
+-        assert metadata["state"] == "completed" and metadata["exception_type"] is None
++        result_names = [
++            name
++            for name, row in manifest.items()
++            if name.startswith(prefix + "/")
++            and name.endswith("/result.json")
++            and row["sha256"] == metadata["result_sha256"]
++        ]
++        assert len(result_names) == 1
++        native_exceptions[agent] = verify_native_resource_record(
++            agent, metadata, original(result_names[0])
++        )
+         assert metadata["resource_overrides"] == {"cpus": 4, "memory_mb": 8192, "storage_mb": 10240}
+         job_name = config["campaign"] + "-native-" + agent
+         native_config = original(prefix + "/" + job_name + "/config.json")
+@@ -191,6 +204,8 @@
+             "checked_originals": checked,
+             "actual_serial_pipeline_seconds": str(pipeline["finished"] - pipeline["started"]),
+             "native_intervals": native_intervals,
++            "native_exception_types": native_exceptions,
++            "exceptions_do_not_change_scientific_outcomes": True,
+             "original_and_fresh_seven_owner_cleanup_verified": True,
+             "locked_harbor_wheel_sha256": wheel_hash,
+             "locked_daytona_backend_sha256": hashlib.sha256(backend).hexdigest(),
+@@ -233,6 +248,11 @@
+     "actual_invoice_usd": None,
+     "free_credits_assumed": False,
+     "original_limits_or_scientific_outcomes_changed": False,
++    "base_strict_auditor_sha256": "036241de95a1d148af94020839568966c80bb14bba7202c36d73cbc4324cb772",
++    "native_resource_record_validator_sha256": hashlib.sha256(
++        Path(__file__).with_name("native_resource_record.py").read_bytes()
++    ).hexdigest(),
++    "profile_difference": "Allow only a handled600secondsolverAgentTimeoutError with originalresultverification, completedwrapper, returncode0 and retries0; all original resource/interval/archive/cleanup/backend constraints retained.",
+     "new_resources_or_models": 0,
+ }
+ args.proof.parent.mkdir(parents=True, exist_ok=True)
