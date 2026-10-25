@@ -9,6 +9,7 @@ from types import SimpleNamespace
 
 import pytest
 from daytona._async.process import AsyncProcess
+from daytona.common.errors import DaytonaNotFoundError
 from daytona_session import session_command
 from daytona_toolbox_api_client_async.models.command import Command
 from repo2rlenv.execution.base import RemoteCommandError
@@ -65,6 +66,111 @@ class Process:
         self.events.append("delete")
         if self.fail == "delete":
             raise ConnectionError("cleanup response lost")
+
+
+class CreationLoss(Process):
+    def __init__(
+        self,
+        *,
+        absence=False,
+        repeated_loss=False,
+        lookup_failure=False,
+        wrong_identity=False,
+        existing_commands=False,
+    ):
+        super().__init__(fast=True)
+        self.creations, self.lookups = 0, 0
+        self.absence, self.repeated_loss = absence, repeated_loss
+        self.lookup_failure, self.wrong_identity = lookup_failure, wrong_identity
+        self.existing_commands = existing_commands
+
+    async def create_session(self, session, **kwargs):
+        self.creations += 1
+        self.events.append("create")
+        if self.creations == 1 or self.repeated_loss:
+            raise ConnectionError("creation acknowledgement lost")
+
+    async def get_session(self, session, **kwargs):
+        self.lookups += 1
+        self.events.append("lookup")
+        assert 0 < kwargs["request_timeout"] <= 30
+        if self.lookup_failure:
+            raise ConnectionError("lookup outcome unknown")
+        if self.absence:
+            raise DaytonaNotFoundError("No session")
+        return SimpleNamespace(
+            session_id="different" if self.wrong_identity else session,
+            commands=["unexpected command"] if self.existing_commands else [],
+        )
+
+
+@pytest.mark.parametrize("absence", [False, True])
+def test_creation_loss_is_reconciled_before_the_only_command_submission(tmp_path, absence):
+    process = CreationLoss(absence=absence)
+    result = asyncio.run(session_command(process, ["original"], timeout=10, directory=tmp_path))
+    assert result.returncode == 0
+    assert process.creations == (2 if absence else 1) and process.lookups == 1
+    assert len(process.submissions) == 1
+    receipt = json.loads((tmp_path / "session-transport.json").read_text())
+    assert receipt["submission_attempts"] == 1 and not receipt["command_reexecuted"]
+    assert receipt["creation_recovery"] == (
+        "created_after_confirmed_absence" if absence else "existing_empty_session"
+    )
+    assert receipt["creation_reconciliation"][0]["state"] == (
+        "confirmed_absent" if absence else "same_empty_session_verified"
+    )
+
+
+@pytest.mark.parametrize(
+    "mode", ["lookup_failure", "wrong_identity", "existing_commands", "repeated_loss"]
+)
+def test_unresolved_creation_or_nonempty_session_never_dispatches_a_command(tmp_path, mode):
+    kwargs = {mode: True}
+    if mode == "repeated_loss":
+        kwargs["absence"] = True
+    process = CreationLoss(**kwargs)
+    with pytest.raises(
+        ConnectionError if mode in {"lookup_failure", "repeated_loss"} else ValueError
+    ):
+        asyncio.run(session_command(process, ["original"], timeout=10, directory=tmp_path))
+    assert process.creations == (2 if mode == "repeated_loss" else 1)
+    assert process.submissions == [] and "delete" not in process.events
+    receipt = json.loads((tmp_path / "session-transport.json").read_text())
+    assert receipt["submission_attempts"] == 0 and receipt["session_cleanup"] == "owner_required"
+
+
+def test_recovered_creation_does_not_retry_a_lost_execute_response(tmp_path):
+    process = CreationLoss()
+    process.fail = "submit"
+    with pytest.raises(ConnectionError, match="submit response lost"):
+        asyncio.run(session_command(process, ["original"], timeout=10, directory=tmp_path))
+    assert process.creations == 1 and process.lookups == 1
+    assert len(process.submissions) == 1
+
+
+def test_creation_recovery_keeps_the_original_deadline(tmp_path, monkeypatch):
+    import daytona_session
+
+    clock = [0]
+    monkeypatch.setattr(
+        daytona_session,
+        "time",
+        SimpleNamespace(
+            monotonic=lambda: clock[0],
+            time=time.time,
+        ),
+    )
+
+    class ExpiredCreation(CreationLoss):
+        async def get_session(self, session, **kwargs):
+            result = await super().get_session(session, **kwargs)
+            clock[0] = 11
+            return result
+
+    process = ExpiredCreation()
+    with pytest.raises(TimeoutError, match="original allowance"):
+        asyncio.run(session_command(process, ["original"], timeout=10, directory=tmp_path))
+    assert process.creations == 1 and process.lookups == 1 and not process.submissions
 
 
 @pytest.mark.parametrize("fast", [False, True])

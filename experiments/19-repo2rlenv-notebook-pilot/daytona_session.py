@@ -15,6 +15,7 @@ from contextlib import asynccontextmanager
 from daytona import AsyncDaytona, SessionExecuteRequest
 from repo2rlenv.execution.base import CommandResult
 from repo2rlenv.execution.lifecycle import save_record
+from repo2rlenv.execution.read_retry import transient_connection_error
 
 
 async def session_command(process, argv, *, timeout, directory):
@@ -32,6 +33,7 @@ async def session_command(process, argv, *, timeout, directory):
         "timeout_seconds": timeout,
         "command_sha256": hashlib.sha256(command.encode()).hexdigest(),
         "submission_attempts": 0,
+        "creation_attempts": 0,
         "command_reexecuted": False,
         "started": time.time(),
     }
@@ -73,7 +75,42 @@ async def session_command(process, argv, *, timeout, directory):
 
     completed = False
     try:
-        await rpc(process.create_session, session, request_timeout=min(30, remaining()))
+        for creation in range(2):
+            record["creation_attempts"] += 1
+            save_record(path, record)
+            try:
+                await rpc(process.create_session, session, request_timeout=min(30, remaining()))
+                if creation:
+                    record["creation_recovery"] = "created_after_confirmed_absence"
+                break
+            except Exception as error:
+                # No execute request has been made. Resolve this same session;
+                # never turn an uncertain command into a second submission.
+                if not transient_connection_error(error) or not inspect.iscoroutinefunction(
+                    getattr(process, "get_session", None)
+                ):
+                    raise
+                observation = {"attempt": creation + 1, "error_type": type(error).__name__}
+                record.setdefault("creation_reconciliation", []).append(observation)
+                save_record(path, record)
+                try:
+                    existing = await rpc(
+                        process.get_session, session, request_timeout=min(30, remaining())
+                    )
+                except Exception as lookup_error:
+                    observation["lookup_error_type"] = type(lookup_error).__name__
+                    save_record(path, record)
+                    if type(lookup_error).__name__ == "DaytonaNotFoundError" and creation == 0:
+                        observation["state"] = "confirmed_absent"
+                        save_record(path, record)
+                        continue
+                    raise error from None
+                if existing.session_id != session or existing.commands != []:
+                    raise ValueError("Creation recovery requires the same empty session") from None
+                observation["state"] = "same_empty_session_verified"
+                record["creation_recovery"] = "existing_empty_session"
+                save_record(path, record)
+                break
         # The installed SDK adds5seconds to the execute call's HTTP timeout.
         # Keep that inside this existing transport allowance, not extra runtime.
         submission_timeout = min(30, int(remaining()) - 5)

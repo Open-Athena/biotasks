@@ -4589,3 +4589,7 @@ Freeze158 from unchanged156 source assets and159 from unchanged157 source assets
 ## 2026-10-25 — ten-source common-policy input check
 
 Verify all ten original notebooks against their existing seed and payload identities. All execution policies equal active158/159 after excluding campaign names and source-path/notices slots. Seed records contain source metadata, not authored task bodies. This prepares a coherent ten-domain comparison without changing notebooks or supplying scientific design. Eight remaining cases are not funded or launched; no current-version execution result is claimed. Exact identities, the reproducible metadata check and source links are in panel-rounds/049.
+
+## 2026-10-25 — preserve158 pre-command failure; bounded session recovery
+
+158completed all five endpoints but grading stopped on a session-creation connection reset. The verified original receipt has zero command submissions; no new asset-review hook or solver ran. All1,055science files and53host files are independently verified; original/fresh4owner cleanup passes. Preserve the original failure. A future general control-plane recovery reconciles only the same empty session, or permits one creation retry after definite absence. Never repeat execute submission or extend deadlines.138affected local checks pass, including33focused cases. Reserve1USDforoneofflineCPU-onlysyntheticprovidercheckwithin200authorized;191held/9unallocated.159continuesonitsunchangedfreeze. Earlier138/140/146eachretain2USDaftertheunchangedstrictresourceaudit; scientific outcomes unchanged.
