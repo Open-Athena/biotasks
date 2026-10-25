@@ -10,7 +10,7 @@
   "admission_rule": "Before enabling paid model execution, verify model pricing and maximum request cost; atomically reserve a conservative bound, then reconcile provider-reported actual usage. Stop if accrued cost plus outstanding reservations plus the proposed bound exceeds 90 USD or cost is unknown.",
   "per_repository_settings": "Preserve official bootstrap settings: Sonnet 4.6 through OpenRouter, temperature 0.2, 2048 output-token cap, 20 calls, 5 USD estimated repository stop threshold; global admission remains required.",
   "additional_reserved_cpu_hour_ceiling": 32,
-  "additional_allocated_cpu_hours": 13.678993888696034,
+  "additional_allocated_cpu_hours": 14.04153499974145,
   "new_paid_capacity_allowed": false,
   "events": [
     {
@@ -692,6 +692,36 @@
           "proof_sha256": "15a7c7ee332a158ca778c9e91342e131dc263ee7c670d729c011347dd1dca8d3"
         }
       ]
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue65-dendropy-dffaf39e26ad",
+      "maximum_allocated_cpu_hours": 6.0,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "primary",
+      "actual_allocated_cpu_hours": 0.35502555555767484
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue65-dendropy-dffaf39e26ad-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "controller": "biotasks.validation.v1",
+      "role": "stop",
+      "reason": "Verified empty/no-creation; no cleanup job"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue65-dendropy-dffaf39e26ad-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "cleanup",
+      "actual_allocated_cpu_hours": 0.007515555487738715
     }
   ],
   "outstanding_cpu_hour_reservations": 0,
