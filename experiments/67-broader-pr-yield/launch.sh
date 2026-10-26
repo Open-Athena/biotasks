@@ -15,6 +15,7 @@ if [ -z "${CW_KEY_ID:-}" ] || [ -z "${CW_KEY_SECRET:-}" ]; then
     unset biotasks67_key_id biotasks67_key_secret
 fi
 case "${1:-run}" in
+ observe) exec "$runner" "$experiment/observe.py" ;;
  preflight) exec "$runner" "$experiment/preflight.py" ;;
  run) exec "$runner" -m biotasks generate run "$experiment/inputs-private/run-001" --allow-generation --allow-validation ;;
  once) exec "$runner" -m biotasks generate run "$experiment/inputs-private/run-001" --allow-generation --allow-validation --once ;;

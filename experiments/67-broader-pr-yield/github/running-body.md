@@ -1,0 +1,7 @@
+**Running:** broader history assessment for AnnData, Biopython, DendroPy and NiBabel. Full inventory: **5,031 PRs** through October17; two known AnnData exports excluded, **5,029 queued**. Successive batches of at most100 are a transport size, not a repository cap. Original NiBabel job submitted once on reserved TRC CPUs; no completed yield or new actual cost yet.
+
+**Method:** official Repo2RLEnv core and existing model/test/grading settings, with the approved history-discovery transport connected to the current runner. One bootstrap cache and cumulative model allowance per repo.189 offline tests passed; native qualification is ongoing. [Protocol and inputs](https://github.com/Open-Athena/biotasks/tree/adb09951/experiments/67-broader-pr-yield). No task-specific repairs or extra repair-model stage.
+
+**Budget:** existing epic33 ledger only: $90 operating ceiling, strictly below $100 extra,32 allocated reserved CPUh total. Starting use $2.196603 and14.892111111 CPUh; $10 storage reserve remains. Stop when remaining budget cannot admit the next stage; report backlog. No new capacity.
+
+**Evidence:** raw historical outputs retained privately under HOME pending redistribution review; publish eligible aggregate evidence separately. Logs, exact handles and progress in comments. Agent owns subissue review; results feed the unified overall summary in #33. No completion or release claim while work is active.
