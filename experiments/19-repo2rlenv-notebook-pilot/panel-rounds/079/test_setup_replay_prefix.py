@@ -364,6 +364,84 @@ def test_current_specification_profile_rejects_changed_sources_and_other_outcome
         module.audit(p, sources, claims, sessions, clean, profile="current_specification_rejection")
 
 
+def current_setup_rejection_evidence():
+    pipeline, _, claims, sessions, clean = evidence()
+    pipeline.update(status="rejected", finished=600)
+    pipeline.pop("failed_stage")
+    pipeline["stages"] = pipeline["stages"][:2]
+    pipeline["stages"][-1]["status"] = "rejected"
+    claims.pop("replay")
+    sessions.pop("replay")
+    clean["owners"] = ["setup-raw"]
+    return pipeline, dict(module.CURRENT_SPECIFICATION_SOURCES), claims, sessions, clean
+
+
+def test_setup_rejection_prices_only_its_verified_closed_session():
+    coarse, upper, records = module.audit(
+        *current_setup_rejection_evidence(), profile="current_setup_rejection"
+    )
+    assert coarse == Decimal("0.692250")
+    assert upper == Decimal(980) * module.RATE / 3600
+    assert set(records) == {"setup-raw"}
+    assert Decimal(records["setup-raw"]["priced_seconds"]) == 980
+
+
+@pytest.mark.parametrize(
+    "defect",
+    [
+        "source",
+        "extra_claim",
+        "extra_session",
+        "later_stage",
+        "infrastructure",
+        "failed_stage",
+        "unfinished_stage",
+        "repair",
+        "resource",
+        "owner",
+        "cleanup",
+        "fresh_absence",
+        "session_cleanup",
+        "clock",
+        "outside_stage",
+    ],
+)
+def test_setup_rejection_refuses_unproven_source_topology_or_cleanup(defect):
+    pipeline, sources, claims, sessions, clean = current_setup_rejection_evidence()
+    if defect == "source":
+        sources["run_reference_setup.py"] = module.SOURCES["run_reference_setup.py"]
+    elif defect == "extra_claim":
+        claims["replay"] = copy.deepcopy(claims["setup-raw"])
+    elif defect == "extra_session":
+        sessions["replay"] = copy.deepcopy(sessions["setup-raw"])
+    elif defect == "later_stage":
+        pipeline["stages"].append({"name": "replay", "status": "completed"})
+    elif defect == "infrastructure":
+        pipeline["status"] = "infrastructure_failed"
+    elif defect == "failed_stage":
+        pipeline["failed_stage"] = "setup"
+    elif defect == "unfinished_stage":
+        pipeline["stages"][-1]["status"] = "incomplete"
+    elif defect == "repair":
+        pipeline["quality_repair"] = {"kind": "specification_review"}
+    elif defect == "resource":
+        claims["setup-raw"]["resources"]["memory"] = 4
+    elif defect == "owner":
+        clean["owners"] = ["unrelated"]
+    elif defect == "cleanup":
+        clean["original_all_cleanup_passed"] = False
+    elif defect == "fresh_absence":
+        clean["fresh_original_ids_absent"] = False
+    elif defect == "session_cleanup":
+        sessions["setup-raw"]["cleanup_verified"] = False
+    elif defect == "clock":
+        sessions["setup-raw"]["finished"] = 209
+    else:
+        sessions["setup-raw"]["finished"] = 601
+    with pytest.raises(AssertionError):
+        module.audit(pipeline, sources, claims, sessions, clean, profile="current_setup_rejection")
+
+
 @pytest.mark.parametrize(
     "defect",
     [

@@ -61,6 +61,8 @@ LEGACY_SPECIFICATION_SOURCES = {
 
 
 def profile_config(profile):
+    if profile == "current_setup_rejection":
+        return ("setup-raw",), ["preparation", "setup"], CURRENT_SPECIFICATION_SOURCES
     if profile == "setup_replay":
         return FOLDERS, ["preparation", "setup", "replay"], SOURCES
     if profile == "legacy_setup_replay":
@@ -127,6 +129,7 @@ def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay")
     folders, names, expected_sources = profile_config(profile)
     assert sources == expected_sources
     rejected = profile in {
+        "current_setup_rejection",
         "legacy_specification_rejection",
         "current_specification_rejection",
         "current_grading_rejection",
@@ -179,8 +182,14 @@ def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay")
     for claim in claims.values():
         assert claim["state"] == "created"
         assert claim["resources"] == {"cpu": 4, "memory": 8, "disk": 10}
-    stage_names = (
-        ("setup", "replay") if len(folders) == 2 else ("setup", "replay", "construction", "grading")
+    stage_names = tuple(
+        {
+            "setup-raw": "setup",
+            "replay": "replay",
+            "materialization-raw": "construction",
+            "grading": "grading",
+        }[folder]
+        for folder in folders
     )
     for folder, name in zip(folders, stage_names, strict=True):
         stage = next(s for s in stages if s["name"] == name)
@@ -211,6 +220,7 @@ def main():
     p.add_argument(
         "--profile",
         choices=[
+            "current_setup_rejection",
             "setup_replay",
             "grading",
             "workspace_grading",
@@ -277,6 +287,8 @@ def main():
         f + "/sandbox-claim.json" for f in folders
     }
     forbidden = () if a.profile == "current_native_preparation_failure" else ("native/",)
+    if a.profile == "current_setup_rejection":
+        forbidden += ("replay/",)
     if a.profile not in {
         "grading",
         "workspace_grading",
@@ -332,6 +344,7 @@ def main():
         "SUCCEEDED"
         if a.profile
         in {
+            "current_setup_rejection",
             "legacy_specification_rejection",
             "current_specification_rejection",
             "current_grading_rejection",

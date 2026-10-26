@@ -5069,3 +5069,9 @@ NeuroKit190 rejected during setup after two input-loading failures; no scientifi
 Release only4USDfor190 stages never dispatched, retain full1USDsetup allowance. Reserve full5USDfor191Scanpy on identical frozen224-file/source-only policy.198.25held/1.75available within200authorized. Fixed panel5/10terminal,0qualified;189Matchms still live. Previous qualified NeuroKit176/release/viewer retained.
 
 Scanpy191 submitted after frozen-input validation and typed pool admission, with only189 nonterminal. No scientific/runtime/prompt changes or additional repair allowances; exact224runtime retained.
+
+### 2026-10-26 — Audit completed setup-only resource lifetimes
+
+Generalized the source-bound closed-session auditor to a single setup-stage rejection, without changing scientific runtime or execution policy. It still requires exact reviewed frozen source hashes, complete original/root readback, typed terminal identity, one matching resource/owner/cleanup set, stage-contained closed clocks and absence of later artifacts.141focused offline checks pass, including15new refusal cases; Ruff passes.
+
+Both190NeuroKit and181Pyteomics match the same source family. Complete original resource lifetimes plus300seconds at EACH end bound them at0.09314/0.09976USD respectively. With the existing extra0.10USD and upward quarter-dollar rounding, retain0.25USDeach and release1.50USDtotal. Current196.75held/3.25unallocated within200authorized, still insufficient for a new full5USDcampaign; do not launch another until capacity and budget are proved. Outcomes/originals unchanged, no invoice or credit assumption.
