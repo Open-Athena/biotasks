@@ -118,7 +118,7 @@ def check_common_payload(packet, config, runtime):
 
 
 def profile_config(profile):
-    if profile == "common_grading_rejection":
+    if profile in {"common_grading_rejection", "common_grading_failure"}:
         runtime, _ = common_runtime()
         sources = {
             name: runtime["experiments/19-repo2rlenv-notebook-pilot/" + name]
@@ -179,6 +179,69 @@ def digest(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
+def archive_inventory(archive, *, snapshot=False):
+    """Read original identities without manufacturing a missing per-file seal."""
+    archive = Path(archive)
+    assert not archive.is_symlink()
+    extra = None
+    if snapshot:
+        folder = archive / "snapshot-restored"
+        transport = archive / "snapshot-transport"
+        assert not folder.is_symlink() and not transport.is_symlink()
+        raw = (folder / "snapshot-files.json").read_bytes()
+        transport_raw = (folder / "transport-export-manifest.json").read_bytes()
+        assert (transport / "export-manifest.json").read_bytes() == transport_raw
+        seal = json.loads(transport_raw)
+        assert seal["download_checked"] is True
+        rows = {row["path"]: row for row in seal["files"]}
+        assert len(seal["files"]) == 2 and set(rows) == {"snapshot-files.json", "evidence.tar.gz"}
+        assert rows["snapshot-files.json"]["bytes"] == len(raw)
+        assert rows["snapshot-files.json"]["sha256"] == digest(raw)
+        for name, row in rows.items():
+            path = transport / name
+            assert not path.is_symlink() and path.is_file()
+            assert path.stat().st_size == row["bytes"]
+            with path.open("rb") as stream:
+                assert hashlib.file_digest(stream, "sha256").hexdigest() == row["sha256"]
+        readback = json.loads((folder / "snapshot-readback.json").read_text())
+        recovery_raw = (archive / "failure-archive-readback.json").read_bytes()
+        recovery = json.loads(recovery_raw)
+        assert recovery["snapshot"] == readback
+        assert readback["format"] == "quiescent-tar-v1"
+        assert readback["all_snapshot_files_hash_size_mode_verified"] is True
+        assert readback["source_manifest_sha256"] == digest(raw)
+        assert readback["transport_manifest_sha256"] == digest(transport_raw)
+        manifest = json.loads(raw)
+        assert manifest["source_quiescent"] is True
+        assert readback["file_count"] == len(manifest["files"])
+        assert readback["bytes"] == sum(row["bytes"] for row in manifest["files"])
+        assert recovery["ordinary_autonomous_export_seal_reconstructed"] is False
+        assert recovery["originals_changed"] is False
+        extra = {
+            "recovery_receipt_sha256": digest(recovery_raw),
+            "transport_manifest_sha256": digest(transport_raw),
+            "source_claim_sha256": recovery["source_claim_sha256"],
+            "original_bootstrap_sha256": recovery["original_bootstrap_sha256"],
+        }
+    else:
+        folder = archive
+        raw = (folder / "sealed-manifest.json").read_bytes()
+        manifest = json.loads(raw)
+        readback = json.loads((folder / "independent-readback.json").read_text())
+        assert readback["all_files_download_verified"] is True
+        assert readback["source_manifest_sha256"] == digest(raw)
+    rows = {row["path"]: row for row in manifest["files"]}
+    assert len(rows) == len(manifest["files"])
+    root = json.loads((archive / "root-evidence/readback.json").read_text())
+    assert root["all_manifest_files_hash_size_mode_verified"] is True
+    if snapshot:
+        assert root["source_full_snapshot_manifest_sha256"] == digest(raw)
+        assert root["root_manifest_sha256"] == digest(
+            (archive / "root-evidence/sealed-root-manifest.json").read_bytes()
+        )
+    return folder / "files", rows, digest(raw), extra
+
+
 def retained_hold(row, prior_hold, upper, *, refine=False):
     """Refine only closed, independently re-audited SDK lifetimes.
 
@@ -237,6 +300,7 @@ def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay")
             "current_specification_rejection",
             "current_grading_rejection",
             "common_grading_rejection",
+            "common_grading_failure",
             "current_grading_failure",
             "current_native_preparation_failure",
         }
@@ -307,6 +371,11 @@ def main():
     p.add_argument("--proof", type=Path, required=True)
     p.add_argument("--apply", action="store_true")
     p.add_argument(
+        "--snapshot",
+        action="store_true",
+        help="Use the complete verified original quiescent snapshot, never a synthetic regular seal",
+    )
+    p.add_argument(
         "--refine-existing",
         action="store_true",
         help="Re-audit an already closed1USD hold; round its bound plus0.10USD upward to0.25USD",
@@ -321,6 +390,7 @@ def main():
             "workspace_grading",
             "current_grading_rejection",
             "common_grading_rejection",
+            "common_grading_failure",
             "current_grading_failure",
             "current_native_preparation_failure",
             "current_specification_rejection",
@@ -332,20 +402,17 @@ def main():
     a = p.parse_args()
     folders, _, expected_sources = profile_config(a.profile)
     assert not a.proof.exists()
+    assert not a.snapshot or a.profile == "common_grading_failure"
     archive = a.private_root / f"archives/{a.number:03}"
-    raw = (archive / "sealed-manifest.json").read_bytes()
-    manifest_hash = digest(raw)
-    manifest = {r["path"]: r for r in json.loads(raw)["files"]}
-    readback = json.loads((archive / "independent-readback.json").read_text())
-    assert readback["all_files_download_verified"]
-    assert readback["source_manifest_sha256"] == manifest_hash
-    assert json.loads((archive / "root-evidence/readback.json").read_text())[
-        "all_manifest_files_hash_size_mode_verified"
-    ]
+    content_root, manifest, manifest_hash, snapshot_evidence = archive_inventory(
+        archive, snapshot=a.snapshot
+    )
     checked = {}
 
     def original(name):
-        data = (archive / "files" / name).read_bytes()
+        path = content_root / name
+        assert not path.is_symlink()
+        data = path.read_bytes()
         assert len(data) == manifest[name]["bytes"]
         assert digest(data) == manifest[name]["sha256"]
         checked[name] = digest(data)
@@ -354,6 +421,12 @@ def main():
     launch = a.private_root / "launch"
     claim_raw = (launch / f"{a.number:03}-submission.json").read_bytes()
     submission = json.loads(claim_raw)
+    if snapshot_evidence:
+        assert snapshot_evidence["source_claim_sha256"] == digest(claim_raw)
+        assert (
+            snapshot_evidence["original_bootstrap_sha256"]
+            == submission["inputs"]["files"]["bootstrap.py"]
+        )
     payload = launch / f"{a.number:03}-payload"
     for name in ("campaign-config.json", "biotasks.tar"):
         assert digest((payload / name).read_bytes()) == submission["inputs"]["files"][name]
@@ -374,13 +447,22 @@ def main():
             for name in expected_sources
         }
     common_admission = None
-    if a.profile == "common_grading_rejection":
+    if a.profile in {"common_grading_rejection", "common_grading_failure"}:
         runtime, common_admission = common_runtime()
         with tarfile.open(payload / "biotasks.tar") as packet:
             check_common_payload(packet, config, runtime)
     clean_raw = (archive / "fresh-provider-cleanup.json").read_bytes()
     clean = json.loads(clean_raw)
-    assert clean["source_archive_manifest_sha256"] == manifest_hash
+    assert (
+        clean["source_snapshot_manifest_sha256" if a.snapshot else "source_archive_manifest_sha256"]
+        == manifest_hash
+    )
+    if a.snapshot:
+        assert clean["source_archive_format"] == "quiescent-tar-v1"
+        assert (
+            clean["source_transport_manifest_sha256"]
+            == snapshot_evidence["transport_manifest_sha256"]
+        )
     assert clean["source_configuration_sha256"] == digest(
         (payload / "campaign-config.json").read_bytes()
     )
@@ -396,6 +478,7 @@ def main():
         "workspace_grading",
         "current_grading_rejection",
         "common_grading_rejection",
+        "common_grading_failure",
         "current_grading_failure",
         "current_native_preparation_failure",
     }:
@@ -466,10 +549,11 @@ def main():
         if r["scope"].startswith(f"autonomous-panel-{a.number:03}:")
     )
     native_unused = a.profile == "current_native_preparation_failure"
-    prior_hold = len(folders) + int(native_unused)
+    whole_grading_failure = a.profile == "common_grading_failure"
+    prior_hold = len(folders) + int(native_unused or whole_grading_failure)
     previous, retained = retained_hold(row, prior_hold, upper, refine=a.refine_existing)
     if not a.refine_existing:
-        if a.profile == "current_comparison_repair_failure":
+        if a.profile == "current_comparison_repair_failure" or whole_grading_failure:
             assert previous == 5 and row["state"] == "submitted"
         else:
             assert row["state"] == (
@@ -503,6 +587,8 @@ def main():
             Path(__file__).resolve().parents[1].joinpath("070/closed_session_bound.py").read_bytes()
         ),
         source_manifest_sha256=manifest_hash,
+        original_archive_format="quiescent-tar-v1" if a.snapshot else "per-file-export-v1",
+        original_snapshot_evidence=snapshot_evidence,
         source_ledger_sha256=digest(before),
         result_ledger_sha256=digest(after),
         checked_originals=checked,

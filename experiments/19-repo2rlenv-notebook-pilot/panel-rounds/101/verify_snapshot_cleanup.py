@@ -13,6 +13,20 @@ def digest(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
+def verify_claim_ids_absent(provider, claims):
+    """Check every created ID, including owners with an empty cleanup list."""
+    assert len({claim["id"] for claim in claims}) == len(claims)
+    for claim in claims:
+        assert claim["state"] == "created"
+        try:
+            provider.get(claim["id"], request_timeout=30)
+        except Exception as error:
+            if type(error).__name__ != "DaytonaNotFoundError":
+                raise
+        else:
+            raise RuntimeError("Original claimed sandbox remains")
+
+
 def main(number):
     from daytona import Daytona, ListSandboxesQuery
 
@@ -80,12 +94,16 @@ def main(number):
         if name.endswith("/sandbox-claim.json")
     }
     assert folders == {"setup-raw", "replay", "materialization-raw", "grading"}
-    evidence, owners = [], []
+    evidence, owners, claims = [], [], []
     for folder in sorted(folders):
         stage, _ = original(folder + "/configuration.json")
         owner = stage["campaign"]
         assert owner.startswith(config["campaign"] + "-")
         owners.append(owner)
+        claim, _ = original(folder + "/sandbox-claim.json")
+        assert claim["owner"] == owner
+        assert claim["resources"] == {"cpu": 4, "memory": 8, "disk": 10}
+        claims.append(claim)
         cleanup, sha = original(folder + "/cleanup.json")
         assert cleanup["passed"] and not cleanup["remaining"]
         assert not cleanup.get("creation_uncertain")
@@ -121,15 +139,7 @@ def main(number):
     ).stdout.strip()
     os.environ["DAYTONA_API_KEY"] = token
     provider = Daytona()
-    for item in evidence:
-        for box in item["sandboxes"]:
-            try:
-                provider.get(box["id"], request_timeout=30)
-            except Exception as error:
-                if type(error).__name__ != "DaytonaNotFoundError":
-                    raise
-            else:
-                raise RuntimeError("Original sandbox remains")
+    verify_claim_ids_absent(provider, claims)
     for owner in owners:
         assert not list(
             provider.list(ListSandboxesQuery(labels={"repo2rlenv.job": owner}), request_timeout=30)
@@ -142,6 +152,10 @@ def main(number):
         "original_cleanup_evidence": evidence,
         "original_all_cleanup_passed": True,
         "fresh_original_ids_absent": True,
+        "all_original_claim_ids_checked": True,
+        "original_sandbox_claims": claims,
+        "original_recorded_deleted_sandbox_count": sum(len(row["sandboxes"]) for row in evidence),
+        "boundary": "Fresh absence checks every original claim ID and owner, even when an original cleanup list is empty. This does not assert that each original receipt recorded a deletion.",
         "source_configuration_sha256": digest(config_raw),
         "source_archive_format": "quiescent-tar-v1",
         "source_snapshot_manifest_sha256": digest(manifest_raw),
@@ -154,7 +168,13 @@ def main(number):
     observations.mkdir(exist_ok=True)
     (observations / (digest(raw) + ".json")).write_bytes(raw)
     path = archive / "fresh-provider-cleanup.json"
-    assert not path.exists(), "Keep any earlier observation separately"
+    if path.exists():
+        prior = path.read_bytes()
+        preserved = observations / (digest(prior) + ".json")
+        if preserved.exists():
+            assert preserved.read_bytes() == prior
+        else:
+            preserved.write_bytes(prior)
     path.write_bytes(raw)
     assert path.read_bytes() == raw
     print(json.dumps({"campaign": number, "owners_verified_absent": 4, "complete": True}))
