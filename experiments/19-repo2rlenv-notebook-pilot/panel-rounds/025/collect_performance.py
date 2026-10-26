@@ -9,14 +9,31 @@ from pathlib import Path
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("archive", type=Path)
 parser.add_argument("output", type=Path)
+parser.add_argument(
+    "--snapshot", action="store_true", help="Use an original verified failure snapshot"
+)
 args = parser.parse_args()
-manifest_bytes = (args.archive / "sealed-manifest.json").read_bytes()
+if args.snapshot:
+    folder = args.archive / "snapshot-restored"
+    manifest_bytes = (folder / "snapshot-files.json").read_bytes()
+    readback = json.loads((folder / "snapshot-readback.json").read_text())
+    transport = (folder / "transport-export-manifest.json").read_bytes()
+    assert readback["all_snapshot_files_hash_size_mode_verified"] is True
+    assert readback["transport_manifest_sha256"] == hashlib.sha256(transport).hexdigest()
+    assert json.loads(manifest_bytes)["source_quiescent"] is True
+    assert json.loads(transport)["download_checked"] is True
+    archive_format = "quiescent-tar-v1"
+else:
+    folder = args.archive
+    manifest_bytes = (folder / "sealed-manifest.json").read_bytes()
+    readback = json.loads((folder / "independent-readback.json").read_text())
+    assert readback["all_files_download_verified"] is True
+    archive_format = "per-file-export-v1"
 manifest_sha = hashlib.sha256(manifest_bytes).hexdigest()
-readback = json.loads((args.archive / "independent-readback.json").read_text())
-assert readback["all_files_download_verified"]
 assert readback["source_manifest_sha256"] == manifest_sha
 rows = {row["path"]: row for row in json.loads(manifest_bytes)["files"]}
-root = args.archive / "files"
+assert len(rows) == len(json.loads(manifest_bytes)["files"])
+root = folder / "files"
 
 
 def original(name):
@@ -60,6 +77,7 @@ charges = [
 ]
 author_operations = {(stage, charge["operation"]) for stage, charge in charges}
 result = {
+    "source_archive_format": archive_format,
     "source_archive_manifest_sha256": manifest_sha,
     "pipeline_status": pipeline["status"],
     "source_id": (pipeline.get("source") or {}).get("id")
