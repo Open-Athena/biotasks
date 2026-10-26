@@ -1,0 +1,57 @@
+{
+  "asset_value_assessments": [],
+  "decision": "accept_for_packaging",
+  "issues": [],
+  "question_issues": [],
+  "rationale": "Candidate d5dc97ef...: all 19 controls executed with expected outcomes. The grader's six checks implement the published addendum exactly (declared relative paths under the supplied root, verified by the failing misplaced outputs/-nested control; exact-string identities; 1e-9 absolute tolerances; 1e-8 absolute score tolerance; exact integer match counts with symmetry; canonical peak ordering; ordered-row CSV comparisons plus cross-file consistency of the ranked list against the submission's own matrices). All six wrong-solution probes fail through scientific-content rejections on well-formed files (perturbed peak intensities, swapped identity strings, perturbed matrix entries, inclusive >=5 threshold breach, misordered ranks, wrong-but-self-consistent association), and all three representation probes pass, matching the declared representation freedoms. The previously excluded plain-CosineGreedy endpoint was recovered per the endpoint-recovery policy as cosine_greedy_scores.npz and independently validated: the answer-free single-process solution reproduced all five outputs byte-identically, and the recomputed control confirmed it. Source coverage is complete; declared exclusions are genuine projections or plot-only output. Solver environment contains only the input MGF (hash-verified) and clean installed packages; asset-value hint findings list is empty. No defects found in the base question, the addendum or the executed evidence.",
+  "scientific_admission": {
+    "answer_isolation": {
+      "blockers": [],
+      "decision": "approve",
+      "evidence": [
+        "input_observations record: the solver-visible input is a single hash-verified MGF file; no reference outputs appear anywhere in the solver-visible inventory",
+        "independent_execution record with status executed_without_answer_access and exit code 0: all five outputs were produced with hashes identical to the frozen reference, demonstrating the answers are reproducible from the MGF alone",
+        "final_environment_review record: the installed matchms tree was walked with no spectral data, GNPS content or answer fixtures, a site-packages filename search returned no hits, reference artifacts live only in the author bundle rather than the solver environment, and the exclusions list is empty because no exclusions were needed",
+        "asset_value_hints record: the findings list is empty after scanning all priority installed python-source literal candidates against hash-verified numeric cells of the two reference CSV outputs with no magnitude matches; the CSV identities derive from the supplied MGF rather than any fixture"
+      ],
+      "output_paths": [
+        "best_matches_spectrum97.csv",
+        "cosine_greedy_scores.npz",
+        "modified_cosine_scores.npz",
+        "processed_spectra.json",
+        "spectrum_metadata.csv"
+      ],
+      "rationale": "The solver environment contains only the original MGF and the installed packages; no reference answer is staged for the solver. The independent execution reproduced all five outputs byte-identically from the MGF alone, and the environment inspection found no installed fixture bearing the answers. The grader reads only the reference and submission directories for the declared paths and consumes no input file itself, so no solver-controlled copy of any input can affect grading. Reference data inspected during this review stayed inside the hash-verified catalog boundary, and later harbor isolation and oracle stages remain separate validations."
+    },
+    "comparisons": [
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Controls record reference control: all six checks passed covering files_present, processed_spectra_library, both matrix archives, spectrum_metadata_table and ranked_matches_spectrum97 (1267 x 1267 matrices, 1267 metadata rows, 10 ranked rows, scores within 1e-08 absolute and match counts exact)",
+          "independent_execution record: a single-process solution running the full task from the MGF only produced all five outputs with byte-identical hashes to the frozen reference, covering the recovered cosine_greedy_scores.npz endpoint with fresh execution without answer access",
+          "grader source: check_processed_spectra enforces spectrum count, field-set equality, exact-string metadata, canonical peak ordering with 1e-9 absolute peak comparison and exact peak counts; check_matrices enforces shape, dtype, finiteness, symmetry, 1e-8 score tolerance and exact match counts; check_best_matches cross-checks the ranked list against the submission row-97 matrices and metadata table so alignment holds across dependent outputs",
+          "wrong-solution probes failed on scientific content rather than parsing: intensity scaling rejected on peak values, identity swap rejected on exact strings, matrix perturbations rejected on score entries and the inclusive match threshold, rank swap rejected on ordering, and the self-consistent association rejected on identity mismatch against the reference"
+        ],
+        "output_paths": [
+          "best_matches_spectrum97.csv",
+          "cosine_greedy_scores.npz",
+          "modified_cosine_scores.npz",
+          "processed_spectra.json",
+          "spectrum_metadata.csv"
+        ],
+        "rationale": "Each final output is compared to the frozen reference under the publicly disclosed contract: values within small absolute tolerances, exact string identities, exact integer match counts, symmetry and dtype constraints, and ordered row comparisons plus cross-file consistency between the ranked list, the row-97 matrices and the submitted metadata table. Consequential wrong values fail through scientific-content rejections rather than crashes, and valid-value acceptance is established both by the same-stack controls and by the independently executed solution reproducing every output from the MGF alone."
+      }
+    ]
+  },
+  "source_coverage": {
+    "decision": "approve",
+    "omitted_scientific_endpoints": [],
+    "rationale": "The five graded outputs cover all terminal scientific results of the converted source: metadata pipeline (call-83..91) projects into spectrum_metadata.csv; peak-processing pipeline (call-107..109) is exported as processed_spectra.json; ModifiedCosine all-pairs matrices (call-205..213) are modified_cosine_scores.npz; the final ranked list for spectrum 97 is best_matches_spectrum97.csv; and the plain CosineGreedy matrices (call-159..167), excluded at preparation time under a now-invalid variable-lifetime rationale, were recovered as cosine_greedy_scores.npz under the endpoint-recovery policy via faithful recomputation of unchanged source calls on the same input and state, with separate provenance and fresh validation (recomputed control plus byte-identical independent execution without answer access). Remaining exclusions are legitimate: spectrums[5]/[11] ranked lists are deterministic one-row projections of the retained matrices; RDKit images and peaks-per-spectrum histograms are plot-only. All eligible source branches have a retained counterpart.",
+    "remaining_validation": [
+      "Later harbor packaging/oracle and native isolation stages must repeat environment and oracle checks before release."
+    ],
+    "scientific_scope_changes": [],
+    "unsupported_evidence_claims": []
+  }
+}

@@ -1,0 +1,798 @@
+{
+  "source_sha256": "0524c9db731ca258d71e7af8fe0846312643b8ff1f02ce833162a6be4c5d6db0",
+  "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+  "operations": [
+    {
+      "id": "call-36-12",
+      "line": 36,
+      "column": 12,
+      "end_line": 36,
+      "end_column": 62,
+      "function": "os.path.join",
+      "source": "os.path.join(os.path.dirname(os.getcwd()), \"data\")"
+    },
+    {
+      "id": "call-36-25",
+      "line": 36,
+      "column": 25,
+      "end_line": 36,
+      "end_column": 53,
+      "function": "os.path.dirname",
+      "source": "os.path.dirname(os.getcwd())"
+    },
+    {
+      "id": "call-36-41",
+      "line": 36,
+      "column": 41,
+      "end_line": 36,
+      "end_column": 52,
+      "function": "os.getcwd",
+      "source": "os.getcwd()"
+    },
+    {
+      "id": "call-37-11",
+      "line": 37,
+      "column": 11,
+      "end_line": 37,
+      "end_column": 73,
+      "function": "os.path.join",
+      "source": "os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf\")"
+    },
+    {
+      "id": "call-38-12",
+      "line": 38,
+      "column": 12,
+      "end_line": 38,
+      "end_column": 41,
+      "function": "list",
+      "source": "list(load_from_mgf(file_mgf))"
+    },
+    {
+      "id": "call-38-17",
+      "line": 38,
+      "column": 17,
+      "end_line": 38,
+      "end_column": 40,
+      "function": "load_from_mgf",
+      "source": "load_from_mgf(file_mgf)"
+    },
+    {
+      "id": "call-40-0",
+      "line": 40,
+      "column": 0,
+      "end_line": 40,
+      "end_column": 55,
+      "function": "print",
+      "source": "print(f\"{len(spectrums)} spectrums found and imported\")"
+    },
+    {
+      "id": "call-40-9",
+      "line": 40,
+      "column": 9,
+      "end_line": 40,
+      "end_column": 23,
+      "function": "len",
+      "source": "len(spectrums)"
+    },
+    {
+      "id": "call-46-13",
+      "line": 46,
+      "column": 13,
+      "end_line": 46,
+      "end_column": 30,
+      "function": "s.get",
+      "source": "s.get(\"inchikey\")"
+    },
+    {
+      "id": "call-47-18",
+      "line": 47,
+      "column": 18,
+      "end_line": 47,
+      "end_column": 65,
+      "function": "np.sum",
+      "source": "np.sum([1 for x in inchikeys if x is not None])"
+    },
+    {
+      "id": "call-48-0",
+      "line": 48,
+      "column": 0,
+      "end_line": 48,
+      "end_column": 60,
+      "function": "print",
+      "source": "print(f\"Found {int(found_inchikeys)} inchikeys in metadata\")"
+    },
+    {
+      "id": "call-48-15",
+      "line": 48,
+      "column": 15,
+      "end_line": 48,
+      "end_column": 35,
+      "function": "int",
+      "source": "int(found_inchikeys)"
+    },
+    {
+      "id": "call-50-9",
+      "line": 50,
+      "column": 9,
+      "end_line": 50,
+      "end_column": 23,
+      "function": "s.get",
+      "source": "s.get(\"inchi\")"
+    },
+    {
+      "id": "call-53-10",
+      "line": 53,
+      "column": 10,
+      "end_line": 53,
+      "end_column": 25,
+      "function": "s.get",
+      "source": "s.get(\"smiles\")"
+    },
+    {
+      "id": "call-56-20",
+      "line": 56,
+      "column": 20,
+      "end_line": 56,
+      "end_column": 35,
+      "function": "len",
+      "source": "len(s.peaks.mz)"
+    },
+    {
+      "id": "call-59-0",
+      "line": 59,
+      "column": 0,
+      "end_line": 59,
+      "end_column": 34,
+      "function": "plt.figure",
+      "source": "plt.figure(figsize=(5,4), dpi=150)"
+    },
+    {
+      "id": "call-60-0",
+      "line": 60,
+      "column": 0,
+      "end_line": 60,
+      "end_column": 49,
+      "function": "plt.hist",
+      "source": "plt.hist(numbers_of_peaks, 20, edgecolor=\"white\")"
+    },
+    {
+      "id": "call-61-0",
+      "line": 61,
+      "column": 0,
+      "end_line": 61,
+      "end_column": 50,
+      "function": "plt.title",
+      "source": "plt.title(\"Peaks per spectrum (before filtering)\")"
+    },
+    {
+      "id": "call-62-0",
+      "line": 62,
+      "column": 0,
+      "end_line": 62,
+      "end_column": 41,
+      "function": "plt.xlabel",
+      "source": "plt.xlabel(\"Number of peaks in spectrum\")"
+    },
+    {
+      "id": "call-63-0",
+      "line": 63,
+      "column": 0,
+      "end_line": 63,
+      "end_column": 31,
+      "function": "plt.ylabel",
+      "source": "plt.ylabel(\"Number of spectra\")"
+    },
+    {
+      "id": "call-83-15",
+      "line": 83,
+      "column": 15,
+      "end_line": 83,
+      "end_column": 40,
+      "function": "default_filters",
+      "source": "default_filters(spectrum)"
+    },
+    {
+      "id": "call-84-15",
+      "line": 84,
+      "column": 15,
+      "end_line": 84,
+      "end_column": 53,
+      "function": "repair_inchi_inchikey_smiles",
+      "source": "repair_inchi_inchikey_smiles(spectrum)"
+    },
+    {
+      "id": "call-85-15",
+      "line": 85,
+      "column": 15,
+      "end_line": 85,
+      "end_column": 49,
+      "function": "derive_inchi_from_smiles",
+      "source": "derive_inchi_from_smiles(spectrum)"
+    },
+    {
+      "id": "call-86-15",
+      "line": 86,
+      "column": 15,
+      "end_line": 86,
+      "end_column": 49,
+      "function": "derive_smiles_from_inchi",
+      "source": "derive_smiles_from_inchi(spectrum)"
+    },
+    {
+      "id": "call-87-15",
+      "line": 87,
+      "column": 15,
+      "end_line": 87,
+      "end_column": 51,
+      "function": "derive_inchikey_from_inchi",
+      "source": "derive_inchikey_from_inchi(spectrum)"
+    },
+    {
+      "id": "call-88-15",
+      "line": 88,
+      "column": 15,
+      "end_line": 88,
+      "end_column": 51,
+      "function": "harmonize_undefined_smiles",
+      "source": "harmonize_undefined_smiles(spectrum)"
+    },
+    {
+      "id": "call-89-15",
+      "line": 89,
+      "column": 15,
+      "end_line": 89,
+      "end_column": 50,
+      "function": "harmonize_undefined_inchi",
+      "source": "harmonize_undefined_inchi(spectrum)"
+    },
+    {
+      "id": "call-90-15",
+      "line": 90,
+      "column": 15,
+      "end_line": 90,
+      "end_column": 53,
+      "function": "harmonize_undefined_inchikey",
+      "source": "harmonize_undefined_inchikey(spectrum)"
+    },
+    {
+      "id": "call-91-15",
+      "line": 91,
+      "column": 15,
+      "end_line": 91,
+      "end_column": 41,
+      "function": "add_precursor_mz",
+      "source": "add_precursor_mz(spectrum)"
+    },
+    {
+      "id": "call-107-15",
+      "line": 107,
+      "column": 15,
+      "end_line": 107,
+      "end_column": 46,
+      "function": "normalize_intensities",
+      "source": "normalize_intensities(spectrum)"
+    },
+    {
+      "id": "call-108-15",
+      "line": 108,
+      "column": 15,
+      "end_line": 108,
+      "end_column": 65,
+      "function": "select_by_intensity",
+      "source": "select_by_intensity(spectrum, intensity_from=0.01)"
+    },
+    {
+      "id": "call-109-15",
+      "line": 109,
+      "column": 15,
+      "end_line": 109,
+      "end_column": 61,
+      "function": "select_by_mz",
+      "source": "select_by_mz(spectrum, mz_from=10, mz_to=1000)"
+    },
+    {
+      "id": "call-118-13",
+      "line": 118,
+      "column": 13,
+      "end_line": 118,
+      "end_column": 35,
+      "function": "metadata_processing",
+      "source": "metadata_processing(s)"
+    },
+    {
+      "id": "call-119-13",
+      "line": 119,
+      "column": 13,
+      "end_line": 119,
+      "end_column": 31,
+      "function": "peak_processing",
+      "source": "peak_processing(s)"
+    },
+    {
+      "id": "call-121-13",
+      "line": 121,
+      "column": 13,
+      "end_line": 121,
+      "end_column": 30,
+      "function": "s.get",
+      "source": "s.get(\"inchikey\")"
+    },
+    {
+      "id": "call-124-20",
+      "line": 124,
+      "column": 20,
+      "end_line": 124,
+      "end_column": 35,
+      "function": "len",
+      "source": "len(s.peaks.mz)"
+    },
+    {
+      "id": "call-127-0",
+      "line": 127,
+      "column": 0,
+      "end_line": 127,
+      "end_column": 34,
+      "function": "plt.figure",
+      "source": "plt.figure(figsize=(5,4), dpi=150)"
+    },
+    {
+      "id": "call-128-0",
+      "line": 128,
+      "column": 0,
+      "end_line": 128,
+      "end_column": 49,
+      "function": "plt.hist",
+      "source": "plt.hist(numbers_of_peaks, 20, edgecolor=\"white\")"
+    },
+    {
+      "id": "call-129-0",
+      "line": 129,
+      "column": 0,
+      "end_line": 129,
+      "end_column": 49,
+      "function": "plt.title",
+      "source": "plt.title(\"Peaks per spectrum (after filtering)\")"
+    },
+    {
+      "id": "call-130-0",
+      "line": 130,
+      "column": 0,
+      "end_line": 130,
+      "end_column": 41,
+      "function": "plt.xlabel",
+      "source": "plt.xlabel(\"Number of peaks in spectrum\")"
+    },
+    {
+      "id": "call-131-0",
+      "line": 131,
+      "column": 0,
+      "end_line": 131,
+      "end_column": 31,
+      "function": "plt.ylabel",
+      "source": "plt.ylabel(\"Number of spectra\")"
+    },
+    {
+      "id": "call-142-19",
+      "line": 142,
+      "column": 19,
+      "end_line": 142,
+      "end_column": 92,
+      "function": "os.path.join",
+      "source": "os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.json\")"
+    },
+    {
+      "id": "call-143-0",
+      "line": 143,
+      "column": 0,
+      "end_line": 143,
+      "end_column": 41,
+      "function": "save_as_json",
+      "source": "save_as_json(spectrums, file_export_json)"
+    },
+    {
+      "id": "call-149-21",
+      "line": 149,
+      "column": 21,
+      "end_line": 149,
+      "end_column": 96,
+      "function": "os.path.join",
+      "source": "os.path.join(path_data, \"GNPS-NIH-NATURALPRODUCTSLIBRARY_processed.pickle\")"
+    },
+    {
+      "id": "call-150-0",
+      "line": 150,
+      "column": 0,
+      "end_line": 151,
+      "end_column": 43,
+      "function": "pickle.dump",
+      "source": "pickle.dump(spectrums, \n            open(file_export_pickle, \"wb\"))"
+    },
+    {
+      "id": "call-151-12",
+      "line": 151,
+      "column": 12,
+      "end_line": 151,
+      "end_column": 42,
+      "function": "open",
+      "source": "open(file_export_pickle, \"wb\")"
+    },
+    {
+      "id": "call-159-21",
+      "line": 159,
+      "column": 21,
+      "end_line": 159,
+      "end_column": 50,
+      "function": "CosineGreedy",
+      "source": "CosineGreedy(tolerance=0.005)"
+    },
+    {
+      "id": "call-160-9",
+      "line": 160,
+      "column": 9,
+      "end_line": 160,
+      "end_column": 86,
+      "function": "calculate_scores",
+      "source": "calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)"
+    },
+    {
+      "id": "call-164-15",
+      "line": 164,
+      "column": 15,
+      "end_line": 164,
+      "end_column": 39,
+      "function": "scores.scores.to_array",
+      "source": "scores.scores.to_array()"
+    },
+    {
+      "id": "call-167-15",
+      "line": 167,
+      "column": 15,
+      "end_line": 167,
+      "end_column": 39,
+      "function": "scores.scores.to_array",
+      "source": "scores.scores.to_array()"
+    },
+    {
+      "id": "call-172-15",
+      "line": 172,
+      "column": 15,
+      "end_line": 172,
+      "end_column": 89,
+      "function": "scores.scores_by_query",
+      "source": "scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)"
+    },
+    {
+      "id": "call-173-0",
+      "line": 173,
+      "column": 0,
+      "end_line": 173,
+      "end_column": 35,
+      "function": "print",
+      "source": "print([x[1] for x in best_matches])"
+    },
+    {
+      "id": "call-175-1",
+      "line": 175,
+      "column": 1,
+      "end_line": 175,
+      "end_column": 19,
+      "function": "x[0].get",
+      "source": "x[0].get(\"smiles\")"
+    },
+    {
+      "id": "call-180-17",
+      "line": 180,
+      "column": 17,
+      "end_line": 180,
+      "end_column": 70,
+      "function": "enumerate",
+      "source": "enumerate([x[0].get(\"smiles\") for x in best_matches])"
+    },
+    {
+      "id": "call-180-28",
+      "line": 180,
+      "column": 28,
+      "end_line": 180,
+      "end_column": 46,
+      "function": "x[0].get",
+      "source": "x[0].get(\"smiles\")"
+    },
+    {
+      "id": "call-181-8",
+      "line": 181,
+      "column": 8,
+      "end_line": 181,
+      "end_column": 34,
+      "function": "Chem.MolFromSmiles",
+      "source": "Chem.MolFromSmiles(smiles)"
+    },
+    {
+      "id": "call-182-4",
+      "line": 182,
+      "column": 4,
+      "end_line": 182,
+      "end_column": 42,
+      "function": "Draw.MolToFile",
+      "source": "Draw.MolToFile(m, f\"compound_{i}.png\")"
+    },
+    {
+      "id": "call-187-17",
+      "line": 187,
+      "column": 17,
+      "end_line": 187,
+      "end_column": 91,
+      "function": "scores.scores_by_query",
+      "source": "scores.scores_by_query(spectrums[5], name=\"CosineGreedy_score\", sort=True)"
+    },
+    {
+      "id": "call-205-21",
+      "line": 205,
+      "column": 21,
+      "end_line": 205,
+      "end_column": 52,
+      "function": "ModifiedCosine",
+      "source": "ModifiedCosine(tolerance=0.005)"
+    },
+    {
+      "id": "call-206-9",
+      "line": 206,
+      "column": 9,
+      "end_line": 206,
+      "end_column": 86,
+      "function": "calculate_scores",
+      "source": "calculate_scores(spectrums, spectrums, similarity_measure, is_symmetric=True)"
+    },
+    {
+      "id": "call-209-17",
+      "line": 209,
+      "column": 17,
+      "end_line": 209,
+      "end_column": 93,
+      "function": "scores.scores_by_query",
+      "source": "scores.scores_by_query(spectrums[5], name=\"ModifiedCosine_score\", sort=True)"
+    },
+    {
+      "id": "call-213-15",
+      "line": 213,
+      "column": 15,
+      "end_line": 213,
+      "end_column": 39,
+      "function": "scores.scores.to_array",
+      "source": "scores.scores.to_array()"
+    },
+    {
+      "id": "call-215-0",
+      "line": 215,
+      "column": 0,
+      "end_line": 215,
+      "end_column": 34,
+      "function": "plt.figure",
+      "source": "plt.figure(figsize=(6,6), dpi=150)"
+    },
+    {
+      "id": "call-216-0",
+      "line": 216,
+      "column": 0,
+      "end_line": 216,
+      "end_column": 74,
+      "function": "plt.imshow",
+      "source": "plt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"], cmap=\"viridis\")"
+    },
+    {
+      "id": "call-217-0",
+      "line": 217,
+      "column": 0,
+      "end_line": 217,
+      "end_column": 24,
+      "function": "plt.colorbar",
+      "source": "plt.colorbar(shrink=0.7)"
+    },
+    {
+      "id": "call-218-0",
+      "line": 218,
+      "column": 0,
+      "end_line": 218,
+      "end_column": 49,
+      "function": "plt.title",
+      "source": "plt.title(\"Modified Cosine spectra similarities\")"
+    },
+    {
+      "id": "call-219-0",
+      "line": 219,
+      "column": 0,
+      "end_line": 219,
+      "end_column": 26,
+      "function": "plt.xlabel",
+      "source": "plt.xlabel(\"Spectrum #ID\")"
+    },
+    {
+      "id": "call-220-0",
+      "line": 220,
+      "column": 0,
+      "end_line": 220,
+      "end_column": 26,
+      "function": "plt.ylabel",
+      "source": "plt.ylabel(\"Spectrum #ID\")"
+    },
+    {
+      "id": "call-225-0",
+      "line": 225,
+      "column": 0,
+      "end_line": 225,
+      "end_column": 34,
+      "function": "plt.figure",
+      "source": "plt.figure(figsize=(6,6), dpi=150)"
+    },
+    {
+      "id": "call-226-0",
+      "line": 226,
+      "column": 0,
+      "end_line": 226,
+      "end_column": 140,
+      "function": "plt.imshow",
+      "source": "plt.imshow(scores_array[:50, :50][\"ModifiedCosine_score\"] * (scores_array[:50, :50][\"ModifiedCosine_matches\"] >= min_match), cmap=\"viridis\")"
+    },
+    {
+      "id": "call-227-0",
+      "line": 227,
+      "column": 0,
+      "end_line": 227,
+      "end_column": 24,
+      "function": "plt.colorbar",
+      "source": "plt.colorbar(shrink=0.7)"
+    },
+    {
+      "id": "call-228-0",
+      "line": 228,
+      "column": 0,
+      "end_line": 228,
+      "end_column": 63,
+      "function": "plt.title",
+      "source": "plt.title(\"Modified Cosine spectra similarities (min_match=5)\")"
+    },
+    {
+      "id": "call-229-0",
+      "line": 229,
+      "column": 0,
+      "end_line": 229,
+      "end_column": 26,
+      "function": "plt.xlabel",
+      "source": "plt.xlabel(\"Spectrum #ID\")"
+    },
+    {
+      "id": "call-230-0",
+      "line": 230,
+      "column": 0,
+      "end_line": 230,
+      "end_column": 26,
+      "function": "plt.ylabel",
+      "source": "plt.ylabel(\"Spectrum #ID\")"
+    },
+    {
+      "id": "call-236-17",
+      "line": 236,
+      "column": 17,
+      "end_line": 236,
+      "end_column": 94,
+      "function": "scores.scores_by_query",
+      "source": "scores.scores_by_query(spectrums[11], name=\"ModifiedCosine_score\", sort=True)"
+    },
+    {
+      "id": "call-240-1",
+      "line": 240,
+      "column": 1,
+      "end_line": 240,
+      "end_column": 19,
+      "function": "x[0].get",
+      "source": "x[0].get(\"smiles\")"
+    },
+    {
+      "id": "call-247-17",
+      "line": 247,
+      "column": 17,
+      "end_line": 247,
+      "end_column": 70,
+      "function": "enumerate",
+      "source": "enumerate([x[0].get(\"smiles\") for x in best_matches])"
+    },
+    {
+      "id": "call-247-28",
+      "line": 247,
+      "column": 28,
+      "end_line": 247,
+      "end_column": 46,
+      "function": "x[0].get",
+      "source": "x[0].get(\"smiles\")"
+    },
+    {
+      "id": "call-248-8",
+      "line": 248,
+      "column": 8,
+      "end_line": 248,
+      "end_column": 34,
+      "function": "Chem.MolFromSmiles",
+      "source": "Chem.MolFromSmiles(smiles)"
+    },
+    {
+      "id": "call-249-4",
+      "line": 249,
+      "column": 4,
+      "end_line": 249,
+      "end_column": 42,
+      "function": "Draw.MolToFile",
+      "source": "Draw.MolToFile(m, f\"compound_{i}.png\")"
+    },
+    {
+      "id": "call-253-10",
+      "line": 253,
+      "column": 10,
+      "end_line": 253,
+      "end_column": 31,
+      "function": "s.get",
+      "source": "s.get(\"precursor_mz\")"
+    },
+    {
+      "id": "call-255-0",
+      "line": 255,
+      "column": 0,
+      "end_line": 255,
+      "end_column": 32,
+      "function": "np.where",
+      "source": "np.where(np.array(masses) > 600)"
+    },
+    {
+      "id": "call-255-9",
+      "line": 255,
+      "column": 9,
+      "end_line": 255,
+      "end_column": 25,
+      "function": "np.array",
+      "source": "np.array(masses)"
+    },
+    {
+      "id": "call-258-17",
+      "line": 258,
+      "column": 17,
+      "end_line": 258,
+      "end_column": 94,
+      "function": "scores.scores_by_query",
+      "source": "scores.scores_by_query(spectrums[97], name=\"ModifiedCosine_score\", sort=True)"
+    },
+    {
+      "id": "call-265-17",
+      "line": 265,
+      "column": 17,
+      "end_line": 265,
+      "end_column": 70,
+      "function": "enumerate",
+      "source": "enumerate([x[0].get(\"smiles\") for x in best_matches])"
+    },
+    {
+      "id": "call-265-28",
+      "line": 265,
+      "column": 28,
+      "end_line": 265,
+      "end_column": 46,
+      "function": "x[0].get",
+      "source": "x[0].get(\"smiles\")"
+    },
+    {
+      "id": "call-266-8",
+      "line": 266,
+      "column": 8,
+      "end_line": 266,
+      "end_column": 34,
+      "function": "Chem.MolFromSmiles",
+      "source": "Chem.MolFromSmiles(smiles)"
+    },
+    {
+      "id": "call-267-4",
+      "line": 267,
+      "column": 4,
+      "end_line": 267,
+      "end_column": 42,
+      "function": "Draw.MolToFile",
+      "source": "Draw.MolToFile(m, f\"compound_{i}.png\")"
+    }
+  ]
+}

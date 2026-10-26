@@ -1,0 +1,95 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "best_matches_spectrum97.csv",
+      "cosine_greedy_scores.npz",
+      "modified_cosine_scores.npz",
+      "processed_spectra.json",
+      "spectrum_metadata.csv"
+    ],
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "checks": [
+    {
+      "artifacts": [
+        "best_matches_spectrum97.csv",
+        "cosine_greedy_scores.npz",
+        "modified_cosine_scores.npz",
+        "processed_spectra.json",
+        "spectrum_metadata.csv"
+      ],
+      "id": "files_present",
+      "kind": "structural",
+      "public_requirement": "All five declared output files (processed_spectra.json, cosine_greedy_scores.npz, modified_cosine_scores.npz, spectrum_metadata.csv, best_matches_spectrum97.csv) must exist as non-empty files at the declared paths directly under the supplied output root, with no extra directory layer."
+    },
+    {
+      "artifacts": [
+        "processed_spectra.json"
+      ],
+      "id": "processed_spectra_library",
+      "kind": "scientific",
+      "public_requirement": "The processed spectral library must match the reference exactly in structure and scientific content: array of N spectra in spectrum-index order, each a JSON object with exactly the reference's set of metadata fields (no extra or missing fields), string identifiers compared exactly, numeric metadata equal within 1e-9 absolute, and the processed peak lists ([m/z, normalized intensity] pairs, JSON numbers) equal in count and value within 1e-9 absolute after canonical m/z-then-intensity ordering; missing, non-numeric, nonfinite or string-encoded peak values fail."
+    },
+    {
+      "artifacts": [
+        "cosine_greedy_scores.npz"
+      ],
+      "id": "cosine_greedy_matrices",
+      "kind": "scientific",
+      "public_requirement": "The .npz archive must contain exactly the arrays CosineGreedy_score (2-D floating-point) and CosineGreedy_matches (2-D integer), both N x N in spectrum-index layout, symmetric in (i,j), with finite, non-negative values. Scores must agree with the reference within 1e-8 absolute and matched-peak counts exactly."
+    },
+    {
+      "artifacts": [
+        "modified_cosine_scores.npz"
+      ],
+      "id": "modified_cosine_matrices",
+      "kind": "scientific",
+      "public_requirement": "The .npz archive must contain exactly the arrays ModifiedCosine_score (2-D floating-point) and ModifiedCosine_matches (2-D integer), both N x N in spectrum-index layout, symmetric in (i,j), with finite, non-negative values. Scores must agree with the reference within 1e-8 absolute and matched-peak counts exactly."
+    },
+    {
+      "artifacts": [
+        "spectrum_metadata.csv"
+      ],
+      "id": "spectrum_metadata_table",
+      "kind": "scientific",
+      "public_requirement": "The table must have the exact header spectrum_index,compound_name,precursor_mz,inchikey,smiles and one row per spectrum numbered 0..N-1 in spectrum-index order (no duplicates, no gaps). compound_name, inchikey and smiles are compared as exact strings (missing metadata as empty fields); precursor_mz must parse as a finite number equal to the reference within 1e-9 absolute."
+    },
+    {
+      "artifacts": [
+        "best_matches_spectrum97.csv"
+      ],
+      "id": "ranked_matches_spectrum97",
+      "kind": "scientific",
+      "public_requirement": "The table must have the exact header rank,smiles,inchikey,ModifiedCosine_score,ModifiedCosine_matches and at most 10 rows with rank running 0.. in order, scores non-increasing downward, each ModifiedCosine_matches an integer >= 5, smiles/inchikey exactly matching the reference rows, ModifiedCosine_score within 1e-8 absolute and ModifiedCosine_matches exactly equal to the reference. Each row must additionally be consistent with the submitter's own outputs: its score and match count must occur at some candidate index in row 97 of the submitted modified-cosine matrices for a spectrum whose submitted metadata table carries that row's smiles/inchikey."
+    }
+  ],
+  "output_paths": [
+    "best_matches_spectrum97.csv",
+    "cosine_greedy_scores.npz",
+    "modified_cosine_scores.npz",
+    "processed_spectra.json",
+    "spectrum_metadata.csv"
+  ],
+  "paths": {
+    "reference_outputs": "/work/reference",
+    "working_directory": "/work/probe"
+  },
+  "public_instruction": "# Process a GNPS natural-products MS/MS library and compute all-pairs spectral similarities\n\n## Input\n\n- `inputs/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf` \u2014 the GNPS NIH Natural Products Library as an MGF file (~39 MB). It contains MS/MS spectra with peak lists and per-spectrum metadata (including the precursor m/z, provided by the MGF `PEPMASS` field).\n\nLet N be the number of spectra in the file. The **spectrum index** (0-based) of each spectrum is its position in file order when the file is read sequentially; all outputs below are keyed by this index.\n\n## Objective\n\n1. **Import** all spectra from the MGF in file order.\n\n2. **Metadata processing** per spectrum, in this order (these are the matchms 0.30.0 reference-pipeline semantics; a pinned environment providing matchms 0.30.0, rdkit 2024.9.6 and numpy 2.2.6 is supplied for convenience \u2014 alternative implementations are allowed if they reproduce the same scientific result):\n   - default metadata harmonization filters;\n   - repair of inchi/inchikey/smiles entries placed in wrong fields;\n   - derive inchi from smiles;\n   - derive smiles from inchi;\n   - derive inchikey from inchi;\n   - harmonize undefined smiles;\n   - harmonize undefined inchi;\n   - harmonize undefined inchikey;\n   - add/harmonize precursor m/z (taking `precursor_mz`/`precursormz`/`pepmass` as the precursor-m/z source and making it a positive float).\n\n3. **Peak processing** per spectrum, in this order:\n   - normalize peak intensities so the maximum intensity of the spectrum equals 1 (a spectrum whose intensities are all \u2264 0 ends up with no peaks);\n   - keep only peaks whose normalized intensity is \u2265 0.01 (bound inclusive);\n   - keep only peaks with m/z between 10.0 and 1000.0 inclusive.\n\n4. **All-pairs similarity**, for both measures below, over all ordered pairs of the processed spectra (including each spectrum with itself):\n   - **Greedy cosine (no mass shift)** \u2014 peak-matching tolerance 0.005.\n   - **Greedy modified cosine** \u2014 peak-matching tolerance 0.005, additionally allowing peaks to match after applying the mass shift equal to the difference of the two spectra' precursor m/z; the zero-shift and the precursor-mass-shift candidate matchings are considered together in the greedy assignment.\n\n   For both measures, a candidate peak pair (one peak from each spectrum) matches when their m/z values differ by at most 0.005 after the applicable shift (bound inclusive). Candidate pairs are considered in decreasing order of the product of the two peaks' intensities, and each peak may be used in at most one matched pair (greedy one-to-one assignment). The score is\n\n   `score = (\u03a3 over matched pairs of I_a\u00b7I_b) / (\u2016I_a\u2016\u2082 \u00b7 \u2016I_b\u2016\u2082)`,\n\n   where `I_a`, `I_b` are the processed (normalized) intensity vectors of the two spectra and the norms are over **all** peaks of each spectrum (intensity cosine restricted to the matched peaks; no m/z weighting). The **matches** value is the number of matched peak pairs. The score is dimensionless and lies in [0, 1] up to floating-point rounding.\n\n5. **Ranked matches for spectrum index 97** (a high-precursor-mass case): take all library spectra as candidates, keep those whose modified-cosine match count with the query is \u2265 5 (inclusive), order the survivors by modified-cosine score descending, and take the first (up to) 10 entries. The query's self-comparison is an ordinary candidate.\n\n## Required outputs\n\nAll files must be written under `outputs/`.\n\n1. `outputs/processed_spectra.json` \u2014 the processed spectral library in matchms' native JSON export format (as written by matchms 0.30.0's `save_as_json`), spectra in spectrum-index order.\n\n2. `outputs/cosine_greedy_scores.npz` \u2014 an `.npz` archive (as produced by `numpy.savez`/`savez_compressed`) containing:\n   - `CosineGreedy_score`: N\u00d7N float array, entry [i, j] = greedy-cosine score between spectrum i and spectrum j;\n   - `CosineGreedy_matches`: N\u00d7N integer array of matched-peak counts, same layout.\n\n3. `outputs/modified_cosine_scores.npz` \u2014 same layout with:\n   - `ModifiedCosine_score`: N\u00d7N float array;\n   - `ModifiedCosine_matches`: N\u00d7N integer array.\n\n4. `outputs/spectrum_metadata.csv` \u2014 one row per spectrum, in spectrum-index order, with header `spectrum_index,compound_name,precursor_mz,inchikey,smiles`. Missing metadata entries are written as empty fields. This table supplies the identity (compound name, precursor m/z, inchikey, SMILES) of each spectrum index used by the matrices.\n\n5. `outputs/best_matches_spectrum97.csv` \u2014 the result of step 5, with header `rank,smiles,inchikey,ModifiedCosine_score,ModifiedCosine_matches`. `rank` is the 0-based position within this final list; `smiles`/`inchikey` are the metadata of the matched (candidate) spectrum; the score/count are the modified-cosine values against query #97.\n\nScore matrices are symmetric in (i, j); diagonal entries are each spectrum's self-comparison.\n\n## Resources and environment\n\nOffline execution; 4 CPUs, 8 GiB RAM, 600 s wall-clock limit. The all-pairs calculations involve N\u00d7N pairs per measure; the reference run of this exact analysis completes comfortably within these limits. A pinned environment (matchms 0.30.0, rdkit 2024.9.6, numpy 2.2.6 on Python 3.13) is provided; its availability is convenience, not a mandate, except that the metadata-harmonization and export-format semantics follow that reference preset.\n\nOutput representations must follow the schemas above exactly (file names, array/field names, column names, index semantics); numerical precision and comparison tolerances are handled at grading.\n\n## Acceptance rules\n\n## Acceptance rules (grading addendum)\n\nAll five declared files are read from the supplied submission root at exactly the declared relative paths (`processed_spectra.json`, `cosine_greedy_scores.npz`, `modified_cosine_scores.npz`, `spectrum_metadata.csv`, `best_matches_spectrum97.csv`); files placed in an additional nested directory (e.g. an extra `outputs/` layer) are at the wrong paths and are treated as missing. Every required file must be present and non-empty.\n\n**Identity and ordering.** The spectrum index is the 0-based file-order position; N is the spectrum count of the reference. `processed_spectra.json` must be a JSON array of N spectrum objects in spectrum-index order. `spectrum_metadata.csv` must contain exactly one row per spectrum index, numbered 0..N-1 in order (no duplicates, no gaps, no reordering \u2014 index order is part of the requested output). `best_matches_spectrum97.csv` rows are compared in rank order (rank 0, 1, ... as listed). Row order is not normalized away for CSV outputs.\n\n**processed_spectra.json.** Each spectrum entry must be a JSON object whose set of metadata field names equals that of the reference entry at the same index (no extra and no missing fields). String-valued fields (e.g. compound_name, inchikey, smiles, and other harmonized metadata strings) are compared as exact strings; missing metadata is an empty string, not `null` or a placeholder. `charge` is an integer-valued field: an integer or a JSON number with the same value is accepted; booleans and strings are not. `peaks_json` must be a list of `[m/z, intensity]` pairs given as JSON numbers (strings are rejected) with all values finite; within each spectrum the peak lists are compared after canonical m/z-then-intensity ordering (so a different within-spectrum ordering is accepted), with peak counts exactly equal and m/z and normalized-intensity values equal within 1e-9 absolute.\n\n**npz archives.** Each archive must contain exactly the two named arrays and no other keys (`CosineGreedy_score` + `CosineGreedy_matches`; `ModifiedCosine_score` + `ModifiedCosine_matches`). Scores must be a 2-D floating-point array and matches a 2-D integer array, both shaped N x N in spectrum-index layout, symmetric in (i, j). Nonfinite (NaN/inf) scores and negative match counts are rejected. Scores are compared to the reference within 1e-8 absolute (pure absolute tolerance; no relative term and no denominator). Match counts are compared exactly as integers. Conversion of a whole score matrix to a narrower floating type (e.g. float32) is not accepted: it must preserve the reference values within the stated tolerance.\n\n**spectrum_metadata.csv.** Header row must be exactly `spectrum_index,compound_name,precursor_mz,inchikey,smiles` (field names and order). compound_name, inchikey and smiles are compared as exact strings; missing metadata is an empty field. `precursor_mz` must parse as a finite number and equal the reference value within 1e-9 absolute; any plain decimal formatting of the same value (including exponent notation) is accepted.\n\n**best_matches_spectrum97.csv.** Header row must be exactly `rank,smiles,inchikey,ModifiedCosine_score,ModifiedCosine_matches`. `rank` must run 0.. in listed order; at most 10 rows. Scores must be non-increasing down the list. `ModifiedCosine_matches` must be integers >= 5. `smiles`/`inchikey` are the metadata of the matched candidate spectrum, compared as exact strings. `ModifiedCosine_score` must equal the reference value within 1e-8 absolute and `ModifiedCosine_matches` must equal the reference integer exactly. Additionally, cross-file consistency is enforced against the submission's own outputs: each row's score and match count must occur in row 97 of the submitted `ModifiedCosine_score`/`ModifiedCosine_matches` matrices at some candidate index whose row in the submitted `spectrum_metadata.csv` carries that row's smiles/inchikey.\n\n**CSV encoding.** CSVs are parsed as standard comma-separated with quoting per RFC 4180 with a single header row; text encoding is UTF-8. CRLF and LF line endings are both accepted; any quoting style that decodes to the same field values is accepted. Row counts must match the reference exactly (no extra trailing rows or ragged rows).\n\n**Reference values are never disclosed**; all comparisons are computed against the private reference outputs at grading time.",
+  "reference_seconds": 600,
+  "verifier_seconds": 120
+}

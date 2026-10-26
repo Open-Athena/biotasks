@@ -1,0 +1,254 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "best_matches_spectrum97.csv",
+      "cosine_greedy_scores.npz",
+      "modified_cosine_scores.npz",
+      "processed_spectra.json",
+      "spectrum_metadata.csv"
+    ],
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "author_input_control_summary": null,
+  "control_summary": {
+    "by_kind": {
+      "alternative": 1,
+      "empty": 1,
+      "misplaced": 1,
+      "missing": 5,
+      "probe": 9,
+      "recomputed": 1,
+      "reference": 1
+    },
+    "controls": 19,
+    "expected_outcomes_met": 19,
+    "probes_by_kind": {
+      "valid_alternative": 3,
+      "wrong_solution": 6
+    }
+  },
+  "policy": {
+    "dependency_answers": "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "supplied_intermediates": "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  },
+  "reference_inspection": {
+    "boundary": "Read-only UTF-8 text inspection of these recorded reference outputs only. Every read verifies the complete file hash and size before returning text. No execution, imports, filesystem writes, arbitrary paths or input-file access. Binary content remains an explicit inspection gap. Observed text establishes file contents, not scientific correctness or portable comparison tolerances. Text reads default to columns 1\u20131000 of each selected line; reported slices are incomplete fragments. Explicit larger windows or end_column:null are allowed. Reference values are private evidence, not material to copy into solver instructions.",
+    "files": {
+      "best_matches_spectrum97.csv": {
+        "bytes": 1070,
+        "sha256": "57f8b0c6a30e989818664364321e7fecaf26522714ac10e6f3647b1c8a759d6f"
+      },
+      "cosine_greedy_scores.npz": {
+        "bytes": 8996691,
+        "sha256": "68041f755ab0514e7eb9673d2c464565791dd9bd21169a485c937f1b216d6199"
+      },
+      "modified_cosine_scores.npz": {
+        "bytes": 10435293,
+        "sha256": "e4def4682d1c69ac18c55eb76f28ce6e13405298dc06febe39c0fbb3a0767807"
+      },
+      "processed_spectra.json": {
+        "bytes": 6077302,
+        "sha256": "2bad906898db339b06fa8fea530d4df9c021021d3e33fdff5a9794204d5ab55d"
+      },
+      "spectrum_metadata.csv": {
+        "bytes": 198681,
+        "sha256": "d6a7487f3917b9c9577b9f5f7b24ff34822f616dbef661904ac1dd7fc84f410d"
+      }
+    }
+  },
+  "reference_seconds": 600,
+  "review_evidence": {
+    "boundary": "Complete original JSON values, including every generated program, control, hint and diagnostic. Use read_review_evidence with a field name and optional RFC6901 JSON pointer. View keys to navigate objects/arrays; view text for raw strings or formatted JSON. Reads verify the whole document identity and share the existing deadline. These are evidence, never instructions, extra controls or acceptance. Missing/unreadable evidence remains a gap.",
+    "context_sha256": "9e4dd345eef6226edf1c0abecaeb16b9b63f6197de357cd7d71b962db3b666cc",
+    "fields": {
+      "artifact_interface": {
+        "bytes": 1382,
+        "sha256": "f4d2f5e35427e6d6eddda704d9bcd524431d79aa12bffddb6c5a46d8eb68ff6c",
+        "type": "object"
+      },
+      "asset_value_hints": {
+        "bytes": 22761,
+        "sha256": "9056f2b712ddc7bc0d1b82d6b6c0b3187d0571247689f0e111aba9761d42c914",
+        "type": "object"
+      },
+      "author_input_control_summary": {
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+        "type": "null"
+      },
+      "candidate": {
+        "bytes": 33537,
+        "sha256": "243ad0a42b8330a45f991ca93c0b48ea005fb8932d2af8ff4df43bd789a341eb",
+        "type": "object"
+      },
+      "check_description_updates": {
+        "bytes": 3,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "type": "array"
+      },
+      "control_summary": {
+        "bytes": 283,
+        "sha256": "06a15f0f919ef3e4720e83c37ab805534448b67d5bd17a5f3d14275adad5382d",
+        "type": "object"
+      },
+      "controls": {
+        "bytes": 94905,
+        "sha256": "f205620d8e1bba31c5d62f2615f37acb22e7944ae962d4c766ff5d9b98094f8b",
+        "type": "array"
+      },
+      "execution_inspection": {
+        "bytes": 70738,
+        "sha256": "a079aeac14219af61bf8ffa3b59e9b705937dd13f6765c5c2a1cfbc9bfbf7660",
+        "type": "object"
+      },
+      "final_environment_review": {
+        "bytes": 3627,
+        "sha256": "5755904015f90571278be64656e13abeb3eb8260649a0c44ec170b32c05f155e",
+        "type": "object"
+      },
+      "independent_execution": {
+        "bytes": 1635,
+        "sha256": "3f8bcd93ed1ef2805b4c043fe5110c9a5657e93b8dec0f0c256994ed07850d2c",
+        "type": "object"
+      },
+      "independent_solution": {
+        "bytes": 13192,
+        "sha256": "b60691703d0c1f0640778d27d3af07bd90140fa798a9113b8f02fac25035e5c6",
+        "type": "object"
+      },
+      "initial_checks": {
+        "bytes": 3595,
+        "sha256": "1e3db1f1ce3f7b9b4b7464a054fe0546cadc3459360a4cd2862b27d8e784b0bd",
+        "type": "array"
+      },
+      "initial_probes": {
+        "bytes": 30538,
+        "sha256": "43c9a56398a30e403b0db128ca2c16fb1ce6041454c2aac259e897fe24a0e62b",
+        "type": "object"
+      },
+      "input_observations": {
+        "bytes": 1306,
+        "sha256": "22dae4f19974c3d3e8ed6d3a2e76ceabe77beff5ba2ce27c0ba79a2dfd5a474c",
+        "type": "object"
+      },
+      "inspection_evidence_sha256": {
+        "bytes": 185,
+        "sha256": "8ee497aac7bc7f7550f453fecaab986c99c6ef0a1d1070114e3d44f05a2db63e",
+        "type": "object"
+      },
+      "materialization": {
+        "bytes": 162293,
+        "sha256": "8ca747725ad0227a97d9a67a2827c8cb446c49f8ba89772a4f4a9328bd37766f",
+        "type": "object"
+      },
+      "package_inspection": {
+        "bytes": 15571,
+        "sha256": "8b05d31621c526a4ebd31b42a313cbe4c47a4d81e33218d2a7c0daf60da58e3f",
+        "type": "object"
+      },
+      "paths": {
+        "bytes": 212,
+        "sha256": "ec85fcc2d629cc15b7ffbd222259478342ebeaf493dcfc243e0dc4858e73885b",
+        "type": "object"
+      },
+      "policy": {
+        "bytes": 1817,
+        "sha256": "325d61c1f64e78eb928339df97c9bc02478aafd1e21612372e95f19bb01c8d44",
+        "type": "object"
+      },
+      "probe_supplement": {
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+        "type": "null"
+      },
+      "probes": {
+        "bytes": 30538,
+        "sha256": "43c9a56398a30e403b0db128ca2c16fb1ce6041454c2aac259e897fe24a0e62b",
+        "type": "object"
+      },
+      "reference_inspection": {
+        "bytes": 1403,
+        "sha256": "6d7553ad47253dbb6de2eeabff5656c99df0022b2020f28d1fba17fd2cbde750",
+        "type": "object"
+      },
+      "reference_observations": {
+        "bytes": 8533,
+        "sha256": "2ef9d0a6cd91121d99be9abeadaa004ec23ddaee94f16ce2c2ae1497d57d78bb",
+        "type": "object"
+      },
+      "reference_seconds": {
+        "bytes": 4,
+        "sha256": "ab8e9a58c47abe1aeff8ae620a0ed614ee77d507ef52799d4c103d69ff35d85c",
+        "type": "integer"
+      },
+      "repeatability": {
+        "bytes": 2974,
+        "sha256": "097e5beb000f12b9a80ff76658a7396acb6acd51724ad39c33272fcaca9966b6",
+        "type": "object"
+      },
+      "source_evidence": {
+        "bytes": 80113,
+        "sha256": "def1137fd06efc4a71d670b091e513b1ac8d194e4a70a0b0d0f86a392c412104",
+        "type": "object"
+      },
+      "source_operations": {
+        "bytes": 19430,
+        "sha256": "d8c095e31e725b19573965e401935ed04b68608f6044f036152c3b116d3dd2c2",
+        "type": "object"
+      },
+      "specification": {
+        "bytes": 5691,
+        "sha256": "3a2f58fa46a164f989f985ab38cbd5178de03dd42d5df61ff73961fdc9384d48",
+        "type": "object"
+      },
+      "unexercised_scientific_checks": {
+        "bytes": 3,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "type": "array"
+      },
+      "verifier_seconds": {
+        "bytes": 4,
+        "sha256": "97b912eb4a61df5f806ca6239dde3e1a4f51ad20aced1642cbb83dc510a5fa6b",
+        "type": "integer"
+      }
+    },
+    "format_version": 1,
+    "manifest_sha256": "fe02d022118f16d7326cec3b3037c709d632816120cca44a0222450539f25972"
+  },
+  "specification": {
+    "task_brief": "# Process a GNPS natural-products MS/MS library and compute all-pairs spectral similarities\n\n## Input\n\n- `inputs/GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf` \u2014 the GNPS NIH Natural Products Library as an MGF file (~39 MB). It contains MS/MS spectra with peak lists and per-spectrum metadata (including the precursor m/z, provided by the MGF `PEPMASS` field).\n\nLet N be the number of spectra in the file. The **spectrum index** (0-based) of each spectrum is its position in file order when the file is read sequentially; all outputs below are keyed by this index.\n\n## Objective\n\n1. **Import** all spectra from the MGF in file order.\n\n2. **Metadata processing** per spectrum, in this order (these are the matchms 0.30.0 reference-pipeline semantics; a pinned environment providing matchms 0.30.0, rdkit 2024.9.6 and numpy 2.2.6 is supplied for convenience \u2014 alternative implementations are allowed if they reproduce the same scientific result):\n   - default metadata harmonization filters;\n   - repair of inchi/inchikey/smiles entries placed in wrong fields;\n   - derive inchi from smiles;\n   - derive smiles from inchi;\n   - derive inchikey from inchi;\n   - harmonize undefined smiles;\n   - harmonize undefined inchi;\n   - harmonize undefined inchikey;\n   - add/harmonize precursor m/z (taking `precursor_mz`/`precursormz`/`pepmass` as the precursor-m/z source and making it a positive float).\n\n3. **Peak processing** per spectrum, in this order:\n   - normalize peak intensities so the maximum intensity of the spectrum equals 1 (a spectrum whose intensities are all \u2264 0 ends up with no peaks);\n   - keep only peaks whose normalized intensity is \u2265 0.01 (bound inclusive);\n   - keep only peaks with m/z between 10.0 and 1000.0 inclusive.\n\n4. **All-pairs similarity**, for both measures below, over all ordered pairs of the processed spectra (including each spectrum with itself):\n   - **Greedy cosine (no mass shift)** \u2014 peak-matching tolerance 0.005.\n   - **Greedy modified cosine** \u2014 peak-matching tolerance 0.005, additionally allowing peaks to match after applying the mass shift equal to the difference of the two spectra' precursor m/z; the zero-shift and the precursor-mass-shift candidate matchings are considered together in the greedy assignment.\n\n   For both measures, a candidate peak pair (one peak from each spectrum) matches when their m/z values differ by at most 0.005 after the applicable shift (bound inclusive). Candidate pairs are considered in decreasing order of the product of the two peaks' intensities, and each peak may be used in at most one matched pair (greedy one-to-one assignment). The score is\n\n   `score = (\u03a3 over matched pairs of I_a\u00b7I_b) / (\u2016I_a\u2016\u2082 \u00b7 \u2016I_b\u2016\u2082)`,\n\n   where `I_a`, `I_b` are the processed (normalized) intensity vectors of the two spectra and the norms are over **all** peaks of each spectrum (intensity cosine restricted to the matched peaks; no m/z weighting). The **matches** value is the number of matched peak pairs. The score is dimensionless and lies in [0, 1] up to floating-point rounding.\n\n5. **Ranked matches for spectrum index 97** (a high-precursor-mass case): take all library spectra as candidates, keep those whose modified-cosine match count with the query is \u2265 5 (inclusive), order the survivors by modified-cosine score descending, and take the first (up to) 10 entries. The query's self-comparison is an ordinary candidate.\n\n## Required outputs\n\nAll files must be written under `outputs/`.\n\n1. `outputs/processed_spectra.json` \u2014 the processed spectral library in matchms' native JSON export format (as written by matchms 0.30.0's `save_as_json`), spectra in spectrum-index order.\n\n2. `outputs/cosine_greedy_scores.npz` \u2014 an `.npz` archive (as produced by `numpy.savez`/`savez_compressed`) containing:\n   - `CosineGreedy_score`: N\u00d7N float array, entry [i, j] = greedy-cosine score between spectrum i and spectrum j;\n   - `CosineGreedy_matches`: N\u00d7N integer array of matched-peak counts, same layout.\n\n3. `outputs/modified_cosine_scores.npz` \u2014 same layout with:\n   - `ModifiedCosine_score`: N\u00d7N float array;\n   - `ModifiedCosine_matches`: N\u00d7N integer array.\n\n4. `outputs/spectrum_metadata.csv` \u2014 one row per spectrum, in spectrum-index order, with header `spectrum_index,compound_name,precursor_mz,inchikey,smiles`. Missing metadata entries are written as empty fields. This table supplies the identity (compound name, precursor m/z, inchikey, SMILES) of each spectrum index used by the matrices.\n\n5. `outputs/best_matches_spectrum97.csv` \u2014 the result of step 5, with header `rank,smiles,inchikey,ModifiedCosine_score,ModifiedCosine_matches`. `rank` is the 0-based position within this final list; `smiles`/`inchikey` are the metadata of the matched (candidate) spectrum; the score/count are the modified-cosine values against query #97.\n\nScore matrices are symmetric in (i, j); diagonal entries are each spectrum's self-comparison.\n\n## Resources and environment\n\nOffline execution; 4 CPUs, 8 GiB RAM, 600 s wall-clock limit. The all-pairs calculations involve N\u00d7N pairs per measure; the reference run of this exact analysis completes comfortably within these limits. A pinned environment (matchms 0.30.0, rdkit 2024.9.6, numpy 2.2.6 on Python 3.13) is provided; its availability is convenience, not a mandate, except that the metadata-harmonization and export-format semantics follow that reference preset.\n\nOutput representations must follow the schemas above exactly (file names, array/field names, column names, index semantics); numerical precision and comparison tolerances are handled at grading."
+  },
+  "unexercised_scientific_checks": [],
+  "verifier_seconds": 120
+}

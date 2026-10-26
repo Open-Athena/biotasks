@@ -1,0 +1,54 @@
+[
+  {
+    "id": "files_present",
+    "kind": "structural",
+    "artifacts": [
+      "best_matches_spectrum97.csv",
+      "cosine_greedy_scores.npz",
+      "modified_cosine_scores.npz",
+      "processed_spectra.json",
+      "spectrum_metadata.csv"
+    ],
+    "public_requirement": "All five declared output files (processed_spectra.json, cosine_greedy_scores.npz, modified_cosine_scores.npz, spectrum_metadata.csv, best_matches_spectrum97.csv) must exist as non-empty files at the declared paths directly under the supplied output root, with no extra directory layer."
+  },
+  {
+    "id": "processed_spectra_library",
+    "kind": "scientific",
+    "artifacts": [
+      "processed_spectra.json"
+    ],
+    "public_requirement": "The processed spectral library must match the reference exactly in structure and scientific content: array of N spectra in spectrum-index order, each a JSON object with exactly the reference's set of metadata fields (no extra or missing fields), string identifiers compared exactly, numeric metadata equal within 1e-9 absolute, and the processed peak lists ([m/z, normalized intensity] pairs, JSON numbers) equal in count and value within 1e-9 absolute after canonical m/z-then-intensity ordering; missing, non-numeric, nonfinite or string-encoded peak values fail."
+  },
+  {
+    "id": "cosine_greedy_matrices",
+    "kind": "scientific",
+    "artifacts": [
+      "cosine_greedy_scores.npz"
+    ],
+    "public_requirement": "The .npz archive must contain exactly the arrays CosineGreedy_score (2-D floating-point) and CosineGreedy_matches (2-D integer), both N x N in spectrum-index layout, symmetric in (i,j), with finite, non-negative values. Scores must agree with the reference within 1e-8 absolute and matched-peak counts exactly."
+  },
+  {
+    "id": "modified_cosine_matrices",
+    "kind": "scientific",
+    "artifacts": [
+      "modified_cosine_scores.npz"
+    ],
+    "public_requirement": "The .npz archive must contain exactly the arrays ModifiedCosine_score (2-D floating-point) and ModifiedCosine_matches (2-D integer), both N x N in spectrum-index layout, symmetric in (i,j), with finite, non-negative values. Scores must agree with the reference within 1e-8 absolute and matched-peak counts exactly."
+  },
+  {
+    "id": "spectrum_metadata_table",
+    "kind": "scientific",
+    "artifacts": [
+      "spectrum_metadata.csv"
+    ],
+    "public_requirement": "The table must have the exact header spectrum_index,compound_name,precursor_mz,inchikey,smiles and one row per spectrum numbered 0..N-1 in spectrum-index order (no duplicates, no gaps). compound_name, inchikey and smiles are compared as exact strings (missing metadata as empty fields); precursor_mz must parse as a finite number equal to the reference within 1e-9 absolute."
+  },
+  {
+    "id": "ranked_matches_spectrum97",
+    "kind": "scientific",
+    "artifacts": [
+      "best_matches_spectrum97.csv"
+    ],
+    "public_requirement": "The table must have the exact header rank,smiles,inchikey,ModifiedCosine_score,ModifiedCosine_matches and at most 10 rows with rank running 0.. in order, scores non-increasing downward, each ModifiedCosine_matches an integer >= 5, smiles/inchikey exactly matching the reference rows, ModifiedCosine_score within 1e-8 absolute and ModifiedCosine_matches exactly equal to the reference. Each row must additionally be consistent with the submitter's own outputs: its score and match count must occur at some candidate index in row 97 of the submitted modified-cosine matrices for a spectrum whose submitted metadata table carries that row's smiles/inchikey."
+  }
+]

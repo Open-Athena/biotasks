@@ -161,6 +161,7 @@ task_html += artifact(profile["instruction"], "Solver question", True)
 for key, label in [
     ("task_manifest", "Input and reference artifact manifest"),
     ("task_config", "Harbor environment and limits"),
+    ("task_outputs", "Output artifacts and exact downloads (inspection only)"),
 ]:
     if profile.get(key):
         task_html += artifact(profile[key], label)
@@ -180,6 +181,10 @@ attempt_html = "<h2>Blind solver attempt</h2>"
 if native_summary:
     solver = native_summary["solver"]
     attempt_html += f"<p>{html.escape(solver['agent'])} · {html.escape(profile.get('solver_model', 'GLM-5.3'))} · reward <strong>{html.escape(str(solver['reward']))}</strong>. The task environment was an offline CPU sandbox; recorded attempt evidence is below.</p>"
+    if solver.get("exception_type"):
+        attempt_html += (
+            f"<p>Recorded outcome: <strong>{html.escape(solver['exception_type'])}</strong>.</p>"
+        )
 else:
     attempt_html += "<p>No blind solver attempt is recorded for this selected task yet.</p>"
 for step in trajectory["steps"]:

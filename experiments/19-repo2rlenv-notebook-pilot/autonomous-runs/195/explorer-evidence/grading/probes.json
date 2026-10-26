@@ -1,0 +1,195 @@
+{
+  "concerns": [
+    "Ranking ties: the public rule orders surviving candidates by modified-cosine score descending but does not state a tie-break for equal scores (e.g. candidate index or match count). The reference appears to break ties by ascending candidate index (the top-10 has strictly decreasing scores, so the true top-10 is unaffected), but any grader that permits alternate orders among equal-score candidates would allow multiple valid rankings; the contract should declare whether a canonical order is required.",
+    "Ranked-match row attribution: the ranked CSV carries only smiles/inchikey, not the candidate spectrum index, so when several candidates share metadata the cross-file consistency check may attribute a row to a different index than the reference used. A submission with legitimately duplicated library entries could be scored against an unintended candidate; the contract should state how ambiguity is resolved (e.g. by index or by any matching candidate).",
+    "The >= 0.01 inclusive intensity bound, the 1e-8 absolute matrix tolerance, and the 1e-9 peak/mz tolerance are stated, but the contract does not state whether the peak-intensity comparison is absolute, relative, or both; the reference export shows full float64 precision (~17 significant digits), so any competing faithful encoding must reproduce that precision, and the boundaries were probed from the declared addendum rather than from disclosed reference internals."
+  ],
+  "disposition": "ready",
+  "probes": [
+    {
+      "check_ids": [
+        "processed_spectra_library"
+      ],
+      "evidence": [
+        {
+          "path": "processed_spectra.json",
+          "quote": "{\"charge\": 1, \"ionmode\": \"positive\", \"smiles\": \"OC(=O)[C@H](NC(=O)CCN1C(=O)[C@@H]2Cc3ccccc3CN2C1=O)c4ccccc4\", \"usi\": \"mzspec:GNPS:GNPS-NIH-NATURALPRODUCTSLIBRARY:accession:CCMSLIB00000079350\""
+        },
+        {
+          "path": "processed_spectra.json",
+          "quote": "\"precursor_mz\": 408.156"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "format-json-repr",
+      "rationale": "The public contract fixes the field-name set, values, and within-spectrum canonical peak ordering for processed_spectra.json, but explicitly permits different JSON key order (\"set of metadata field names\"), a JSON number for charge (\"an integer or a JSON number with the same value\"), and a different within-spectrum peak order (\"compared after canonical m/z-then-intensity ordering\"). This control re-serializes the reference library with sorted keys, reversed peak lists, charge 1 written as the JSON number 1.0, and different whitespace. All values are bit-identical, so every scientific check must still pass; this establishes that the grader honors the declared representation freedoms rather than requiring byte equality with matchms' native dump.",
+      "script": "\"\"\"Valid representation control for processed_spectra.json.\n\nPublic contract: each entry must be a JSON object with the same set of field\nnames (order of keys is not part of the rule); `charge` accepts \"an integer or\na JSON number with the same value\"; peak lists are compared \"after canonical\nm/z-then-intensity ordering (so a different within-spectrum ordering is\naccepted)\". This control re-serializes the library with a different key order,\nreversed within-spectrum peak order, int charge promoted to a JSON number\nfloat (1 -> 1.0), and different whitespace/indentation, leaving every value\nidentical.\n\"\"\"\nimport json, math\n\npath = \"processed_spectra.json\"\nwith open(path, encoding=\"utf-8\") as f:\n    data = json.load(f)\n\nassert isinstance(data, list), \"library must be a JSON array\"\nN = len(data)\nassert N == 1267\n\nchanged = 0\nfor i, sp in enumerate(data):\n    assert isinstance(sp, dict)\n    # charge: integer 1 -> JSON number 1.0 (same value, explicitly accepted)\n    c = sp[\"charge\"]\n    assert isinstance(c, int) and not isinstance(c, bool) and c == 1\n    sp[\"charge\"] = float(c)\n    # peaks: reverse within-spectrum order; values untouched\n    pk = sp[\"peaks_json\"]\n    assert isinstance(pk, list) and len(pk) > 0\n    for pair in pk:\n        assert len(pair) == 2\n        mz, inten = pair\n        assert isinstance(mz, (int, float)) and isinstance(inten, (int, float))\n        assert math.isfinite(mz) and math.isfinite(inten)\n    pk.reverse()\n    # rewrite the object with a different (sorted) field order\n    changed += 1\n    data[i] = {k: sp[k] for k in sorted(sp)}\n\nassert changed == N\nwith open(path, \"w\", encoding=\"utf-8\") as f:\n    json.dump(data, f, indent=1)\nprint(\"rewrote %d spectra with reordered keys, reversed peak lists, float charge\" % N)\n"
+    },
+    {
+      "check_ids": [
+        "spectrum_metadata_table",
+        "ranked_matches_spectrum97"
+      ],
+      "evidence": [
+        {
+          "path": "spectrum_metadata.csv",
+          "quote": "spectrum_index,compound_name,precursor_mz,inchikey,smiles"
+        },
+        {
+          "path": "spectrum_metadata.csv",
+          "quote": "0,\\\"(2R)-2-[3-[(10aS)-1,3-dioxo-10,10a-dihydro-5H-imidazo[1,5-b]isoquinolin-2-yl]propanoylamino]-2-phenylacetic acid\\\"\\\"\\\",408.156,XTJNPXYDTGJZSA-PKOBYXMFSA-N"
+        },
+        {
+          "path": "best_matches_spectrum97.csv",
+          "quote": "rank,smiles,inchikey,ModifiedCosine_score,ModifiedCosine_matches"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "format-csv-repr",
+      "rationale": "The addendum states CSVs are parsed per RFC 4180 with \"CRLF and LF line endings both accepted; any quoting style that decodes to the same field values is accepted\", and for precursor_mz \"any plain decimal formatting of the same value (including exponent notation) is accepted\". The reference uses CRLF line endings, heavy quoting and plain decimals. This control rewrites both CSVs with LF endings and minimal quoting, and re-encodes each precursor_mz in %.14e exponent notation (same double value, well within the 1e-9 absolute tolerance). Field values, row order and row counts are unchanged, so both CSV checks must pass. This specifically tests numeric-format freedom and line-ending freedom, not a recomputation.",
+      "script": "\"\"\"Valid representation control for the two CSV outputs.\n\nPublic contract: CSVs are parsed as standard RFC 4180 CSV, \"CRLF and LF line\nendings are both accepted; any quoting style that decodes to the same field\nvalues is accepted\", and for precursor_mz \"any plain decimal formatting of\nthe same value (including exponent notation) is accepted\". This control\nrewrites both CSVs with LF line endings and minimal quoting, and re-encodes\nprecursor_mz in exponent notation (same double value). Field values, row order\nand row counts are unchanged; best-match score strings are kept decimal.\n\"\"\"\nimport csv\n\ndef rewrite(path):\n    with open(path, newline=\"\", encoding=\"utf-8\") as f:\n        rows = list(csv.reader(f))\n    assert rows and rows[0]\n    return rows\n\nmd = rewrite(\"spectrum_metadata.csv\")\nassert md[0] == [\"spectrum_index\", \"compound_name\", \"precursor_mz\", \"inchikey\", \"smiles\"], md[0]\nassert len(md) == 1268, len(md)\nfor r in md[1:]:\n    assert len(r) == 5\n    x = float(r[2])\n    assert x > 0\n    # same value, exponent decimal encoding\n    r[2] = \"%.14e\" % x\nwith open(\"spectrum_metadata.csv\", \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    csv.writer(f, lineterminator=\"\\n\").writerows(md)\n\nbm = rewrite(\"best_matches_spectrum97.csv\")\nassert bm[0] == [\"rank\", \"smiles\", \"inchikey\", \"ModifiedCosine_score\", \"ModifiedCosine_matches\"], bm[0]\nassert len(bm) == 11, len(bm)\nfor r in bm[1:]:\n    assert len(r) == 5 and int(r[0]) >= 0 and int(r[4]) >= 5\nwith open(\"best_matches_spectrum97.csv\", \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    csv.writer(f, lineterminator=\"\\n\").writerows(bm)\nprint(\"rewrote both CSVs with LF endings, minimal quoting, exponent precursor_mz\")\n"
+    },
+    {
+      "check_ids": [
+        "cosine_greedy_matrices",
+        "modified_cosine_matrices"
+      ],
+      "evidence": [
+        {
+          "path": "cosine_greedy_scores.npz",
+          "quote": "CosineGreedy_score float64 (1267, 1267) min 0.0 max 1.0000000000000102; CosineGreedy_matches int64 (1267, 1267) min 0 max 1702"
+        },
+        {
+          "path": "modified_cosine_scores.npz",
+          "quote": "ModifiedCosine_score float64 (1267, 1267) min 0.0; ModifiedCosine_matches int64 (1267, 1267) max 1702"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "format-npz-repr",
+      "rationale": "The npz addendum requires exactly the two named arrays per archive, scores \"a 2-D floating-point array\" and matches \"a 2-D integer array\" compared exactly as integers; it forbids narrowing the score matrix but says nothing about the archive's compression or the integer width of the match matrix. Observed match counts range 0..1702, safely inside int32. This control re-saves both archives uncompressed (plain savez) and narrows the greedy match matrix to int32, leaving every score value and count identical. Both matrix checks must pass; this tests that the grader honors the declared dtype/compression freedoms rather than requiring byte-identical archives.",
+      "script": "\"\"\"Valid representation control for the two .npz archives.\n\nPublic contract: each archive must contain exactly the two named arrays;\nmatches must be \"a 2-D integer array\" (no width demanded; counts compared\nexactly) and scores a 2-D floating-point array preserving reference values\nwithin 1e-8 (only narrowing the *score* matrix is rejected). The reference\narchives are compressed and use int64 matches; this control re-saves them\nuncompressed with the greedy match matrix narrowed to int32 (all counts are\nbetween 0 and 1702, so all values are preserved exactly). Array values, names,\nshapes and symmetry are unchanged.\n\"\"\"\nimport numpy as np\n\nd = dict(np.load(\"cosine_greedy_scores.npz\"))\nassert sorted(d) == [\"CosineGreedy_matches\", \"CosineGreedy_score\"]\ns, m = d[\"CosineGreedy_score\"], d[\"CosineGreedy_matches\"]\nassert s.shape == (1267, 1267) and s.dtype == np.float64\nassert m.shape == (1267, 1267) and m.dtype == np.int64\nassert np.isfinite(s).all() and (m >= 0).all()\nassert int(m.max()) <= 2**31 - 1\nnp.savez(\"cosine_greedy_scores.npz\",\n         CosineGreedy_score=s,\n         CosineGreedy_matches=m.astype(np.int32))\n\nd2 = dict(np.load(\"modified_cosine_scores.npz\"))\nassert sorted(d2) == [\"ModifiedCosine_matches\", \"ModifiedCosine_score\"]\ns2, m2 = d2[\"ModifiedCosine_score\"], d2[\"ModifiedCosine_matches\"]\nassert s2.shape == (1267, 1267) and s2.dtype == np.float64\nassert m2.shape == (1267, 1267) and m2.dtype == np.int64\nassert np.isfinite(s2).all() and (m2 >= 0).all()\nnp.savez(\"modified_cosine_scores.npz\",\n         ModifiedCosine_score=s2,\n         ModifiedCosine_matches=m2)\nprint(\"re-saved both archives uncompressed; greedy matches narrowed to int32\")\n"
+    },
+    {
+      "check_ids": [
+        "processed_spectra_library"
+      ],
+      "evidence": [
+        {
+          "path": "processed_spectra.json",
+          "quote": "103.050735, 0.012904279647174126], [106.066605, 0.014537732767069584]"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "wrong-peak-intensities",
+      "rationale": "Step 3 requires normalized intensities with maximum 1 and a >= 0.01 inclusive cut, and the processed_spectra.json check requires every m/z and normalized-intensity value to equal the reference within 1e-9 absolute. This control multiplies every peak intensity by 1.001, simulating a pipeline that normalized intensities against the wrong maximum (e.g. truncating the max to the m/z-filtered peaks first). All m/z values, peak counts, record identities and row counts are preserved and the file stays perfectly parseable, so only the scientific peak-value comparison fails (141608 peaks shifted by ~1e-3 each, far beyond both the 1e-9 rule and any float64 writer rounding). This is a value-correctness probe, not a parse-failure cascade: field names, finiteness and counts still hold.",
+      "script": "\"\"\"Wrong-result control: wrong peak normalization in processed_spectra.json.\n\nPublic rule (step 3 + processed_spectra_library): normalized intensities must\nhave maximum 1 with an inclusive >= 0.01 cut, and every peak's m/z and\nnormalized intensity must equal the reference within 1e-9 absolute. This\ncontrol keeps every peak and m/z untouched but scales every normalized\nintensity by 1.001, simulating a pipeline whose intensity normalization used\nthe wrong maximum. Peak counts and record identities are preserved, so the\nfile remains fully parseable and structurally valid; only the peak-value\ncomparison fails.\n\"\"\"\nimport json\n\npath = \"processed_spectra.json\"\nwith open(path, encoding=\"utf-8\") as f:\n    data = json.load(f)\n\nassert isinstance(data, list) and len(data) == 1267\nn = 0\nfor sp in data:\n    pk = sp[\"peaks_json\"]\n    assert isinstance(pk, list) and len(pk) > 0\n    for pair in pk:\n        assert len(pair) == 2\n        pair[1] = pair[1] * 1.001\n        n += 1\nwith open(path, \"w\", encoding=\"utf-8\") as f:\n    json.dump(data, f)\nprint(\"perturbed intensities of %d peaks across %d spectra\" % (n, len(data)))\n"
+    },
+    {
+      "check_ids": [
+        "processed_spectra_library",
+        "spectrum_metadata_table"
+      ],
+      "evidence": [
+        {
+          "path": "spectrum_metadata.csv",
+          "quote": "0,\\\"(2R)-2-[...]\\\",408.156,XTJNPXYDTGJZSA-PKOBYXMFSA-N"
+        },
+        {
+          "path": "spectrum_metadata.csv",
+          "quote": "2,5-hydroxy-7-methoxy-2-phenylchromen-4-one,269.081,IRZVHDLBAYNPCT-UHFFFAOYSA-N"
+        },
+        {
+          "path": "best_matches_spectrum97.csv",
+          "quote": "1,COC(=O)c1ccc2ccccc2n1,CILJSZLWPHTUIP-UHFFFAOYSA-N,0.6523015316427301,8"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "wrong-string-metadata",
+      "rationale": "Both processed_spectra.json and spectrum_metadata.csv require compound_name/inchikey/smiles to match the reference as exact strings, and the metadata table supplies the identity of each spectrum index. This control swaps the inchikey and compound_name values between spectra 0 and 2 in both files consistently (simulating an off-by-one metadata join). Row counts, index labels, numeric values and field names are all preserved, so each file still passes every structural header/row-count rule; only the exact-string identity comparisons fail. In particular this tests that cross-file identity consistency alone is insufficient - the grader must compare identities to the reference, not only to the submission's own tables.",
+      "script": "\"\"\"Wrong-result control: wrong compound identity strings.\n\nPublic rule: compound_name/inchikey/smiles (and other harmonized string\nmetadata) are compared as exact strings in both processed_spectra.json and\nspectrum_metadata.csv. This control swaps the inchikey and compound_name\nvalues of spectrum 0 and spectrum 2 (both non-empty) consistently in both\nfiles, preserving all record identities, row counts, numeric values and field\nnames. This simulates a solver whose metadata harmonization derived the wrong\nidentifier for each spectrum; only the exact-string comparisons fail.\n\"\"\"\nimport csv, json\n\nwith open(\"processed_spectra.json\", encoding=\"utf-8\") as f:\n    data = json.load(f)\nassert isinstance(data, list) and len(data) == 1267\na, b = data[0], data[2]\nfor field in (\"inchikey\", \"compound_name\"):\n    va, vb = a[field], b[field]\n    assert isinstance(va, str) and va and isinstance(vb, str) and vb\n    a[field], b[field] = vb, va\nwith open(\"processed_spectra.json\", \"w\", encoding=\"utf-8\") as f:\n    json.dump(data, f)\n\nwith open(\"spectrum_metadata.csv\", newline=\"\", encoding=\"utf-8\") as f:\n    rows = list(csv.reader(f))\nassert rows[0] == [\"spectrum_index\", \"compound_name\", \"precursor_mz\", \"inchikey\", \"smiles\"]\nassert len(rows) == 1268\n# row i+1 is spectrum i: swap the two identities in the metadata table too\nrows[1][1], rows[3][1] = rows[3][1], rows[1][1]\nrows[1][3], rows[3][3] = rows[3][3], rows[1][3]\nwith open(\"spectrum_metadata.csv\", \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    csv.writer(f).writerows(rows)\nprint(\"swapped compound_name/inchikey between spectra 0 and 2 in both files\")\n"
+    },
+    {
+      "check_ids": [
+        "cosine_greedy_matrices"
+      ],
+      "evidence": [
+        {
+          "path": "cosine_greedy_scores.npz",
+          "quote": "CosineGreedy_score float64 (1267, 1267); CosineGreedy_matches int64 (1267, 1267) -- entry [97,300] = 0.006605012964144674 with 10 matches"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "wrong-cosine-matrix",
+      "rationale": "CosineGreedy scores must agree with the reference within 1e-8 absolute and matches exactly, with symmetry, finiteness and non-negativity preserved. This control perturbs a deterministic seeded block of 40x40 off-diagonal entries (both triangles kept exactly symmetric via an upper-triangular symmetrization, scores scaled by 0.99 and clipped to [0,1], counts with >=5 matches reduced by 3), simulating spectra whose greedy-cosine assignment was computed slightly wrong. All structural constraints still hold, so the failure isolates the scientific score/count comparison. The tolerated score shift is ~1e-3, roughly five orders of magnitude above the 1e-8 bound; this also probes that the grader's absolute tolerance is not accidentally relative or permissive.",
+      "script": "\"\"\"Wrong-result control: wrong greedy-cosine scores and match counts.\n\nPublic rule: CosineGreedy_score must agree with the reference within 1e-8\nabsolute and CosineGreedy_matches exactly, symmetric in (i,j), finite and\nnon-negative. This control perturbs a deterministic seeded block of\noff-diagonal entries (kept exactly symmetric, finite, non-negative),\nsimulating a subset of pairs whose greedy one-to-one peak assignment or\nnormalizing norm was computed incorrectly. Passes the structural\nconstraints, fails the scientific value comparisons.\n\"\"\"\nimport numpy as np\n\np = \"cosine_greedy_scores.npz\"\nd = dict(np.load(p))\nassert sorted(d) == [\"CosineGreedy_matches\", \"CosineGreedy_score\"]\ns, m = d[\"CosineGreedy_score\"], d[\"CosineGreedy_matches\"]\nN = s.shape[0]\nassert s.shape == m.shape == (1267, 1267)\nrng = np.random.default_rng(20240917)\nidx = sorted(rng.choice(N, size=40, replace=False))\nn = 0\nfor a in idx:\n    for b in idx:\n        if a == b:\n            continue\n        # score off by ~1e-3 (far beyond 1e-8), kept finite and non-negative\n        s[a, b] = float(np.clip(s[a, b] * 0.99, 0.0, 1.0))\n        # match count off by a few units (only where counts >= 5 so they stay >= 0)\n        if m[a, b] >= 5:\n            m[a, b] = m[a, b] - 3\n        n += 1\n# keep exact symmetry of both mutated matrices\ns = np.triu(s) + np.triu(s, 1).T\nm = np.triu(m) + np.triu(m, 1).T\nd[\"CosineGreedy_score\"] = s\nd[\"CosineGreedy_matches\"] = m\nnp.savez_compressed(p, **d)\nassert np.isfinite(s).all() and (s >= 0).all() and (m >= 0).all()\nassert (s == s.T).all() and (m == m.T).all()\nprint(\"perturbed %d symmetric entry pairs in the greedy-cosine matrices\" % (n // 2))\n"
+    },
+    {
+      "check_ids": [
+        "modified_cosine_matrices",
+        "ranked_matches_spectrum97"
+      ],
+      "evidence": [
+        {
+          "path": "modified_cosine_scores.npz",
+          "quote": "row 97: candidate 123 has ModifiedCosine_score 0.32173947547305709 with ModifiedCosine_matches 5; candidate 249 (first survivor below the top-10 cutoff) has score 0.32108399867517895 with 9 matches"
+        },
+        {
+          "path": "best_matches_spectrum97.csv",
+          "quote": "9,COc1cc(C)c(C(=O)Oc2cc(C)c(C(=O)O)c(O)c2C)c(O)c1C,NMKBRSYSHBPUPY-UHFFFAOYSA-N,0.3217394754730571,5"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "wrong-modified-matrix",
+      "rationale": "ModifiedCosine scores must agree within 1e-8 absolute and matches exactly, and each ranked-match row must equal the row-97 reference values with matches >= 5. This control scales a fixed off-diagonal slice of scores by 1-1e-4 (symmetrically) and, critically, decrements the match count between query 97 and candidate 123 (the true rank-9 entry) from 5 to 4, so the ranked-match entry that cites it violates the >= 5 bound and its reference value simultaneously. This targets the inclusive >= 5 match-count threshold in step 5 and the score tolerance together; matrices remain finite, non-negative, symmetric and structurally valid.",
+      "script": "\"\"\"Wrong-result control: wrong modified-cosine scores and match counts.\n\nPublic rule: ModifiedCosine_score must agree with the reference within 1e-8\nabsolute and ModifiedCosine_matches exactly; ranked-match rows must carry\nmatch counts >= 5 matching row 97 of the matrix. This control scales a fixed\noff-diagonal slice of scores by 1-1e-4 (kept symmetric and finite) and\ndecrements the match count for query 97 vs candidate 123 from 5 to 4, dropping\nthe true rank-9 ranked-match entry below the >= 5 threshold while keeping all\nstructural constraints satisfied.\n\"\"\"\nimport numpy as np\n\np = \"modified_cosine_scores.npz\"\nd = dict(np.load(p))\nassert sorted(d) == [\"ModifiedCosine_matches\", \"ModifiedCosine_score\"]\ns, m = d[\"ModifiedCosine_score\"], d[\"ModifiedCosine_matches\"]\nN = s.shape[0]\nassert s.shape == m.shape == (1267, 1267)\nassert int(m[97, 123]) == 5 and s[97, 123] > 0.32\n\n# uniformly wrong scores in a fixed off-diagonal slice, kept symmetric/finite\nfor i in range(200, 260):\n    for j in range(300, 380):\n        if i == j:\n            continue\n        s[i, j] = float(np.clip(s[i, j] * (1.0 - 1e-4), 0.0, 1.0))\n# break the rank-9 candidate's match count (query 97 vs candidate 123), both triangles\nfor a, b in ((97, 123), (123, 97)):\n    m[a, b] = m[a, b] - 1\ns = np.triu(s) + np.triu(s, 1).T\nm = np.triu(m) + np.triu(m, 1).T\nd[\"ModifiedCosine_score\"] = s\nd[\"ModifiedCosine_matches\"] = m\nnp.savez(p, **d)\nassert np.isfinite(s).all() and (s >= 0).all() and (m >= 0).all()\nassert (s == s.T).all() and (m == m.T).all()\nprint(\"slice scores scaled by 1-1e-4; m[97,123]=%d\" % int(m[97, 123]))\n"
+    },
+    {
+      "check_ids": [
+        "ranked_matches_spectrum97"
+      ],
+      "evidence": [
+        {
+          "path": "best_matches_spectrum97.csv",
+          "quote": "6,COc1cc(O)cc2cc3OC(C)(O)CC(=O)c3c(O)c12,FKCYENFBFZUSDP-UHFFFAOYSA-N,0.3423652019792834,30 and 7,CC(=O)OCC(=O)c1c[nH]c2ccccc12,PKWIQNMYISXPPV-UHFFFAOYSA-N,0.3292671952830729,6 -- adjacent ranked rows with distinct scores"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "wrong-ranked-order",
+      "rationale": "best_matches_spectrum97.csv rows are compared in rank order and scores must be non-increasing down the list, matching the reference ranking by modified-cosine score. This control swaps the entire rank-6 and rank-7 rows (all other field values preserved verbatim; the rank column renumbered so it still runs 0..9) producing a list that is no longer non-increasing (0.3292671952830729 at rank 6 followed by 0.3423652019792834 at rank 7) and no longer matching the reference rank order. Row count, the matches >= 5 bound and the internal cross-file consistency (values still occur in row 97 of the untouched matrices for the correct candidates) are all preserved, so only the ranked-order rules fail.",
+      "script": "\"\"\"Wrong-result control: incorrect ranked order for spectrum 97.\n\nPublic rule: rows are ranked by modified-cosine score descending; list order\nis compared in rank order and scores must be non-increasing downward. This\ncontrol swaps the rank 6 and rank 7 rows (all field values preserved\nverbatim; the rank column is renumbered so it still runs 0..9 in listed\norder), so the score sequence is no longer non-increasing (0.329267 comes\nbefore 0.342365) and the listed order no longer matches the reference\nranking. Row count, the >= 5 match bound, and cross-file consistency\nagainst the untouched matrices all still hold, so only the ordering rules\nfail.\n\"\"\"\nimport csv\n\npath = \"best_matches_spectrum97.csv\"\nwith open(path, newline=\"\", encoding=\"utf-8\") as f:\n    rows = list(csv.reader(f))\nassert rows[0] == [\"rank\", \"smiles\", \"inchikey\",\n                   \"ModifiedCosine_score\", \"ModifiedCosine_matches\"]\nassert len(rows) == 11\n# list positions 7 and 8 currently hold rank 6 and rank 7\nassert rows[7][0] == \"6\" and rows[8][0] == \"7\"\nrows[7], rows[8] = rows[8], rows[7]\nrows[7][0] = \"6\"\nrows[8][0] = \"7\"\n# rank column still runs 0..9, but the score sequence now increases\nassert [r[0] for r in rows[1:]] == [str(i) for i in range(10)]\nassert float(rows[6][3]) >= float(rows[7][3])\nassert float(rows[7][3]) < float(rows[8][3])\nassert float(rows[8][3]) >= float(rows[9][3])\nwith open(path, \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    csv.writer(f).writerows(rows)\nprint(\"swapped rank 6 and 7 rows (values unchanged, order wrong)\")\n"
+    },
+    {
+      "check_ids": [
+        "ranked_matches_spectrum97",
+        "spectrum_metadata_table"
+      ],
+      "evidence": [
+        {
+          "path": "best_matches_spectrum97.csv",
+          "quote": "1,COC(=O)c1ccc2ccccc2n1,CILJSZLWPHTUIP-UHFFFAOYSA-N,0.6523015316427301,8 -- rank 1 describes candidate spectrum 473"
+        },
+        {
+          "path": "modified_cosine_scores.npz",
+          "quote": "row 97, candidate 249 (first survivor below the top-10 cutoff): ModifiedCosine_score 0.32108399867517895, ModifiedCosine_matches 9"
+        },
+        {
+          "path": "spectrum_metadata.csv",
+          "quote": "row 473: CILJSZLWPHTUIP-UHFFFAOYSA-N, COC(=O)c1ccc2ccccc2n1 (candidate 473); row 249: MIJKZXWOOXIEEU-UHFFFAOYSA-N"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "wrong-crossfile-association",
+      "rationale": "The ranked-match check requires cross-file consistency against the submission's own outputs (each row's score/count must occur in row 97 of the submitted matrices at an index whose submitted metadata carries that row's smiles/inchikey), in addition to matching the reference. This control builds a submission that is fully self-consistent but scientifically wrong: the identities of candidate 473 (true rank 1) and candidate 249 (first survivor below the top-10 cutoff) are swapped in spectrum_metadata.csv, and the rank-1 row of best_matches_spectrum97.csv is rewritten to describe candidate 249's identity while citing candidate 473's row-97 score/count (8 matches, score 0.6523015316427301). All internal relations hold (verified locally: every ranked row's values occur in row 97 of the untouched matrices at an index whose swapped metadata matches), scores remain non-increasing and matches >= 5, but the rank-1 entry has the wrong compound and the metadata rows at indices 249/473 carry wrong identities. This proves the grader compares identities to the reference, not merely to the submission's own tables.",
+      "script": "\"\"\"Wrong-result control: self-consistent but scientifically wrong association.\n\nPublic rule: each ranked-match row's score and match count must occur in row\n97 of the submitted modified-cosine matrices at a candidate index whose\nsubmitted metadata row carries that row's smiles/inchikey. Instead of breaking\nthat internal consistency, this control produces a wrong-by-construction\nassociation that satisfies every internal relation: the metadata of candidate\n473 (true rank 1) and candidate 249 (first survivor below the top-10 cutoff)\nare swapped in spectrum_metadata.csv, and the rank-1 row of\nbest_matches_spectrum97.csv is rewritten to describe candidate 249's identity\nwhile keeping candidate 473's row-97 score/count values. The matrices are\nleft untouched, so every internal check passes while the reference identity,\nranking and metadata comparisons fail.\n\"\"\"\nimport csv\nimport numpy as np\n\nd = dict(np.load(\"modified_cosine_scores.npz\"))\ns, m = d[\"ModifiedCosine_score\"], d[\"ModifiedCosine_matches\"]\nassert s.shape == (1267, 1267) and m.shape == (1267, 1267)\n\nwith open(\"spectrum_metadata.csv\", newline=\"\", encoding=\"utf-8\") as f:\n    md = list(csv.reader(f))\nassert md[0] == [\"spectrum_index\", \"compound_name\", \"precursor_mz\", \"inchikey\", \"smiles\"]\nassert len(md) == 1268\n\nrow_473 = md[1 + 473][:]\nrow_249 = md[1 + 249][:]\nassert row_473[0] == \"473\" and row_249[0] == \"249\"\nassert row_473[3] != row_249[3] and row_473[4] != row_249[4]\nassert row_473[3] == \"CILJSZLWPHTUIP-UHFFFAOYSA-N\"\nassert row_249[3] == \"MIJKZXWOOXIEEU-UHFFFAOYSA-N\"\n\n# true rank-1 values (candidate 473) and rank-11 values (candidate 249)\ns473, m473 = float(s[97, 473]), int(m[97, 473])\ns249, m249 = float(s[97, 249]), int(m[97, 249])\nassert m473 == 8 and abs(s473 - 0.6523015316427301) < 1e-9\nassert m249 == 9 and abs(s249 - 0.32108399867517895) < 1e-9\n\n# swap the two candidates' identities, keeping their index labels\nmd[1 + 473] = [\"473\"] + row_249[1:]\nmd[1 + 249] = [\"249\"] + row_473[1:]\nwith open(\"spectrum_metadata.csv\", \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    csv.writer(f).writerows(md)\n\n# rewrite the rank-1 row: candidate 473's row-97 score/count, candidate 249's identity\nwith open(\"best_matches_spectrum97.csv\", newline=\"\", encoding=\"utf-8\") as f:\n    bm = list(csv.reader(f))\nassert bm[0] == [\"rank\", \"smiles\", \"inchikey\",\n                 \"ModifiedCosine_score\", \"ModifiedCosine_matches\"]\nassert len(bm) == 11\nassert bm[2][1] == row_473[4] and bm[2][2] == row_473[3]\nbm[2] = [\"1\", row_249[4], row_249[3], repr(s473), str(m473)]\nassert float(bm[1][3]) >= float(bm[2][3]) >= float(bm[3][3])  # still non-increasing\nwith open(\"best_matches_spectrum97.csv\", \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    csv.writer(f).writerows(bm)\nprint(\"rank-1 row now describes candidate 249's identity with candidate 473's values\")\n"
+    }
+  ]
+}

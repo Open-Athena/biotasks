@@ -1,0 +1,8 @@
+# Original reference outputs
+
+This is the preparation/setup output inventory, before construction recovered the additional cosine branch. A download is listed only when its complete bytes match a published final reference artifact.
+
+- `processed_spectra.json` — 6,077,302 bytes; SHA256 `2bad906898db339b06fa8fea530d4df9c021021d3e33fdff5a9794204d5ab55d`. [Identical published bytes](https://huggingface.co/datasets/gonzalobenegas/biotasks-notebook-pilot-issue-19-matchms/resolve/35943f6c2e4fed0ac782abaf39dcd34ac68589fa/tasks/autonomous-panel-195/tests/reference/processed_spectra.json)
+- `modified_cosine_scores.npz` — 10,435,293 bytes; SHA256 `e4def4682d1c69ac18c55eb76f28ce6e13405298dc06febe39c0fbb3a0767807`. [Identical published bytes](https://huggingface.co/datasets/gonzalobenegas/biotasks-notebook-pilot-issue-19-matchms/resolve/35943f6c2e4fed0ac782abaf39dcd34ac68589fa/tasks/autonomous-panel-195/tests/reference/modified_cosine_scores.npz)
+- `spectrum_metadata.csv` — 198,681 bytes; SHA256 `d6a7487f3917b9c9577b9f5f7b24ff34822f616dbef661904ac1dd7fc84f410d`. [Identical published bytes](https://huggingface.co/datasets/gonzalobenegas/biotasks-notebook-pilot-issue-19-matchms/resolve/35943f6c2e4fed0ac782abaf39dcd34ac68589fa/tasks/autonomous-panel-195/tests/reference/spectrum_metadata.csv)
+- `best_matches_spectrum97.csv` — 1,070 bytes; SHA256 `57f8b0c6a30e989818664364321e7fecaf26522714ac10e6f3647b1c8a759d6f`. [Identical published bytes](https://huggingface.co/datasets/gonzalobenegas/biotasks-notebook-pilot-issue-19-matchms/resolve/35943f6c2e4fed0ac782abaf39dcd34ac68589fa/tasks/autonomous-panel-195/tests/reference/best_matches_spectrum97.csv)

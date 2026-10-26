@@ -1,0 +1,25 @@
+{
+  "output_paths": [
+    "best_matches_spectrum97.csv",
+    "cosine_greedy_scores.npz",
+    "modified_cosine_scores.npz",
+    "processed_spectra.json",
+    "spectrum_metadata.csv"
+  ],
+  "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+  "grader_root_arguments": [
+    "--reference-dir",
+    "--submission-dir"
+  ],
+  "solution_output_root_argument": "--output-dir",
+  "native_output_root": "/workspace/outputs",
+  "native_grader_submission_dir": "/workspace/outputs",
+  "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+  "trusted_inputs": {
+    "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+    "input_paths": [
+      "GNPS-NIH-NATURALPRODUCTSLIBRARY.mgf"
+    ],
+    "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+  }
+}
