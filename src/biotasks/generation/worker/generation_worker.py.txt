@@ -1,0 +1,367 @@
+"""Trusted generation operation; native task containers receive no credentials."""
+
+import json
+import os
+import shutil
+import signal
+import time
+from pathlib import Path
+
+from biotasks.validation.files import require, sha
+from biotasks.validation.worker.common import checkpoint
+from biotasks.validation.worker.job import Supervisor
+
+
+class Generation(Supervisor):
+    def __init__(self, root, out, config):
+        super().__init__(root, out, config)
+        self.report.update(
+            model_calls=None, generation_started=False, upstream_only_model_calls=True
+        )
+        self.secrets = {}
+
+    def redact(self):
+        text = json.dumps(self.report)
+        for value in self.secrets.values():
+            text = text.replace(value, "[REDACTED]")
+        self.report = json.loads(text)
+
+    def save(self):
+        self.redact()
+        super().save()
+
+    def validate(self):
+        require(self.config["operation"] == "generate", "Not a generation operation")
+        require(
+            self.config["run_id"] == os.environ["BIOTASKS_RUN_ID"]
+            and os.environ["BIOTASKS_EXPECTED_WORKER"] == os.environ["IRIS_WORKER_ID"],
+            "Worker/run identity changed",
+        )
+        hashes = json.loads((self.root / "payload.json").read_text())["sha256"]
+        require(
+            {
+                "generation_worker.py",
+                "generation_entry.py",
+                "native-config.json",
+                "model-run-budget.json",
+                "pins.json",
+                "native_docker.py",
+                "observed_cli.py",
+                "provider_usage.py",
+                "cost_guard.py",
+                "setup_controller.sh",
+                "upstream-source-manifest.json",
+                "reference-candidates.json",
+                "family.json",
+            }
+            <= set(hashes),
+            "Missing bound generation executable inputs",
+        )
+        for name, digest in hashes.items():
+            require(sha(self.root / name) == digest, "Generation payload changed")
+        resources = self.config["resources"]
+        require(
+            resources["cpus"] == 4
+            and resources["memory_gib"] == 16
+            and resources["timeout_seconds"] == 5400,
+            "Unapproved generation allocation",
+        )
+        require(
+            self.config["model_budget"]["maximum_usd"]
+            == json.loads((self.root / "model-run-budget.json").read_text())["maximum_usd"],
+            "Worker admission bound changed",
+        )
+        require(
+            not any(
+                os.environ.get(k)
+                for k in (
+                    "GH_TOKEN",
+                    "GITHUB_TOKEN",
+                    "OPENROUTER_API_KEY",
+                    "HF_TOKEN",
+                    "CW_KEY_ID",
+                    "CW_KEY_SECRET",
+                )
+            ),
+            "Credentials must use isolated named secret files",
+        )
+        directory = Path(os.environ.get("RIGGING_SECRETS_DIR", "/run/rigging/secrets"))
+        for name in ("GH_TOKEN", "OPENROUTER_API_KEY"):
+            value = (directory / name).read_text().strip()
+            require(bool(value), "Missing approved generation credential")
+            self.secrets[name] = value
+        self.report.update(
+            configuration_verified=True,
+            payload_sha256=json.loads((self.root / "payload.json").read_text())["sha256"],
+            credential_names=sorted(self.secrets),
+            new_capacity=False,
+        )
+        self.save()
+
+    def work(self):
+        self.tools_ready()
+        pins, resources = self.config["tools"], self.config["resources"]
+        self.fetch(pins["compose_url"], self.tools / "docker-compose", pins["compose_sha256"])
+        (self.tools / "docker-compose").chmod(0o755)
+        require(
+            not self.docker(
+                "ps", "-aq", "--filter", "label=biotasks.run=" + self.run
+            ).stdout.split(),
+            "Owned containers already exist",
+        )
+        require(
+            self.docker("volume", "inspect", self.volume, check=False).returncode != 0,
+            "Owned volume already exists",
+        )
+        config = json.loads((self.root / "native-config.json").read_text())
+        slug = config["repo"]["url"].removeprefix("https://github.com/").replace("/", "__")
+        tag = "local/r2e-bootstrap/" + slug + ":" + config["repo"]["ref"][:12]
+        existing = self.docker(
+            "image", "ls", "--format", "{{.Repository}}:{{.Tag}}", tag + "*", check=True
+        ).stdout.split()
+        require(not existing, "Bootstrap tag already exists; do not overwrite another run")
+        self.report.update(creation_started=True, stage="volume_creation")
+        self.save()
+        self.docker("volume", "create", "--label", "biotasks.run=" + self.run, self.volume)
+        mountpoint = json.loads(self.docker("volume", "inspect", self.volume).stdout)[0][
+            "Mountpoint"
+        ]
+        self.docker("pull", pins["controller_image"], timeout=240)
+        args = [
+            "create",
+            "--name",
+            self.controller,
+            "--cpus=1",
+            "--memory=4g",
+            "--memory-swap=4g",
+            "--network=" + self.config["network"],
+            "--label",
+            "biotasks.controller=" + self.run,
+            "-v",
+            "/var/run/docker.sock:/var/run/docker.sock",
+            "-v",
+            self.volume + ":/work",
+            "-v",
+            self.volume + ":" + mountpoint,
+            "-w",
+            "/work",
+            "-e",
+            "BIOTASKS_RUN_ID=" + self.run,
+            "-e",
+            "BIOTASKS_PHASE=generate",
+            "-e",
+            "BIOTASKS_SHARED_ROOT=" + mountpoint,
+            "-e",
+            "BIOTASKS_REAL_DOCKER=/work/real/docker",
+            "-e",
+            "BIOTASKS_DOCKER_GUARD_LOCK=/work/native-docker.lock",
+            "-e",
+            "DOCKER_CONFIG=/work/docker-config",
+            "-e",
+            "GH_TOKEN",
+            "-e",
+            "OPENROUTER_API_KEY",
+            pins["controller_image"],
+            "sleep",
+            str(resources["timeout_seconds"]),
+        ]
+        # Values enter only the trusted Docker controller's environment, never
+        # command text, payloads, logs or native repository sandbox arguments.
+        import subprocess
+
+        subprocess.run(
+            [str(self.tools / "docker"), *args],
+            env={**os.environ, **self.secrets},
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=90,
+        )
+        self.report["controller_created"] = True
+        self.save()
+        self.docker("start", self.controller)
+        self.docker(
+            "exec",
+            self.controller,
+            "mkdir",
+            "-p",
+            "/work/bin",
+            "/work/real",
+            "/work/evidence",
+            "/work/inputs",
+            "/work/bootstrap",
+            "/work/outputs/raw",
+            "/work/native-bin",
+            "/work/harbor-bin",
+            "/work/docker-config/cli-plugins",
+            "/work/infra",
+            "/work/native-observations",
+        )
+        self.docker("cp", str(self.root) + "/.", self.controller + ":/work/")
+        self.docker(
+            "cp",
+            str(self.root / "native-config.json"),
+            self.controller + ":/work/inputs/reference.json",
+        )
+        for source, destination in (
+            (self.tools / "docker", "/work/real/docker"),
+            (self.tools / "docker-compose", "/work/docker-config/cli-plugins/docker-compose"),
+            (self.root / "native_docker.py", "/work/native-bin/docker"),
+        ):
+            self.docker("cp", str(source), self.controller + ":" + destination)
+        self.docker("exec", self.controller, "chmod", "+x", "/work/native-bin/docker")
+        # Hold a shared public image reference throughout owner-only cleanup.
+        base = "python:3.12-slim"
+        self.docker("pull", base, timeout=240)
+        image = json.loads(self.docker("image", "inspect", base).stdout)[0]
+        self.report["protected_base"] = {
+            "run_id": self.run,
+            "ref": base,
+            "image_id": image["Id"],
+            "repo_digests": image["RepoDigests"],
+        }
+        self.docker(
+            "create",
+            "--name",
+            self.run + "-base-reference",
+            "--cpus=0.05",
+            "--memory=64m",
+            "--memory-swap=64m",
+            "--network=none",
+            "--label",
+            "biotasks.controller=" + self.run,
+            base,
+            "true",
+        )
+        self.report["stage"] = "controller_setup"
+        self.save()
+        setup = self.logged(
+            "setup.log", [self.controller, "bash", "/work/setup_controller.sh"], 1500
+        )
+        self.report["setup_exit"] = setup.returncode
+        require(setup.returncode == 0, "Official controller setup failed")
+        self.docker("exec", self.controller, "mkdir", "-p", "/work/upstream/workspace/bootstrap")
+        self.docker(
+            "exec",
+            self.controller,
+            "/work/upstream/.venv/bin/python",
+            "-c",
+            "import subprocess; from pathlib import Path; Path('/work/evidence/upstream-freeze.txt').write_text(subprocess.check_output(['uv','pip','freeze','--python','/work/upstream/.venv/bin/python'],text=True))",
+        )
+        remaining = int(self.report["started"] + resources["work_deadline_seconds"] - time.time())
+        require(remaining > 300, "Insufficient native generation window")
+        self.report.update(
+            generation_started=True, stage="native_generation", native_window_seconds=remaining
+        )
+        self.save()
+        result = self.logged(
+            "native-generation.log",
+            [
+                "-e",
+                "BIOTASKS_HISTORY_DEADLINE_EPOCH=" + str(time.time() + remaining),
+                "-e",
+                "PATH=/work/native-bin:/work/upstream/.venv/bin:/work/bin:/usr/local/bin:/usr/bin:/bin",
+                "-w",
+                "/work/upstream",
+                self.controller,
+                "timeout",
+                "--kill-after=15s",
+                str(remaining),
+                "/work/upstream/.venv/bin/python",
+                "-B",
+                "/work/generation_entry.py",
+            ],
+            remaining + 30,
+        )
+        self.report.update(native_exit=result.returncode, stage="native_returned")
+        self.save()
+
+    def finish(self):
+        if (self.tools / "docker").exists() and self.report["creation_started"]:
+            try:
+                self.report["stop"] = self.stop_execution()
+                require(self.report["stop"]["verified_stopped"], "Cannot seal running generation")
+                if self.report["controller_created"]:
+                    self.docker("start", self.controller)
+                    # Ensure empty pre-bootstrap failures can still be archived.
+                    self.docker(
+                        "exec",
+                        self.controller,
+                        "mkdir",
+                        "-p",
+                        "/work/outputs",
+                        "/work/native-observations",
+                        "/work/upstream/workspace/bootstrap",
+                    )
+                    self.docker(
+                        "exec",
+                        self.controller,
+                        "tar",
+                        "-czf",
+                        "/work/evidence/control-artifacts.tar.gz",
+                        "-C",
+                        "/work",
+                        "outputs",
+                        "native-observations",
+                        "upstream/workspace/bootstrap",
+                        timeout=120,
+                    )
+                    self.docker(
+                        "cp", self.controller + ":/work/evidence/.", str(self.out), timeout=120
+                    )
+                    self.report["archive_copied"] = True
+            except Exception as error:
+                self.report["archive_error"] = type(error).__name__
+            finally:
+                try:
+                    self.report["stop"] = self.stop_execution()
+                except Exception as error:
+                    self.report["stop"] = {
+                        "verified_stopped": False,
+                        "error_type": type(error).__name__,
+                    }
+            self.report["retained_resources"] = {
+                "controller": self.controller,
+                "volume": self.volume,
+                "reason": "Retain stopped resources until bound readback/publication/cleanup",
+            }
+        elif self.report.get("configuration_verified"):
+            self.report["cleanup"] = {
+                "verified_no_creation": True,
+                "reason": "Bound generation worker stopped before first creation request",
+            }
+        if not self.report["generation_started"]:
+            self.report["model_calls"] = 0
+        self.redact()
+        if self.tools.exists():
+            shutil.rmtree(self.tools)
+        self.report["finished"] = time.time()
+        self.report["output_sha256"] = {
+            p.relative_to(self.out).as_posix(): sha(p)
+            for p in self.out.rglob("*")
+            if p.is_file() and p.name not in ("result.json", "work-state.json")
+        }
+        checkpoint(self.out / "result.json", self.report)
+
+
+def main():
+    root, out = Path(os.environ["IRIS_WORKDIR"]), Path(os.environ["IRIS_OUTPUT_DIR"])
+    out.mkdir(parents=True, exist_ok=True)
+    runner = Generation(root, out, json.loads((root / "family.json").read_text()))
+
+    def interrupted(signum, frame):
+        raise RuntimeError("Generation worker interrupted")
+
+    signal.signal(signal.SIGTERM, interrupted)
+    signal.signal(signal.SIGINT, interrupted)
+    try:
+        runner.validate()
+        runner.work()
+    except BaseException as error:
+        runner.report.update(error_type=type(error).__name__)
+    finally:
+        runner.finish()
+
+
+if __name__ == "__main__":
+    main()

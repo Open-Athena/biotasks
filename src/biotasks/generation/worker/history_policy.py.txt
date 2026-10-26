@@ -1,0 +1,28 @@
+"""Bounded history identities and deterministic batches; no task repair."""
+import re
+
+KIND = "history-identities-v1"
+
+
+def validate(value):
+    assert value.get("kind") == KIND
+    assert value["limit"] == 100
+    rows = value["candidates"]
+    assert isinstance(rows, list) and len(rows) <= 100000
+    assert len({r["number"] for r in rows}) == len(rows)
+    assert re.fullmatch(r"[0-9a-f]{64}", value["source_inventory_sha256"])
+    assert value["cutoff_utc"]
+    for row in rows:
+        assert type(row["number"]) is int and row["number"] > 0
+        assert row["state"] == "MERGED"
+        assert re.fullmatch(r"[0-9a-f]{40}", row["head_sha"])
+    return rows
+
+
+def advance(pending, chosen, returned, entered):
+    assert chosen == pending[:100]
+    assert len(set(entered)) == len(entered)
+    assert set(entered) <= set(returned) <= set(chosen)
+    omitted = set(chosen) - set(returned)
+    done = set(entered) | omitted
+    return [n for n in pending if n not in done], [n for n in chosen if n in omitted]

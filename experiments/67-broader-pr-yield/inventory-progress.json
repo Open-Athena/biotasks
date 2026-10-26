@@ -1,0 +1,550 @@
+{
+  "started_utc": "2026-10-26T15:06:18.047742+00:00",
+  "cutoff_utc": "2026-10-17T23:59:59+00:00",
+  "method": "Serial GraphQL merged-PR cursor traversal in createdAt ascending order, no lower date cutoff or total PR limit. Only mergedAt<=frozen cutoff enters inventory. Original count and unique PR identities must agree.",
+  "scope": "Metadata inventory, not eligibility, native acquisition/validation, task export or a success denominator.",
+  "source_sha256": "57488bfba1066e3029cc9560ebff03f3553406adf5d3350d9034aacac46e9ba1",
+  "count_source_sha256": "b8d4403596f0283033fedbc87f97d6b3df30ec61999b75a1182b9c57c890f339",
+  "query": "query($owner: String!, $name: String!, $cursor: String) {\n  repository(owner: $owner, name: $name) {\n    nameWithOwner\n    pullRequests(states: MERGED, first: 100, after: $cursor,\n                 orderBy: {field: CREATED_AT, direction: ASC}) {\n      totalCount\n      pageInfo { hasNextPage endCursor }\n      nodes { id number title url createdAt mergedAt baseRefName baseRefOid headRefOid }\n    }\n  }\n  rateLimit { cost remaining resetAt }\n}",
+  "estimated_peak_working_set_mib": 128,
+  "model_calls": 0,
+  "repositories": [
+    {
+      "repo": "nipy/nibabel",
+      "unique_merged_prs_at_cutoff": 812,
+      "original_count_matches": true,
+      "search_count": 812,
+      "cursor_exhausted": true,
+      "post_cutoff_merges_excluded": 2,
+      "pages": [
+        {
+          "path": "nipy__nibabel/page-0000.json",
+          "sha256": "8d856099494f546292dabc28e25b9ca7fbfa01ead39049a5185e7a250c399848",
+          "bytes": 50425,
+          "request_cursor": null,
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAxMy0wNi0xNVQxNjoyMjo0MlrOAGDKwA==",
+          "has_next_page": true,
+          "observed_total_count": 814
+        },
+        {
+          "path": "nipy__nibabel/page-0001.json",
+          "sha256": "5f4a86c3d83550749f6f417ad5e3b3a676e6c0f52d8fbbad2df7fed8bbb8fb68",
+          "bytes": 51401,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAxMy0wNi0xNVQxNjoyMjo0MlrOAGDKwA==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAxNS0wOC0yOFQxNTowMDozOVrOApnZgQ==",
+          "has_next_page": true,
+          "observed_total_count": 814
+        },
+        {
+          "path": "nipy__nibabel/page-0002.json",
+          "sha256": "57059def51af6149da902ba56664c2b2eb70eb1fcbc56f237b07dc15a3c29904",
+          "bytes": 51190,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAxNS0wOC0yOFQxNTowMDozOVrOApnZgQ==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAxNy0wMy0yMlQxODoxMzo0M1rOBq4nzg==",
+          "has_next_page": true,
+          "observed_total_count": 814
+        },
+        {
+          "path": "nipy__nibabel/page-0003.json",
+          "sha256": "5e47da2dde590d1535157a8b83fcb4d26c8a7d57daf79a370d7ce2de8a3f94b3",
+          "bytes": 51647,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAxNy0wMy0yMlQxODoxMzo0M1rOBq4nzg==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAxOS0wNC0yM1QwMToyMzozNFrOED7U4g==",
+          "has_next_page": true,
+          "observed_total_count": 814
+        },
+        {
+          "path": "nipy__nibabel/page-0004.json",
+          "sha256": "a9968aafcae8a87efd18b9ddf770bd64a7b85926422ab40d3558217666a0e7f7",
+          "bytes": 51843,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAxOS0wNC0yM1QwMToyMzozNFrOED7U4g==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0wNy0wNlQwMjo1NDoyNFrOGn6s_g==",
+          "has_next_page": true,
+          "observed_total_count": 814
+        },
+        {
+          "path": "nipy__nibabel/page-0005.json",
+          "sha256": "b19cd7efd58469592cd69cc84f2d47aa20ad73d61514813f6d0aefdd77dd2a09",
+          "bytes": 50907,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0wNy0wNlQwMjo1NDoyNFrOGn6s_g==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMy0wMS0wNlQwMzoxNjoyNlrORsdKsg==",
+          "has_next_page": true,
+          "observed_total_count": 814
+        },
+        {
+          "path": "nipy__nibabel/page-0006.json",
+          "sha256": "3e287ff880f13b176a46fcfe4cdf5f7be685240a14bca6f791a45f176cb8567b",
+          "bytes": 50744,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMy0wMS0wNlQwMzoxNjoyNlrORsdKsg==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNC0wOS0yMlQxNTo0NDo1N1rOfEo9YQ==",
+          "has_next_page": true,
+          "observed_total_count": 814
+        },
+        {
+          "path": "nipy__nibabel/page-0007.json",
+          "sha256": "d4bcaddef687ea904613d044e92f88dfa13ae92e2b338e19b545de66d1ec598e",
+          "bytes": 50695,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNC0wOS0yMlQxNTo0NDo1N1rOfEo9YQ==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNi0wOC0yNFQyMDoxMDoxNVrPAAAAAQNmUEI=",
+          "has_next_page": true,
+          "observed_total_count": 814
+        },
+        {
+          "path": "nipy__nibabel/page-0008.json",
+          "sha256": "1dbcb56ab645e74ced28375583fee6253d85f778989a9d2455a58380ad66c687",
+          "bytes": 7670,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNi0wOC0yNFQyMDoxMDoxNVrPAAAAAQNmUEI=",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNi0xMC0xNlQxMjoyNDozMlrPAAAAASNd25M=",
+          "has_next_page": false,
+          "observed_total_count": 814
+        }
+      ],
+      "inventory": {
+        "path": "nipy__nibabel/inventory.jsonl",
+        "sha256": "dbcc728b841f01e1d69fb74eef023eab247dfd2d3594d958d578bc3f566e1003",
+        "bytes": 305290
+      }
+    },
+    {
+      "repo": "jeetsukumaran/DendroPy",
+      "unique_merged_prs_at_cutoff": 72,
+      "original_count_matches": true,
+      "search_count": 72,
+      "cursor_exhausted": true,
+      "post_cutoff_merges_excluded": 8,
+      "pages": [
+        {
+          "path": "jeetsukumaran__DendroPy/page-0000.json",
+          "sha256": "d004c290733c98ff71ddf78ccab3e9831098c4019487bd3e08f1aa6120a267b2",
+          "bytes": 41093,
+          "request_cursor": null,
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNi0xMC0yM1QyMDozMDoyNFrPAAAAASlcGLM=",
+          "has_next_page": false,
+          "observed_total_count": 80
+        }
+      ],
+      "inventory": {
+        "path": "jeetsukumaran__DendroPy/inventory.jsonl",
+        "sha256": "5ea7e389f0808d52136ab132b4a62dcc8f54639c69a8079e1e5a97e88fc3bdc4",
+        "bytes": 27120
+      }
+    },
+    {
+      "repo": "scverse/anndata",
+      "unique_merged_prs_at_cutoff": 1531,
+      "original_count_matches": true,
+      "search_count": 1531,
+      "cursor_exhausted": true,
+      "post_cutoff_merges_excluded": 9,
+      "pages": [
+        {
+          "path": "scverse__anndata/page-0000.json",
+          "sha256": "8b715692d727214a8807cb6ab0b1cab6b66f0170715f61b45d4b62ef586c9118",
+          "bytes": 50650,
+          "request_cursor": null,
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAxOS0xMi0yOFQxNjo1NDoxMFrOFU_HqA==",
+          "has_next_page": true,
+          "observed_total_count": 1540
+        },
+        {
+          "path": "scverse__anndata/page-0001.json",
+          "sha256": "8fffc0a9edd614966971fa6a25d95a5b813ff8c77262fa110fbe1acd1af605ca",
+          "bytes": 50892,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAxOS0xMi0yOFQxNjo1NDoxMFrOFU_HqA==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMS0wNS0yOFQxNzowNDo0MFrOJyYZbg==",
+          "has_next_page": true,
+          "observed_total_count": 1540
+        },
+        {
+          "path": "scverse__anndata/page-0002.json",
+          "sha256": "513126f3f4fffd86ae3e60628afe005fe26e7d56dc660a433a07f0787e06a961",
+          "bytes": 49545,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMS0wNS0yOFQxNzowNDo0MFrOJyYZbg==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMy0wMS0yN1QwODo1NjowNFrOSKg_Qg==",
+          "has_next_page": true,
+          "observed_total_count": 1540
+        },
+        {
+          "path": "scverse__anndata/page-0003.json",
+          "sha256": "134bcb344b26242f252c7358892873ccc669796e3ae49058ab66bb040e9bfd35",
+          "bytes": 50037,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMy0wMS0yN1QwODo1NjowNFrOSKg_Qg==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMy0wNy0yMFQwOToxOTozM1rOVfpTWg==",
+          "has_next_page": true,
+          "observed_total_count": 1540
+        },
+        {
+          "path": "scverse__anndata/page-0004.json",
+          "sha256": "d3bfa608e139f59c53f1cb00c6e24f6a5be77eac13818f74670ec71d89d0fd1f",
+          "bytes": 50089,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMy0wNy0yMFQwOToxOTozM1rOVfpTWg==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMy0xMS0wNlQxNzo0NTo1N1rOXrf81Q==",
+          "has_next_page": true,
+          "observed_total_count": 1540
+        },
+        {
+          "path": "scverse__anndata/page-0005.json",
+          "sha256": "96fa331cd0a98942e32900f8539b27808da6f3a7ae2b0169db1f343af2792d90",
+          "bytes": 51471,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMy0xMS0wNlQxNzo0NTo1N1rOXrf81Q==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNC0wMi0xNlQxNDo1Mzo0OVrOZxjFNQ==",
+          "has_next_page": true,
+          "observed_total_count": 1540
+        },
+        {
+          "path": "scverse__anndata/page-0006.json",
+          "sha256": "30d1900cde165b42942655db13796dcb81303fa4e4ac94a6c99cf2e05be8266e",
+          "bytes": 51087,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNC0wMi0xNlQxNDo1Mzo0OVrOZxjFNQ==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNC0wNi0xMVQxNDo1NToyNFrOch_QZg==",
+          "has_next_page": true,
+          "observed_total_count": 1540
+        },
+        {
+          "path": "scverse__anndata/page-0007.json",
+          "sha256": "aa093fe699eb4e262fd39f08002c1be2d5eaee2be9f53c2051f305589b3c65af",
+          "bytes": 51704,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNC0wNi0xMVQxNDo1NToyNFrOch_QZg==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNC0wOS0wNFQxMTozMDo1OFrOemGmPg==",
+          "has_next_page": true,
+          "observed_total_count": 1540
+        },
+        {
+          "path": "scverse__anndata/page-0008.json",
+          "sha256": "b64e9ade6da8cfe27ea5869910772a5737a986dd2f0069269a48eea7a5cbead9",
+          "bytes": 50929,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNC0wOS0wNFQxMTozMDo1OFrOemGmPg==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNC0xMi0wOVQxMDoyMjoyMVrOhIO6lQ==",
+          "has_next_page": true,
+          "observed_total_count": 1540
+        },
+        {
+          "path": "scverse__anndata/page-0009.json",
+          "sha256": "e488fdbeaebb7a3e46da0039b4fbfe53cd5ef2caad0b1b603dfeaede5734e1c5",
+          "bytes": 52000,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNC0xMi0wOVQxMDoyMjoyMVrOhIO6lQ==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNS0wMy0yMVQxNDoyOToxNVrOj6DK0g==",
+          "has_next_page": true,
+          "observed_total_count": 1540
+        },
+        {
+          "path": "scverse__anndata/page-0010.json",
+          "sha256": "a1579ed26cf8eeede9f7df9bd97ad06d209f63746cb035efc41173bbc8f5fbe8",
+          "bytes": 51138,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNS0wMy0yMVQxNDoyOToxNVrOj6DK0g==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNS0wOC0xMVQwNzoyMDo1MlrOovu8zQ==",
+          "has_next_page": true,
+          "observed_total_count": 1540
+        },
+        {
+          "path": "scverse__anndata/page-0011.json",
+          "sha256": "77c3c22569c488af3a5889317ca27a8a7915464255ab4f5f358979e42508c9f7",
+          "bytes": 51212,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNS0wOC0xMVQwNzoyMDo1MlrOovu8zQ==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNS0xMS0xMVQxNzoyOToxNlrOss5KFw==",
+          "has_next_page": true,
+          "observed_total_count": 1540
+        },
+        {
+          "path": "scverse__anndata/page-0012.json",
+          "sha256": "0443575ffffa855402e0ce66641ab7663f133bbd352111bcf1ff44da7970beca",
+          "bytes": 51529,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNS0xMS0xMVQxNzoyOToxNlrOss5KFw==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNi0wMy0xOVQxMzoyMTo1NFrOy9nGug==",
+          "has_next_page": true,
+          "observed_total_count": 1540
+        },
+        {
+          "path": "scverse__anndata/page-0013.json",
+          "sha256": "25806b6804af72da8cab74af2c763155145cd753d6c648f7707ef51a1ae5a4fc",
+          "bytes": 51548,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNi0wMy0xOVQxMzoyMTo1NFrOy9nGug==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNi0wNi0xN1QyMDoyODowOFrO56iG_w==",
+          "has_next_page": true,
+          "observed_total_count": 1540
+        },
+        {
+          "path": "scverse__anndata/page-0014.json",
+          "sha256": "d42bfcc482c1e9d5e7a93a743e4b86eccbaaf6ad33be461b12239d0e8cbfaa80",
+          "bytes": 51903,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNi0wNi0xN1QyMDoyODowOFrO56iG_w==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNi0wOS0wOFQxNDoxMTozMVrPAAAAAQq9MNk=",
+          "has_next_page": true,
+          "observed_total_count": 1540
+        },
+        {
+          "path": "scverse__anndata/page-0015.json",
+          "sha256": "55a3fbc69a91d3c448e61e1f5e395d536a66c5edc1e161e49f8717d81dc562ed",
+          "bytes": 21524,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNi0wOS0wOFQxNDoxMTozMVrPAAAAAQq9MNk=",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNi0xMC0yM1QxNToyODoxOVrPAAAAASkjgDU=",
+          "has_next_page": false,
+          "observed_total_count": 1540
+        }
+      ],
+      "inventory": {
+        "path": "scverse__anndata/inventory.jsonl",
+        "sha256": "b873854d5be5bb4cc28a82c3ebea56787ea1d237ca5d189c0372fd18b400c1d5",
+        "bytes": 575184
+      }
+    },
+    {
+      "repo": "biopython/biopython",
+      "unique_merged_prs_at_cutoff": 2616,
+      "original_count_matches": false,
+      "search_count": 2615,
+      "cursor_exhausted": true,
+      "post_cutoff_merges_excluded": 3,
+      "pages": [
+        {
+          "path": "biopython__biopython/page-0000.json",
+          "sha256": "8fdc5ad1d851a4516a2c3638ccc58a9257fb0fb80442692f521b645a15724081",
+          "bytes": 51721,
+          "request_cursor": null,
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAxNS0wNS0wNFQyMToxMTo0OFrOAhEbwQ==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0001.json",
+          "sha256": "78117ed0433309e48d248087de55ca39384353f207eb05cf22ae5925429427e2",
+          "bytes": 51980,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAxNS0wNS0wNFQyMToxMTo0OFrOAhEbwQ==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAxNi0xMi0wOVQxNTozNzoyNFrOBc0hgw==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0002.json",
+          "sha256": "d34644eff25db357aac37c3a42e95cab451c0388dd5474227018bf2707922fa4",
+          "bytes": 52143,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAxNi0xMi0wOVQxNTozNzoyNFrOBc0hgw==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAxNy0wNS0yN1QxNTo0Mzo0OFrOB1E_LQ==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0003.json",
+          "sha256": "b952fa5051cf8d6729e0bcbdcf8bb568067045e649fd3a3fa472bd226bdba1a5",
+          "bytes": 52270,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAxNy0wNS0yN1QxNTo0Mzo0OFrOB1E_LQ==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAxNy0xMi0xNFQxOTowMzozNFrOCXGQEw==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0004.json",
+          "sha256": "d71c567cdc03b9fcddcb99c9dc4d08a793e7498401c450b7d1e6157dbc960cc3",
+          "bytes": 52806,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAxNy0xMi0xNFQxOTowMzozNFrOCXGQEw==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAxOC0wNS0zMVQwOTo0NToxMVrOC20Zlg==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0005.json",
+          "sha256": "2142fef25ba74e939a6f0499a1cb6714c3fc410e7adb2d9471d1a0dbc0b5c6d9",
+          "bytes": 52154,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAxOC0wNS0zMVQwOTo0NToxMVrOC20Zlg==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAxOS0wMS0xNVQwNzoxOTo1MVrODpXCTg==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0006.json",
+          "sha256": "fc3dfc49613afa62f37ce3eb91010f5b3d37cb91067089720fc69cc68ccc18df",
+          "bytes": 52531,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAxOS0wMS0xNVQwNzoxOTo1MVrODpXCTg==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAxOS0wNS0yMFQwMjo0Mjo0NlrOELPduQ==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0007.json",
+          "sha256": "94371162cadb26cf0e6ecd709b5a62ade4f83e7aa2529062e440ef8883a6fa10",
+          "bytes": 52424,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAxOS0wNS0yMFQwMjo0Mjo0NlrOELPduQ==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAxOS0wOC0xNFQxNjo1NToxNlrOElLGNQ==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0008.json",
+          "sha256": "08375c68a95e28947d972b6afba5ddbe8de1051af8e1a5329ddc217b89da8a3f",
+          "bytes": 51657,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAxOS0wOC0xNFQxNjo1NToxNlrOElLGNQ==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAxOS0xMi0wNlQxMjowMzowNlrOFNs7-Q==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0009.json",
+          "sha256": "6d329a837ecc79f2b0da14f8bcab844723f1865556e11d5592524e4ef39525b0",
+          "bytes": 51385,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAxOS0xMi0wNlQxMjowMzowNlrOFNs7-Q==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0wMS0wOVQxMTo0MDo1M1rOFYMmBw==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0010.json",
+          "sha256": "53a19b386af60bd1e97803443cd8f5d7152a2a20271d53dbdbf454333159a035",
+          "bytes": 51882,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0wMS0wOVQxMTo0MDo1M1rOFYMmBw==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0wMi0wNVQyMTo1Nzo1OFrOFiZBwQ==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0011.json",
+          "sha256": "27d85ff6de92565d3d3ec43abd2e9165c19770fbfcd879fdfffe9e4ecd094acf",
+          "bytes": 52080,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0wMi0wNVQyMTo1Nzo1OFrOFiZBwQ==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0wMi0yNVQxMToxOTozM1rOFp8F2w==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0012.json",
+          "sha256": "f626e50c67073113de96a5fa6cae7bf9d4669c5e7332f9da227d4f7e4528f8af",
+          "bytes": 52509,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0wMi0yNVQxMToxOTozM1rOFp8F2w==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0wNS0yOVQxMjozMToxMlrOGVYj2g==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0013.json",
+          "sha256": "431630094dc190865557a04f1479009bea266045a84aa91b2ccb86df92bf7151",
+          "bytes": 52040,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0wNS0yOVQxMjozMToxMlrOGVYj2g==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0wNy0xOFQyMjozODowNFrOGvPAgg==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0014.json",
+          "sha256": "373e7338055a1c607e6c633901436951d6c5d34d47b4b2e4867e3ce7e8d1d8d0",
+          "bytes": 51647,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0wNy0xOFQyMjozODowNFrOGvPAgg==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0wNy0zMVQwOToxNjo0M1rOG2pTRw==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0015.json",
+          "sha256": "5eaa32f016fabda2a639f5bb11af1b1c915edf80c8f6fcdf60d096946914f40c",
+          "bytes": 52053,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0wNy0zMVQwOToxNjo0M1rOG2pTRw==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0xMS0xNVQxNzoxMzo0NVrOHxFMDQ==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0016.json",
+          "sha256": "dcc6a667ec00709d30507eb0ccaf07aee7d0bf35b4237aca569b5c6128b4b181",
+          "bytes": 51370,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMC0xMS0xNVQxNzoxMzo0NVrOHxFMDQ==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMS0wNC0xNFQwMTowNDo0NVrOJKXmlw==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0017.json",
+          "sha256": "639445a305a0299fb35cbdbf264a270fc14eaa96c11aae90db39897dba7190f2",
+          "bytes": 52223,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMS0wNC0xNFQwMTowNDo0NVrOJKXmlw==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMS0wOS0wNlQxMzo0NjoyNlrOK2QLPw==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0018.json",
+          "sha256": "01648cc48f3b1493e396f8a8feb347dfb29e11c6081ccaf205b931a7f178be36",
+          "bytes": 51044,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMS0wOS0wNlQxMzo0NjoyNlrOK2QLPw==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMi0wNi0wMVQwNjoxOTo0MFrOOM5qmA==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0019.json",
+          "sha256": "45500c4d5aaeeafda64b62569189089d19ef4a12434bd0c81f01f7a8ac602a30",
+          "bytes": 50064,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMi0wNi0wMVQwNjoxOTo0MFrOOM5qmA==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMi0xMC0wNVQwMDowNTowNFrOQCw7rA==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0020.json",
+          "sha256": "bf0552d474a40af95864c363643f35470db8c67ebced58e1793d54843d1d64cd",
+          "bytes": 50592,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMi0xMC0wNVQwMDowNTowNFrOQCw7rA==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMy0wNy0wMVQxMjozMjoyOVrOVGc_Ww==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0021.json",
+          "sha256": "eefb7ec1ef2d8506908f74bc19590826a8c98590d37f829732f745a3460af84b",
+          "bytes": 50434,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMy0wNy0wMVQxMjozMjoyOVrOVGc_Ww==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyMy0xMS0xN1QwNDo1NzowOVrOX7S3Jw==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0022.json",
+          "sha256": "49513fc5467437caaacef1afb86c1b76301ed332b59e95946acf7ce0bb7f4aaa",
+          "bytes": 50649,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyMy0xMS0xN1QwNDo1NzowOVrOX7S3Jw==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNC0wMy0xOFQxMjoyNTowM1rOae8DRg==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0023.json",
+          "sha256": "919f736edbe0c33f34be838513777141d6cf2c8fe6ece58b71b181125192e58d",
+          "bytes": 51058,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNC0wMy0xOFQxMjoyNTowM1rOae8DRg==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNC0wOS0xMFQxMjo0NjoyNlrOevqn9w==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0024.json",
+          "sha256": "6b02ccb1597316da70bfc4e8532bb8b14ce47680ea9d1969dfbbb1f918210d19",
+          "bytes": 51081,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNC0wOS0xMFQxMjo0NjoyNlrOevqn9w==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNS0wNy0xM1QwMjoyMDowMFrOnqkc8A==",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0025.json",
+          "sha256": "e2ac6e255642ec6893cff303d7868d00ac8a6d27062b8cd0a267b8c4a60ce208",
+          "bytes": 51203,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNS0wNy0xM1QwMjoyMDowMFrOnqkc8A==",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNi0wOS0wOFQxOToyNDozMFrPAAAAAQrlv6I=",
+          "has_next_page": true,
+          "observed_total_count": 2619
+        },
+        {
+          "path": "biopython__biopython/page-0026.json",
+          "sha256": "b53d5f233604aa3194f486361582f88b2960363ed381d4ef0af3b07a43c3834a",
+          "bytes": 10183,
+          "request_cursor": "Y3Vyc29yOnYyOpK0MjAyNi0wOS0wOFQxOToyNDozMFrPAAAAAQrlv6I=",
+          "end_cursor": "Y3Vyc29yOnYyOpK0MjAyNi0xMC0yMlQwMjoxMzozMlrPAAAAASez4Dg=",
+          "has_next_page": false,
+          "observed_total_count": 2619
+        }
+      ],
+      "inventory": {
+        "path": "biopython__biopython/inventory.jsonl",
+        "sha256": "9511858bd0ff1c892376bfd57095562dbc880f3ce556a84161d4ce0b178b310f",
+        "bytes": 997293
+      }
+    }
+  ]
+}

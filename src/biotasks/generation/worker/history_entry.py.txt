@@ -1,0 +1,99 @@
+"""Successive official CLI batches, one original bootstrap cache and model ledger."""
+import dataclasses
+import functools
+import json
+import os
+from pathlib import Path
+import runpy
+import sys
+import time
+
+import history_discovery
+import history_policy
+
+
+def execute(recorder, expected, config_path, state, save, guard_completion, targeting_policy):
+    import cost_guard
+    import litellm
+    from observed_cli import install_hooks
+    from repo2rlenv import github
+
+    rows = history_policy.validate(expected)
+    pending = [r["number"] for r in rows]
+    frozen = {r["number"]: r for r in rows}
+    install_hooks(recorder)
+    budget = json.loads(Path('/work/model-run-budget.json').read_text())
+    litellm.completion = guard_completion(recorder, litellm.completion, budget, cost_guard)
+    original_transport = github._run_gh
+    original_listing = github.list_merged_prs
+    deadline = float(os.environ['BIOTASKS_HISTORY_DEADLINE_EPOCH'])
+    ledger = {'repo': expected['repo'], 'batches': [], 'backlog_pr_numbers': pending.copy(),
+              'model_budget_scope': 'One cumulative 20-call/$5-stop allocation, no reset per batch'}
+    all_returned = {}
+    family = json.loads(Path('/work/family.json').read_text())
+    executable = '/work/upstream/.venv/bin/repo2rlenv'
+    try:
+        while pending and time.time() + 1260 < deadline:
+            chosen = pending[:100]
+            batch = {k: expected[k] for k in ['repo', 'cutoff_utc', 'source_inventory_sha256']}
+            batch['pr_numbers'] = chosen
+            returned = None
+            history_discovery.install(github, batch, recorder)
+
+            @functools.wraps(original_listing)
+            def listing(*args, **kwargs):
+                nonlocal returned
+                values = original_listing(*args, **kwargs)
+                descriptors = [dataclasses.asdict(v) for v in values]
+                assert len({r['number'] for r in descriptors}) == len(descriptors)
+                assert all(r['number'] in chosen and r['head_sha'] == frozen[r['number']]['head_sha']
+                           for r in descriptors), 'Frozen PR head changed; do not substitute'
+                returned = [r['number'] for r in descriptors]
+                all_returned.update({r['number']: r for r in descriptors})
+                recorder.save('history-candidates.json', list(all_returned.values()))
+                return values
+
+            github.list_merged_prs = listing
+            event_file = recorder.root / 'events.jsonl'
+            offset = event_file.stat().st_size if event_file.exists() else 0
+            row = {'selected_pr_numbers': chosen, 'started': time.time()}
+            ledger['batches'].append(row)
+            recorder.save('history-batches.json', ledger)
+            sys.argv = [executable, '--no-ui', 'generate', '--config', str(config_path), '--max-spend-usd', '5']
+            state.update(native_cli_started=True, state='native_running', batch=len(ledger['batches'])-1)
+            save()
+            try:
+                with targeting_policy(family, state):
+                    runpy.run_path(executable, run_name='__main__')
+                row['exit_code'] = 0
+            except SystemExit as error:
+                row['exit_code'] = error.code if isinstance(error.code, int) else 1
+            except Exception as error:
+                row['exception_type'] = type(error).__name__
+            finally:
+                github._run_gh = original_transport
+                github.list_merged_prs = original_listing
+                events = []
+                if event_file.exists():
+                    with event_file.open() as stream:
+                        stream.seek(offset)
+                        events = [json.loads(line) for line in stream if line.strip()]
+                entered = [e['pr'] for e in events if e['event'] == 'candidate_entered']
+                omitted = []
+                if returned is not None:
+                    pending, omitted = history_policy.advance(pending, chosen, returned, entered)
+                row.update(returned=returned, entered=entered, omitted=omitted, finished=time.time())
+                ledger['backlog_pr_numbers'] = pending.copy()
+                recorder.save('history-batches.json', ledger)
+                recorder.billing()
+            if returned is None or not entered and not omitted or recorder.cost_unknown or recorder.actual_cost >= recorder.threshold:
+                ledger['stop_reason'] = 'acquisition_bootstrap_no_progress_or_budget'
+                break
+        ledger.setdefault('stop_reason', 'exhausted' if not pending else 'remaining_time_for_next_batch')
+        ledger['state'] = 'complete' if not pending else 'bounded_with_backlog'
+        state.update(native_exit_code=0, state='native_returned')
+    finally:
+        github._run_gh = original_transport
+        github.list_merged_prs = original_listing
+        recorder.save('history-batches.json', ledger)
+        recorder.save('history-candidates.json', list(all_returned.values()))

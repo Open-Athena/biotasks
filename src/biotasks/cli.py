@@ -1,4 +1,4 @@
-"""Command-line access to packaged BioTasks prompts."""
+"""Command-line access to BioTasks tools."""
 
 import sys
 from collections.abc import Sequence
@@ -7,15 +7,22 @@ from typing import Annotated
 
 from cyclopts import App, Parameter
 
+from biotasks.generation.cli import app as generation
 from biotasks.prompts import list_prompts, load_prompt
+from biotasks.retention.cli import app as retention
+from biotasks.validation.cli import app as validation
+from biotasks.validation.files import ValidationError
 
 app = App(
     name="biotasks",
-    help="Inspect bundled BioTasks prompt templates.",
+    help="Inspect prompts and run bounded official PR task generation/validation.",
     version=f"biotasks {version('biotasks')}",
 )
 prompts = App(name="prompts", help="List or read bundled prompt templates.")
 app.command(prompts)
+app.command(validation)
+app.command(generation)
+app.command(retention)
 
 
 @prompts.command(name="list")
@@ -32,4 +39,8 @@ def prompt_show(name: Annotated[str, Parameter(choices=list_prompts())]) -> None
 
 
 def main(argv: Sequence[str] | None = None) -> None:
-    app(argv)
+    try:
+        app(argv)
+    except ValidationError as error:
+        print(f"Validation held: {error}", file=sys.stderr)
+        raise SystemExit(2) from None
