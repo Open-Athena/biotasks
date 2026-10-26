@@ -1,0 +1,34 @@
+--- a/experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py
++++ b/experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py
+@@ -189,7 +189,15 @@
+     expected = {row["hint_id"] for row in findings}
+     observed = [row.hint_id for row in review.asset_value_assessments]
+     if len(set(observed)) != len(observed) or set(observed) != expected:
+-        raise ValueError("Explicitly assess every supplied asset value hint exactly once")
++        counts = Counter(observed)
++        raise ValueError(
++            "Explicitly assess every supplied asset value hint exactly once; "
++            f"missing_hint_ids={sorted(expected - set(observed))}; "
++            f"unexpected_hint_ids={sorted(set(observed) - expected)}; "
++            f"duplicate_hint_ids={sorted(key for key, count in counts.items() if count > 1)}. "
++            "Use the recorded hint IDs verbatim. Correct the coverage without "
++            "changing scientific assessments to satisfy validation."
++        )
+     if review.decision == "accept_for_packaging" and any(
+         row.decision != "unrelated" for row in review.asset_value_assessments
+     ):
+--- a/src/biotasks/prompts/notebook-grader-review.md
++++ b/src/biotasks/prompts/notebook-grader-review.md
+@@ -1,4 +1,12 @@
+ # Review an artifact grader and its executed controls
++
++Return nested objects and arrays as actual JSON objects and arrays, never as
++JSON-encoded strings. On artifact-validation feedback, correct the named schema
++or identity defect while preserving all other supported assessments. Hint IDs
++are opaque recorded identities: copy them verbatim, and use the feedback's
++missing, unexpected and duplicate ID lists to locate a coverage error. Do not
++invent an assessment, mark an unresolved hint unrelated, or change a scientific
++conclusion merely to obtain schema acceptance.
+ 
+ When the input contains `review_evidence`, detailed fields are in a complete,
+ identity-bound packet rather than repeated inline. Use `read_review_evidence`
