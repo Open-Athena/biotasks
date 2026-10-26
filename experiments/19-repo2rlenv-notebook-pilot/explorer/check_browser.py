@@ -8,6 +8,7 @@ from playwright.sync_api import sync_playwright
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--index", type=Path, default=Path(__file__).with_name("index.html"))
+parser.add_argument("--screenshot", type=Path)
 args = parser.parse_args()
 index = args.index.resolve()
 manifest = json.loads(index.with_name("source-manifest.json").read_text())
@@ -57,6 +58,33 @@ with sync_playwright() as p:
     for label in ["Notebook", "Task", "Attempt", "Pipeline", "Validation"]:
         page.get_by_role("link", name=label, exact=True).click()
         assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth"), label
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.get_by_role("link", name="Notebook", exact=True).click()
+    notebook_code = page.locator("#notebook .cell .highlight pre").first
+    notebook_code.wait_for(state="visible")
+    contrast = notebook_code.evaluate(
+        """element => {
+          const rgb = value => value.match(/[0-9.]+/g).map(Number);
+          const foreground = rgb(getComputedStyle(element).color).slice(0, 3);
+          let parent = element;
+          let background;
+          while (parent) {
+            const current = rgb(getComputedStyle(parent).backgroundColor);
+            if (current.length === 3 || current[3] > 0) { background = current.slice(0, 3); break; }
+            parent = parent.parentElement;
+          }
+          const luminance = colors => colors.map(x => x / 255)
+            .map(x => x <= .04045 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4)
+            .reduce((sum, x, i) => sum + x * [.2126, .7152, .0722][i], 0);
+          const values = [luminance(foreground), luminance(background)].sort((a,b) => b-a);
+          return (values[0] + .05) / (values[1] + .05);
+        }"""
+    )
+    assert contrast >= 7, contrast
+    if args.screenshot:
+        args.screenshot.parent.mkdir(parents=True, exist_ok=True)
+        notebook_code.scroll_into_view_if_needed()
+        page.screenshot(path=str(args.screenshot))
     assert not errors, errors
     browser.close()
     print(
@@ -66,6 +94,7 @@ with sync_playwright() as p:
                 "stages": len(manifest["stage_ids"]),
                 "mobile_overflow": False,
                 "javascript_errors": errors,
+                "notebook_base_text_contrast": round(contrast, 2),
             }
         )
     )
