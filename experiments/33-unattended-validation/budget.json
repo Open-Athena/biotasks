@@ -10,7 +10,7 @@
   "admission_rule": "Before enabling paid model execution, verify model pricing and maximum request cost; atomically reserve a conservative bound, then reconcile provider-reported actual usage. Stop if accrued cost plus outstanding reservations plus the proposed bound exceeds 90 USD or cost is unknown.",
   "per_repository_settings": "Preserve official bootstrap settings: Sonnet 4.6 through OpenRouter, temperature 0.2, 2048 output-token cap, 20 calls, 5 USD estimated repository stop threshold; global admission remains required.",
   "additional_reserved_cpu_hour_ceiling": 32,
-  "additional_allocated_cpu_hours": 25.32718055539661,
+  "additional_allocated_cpu_hours": 25.713971110979717,
   "new_paid_capacity_allowed": false,
   "events": [
     {
@@ -1046,29 +1046,92 @@
       "run_id": "biotasks-val-issue67b-nibabel-ddff85b71d1d",
       "maximum_allocated_cpu_hours": 6.0,
       "new_paid_capacity": false,
-      "state": "reserved before submission",
+      "state": "terminal reconciled",
       "controller": "biotasks.validation.v1",
-      "role": "primary"
+      "role": "primary",
+      "actual_allocated_cpu_hours": 0.12553666671117147
     },
     {
       "kind": "reserved_cpu_admission",
       "run_id": "biotasks-val-issue67b-nibabel-ddff85b71d1d-stop",
       "maximum_allocated_cpu_hours": 0.16666666666666666,
       "new_paid_capacity": false,
-      "state": "reserved before submission",
+      "state": "released unused",
       "controller": "biotasks.validation.v1",
-      "role": "stop"
+      "role": "stop",
+      "reason": "Verified empty/no-creation; no cleanup job"
     },
     {
       "kind": "reserved_cpu_admission",
       "run_id": "biotasks-val-issue67b-nibabel-ddff85b71d1d-cleanup",
       "maximum_allocated_cpu_hours": 0.16666666666666666,
       "new_paid_capacity": false,
-      "state": "reserved before submission",
+      "state": "terminal reconciled",
       "controller": "biotasks.validation.v1",
-      "role": "cleanup"
+      "role": "cleanup",
+      "actual_allocated_cpu_hours": 0.007158333328035143
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue67b-nibabel-de8dca5cba39",
+      "maximum_allocated_cpu_hours": 6.0,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "primary",
+      "actual_allocated_cpu_hours": 0.12233611106872559
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue67b-nibabel-de8dca5cba39-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "controller": "biotasks.validation.v1",
+      "role": "stop",
+      "reason": "Verified empty/no-creation; no cleanup job"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue67b-nibabel-de8dca5cba39-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "cleanup",
+      "actual_allocated_cpu_hours": 0.0060761111312442355
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue67b-nibabel-d8045db79de9",
+      "maximum_allocated_cpu_hours": 6.0,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "primary",
+      "actual_allocated_cpu_hours": 0.11945888890160454
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue67b-nibabel-d8045db79de9-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "controller": "biotasks.validation.v1",
+      "role": "stop",
+      "reason": "Verified empty/no-creation; no cleanup job"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue67b-nibabel-d8045db79de9-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "cleanup",
+      "actual_allocated_cpu_hours": 0.006224444442325168
     }
   ],
-  "outstanding_cpu_hour_reservations": 6.333333333333333,
+  "outstanding_cpu_hour_reservations": 0,
   "cpu_accounting_rule": "Sum terminal admission actuals and still-reserved admission maxima; normalize floating subtraction residue by recomputation."
 }

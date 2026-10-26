@@ -1,6 +1,6 @@
 # Autonomous issue review — 2026-10-26
 
-Reviewed the live issue bodies, their linked findings, the reconciled task ledger and final delivery audit. This is a review of recorded evidence, not a new execution or regrading. The user requested overall review only; the earlier requirement to leave every child open for human review is superseded. Immutable original bodies are retained in `github/overall-review-issues.json`.
+Reviewed the live issue bodies, their linked findings, the reconciled task ledger and final delivery audit. This is a review of recorded evidence, not a new execution or regrading. The user requested overall review only; the earlier requirement to leave every child open for human review is superseded. Immutable original bodies are retained in `github/overall-review-issues.json`. Follow-up #68 was subsequently reviewed against closed #30 and added below; its exact publication and revised-scope receipts are retained with #67. The register now covers 33 reviewed questions: 27 closed, six substantive follow-ups open, with active broader assessment #67 tracked separately.
 
 | Issue | Disposition | Conclusion / remaining work |
 | --- | --- | --- |
@@ -36,3 +36,4 @@ Reviewed the live issue bodies, their linked findings, the reconciled task ledge
 | [#64](https://github.com/Open-Athena/biotasks/issues/64) | OPEN | Real subtest fixtures reproduce false PASSED parent identities. Strict clean-command checks reject nonzero exits, but a generic subcase identity or explicit unsupported contract remains unimplemented. |
 | [#65](https://github.com/Open-Athena/biotasks/issues/65) | CLOSED | Sealed DendroPy import and native controls completed without model calls: positive tracked pair, four other failures, zero strict-clean tasks. Archival, cleanup and replay verified. |
 | [#66](https://github.com/Open-Athena/biotasks/issues/66) | CLOSED | Fresh NiBabel generation and independent controls completed: nine target regressions repaired, 37 P2P retained, clean selected-file command. Full lifecycle verified; no whole-repository or dataset-release claim. |
+| [#68](https://github.com/Open-Athena/biotasks/issues/68) | OPEN | Reuses #30’s completed stdin/E2BIG comparison and the new DendroPy PR247 command-size witness. Generic shell/cancellation semantics and shared generation/export transport are not qualified; no fix or new remote/model execution is admitted. |
