@@ -1,5 +1,7 @@
 # Unattended PR workflow: bounded delivery
 
+For the consolidated per-repository yield, costs and issue disposition, start with [the overall summary](overall-summary.md).
+
 The supported candidate now completes the official PR-to-task workflow without Codex in its execution loop: frozen PR discovery, upstream bootstrap/generation, local export, independent deterministic controls, cumulative accounting, append-only eligible HF archival and ownership-scoped cleanup. Draft [PR #63](https://github.com/Open-Athena/biotasks/pull/63) contains the fresh-main-based implementation. Main remains unchanged; this is a reviewable delivery, not a merged tool or dataset release.
 
 The decisive fresh case is [NiBabel #66](https://github.com/Open-Athena/biotasks/issues/66), whose [complete evidence](https://github.com/Open-Athena/biotasks/blob/0d7344963b050bf3743de14d4d6858039c2c6201/experiments/66-fresh-nibabel/results.md) records one original generation, one control workflow/two sides, all four HF readbacks, empty owned resources and byte-inert installed completed replay. Nop reward 0 fails 9/9 target regressions; oracle reward 1 passes 9/9, with 37/37 P2P passing on both sides and oracle exit 0. The selected test-file command is clean, not every NiBabel test. No source/test/dependency/parser/reward/timeout repair or added model stage occurred between generation and controls.
@@ -40,4 +42,4 @@ A separately recorded zero-attempt Cobrapy submission incurred no model charge. 
 
 This is one supported execution profile and a small selected integration set, not a population-yield estimate, universal language/backend support, learned-solver score or production/training/dataset release. Source/import provenance, compiled rebuilding, subtest identities and argument/parser edge cases remain documented limitations. Future adoption or experiments require their own review and unchanged budget/authorization boundaries. Do not keep launching cases just to obtain another success.
 
-All admitted workflows are terminal, eligible evidence has verified HF readback and owned cleanup, and the final installed replay is inert. Keep the epic, children and all five pipeline PRs open for human review; #28 remains closed. No automatic merge, release or further run is part of this delivery.
+All admitted workflows are terminal, eligible evidence has verified HF readback and owned cleanup, and the final installed replay is inert. The 2026-10-26 agent review supersedes the earlier requirement to leave every child open for human review. Completed issues are closed, five substantive research follow-ups remain agent-owned, and epic #33 plus PR #63 are the overall review surface; #28 remains closed. No automatic merge, release or further run is part of this delivery.

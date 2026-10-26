@@ -1,0 +1,7 @@
+**Closed after agent review of the bounded experiment/delivery.**
+
+Historical rebuild recovered native MACS PR742 F2P, but exported controls could not fetch isolated build dependencies. The subsequent offline preparation comparison in #34 recovered the clean pair; general compiled policy remains #60.
+
+Closure records the bounded result, including its limitations; it does not mean the limitation is fixed or a pipeline change is merged. Overall findings, costs and remaining work are summarized in epic #33; PR #63 is the consolidated implementation review. Original execution records remain in prior comments and linked research artifacts.
+
+[Candidate checks](https://github.com/Open-Athena/biotasks/blob/6c03d407/experiments/31-historical-builds/native-outcome-results.json) · [PR742 native result](https://github.com/Open-Athena/biotasks/blob/015c5e2b/experiments/31-historical-builds/macs-742-native-diagnosis.json) · [Control diagnosis](https://github.com/Open-Athena/biotasks/blob/a78e6e21/experiments/31-historical-builds/macs-742-control-diagnosis.json) · [Results](https://github.com/Open-Athena/biotasks/blob/a78e6e21/experiments/31-historical-builds/macs-742-control-results.json) · [Boundary evidence](https://github.com/Open-Athena/biotasks/blob/abe0c069/experiments/33-unattended-validation/pr742-boundary-review.json) · [Archive receipt](https://github.com/Open-Athena/biotasks/blob/abe0c069/experiments/33-unattended-validation/macs-evidence-receipt.json)
