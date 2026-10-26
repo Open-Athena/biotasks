@@ -1,5 +1,7 @@
 import copy
 import importlib.util
+import io
+import tarfile
 from decimal import Decimal
 from pathlib import Path
 
@@ -186,6 +188,75 @@ def current_grading_evidence():
     p.pop("failed_stage")
     p["stages"][-1]["status"] = "rejected"
     return p, sources, claims, sessions, clean
+
+
+def common_grading_evidence():
+    values = list(current_grading_evidence())
+    values[1] = dict(module.profile_config("common_grading_rejection")[2])
+    return values
+
+
+def test_common_candidate_admission_retains_all_four_closed_lifetime_checks():
+    coarse, upper, records = module.audit(
+        *common_grading_evidence(), profile="common_grading_rejection"
+    )
+    assert coarse == Decimal("2.769000") and len(records) == 4 and upper < 1
+
+
+@pytest.mark.parametrize(
+    "defect", ["old_source", "extra_session", "other_repair", "unclean", "overlap"]
+)
+def test_common_candidate_cannot_admit_unproven_sources_resources_or_repairs(defect):
+    p, sources, claims, sessions, clean = common_grading_evidence()
+    if defect == "old_source":
+        sources = dict(module.CURRENT_SPECIFICATION_SOURCES)
+    elif defect == "extra_session":
+        claims["materialization-repair-raw"] = dict(claims["grading"])
+    elif defect == "other_repair":
+        p["quality_repair"]["kind"] = "generated_construction"
+    elif defect == "unclean":
+        clean["original_all_cleanup_passed"] = False
+    elif defect == "overlap":
+        sessions["grading"]["started"] = sessions["materialization-raw"]["finished"] - 1
+    with pytest.raises(AssertionError):
+        module.audit(p, sources, claims, sessions, clean, profile="common_grading_rejection")
+
+
+@pytest.mark.parametrize("defect", [None, "changed", "extra", "missing", "linked", "duplicate"])
+def test_entire_common_executable_payload_is_bound_not_only_seven_selected_modules(defect):
+    config = {"seed_file": "seed.json", "notebook_file": "source.ipynb"}
+    runtime = {"src/runtime.py": module.digest(b"original")}
+    rows = [
+        ("src/runtime.py", b"original"),
+        ("experiments/19-repo2rlenv-notebook-pilot/seed.json", b"[]"),
+        ("experiments/19-repo2rlenv-notebook-pilot/source.ipynb", b"{}"),
+    ]
+    if defect == "changed":
+        rows[0] = (rows[0][0], b"modified")
+    elif defect == "extra":
+        rows.append(("src/unadmitted.py", b"extra"))
+    elif defect == "missing":
+        rows.pop(0)
+    elif defect == "duplicate":
+        rows.append(rows[0])
+    stream = io.BytesIO()
+    with tarfile.open(fileobj=stream, mode="w") as archive:
+        for name, data in rows:
+            item = tarfile.TarInfo(name)
+            item.size = len(data)
+            archive.addfile(item, io.BytesIO(data))
+        if defect == "linked":
+            item = tarfile.TarInfo("linked")
+            item.type = tarfile.SYMTYPE
+            item.linkname = "src/runtime.py"
+            archive.addfile(item)
+    stream.seek(0)
+    with tarfile.open(fileobj=stream) as archive:
+        if defect is None:
+            module.check_common_payload(archive, config, runtime)
+        else:
+            with pytest.raises(AssertionError):
+                module.check_common_payload(archive, config, runtime)
 
 
 def current_native_evidence():

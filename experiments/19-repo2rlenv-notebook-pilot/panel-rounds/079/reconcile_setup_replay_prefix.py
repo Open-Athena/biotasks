@@ -2,12 +2,13 @@
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import sys
 import tarfile
 from datetime import UTC, datetime
 from decimal import ROUND_CEILING, Decimal
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "070"))
 from closed_session_bound import RATE, closed_session_bound  # noqa: E402
@@ -68,7 +69,66 @@ LEGACY_SPECIFICATION_SOURCES = {
 }
 
 
+def common_runtime():
+    """Admit the complete tested candidate, never an arbitrary new source hash."""
+    experiment = Path(__file__).resolve().parents[2]
+    panel = experiment / "panel-rounds/101"
+    source_proof = panel / "source-admission.json"
+    helper = panel / "runtime_admission.py"
+    assert (
+        digest(helper.read_bytes())
+        == json.loads(source_proof.read_text())["admission_helper_sha256"]
+    )
+    spec = importlib.util.spec_from_file_location("common_sdk_source_admission", helper)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    identity = panel / "runtime-identity.json"
+    runtime = json.loads(identity.read_text())["runtime_files"]
+    module.candidate_admission(experiment.parents[1], runtime)
+    return runtime, {
+        "source_admission_sha256": digest(source_proof.read_bytes()),
+        "admission_helper_sha256": digest(helper.read_bytes()),
+        "runtime_identity_sha256": digest(identity.read_bytes()),
+    }
+
+
+def check_common_payload(packet, config, runtime):
+    """Every executable payload file must match that admitted common runtime."""
+    prefix = "experiments/19-repo2rlenv-notebook-pilot/"
+    assets = set()
+    for key in ("seed_file", "notebook_file", "source_notices_file"):
+        if config.get(key) is None:
+            continue
+        value = config[key]
+        path = PurePosixPath(value)
+        assert not path.is_absolute() and ".." not in path.parts and str(path) == value
+        assets.add(prefix + value)
+    actual, seen, present_assets = {}, set(), set()
+    for member in packet.getmembers():
+        if member.isdir():
+            continue
+        assert member.isfile() and member.name not in seen
+        seen.add(member.name)
+        if member.name in assets:
+            present_assets.add(member.name)
+        else:
+            actual[member.name] = digest(packet.extractfile(member).read())
+    assert present_assets == assets and actual == runtime, "Unadmitted executable payload"
+
+
 def profile_config(profile):
+    if profile == "common_grading_rejection":
+        runtime, _ = common_runtime()
+        sources = {
+            name: runtime["experiments/19-repo2rlenv-notebook-pilot/" + name]
+            for name in CURRENT_SPECIFICATION_SOURCES
+        }
+        return (
+            (*FOLDERS, "materialization-raw", "grading"),
+            ["preparation", "setup", "replay", "specification", "construction", "grading"],
+            sources,
+        )
     if profile == "current_comparison_repair_failure":
         return (
             (*FOLDERS, "materialization-raw", "grading", "grading-comparison-repair"),
@@ -147,6 +207,7 @@ def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay")
         "legacy_specification_rejection",
         "current_specification_rejection",
         "current_grading_rejection",
+        "common_grading_rejection",
     }
     assert pipeline["status"] == ("rejected" if rejected else "infrastructure_failed")
     if rejected:
@@ -175,6 +236,7 @@ def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay")
             "workspace_grading",
             "current_specification_rejection",
             "current_grading_rejection",
+            "common_grading_rejection",
             "current_grading_failure",
             "current_native_preparation_failure",
         }
@@ -258,6 +320,7 @@ def main():
             "grading",
             "workspace_grading",
             "current_grading_rejection",
+            "common_grading_rejection",
             "current_grading_failure",
             "current_native_preparation_failure",
             "current_specification_rejection",
@@ -310,6 +373,11 @@ def main():
             )
             for name in expected_sources
         }
+    common_admission = None
+    if a.profile == "common_grading_rejection":
+        runtime, common_admission = common_runtime()
+        with tarfile.open(payload / "biotasks.tar") as packet:
+            check_common_payload(packet, config, runtime)
     clean_raw = (archive / "fresh-provider-cleanup.json").read_bytes()
     clean = json.loads(clean_raw)
     assert clean["source_archive_manifest_sha256"] == manifest_hash
@@ -327,6 +395,7 @@ def main():
         "grading",
         "workspace_grading",
         "current_grading_rejection",
+        "common_grading_rejection",
         "current_grading_failure",
         "current_native_preparation_failure",
     }:
@@ -382,6 +451,7 @@ def main():
             "legacy_specification_rejection",
             "current_specification_rejection",
             "current_grading_rejection",
+            "common_grading_rejection",
         }
         else "FAILED"
     )
@@ -443,6 +513,7 @@ def main():
         resource_upper_bound_usd=str(upper),
         records=records,
         native_preparation_non_dispatch=native_preparation,
+        common_source_admission=common_admission,
         retained_usd=f"{retained:.2f}",
         previous_hold_usd=f"{previous:.2f}",
         refinement=a.refine_existing,
