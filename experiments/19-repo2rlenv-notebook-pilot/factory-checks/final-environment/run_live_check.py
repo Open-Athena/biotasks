@@ -126,7 +126,7 @@ async def checks(remote, root):
             )["log"]
         )
         assert read["exit_code"] == 0
-        assert hashlib.sha256(read["log"].encode()).hexdigest() == identity["sha256"]
+        assert hashlib.sha256(read["stdout"].encode()).hexdigest() == identity["sha256"]
         assert result["oracle_isolation"]["exit_code"] == 0
         (root / (name + "-result.json")).write_text(json.dumps(result, indent=2) + "\n")
         observed.append(result)
