@@ -3,14 +3,14 @@
   "user_limit_exclusive_usd": 100,
   "operating_ceiling_usd": 90,
   "unused_margin_usd": 10,
-  "recorded_paid_cost_usd": 2.196603,
-  "outstanding_reservations_usd": 23.07,
-  "new_model_calls": 61,
-  "paid_model_execution_enabled": true,
+  "recorded_paid_cost_usd": 2.724375,
+  "outstanding_reservations_usd": 10.0,
+  "new_model_calls": 75,
+  "paid_model_execution_enabled": false,
   "admission_rule": "Before enabling paid model execution, verify model pricing and maximum request cost; atomically reserve a conservative bound, then reconcile provider-reported actual usage. Stop if accrued cost plus outstanding reservations plus the proposed bound exceeds 90 USD or cost is unknown.",
   "per_repository_settings": "Preserve official bootstrap settings: Sonnet 4.6 through OpenRouter, temperature 0.2, 2048 output-token cap, 20 calls, 5 USD estimated repository stop threshold; global admission remains required.",
   "additional_reserved_cpu_hour_ceiling": 32,
-  "additional_allocated_cpu_hours": 14.89211111081971,
+  "additional_allocated_cpu_hours": 19.22670944425795,
   "new_paid_capacity_allowed": false,
   "events": [
     {
@@ -822,13 +822,65 @@
       "run_id": "biotasks67-nibabel-001",
       "maximum_allocated_cpu_hours": 6,
       "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "primary",
+      "actual_allocated_cpu_hours": 4.330141111214956
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks67-nibabel-001-stop",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "released unused",
+      "controller": "biotasks.validation.v1",
+      "role": "stop",
+      "reason": "Verified empty/no-creation; no cleanup job"
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks67-nibabel-001-cleanup",
+      "maximum_allocated_cpu_hours": 0.16666666666666666,
+      "new_paid_capacity": false,
+      "state": "terminal reconciled",
+      "controller": "biotasks.validation.v1",
+      "role": "cleanup",
+      "actual_allocated_cpu_hours": 0.00445722222328186
+    },
+    {
+      "kind": "model_run_reservation",
+      "run_id": "biotasks67-nibabel-001",
+      "maximum_usd": "13.07",
+      "outstanding_usd": "0",
+      "known_actual_usd": "0.527772",
+      "known_calls": 14,
+      "call_count_complete": true,
+      "state": "terminal reconciled",
+      "quote_sha256": "015b6f57107938b4eeb11a2249672eb30302ea0bb9468c2f1bc51260334cdd3a",
+      "plan_identity": "8f651c478e95936ad688f509b4b0a8c7542dd3048bf7ea5bb53b9e917435d0fc",
+      "model": "openrouter/anthropic/claude-sonnet-4.6",
+      "scope": "Only the original upstream bootstrap calls; no repairs/fallback/retries",
+      "observations": [
+        {
+          "known_actual_usd": "0.527772",
+          "known_calls": 14,
+          "cost_complete": true,
+          "proof_sha256": "915b3f119783d54a3fd91af31bed031d1881bf31f32a1c9b23f376f1f025f87d"
+        }
+      ]
+    },
+    {
+      "kind": "reserved_cpu_admission",
+      "run_id": "biotasks-val-issue67b-nibabel-d02533aaa8f0",
+      "maximum_allocated_cpu_hours": 6.0,
+      "new_paid_capacity": false,
       "state": "reserved before submission",
       "controller": "biotasks.validation.v1",
       "role": "primary"
     },
     {
       "kind": "reserved_cpu_admission",
-      "run_id": "biotasks67-nibabel-001-stop",
+      "run_id": "biotasks-val-issue67b-nibabel-d02533aaa8f0-stop",
       "maximum_allocated_cpu_hours": 0.16666666666666666,
       "new_paid_capacity": false,
       "state": "reserved before submission",
@@ -837,29 +889,14 @@
     },
     {
       "kind": "reserved_cpu_admission",
-      "run_id": "biotasks67-nibabel-001-cleanup",
+      "run_id": "biotasks-val-issue67b-nibabel-d02533aaa8f0-cleanup",
       "maximum_allocated_cpu_hours": 0.16666666666666666,
       "new_paid_capacity": false,
       "state": "reserved before submission",
       "controller": "biotasks.validation.v1",
       "role": "cleanup"
-    },
-    {
-      "kind": "model_run_reservation",
-      "run_id": "biotasks67-nibabel-001",
-      "maximum_usd": "13.07",
-      "outstanding_usd": "13.07",
-      "known_actual_usd": "0",
-      "known_calls": 0,
-      "call_count_complete": false,
-      "state": "reserved before submission",
-      "quote_sha256": "015b6f57107938b4eeb11a2249672eb30302ea0bb9468c2f1bc51260334cdd3a",
-      "plan_identity": "8f651c478e95936ad688f509b4b0a8c7542dd3048bf7ea5bb53b9e917435d0fc",
-      "model": "openrouter/anthropic/claude-sonnet-4.6",
-      "scope": "Only the original upstream bootstrap calls; no repairs/fallback/retries",
-      "observations": []
     }
   ],
-  "outstanding_cpu_hour_reservations": 6.333333333333334,
+  "outstanding_cpu_hour_reservations": 6.333333333333333,
   "cpu_accounting_rule": "Sum terminal admission actuals and still-reserved admission maxima; normalize floating subtraction residue by recomputation."
 }
