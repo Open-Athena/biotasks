@@ -63,7 +63,7 @@ The principal unresolved mechanisms are source/import provenance, compiled-artif
 
 The agent reviewed 33 research/follow-up issues and closed 27 completed questions. Six substantive follow-ups remain agent-owned: #29, #32, #56, #60, #64 and #68; active broader reassessment is #67. The user reviews this overall summary and consolidated PR #63. No individual subissue review is requested.
 
-[Reconciled task ledger](https://github.com/Open-Athena/biotasks/blob/488a22ab/experiments/33-unattended-validation/task-execution-ledger.json) · [Completed-run model accounting](https://github.com/Open-Athena/biotasks/blob/488a22ab/experiments/33-unattended-validation/model-cost-by-run.json) · [Delivery and modification rationale](https://github.com/Open-Athena/biotasks/blob/488a22ab/experiments/33-unattended-validation/conclusion.md) · [Issue review register](https://github.com/Open-Athena/biotasks/blob/043dd27e/experiments/33-unattended-validation/issue-review-2026-10-26.md). Detailed progress and artifact receipts remain in comments.
+[Reconciled task ledger](https://github.com/Open-Athena/biotasks/blob/488a22ab/experiments/33-unattended-validation/task-execution-ledger.json) · [Completed-run model accounting](https://github.com/Open-Athena/biotasks/blob/488a22ab/experiments/33-unattended-validation/model-cost-by-run.json) · [Delivery and modification rationale](https://github.com/Open-Athena/biotasks/blob/488a22ab/experiments/33-unattended-validation/conclusion.md) · [Issue review register](https://github.com/Open-Athena/biotasks/blob/46f7f7a5/experiments/33-unattended-validation/issue-review-2026-10-26.md). Detailed progress and artifact receipts remain in comments.
 
 
 
