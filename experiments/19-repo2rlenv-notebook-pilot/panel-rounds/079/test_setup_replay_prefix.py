@@ -442,6 +442,79 @@ def test_setup_rejection_refuses_unproven_source_topology_or_cleanup(defect):
         module.audit(pipeline, sources, claims, sessions, clean, profile="current_setup_rejection")
 
 
+def comparison_repair_failure_evidence():
+    pipeline, _, claims, sessions, clean = grading_evidence("current_grading_failure")
+    pipeline["quality_repair"] = {
+        "kind": "comparison_diagnosis",
+        "allowance_consumed": True,
+        "target": "independent_solution",
+        "original_materialization": "work/materialization",
+        "original_grading": "work/grading",
+    }
+    pipeline["stages"][-1]["finished"] = 800
+    claims["grading-comparison-repair"] = {
+        **copy.deepcopy(claims["grading"]),
+        "id": "grading-comparison-repair",
+        "owner": "grading-comparison-repair",
+    }
+    sessions["grading-comparison-repair"] = {
+        "started": 700,
+        "finished": 790,
+        "cleanup_verified": True,
+    }
+    clean["owners"].append("grading-comparison-repair")
+    return pipeline, dict(module.COMPARISON_REPAIR_SOURCES), claims, sessions, clean
+
+
+def test_comparison_repair_prices_both_grading_sessions_and_all_earlier_sessions():
+    coarse, upper, records = module.audit(
+        *comparison_repair_failure_evidence(), profile="current_comparison_repair_failure"
+    )
+    assert coarse == Decimal("3.461250") and upper < 1
+    assert len(records) == 5
+    assert Decimal(records["grading-comparison-repair"]["priced_seconds"]) == 690
+
+
+@pytest.mark.parametrize(
+    "defect",
+    [
+        "source",
+        "missing_claim",
+        "missing_session",
+        "overlap",
+        "repair_kind",
+        "target",
+        "extra_repair",
+        "wrong_prefix",
+        "native",
+    ],
+)
+def test_comparison_repair_audit_refuses_changed_topology_or_unreviewed_repair(defect):
+    pipeline, sources, claims, sessions, clean = comparison_repair_failure_evidence()
+    if defect == "source":
+        sources["comparison_repair.py"] = "0" * 64
+    elif defect == "missing_claim":
+        claims.pop("grading-comparison-repair")
+    elif defect == "missing_session":
+        sessions.pop("grading-comparison-repair")
+    elif defect == "overlap":
+        sessions["grading-comparison-repair"]["started"] = sessions["grading"]["finished"] - 1
+    elif defect == "repair_kind":
+        pipeline["quality_repair"]["kind"] = "public_question_diagnosis"
+    elif defect == "target":
+        pipeline["quality_repair"]["target"] = "public_question"
+    elif defect == "extra_repair":
+        pipeline["quality_repair"]["another_repair"] = True
+    elif defect == "wrong_prefix":
+        pipeline["quality_repair"]["original_grading"] = "other/grading"
+    else:
+        pipeline["stages"].append({"name": "native"})
+    with pytest.raises(AssertionError):
+        module.audit(
+            pipeline, sources, claims, sessions, clean, profile="current_comparison_repair_failure"
+        )
+
+
 @pytest.mark.parametrize(
     "defect",
     [

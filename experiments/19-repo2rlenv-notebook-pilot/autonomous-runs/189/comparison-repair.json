@@ -1,0 +1,17 @@
+{
+  "disposition": "ready",
+  "grader_repair": null,
+  "independent_issues": [
+    {
+      "prior_code_quote": "    spectrum = msfilters.make_charge_int(spectrum)\n    spectrum = msfilters.add_compound_name(spectrum)\n    spectrum = msfilters.interpret_pepmass(spectrum)\n    spectrum = msfilters.add_precursor_mz(spectrum)\n    spectrum = msfilters.add_retention_time(spectrum)\n    spectrum = msfilters.add_retention_index(spectrum)",
+      "public_requirement_quote": "Apply the following harmonization/derivation sequence (matchms 0.30.0 is the reference implementation; equivalent, scientifically identical pipelines are acceptable):"
+    },
+    {
+      "prior_code_quote": "    spectrum = msfilters.add_retention_time(spectrum)\n    spectrum = msfilters.add_retention_index(spectrum)",
+      "public_requirement_quote": "1. default metadata filters (harmonize and clean standard metadata fields)"
+    }
+  ],
+  "instruction": null,
+  "rationale": "The public question correctly states Part 1: matchms 0.30.0 is the pinned reference implementation for the harmonization/derivation sequence, starting from its default metadata filters. Verified in the installed matchms 0.30.0 source (matchms/filtering/default_filters.py), default_filters applies exactly nine filters: make_charge_int, add_compound_name, derive_adduct_from_name, derive_formula_from_name, clean_compound_name, interpret_pepmass, add_precursor_mz, derive_ionmode, correct_charge. clean_compound_name (also verified in source) strips library tags from raw NAME strings, which is what produces the reference harmonized compound_name values. The independent implementation instead substituted a hand-picked six-filter chain (make_charge_int, add_compound_name, interpret_pepmass, add_precursor_mz, add_retention_time, add_retention_index), omitting derive_adduct_from_name, derive_formula_from_name, clean_compound_name, derive_ionmode and correct_charge, and adding two retention filters that are not part of default_filters. The executed comparison shows the direct consequences: all 1267 compound_name values carry the raw uncleaned NAME string, the processed-library field set differs (no adduct; extra retention_time/retention_index), and 441+ identifier rows disagree \u2014 exactly the failing checks \u2014 while every numeric endpoint (both score matrices, all best-match scores and match counts, peaks) matched the reference exactly. This locates the defect entirely in the metadata filter chain, not in the peak processing, similarity kernels, ranking or output conventions: the substitution is not 'scientifically identical' to the reference implementation the question names. Repair route: the worker should use matchms's own default_filters (or an equivalent chain reproducing its resulting harmonized metadata) for Part 1 step 1, leaving all other parts unchanged; no change to the scientific target, inputs or acceptance criteria is needed. The grader and its controls are sound: reference copy passes, the same-step metadata mutations were caught precisely by the metadata checks, and the alternative-under-test failed only on the metadata artifacts.",
+  "target": "independent_solution"
+}

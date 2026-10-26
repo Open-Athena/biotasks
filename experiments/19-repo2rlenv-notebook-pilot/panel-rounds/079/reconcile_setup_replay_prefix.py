@@ -47,6 +47,14 @@ CURRENT_SPECIFICATION_SOURCES = {
     "run_reference_setup.py": "5349631f69d5426ce822882f2bc5df5ae3724efe7fbcd0ee0979681187472c30",
     "upload_transfer.py": "816875df9e886e9499b29c28496df2bed9218fa24b98a64eb4343c1e3f48064c",
 }
+COMPARISON_REPAIR_SOURCES = {
+    **CURRENT_SPECIFICATION_SOURCES,
+    # Reviewed direct diagnosis followed by exactly one fresh grading session.
+    "run_notebook_grader.py": "714a3702b99cd64c32a9c3fd2354e5c4a74a8a47304c24df6ef230beaea5ce4c",
+    "grading_session.py": "eed7737caa2e3efc8503e4186661bfe9039dec5f5f1f7c98afebf06ced36b540",
+    "comparison_repair.py": "0d54551fc45b29ea9033509ebc4154c87e1bae94f0ed6a2d12b20d14ec2dabbe",
+    "question_repair.py": "ca834e99dafb2c793b1e955363c3e2d675745573b54e46fa62901c0aa46ddb39",
+}
 LEGACY_REPLAY_SOURCES = {
     **SOURCES,
     "run_autonomous.py": "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188",
@@ -61,6 +69,12 @@ LEGACY_SPECIFICATION_SOURCES = {
 
 
 def profile_config(profile):
+    if profile == "current_comparison_repair_failure":
+        return (
+            (*FOLDERS, "materialization-raw", "grading", "grading-comparison-repair"),
+            ["preparation", "setup", "replay", "specification", "construction", "grading"],
+            COMPARISON_REPAIR_SOURCES,
+        )
     if profile == "current_setup_rejection":
         return ("setup-raw",), ["preparation", "setup"], CURRENT_SPECIFICATION_SOURCES
     if profile == "setup_replay":
@@ -140,7 +154,20 @@ def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay")
     else:
         assert pipeline["failed_stage"] == names[-1]
     repair = pipeline.get("quality_repair")
-    if repair:
+    if profile == "current_comparison_repair_failure":
+        assert repair and repair["kind"] == "comparison_diagnosis"
+        assert repair["allowance_consumed"] is True and repair["target"] == "independent_solution"
+        prefix = repair["original_materialization"].removesuffix("/materialization")
+        assert repair["original_materialization"] == prefix + "/materialization"
+        assert repair["original_grading"] == prefix + "/grading"
+        assert set(repair) == {
+            "kind",
+            "allowance_consumed",
+            "target",
+            "original_materialization",
+            "original_grading",
+        }
+    elif repair:
         # This exact controller's proposal revision/review uses direct model
         # calls, not another sandbox. Other repairs are not admitted here.
         assert profile in {
@@ -188,6 +215,7 @@ def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay")
             "replay": "replay",
             "materialization-raw": "construction",
             "grading": "grading",
+            "grading-comparison-repair": "grading",
         }[folder]
         for folder in folders
     )
@@ -195,6 +223,10 @@ def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay")
         stage = next(s for s in stages if s["name"] == name)
         assert stage["started"] <= sessions[folder]["started"]
         assert sessions[folder]["finished"] <= stage["finished"]
+    assert all(
+        sessions[a]["finished"] <= sessions[b]["started"]
+        for a, b in zip(folders, folders[1:], strict=False)
+    ), "The single-sandbox sessions must not overlap"
     coarse = len(folders) * RATE * 7500 / 3600
     assert coarse < len(folders)
     records = {
@@ -220,6 +252,7 @@ def main():
     p.add_argument(
         "--profile",
         choices=[
+            "current_comparison_repair_failure",
             "current_setup_rejection",
             "setup_replay",
             "grading",
@@ -290,6 +323,7 @@ def main():
     if a.profile == "current_setup_rejection":
         forbidden += ("replay/",)
     if a.profile not in {
+        "current_comparison_repair_failure",
         "grading",
         "workspace_grading",
         "current_grading_rejection",
@@ -365,11 +399,14 @@ def main():
     prior_hold = len(folders) + int(native_unused)
     previous, retained = retained_hold(row, prior_hold, upper, refine=a.refine_existing)
     if not a.refine_existing:
-        assert row["state"] == (
-            "terminal_native_preparation_failure_full_reservation_held"
-            if native_unused
-            else "unused_stage_allowances_released_used_holds_unchanged"
-        )
+        if a.profile == "current_comparison_repair_failure":
+            assert previous == 5 and row["state"] == "submitted"
+        else:
+            assert row["state"] == (
+                "terminal_native_preparation_failure_full_reservation_held"
+                if native_unused
+                else "unused_stage_allowances_released_used_holds_unchanged"
+            )
     row.update(
         ceiling_usd=f"{retained:.2f}",
         state="terminal_known_sdk_prefix_closed_lifetimes_refined"
