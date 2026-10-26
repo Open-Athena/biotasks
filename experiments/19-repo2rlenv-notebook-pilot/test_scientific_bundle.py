@@ -57,6 +57,10 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(
                 "sha256": hashlib.sha256(catalog_raw).hexdigest(),
                 "bytes": len(catalog_raw),
             },
+            "asset_value_hints": {
+                "findings": [{"source_text": "PRIVATE numeric answer fixture"}],
+                "scope": "PRIVATE author inspection only",
+            },
         }
         candidate["environment_review"] = {
             **binding(manifest),
@@ -88,6 +92,11 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(
                 bytes=len(catalog_raw),
                 sha256=hashlib.sha256(catalog_raw).hexdigest(),
             )
+        )
+    if final_environment:
+        save(
+            materialized / "asset-value-hints.json",
+            {"findings": ["PRIVATE numeric answer fixture"]},
         )
     save(materialized / "artifact-manifest.json", dict(original_small_files=records))
     for kind, name in [("inputs", "x.txt"), ("reference", "y.txt")]:
@@ -206,6 +215,12 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(
                 for row in json.loads(public_manifest)["files"]
             )
             assert not (task / "environment/dependency-assets-final.json").exists()
+            assert not any(p.name == "asset-value-hints.json" for p in task.rglob("*"))
+            assert all(
+                b"PRIVATE numeric answer fixture" not in p.read_bytes()
+                for p in (task / "environment").rglob("*")
+                if p.is_file()
+            )
         assert (task / "environment/dependency_assets.py").read_bytes() == (
             environment / "trial/dependency_assets.py"
         ).read_bytes()

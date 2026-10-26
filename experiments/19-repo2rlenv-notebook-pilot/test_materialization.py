@@ -73,11 +73,46 @@ def test_source_corruption_and_unsafe_output_links_fail(tmp_path):
         inventory(out)
 
 
+def test_new_attempt_invalidates_stale_reports_and_retains_author_only_access(
+    tmp_path, monkeypatch
+):
+    import stat
+
+    import materialization_remote as module
+
+    area = tmp_path / "inspection"
+    area.mkdir()
+    for name in ("dependency-assets-final.json", "asset-value-hints.json", "unrelated.txt"):
+        (area / name).write_text("previous attempt")
+    owners = []
+    monkeypatch.setattr(module.os, "chown", lambda path, uid, gid: owners.append((path, uid, gid)))
+    module.reset_inspection(area)
+    assert owners == [(area, 0, module.AUTHOR)]
+    assert stat.S_IMODE(area.stat().st_mode) == 0o750
+    assert sorted(p.name for p in area.iterdir()) == ["unrelated.txt"]
+    # It is safe to reset again after a failed attempt produced no reports.
+    module.reset_inspection(area)
+
+
+def test_reset_does_not_recursively_delete_an_unexpected_report_directory(tmp_path, monkeypatch):
+    import materialization_remote as module
+
+    area = tmp_path / "inspection"
+    area.mkdir()
+    unexpected = area / "asset-value-hints.json"
+    unexpected.mkdir()
+    (unexpected / "evidence.txt").write_text("preserve")
+    monkeypatch.setattr(module.os, "chown", lambda *args: None)
+    with pytest.raises(IsADirectoryError):
+        module.reset_inspection(area)
+    assert (unexpected / "evidence.txt").read_text() == "preserve"
+
+
 @pytest.mark.parametrize("mode", ["fresh", "finalize", "construct_with_prior"])
 @pytest.mark.parametrize("remove_fixture", [False, True])
-@pytest.mark.parametrize("corrupt_first_catalog", [False, True])
+@pytest.mark.parametrize("corruption", ["none", "catalog", "hints", "hint_binding"])
 def test_materialization_controller_preserves_candidate_and_checks_downloads(
-    tmp_path, mode, remove_fixture, corrupt_first_catalog
+    tmp_path, mode, remove_fixture, corruption
 ):
     import asyncio
     import json
@@ -128,6 +163,7 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(
     calls = []
     executions = []
     catalog_downloads = []
+    hint_downloads = []
     removals = (
         [
             {
@@ -143,6 +179,7 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(
     request = {}
     catalog = {"files": [], "summary": {"priority_matches": [], "candidate_files": 0}}
     catalog_raw = (json.dumps(catalog, indent=2) + "\n").encode()
+    hints_raw = b""
     controlled = {
         "status": "executed_requires_scientific_validation",
         "inputs": [item],
@@ -171,14 +208,20 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(
             catalog_downloads.append(remote)
             content = (
                 b"CORRUPTED"
-                if corrupt_first_catalog and len(catalog_downloads) == 1
+                if corruption == "catalog" and len(catalog_downloads) == 1
                 else catalog_raw
+            )
+        if remote.endswith("asset-value-hints.json"):
+            hint_downloads.append(remote)
+            content = (
+                b"CORRUPTED" if corruption == "hints" and len(hint_downloads) == 1 else hints_raw
             )
         local.write_bytes(content)
 
     async def command(argv, seconds, label):
-        nonlocal catalog_raw
+        nonlocal catalog_raw, hints_raw
         assert argv[-1] == "/work/materialization_remote.py"
+        assert time.time() < request["controlled_execution_deadline"] <= time.time() + 60
         executions.append(label)
         merged = request["effective_dependency_exclusions"]
         catalog["summary"]["candidate_files"] = int(not merged["files"])
@@ -192,6 +235,26 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(
                 "bytes": len(catalog_raw),
             },
         )
+        hints = {
+            "source": {
+                "asset_catalog_sha256": hashlib.sha256(catalog_raw).hexdigest(),
+                "reference_inventory_sha256": hashlib.sha256(
+                    json.dumps(controlled["reference"]).encode()
+                ).hexdigest(),
+            },
+            "findings": [{"source_text": "PRIVATE-NUMERIC-HINT"}],
+            "scope": "Synthetic discovery fixture, not an isolation verdict",
+        }
+        if corruption == "hint_binding" and len(executions) == 1:
+            hints["source"]["reference_inventory_sha256"] = "0" * 64
+        hints_raw = json.dumps(hints).encode()
+        controlled["environment"]["asset_value_hints"] = {
+            "source": hints["source"],
+            "scope": hints["scope"],
+            "finding_count": len(hints["findings"]),
+            "bytes": len(hints_raw),
+            "sha256": hashlib.sha256(hints_raw).hexdigest(),
+        }
         return {
             "exit_code": 0,
             "log": json.dumps(controlled),
@@ -293,7 +356,7 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(
     }
     assert result["oracle_executed"]
     assert len(calls) == (3 if remove_fixture else 2)
-    assert len(executions) == (2 if remove_fixture or corrupt_first_catalog else 1)
+    assert len(executions) == (2 if remove_fixture or corruption != "none" else 1)
     assert (
         json.loads((root / "materialized/manifest.json").read_text())["environment"]["exclusions"][
             "files"
@@ -304,6 +367,12 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(
     assert json.loads((root / "materialization-candidate.json").read_text()) == candidate
     assert (root / "materialized/reference/value.txt").read_bytes() == data
     assert "/work/grading-private/materialization.json" in uploads
+    assert "/work/asset_literal_inspection.py" in uploads
+    assert "/work/installed_asset_hints.py" in uploads
+    # The report is an inspectable private artifact, not an unbounded tool-error
+    # payload or material inserted into every model call by default.
+    assert "PRIVATE-NUMERIC-HINT" not in json.dumps(calls)
+    assert (root / "materialization/1/asset-value-hints.json").exists() is (corruption != "catalog")
 
 
 def test_reuse_requires_verified_materialization_and_cleanup(tmp_path):

@@ -30,12 +30,21 @@ def inventory(root):
     ]
 
 
-def main():
-    candidate = json.loads((PRIVATE / "materialization.json").read_text())
-    inspection = Path("/work/construction-inspection")
+def reset_inspection(inspection):
+    """Invalidate only known controller reports before any fresh computation."""
     inspection.mkdir(exist_ok=True)
     os.chown(inspection, 0, AUTHOR)
     inspection.chmod(0o750)
+    for name in ("dependency-assets-final.json", "asset-value-hints.json"):
+        (inspection / name).unlink(missing_ok=True)
+
+
+def main():
+    candidate = json.loads((PRIVATE / "materialization.json").read_text())
+    inspection = Path("/work/construction-inspection")
+    # A failed new attempt must not leave old inspection results available as
+    # though they described its current products or environment.
+    reset_inspection(inspection)
     # These fields are supplied by the trusted controller after checking the
     # worker's observation-bound declaration, never chosen from filenames here.
     receipt_path = PRIVATE / "final-environment-removals.json"
@@ -201,10 +210,38 @@ def main():
             text=True,
         )
         assets = json.loads(catalog.read_text())
+        hints_path = PRIVATE / "asset-value-hints.json"
+        exclusion_path = PRIVATE / "effective-exclusions.json"
+        exclusion_path.write_text(json.dumps(excluded))
+        subprocess.run(
+            [
+                "/work/venv/bin/python",
+                "/work/installed_asset_hints.py",
+                str(catalog),
+                str(outputs_path),
+                str(saved / "reference"),
+                str(exclusion_path),
+                str(candidate["controlled_execution_deadline"]),
+                str(hints_path),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        hints = json.loads(hints_path.read_text())
+        if hints["source"] != {
+            "asset_catalog_sha256": hashlib.sha256(catalog.read_bytes()).hexdigest(),
+            "reference_inventory_sha256": hashlib.sha256(outputs_path.read_bytes()).hexdigest(),
+        }:
+            raise ValueError("Installed value hints do not match final recorded identities")
         visible_catalog = inspection / "dependency-assets-final.json"
         visible_catalog.write_bytes(catalog.read_bytes())
         os.chown(visible_catalog, 0, AUTHOR)
         visible_catalog.chmod(0o440)
+        visible_hints = inspection / "asset-value-hints.json"
+        visible_hints.write_bytes(hints_path.read_bytes())
+        os.chown(visible_hints, 0, AUTHOR)
+        visible_hints.chmod(0o440)
         result["environment"] = {
             "exclusions": excluded,
             "removal_receipt": json.loads(receipt_path.read_text()),
@@ -213,6 +250,14 @@ def main():
                 "sha256": hashlib.sha256(catalog.read_bytes()).hexdigest(),
             },
             "asset_summary": assets["summary"],
+            "asset_value_hints": {
+                "sha256": hashlib.sha256(hints_path.read_bytes()).hexdigest(),
+                "bytes": hints_path.stat().st_size,
+                "source": hints["source"],
+                "finding_count": len(hints["findings"]),
+                "scope": hints["scope"],
+                "distance_is_not_grading_tolerance": True,
+            },
         }
         result["status"] = "executed_requires_scientific_validation"
         return result

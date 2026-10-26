@@ -22,6 +22,18 @@ scientific quantity, population, required inputs, identity rules or source
 coverage, it is within this review and can be blocking. Unsupported scientific
 claims do not become acceptable merely because they appear in private notes.
 
+Keep environment remediation with its owning stage too. A suspected unused
+answer fixture in the setup environment is a private handoff to construction,
+which assesses the final installed files and can declare exact removals followed
+by fresh execution. Record the concrete exposure and unresolved unused-status
+question in your assessment; a missing final removal receipt is expected before
+construction and does not by itself make the scientific proposal invalid. Do
+not assume removal succeeded or approve that file in the eventual solver image.
+If evidence establishes that a required input or necessary runtime asset gives
+away the requested answer and no allowed task preserves the science, explain
+that target-level blocker instead. Final environment checks, independent grading
+and native qualification still have to pass.
+
 Check:
 
 - Preserve the original methods, input populations and every eligible scientific

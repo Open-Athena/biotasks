@@ -1,5 +1,6 @@
 """Tasksmith session for explicit supplied inputs and a separately executed oracle."""
 
+import hashlib
 import json
 import time
 from pathlib import Path
@@ -160,11 +161,22 @@ async def run_materialization(
         }
         record["effective_dependency_exclusions"] = merged
         record["original_source"] = context["source_evidence"]["inputs/original.py"]
+        # Inspection shares this operation's existing wall-time allowance. It
+        # cannot mint a new deadline after derivation/oracle have completed.
+        record["controlled_execution_deadline"] = min(
+            deadline, time.time() + 2 * config["reference_seconds"] + 60
+        )
         save_record(folder / "candidate.json", record)
         await session.remote.upload(
             folder / "candidate.json", "/work/grading-private/materialization.json"
         )
-        for name in ("materialization_remote.py", "grading_remote.py", "dependency_assets.py"):
+        for name in (
+            "materialization_remote.py",
+            "grading_remote.py",
+            "dependency_assets.py",
+            "asset_literal_inspection.py",
+            "installed_asset_hints.py",
+        ):
             await session.remote.upload(HERE / name, "/work/" + name)
         # Any fresh attempt can replace the remote products, even if it fails.
         # A prior successful candidate can no longer reuse those paths blindly.
@@ -198,6 +210,27 @@ async def run_materialization(
             or sha256(last_catalog) != catalog["sha256"]
         ):
             raise ValueError("Final installed-asset catalog identity mismatch")
+        hints_file = folder / "asset-value-hints.json"
+        await session.remote.download("/work/grading-private/asset-value-hints.json", hints_file)
+        hint_record = last_execution["environment"]["asset_value_hints"]
+        if (
+            hints_file.stat().st_size != hint_record["bytes"]
+            or sha256(hints_file) != hint_record["sha256"]
+        ):
+            raise ValueError("Final installed-value hints identity mismatch")
+        hints = json.loads(hints_file.read_text())
+        if (
+            hints["source"]
+            != {
+                "asset_catalog_sha256": catalog["sha256"],
+                "reference_inventory_sha256": hashlib.sha256(
+                    json.dumps(last_execution["reference"]).encode()
+                ).hexdigest(),
+            }
+            or len(hints["findings"]) != hint_record["finding_count"]
+            or hints["source"] != hint_record["source"]
+        ):
+            raise ValueError("Installed-value hints do not describe this execution")
         last_execution_key = execution_key
         try:
             effective_exclusions(
@@ -219,9 +252,11 @@ async def run_materialization(
                     {
                         **binding(last_execution),
                         "asset_summary": last_execution["environment"]["asset_summary"],
+                        "asset_value_hints": last_execution["environment"].get("asset_value_hints"),
                         "already_applied_additional_exclusions": applied_additions,
                         "working_reference_outputs": "/work/author/derive-case/bundle/reference",
                         "installed_asset_catalog": "/work/construction-inspection/dependency-assets-final.json",
+                        "installed_asset_value_hints": "/work/construction-inspection/asset-value-hints.json",
                     }
                 )
             ) from error

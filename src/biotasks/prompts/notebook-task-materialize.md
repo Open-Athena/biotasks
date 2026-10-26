@@ -42,6 +42,18 @@ shell. Candidate names, matching numbers or differing bytes alone do not prove
 that a file is an answer or is unused. An unused file may expose a partial answer
 in text, code or another representation even without byte identity.
 
+The same feedback also supplies advisory numeric matches between actual installed
+Python source and the final executed CSV/TSV outputs. Read the complete report at
+`installed_asset_value_hints`, including its candidate and reference coverage.
+Inspect each finding's source, input and scientific quantity before assessing it.
+An unrelated match is not an answer; the discovery distance is not a grading
+tolerance. Integers, strings, comments, other formats and nonpriority files remain
+gaps, and no match does not establish a clean environment. These are private
+authoring observations, never solver inputs. Use them in the existing environment
+assessment while you can declare justified unused-file removals; they add no
+scientific computation or repair allowance. A changed candidate or environment
+requires fresh controlled execution and new bound observations.
+
 On the initial submission leave `environment_review` null. After observing the
 executed inventory, use `revise_artifact` with
 `{"patch": {"environment_review": ...}}` to supply only that field

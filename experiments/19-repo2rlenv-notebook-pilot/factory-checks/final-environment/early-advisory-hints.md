@@ -1,7 +1,6 @@
 # Earlier discovery of installed answer assets — candidate, not adopted
 
-The fixed 224-file panel is unchanged. This note identifies reusable code for a
-possible later version; it does not qualify a task or change repair allowances.
+The fixed 224-file panel is unchanged. A [next-version implementation](../early-installed-hints/README.md) now passes offline checks but has not been adopted in that panel or validated on the provider. It does not qualify a task or change repair allowances.
 
 ## What the retained failure establishes
 
