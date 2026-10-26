@@ -100,7 +100,7 @@ async def run_materialization(
     repair_record = None
     repair_original = None
     if config.get("construction_repair_file"):
-        from construction_repair import load_repair
+        from construction_repair import load_repair, stage_inputs
 
         if (
             config.get("prior_author_files")
@@ -109,6 +109,10 @@ async def run_materialization(
             raise ValueError("Construction repair cannot reuse another authoring mode")
         repair_record = json.loads((HERE / config["construction_repair_file"]).read_text())
         repair_original = load_repair(repair_record, context)
+        original_inputs = await stage_inputs(
+            session, repair_record, HERE / config["construction_repair_directory"]
+        )
+        context["paths"] = {**context["paths"], "prior_task_inputs": original_inputs}
         context["construction_repair"] = repair_record
         save_record(root / "construction-repair.json", repair_record)
     prior_files = config.get("prior_author_files")

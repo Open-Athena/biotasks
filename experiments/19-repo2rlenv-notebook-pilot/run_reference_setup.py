@@ -106,8 +106,11 @@ def check_config(config):
         or any(config.get(key) for key in recovery_keys)
         or config.get("frozen_grader_file")
         or config.get("independent_repair_file")
+        or not config.get("construction_repair_directory")
     ):
         raise ValueError("Construction repair requires fresh construction and a consumed allowance")
+    if config.get("construction_repair_directory") and not config.get("construction_repair_file"):
+        raise ValueError("Original construction inputs require the bound repair record")
     if config.get("resume_probe_draft_directory") and (
         not config.get("resume_grading_directory") or config.get("resume_probes_directory")
     ):
@@ -152,6 +155,7 @@ def check_config(config):
         "frozen_grader_file",
         "independent_repair_file",
         "construction_repair_file",
+        "construction_repair_directory",
     ):
         if key in config and (
             not config[key] or Path(config[key]).is_absolute() or ".." in Path(config[key]).parts

@@ -22,6 +22,11 @@ entity relationships, multiplicity, missingness and numerical precision. An
 identifier's serialized text is not evidence that its characters are separate
 entities. Judge representations from their producing code and observed schema.
 
+`paths.prior_task_inputs` contains the exact original task-input files, staged
+read-only after their identity checks. Copy these when deriving the replacement
+bundle rather than regenerating intermediates or asking for different inputs.
+Their presence does not permit copying private reference answers into outputs.
+
 Submit a candidate before using exploratory shell commands. The controller runs
 fresh derivation and an isolated oracle and reports definite execution failures.
 The environment assessment must bind to this new execution; leave

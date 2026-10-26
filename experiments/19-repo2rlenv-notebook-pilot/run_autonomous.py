@@ -704,6 +704,7 @@ class Pipeline:
                         materialize_task=True,
                         allow_quality_repair=False,
                         construction_repair_file=self.relative(feedback_file),
+                        construction_repair_directory=self.relative(mat),
                     )
                     retry["max_tests"] = None
                     os.environ["BIOTASKS_ARTIFACT_PREFIX"] = (

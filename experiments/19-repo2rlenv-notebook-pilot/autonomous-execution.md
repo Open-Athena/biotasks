@@ -199,6 +199,11 @@ generated derivation/oracle code and its rationale may be corrected, with a fres
 environment assessment and unchanged exclusions. A needed scientific-contract,
 input or source change blocks this narrow route.
 
+The original solver inputs are hash-checked and staged read-only for the repair
+worker, so an explicit intermediate can be copied without regenerating it.
+This handoff neither provides private answers to a solver nor relaxes the final
+input-identity requirement.
+
 Original and replacement evidence remain separate. Fresh independent grading,
 probes, source review and native qualification are required; no previous solution,
 grader, expected-result feedback or acceptance enters those independent workers.

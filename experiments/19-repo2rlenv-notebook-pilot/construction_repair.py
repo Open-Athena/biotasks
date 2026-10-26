@@ -141,3 +141,35 @@ def check_execution(record, execution):
 def verify_revision(record, candidate, execution):
     check_candidate(original_candidate(record), Materialization.model_validate(candidate))
     check_execution(record, execution)
+
+
+async def stage_inputs(session, record, directory):
+    """Make existing task inputs available without rerunning their derivation."""
+    directory = Path(directory)
+    candidate, execution = load_materialized(directory)
+    if candidate != record["original_candidate"] or execution != record["original_execution"]:
+        raise ValueError("Construction repair input handoff belongs to another task")
+    files = []
+    for item in execution["inputs"]:
+        path = directory / "inputs" / item["path"]
+        if path.is_symlink() or not path.resolve().is_relative_to(directory.resolve()):
+            raise ValueError("Linked construction repair input")
+        with path.open("rb") as stream:
+            sha = hashlib.file_digest(stream, "sha256").hexdigest()
+        if sha != item["sha256"] or path.stat().st_size != item["bytes"]:
+            raise ValueError("Construction repair input bytes changed before staging")
+        files.append((path, item["path"]))
+    remote = "/work/construction-repair-inputs"
+    for path, name in files:
+        reply = await session.command(
+            ["mkdir", "-p", str(Path(remote, name).parent)], 30, "construction-repair-input-parent"
+        )
+        if reply["exit_code"]:
+            raise RuntimeError("Cannot stage original construction inputs")
+        await session.remote.upload(path, remote + "/" + name)
+    reply = await session.command(
+        ["chmod", "-R", "a+rX,a-w", remote], 30, "seal-construction-repair-inputs"
+    )
+    if reply["exit_code"]:
+        raise RuntimeError("Cannot freeze original construction inputs")
+    return remote

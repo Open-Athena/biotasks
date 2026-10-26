@@ -112,7 +112,7 @@ def test_reset_does_not_recursively_delete_an_unexpected_report_directory(tmp_pa
 @pytest.mark.parametrize("remove_fixture", [False, True])
 @pytest.mark.parametrize("corruption", ["none", "catalog", "hints", "hint_binding"])
 def test_materialization_controller_preserves_candidate_and_checks_downloads(
-    tmp_path, mode, remove_fixture, corruption
+    tmp_path, mode, remove_fixture, corruption, monkeypatch
 ):
     import asyncio
     import json
@@ -214,6 +214,12 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(
 
         from construction_repair import digest
         from task_materialization import materialization_context
+
+        async def stage_inputs(session, record, directory):
+            assert directory == tmp_path / "sealed-parent"
+            return "/work/construction-repair-inputs"
+
+        monkeypatch.setattr("construction_repair.stage_inputs", stage_inputs)
 
         original = {**candidate, "derive_code": "previous_generated_code()"}
         original["environment_review"] = {
@@ -387,6 +393,11 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(
                 ),
                 **({"authoring_mode": "construct"} if mode == "construct_with_prior" else {}),
                 **({"construction_repair_file": str(repair_file)} if mode == "repair" else {}),
+                **(
+                    {"construction_repair_directory": str(tmp_path / "sealed-parent")}
+                    if mode == "repair"
+                    else {}
+                ),
             },
             endpoint="unused",
             credential="unused",

@@ -273,6 +273,7 @@ def test_launch_configuration_rejects_incompatible_recovery(conflict):
         materialize_task=True,
         allow_quality_repair=False,
         construction_repair_file="run/repair.json",
+        construction_repair_directory="run/materialization",
         max_tests=None,
         verifier_seconds=120,
     )
@@ -289,3 +290,62 @@ def test_launch_configuration_rejects_incompatible_recovery(conflict):
             check_config(config)
     else:
         check_config(config)
+
+
+@pytest.mark.parametrize("failure", [None, "different_task", "corrupt", "link", "mkdir", "chmod"])
+def test_original_input_handoff_verifies_bytes_and_freezes_the_copy(tmp_path, monkeypatch, failure):
+    import asyncio
+    import hashlib
+    from types import SimpleNamespace
+
+    import construction_repair as module
+
+    parent = tmp_path / "parent"
+    (parent / "inputs").mkdir(parents=True)
+    data = b"Observed original intermediate\n"
+    path = parent / "inputs/data.csv"
+    path.write_bytes(data)
+    prior = record()
+    prior["original_execution"]["inputs"][0].update(
+        bytes=len(data), sha256=hashlib.sha256(data).hexdigest()
+    )
+    original = copy.deepcopy(prior["original_candidate"])
+    if failure == "different_task":
+        original["instruction"] = "Another question"
+    monkeypatch.setattr(
+        module, "load_materialized", lambda directory: (original, prior["original_execution"])
+    )
+    if failure == "corrupt":
+        path.write_bytes(b"changed")
+    if failure == "link":
+        path.unlink()
+        target = tmp_path / "elsewhere"
+        target.write_bytes(data)
+        path.symlink_to(target)
+    operations, uploads = [], []
+
+    async def command(argv, seconds, label):
+        operations.append((argv, label))
+        assert seconds == 30
+        return {"exit_code": int(failure == argv[0])}
+
+    async def upload(local, remote):
+        assert local.read_bytes() == data
+        uploads.append(remote)
+
+    session = SimpleNamespace(command=command, remote=SimpleNamespace(upload=upload))
+    if failure:
+        with pytest.raises(
+            ValueError if failure in {"different_task", "corrupt", "link"} else RuntimeError
+        ):
+            asyncio.run(module.stage_inputs(session, prior, parent))
+        if failure in {"different_task", "corrupt", "link"}:
+            assert operations == uploads == []
+    else:
+        assert (
+            asyncio.run(module.stage_inputs(session, prior, parent))
+            == "/work/construction-repair-inputs"
+        )
+        assert uploads == ["/work/construction-repair-inputs/data.csv"]
+        assert operations[-1][0] == ["chmod", "-R", "a+rX,a-w", "/work/construction-repair-inputs"]
+        assert path.read_bytes() == data
