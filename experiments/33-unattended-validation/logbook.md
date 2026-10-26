@@ -278,3 +278,7 @@ Publication verified: all 32 issue bodies, agent-generated labels, states and co
 ## 2026-10-26 — Unify repository yield reporting
 
 User agreed that the four newer repositories belong in the broad yield assessment. Unified all fourteen rows, explicitly marked partial coverage and unmeasured history-wide backlog, and deduplicated Cobrapy PR1497 while retaining its cost. Recorded cohort totals are 85/84/68 and $8.310168 excluding September, earlier #24/#25 and the adapted MACS diagnostic. Defined the next broader measurement protocol requirements; no run, model call or task repair started.
+
+## 2026-10-26 — Canonical overall summary in epic body
+
+At the user’s request, moved the complete high-level per-repository table, settled costs, active reassessment status, limits and review ownership into the body of issue33. Comments and linked artifacts retain detailed execution evidence. The Markdown report is a supporting versioned snapshot; it is not the primary review destination. Verified current NiBabel handle remains running before publishing active status.
