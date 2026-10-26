@@ -2,6 +2,8 @@
 
 import copy
 import json
+from datetime import UTC, datetime
+from decimal import Decimal
 
 import pytest
 from test_setup_replay_prefix import grading_evidence, module
@@ -159,3 +161,71 @@ def test_common_timeout_does_not_relax_source_status_resource_or_cleanup_guards(
         sessions["grading"]["started"] = sessions["materialization-raw"]["finished"] - 1
     with pytest.raises(AssertionError):
         module.audit(pipeline, sources, claims, sessions, clean, profile="common_grading_failure")
+
+
+def absence_evidence():
+    pipeline, _, claims, sessions, clean = grading_evidence("common_grading_failure")
+    clean.update(
+        all_original_claim_ids_checked=True,
+        fresh_original_ids_absent=True,
+        original_sandbox_claims=list(claims.values()),
+        observed_at=datetime.fromtimestamp(2000, UTC).isoformat(),
+    )
+    return pipeline, claims, sessions, clean
+
+
+def test_uncertain_tail_prices_every_second_until_later_direct_absence_without_rewriting_clocks():
+    args = absence_evidence()
+    before = copy.deepcopy(args)
+    added, rows = module.price_through_fresh_absence(*args, ["grading"])
+    seconds = Decimal(2000) - Decimal(str(args[2]["grading"]["finished"]))
+    assert added == seconds * module.RATE / 3600
+    assert Decimal(rows["grading"]["additional_priced_seconds"]) == seconds
+    assert args == before
+
+
+@pytest.mark.parametrize(
+    "defect",
+    [
+        "missing_id_check",
+        "present_id",
+        "missing_claim",
+        "changed_claim",
+        "duplicate_claim",
+        "old_observation",
+        "naive_clock",
+        "unknown_folder",
+        "duplicate_folder",
+    ],
+)
+def test_late_absence_pricing_requires_all_bound_claims_and_an_actual_later_observation(defect):
+    pipeline, claims, sessions, clean = absence_evidence()
+    folders = ["grading"]
+    if defect == "missing_id_check":
+        clean["all_original_claim_ids_checked"] = False
+    elif defect == "present_id":
+        clean["fresh_original_ids_absent"] = False
+    elif defect == "missing_claim":
+        clean["original_sandbox_claims"] = clean["original_sandbox_claims"][:-1]
+    elif defect == "changed_claim":
+        clean["original_sandbox_claims"] = copy.deepcopy(clean["original_sandbox_claims"])
+        clean["original_sandbox_claims"][0]["id"] = "other"
+    elif defect == "duplicate_claim":
+        clean["original_sandbox_claims"] = [clean["original_sandbox_claims"][0]] * 4
+    elif defect == "old_observation":
+        clean["observed_at"] = datetime.fromtimestamp(1, UTC).isoformat()
+    elif defect == "naive_clock":
+        clean["observed_at"] = "1970-01-01T00:33:20"
+    elif defect == "unknown_folder":
+        folders = ["other"]
+    elif defect == "duplicate_folder":
+        folders = ["grading", "grading"]
+    with pytest.raises(AssertionError):
+        module.price_through_fresh_absence(pipeline, claims, sessions, clean, folders)
+
+
+def test_tail_bound_retains_margin_and_rounding_and_never_exceeds_the_original_reservation():
+    assert module.retain_extended_bound(Decimal(5), Decimal(1), Decimal("0.95")) == Decimal("1.25")
+    assert module.retain_extended_bound(Decimal(5), Decimal(1), Decimal("0.4")) == Decimal(1)
+    with pytest.raises(AssertionError):
+        module.retain_extended_bound(Decimal(5), Decimal(1), Decimal("4.99"))

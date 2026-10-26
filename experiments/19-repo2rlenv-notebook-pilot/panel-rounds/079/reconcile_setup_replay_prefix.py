@@ -262,6 +262,48 @@ def retained_hold(row, prior_hold, upper, *, refine=False):
     return Decimal(prior_hold), Decimal(1)
 
 
+def price_through_fresh_absence(pipeline, claims, sessions, clean, unrecorded):
+    """Price uncertain post-cleanup time; never synthesize a deletion receipt."""
+    assert unrecorded and set(unrecorded) <= set(claims)
+    assert len(unrecorded) == len(set(unrecorded))
+    assert clean["all_original_claim_ids_checked"] is True
+    assert clean["fresh_original_ids_absent"] is True
+    recorded = clean["original_sandbox_claims"]
+    assert len(recorded) == len(claims)
+    by_owner = {row["owner"]: row for row in recorded}
+    assert len(by_owner) == len(recorded)
+    assert by_owner == {row["owner"]: row for row in claims.values()}
+    observed = datetime.fromisoformat(clean["observed_at"])
+    assert observed.tzinfo is not None
+    end = Decimal(str(observed.timestamp()))
+    assert end >= Decimal(str(pipeline["finished"]))
+    extensions = {}
+    for folder in unrecorded:
+        closed = Decimal(str(sessions[folder]["finished"]))
+        assert end >= closed
+        seconds = end - closed
+        extensions[folder] = {
+            "original_claim_id": claims[folder]["id"],
+            "original_session_finished": str(closed),
+            "fresh_exact_id_absence_observed": clean["observed_at"],
+            "additional_priced_seconds": str(seconds),
+            "additional_resource_upper_bound_usd": str(seconds * RATE / 3600),
+            "boundary": "Extend the existing end+300s margin to fresh absence+300s; original start-300s margin retained. This does not assert when or by whom deletion happened.",
+        }
+    return sum(
+        Decimal(row["additional_resource_upper_bound_usd"]) for row in extensions.values()
+    ), extensions
+
+
+def retain_extended_bound(previous, retained, upper):
+    rounded = ((upper + Decimal("0.10")) / Decimal("0.25")).to_integral_value(
+        rounding=ROUND_CEILING
+    ) * Decimal("0.25")
+    value = max(retained, rounded)
+    assert Decimal(0) < upper <= value <= previous
+    return value
+
+
 def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay"):
     folders, names, expected_sources = profile_config(profile)
     assert sources == expected_sources
@@ -376,6 +418,11 @@ def main():
         help="Use the complete verified original quiescent snapshot, never a synthetic regular seal",
     )
     p.add_argument(
+        "--price-through-fresh-absence",
+        action="store_true",
+        help="For an empty original cleanup list, price the created resource until a later verified exact-ID absence instead of assuming deletion at session close",
+    )
+    p.add_argument(
         "--refine-existing",
         action="store_true",
         help="Re-audit an already closed1USD hold; round its bound plus0.10USD upward to0.25USD",
@@ -403,6 +450,9 @@ def main():
     folders, _, expected_sources = profile_config(a.profile)
     assert not a.proof.exists()
     assert not a.snapshot or a.profile == "common_grading_failure"
+    assert not a.price_through_fresh_absence or (
+        a.snapshot and a.profile == "common_grading_failure" and not a.refine_existing
+    )
     archive = a.private_root / f"archives/{a.number:03}"
     content_root, manifest, manifest_hash, snapshot_evidence = archive_inventory(
         archive, snapshot=a.snapshot
@@ -489,7 +539,7 @@ def main():
     assert {r["path"] for r in clean["original_cleanup_evidence"]} == {
         f + "/cleanup.json" for f in folders
     }
-    claims, sessions = {}, {}
+    claims, sessions, unrecorded = {}, {}, []
     for folder in folders:
         claims[folder] = original(folder + "/sandbox-claim.json")
         stage = original(folder + "/configuration.json")
@@ -499,12 +549,22 @@ def main():
         assert (
             cleanup["passed"] and not cleanup["remaining"] and not cleanup.get("creation_uncertain")
         )
-        assert cleanup["sandboxes"] == [
+        expected_deleted = [
             {"id": claims[folder]["id"], "cpu": 4, "memory": 8, "disk": 10, "deleted": True}
         ]
+        if cleanup["sandboxes"] != expected_deleted:
+            assert a.price_through_fresh_absence and cleanup["sandboxes"] == []
+            unrecorded.append(folder)
         sessions[folder] = original(folder + "/result.json")
     pipeline = original("pipeline.json")
     coarse, upper, records = audit(pipeline, sources, claims, sessions, clean, profile=a.profile)
+    absence_extension = None
+    base_upper = upper
+    if unrecorded:
+        additional, absence_extension = price_through_fresh_absence(
+            pipeline, claims, sessions, clean, unrecorded
+        )
+        upper += additional
     native_preparation = None
     if a.profile == "current_native_preparation_failure":
         # A native failure alone is insufficient: prove the exact frozen runner
@@ -551,7 +611,9 @@ def main():
     native_unused = a.profile == "current_native_preparation_failure"
     whole_grading_failure = a.profile == "common_grading_failure"
     prior_hold = len(folders) + int(native_unused or whole_grading_failure)
-    previous, retained = retained_hold(row, prior_hold, upper, refine=a.refine_existing)
+    previous, retained = retained_hold(row, prior_hold, base_upper, refine=a.refine_existing)
+    if absence_extension:
+        retained = retain_extended_bound(previous, retained, upper)
     if not a.refine_existing:
         if a.profile == "current_comparison_repair_failure" or whole_grading_failure:
             assert previous == 5 and row["state"] == "submitted"
@@ -567,7 +629,16 @@ def main():
         if a.refine_existing
         else "terminal_known_sdk_prefix_closed_lifetimes_reconciled",
         reconciliation="All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. "
-        + ("Add0.10USD and round upward to0.25USD; " if a.refine_existing else "Retain1USD; ")
+        + (
+            "Price unrecorded-deletion tails through later exact-ID absence; "
+            if absence_extension
+            else ""
+        )
+        + (
+            "Add0.10USD and round upward to0.25USD; "
+            if a.refine_existing or absence_extension
+            else "Retain1USD; "
+        )
         + "no invoices or credits assumed. See "
         + a.proof.relative_to(a.ledger.parent).as_posix(),
     )
@@ -589,6 +660,8 @@ def main():
         source_manifest_sha256=manifest_hash,
         original_archive_format="quiescent-tar-v1" if a.snapshot else "per-file-export-v1",
         original_snapshot_evidence=snapshot_evidence,
+        original_cleanup_deletion_records_incomplete=unrecorded,
+        observed_absence_extension=absence_extension,
         source_ledger_sha256=digest(before),
         result_ledger_sha256=digest(after),
         checked_originals=checked,
@@ -603,8 +676,8 @@ def main():
         retained_usd=f"{retained:.2f}",
         previous_hold_usd=f"{previous:.2f}",
         refinement=a.refine_existing,
-        additional_margin_usd="0.10" if a.refine_existing else None,
-        rounding="upward_to_0.25USD" if a.refine_existing else None,
+        additional_margin_usd="0.10" if a.refine_existing or absence_extension else None,
+        rounding="upward_to_0.25USD" if a.refine_existing or absence_extension else None,
         released_usd=f"{released:.2f}",
         aggregate_held_usd=ledger["reserved_upper_bound_usd"],
         unallocated_usd=ledger["unallocated_usd"],
