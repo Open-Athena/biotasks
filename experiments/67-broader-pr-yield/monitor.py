@@ -81,8 +81,12 @@ def snapshot():
         if vp:
             c['controls_planned'] = len(vp['tasks'])
             c['phase'] = 'controls_running_or_finalizing'
+            waiting_cleanup_capacity = False
             for group in vp['tasks']:
                 directory = val / 'runs' / group['id']
+                failed_cleanup = directory / 'cleanup/submit.log'
+                if failed_cleanup.is_file() and not (directory / 'cleanup/submission.json').exists() and 'No compatible existing reserved worker with declared headroom' in failed_cleanup.read_text():
+                    waiting_cleanup_capacity = True
                 if (directory / 'held.json').is_file():
                     c['phase'] = 'held_requires_review'
                 if complete(directory):
@@ -91,6 +95,7 @@ def snapshot():
                     c['controls_cleaned'] += 1
                     c['positive'] += rb.get('positive_control_pair') is True
                     c['clean'] += all(rb.get(k) is True for k in ['positive_control_pair', 'clean_oracle_command', 'complete_parseable_pair', 'all_p2p_pass_both'])
+            if waiting_cleanup_capacity: c['phase'] = 'waiting_for_cleanup_capacity'
             if c['controls_cleaned'] == len(vp['tasks']): c['phase'] = 'controls_complete'
         model = [e for e in budget['events'] if e['kind'] == 'model_run_reservation' and e['run_id'] == case['run_id']]
         c['model_cost_usd'] = model[0]['known_actual_usd'] if model and model[0]['state'] == 'terminal reconciled' else None
@@ -99,7 +104,7 @@ def snapshot():
     running = alive()
     terminal_cases = all(c['phase'] in ['zero_exports_complete', 'controls_complete'] for c in cases)
     state = 'monitoring' if running else ('workflow_complete' if terminal_cases else 'controller_stopped_requires_review')
-    return {'report_profile': 'cumulative-table-v2', 'observed_utc': datetime.now(timezone.utc).isoformat(), 'state': state, 'controller_alive': running,
+    return {'report_profile': 'cumulative-table-v3', 'observed_utc': datetime.now(timezone.utc).isoformat(), 'state': state, 'controller_alive': running,
             'cases': cases, 'settled_issue67_model_usd': str(sum((Decimal(c['model_cost_usd']) for c in cases if c['model_cost_usd'] is not None), Decimal(0))),
             'settled_issue67_model_calls': sum(c['model_calls'] or 0 for c in cases),
             'epic_actual_model_usd': budget['recorded_paid_cost_usd'],
@@ -169,6 +174,7 @@ def publish(value):
         body = body.replace(heading, heading + block + '\n\n', 1)
     # Remove the superseded manually checked sentence, preserving the rest of the summary.
     body = re.sub(r'\*\*Last checked October 26, 11:33 a\.m\. ET:\*\*[^\n]+\n\n', '', body)
+    body = body.replace('DendroPy, AnnData and Biopython remain queued.', 'The live table shows which repositories are running or queued.')
     body = body.replace('The original NiBabel job is active on reserved TRC CPUs, with later repositories and controls subject to the remaining shared budget.', 'The monitor above records the active repository and stage; remaining work shares the original budget.')
     body = body.replace('Its current reservations are **6.333333333 CPUh** and **$13.07 model allowance**, in addition to the **unreconciled $10 storage reserve**. Actual new charges remain pending.', 'Current reservations and reconciled charges are in the monitored progress block; the **$10 storage reserve remains unreconciled**.')
     api(['--method', 'PATCH', 'repos/Open-Athena/biotasks/issues/33'], {'body': body})

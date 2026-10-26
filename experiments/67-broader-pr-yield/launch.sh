@@ -15,6 +15,10 @@ if [ -z "${CW_KEY_ID:-}" ] || [ -z "${CW_KEY_SECRET:-}" ]; then
     unset biotasks67_key_id biotasks67_key_secret
 fi
 case "${1:-run}" in
+ wait-cleanup) exec "$runner" "$experiment/wait_for_cleanup.py" --watch ;;
+ dendropy-generation) exec "$runner" "$experiment/run_frozen_generation.py" dendropy ;;
+ inspect-worker) exec /home/exedev/projects/marin/.venv/bin/python "$experiment/inspect_worker.py" ;;
+ observe-controls) exec "$runner" "$experiment/observe_controls.py" ;;
  recover) exec "$runner" -m biotasks generate run "$experiment/inputs-private/run-002" --allow-generation --allow-validation ;;
  logs) exec "$runner" "$experiment/observe.py" --logs ;;
  observe) exec "$runner" "$experiment/observe.py" ;;

@@ -1,0 +1,15 @@
+{
+  "id": "IC_kwDOU1dZq88AAAABfuS38g",
+  "author": {
+    "login": "gonzalobenegas"
+  },
+  "authorAssociation": "MEMBER",
+  "body": "\ud83e\udd16 Active supervision caught a cleanup-capacity stop before any submission: NiBabel PR1291 completed a positive, clean control pair, but its pinned healthy worker had only 0.473 GiB unallocated memory and negative quota-based disk headroom. Cleanup requires 2 CPUs/4 GiB/4 GiB. No cleanup handle exists; the controls are not being rerun or counted as fully qualified until cleanup is verified. The separate email-scope warning is not the blocking error; worker metadata requests succeed.\n\nThe first two pairs are cleaned: PR1255 positive and clean; PR1272 positive with four untracked failures on both sides. The third pair remains archived and cleanup-reserved.\n\nThe agent is advancing DendroPy's existing frozen generation plan on a different eligible reserved worker while NiBabel housekeeping waits. This changes cross-repository scheduling order only. Original source, descriptors, model limits, tests, grading, resource contracts and run IDs are unchanged. Our native jobs remain serial because rejected cleanup never submitted. The same shared ledger holds all reservations. Normal cohort recovery will reuse this generation rather than regenerate it. No resource-check bypass, new capacity or extra repair-model stage.\n\nThis exposes a general pipeline limitation: reserving cleanup CPU-hours in an accounting ledger does not reserve a physical worker slot after the primary job releases it. A future controller needs capacity held through archival/cleanup or a supported housekeeping path. NiBabel cleanup will resume its original handle when target capacity returns.\n",
+  "createdAt": "2026-10-26T18:16:34Z",
+  "includesCreatedEdit": false,
+  "isMinimized": false,
+  "minimizedReason": "",
+  "reactionGroups": [],
+  "url": "https://github.com/Open-Athena/biotasks/issues/67#issuecomment-6423885810",
+  "viewerDidAuthor": true
+}

@@ -37,6 +37,8 @@ while not out:
     while offset<len(raw):
         wd,mask,cookie,size=struct.unpack_from('iIII',raw,offset);offset+=16
         name=raw[offset:offset+size].split(b'\0',1)[0].decode();offset+=size
-        if mask&0x40000000 or name in ['budget.json','journal.json','readback.json','cleanup-proof.json','held.json','accounting.json','model-accounting.json','controller-output-003.log']:
+        if (mask&0x40000000 and work in watched.get(wd,Path('/')).parents) or name in ['budget.json','journal.json','readback.json','cleanup-proof.json','held.json','accounting.json','model-accounting.json','controller-output-003.log','dendropy-generation-controller.log','anndata-generation-controller.log','biopython-generation-controller.log']:
             out.append({'directory':str(watched.get(wd,'')),'name':name,'mask':mask})
-print(json.dumps({'event':'lifecycle_change','changes':out,'status_poll':False}))
+import monitor
+value=monitor.snapshot()
+print(json.dumps({'event':'lifecycle_change','changes':out,'snapshot':value,'status_poll':False}))
