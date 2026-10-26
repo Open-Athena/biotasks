@@ -221,6 +221,7 @@ async def run_materialization(
                         "asset_summary": last_execution["environment"]["asset_summary"],
                         "already_applied_additional_exclusions": applied_additions,
                         "working_reference_outputs": "/work/author/derive-case/bundle/reference",
+                        "installed_asset_catalog": "/work/construction-inspection/dependency-assets-final.json",
                     }
                 )
             ) from error

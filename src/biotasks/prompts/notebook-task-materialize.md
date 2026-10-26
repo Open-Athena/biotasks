@@ -33,6 +33,8 @@ not require you to establish numerical equivalence first.
 
 After successful controlled execution, the controller returns identities for the
 actual final input/reference/oracle inventory and an installed-asset catalog.
+The feedback identifies the complete catalog's read-only inspection path, which
+is accessible to your authoring shell and hidden from the isolated oracle.
 This includes recovered endpoints; setup's earlier answer-file review does not
 cover outputs that were not yet selected or recovered. Inspect the actual
 candidate files and their relationship to the final requested results using the

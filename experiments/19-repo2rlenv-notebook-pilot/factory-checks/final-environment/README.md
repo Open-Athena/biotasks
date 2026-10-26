@@ -11,3 +11,5 @@ The first actual-venv test exposed a helper bug: Distribution.files can omit del
 A [bounded provider check](run_live_check.py) is prepared but not launched: original final-inventory fixture, declared removal with fresh isolated programs, and reintroduced-answer refusal. Funding and a fresh shared-pool admission are required before that check; its three synthetic cases are not a fresh notebook campaign. Full source-only adoption remains pending.
 
 The regular project checks also pass: Ruff lint/format, ty, 219 default tests and pre-commit. No model or provider execution is included in these counts.
+
+The full catalog is available at a controller-owned, author-group read-only inspection path. It is hidden from the isolated oracle; the oracle isolation probe checks directory denial, and the prepared provider control will check actual author readability. This access boundary is implemented, with live observation pending.

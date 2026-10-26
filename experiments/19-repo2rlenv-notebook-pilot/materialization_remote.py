@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -31,6 +32,10 @@ def inventory(root):
 
 def main():
     candidate = json.loads((PRIVATE / "materialization.json").read_text())
+    inspection = Path("/work/construction-inspection")
+    inspection.mkdir(exist_ok=True)
+    os.chown(inspection, 0, AUTHOR)
+    inspection.chmod(0o750)
     # These fields are supplied by the trusted controller after checking the
     # worker's observation-bound declaration, never chosen from filenames here.
     receipt_path = PRIVATE / "final-environment-removals.json"
@@ -129,7 +134,7 @@ def main():
                     "/work/venv/bin/python",
                     "-c",
                     "from pathlib import Path\n"
-                    "for p in ['/work/reference', '/work/author', '/work/grading-private']:\n"
+                    "for p in ['/work/reference', '/work/author', '/work/grading-private', '/work/construction-inspection']:\n"
                     " try:\n  list(Path(p).iterdir())\n"
                     " except PermissionError:\n  continue\n"
                     " raise RuntimeError('Private reference accessible')\n"
@@ -196,6 +201,10 @@ def main():
             text=True,
         )
         assets = json.loads(catalog.read_text())
+        visible_catalog = inspection / "dependency-assets-final.json"
+        visible_catalog.write_bytes(catalog.read_bytes())
+        os.chown(visible_catalog, 0, AUTHOR)
+        visible_catalog.chmod(0o440)
         result["environment"] = {
             "exclusions": excluded,
             "removal_receipt": json.loads(receipt_path.read_text()),

@@ -110,6 +110,24 @@ async def checks(remote, root):
             assert all(
                 result[k] == observed[0][k] for k in ("inputs", "reference", "oracle_outputs")
             )
+        read = json.loads(
+            (
+                await command(
+                    [
+                        "python",
+                        "/work/grading_remote.py",
+                        "shell",
+                        "author",
+                        "cat /work/construction-inspection/dependency-assets-final.json",
+                        "30",
+                    ],
+                    name + "-author-inspection",
+                )
+            )["log"]
+        )
+        assert read["exit_code"] == 0
+        assert hashlib.sha256(read["log"].encode()).hexdigest() == identity["sha256"]
+        assert result["oracle_isolation"]["exit_code"] == 0
         (root / (name + "-result.json")).write_text(json.dumps(result, indent=2) + "\n")
         observed.append(result)
     # Restoring the exact fixture must fail the read-only absence check.
