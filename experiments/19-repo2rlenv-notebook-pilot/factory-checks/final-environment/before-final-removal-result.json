@@ -1,0 +1,107 @@
+{
+  "status": "executed_requires_scientific_validation",
+  "derivation": {
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "",
+    "stderr": "",
+    "role_process_cleanup_verified": true,
+    "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns."
+  },
+  "environment_removal_receipt": {
+    "files": [],
+    "excluded_files_absent": true
+  },
+  "inputs": [
+    {
+      "path": "data.csv",
+      "sha256": "9694854c32ce793afe20aac48984e938d627a4d82c60528fc9eafe2be666f9d0",
+      "bytes": 8
+    }
+  ],
+  "reference": [
+    {
+      "path": "final.csv",
+      "sha256": "9694854c32ce793afe20aac48984e938d627a4d82c60528fc9eafe2be666f9d0",
+      "bytes": 8
+    }
+  ],
+  "oracle_isolation": {
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "isolated\n",
+    "stderr": "",
+    "role_process_cleanup_verified": true,
+    "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns."
+  },
+  "oracle": {
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "",
+    "stderr": "",
+    "role_process_cleanup_verified": true,
+    "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns."
+  },
+  "oracle_outputs": [
+    {
+      "path": "final.csv",
+      "sha256": "9694854c32ce793afe20aac48984e938d627a4d82c60528fc9eafe2be666f9d0",
+      "bytes": 8
+    }
+  ],
+  "environment": {
+    "exclusions": {
+      "files": []
+    },
+    "removal_receipt": {
+      "files": [],
+      "excluded_files_absent": true
+    },
+    "asset_catalog": {
+      "bytes": 2026,
+      "sha256": "0ac7dc82641772b57272be960d3760a07617bd99b1a11e7077feaaa595e15361"
+    },
+    "asset_summary": {
+      "scope": "Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit.",
+      "installed_files_inspected": 1,
+      "candidate_files": 1,
+      "distribution_coverage": [
+        {
+          "distribution": "synthetic-tests",
+          "installed_regular_files_inspected": 1,
+          "candidate_files": 1,
+          "dedicated_test_distribution_hint": true
+        }
+      ],
+      "priority_matches": [
+        {
+          "distribution": "synthetic-tests",
+          "path": "synthetic/tests/final.csv",
+          "sha256": "9694854c32ce793afe20aac48984e938d627a4d82c60528fc9eafe2be666f9d0",
+          "bytes": 8,
+          "matches": [
+            {
+              "output": "final.csv",
+              "reasons": [
+                "same_basename",
+                "same_stem",
+                "same_suffix"
+              ]
+            },
+            {
+              "output": "final.csv",
+              "reasons": [
+                "identical_bytes"
+              ]
+            }
+          ],
+          "packaged_test_or_example": true,
+          "eligible_for_declared_removal": true,
+          "source_import_matches": [],
+          "source_import_group_matches": []
+        }
+      ],
+      "source_import_terms": []
+    }
+  }
+}

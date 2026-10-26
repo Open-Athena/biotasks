@@ -1,0 +1,99 @@
+{
+  "status": "executed_requires_scientific_validation",
+  "derivation": {
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "",
+    "stderr": "",
+    "role_process_cleanup_verified": true,
+    "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns."
+  },
+  "environment_removal_receipt": {
+    "files": [
+      {
+        "distribution": "synthetic-tests",
+        "path": "synthetic/tests/final.csv",
+        "sha256": "9694854c32ce793afe20aac48984e938d627a4d82c60528fc9eafe2be666f9d0"
+      }
+    ],
+    "excluded_files_absent": true
+  },
+  "inputs": [
+    {
+      "path": "data.csv",
+      "sha256": "9694854c32ce793afe20aac48984e938d627a4d82c60528fc9eafe2be666f9d0",
+      "bytes": 8
+    }
+  ],
+  "reference": [
+    {
+      "path": "final.csv",
+      "sha256": "9694854c32ce793afe20aac48984e938d627a4d82c60528fc9eafe2be666f9d0",
+      "bytes": 8
+    }
+  ],
+  "oracle_isolation": {
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "isolated\n",
+    "stderr": "",
+    "role_process_cleanup_verified": true,
+    "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns."
+  },
+  "oracle": {
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "",
+    "stderr": "",
+    "role_process_cleanup_verified": true,
+    "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns."
+  },
+  "oracle_outputs": [
+    {
+      "path": "final.csv",
+      "sha256": "9694854c32ce793afe20aac48984e938d627a4d82c60528fc9eafe2be666f9d0",
+      "bytes": 8
+    }
+  ],
+  "environment": {
+    "exclusions": {
+      "files": [
+        {
+          "distribution": "synthetic-tests",
+          "path": "synthetic/tests/final.csv",
+          "sha256": "9694854c32ce793afe20aac48984e938d627a4d82c60528fc9eafe2be666f9d0",
+          "reason": "Synthetic worker-selected unused expected-output fixture; copy programs never import it"
+        }
+      ]
+    },
+    "removal_receipt": {
+      "files": [
+        {
+          "distribution": "synthetic-tests",
+          "path": "synthetic/tests/final.csv",
+          "sha256": "9694854c32ce793afe20aac48984e938d627a4d82c60528fc9eafe2be666f9d0"
+        }
+      ],
+      "excluded_files_absent": true
+    },
+    "asset_catalog": {
+      "bytes": 620,
+      "sha256": "87ea3a71a07be66d9b2c06cbc85d6a0c47f233b2c8797107c01ed48df1314494"
+    },
+    "asset_summary": {
+      "scope": "Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit.",
+      "installed_files_inspected": 0,
+      "candidate_files": 0,
+      "distribution_coverage": [
+        {
+          "distribution": "synthetic-tests",
+          "installed_regular_files_inspected": 0,
+          "candidate_files": 0,
+          "dedicated_test_distribution_hint": true
+        }
+      ],
+      "priority_matches": [],
+      "source_import_terms": []
+    }
+  }
+}

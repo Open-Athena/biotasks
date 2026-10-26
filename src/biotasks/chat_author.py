@@ -447,8 +447,6 @@ class GLMChatAuthor:
                         messages = reduced
                         continue
                 raise OutputTokenLimit("Response reached its output-token limit; no tool executed")
-            if choice.get("finish_reason") not in {"stop", "tool_calls"}:
-                raise IncompleteCompletion("Incomplete model response; no tool executed")
             message = choice.get("message", {})
             if not isinstance(message, dict) or message.get("role") != "assistant":
                 raise IncompleteCompletion("Expected an assistant message")
@@ -459,7 +457,22 @@ class GLMChatAuthor:
                 and message.get("function_call") is None
                 and not message.get("refusal")
             )
+            # Some providers explicitly abort an otherwise empty response.
+            # Reuse the existing single empty-response retry only when no
+            # artifact, tool/function action or refusal was received. Never
+            # accept partial content or replenish any execution allowance.
+            aborted_empty = choice.get("finish_reason") == "abort" and empty
+            if choice.get("finish_reason") not in {"stop", "tool_calls"} and not aborted_empty:
+                raise IncompleteCompletion("Incomplete model response; no tool executed")
             if empty:
+                if aborted_empty:
+                    self.save_record(
+                        request_root / "failure.json",
+                        {
+                            "failure_category": "provider_aborted_empty_completion",
+                            "actions_executed": 0,
+                        },
+                    )
                 if (
                     self.empty_response_retry_notice is not None
                     and self.empty_response_retries_used == 0
@@ -475,6 +488,7 @@ class GLMChatAuthor:
                         empty_call_id=call_id,
                         response=str(request_root / "response.json"),
                         retry_number=self.empty_response_retries_used,
+                        finish_reason=choice.get("finish_reason"),
                         allowance_reset=False,
                         actions_executed=0,
                     )

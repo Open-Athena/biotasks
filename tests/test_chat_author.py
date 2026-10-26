@@ -376,7 +376,7 @@ def test_missing_tool_reminder_preserves_other_failures_and_bounds(tmp_path, cas
 
 
 @pytest.mark.parametrize("calls", [None, []])
-@pytest.mark.parametrize("finish", ["stop", "tool_calls"])
+@pytest.mark.parametrize("finish", ["stop", "tool_calls", "abort"])
 def test_empty_response_retry_preserves_actions_evidence_and_accounting(tmp_path, calls, finish):
     payloads, actions = [], []
     empty = empty_reply(finish=finish, calls=calls)
@@ -423,15 +423,20 @@ def test_empty_response_retry_preserves_actions_evidence_and_accounting(tmp_path
     recovery = [e for e in events if e["kind"] == "empty_response_retry_requested"]
     assert len(recovery) == 1
     assert recovery[0]["empty_call_id"] == 2
+    assert recovery[0]["finish_reason"] == finish
     assert recovery[0]["allowance_reset"] is False and recovery[0]["actions_executed"] == 0
 
 
-def test_repeated_empty_responses_stop_after_one_retry(tmp_path):
+@pytest.mark.parametrize(
+    "finishes",
+    [("tool_calls", "tool_calls"), ("abort", "abort"), ("stop", "abort"), ("abort", "stop")],
+)
+def test_repeated_empty_responses_stop_after_one_retry(tmp_path, finishes):
     calls = []
 
     async def complete(payload):
         calls.append(payload)
-        return empty_reply()
+        return empty_reply(finish=finishes[len(calls) - 1])
 
     author, ledger = make_author(tmp_path, complete, empty_response_retry_notice="Retry empty")
     args = options(tmp_path, {"submit_artifact": committed, "revise_artifact": committed})
@@ -443,6 +448,42 @@ def test_repeated_empty_responses_stop_after_one_retry(tmp_path):
     assert (tmp_path / "trace/2/response.json").exists()
     with sqlite3.connect(ledger.path) as db:
         assert db.execute("SELECT COUNT(*) FROM calls").fetchone()[0] == 2
+
+
+@pytest.mark.parametrize(
+    "defect", ["content", "tool", "legacy_function", "refusal", "role", "filtered"]
+)
+def test_provider_abort_retry_never_replays_partial_actions_or_bypasses_a_refusal(tmp_path, defect):
+    value = empty_reply(finish="abort")
+    message = value["choices"][0]["message"]
+    if defect == "content":
+        message["content"] = "Unfinished analysis"
+    elif defect == "tool":
+        message["tool_calls"] = reply()["choices"][0]["message"]["tool_calls"]
+    elif defect == "legacy_function":
+        message["function_call"] = {"name": "submit_artifact", "arguments": "{}"}
+    elif defect == "refusal":
+        message["refusal"] = "declined"
+    elif defect == "role":
+        message["role"] = "user"
+    else:
+        value["choices"][0]["finish_reason"] = "content_filter"
+    calls, actions = [], []
+
+    async def complete(payload):
+        calls.append(payload)
+        return value
+
+    async def submit(**artifact):
+        actions.append(artifact)
+        return "Artifact committed."
+
+    author, _ = make_author(tmp_path, complete, empty_response_retry_notice="Retry empty")
+    with pytest.raises(IncompleteCompletion):
+        asyncio.run(
+            author(**options(tmp_path, {"submit_artifact": submit, "revise_artifact": submit}))
+        )
+    assert len(calls) == 1 and not actions and author.empty_response_retries_used == 0
 
 
 @pytest.mark.parametrize("output_format", ["json_schema", "json_unconstrained"])
@@ -490,12 +531,13 @@ def test_empty_json_response_retries_without_submitting_empty_artifact(tmp_path,
     assert len(payloads[1]["messages"]) == 3
 
 
-def test_empty_retry_allowance_survives_upstream_stage_resubmission(tmp_path):
+@pytest.mark.parametrize("finish", ["tool_calls", "abort"])
+def test_empty_retry_allowance_survives_upstream_stage_resubmission(tmp_path, finish):
     calls = []
 
     async def complete(payload):
         calls.append(payload)
-        return reply() if len(calls) == 2 else empty_reply()
+        return reply() if len(calls) == 2 else empty_reply(finish=finish)
 
     author, _ = make_author(tmp_path, complete, empty_response_retry_notice="Retry empty")
     args = options(tmp_path, {"submit_artifact": committed, "revise_artifact": committed})
@@ -536,14 +578,15 @@ def test_empty_retry_does_not_regenerate_other_invalid_responses(tmp_path, case)
 
 
 @pytest.mark.parametrize("bound", ["turn", "ledger", "deadline"])
-def test_empty_retry_keeps_original_execution_bounds(tmp_path, bound):
+@pytest.mark.parametrize("finish", ["tool_calls", "abort"])
+def test_empty_retry_keeps_original_execution_bounds(tmp_path, bound, finish):
     calls = []
 
     async def complete(payload):
         calls.append(payload)
         if bound == "deadline":
             author.deadline = time.time() - 1
-        return empty_reply()
+        return empty_reply(finish=finish)
 
     author, _ = make_author(
         tmp_path,

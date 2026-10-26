@@ -96,7 +96,7 @@ def grading_evidence(profile="grading"):
     return p, dict(sources), claims, sessions, clean
 
 
-@pytest.mark.parametrize("profile", ["grading", "workspace_grading"])
+@pytest.mark.parametrize("profile", ["grading", "workspace_grading", "current_grading_failure"])
 def test_explicit_early_review_profile_prices_four_complete_sessions(profile):
     coarse, upper, records = module.audit(*grading_evidence(profile), profile=profile)
     assert coarse == Decimal("2.769000")
@@ -116,7 +116,7 @@ def test_explicit_early_review_profile_prices_four_complete_sessions(profile):
         "outside_stage",
     ],
 )
-@pytest.mark.parametrize("profile", ["grading", "workspace_grading"])
+@pytest.mark.parametrize("profile", ["grading", "workspace_grading", "current_grading_failure"])
 def test_grading_profile_does_not_admit_other_repairs_or_topologies(defect, profile):
     p, sources, claims, sessions, clean = copy.deepcopy(grading_evidence(profile))
     if defect == "source":
@@ -141,7 +141,7 @@ def test_grading_profile_does_not_admit_other_repairs_or_topologies(defect, prof
         module.audit(p, sources, claims, sessions, clean, profile=profile)
 
 
-@pytest.mark.parametrize("profile", ["grading", "workspace_grading"])
+@pytest.mark.parametrize("profile", ["grading", "workspace_grading", "current_grading_failure"])
 def test_different_complete_source_families_cannot_be_crosswired(profile):
     p, sources, claims, sessions, clean = grading_evidence(profile)
     other = "workspace_grading" if profile == "grading" else "grading"

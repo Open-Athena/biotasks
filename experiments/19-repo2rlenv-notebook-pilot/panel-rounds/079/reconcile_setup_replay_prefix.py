@@ -81,12 +81,14 @@ def profile_config(profile):
         "grading",
         "workspace_grading",
         "current_grading_rejection",
+        "current_grading_failure",
         "current_native_preparation_failure",
     }
     grading_sources = {
         "grading": GRADING_SOURCES,
         "workspace_grading": WORKSPACE_GRADING_SOURCES,
         "current_grading_rejection": CURRENT_SPECIFICATION_SOURCES,
+        "current_grading_failure": CURRENT_SPECIFICATION_SOURCES,
         "current_native_preparation_failure": CURRENT_SPECIFICATION_SOURCES,
     }
     return (
@@ -123,6 +125,7 @@ def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay")
             "workspace_grading",
             "current_specification_rejection",
             "current_grading_rejection",
+            "current_grading_failure",
             "current_native_preparation_failure",
         }
         assert repair["kind"] == "specification_review"
@@ -187,6 +190,7 @@ def main():
             "grading",
             "workspace_grading",
             "current_grading_rejection",
+            "current_grading_failure",
             "current_native_preparation_failure",
             "current_specification_rejection",
             "legacy_setup_replay",
@@ -252,6 +256,7 @@ def main():
         "grading",
         "workspace_grading",
         "current_grading_rejection",
+        "current_grading_failure",
         "current_native_preparation_failure",
     }:
         forbidden += ("materialization", "grading")
