@@ -5111,3 +5111,11 @@ Unchanged stage/closed-resource auditors retain 0.50USD after the existing full-
 ### 2026-10-26 — Prepare synthetic provider validation for earlier hints
 
 Prepared a three-case integration script using the existing bounded provider runner: actual installed ownership and numeric hint identities with author access/oracle denial; exact declared removal with fresh unchanged copy outputs; and failed-attempt invalidation of visible reports. Synthetic package raises if imported. Syntax/embedded literal programs/Ruff pass. Not funded or launched, no model/biology/provider activity. Requires a full1USDreservation and free slot under the existing two-host ceiling;193/194 continue independently on unchanged224runtime. Passing this would establish provider plumbing only, not qualify a notebook.
+
+Reserve1USD for the prepared synthetic provider check within the existing ceiling:199.75held/0.25unallocated. Configuration freezes all twelve relevant controller/shared-runner modules at88da9c45. No launch while193/194 occupy both slots; typed admission and terminal cleanup still required. No scientific/model policy or campaign allowance changed.
+
+### 2026-10-26 — Preserve Pyteomics setup rejection
+
+193 exhausted two tests: missing relative input directory, then optional psims needed by a later parser after partial scientific execution. Worker inspected and declared it afterwards but did not claim the untested recipe passed. The existing prompt already requests directory and optional-dependency preflight; no extra reminder or seed-specific patch adopted.8.70minutes/36requests.548 science files/6,476,085bytes and21rootfiles/1,006,224bytes verified; one original/freshowner/ID absent. Original data/notebook/task redistribution hold preserved.
+
+Unchanged original-source/stage/closed-clock auditors retain0.25USD after two-sided300seconds, extra0.10 and quarter-up, release4.75.195.00held/5.00unallocated including funded1USDsynthetic check. Fixed panel9/10audited: seven generated-candidate rejections, one source-fidelity rejection, one infrastructure failure; zero qualified new tasks.194remains running.

@@ -1,0 +1,46 @@
+{
+  "source_archive_manifest_sha256": "830a2ca1f1a802a104a611f43464643fc88be6bf7f4beae32f0294ebbd6b4d70",
+  "pipeline_status": "rejected",
+  "source_id": "pyteomics-filtering",
+  "elapsed_pipeline_seconds": 522.208,
+  "stage_elapsed_seconds": {
+    "preparation": 19.349,
+    "setup": 497.596
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "rejected"
+  },
+  "accounted_model_request_attempts": 36,
+  "request_ledgers": [
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "9b5da2bfb98256bb0d3da0428cdb3f8da0fea9f250bf451ed6068408806397c2",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "ea33fd65b92039df9399d173d5670635ee8efbca8fdda8b86a7b630fc4394845",
+      "count": 35,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 35
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 36,
+  "distinct_author_response_operations_within_stage": 36,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 0
+}

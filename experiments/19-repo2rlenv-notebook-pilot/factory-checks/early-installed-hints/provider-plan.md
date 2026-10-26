@@ -1,6 +1,6 @@
 # Provider validation before notebook adoption
 
-The [synthetic check](run_live_check.py) is prepared, not launched or funded. It reuses the existing provider runner: one offline 4-CPU/8-GiB/10-GiB sandbox, 300 seconds of work plus 180 seconds of cleanup, no GPU, model call, biological input or scientific computation. Before execution, reserve its full $1 within the existing $200 aggregate ceiling and prove that one of the two shared campaign slots is free. Both running fixed-panel cases must keep their original inputs and factory version.
+The [synthetic check](run_live_check.py) is prepared and funded, not launched. It reuses the existing provider runner: one offline 4-CPU/8-GiB/10-GiB sandbox, 300 seconds of work plus 180 seconds of cleanup, no GPU, model call, biological input or scientific computation. Its full $1 is reserved within the existing $200 aggregate ceiling; execution must still prove that one of the two shared campaign slots is free. Both running fixed-panel cases must keep their original inputs and factory version.
 
 The check exercises the current controller path, rather than calling the hint collector alone:
 
