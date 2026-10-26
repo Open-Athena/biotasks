@@ -1,0 +1,5 @@
+# PyMC 184: preserve aborted final scientific review
+
+The original reference, clean replay, initial specification review and task construction completed autonomously on the frozen original runtime. During the final scientific review, the provider returned `finish_reason: abort` with empty content, no tools and no refusal. The original adapter rejected that incomplete response without executing a tool. The controller reported an infrastructure failure; no native controls, blind solver or publication followed. This is not a scientific rejection or evidence that the source notebook is broken. Earlier controls cannot substitute for the unfinished independent review.
+
+The complete original archive (1,588 files, 155,795,921 bytes), root export (60 files, 1,256,001 bytes), and fresh absence of all four owned SDK sandboxes are verified. Pipeline time was 34.70 minutes with 67 recorded requests; bootstrap, export/readback and publication are excluded. Original responses and programs remain unchanged. [Response-shape evidence](provider-abort-184.json), [result](result-184.json), [cleanup](../../autonomous-runs/184/provider-cleanup.json).
