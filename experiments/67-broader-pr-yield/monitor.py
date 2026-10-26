@@ -47,6 +47,28 @@ def complete(directory):
     return [s['stage'] for s in j.get('stages', [])] == STAGES and not j.get('intent')
 
 
+def history_coverage(history, observations):
+    closed = [n for b in history['batches'] for n in b.get('entered', [])]
+    unfinished = any('finished' not in b for b in history['batches'])
+    events = observations / 'events.jsonl'
+    if events.is_file():
+        entered = []
+        with events.open() as stream:
+            for line in stream:
+                event = json.loads(line)
+                if event.get('event') == 'candidate_entered': entered.append(event['pr'])
+        assert len(entered) == len(set(entered)) and set(closed) <= set(entered)
+        if not unfinished: assert set(entered) == set(closed)
+        # The final interrupted batch never updates its denormalized backlog.
+        # Subtract its durable entry events; preserve the original ledger.
+        backlog = set(history['backlog_pr_numbers']) - set(entered)
+        return {'entered': len(entered), 'backlog': len(backlog), 'entered_source': 'append_only_native_events', 'unfinished_native_batch': unfinished}
+    if unfinished:
+        return {'entered': None, 'backlog': None, 'entered_source': 'unknown_without_interrupted_batch_events', 'unfinished_native_batch': True}
+    assert len(set(closed)) == len(closed)
+    return {'entered': len(closed), 'backlog': len(history['backlog_pr_numbers']), 'entered_source': 'closed_native_batch_ledger', 'unfinished_native_batch': False}
+
+
 def snapshot():
     active = read(ROOT / 'active-workflow.json', {})
     manifest = read(ROOT / active.get('manifest', 'manifest.json'))
@@ -67,9 +89,7 @@ def snapshot():
         elif journal.get('stages') or journal.get('intent'): c['phase'] = 'generation_running_or_finalizing'
         history = read(gen / 'generation-source/native-observations/history-batches.json')
         if history:
-            entered = [n for b in history['batches'] for n in b.get('entered', [])]
-            assert len(set(entered)) == len(entered)
-            c.update(entered=len(entered), backlog=len(history['backlog_pr_numbers']))
+            c.update(history_coverage(history, gen / 'generation-source/native-observations'))
         if r and r.get('durable_readback_verified'):
             c['exports'] = len(set(r['exported_tasks']))
         if complete(gen):
@@ -104,7 +124,7 @@ def snapshot():
     running = alive()
     terminal_cases = all(c['phase'] in ['zero_exports_complete', 'controls_complete'] for c in cases)
     state = 'monitoring' if running else ('workflow_complete' if terminal_cases else 'controller_stopped_requires_review')
-    return {'report_profile': 'cumulative-table-v3', 'observed_utc': datetime.now(timezone.utc).isoformat(), 'state': state, 'controller_alive': running,
+    return {'report_profile': 'cumulative-table-v4', 'observed_utc': datetime.now(timezone.utc).isoformat(), 'state': state, 'controller_alive': running,
             'cases': cases, 'settled_issue67_model_usd': str(sum((Decimal(c['model_cost_usd']) for c in cases if c['model_cost_usd'] is not None), Decimal(0))),
             'settled_issue67_model_calls': sum(c['model_calls'] or 0 for c in cases),
             'epic_actual_model_usd': budget['recorded_paid_cost_usd'],
@@ -126,7 +146,10 @@ def cumulative_table(body, value):
         if c['exports'] is None:
             continue
         label, exports, positive, clean, cost = baseline[c['case']]
-        coverage = f"{c['entered']} / {c['inventory_queued']} historical PRs entered; {c['backlog']} backlog; prior small-run results included"
+        entered = 'unknown' if c['entered'] is None else str(c['entered'])
+        backlog = 'unknown' if c['backlog'] is None else str(c['backlog'])
+        coverage = f"{entered} / {c['inventory_queued']} historical PRs entered; {backlog} backlog; prior small-run results included"
+        if c.get('unfinished_native_batch'): coverage += '; interrupted final batch'
         cost += Decimal(c['model_cost_usd']) if c['model_cost_usd'] is not None else Decimal(0)
         row = f"| {label} | {coverage} | {exports+c['exports']} | {positive+c['positive']} | {clean+c['clean']} | {cost:.6f} |"
         body, changed = re.subn(r'^\| '+re.escape(label)+r' \|[^\n]+$', lambda match: row, body, count=1, flags=re.M)

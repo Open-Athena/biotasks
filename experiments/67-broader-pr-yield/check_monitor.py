@@ -14,6 +14,17 @@ def write(p, obj):
     p.parent.mkdir(parents=True, exist_ok=True); p.write_text(json.dumps(obj))
 
 try:
+    # A killed second batch leaves an old backlog even though its durable
+    # entry log contains work beyond the first completed batch.
+    observations = scratch / 'partial-observations'; observations.mkdir()
+    history = {'batches':[{'entered':[1], 'finished':1}, {'started':2}], 'backlog_pr_numbers':[2,3,4]}
+    unknown = module.history_coverage(history, observations)
+    assert unknown['entered'] is None and unknown['backlog'] is None
+    (observations/'events.jsonl').write_text(''.join(json.dumps({'event':'candidate_entered','pr':n})+'\n' for n in [1,2,3]))
+    coverage = module.history_coverage(history, observations)
+    assert coverage['entered']==3 and coverage['backlog']==1 and coverage['unfinished_native_batch']
+    closed = {'batches':[{'entered':[1,2,3],'finished':3}], 'backlog_pr_numbers':[4]}
+    assert module.history_coverage(closed, observations)['entered']==3
     budget={'events':[], 'recorded_paid_cost_usd':2.196603, 'additional_allocated_cpu_hours':14.89, 'outstanding_cpu_hour_reservations':6.33, 'outstanding_reservations_usd':23.07}
     write(scratch/'budget.json', budget); write(scratch/'candidates.json', {'candidates':[{},{}]})
     write(scratch/'manifest.json', {'budget_ledger':str(scratch/'budget.json'), 'cases':[{'id':'nibabel','run_id':'test','candidates':{'path':str(scratch/'candidates.json')}}]})
@@ -37,6 +48,6 @@ try:
     module.alive=lambda:False; assert module.snapshot()['state']=='workflow_complete'
     write(directory/'journal.json', {'stages':[]}); assert module.snapshot()['state']=='controller_stopped_requires_review'
     assert module.signature(value)==module.signature({**value,'observed_utc':'later'})
-    print('Monitor contract checks passed: unknowns, cleanup gate, strict clean flags, terminal/hold, stable signature')
+    print('Monitor contract checks passed: interrupted-batch coverage, unknowns, cleanup gate, strict clean flags, terminal/hold, stable signature')
 finally:
     shutil.rmtree(scratch)
