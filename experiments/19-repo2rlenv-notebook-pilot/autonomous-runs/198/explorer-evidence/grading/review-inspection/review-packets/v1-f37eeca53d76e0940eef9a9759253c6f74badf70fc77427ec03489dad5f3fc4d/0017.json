@@ -1,0 +1,41 @@
+{
+  "worker_review": {
+    "additional_exclusions": [
+      {
+        "distribution": "MDAnalysisTests",
+        "path": "MDAnalysisTests/analysis/test_rms.py",
+        "reason": "Unused pytest module containing hard-coded literals matching requested answers: line 102 '6.820321761927005' (assert in test_superposition on u=mda.Universe(PSF,DCD), backbone atoms, first vs last trajectory frame with superposition=True) equals backbone_rmsd.csv final-frame Backbone cell 6.820321761026975 to ~1e-10 relative, and line 249 '0.91544906' (rms.RMSD select='name CA' frame 5 vs ref_frame 0) equals mass_weighted_rmsd.csv frame-5 C-alphas cell 0.9154490678430646 to 8 digits — the same quantity, since all CA atoms share one mass, making mass-weighting invariant over CA selections. The reference derivation and oracle import only MDAnalysisTests data files (adk.psf, adk_dims.dcd, adk_open.crd) and the MDAnalysis.tests.datafiles shim; this test module is never imported by any runtime code path, so it is unused. Verified distribution, relative path and exact sha256 by shell inspection of the installed environment; removal was applied and confirmed absent while the required data files and runtime code remain intact.",
+        "sha256": "2ba84a0110e18b718096351717a62238689f7373a1ddf77956d2c5faf2497728"
+      },
+      {
+        "distribution": "MDAnalysisTests",
+        "path": "MDAnalysisTests/analysis/test_align.py",
+        "reason": "Unused pytest module containing the hard-coded literal '6.820321761927005' (line 261, rms.rmsd(first_frame, last_frame, superposition=True) over Universe(PSF, DCD) backbone atoms, first vs last trajectory frame), which equals backbone_rmsd.csv final-frame Backbone cell 6.820321761026975 to ~1e-10 — requested-answer exposure. The module is never imported by the reference derivation (which reads only MDAnalysisTests/data files through the MDAnalysis.tests.datafiles shim) or by the oracle, so it is unused. Verified distribution, relative path and exact sha256 by shell inspection of the installed environment; removal was applied and confirmed absent while the required data files and runtime code remain intact.",
+        "sha256": "6f99185651f117bf0b93b259ad5d3fd7086fd032d77d21c3564bce300075cd3c"
+      }
+    ],
+    "artifact_inventory_sha256": "616fd554101c0b0fe93433886f13eddb89a6ff7b795165d780aa5d4afb89bc64",
+    "assessment": "Controlled derivation and oracle execution succeeded for all five requested outputs, including the two endpoints recovered by faithful rerun of the unchanged source calls (rms.rmsd first-vs-CRD backbones with center/superposition on a fresh frame-0 universe; rms.RMSD(u, u, select='backbone', groupselections=[CORE, LID, NMP], ref_frame=0)). The final bundle contains open_closed_backbone_rmsd.csv (one row) and backbone_rmsd.csv, core_ca_rmsd.csv, mass_weighted_rmsd.csv, resid_weighted_rmsd.csv (98 rows each) with the relabeled 'Time (ps)' headers and unchanged data values. Environment review: I read the full installed_asset_value_hints report (5/5 reference files, numeric cells inspected) and assessed each of its three findings by inspecting the exact literals, their surrounding test code, and the corresponding output cells. Both occurrences of 6.820321761927005 (test_rms.py:102 in test_superposition, test_align.py:261 in an alignment test, both computing the superposition backbone RMSD of Universe(PSF, DCD) first vs last frame) reproduce backbone_rmsd.csv frame-97 Backbone = 6.820321761026975 to ~1e-10 relative — the same source computation and inputs, i.e. genuine single-cell requested-answer exposure. The literal 0.91544906 (test_rms.py:249, rms.RMSD select='name CA' frame 5 vs frame 0) reproduces mass_weighted_rmsd.csv frame-5 C-alphas = 0.9154490678430646 to 8 digits; the quantity is identical because all alpha-carbons share one mass, so mass-weighting is invariant over CA selections. All three findings sat in two pytest modules that no runtime code path imports (only MDAnalysisTests data files and the MDAnalysis.tests.datafiles shim are used); nothing else in the catalog matched any output cell. I therefore declared removal of those two modules. The controller applied the exclusions, reran controlled execution, and the resulting installed-asset catalog (919014ebcfabc0cb9d066fb9de64225b8dbf33f95202336fb571f201e714be1a, 690 MDAnalysisTests files, 7895 inspected) reports ZERO value findings across all five reference files, while the required inputs (MDAnalysisTests/data/adk.psf, adk_dims.dcd, adk_open.crd), the MDAnalysis/tests/datafiles.py import shim, and all MDAnalysis runtime code remain present and unchanged, and all five outputs were reproduced identically (e.g. recovered open-closed scalar 6.823686867261616, recovered backbone_rmsd.csv first row Backbone 5.834343817915898e-07). These declarations are verbatim-inspection-backed for both answer exposure and unused status; the advisory scan's known gaps (integer/string/comment literals, nonpriority files, non-Python formats) mean this is an evidence-backed targeted review rather than an exhaustive-ness claim. No required data, scientific method, runtime code or notice is affected by the exclusions.",
+    "asset_catalog_sha256": "919014ebcfabc0cb9d066fb9de64225b8dbf33f95202336fb571f201e714be1a"
+  },
+  "executed_exclusions": {
+    "excluded_files_absent": true,
+    "files": [
+      {
+        "distribution": "MDAnalysisTests",
+        "path": "MDAnalysisTests/analysis/test_align.py",
+        "sha256": "6f99185651f117bf0b93b259ad5d3fd7086fd032d77d21c3564bce300075cd3c"
+      },
+      {
+        "distribution": "MDAnalysisTests",
+        "path": "MDAnalysisTests/analysis/test_rms.py",
+        "sha256": "2ba84a0110e18b718096351717a62238689f7373a1ddf77956d2c5faf2497728"
+      }
+    ]
+  },
+  "asset_catalog": {
+    "bytes": 1333639,
+    "sha256": "919014ebcfabc0cb9d066fb9de64225b8dbf33f95202336fb571f201e714be1a"
+  },
+  "scope": "Worker scientific assessment plus controller-observed cleanup; not independent answer-isolation approval."
+}

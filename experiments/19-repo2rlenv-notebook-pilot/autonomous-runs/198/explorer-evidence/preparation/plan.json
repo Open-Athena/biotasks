@@ -1,0 +1,31 @@
+{
+  "artifacts": [
+    {
+      "description": "RMSD of the CORE domain backbone alpha-carbons over the trajectory (AtomGroup-restricted RMSD analysis), with frame index, time, and CORE RMSD columns.",
+      "path": "core_ca_rmsd.csv",
+      "source_evidence": "The section 'RMSD of an AtomGroup with multiple selections' presents this CORE-domain RMSD over the trajectory as its result. Produced by `R = rms.RMSD(ca, ca, select=CORE, ref_frame=0); R.run()` and stored as `df = pd.DataFrame(R.results.rmsd, columns=['Frame', 'Time (ns)', 'CORE'])`. The variable `df` still holds this DataFrame at script completion because the later weighted analyses use separate DataFrames."
+    },
+    {
+      "description": "Mass-weighted RMSD of C-alpha atoms plus unweighted CORE, LID and NMP domain RMSDs over the trajectory, with frame index and time.",
+      "path": "mass_weighted_rmsd.csv",
+      "source_evidence": "The 'Weighted RMSD of a trajectory - Mass' section interprets these per-frame RMSD curves ('The plot looks largely the same as above...') as the analysis outcome. Produced by `R_mass.run()` and stored as `df_mass = pd.DataFrame(R_mass.results.rmsd, columns=['Frame', 'Time (ns)', 'C-alphas', 'CORE', 'LID', 'NMP'])`, which persists to script completion."
+    },
+    {
+      "description": "Resid-weighted ('custom weights') RMSD of C-alpha atoms plus resid-weighted CORE, LID and NMP domain RMSDs over the trajectory, with frame index and time.",
+      "path": "resid_weighted_rmsd.csv",
+      "source_evidence": "The 'Custom weights' section draws a scientific interpretation from these values ('you can see in the below graph that the NMP domain has much higher RMSD than before... residues later in the NMP domain... are mobile'), treating them as an interpretable result. Produced by `R_charge.run()` and stored as `df_charge = pd.DataFrame(R_charge.results.rmsd, ...)`, which persists to script completion."
+    }
+  ],
+  "disposition": "prepare",
+  "excluded_outputs": [
+    "RMSD between the open and closed AdK backbone coordinate sets (rms.rmsd call in 'RMSD between two sets of coordinates'): a standalone scalar shown as an unassigned expression; the value is never stored in a named variable, and no capture or recomputation is permitted.",
+    "First whole-trajectory RMSD analysis with backbone select and CORE/LID/NMP groupselections (RMSD of a Universe with multiple selections): both its analysis object `R` and its DataFrame `df` are overwritten by the later AtomGroup (CA-only CORE) analysis, so its values are not recoverable at completion.",
+    "RMSD line plots (df.plot, df_mass.plot, df_charge.plot): plot-only renditions; the underlying per-frame values exported above already exist in the corresponding DataFrames. Figure images are not captured."
+  ],
+  "explanation": "The notebook computes RMSD analyses of AdK domain motion. Three terminal result tables remain accessible at script completion in named DataFrames (df, df_mass, df_charge), each backed by its RMSD analysis object. The export code appends after the baseline, creates /work/outputs, and writes each existing DataFrame to CSV without recomputation. The first whole-trajectory backbone/CORE/LID/NMP RMSD analysis is excluded because both its DataFrames (R and df) were overwritten by the later CA-only analysis, and the single open-vs-closed backbone RMSD scalar is only an unnamed standalone expression.",
+  "export_code": "import os as _os\n_os.makedirs('/work/outputs', exist_ok=True)\n\ndf.to_csv('/work/outputs/core_ca_rmsd.csv', index=False)\ndf_mass.to_csv('/work/outputs/mass_weighted_rmsd.csv', index=False)\ndf_charge.to_csv('/work/outputs/resid_weighted_rmsd.csv', index=False)\n",
+  "unresolved_assumptions": [
+    "Whether the RMSD data arrays include a guessed time column and how many frames the DCD trajectory yields is only verifiable at execution; column layout is taken from the source narrative.",
+    "Environment fit (MDAnalysis, MDAnalysisTests, pandas installation under the CPU-only offline reference run) is left to the execution stage."
+  ]
+}

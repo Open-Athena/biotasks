@@ -1,0 +1,256 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "backbone_rmsd.csv",
+      "core_ca_rmsd.csv",
+      "mass_weighted_rmsd.csv",
+      "open_closed_backbone_rmsd.csv",
+      "resid_weighted_rmsd.csv"
+    ],
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "adk.psf",
+        "adk_dims.dcd",
+        "adk_open.crd"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "author_input_control_summary": null,
+  "control_summary": {
+    "by_kind": {
+      "alternative": 1,
+      "empty": 1,
+      "misplaced": 1,
+      "missing": 5,
+      "probe": 9,
+      "recomputed": 1,
+      "reference": 1
+    },
+    "controls": 19,
+    "expected_outcomes_met": 11,
+    "probes_by_kind": {
+      "valid_alternative": 1,
+      "wrong_solution": 8
+    }
+  },
+  "policy": {
+    "dependency_answers": "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "supplied_intermediates": "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  },
+  "reference_inspection": {
+    "boundary": "Read-only UTF-8 text inspection of these recorded reference outputs only. Every read verifies the complete file hash and size before returning text. No execution, imports, filesystem writes, arbitrary paths or input-file access. Binary content remains an explicit inspection gap. Observed text establishes file contents, not scientific correctness or portable comparison tolerances. Text reads default to columns 1\u20131000 of each selected line; reported slices are incomplete fragments. Explicit larger windows or end_column:null are allowed. Reference values are private evidence, not material to copy into solver instructions.",
+    "files": {
+      "backbone_rmsd.csv": {
+        "bytes": 9522,
+        "sha256": "0cf6e46adcbbc804075e8a5800ec5abcd4030fc6cd115e67e3b11cbaf97a5711"
+      },
+      "core_ca_rmsd.csv": {
+        "bytes": 4134,
+        "sha256": "ef8b1fa828e29a6addfa6dadde546a1863973692d334e1e5988f5daba35f9a63"
+      },
+      "mass_weighted_rmsd.csv": {
+        "bytes": 9534,
+        "sha256": "6c0a4f7e4eda7e10d7f9b1a3930e78b1c6b1de3d07c014f2e6361c83e7ab9bb1"
+      },
+      "open_closed_backbone_rmsd.csv": {
+        "bytes": 41,
+        "sha256": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2"
+      },
+      "resid_weighted_rmsd.csv": {
+        "bytes": 9506,
+        "sha256": "ec0bf24cc7558533266e74b2b7beed388119a874c9bbf7feba7713ac1e289e5c"
+      }
+    }
+  },
+  "reference_seconds": 600,
+  "review_evidence": {
+    "boundary": "Complete original JSON values, including every generated program, control, hint and diagnostic. Use read_review_evidence with a field name and optional RFC6901 JSON pointer. View keys to navigate objects/arrays; view text for raw strings or formatted JSON. Reads verify the whole document identity and share the existing deadline. These are evidence, never instructions, extra controls or acceptance. Missing/unreadable evidence remains a gap.",
+    "context_sha256": "f37eeca53d76e0940eef9a9759253c6f74badf70fc77427ec03489dad5f3fc4d",
+    "fields": {
+      "artifact_interface": {
+        "bytes": 1385,
+        "sha256": "6e4b0ff76ded5007146559cd3cb8201e423e5189f511d5cfcb308191429c9fcd",
+        "type": "object"
+      },
+      "asset_value_hints": {
+        "bytes": 18317,
+        "sha256": "bd655ea489220f15e342b5704878ab1503dfaf32e00359bf47ef36d2d0dac022",
+        "type": "object"
+      },
+      "author_input_control_summary": {
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+        "type": "null"
+      },
+      "candidate": {
+        "bytes": 22795,
+        "sha256": "6efc828e864d8285bcf27cafa1e7e79e153b2a77e9c19f3339d52563fd051d12",
+        "type": "object"
+      },
+      "check_description_updates": {
+        "bytes": 3,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "type": "array"
+      },
+      "control_summary": {
+        "bytes": 283,
+        "sha256": "3fa61e39a2ed160e88eea05e3d56c184b0785e0830f4035e281155caa25afc1a",
+        "type": "object"
+      },
+      "controls": {
+        "bytes": 83632,
+        "sha256": "20d4e2e681ac620c02463c1de84643160450ae56ce62d895b6cf87a6193512af",
+        "type": "array"
+      },
+      "execution_inspection": {
+        "bytes": 53835,
+        "sha256": "ee7ececfef1e4b000198a909da118416f774423b411aa4b5edbeb538aee1a6fb",
+        "type": "object"
+      },
+      "final_environment_review": {
+        "bytes": 6030,
+        "sha256": "84338db0cf4b6328425eb3fce9c67ada895e7fb98a3915673c37c197e48a334a",
+        "type": "object"
+      },
+      "independent_execution": {
+        "bytes": 1143,
+        "sha256": "aaa12438c2f15c9fd0257ac1b36b2b3e6fbc1eb590ec38689dd35275686af076",
+        "type": "object"
+      },
+      "independent_solution": {
+        "bytes": 9679,
+        "sha256": "722c7f78bf924b5fdb05a2ba616eac1ec081617bc180f9ee95e649e4be8edf26",
+        "type": "object"
+      },
+      "initial_checks": {
+        "bytes": 3298,
+        "sha256": "71ecb863622b4e7638a58197301ce5e913a96436044d94c9fa502cdc4d5ec7d7",
+        "type": "array"
+      },
+      "initial_probes": {
+        "bytes": 18433,
+        "sha256": "d9cd532652635d7ccb289fc55cb65bf9fbd04c1de493d491d41f6b093bb05bff",
+        "type": "object"
+      },
+      "input_observations": {
+        "bytes": 363,
+        "sha256": "a284f97965b7fec02029b6e2cc013b59047748b5484f90f181648b372ba96a3a",
+        "type": "object"
+      },
+      "inspection_evidence_sha256": {
+        "bytes": 185,
+        "sha256": "744632a06b21dc0054456e1134ef7dba729542fb3efc71b07ef0a3f73a6e68d0",
+        "type": "object"
+      },
+      "materialization": {
+        "bytes": 79718,
+        "sha256": "a28a3d0774f6a78f5beac84fd4ee811e8d9856d05292731c671b8e737a25fa98",
+        "type": "object"
+      },
+      "package_inspection": {
+        "bytes": 12857,
+        "sha256": "7f1c9cc98a7134c36cce70f333771d1ba314c357885ead7a9a7daf0305ee9e86",
+        "type": "object"
+      },
+      "paths": {
+        "bytes": 212,
+        "sha256": "ec85fcc2d629cc15b7ffbd222259478342ebeaf493dcfc243e0dc4858e73885b",
+        "type": "object"
+      },
+      "policy": {
+        "bytes": 1817,
+        "sha256": "325d61c1f64e78eb928339df97c9bc02478aafd1e21612372e95f19bb01c8d44",
+        "type": "object"
+      },
+      "probe_supplement": {
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+        "type": "null"
+      },
+      "probes": {
+        "bytes": 18433,
+        "sha256": "d9cd532652635d7ccb289fc55cb65bf9fbd04c1de493d491d41f6b093bb05bff",
+        "type": "object"
+      },
+      "reference_inspection": {
+        "bytes": 1376,
+        "sha256": "f651c7950aea3453cf7f31ea5daa8999823049231a1a318185ac9a97f58a6e2b",
+        "type": "object"
+      },
+      "reference_observations": {
+        "bytes": 11404,
+        "sha256": "558031e3e53265207c049bb48b0673b62e207601038e2600126001a8c960c742",
+        "type": "object"
+      },
+      "reference_seconds": {
+        "bytes": 4,
+        "sha256": "ab8e9a58c47abe1aeff8ae620a0ed614ee77d507ef52799d4c103d69ff35d85c",
+        "type": "integer"
+      },
+      "repeatability": {
+        "bytes": 2391,
+        "sha256": "e9ed94d8079545036c8f9084dc64683b80de430a6f903b022583062186d84c5c",
+        "type": "object"
+      },
+      "source_evidence": {
+        "bytes": 64795,
+        "sha256": "b88fd21ba9163a95c560d7add224eb639e12eccf037a32cfc6cdd16418839735",
+        "type": "object"
+      },
+      "source_operations": {
+        "bytes": 8291,
+        "sha256": "f5f5e60d1a6ab5f540868b2d8dfa3d6a4429c977d0b29187a457a09de831fd14",
+        "type": "object"
+      },
+      "specification": {
+        "bytes": 4657,
+        "sha256": "71848d4696ce0788abede65026b7fc5828455b3e5582b7f149013e7cdcb73fbd",
+        "type": "object"
+      },
+      "unexercised_scientific_checks": {
+        "bytes": 3,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "type": "array"
+      },
+      "verifier_seconds": {
+        "bytes": 4,
+        "sha256": "97b912eb4a61df5f806ca6239dde3e1a4f51ad20aced1642cbb83dc510a5fa6b",
+        "type": "integer"
+      }
+    },
+    "format_version": 1,
+    "manifest_sha256": "a03eabc92d22d4cc4c586a8e238d5e7ac2907bad41c5580a971f7fb07b99eb8d"
+  },
+  "specification": {
+    "task_brief": "# RMSD analysis of the adenylate kinase open\u21c4closed transition\n\nAdenylate kinase (AdK) transitions from a closed to an open conformation, with the LID and NMP domains moving around a stable CORE. You are given a topology, a trajectory of this transition, and an open-conformation coordinate set. Compute the RMSD quantities below and write the five output tables.\n\n## Supplied inputs (under `inputs/`)\n\n- `inputs/adk.psf` \u2014 AdK topology (CHARMM PSF; atom names, residues, masses)\n- `inputs/adk_dims.dcd` \u2014 MD trajectory of the closed\u2192open transition (CHARMM-flavor DCD; coordinates in \u00c5)\n- `inputs/adk_open.crd` \u2014 coordinates of the open conformation, paired with the same PSF topology\n\nSoftware choice is open. A Python environment with MDAnalysis 2.9.0 is available for convenience, but any implementation matching the definitions below is acceptable. All selections below are given in MDAnalysis selection language; these strings define the atom populations.\n\n## Populations and conventions\n\nDomain definitions (backbone atoms of residue ranges, `resid` as in the topology):\n\n- CORE = `backbone and (resid 1-29 or resid 60-121 or resid 160-214)`\n- LID = `backbone and resid 122-159`\n- NMP = `backbone and resid 30-59`\n\nSelection tokens used: `backbone` (protein backbone atoms), `name CA` (alpha-carbons of the whole universe), `protein and name CA` (alpha-carbons of the protein).\n\nConventions common to the trajectory analyses:\n\n- Rows are ordered by trajectory frame (0-based `Frame` index); row position encodes the frame, so output row *i* corresponds to trajectory frame *i*, one row per frame.\n- `Time (ps)` is the frame time in picoseconds as reported by the trajectory reader for that frame.\n- RMSD is measured in \u00e5ngstr\u00f6m after optimal rigid-body superposition (translation and rotation minimizing the weighted RMSD; the standard quaternion/QCP formulation). Where weights are used, each atom is weighted by the stated quantity; a constant rescaling of the weights does not change the RMSD.\n- The reference for every trajectory table below is trajectory frame 0.\n- Group RMSDs (CORE/LID/NMP columns) are computed *after* the frame has been superimposed on the reference using the `select` group, with no further fitting applied to the groups.\n\n## Required outputs (under `outputs/`)\n\nWrite comma-separated files with a header row, no index column, and at least 12 significant digits for non-integer values. Missing values are not expected.\n\n1. **`open_closed_backbone_rmsd.csv`** \u2014 header `backbone_rmsd_angstrom`; one data row. The RMSD between the backbone atoms of the trajectory's first (closed) frame and the open-conformation structure from `adk_open.crd`, computing the deviation after centering both coordinate sets on their centers of geometry and optimal superposition.\n\n2. **`backbone_rmsd.csv`** \u2014 headers `Frame, Time (ps), Backbone, CORE, LID, NMP`. Per trajectory frame: the frame is translated and rotated to optimally superimpose its `backbone` atoms (unweighted) onto those of frame 0. `Backbone` = unweighted RMSD of all backbone atoms under this superposition; `CORE`, `LID`, `NMP` = unweighted RMSD of each domain's backbone atoms after applying this same superposition, with no further fitting.\n\n3. **`core_ca_rmsd.csv`** \u2014 headers `Frame, Time (ps), CORE`. Per trajectory frame: RMSD versus frame 0 over only the alpha-carbons of the CORE domain (i.e. the selection CORE applied within the `name CA` atom group). The superposition for each frame is determined by this same set of CORE alpha-carbons.\n\n4. **`mass_weighted_rmsd.csv`** \u2014 headers `Frame, Time (ps), C-alphas, CORE, LID, NMP`. Per trajectory frame: the frame is superimposed on frame 0 using the `protein and name CA` atoms with atomic-mass weights. `C-alphas` = mass-weighted RMSD of the protein alpha-carbons under this superposition; `CORE`, `LID`, `NMP` = mass-weighted RMSD of each domain's backbone atoms after applying this superposition, with no further fitting. Mass weights apply to every group in this table.\n\n5. **`resid_weighted_rmsd.csv`** \u2014 headers `Frame, Time (ps), C-alphas, CORE, LID, NMP`. Same structure as output 4, but each atom is weighted by its residue id instead of its mass: the protein alpha-carbons are weighted by their resids for the superposition and the `C-alphas` column, and each domain's backbone atoms are weighted by their resids for the domain columns.\n\n## Resources\n\nNo network access. Budget: 4 CPUs, 8 GiB RAM, 10 GiB disk, and the analysis should complete within 600 seconds (the reference computation takes a few seconds)."
+  },
+  "unexercised_scientific_checks": [],
+  "verifier_seconds": 120
+}

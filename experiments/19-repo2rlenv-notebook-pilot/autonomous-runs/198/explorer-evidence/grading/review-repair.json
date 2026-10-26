@@ -1,0 +1,112 @@
+{
+  "asset_value_assessments": [],
+  "decision": "accept_for_packaging",
+  "issues": [],
+  "question_issues": [],
+  "rationale": "The candidate is suitable for packaging. (1) Scientific scope: all five eligible terminal results of the notebook are present and hash-bound \u2014 the two endpoints the original preparation had discarded (open-vs-closed scalar, whole-backbone+domains table) were recovered append-only by faithful rerun of the unchanged source calls (rms.rmsd center/superposition; rms.RMSD(u,u,select='backbone',groupselections,ref_frame=0)) with separate provenance and independent validation, and the three originally exported tables (core_ca, mass_weighted, resid_weighted) come from the notebook's persistent DataFrames; plots are renditions of those values, and the one print call is a shape diagnostic. (2) Grader contract: the six checks match the public addendum exactly (path placement directly under the output root, exact headers, one row per frame with Frame==row index enforced, 98-row cross-table row-count agreement, finite/negative-value rejection, max(1e-5 \u00c5, 1e-6 rel) RMSD bound, 1e-6 ps time bound, decoded-value-only comparison with representation freedom). The admitted prose nuance \u2014 'negative times fail' \u2014 holds in effect because every reference time is \u2265~1 ps, so any negative time fails the 1e-6 ps value comparison; and '12 significant digits' is disclosed as a writer obligation enforced only through the value bounds. (3) Controls: 19/19 executed controls met expectations, including reference, empty, misplaced (files under an extra outputs/ layer rejected, confirming declared placement), five missing-file omissions, an independent recomputation, an independently implemented alternative (own QCP superposition; open_closed byte-identical to reference, float-reformatted trajectory tables), and nine probes. The repair worker's check_ids/kind corrections are the sanctioned annotation fixes: the six wrong_solution probes deliberately preserve CSV structure, so their executing structural_schema listing was contradicted by both the frozen scripts and the executed reports (structural_schema passed in every record); the two weighting probes' frozen scripts merely reform values ('%.17g' round-trips float64 exactly), so valid_alternative is the correct classification \u2014 I verified each mutation independently satisfies/violates the public contract as annotated, and each scientific check retains executed wrong-result coverage (scale inflation, LID/NMP swap, cross-file population substitution, +5e-6 ps shift, 1e-5 ps grid, 5-significant-digit rounding). (4) Scientific equivalence of the mass-weighted convention: recorded recomputations with weights_groupselections=['mass','mass','mass'] (and ca.masses) reproduce the reference-matching tables to \u22641.4e-6 \u00c5, well inside the 1e-5 \u00c5 bound \u2014 the C-alphas column is invariant to mass weighting (alpha-carbons share one mass) \u2014 so the question's 'mass weights apply to every group' is consistent with the frozen reference at the acceptance scale; the resid convention matches the source's weights=ag.resids/weights_groupselections calls and was matched to 1e-6 by executed recomputation. (5) Units: 'Time (ps)' correctly relabels the reader's picosecond frame times (frame 0 = 0.9999999119200186 ps, DCD saved time origin), fixing the notebook's 'ns' label against the observed reader values; RMSD in \u00c5 from CHARMM DCD coordinates. (6) Answer isolation: the only identified answer exposure (literals 6.820321761927005 and 0.91544906 reproducing requested cells) was removed with verified file identities (test_rms.py, test_align.py), the removal receipt confirms absence, the required inputs, datafiles shim and runtime code remain, and the post-exclusion catalog scan (49 candidates, 690 MDAnalysisTests files / 7895 inspected, 5/5 reference files covered, hash-bound) reports zero findings; a fresh controlled derivation and oracle rerun reproduced all five outputs and all controls were re-executed on the cleaned environment. No supported defects remain; the known, candidly recorded coverage notes (unexercised time-recomputation boundary, no executed cross-convention substitution probe, advisory scan gaps on non-Python formats) are limitations disclosed by the candidate, consistent with the executed evidence, and do not change which submissions pass under the stated rules.",
+  "scientific_admission": {
+    "answer_isolation": {
+      "blockers": [],
+      "decision": "approve",
+      "evidence": [
+        "final_environment_review.worker_review.additional_exclusions: test_rms.py (sha 2ba84a01...) and test_align.py (sha 6f991856...) removed \u2014 unused pytest modules whose literals reproduce requested cells ('6.820321761927005' = backbone_rmsd.csv frame-97 Backbone to ~1e-10 relative; '0.91544906' = mass_weighted_rmsd.csv frame-5 C-alphas to 8 digits, mass-invariant over CA selections); removal applied and confirmed absent while required data files and runtime code remain intact.",
+        "final_environment_review.executed_exclusions: excluded_files_absent=true with both identities; post-exclusion asset catalog 919014eb... (690 MDAnalysisTests files, 7895 inspected).",
+        "asset_value_hints: findings empty; reference_coverage lists all five output files numeric_cells_inspected; the two removed modules are absent from the 49 candidates; remaining non-Python candidates are topology/coordinate input data (PSF/DCD/CRD, legacy coordinate .npy arrays), not requested RMSD aggregates.",
+        "worker_review.assessment: after exclusions, controlled derivation and oracle execution reproduced all five outputs identically (recovered scalar 6.823686867261616) while the required inputs, the MDAnalysis/tests/datafiles.py shim and runtime code are present and unchanged.",
+        "controls (19/19 passed on candidate d945a31f...): all executed against the cleaned environment; grader_code reads only the controller-supplied reference/submission/report arguments and compares decoded values against the immutable reference copies \u2014 no solver-workspace input copies are consulted and no input-derived check exists, so BIOTASKS_TRUSTED_INPUT_DIR is not needed for this value-comparison design.",
+        "independent_execution: 'executed_without_answer_access', exit 0 \u2014 five outputs reproduced with open_closed byte-identical (219e9f63...) and trajectory tables full-precision value-identical."
+      ],
+      "output_paths": [
+        "backbone_rmsd.csv",
+        "core_ca_rmsd.csv",
+        "mass_weighted_rmsd.csv",
+        "open_closed_backbone_rmsd.csv",
+        "resid_weighted_rmsd.csv"
+      ],
+      "rationale": "No requested answer is disclosed to solvers in the final environment. The only identified answer exposure \u2014 hard-coded literals in two unused pytest modules reproducing requested cells \u2014 was removed with verified installed-file identities and source-backed unused-ness reasons (reference/oracle import only the MDAnalysisTests data files and the MDAnalysis.tests.datafiles shim), the controller's removal receipt confirms absence, and a fresh identity-bound scan of 7895 installed files in the cleaned catalog reports zero findings across all five reference outputs while the required inputs, the datafiles shim and runtime code remain present. The answers were freshly re-derived from the inputs after the exclusions and all controls were re-executed on the cleaned environment; the independent solution recomputed all five outputs without answer access. Binary data assets outside the advisory scan's semantics are the legitimately supplied input files and coordinate arrays, not tables of requested aggregates. The grader compares decoded values against immutable reference copies and never reads solver-workspace inputs, so no solver-controlled-copy channel exists. The advisory scan declares non-exhaustive scope (integer/string/comment literals, non-priority files, non-Python formats); the assessment rests on the removal receipt, the post-exclusion zero-finding scan covering all five references, and fresh reproduction rather than filenames or passing controls."
+    },
+    "comparisons": [
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "source_operations call-92-0: rms.rmsd(backbone positions, center=True, superposition=True) \u2014 recovered faithful rerun on a fresh frame-0 universe vs adk_open.crd; reference hash 219e9f63..., 41 bytes, value 6.823686867261616.",
+          "independent_execution (executed_without_answer_access): open_closed_backbone_rmsd.csv byte-identical (219e9f63...) from an independently implemented qcprot-based solver; reference control passed all six checks.",
+          "controls: probe open-closed-scaled-one-percent (0.1% inflation) executed \u2014 structural_schema passed, open_closed_backbone_rmsd failed; cells-rounded-to-five-sig-digits failed open_closed_backbone_rmsd; full-precision %.17e re-rendering passed."
+        ],
+        "output_paths": [
+          "open_closed_backbone_rmsd.csv"
+        ],
+        "rationale": "The single scalar equals the open-vs-closed backbone RMSD defined by the source's unchanged rms.rmsd call (unweighted centering on centers of geometry plus optimal QCP superposition of the backbone atoms between trajectory frame 0 and adk_open.crd), recovered append-only with separate provenance and independently executed validation. An independently implemented solver reproduced the value byte-identically. Correct values in any parseable full-precision spelling are accepted; inflations as small as 0.1% and five-significant-digit rounding are rejected by executed controls; non-negativity is enforced."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "source_operations call-107-4/call-112-0: rms.RMSD(u, u, select='backbone', groupselections=[CORE, LID, NMP], ref_frame=0); R.run() \u2014 the recovered faithful rerun; 98 frames (all per-check messages report 98 rows); reference hash 0cf6e46a..., 9522 bytes.",
+          "controls: reference and recomputed controls passed; alternative control (independent solver, 21ee1d56...) passed; probe backbone-lid-nmp-column-swap failed exactly backbone_rmsd (97/98 rows beyond both tolerance branches) with structural_schema passing; time-shift (+5e-6 ps) and 1e-5 ps grid probes failed backbone_rmsd; five-significant-digit rounding failed; empty, misplaced (extra outputs/ layer) and missing-file controls all rejected.",
+          "current/0044 (executed): RMSD(u, select='backbone', groupselections=...) vs solver output \u2014 Backbone 0.0, domain columns <=1.5e-6 A maxdiff.",
+          "grader_code make_traj_check: enforces exact row count per reference, s[0]==i==int(s[0]) (frame identity defeats reordering/omission/duplication/extra rows), time diff <=1e-6 ps, per-cell max(1e-5 A, 1e-6 rel) with negative-cell rejection."
+        ],
+        "output_paths": [
+          "backbone_rmsd.csv"
+        ],
+        "rationale": "Row-by-row unweighted backbone superposition-fit and CORE/LID/NMP group-domain RMSDs equal the source's recovered call over the identical population, with group columns measured after the backbone fit on frame 0 with no further fitting, matching the RMSD class semantics (verified against the recorded MDAnalysis 2.9 rms.py source). Frame identity is consistent with the shared reader-reported Time column and cross-table row-count agreement; per-file reference comparison makes cross-file substitutions fail; wrong results (swapped domain columns, perturbed or gridded times, coarse rounding, structural deviations) are rejected by executed controls; an independent implementation reproduced all cells within 1.5e-6 A."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "source_operations call-147-5/call-149-4/call-150-0: ca = u.select_atoms('name CA'); R = rms.RMSD(ca, ca, select=CORE, ref_frame=0); R.run(); exported via df (plan.json export_code); reference hash ef8b1fa8..., 4134 bytes.",
+          "current/0044 (executed): RMSD(ca, ca, select=CORE) reproduction vs solver output \u2014 CORE maxdiff 1.7e-7 A.",
+          "controls: reference and alternative controls passed core_ca_rmsd; probe core-ca-backbone-pool-contamination (backbone_table CORE values substituted) failed exactly core_ca_rmsd with structural_schema passing; time and rounding probes also covered this check.",
+          "independent_solution rationale: CORE-and-name-CA selection verified identical to applying CORE within the CA atom group; reproduces MDAnalysis RMSD to <=1.4e-6 A."
+        ],
+        "output_paths": [
+          "core_ca_rmsd.csv"
+        ],
+        "rationale": "The column is the unweighted RMSD over the CORE domain's alpha-carbons (CORE applied within the 'name CA' atom group) with the superposition determined by that same atom set, exactly the source's AtomGroup-restricted call. Wrong-population substitution from another table's same-name column is rejected by an executed control; identity, time and value rules are shared with the other trajectory tables."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "source_operations call-167-9..call-171-0: rms.RMSD(u, u, select='protein and name CA', weights='mass', groupselections=[CORE, LID, NMP]); R_mass.run(); exported via df_mass (plan.json); reference hash 6c0a4f7e..., 9534 bytes.",
+          "current/0046 (executed recomputation): RMSD(u, select='protein and name CA', weights=ca.masses, weights_groupselections=['mass','mass','mass'], groupselections=[CORE, LID, NMP], ref_frame=0) vs the reference-matching solver table: maxdiff C-alphas 1.6e-13, CORE 1.6e-7, LID 1.3e-6, NMP 4.8e-7 A \u2014 far inside the 1e-5 A acceptance bound.",
+          "controls: reference, alternative (independent solver, 9b9d3d9d... distinct bytes, value-identical) and recomputed controls all passed mass_weighted_rmsd; time-shift, time-grid and five-significant-digit rounding probes failed it; value-preserving '%.17g'/'%.17e' reformattings passed.",
+          "final_environment_review.assessment: recovered after endpoint recovery; Time header relabeled to (ps), data values unchanged."
+        ],
+        "output_paths": [
+          "mass_weighted_rmsd.csv"
+        ],
+        "rationale": "The reference values match the notebook's mass section, and an explicitly mass-weighted-everywhere recomputation (weights and weights_groupselections both mass) reproduces those values to <=1.4e-6 A \u2014 so the public declaration that mass weights apply to every group in this table is consistent with the frozen reference at the acceptance scale; the plan's 'unweighted domain subcolumns' wording describes a numerically indistinguishable variant here (the C-alphas column is mass-invariant since alpha-carbons share one mass, and executed diffs on domain columns are ~1e-6 A). The CA superposition group, domain populations, frame identity and shared reader time column are consistent across dependent outputs; wrong values (coarse rounding, perturbed times, other-table substitutions) are rejected by executed controls, and value-preserving representation variants are accepted."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "source_operations call-190-5..call-205-0: rms.RMSD(u, u, select='protein and name CA', weights=ag.resids, weights_groupselections=[core.resids, lid.resids, nmp.resids], groupselections=[CORE, LID, NMP]); R_charge.run(); exported via df_charge (plan.json); reference hash ec0bf24c..., 9506 bytes.",
+          "current/0046 (executed recomputation): same resid-weighted configuration vs the reference-matching solver table: per-column maxdiff 7.9e-14 to 9.97e-7 A; last-row reference [6.43572272, 3.76265985, 9.29640329, 13.91207152] vs solver [6.43572272, 3.76265975, 9.29640353, 13.91207144] \u2014 matching to ~1e-9 A.",
+          "controls: reference, alternative (a20d4c61...) and recomputed controls passed resid_weighted_rmsd; time-shift, time-grid and rounding probes failed it; '%.17g'-round-tripped content passed.",
+          "probes.concerns (disclosed): no executed cross-convention substitution probe exists; the mass-vs-resid tables differ by ~0.35\u20133.5 A across convention cells and the per-cell value rule (which executed rejection of 5e-6 ps deviations) applies unchanged."
+        ],
+        "output_paths": [
+          "resid_weighted_rmsd.csv"
+        ],
+        "rationale": "The reference equals the notebook's custom-weights analysis with resids applied to the CA superposition group and to every domain groupselection, exactly as the question specifies; executed recomputation reproduces every column to <=1e-6 A. Identity, time and value rules are consistent with the dependent outputs. The disclosed absence of a mass-for-resid substitution probe is a coverage limitation, not a contract defect: the same per-cell value rule that rejected far smaller deviations is what such a substitution faces, and the recorded convention tables differ by orders of magnitude beyond the bound."
+      }
+    ]
+  },
+  "source_coverage": {
+    "decision": "approve",
+    "omitted_scientific_endpoints": [],
+    "rationale": "Every eligible terminal scientific result of the original notebook is present. The three originally exported tables (core_ca_rmsd.csv from the AtomGroup CA-restricted CORE analysis; mass_weighted_rmsd.csv from the mass-weighted section; resid_weighted_rmsd.csv from the custom resid-weights section \u2014 exported from df/df_mass/df_charge per inputs/exports.py and inputs/plan.json) cover the notebook's persisting result tables. The two endpoints the preparation plan initially excluded \u2014 the open-vs-closed backbone RMSD scalar (call-92-0) and the whole-backbone fit with CORE/LID/NMP groupselections table (call-107-4/call-112-0) \u2014 were recovered append-only by faithful recomputation of the unchanged original calls on the same inputs and state, with separate provenance and independent validation (final_environment_review, materialization; five hash-bound outputs). Line plots (call-131-5/156-5/180-10/216-12) are renditions of the already-exported per-frame values, not independent endpoints; the single print(call-191-0) is a shape diagnostic. The Time(ps) relabel corrects the notebook's inherited 'Time (ns)' label against the reader's observed picosecond values. Endpoint coverage, entity populations, weights, reference frame and output schemas agree across source, question, grader and frozen reference bytes.",
+    "remaining_validation": [
+      "The 1e-6 ps time boundary is not exercised by an independent time recomputation (only by the executed +5e-6 ps shift and 1e-5 ps grid-rounding probes); the public rule prescribes reader-reported times, which the reference and independent solution both used.",
+      "No executed cross-convention substitution probe for the weighting tables (the two candidate scripts are decoded-value-identical reformattings, correctly annotated valid_alternative); mass_weighted_rmsd and resid_weighted_rmsd retain executed wrong-result coverage only through value-coarsening/time probes, while the per-cell value rule itself is executed and the convention tables differ by orders of magnitude beyond the bound.",
+      "The installed-asset advisory scan declares non-exhaustive scope (integer/string/comment literals, non-priority files, non-Python formats); no findings remain after the verified exclusions, but exhaustive binary-content inspection is outside its boundary."
+    ],
+    "scientific_scope_changes": [],
+    "unsupported_evidence_claims": []
+  }
+}

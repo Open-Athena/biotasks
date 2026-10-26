@@ -1,0 +1,54 @@
+[
+  {
+    "id": "structural_schema",
+    "kind": "structural",
+    "artifacts": [
+      "open_closed_backbone_rmsd.csv",
+      "backbone_rmsd.csv",
+      "core_ca_rmsd.csv",
+      "mass_weighted_rmsd.csv",
+      "resid_weighted_rmsd.csv"
+    ],
+    "public_requirement": "Each of the five files named above exists at the declared path directly under the output root (no extra directory layer), parses as a CSV with a header row exactly matching the declared header names in order, contains no duplicate header names, has uniform field counts in every data row, and contains only finite numeric values in each cell. open_closed_backbone_rmsd.csv must contain exactly one data row; the four trajectory tables must all have the same number of data rows."
+  },
+  {
+    "id": "open_closed_backbone_rmsd",
+    "kind": "scientific",
+    "artifacts": [
+      "open_closed_backbone_rmsd.csv"
+    ],
+    "public_requirement": "The single data-row value equals, within max(|diff| <= 1e-5 angstrom, |diff|/reference-value <= 1e-6), the reference open-vs-closed backbone RMSD in angstrom for the atom populations, centering, weights and superposition defined in the question. The value must be non-negative."
+  },
+  {
+    "id": "backbone_rmsd",
+    "kind": "scientific",
+    "artifacts": [
+      "backbone_rmsd.csv"
+    ],
+    "public_requirement": "Each data row has Frame exactly equal to its 0-based position (0, 1, 2, ...), Time (ps) equal to the reference frame time within 1e-6 ps, and Backbone, CORE, LID and NMP equal to the corresponding reference unweighted RMSD values in angstrom, each within max(|diff| <= 1e-5, |diff|/reference-value <= 1e-6). All RMSD cells must be non-negative."
+  },
+  {
+    "id": "core_ca_rmsd",
+    "kind": "scientific",
+    "artifacts": [
+      "core_ca_rmsd.csv"
+    ],
+    "public_requirement": "Each data row has Frame exactly equal to its 0-based position (0, 1, 2, ...), Time (ps) equal to the reference frame time within 1e-6 ps, and the CORE column equal to the corresponding reference CORE alpha-carbon RMSD in angstrom within max(|diff| <= 1e-5, |diff|/reference-value <= 1e-6). The value must be non-negative."
+  },
+  {
+    "id": "mass_weighted_rmsd",
+    "kind": "scientific",
+    "artifacts": [
+      "mass_weighted_rmsd.csv"
+    ],
+    "public_requirement": "Each data row has Frame exactly equal to its 0-based position (0, 1, 2, ...), Time (ps) equal to the reference frame time within 1e-6 ps, and C-alphas, CORE, LID and NMP equal to the corresponding reference mass-weighted RMSD values in angstrom (mass weights applied to every group in this table, per the question), each within max(|diff| <= 1e-5, |diff|/reference-value <= 1e-6). All RMSD cells must be non-negative."
+  },
+  {
+    "id": "resid_weighted_rmsd",
+    "kind": "scientific",
+    "artifacts": [
+      "resid_weighted_rmsd.csv"
+    ],
+    "public_requirement": "Each data row has Frame exactly equal to its 0-based position (0, 1, 2, ...), Time (ps) equal to the reference frame time within 1e-6 ps, and C-alphas, CORE, LID and NMP equal to the corresponding reference resid-weighted RMSD values in angstrom (all atoms weighted by their residue id in every group, per the question), each within max(|diff| <= 1e-5, |diff|/reference-value <= 1e-6). All RMSD cells must be non-negative."
+  }
+]

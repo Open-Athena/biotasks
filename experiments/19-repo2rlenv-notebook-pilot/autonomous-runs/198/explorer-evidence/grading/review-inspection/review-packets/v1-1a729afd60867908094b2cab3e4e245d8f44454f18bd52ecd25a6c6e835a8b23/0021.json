@@ -1,0 +1,183 @@
+{
+  "disposition": "ready",
+  "probes": [
+    {
+      "name": "open-closed-scaled-one-percent",
+      "kind": "wrong_solution",
+      "focus": "numeric_tolerance",
+      "rationale": "The unchanged script rewrites only the single RMSD value in open_closed_backbone_rmsd.csv, preserving the exact header line, the single data row and a positive finite numeric cell, so every structural requirement of the public contract (declared path, exact header spelling, exactly one data row, finite numeric value) remains satisfied and the structural_schema check must pass. The original check_ids annotation contradicted the probe's own frozen rationale, which states that structural_schema still passes and the failure is purely scientific, and the executed grading record, in which structural_schema passed and only open_closed_backbone_rmsd failed. The wrong_solution classification is unchanged: the 0.1% inflation (about 0.0068 angstrom, relative 1e-3) exceeds both tolerance branches of the scientific rule while the file stays well formed. This probe remains the executed wrong-result coverage for the open_closed_backbone_rmsd scientific check.",
+      "evidence": [
+        {
+          "path": "open_closed_backbone_rmsd.csv",
+          "quote": "backbone_rmsd_angstrom\n6.823686867261616"
+        }
+      ],
+      "script": "import csv,os,tempfile\nP='open_closed_backbone_rmsd.csv'\nrows=list(csv.reader(open(P)))\nassert rows[0]==['backbone_rmsd_angstrom'] and len(rows)==2\nr=rows[1]; assert len(r)==1\nv=float(r[0]); assert v==float('%.17g'%v)\nw=v*1.001\nassert w>0 and abs(w-v)>1e-5 and abs(w-v)/v>1e-6\ntext='backbone_rmsd_angstrom\\n%.17g\\n'%w\nfd,tmp=tempfile.mkstemp(dir='.',suffix='.tmp')\nwith os.fdopen(fd,'w',newline='') as f: f.write(text)\nos.replace(tmp,P)\n",
+      "check_ids": [
+        "open_closed_backbone_rmsd"
+      ]
+    },
+    {
+      "name": "backbone-lid-nmp-column-swap",
+      "kind": "wrong_solution",
+      "focus": "general",
+      "rationale": "The unchanged script swaps only the LID and NMP cell values within each row of backbone_rmsd.csv, keeping the six-field structure, exact header, row count, Frame identities, Time values and finite non-negative cells, so the file remains structurally valid and structural_schema must pass — as the probe's own frozen rationale states ('the file stays structurally valid ... so the failure targets the intended scientific rule rather than a parse cascade') and as the executed record shows (structural_schema passed; only backbone_rmsd failed). The original check_ids annotation wrongly listed structural_schema among the checks this mutation violates. The scientific target is unchanged: the swapped domain values differ from the reference beyond both tolerance branches in 97 of 98 rows, so the backbone_rmsd check must fail and retains its executed wrong-result coverage through this probe.",
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "59.0,59.99999471520111,5.462555566938841,2.9617342192699905,9.501648345009523,7.458787833143318"
+        }
+      ],
+      "script": "import csv,os,tempfile,io\nP='backbone_rmsd.csv'\nrows=list(csv.reader(open(P)))\nh=rows[0]; assert h==['Frame','Time (ps)','Backbone','CORE','LID','NMP']\nhdr={n:i for i,n in enumerate(h)}\ni_lid,i_nmp=hdr['LID'],hdr['NMP']\nn=0\nbuf=io.StringIO(); w=csv.writer(buf,lineterminator='\\n'); w.writerow(h)\nfor r in rows[1:]:\n    assert len(r)==6\n    x,y=float(r[i_lid]),float(r[i_nmp])\n    if abs(x-y)>1e-5 and abs(x-y)/max(x,y)>1e-6: n+=1\n    r[i_lid],r[i_nmp]='%.17g'%y,'%.17g'%x\n    w.writerow(r)\nassert n>=90,n\nfd,tmp=tempfile.mkstemp(dir='.',suffix='.tmp')\nwith os.fdopen(fd,'w',newline='') as f: f.write(buf.getvalue())\nos.replace(tmp,P)\n",
+      "check_ids": [
+        "backbone_rmsd"
+      ]
+    },
+    {
+      "name": "core-ca-backbone-pool-contamination",
+      "kind": "wrong_solution",
+      "focus": "general",
+      "rationale": "The unchanged script replaces only the CORE column values of core_ca_rmsd.csv, preserving the three-field structure, exact header, row count, Frame alignment and Time cells, so the file stays structurally valid and structural_schema must pass — as the probe's own frozen rationale states ('while Frame alignment, Time and the 3-column structure are preserved, so structural_schema still passes') and as the executed record shows (structural_schema passed; only core_ca_rmsd failed, on genuine cross-file wrong-population values). The original check_ids annotation wrongly listed structural_schema among the checks this mutation violates. The correction restores consistency between the check list and the mutation actually performed; the core_ca_rmsd scientific check keeps its executed wrong-result coverage through this probe.",
+      "evidence": [
+        {
+          "path": "core_ca_rmsd.csv",
+          "quote": "50.0,50.99999550792095,1.64172668480984"
+        },
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "50.0,50.99999550792095,4.781815529260516,2.69961899692138,8.58318169057017,5.847618576505261"
+        }
+      ],
+      "script": "import csv,os,tempfile,io\nP='core_ca_rmsd.csv'; Q='backbone_rmsd.csv'\nrows=list(csv.reader(open(P))); d=list(csv.reader(open(Q)))\nassert rows[0]==['Frame','Time (ps)','CORE']\nassert d[0]==['Frame','Time (ps)','Backbone','CORE','LID','NMP']\nassert len(rows)==len(d)\nic=d[0].index('CORE')\nn=0\nbuf=io.StringIO(); w=csv.writer(buf,lineterminator='\\n'); w.writerow(rows[0])\nfor t,dd in zip(rows[1:],d[1:]):\n    assert len(t)==3 and len(dd)==6\n    a,b=float(t[2]),float(dd[ic])\n    if abs(a-b)>1e-5 and abs(a-b)/max(a,b)>1e-6: n+=1\n    t[2]='%.17g'%b\n    w.writerow(t)\nassert n>=90,n\nfd,tmp=tempfile.mkstemp(dir='.',suffix='.tmp')\nwith os.fdopen(fd,'w',newline='') as f: f.write(buf.getvalue())\nos.replace(tmp,P)\n",
+      "check_ids": [
+        "core_ca_rmsd"
+      ]
+    },
+    {
+      "name": "mass-weighted-to-unweighted",
+      "kind": "valid_alternative",
+      "focus": "general",
+      "rationale": "The unchanged script does not perform the substitution its original rationale and wrong_solution label describe. It reads backbone_rmsd.csv only for header and row-count assertions; its rewrite loop writes each original cell of mass_weighted_rmsd.csv back as '%.17g' of its own parsed value, and 17 significant digits round-trip binary64 floats exactly, so the mutated file is decoded-value-identical to the reference copy with the correct header, row count, Frame identity and Time values. Under the unchanged public rules — decoded numeric values compared with the stated tolerances, and representation-preserving reformattings accepted (as the executed full-precision-e-notation control establishes) — the grading of this content must pass both listed checks, which is what the recorded execution shows. The original mistake was labeling the probe by its intended scientific challenge (a cross-convention substitution) rather than by the mutation the frozen script actually executes; that intended substitution would indeed fail, since the unweighted and mass-weighted convention tables differ beyond both bounds in 388 of 392 RMSD cells with differences up to about 0.1 angstrom, but it is not the content the script writes, so the wrong_solution annotation misdescribed the executed mutation.",
+      "evidence": [
+        {
+          "path": "mass_weighted_rmsd.csv",
+          "quote": "50.0,50.99999550792095,4.761205457088511,2.695402727776902,8.577591410770594,5.906716225742546"
+        },
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "50.0,50.99999550792095,4.781815529260516,2.69961899692138,8.58318169057017,5.847618576505261"
+        }
+      ],
+      "script": "import csv,os,tempfile,io\nP='mass_weighted_rmsd.csv'; Q='backbone_rmsd.csv'\nrows=list(csv.reader(open(P))); d=list(csv.reader(open(Q)))\nassert rows[0]==['Frame','Time (ps)','C-alphas','CORE','LID','NMP']\nassert d[0]==['Frame','Time (ps)','Backbone','CORE','LID','NMP']\nassert len(rows)==len(d)\nbuf=io.StringIO(); w=csv.writer(buf,lineterminator='\\n'); w.writerow(rows[0])\nfor t in rows[1:]:\n    assert len(t)==6\n    w.writerow(t[:2]+['%.17g'%float(x) for x in t[2:]])\nfd,tmp=tempfile.mkstemp(dir='.',suffix='.tmp')\nwith os.fdopen(fd,'w',newline='') as f: f.write(buf.getvalue())\nos.replace(tmp,P)\n",
+      "check_ids": [
+        "mass_weighted_rmsd",
+        "structural_schema"
+      ]
+    },
+    {
+      "name": "resid-weighted-to-mass-weighted",
+      "kind": "valid_alternative",
+      "focus": "general",
+      "rationale": "The unchanged script uses the mass_weighted_rmsd.csv values only to compute an assertion counter (n>=380) and writes each original cell of resid_weighted_rmsd.csv back ('%.17g' of its own parsed value for the RMSD columns, original text for Frame and Time). Seventeen significant digits round-trip binary64 floats exactly, so the written file preserves every decoded value, header, row count, Frame identity and Time cell of the reference copy. Under the unchanged public rules the grading of this content must pass both listed checks, which is what the recorded execution shows. The original mistake was again labeling the probe by its intended scientific challenge rather than by the executed mutation: the intended mass-for-resid substitution would fail (the two convention tables differ beyond both bounds in 388 of 392 RMSD cells with differences up to a few angstrom), but the frozen script never writes those substituted values, so the wrong_solution annotation misdescribed what was actually graded. Wrong-result coverage for this check remains provided by the executed five-significant-digit rounding and time-grid probes, which do mutate the file's values.",
+      "evidence": [
+        {
+          "path": "resid_weighted_rmsd.csv",
+          "quote": "50.0,50.99999550792095,4.696281014975141,3.0448107314057786,7.187726948182439,7.843832428557505"
+        },
+        {
+          "path": "mass_weighted_rmsd.csv",
+          "quote": "50.0,50.99999550792095,4.761205457088511,2.695402727776902,8.577591410770594,5.906716225742546"
+        }
+      ],
+      "script": "import csv,os,tempfile,io\nP='resid_weighted_rmsd.csv'; Q='mass_weighted_rmsd.csv'\nrows=list(csv.reader(open(P))); d=list(csv.reader(open(Q)))\nassert rows[0]==d[0]==['Frame','Time (ps)','C-alphas','CORE','LID','NMP']\nassert len(rows)==len(d)\nn=0\nbuf=io.StringIO(); w=csv.writer(buf,lineterminator='\\n'); w.writerow(rows[0])\nfor t,dd in zip(rows[1:],d[1:]):\n    assert len(t)==6 and len(dd)==6\n    row=[]\n    for k,v in enumerate(t):\n        x=float(v)\n        if k>=2:\n            y=float(dd[k])\n            if not (abs(x-y)<=1e-5 or abs(x-y)/max(x,y)<=1e-6): n+=1\n        row.append(v if k<2 else '%.17g'%x)\n    w.writerow(row)\nassert n>=380,n\nfd,tmp=tempfile.mkstemp(dir='.',suffix='.tmp')\nwith os.fdopen(fd,'w',newline='') as f: f.write(buf.getvalue())\nos.replace(tmp,P)\n",
+      "check_ids": [
+        "resid_weighted_rmsd",
+        "structural_schema"
+      ]
+    },
+    {
+      "name": "time-shift-plus-five-e-minus-six",
+      "kind": "wrong_solution",
+      "focus": "numeric_tolerance",
+      "rationale": "The unchanged script modifies only the Time (ps) cells (adding exactly +5e-6 ps) in the four trajectory tables, leaving headers, row counts, Frame identities, RMSD values, finiteness, positivity and cross-file time identity intact, so the files remain structurally valid and structural_schema must pass — as the probe's own frozen rationale states ('all RMSD values and Frame/row structure are untouched so structural_schema passes') and as the executed record shows (structural_schema passed; exactly the four trajectory scientific checks failed on the 1e-6 ps time rule). The original check_ids annotation wrongly listed structural_schema among the checks this mutation violates. The mutation is a genuine wrong result on real frame data: every time cell exceeds the 1e-6 ps absolute bound by 5x, so all four trajectory scientific checks fail and retain their executed wrong-result coverage through this probe.",
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "0.0,0.9999999119200186,5.834343817915898e-07,3.92148642971737e-08,1.1969998121003948e-07,6.276496925603961e-08"
+        }
+      ],
+      "script": "import csv,os,tempfile,io\nfor P in ['backbone_rmsd.csv','core_ca_rmsd.csv','mass_weighted_rmsd.csv','resid_weighted_rmsd.csv']:\n    rows=list(csv.reader(open(P)))\n    buf=io.StringIO(); w=csv.writer(buf,lineterminator='\\n'); w.writerow(rows[0])\n    for r in rows[1:]:\n        t=float(r[1])+5e-6\n        assert t>0\n        r[1]='%.17g'%t\n        w.writerow(r)\n    fd,tmp=tempfile.mkstemp(dir='.',suffix='.tmp')\n    with os.fdopen(fd,'w',newline='') as f: f.write(buf.getvalue())\n    os.replace(tmp,P)\n",
+      "check_ids": [
+        "backbone_rmsd",
+        "core_ca_rmsd",
+        "mass_weighted_rmsd",
+        "resid_weighted_rmsd"
+      ]
+    },
+    {
+      "name": "time-round-to-half-microsecond-grid",
+      "kind": "wrong_solution",
+      "focus": "lazy_output",
+      "rationale": "The unchanged script rounds only the Time (ps) cells to a 1e-5 ps grid in the four trajectory tables, leaving headers, row counts, Frame identities, RMSD values, positivity and cross-file time identity intact, so the files remain structurally valid and structural_schema must pass — as the probe's own frozen rationale states ('all RMSD values and Frame identities are byte-identical ... and the script exits 0 with an actual mutation') and as the executed record shows (structural_schema passed; exactly the four trajectory scientific checks failed, 78 of 98 rows exceeding the 1e-6 ps bound). The original check_ids annotation wrongly listed structural_schema among the checks this mutation violates. The mutation is a genuine wrong result (a coarse timestamp grid instead of reader-reported times), so the four trajectory scientific checks fail and keep their executed wrong-result coverage through this probe.",
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "0.0,0.9999999119200186,5.834343817915898e-07,3.92148642971737e-08,1.1969998121003948e-07,6.276496925603961e-08"
+        }
+      ],
+      "script": "import csv,os,tempfile,io\nfor P in ['backbone_rmsd.csv','core_ca_rmsd.csv','mass_weighted_rmsd.csv','resid_weighted_rmsd.csv']:\n    rows=list(csv.reader(open(P)))\n    buf=io.StringIO(); w=csv.writer(buf,lineterminator='\\n'); w.writerow(rows[0])\n    for r in rows[1:]:\n        t=float(r[1])\n        grid=round(t/1e-5)*1e-5\n        assert grid>0\n        r[1]='%.17g'%grid\n        w.writerow(r)\n    fd,tmp=tempfile.mkstemp(dir='.',suffix='.tmp')\n    with os.fdopen(fd,'w',newline='') as f: f.write(buf.getvalue())\n    os.replace(tmp,P)\n",
+      "check_ids": [
+        "backbone_rmsd",
+        "core_ca_rmsd",
+        "mass_weighted_rmsd",
+        "resid_weighted_rmsd"
+      ]
+    },
+    {
+      "name": "cells-rounded-to-five-sig-digits",
+      "kind": "wrong_solution",
+      "focus": "lazy_output",
+      "rationale": "The unchanged script rewrites every data cell of all five files at five significant digits, keeping the files parseable with exact headers, uniform field counts, finite non-negative values, one row per frame and correct Frame identities, so structural_schema must pass — as the probe's own frozen rationale states ('the files stay parseable, finite, non-negative, with exact headers, row counts and Frame identities (structural_schema passes)') and as the executed record shows (structural_schema passed; all five scientific checks failed). The original check_ids annotation wrongly listed structural_schema among the checks this mutation violates. The mutation is a genuine wrong result: on real frame data the rounded scalar, many RMSD cells and most time cells move beyond the stated tolerance branches, so all five scientific checks fail and retain their executed wrong-result coverage through this probe.",
+      "evidence": [
+        {
+          "path": "core_ca_rmsd.csv",
+          "quote": "50.0,50.99999550792095,1.64172668480984"
+        }
+      ],
+      "script": "import csv,os,tempfile,io\nfor P in ['open_closed_backbone_rmsd.csv','backbone_rmsd.csv','core_ca_rmsd.csv','mass_weighted_rmsd.csv','resid_weighted_rmsd.csv']:\n    rows=list(csv.reader(open(P)))\n    buf=io.StringIO(); w=csv.writer(buf,lineterminator='\\n'); w.writerow(rows[0])\n    for r in rows[1:]:\n        w.writerow(['%.4e'%float(x) for x in r])\n    fd,tmp=tempfile.mkstemp(dir='.',suffix='.tmp')\n    with os.fdopen(fd,'w',newline='') as f: f.write(buf.getvalue())\n    os.replace(tmp,P)\n",
+      "check_ids": [
+        "open_closed_backbone_rmsd",
+        "backbone_rmsd",
+        "core_ca_rmsd",
+        "mass_weighted_rmsd",
+        "resid_weighted_rmsd"
+      ]
+    },
+    {
+      "name": "full-precision-e-notation",
+      "kind": "valid_alternative",
+      "focus": "lazy_output",
+      "rationale": "Rewrites all five files using full-precision 17-significant-digit %.17e scientific notation for every data cell and integer spellings for the Frame column (0 instead of 0.0). This is a valid representation alternative, not a scientific difference: the contract requires at least 12 significant digits and explicitly compares decoded numeric values rather than text formatting or float width, and %e-style full precision is called out as acceptable. Verified locally on a fresh copy of the reference outputs: every cell parses to a value exactly equal to the reference cell (parsed-value equality asserted for all five files against the reference copies), headers, row counts and Frame identities are preserved, and each file is textually changed so the mutation is real. This ensures the grader accepts legitimate format/width variations instead of over-rejecting on text spelling.",
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "0.0,0.9999999119200186,5.834343817915898e-07,3.92148642971737e-08,1.1969998121003948e-07,6.276496925603961e-08"
+        }
+      ],
+      "script": "import csv,os,tempfile,io\nfor P in ['open_closed_backbone_rmsd.csv','backbone_rmsd.csv','core_ca_rmsd.csv','mass_weighted_rmsd.csv','resid_weighted_rmsd.csv']:\n    with open(P,newline='') as f: rows=list(csv.reader(f))\n    assert len(rows)>=2\n    has_frame=len(rows[0])>1\n    buf=io.StringIO(); w=csv.writer(buf,lineterminator='\\n')\n    for i,r in enumerate(rows):\n        if i==0:\n            out=r\n        else:\n            out=[]\n            for j,x in enumerate(r):\n                v=float(x)\n                if j==0 and has_frame:\n                    out.append(str(int(v)))\n                else:\n                    out.append('%.17e'%v)\n        w.writerow(out)\n    text=buf.getvalue()\n    orig=open(P,'rb').read().decode()\n    assert text!=orig, 'expected textual change in '+P\n    fd,tmp=tempfile.mkstemp(dir='.',suffix='.tmp')\n    with os.fdopen(fd,'w',newline='') as f: f.write(text)\n    os.replace(tmp,P)\n",
+      "check_ids": [
+        "open_closed_backbone_rmsd",
+        "backbone_rmsd",
+        "core_ca_rmsd",
+        "mass_weighted_rmsd",
+        "resid_weighted_rmsd",
+        "structural_schema"
+      ]
+    }
+  ],
+  "concerns": [
+    "Time-column boundary: the reference Time values are full round-trip serializations of reader-reported times that reflect a float32-derived dt (first frame ~1 ps from the DCD's saved time origin; per-frame spacing drifts at the ~1e-6 ps scale). The 1e-6 ps absolute bound therefore sits near the scale of representable timing noise, and a solver recomputing times as exact integer-frame steps instead of reader-reported values could approach the bound at late frames. The public text prescribes 'as reported by the trajectory reader', and the executed uniform +5e-6 ps shift and the 1e-5 ps grid-rounding probes both fail through the time rule, but the boundary itself is not exercised by a genuine independent time recomputation against only saved reference values.",
+    "Depth limitation of the reference artifacts: the reference outputs contain only per-frame aggregates, not per-atom coordinates, selection indices or weight vectors, so probes can challenge the stated public rules (cell values, tolerances, cross-file column relations, representation format) but cannot validate the weighting/QCP superposition itself beyond value equality. This is an unavoidable evidence limitation of a representation-level validation suite, not a defect of the contract.",
+    "Weighting-convention negative coverage is not exercised by any executed probe. The two probes named for it (mass-weighted-to-unweighted, resid-weighted-to-mass-weighted) as frozen read the other file's values only for assertion counters and write each target cell back as a '%.17g' reformatting of its own value, which round-trips float64 exactly; their executed files are decoded-value-identical to the reference and are correctly annotated valid_alternative. Their scripts never perform the intended cross-convention substitution, so a genuine weighting-convention error (for example unweighted values written into the mass-weighted table) has no executed negative control in the recorded suite; the mass_weighted_rmsd and resid_weighted_rmsd rules retain wrong-result coverage only through the executed five-significant-digit rounding and time-grid probes, which are value-coarsening errors rather than convention errors."
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "backbone_rmsd.csv",
+      "core_ca_rmsd.csv",
+      "mass_weighted_rmsd.csv",
+      "open_closed_backbone_rmsd.csv",
+      "resid_weighted_rmsd.csv"
+    ],
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "adk.psf",
+        "adk_dims.dcd",
+        "adk_open.crd"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "checks": [
+    {
+      "artifacts": [
+        "open_closed_backbone_rmsd.csv",
+        "backbone_rmsd.csv",
+        "core_ca_rmsd.csv",
+        "mass_weighted_rmsd.csv",
+        "resid_weighted_rmsd.csv"
+      ],
+      "id": "structural_schema",
+      "kind": "structural",
+      "public_requirement": "Each of the five files named above exists at the declared path directly under the output root (no extra directory layer), parses as a CSV with a header row exactly matching the declared header names in order, contains no duplicate header names, has uniform field counts in every data row, and contains only finite numeric values in each cell. open_closed_backbone_rmsd.csv must contain exactly one data row; the four trajectory tables must all have the same number of data rows."
+    },
+    {
+      "artifacts": [
+        "open_closed_backbone_rmsd.csv"
+      ],
+      "id": "open_closed_backbone_rmsd",
+      "kind": "scientific",
+      "public_requirement": "The single data-row value equals, within max(|diff| <= 1e-5 angstrom, |diff|/reference-value <= 1e-6), the reference open-vs-closed backbone RMSD in angstrom for the atom populations, centering, weights and superposition defined in the question. The value must be non-negative."
+    },
+    {
+      "artifacts": [
+        "backbone_rmsd.csv"
+      ],
+      "id": "backbone_rmsd",
+      "kind": "scientific",
+      "public_requirement": "Each data row has Frame exactly equal to its 0-based position (0, 1, 2, ...), Time (ps) equal to the reference frame time within 1e-6 ps, and Backbone, CORE, LID and NMP equal to the corresponding reference unweighted RMSD values in angstrom, each within max(|diff| <= 1e-5, |diff|/reference-value <= 1e-6). All RMSD cells must be non-negative."
+    },
+    {
+      "artifacts": [
+        "core_ca_rmsd.csv"
+      ],
+      "id": "core_ca_rmsd",
+      "kind": "scientific",
+      "public_requirement": "Each data row has Frame exactly equal to its 0-based position (0, 1, 2, ...), Time (ps) equal to the reference frame time within 1e-6 ps, and the CORE column equal to the corresponding reference CORE alpha-carbon RMSD in angstrom within max(|diff| <= 1e-5, |diff|/reference-value <= 1e-6). The value must be non-negative."
+    },
+    {
+      "artifacts": [
+        "mass_weighted_rmsd.csv"
+      ],
+      "id": "mass_weighted_rmsd",
+      "kind": "scientific",
+      "public_requirement": "Each data row has Frame exactly equal to its 0-based position (0, 1, 2, ...), Time (ps) equal to the reference frame time within 1e-6 ps, and C-alphas, CORE, LID and NMP equal to the corresponding reference mass-weighted RMSD values in angstrom (mass weights applied to every group in this table, per the question), each within max(|diff| <= 1e-5, |diff|/reference-value <= 1e-6). All RMSD cells must be non-negative."
+    },
+    {
+      "artifacts": [
+        "resid_weighted_rmsd.csv"
+      ],
+      "id": "resid_weighted_rmsd",
+      "kind": "scientific",
+      "public_requirement": "Each data row has Frame exactly equal to its 0-based position (0, 1, 2, ...), Time (ps) equal to the reference frame time within 1e-6 ps, and C-alphas, CORE, LID and NMP equal to the corresponding reference resid-weighted RMSD values in angstrom (all atoms weighted by their residue id in every group, per the question), each within max(|diff| <= 1e-5, |diff|/reference-value <= 1e-6). All RMSD cells must be non-negative."
+    }
+  ],
+  "output_paths": [
+    "backbone_rmsd.csv",
+    "core_ca_rmsd.csv",
+    "mass_weighted_rmsd.csv",
+    "open_closed_backbone_rmsd.csv",
+    "resid_weighted_rmsd.csv"
+  ],
+  "paths": {
+    "reference_outputs": "/work/reference",
+    "working_directory": "/work/probe"
+  },
+  "public_instruction": "# RMSD analysis of the adenylate kinase open\u21c4closed transition\n\nAdenylate kinase (AdK) transitions from a closed to an open conformation, with the LID and NMP domains moving around a stable CORE. You are given a topology, a trajectory of this transition, and an open-conformation coordinate set. Compute the RMSD quantities below and write the five output tables.\n\n## Supplied inputs (under `inputs/`)\n\n- `inputs/adk.psf` \u2014 AdK topology (CHARMM PSF; atom names, residues, masses)\n- `inputs/adk_dims.dcd` \u2014 MD trajectory of the closed\u2192open transition (CHARMM-flavor DCD; coordinates in \u00c5)\n- `inputs/adk_open.crd` \u2014 coordinates of the open conformation, paired with the same PSF topology\n\nSoftware choice is open. A Python environment with MDAnalysis 2.9.0 is available for convenience, but any implementation matching the definitions below is acceptable. All selections below are given in MDAnalysis selection language; these strings define the atom populations.\n\n## Populations and conventions\n\nDomain definitions (backbone atoms of residue ranges, `resid` as in the topology):\n\n- CORE = `backbone and (resid 1-29 or resid 60-121 or resid 160-214)`\n- LID = `backbone and resid 122-159`\n- NMP = `backbone and resid 30-59`\n\nSelection tokens used: `backbone` (protein backbone atoms), `name CA` (alpha-carbons of the whole universe), `protein and name CA` (alpha-carbons of the protein).\n\nConventions common to the trajectory analyses:\n\n- Rows are ordered by trajectory frame (0-based `Frame` index); row position encodes the frame, so output row *i* corresponds to trajectory frame *i*, one row per frame.\n- `Time (ps)` is the frame time in picoseconds as reported by the trajectory reader for that frame.\n- RMSD is measured in \u00e5ngstr\u00f6m after optimal rigid-body superposition (translation and rotation minimizing the weighted RMSD; the standard quaternion/QCP formulation). Where weights are used, each atom is weighted by the stated quantity; a constant rescaling of the weights does not change the RMSD.\n- The reference for every trajectory table below is trajectory frame 0.\n- Group RMSDs (CORE/LID/NMP columns) are computed *after* the frame has been superimposed on the reference using the `select` group, with no further fitting applied to the groups.\n\n## Required outputs (under `outputs/`)\n\nWrite comma-separated files with a header row, no index column, and at least 12 significant digits for non-integer values. Missing values are not expected.\n\n1. **`open_closed_backbone_rmsd.csv`** \u2014 header `backbone_rmsd_angstrom`; one data row. The RMSD between the backbone atoms of the trajectory's first (closed) frame and the open-conformation structure from `adk_open.crd`, computing the deviation after centering both coordinate sets on their centers of geometry and optimal superposition.\n\n2. **`backbone_rmsd.csv`** \u2014 headers `Frame, Time (ps), Backbone, CORE, LID, NMP`. Per trajectory frame: the frame is translated and rotated to optimally superimpose its `backbone` atoms (unweighted) onto those of frame 0. `Backbone` = unweighted RMSD of all backbone atoms under this superposition; `CORE`, `LID`, `NMP` = unweighted RMSD of each domain's backbone atoms after applying this same superposition, with no further fitting.\n\n3. **`core_ca_rmsd.csv`** \u2014 headers `Frame, Time (ps), CORE`. Per trajectory frame: RMSD versus frame 0 over only the alpha-carbons of the CORE domain (i.e. the selection CORE applied within the `name CA` atom group). The superposition for each frame is determined by this same set of CORE alpha-carbons.\n\n4. **`mass_weighted_rmsd.csv`** \u2014 headers `Frame, Time (ps), C-alphas, CORE, LID, NMP`. Per trajectory frame: the frame is superimposed on frame 0 using the `protein and name CA` atoms with atomic-mass weights. `C-alphas` = mass-weighted RMSD of the protein alpha-carbons under this superposition; `CORE`, `LID`, `NMP` = mass-weighted RMSD of each domain's backbone atoms after applying this superposition, with no further fitting. Mass weights apply to every group in this table.\n\n5. **`resid_weighted_rmsd.csv`** \u2014 headers `Frame, Time (ps), C-alphas, CORE, LID, NMP`. Same structure as output 4, but each atom is weighted by its residue id instead of its mass: the protein alpha-carbons are weighted by their resids for the superposition and the `C-alphas` column, and each domain's backbone atoms are weighted by their resids for the domain columns.\n\n## Resources\n\nNo network access. Budget: 4 CPUs, 8 GiB RAM, 10 GiB disk, and the analysis should complete within 600 seconds (the reference computation takes a few seconds).\n\n## Acceptance rules\n\n## Acceptance addendum (AdK open\u21c4closed RMSD task)\n\n**Compared artifacts.** Exactly the five CSV files named in the question, each read from the declared path directly under the output root (`outputs/<name>`; no extra directory layer). Files are parsed as comma-separated text with a single header row. The reference values are read dynamically from the reference copies of the same files.\n\n**Row structure and identifiers.**\n- `open_closed_backbone_rmsd.csv` must contain exactly one data row.\n- Each trajectory table must have one data row per trajectory frame; the four trajectory tables must all share the same row count. Row position encodes the frame: data row *i* must have `Frame` exactly equal to *i* (0-based), as a numeric cell equal in value to an integer. (The cell text may be `0`, `0.0` or any equivalent numeric spelling; the parsed value is compared.) Any other frame numbering, row reordering, deduplication or omission fails, because the `Frame` column is a per-row identity, not an arbitrary label.\n- Duplicate data rows are not permitted beyond the one-row-per-frame rule: since `Frame` must equal its row index and frames are unique, duplicated frame values fail.\n- Every cell must be present, numeric and finite. Empty cells, non-numeric text, `nan`/`inf`/`-inf` and unequal field counts per row all fail. Negative RMSD values and negative times fail as invalid scientific results (RMSD is a non-negative deviation; time values here are positive).\n\n**Headers.** The header must equal, in order and spelling: `backbone_rmsd_angstrom` for output 1; `Frame, Time (ps), Backbone, CORE, LID, NMP` for output 2; `Frame, Time (ps), CORE` for output 3; `Frame, Time (ps), C-alphas, CORE, LID, NMP` for outputs 4 and 5. Duplicate header names are not allowed. `Time (ps)` is compared as the reader's picosecond frame time (identical across the four tables; see below).\n\n**Numeric comparison of RMSD values (\u00c5).** Every non-identifier numeric cell (all RMSD columns, and the scalar in output 1) is compared to the corresponding reference cell, aligned by (file, row, column). A cell passes if either\n- its absolute difference from the reference value is at most **1e-5 \u00c5**, or\n- its relative difference is at most **1e-6** of the reference value (reference cell is the denominator).\n\nThis is a limit on observable output differences, not a guarantee that every wrong method is detected: physically distinguishable quantities in this task differ far above this bound (the different weighting/domain conventions diverge by \u2265 0.5 \u00c5 in the trajectory), while the bound only absorbs floating-point-convention noise. Permitted equivalent results agree within it; genuinely different scientific results still fail. Truncation to fewer than the required significant digits counts as a failing difference in a cell when the scientific value is thereby changed beyond the limit (e.g. rounding an RMSD cell to 6 significant digits violates the \"at least 12 significant digits\" requirement and is rejected), but a value printed in `%e`-style scientific notation with full precision passes, as does `0` in place of `0.0`: only decoded numeric values, not text formatting or float width, are compared.\n\n**Time column (ps).** Compared with the same reference denominator convention but a tighter absolute bound: a time cell passes if its absolute difference from the reference cell is at most **1e-6 ps**. Frame times are identical across all four trajectory tables (cross-file consistency: the value for a given frame is the same quantity wherever it appears); a submission whose tables disagree in time is internally inconsistent and will fail wherever the reference value is not reproduced. `Time (ps)` replicates the trajectory reader's reported time (the first frame's time reflects the file's saved time origin).\n\n**Cross-file consistency.** Row alignment is by (file, row = frame index). RMSD columns of the same name in different files are *not* exchangeable: they are different physical quantities (different reference groups, weights and superpositions), and each is compared within its own file at its own row. Coverage is row- and column-complete for every table: missing rows, missing columns, extra columns, or extra appended rows (even well-formed ones) fail.\n\n**Values compared, per output.**\n1. `open_closed_backbone_rmsd.csv`: one backbone RMSD in \u00c5 between trajectory frame 0 and the open-conformation coordinates, after centering on the centers of geometry and optimal unweighted superposition.\n2. `backbone_rmsd.csv`: per-frame unweighted RMSDs of the whole backbone and of the CORE/LID/NMP backbone subgroups after the backbone superposition onto frame 0.\n3. `core_ca_rmsd.csv`: per-frame unweighted RMSD over the CORE alpha-carbons, superposition determined by those atoms.\n4. `mass_weighted_rmsd.csv`: per-frame mass-weighted RMSDs (C-alphas from the `protein and name CA` superposition; domain subgroups also mass-weighted).\n5. `resid_weighted_rmsd.csv`: per-frame RMSDs with all weights equal to atom residue ids (superposition and `C-alphas` from protein alpha-carbons weighted by resid; domain subgroups weighted by resid).\n\n**Grader operation.** The grader exits 0 and writes a JSON report with one entry per declared check. Missing files, malformed content, non-finite values, wrong headers, wrong row counts and out-of-tolerance values each fail the affected scientific check(s) rather than crashing the grader. No paths, timestamps or environment variables other than the supplied reference/submission/report arguments are used.",
+  "reference_seconds": 600,
+  "verifier_seconds": 120
+}

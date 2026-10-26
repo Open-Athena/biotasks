@@ -1,0 +1,285 @@
+{
+  "source_sha256": "afca45640d1a4d9abd7ce1ff25cd0bdee446a60dcbf1231bda9a261836e11ec7",
+  "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+  "operations": [
+    {
+      "id": "call-61-4",
+      "line": 61,
+      "column": 4,
+      "end_line": 61,
+      "end_column": 26,
+      "function": "mda.Universe",
+      "source": "mda.Universe(PSF, DCD)"
+    },
+    {
+      "id": "call-62-6",
+      "line": 62,
+      "column": 6,
+      "end_line": 62,
+      "end_column": 28,
+      "function": "mda.Universe",
+      "source": "mda.Universe(PSF, CRD)"
+    },
+    {
+      "id": "call-92-0",
+      "line": 92,
+      "column": 0,
+      "end_line": 95,
+      "end_column": 28,
+      "function": "rms.rmsd",
+      "source": "rms.rmsd(u.select_atoms('backbone').positions,  # coordinates to align\n         ref.select_atoms('backbone').positions,  # reference coordinates\n         center=True,  # subtract the center of geometry\n         superposition=True)"
+    },
+    {
+      "id": "call-92-9",
+      "line": 92,
+      "column": 9,
+      "end_line": 92,
+      "end_column": 35,
+      "function": "u.select_atoms",
+      "source": "u.select_atoms('backbone')"
+    },
+    {
+      "id": "call-93-9",
+      "line": 93,
+      "column": 9,
+      "end_line": 93,
+      "end_column": 37,
+      "function": "ref.select_atoms",
+      "source": "ref.select_atoms('backbone')"
+    },
+    {
+      "id": "call-107-4",
+      "line": 107,
+      "column": 4,
+      "end_line": 111,
+      "end_column": 25,
+      "function": "rms.RMSD",
+      "source": "rms.RMSD(u,  # universe to align\n             u,  # reference universe or atomgroup\n             select='backbone',  # group to superimpose and calculate RMSD\n             groupselections=[CORE, LID, NMP],  # groups for RMSD\n             ref_frame=0)"
+    },
+    {
+      "id": "call-112-0",
+      "line": 112,
+      "column": 0,
+      "end_line": 112,
+      "end_column": 7,
+      "function": "R.run",
+      "source": "R.run()"
+    },
+    {
+      "id": "call-124-5",
+      "line": 124,
+      "column": 5,
+      "end_line": 127,
+      "end_column": 41,
+      "function": "pd.DataFrame",
+      "source": "pd.DataFrame(R.results.rmsd, \n                  columns=['Frame', 'Time (ns)', \n                           'Backbone', 'CORE', \n                           'LID', 'NMP'])"
+    },
+    {
+      "id": "call-131-5",
+      "line": 131,
+      "column": 5,
+      "end_line": 132,
+      "end_column": 25,
+      "function": "df.plot",
+      "source": "df.plot(x='Frame', y=['Backbone', 'CORE', 'LID', 'NMP'],\n             kind='line')"
+    },
+    {
+      "id": "call-133-0",
+      "line": 133,
+      "column": 0,
+      "end_line": 133,
+      "end_column": 30,
+      "function": "ax.set_ylabel",
+      "source": "ax.set_ylabel(r'RMSD ($\\AA$)')"
+    },
+    {
+      "id": "call-147-5",
+      "line": 147,
+      "column": 5,
+      "end_line": 147,
+      "end_column": 30,
+      "function": "u.select_atoms",
+      "source": "u.select_atoms('name CA')"
+    },
+    {
+      "id": "call-149-4",
+      "line": 149,
+      "column": 4,
+      "end_line": 149,
+      "end_column": 46,
+      "function": "rms.RMSD",
+      "source": "rms.RMSD(ca, ca, select=CORE, ref_frame=0)"
+    },
+    {
+      "id": "call-150-0",
+      "line": 150,
+      "column": 0,
+      "end_line": 150,
+      "end_column": 7,
+      "function": "R.run",
+      "source": "R.run()"
+    },
+    {
+      "id": "call-152-5",
+      "line": 152,
+      "column": 5,
+      "end_line": 154,
+      "end_column": 35,
+      "function": "pd.DataFrame",
+      "source": "pd.DataFrame(R.results.rmsd, \n                  columns=['Frame', 'Time (ns)', \n                           'CORE'])"
+    },
+    {
+      "id": "call-156-5",
+      "line": 156,
+      "column": 5,
+      "end_line": 156,
+      "end_column": 46,
+      "function": "df.plot",
+      "source": "df.plot(x='Frame', y='CORE', kind='line')"
+    },
+    {
+      "id": "call-157-0",
+      "line": 157,
+      "column": 0,
+      "end_line": 157,
+      "end_column": 29,
+      "function": "ax.set_ylabel",
+      "source": "ax.set_ylabel('RMSD ($\\AA$)')"
+    },
+    {
+      "id": "call-167-9",
+      "line": 167,
+      "column": 9,
+      "end_line": 170,
+      "end_column": 51,
+      "function": "rms.RMSD",
+      "source": "rms.RMSD(u, u,\n                  select='protein and name CA',\n                  weights='mass',\n                  groupselections=[CORE, LID, NMP])"
+    },
+    {
+      "id": "call-171-0",
+      "line": 171,
+      "column": 0,
+      "end_line": 171,
+      "end_column": 12,
+      "function": "R_mass.run",
+      "source": "R_mass.run()"
+    },
+    {
+      "id": "call-175-10",
+      "line": 175,
+      "column": 10,
+      "end_line": 179,
+      "end_column": 46,
+      "function": "pd.DataFrame",
+      "source": "pd.DataFrame(R_mass.results.rmsd, \n                       columns=['Frame', \n                                'Time (ns)', \n                                'C-alphas', 'CORE', \n                                'LID', 'NMP'])"
+    },
+    {
+      "id": "call-180-10",
+      "line": 180,
+      "column": 10,
+      "end_line": 181,
+      "end_column": 60,
+      "function": "df_mass.plot",
+      "source": "df_mass.plot(x='Frame', \n                       y=['C-alphas', 'CORE', 'LID', 'NMP'])"
+    },
+    {
+      "id": "call-182-0",
+      "line": 182,
+      "column": 0,
+      "end_line": 182,
+      "end_column": 48,
+      "function": "ax_mass.set_ylabel",
+      "source": "ax_mass.set_ylabel('Mass-weighted RMSD ($\\AA$)')"
+    },
+    {
+      "id": "call-190-5",
+      "line": 190,
+      "column": 5,
+      "end_line": 190,
+      "end_column": 42,
+      "function": "u.select_atoms",
+      "source": "u.select_atoms('protein and name CA')"
+    },
+    {
+      "id": "call-191-0",
+      "line": 191,
+      "column": 0,
+      "end_line": 191,
+      "end_column": 52,
+      "function": "print",
+      "source": "print('Shape of C-alpha charges:', ag.charges.shape)"
+    },
+    {
+      "id": "call-192-7",
+      "line": 192,
+      "column": 7,
+      "end_line": 192,
+      "end_column": 27,
+      "function": "u.select_atoms",
+      "source": "u.select_atoms(CORE)"
+    },
+    {
+      "id": "call-193-6",
+      "line": 193,
+      "column": 6,
+      "end_line": 193,
+      "end_column": 25,
+      "function": "u.select_atoms",
+      "source": "u.select_atoms(LID)"
+    },
+    {
+      "id": "call-194-6",
+      "line": 194,
+      "column": 6,
+      "end_line": 194,
+      "end_column": 25,
+      "function": "u.select_atoms",
+      "source": "u.select_atoms(NMP)"
+    },
+    {
+      "id": "call-198-11",
+      "line": 198,
+      "column": 11,
+      "end_line": 204,
+      "end_column": 57,
+      "function": "rms.RMSD",
+      "source": "rms.RMSD(u, u,\n                    select='protein and name CA',\n                    groupselections=[CORE, LID, NMP],\n                    weights=ag.resids,\n                    weights_groupselections=[core.resids, \n                                             lid.resids, \n                                             nmp.resids])"
+    },
+    {
+      "id": "call-205-0",
+      "line": 205,
+      "column": 0,
+      "end_line": 205,
+      "end_column": 14,
+      "function": "R_charge.run",
+      "source": "R_charge.run()"
+    },
+    {
+      "id": "call-211-12",
+      "line": 211,
+      "column": 12,
+      "end_line": 215,
+      "end_column": 46,
+      "function": "pd.DataFrame",
+      "source": "pd.DataFrame(R_charge.results.rmsd, \n                         columns=['Frame', \n                                'Time (ns)', \n                                'C-alphas', 'CORE', \n                                'LID', 'NMP'])"
+    },
+    {
+      "id": "call-216-12",
+      "line": 216,
+      "column": 12,
+      "end_line": 217,
+      "end_column": 64,
+      "function": "df_charge.plot",
+      "source": "df_charge.plot(x='Frame',\n                           y=['C-alphas', 'CORE', 'LID', 'NMP'])"
+    },
+    {
+      "id": "call-218-0",
+      "line": 218,
+      "column": 0,
+      "end_line": 218,
+      "end_column": 52,
+      "function": "ax_charge.set_ylabel",
+      "source": "ax_charge.set_ylabel('Charge-weighted RMSD ($\\AA$)')"
+    }
+  ]
+}

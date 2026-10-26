@@ -1,0 +1,215 @@
+{
+  "derive_code": "#!/usr/bin/env python3\n\"\"\"Materialize solver inputs and reference projections for the AdK RMSD task.\n\n--source-inputs : JSON manifest of original absolute paths (may be empty; the\n                  original notebook inputs ship inside the installed\n                  MDAnalysisTests distribution).\n--reference-dir : original terminal artifacts (three exported CSVs).\n--destination   : new destination root; only inputs/ and reference/ are created.\n\"\"\"\nimport argparse\nimport hashlib\nimport json\nimport os\nimport shutil\n\n\ndef find_package_data():\n    \"\"\"Locate the original notebook input files (PSF/DCD/CRD).\"\"\"\n    names = {\"PSF\": \"adk.psf\", \"DCD\": \"adk_dims.dcd\", \"CRD\": \"adk_open.crd\"}\n    try:\n        import MDAnalysisTests\n        data_dir = os.path.join(\n            os.path.dirname(os.path.realpath(MDAnalysisTests.__file__)), \"data\"\n        )\n        if all(os.path.exists(os.path.join(data_dir, n)) for n in names.values()):\n            return {k: os.path.join(data_dir, n) for k, n in names.items()}\n    except ImportError:\n        pass\n    # fallback: the MDAnalysis.tests.datafiles shim used by the original source\n    from MDAnalysis.tests.datafiles import PSF, DCD, CRD\n    return {\n        \"PSF\": os.path.realpath(str(PSF)),\n        \"DCD\": os.path.realpath(str(DCD)),\n        \"CRD\": os.path.realpath(str(CRD)),\n    }\n\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument(\"--source-inputs\", required=True)\n    ap.add_argument(\"--reference-dir\", required=True)\n    ap.add_argument(\"--destination\", required=True)\n    args = ap.parse_args()\n\n    dest = os.path.abspath(args.destination)\n    inputs_dir = os.path.join(dest, \"inputs\")\n    reference_dir = os.path.join(dest, \"reference\")\n    os.makedirs(inputs_dir, exist_ok=True)\n    os.makedirs(reference_dir, exist_ok=True)\n\n    # ---- 1) solver inputs: byte-for-byte copies of the original data files\n    manifest = {}\n    if os.path.exists(args.source_inputs):\n        with open(args.source_inputs) as fh:\n            manifest = json.load(fh) or {}\n\n    pkg = find_package_data()\n    src_map = {\"adk.psf\": pkg[\"PSF\"], \"adk_dims.dcd\": pkg[\"DCD\"],\n               \"adk_open.crd\": pkg[\"CRD\"]}\n    for fname, key in ((\"adk.psf\", \"PSF\"), (\"adk_dims.dcd\", \"DCD\"),\n                       (\"adk_open.crd\", \"CRD\")):\n        for probe in (key, fname, os.path.join(\"inputs\", fname)):\n            value = manifest.get(probe) if isinstance(manifest, dict) else None\n            if isinstance(value, str) and os.path.exists(value):\n                src_map[fname] = value\n                break\n        if not os.path.exists(src_map[fname]):\n            raise FileNotFoundError(\"original input not found for %s\" % fname)\n        shutil.copyfile(src_map[fname], os.path.join(inputs_dir, fname))\n\n    # ---- 2) reference: three original exports relabeled 'Time (ns)' -> 'Time (ps)'.\n    # Byte-level textual header replacement only; every data byte unchanged.\n    # The original export bytes stay untouched in --reference-dir.\n    for name in (\"core_ca_rmsd.csv\", \"mass_weighted_rmsd.csv\",\n                 \"resid_weighted_rmsd.csv\"):\n        src = os.path.join(args.reference_dir, name)\n        with open(src, \"rb\") as fh:\n            raw = fh.read()\n        head, sep, rest = raw.partition(b\"\\n\")\n        new_head = head.replace(b\"Time (ns)\", b\"Time (ps)\")\n        if new_head == head:\n            raise ValueError(\"expected 'Time (ns)' header in %s\" % name)\n        with open(os.path.join(reference_dir, name), \"wb\") as fh:\n            fh.write(new_head + sep + rest)\n\n    # ---- 3) endpoint recovery (unchanged source calls, same inputs/state)\n    import MDAnalysis as mda\n    from MDAnalysis.analysis import rms\n    import pandas as pd\n\n    psf = os.path.join(inputs_dir, \"adk.psf\")\n    dcd = os.path.join(inputs_dir, \"adk_dims.dcd\")\n    crd = os.path.join(inputs_dir, \"adk_open.crd\")\n\n    # Endpoint 1 (original.py lines 92-95). Required state: trajectory universe\n    # positioned at frame 0, which holds for a freshly loaded Universe.\n    u = mda.Universe(psf, dcd)\n    ref = mda.Universe(psf, crd)\n    value = float(rms.rmsd(u.select_atoms(\"backbone\").positions,\n                           ref.select_atoms(\"backbone\").positions,\n                           center=True,\n                           superposition=True))\n    with open(os.path.join(reference_dir, \"open_closed_backbone_rmsd.csv\"),\n              \"w\") as fh:\n        fh.write(\"backbone_rmsd_angstrom\\n\")\n        fh.write(repr(value) + \"\\n\")\n\n    # Endpoint 2 (original.py lines 107-112). Required state as in the source.\n    CORE = \"backbone and (resid 1-29 or resid 60-121 or resid 160-214)\"\n    LID = \"backbone and resid 122-159\"\n    NMP = \"backbone and resid 30-59\"\n    R = rms.RMSD(u, u,\n                 select=\"backbone\",\n                 groupselections=[CORE, LID, NMP],\n                 ref_frame=0)\n    R.run()\n    pd.DataFrame(R.results.rmsd,\n                 columns=[\"Frame\", \"Time (ps)\", \"Backbone\", \"CORE\", \"LID\",\n                          \"NMP\"]).to_csv(\n        os.path.join(reference_dir, \"backbone_rmsd.csv\"), index=False)\n\n    print(json.dumps({\"inputs\": sorted(os.listdir(inputs_dir)),\n                      \"reference\": sorted(os.listdir(reference_dir))}))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "disposition": "ready",
+  "environment_review": {
+    "additional_exclusions": [
+      {
+        "distribution": "MDAnalysisTests",
+        "path": "MDAnalysisTests/analysis/test_rms.py",
+        "reason": "Unused pytest module containing hard-coded literals matching requested answers: line 102 '6.820321761927005' (assert in test_superposition on u=mda.Universe(PSF,DCD), backbone atoms, first vs last trajectory frame with superposition=True) equals backbone_rmsd.csv final-frame Backbone cell 6.820321761026975 to ~1e-10 relative, and line 249 '0.91544906' (rms.RMSD select='name CA' frame 5 vs ref_frame 0) equals mass_weighted_rmsd.csv frame-5 C-alphas cell 0.9154490678430646 to 8 digits \u2014 the same quantity, since all CA atoms share one mass, making mass-weighting invariant over CA selections. The reference derivation and oracle import only MDAnalysisTests data files (adk.psf, adk_dims.dcd, adk_open.crd) and the MDAnalysis.tests.datafiles shim; this test module is never imported by any runtime code path, so it is unused. Verified distribution, relative path and exact sha256 by shell inspection of the installed environment; removal was applied and confirmed absent while the required data files and runtime code remain intact.",
+        "sha256": "2ba84a0110e18b718096351717a62238689f7373a1ddf77956d2c5faf2497728"
+      },
+      {
+        "distribution": "MDAnalysisTests",
+        "path": "MDAnalysisTests/analysis/test_align.py",
+        "reason": "Unused pytest module containing the hard-coded literal '6.820321761927005' (line 261, rms.rmsd(first_frame, last_frame, superposition=True) over Universe(PSF, DCD) backbone atoms, first vs last trajectory frame), which equals backbone_rmsd.csv final-frame Backbone cell 6.820321761026975 to ~1e-10 \u2014 requested-answer exposure. The module is never imported by the reference derivation (which reads only MDAnalysisTests/data files through the MDAnalysis.tests.datafiles shim) or by the oracle, so it is unused. Verified distribution, relative path and exact sha256 by shell inspection of the installed environment; removal was applied and confirmed absent while the required data files and runtime code remain intact.",
+        "sha256": "6f99185651f117bf0b93b259ad5d3fd7086fd032d77d21c3564bce300075cd3c"
+      }
+    ],
+    "artifact_inventory_sha256": "616fd554101c0b0fe93433886f13eddb89a6ff7b795165d780aa5d4afb89bc64",
+    "assessment": "Controlled derivation and oracle execution succeeded for all five requested outputs, including the two endpoints recovered by faithful rerun of the unchanged source calls (rms.rmsd first-vs-CRD backbones with center/superposition on a fresh frame-0 universe; rms.RMSD(u, u, select='backbone', groupselections=[CORE, LID, NMP], ref_frame=0)). The final bundle contains open_closed_backbone_rmsd.csv (one row) and backbone_rmsd.csv, core_ca_rmsd.csv, mass_weighted_rmsd.csv, resid_weighted_rmsd.csv (98 rows each) with the relabeled 'Time (ps)' headers and unchanged data values. Environment review: I read the full installed_asset_value_hints report (5/5 reference files, numeric cells inspected) and assessed each of its three findings by inspecting the exact literals, their surrounding test code, and the corresponding output cells. Both occurrences of 6.820321761927005 (test_rms.py:102 in test_superposition, test_align.py:261 in an alignment test, both computing the superposition backbone RMSD of Universe(PSF, DCD) first vs last frame) reproduce backbone_rmsd.csv frame-97 Backbone = 6.820321761026975 to ~1e-10 relative \u2014 the same source computation and inputs, i.e. genuine single-cell requested-answer exposure. The literal 0.91544906 (test_rms.py:249, rms.RMSD select='name CA' frame 5 vs frame 0) reproduces mass_weighted_rmsd.csv frame-5 C-alphas = 0.9154490678430646 to 8 digits; the quantity is identical because all alpha-carbons share one mass, so mass-weighting is invariant over CA selections. All three findings sat in two pytest modules that no runtime code path imports (only MDAnalysisTests data files and the MDAnalysis.tests.datafiles shim are used); nothing else in the catalog matched any output cell. I therefore declared removal of those two modules. The controller applied the exclusions, reran controlled execution, and the resulting installed-asset catalog (919014ebcfabc0cb9d066fb9de64225b8dbf33f95202336fb571f201e714be1a, 690 MDAnalysisTests files, 7895 inspected) reports ZERO value findings across all five reference files, while the required inputs (MDAnalysisTests/data/adk.psf, adk_dims.dcd, adk_open.crd), the MDAnalysis/tests/datafiles.py import shim, and all MDAnalysis runtime code remain present and unchanged, and all five outputs were reproduced identically (e.g. recovered open-closed scalar 6.823686867261616, recovered backbone_rmsd.csv first row Backbone 5.834343817915898e-07). These declarations are verbatim-inspection-backed for both answer exposure and unused status; the advisory scan's known gaps (integer/string/comment literals, nonpriority files, non-Python formats) mean this is an evidence-backed targeted review rather than an exhaustive-ness claim. No required data, scientific method, runtime code or notice is affected by the exclusions.",
+    "asset_catalog_sha256": "919014ebcfabc0cb9d066fb9de64225b8dbf33f95202336fb571f201e714be1a"
+  },
+  "input_paths": [
+    "adk.psf",
+    "adk_dims.dcd",
+    "adk_open.crd"
+  ],
+  "instruction": "# RMSD analysis of the adenylate kinase open\u21c4closed transition\n\nAdenylate kinase (AdK) transitions from a closed to an open conformation, with the LID and NMP domains moving around a stable CORE. You are given a topology, a trajectory of this transition, and an open-conformation coordinate set. Compute the RMSD quantities below and write the five output tables.\n\n## Supplied inputs (under `inputs/`)\n\n- `inputs/adk.psf` \u2014 AdK topology (CHARMM PSF; atom names, residues, masses)\n- `inputs/adk_dims.dcd` \u2014 MD trajectory of the closed\u2192open transition (CHARMM-flavor DCD; coordinates in \u00c5)\n- `inputs/adk_open.crd` \u2014 coordinates of the open conformation, paired with the same PSF topology\n\nSoftware choice is open. A Python environment with MDAnalysis 2.9.0 is available for convenience, but any implementation matching the definitions below is acceptable. All selections below are given in MDAnalysis selection language; these strings define the atom populations.\n\n## Populations and conventions\n\nDomain definitions (backbone atoms of residue ranges, `resid` as in the topology):\n\n- CORE = `backbone and (resid 1-29 or resid 60-121 or resid 160-214)`\n- LID = `backbone and resid 122-159`\n- NMP = `backbone and resid 30-59`\n\nSelection tokens used: `backbone` (protein backbone atoms), `name CA` (alpha-carbons of the whole universe), `protein and name CA` (alpha-carbons of the protein).\n\nConventions common to the trajectory analyses:\n\n- Rows are ordered by trajectory frame (0-based `Frame` index); row position encodes the frame, so output row *i* corresponds to trajectory frame *i*, one row per frame.\n- `Time (ps)` is the frame time in picoseconds as reported by the trajectory reader for that frame.\n- RMSD is measured in \u00e5ngstr\u00f6m after optimal rigid-body superposition (translation and rotation minimizing the weighted RMSD; the standard quaternion/QCP formulation). Where weights are used, each atom is weighted by the stated quantity; a constant rescaling of the weights does not change the RMSD.\n- The reference for every trajectory table below is trajectory frame 0.\n- Group RMSDs (CORE/LID/NMP columns) are computed *after* the frame has been superimposed on the reference using the `select` group, with no further fitting applied to the groups.\n\n## Required outputs (under `outputs/`)\n\nWrite comma-separated files with a header row, no index column, and at least 12 significant digits for non-integer values. Missing values are not expected.\n\n1. **`open_closed_backbone_rmsd.csv`** \u2014 header `backbone_rmsd_angstrom`; one data row. The RMSD between the backbone atoms of the trajectory's first (closed) frame and the open-conformation structure from `adk_open.crd`, computing the deviation after centering both coordinate sets on their centers of geometry and optimal superposition.\n\n2. **`backbone_rmsd.csv`** \u2014 headers `Frame, Time (ps), Backbone, CORE, LID, NMP`. Per trajectory frame: the frame is translated and rotated to optimally superimpose its `backbone` atoms (unweighted) onto those of frame 0. `Backbone` = unweighted RMSD of all backbone atoms under this superposition; `CORE`, `LID`, `NMP` = unweighted RMSD of each domain's backbone atoms after applying this same superposition, with no further fitting.\n\n3. **`core_ca_rmsd.csv`** \u2014 headers `Frame, Time (ps), CORE`. Per trajectory frame: RMSD versus frame 0 over only the alpha-carbons of the CORE domain (i.e. the selection CORE applied within the `name CA` atom group). The superposition for each frame is determined by this same set of CORE alpha-carbons.\n\n4. **`mass_weighted_rmsd.csv`** \u2014 headers `Frame, Time (ps), C-alphas, CORE, LID, NMP`. Per trajectory frame: the frame is superimposed on frame 0 using the `protein and name CA` atoms with atomic-mass weights. `C-alphas` = mass-weighted RMSD of the protein alpha-carbons under this superposition; `CORE`, `LID`, `NMP` = mass-weighted RMSD of each domain's backbone atoms after applying this superposition, with no further fitting. Mass weights apply to every group in this table.\n\n5. **`resid_weighted_rmsd.csv`** \u2014 headers `Frame, Time (ps), C-alphas, CORE, LID, NMP`. Same structure as output 4, but each atom is weighted by its residue id instead of its mass: the protein alpha-carbons are weighted by their resids for the superposition and the `C-alphas` column, and each domain's backbone atoms are weighted by their resids for the domain columns.\n\n## Resources\n\nNo network access. Budget: 4 CPUs, 8 GiB RAM, 10 GiB disk, and the analysis should complete within 600 seconds (the reference computation takes a few seconds).",
+  "operation_coverage": [
+    {
+      "artifact_paths": [
+        "adk.psf",
+        "adk_dims.dcd"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-61-4"
+      ],
+      "rationale": "Loads the trajectory Universe (closed AdK, PSF+DCD); the data files become the supplied inputs feeding every trajectory analysis.",
+      "role": "supplied_input"
+    },
+    {
+      "artifact_paths": [
+        "adk.psf",
+        "adk_open.crd"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-62-6"
+      ],
+      "rationale": "Loads the open-conformation reference Universe (PSF+CRD); required state for the recovered open-vs-closed backbone RMSD endpoint.",
+      "role": "supplied_input"
+    },
+    {
+      "artifact_paths": [
+        "open_closed_backbone_rmsd.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-92-0"
+      ],
+      "rationale": "Open-vs-closed backbone RMSD scalar with centering and superposition (original.py lines 92-95). A distinct quantitative biological comparison; recovered by faithful rerun of the unchanged call with the trajectory Universe at frame 0, producing requested output 1.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-92-9",
+        "call-93-9"
+      ],
+      "rationale": "Backbone atom selections that supply the coordinate arrays to the call-92-0 rmsd computation; no independent scientific result.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [
+        "backbone_rmsd.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-107-4",
+        "call-112-0",
+        "call-124-5"
+      ],
+      "rationale": "Whole-trajectory backbone + CORE/LID/NMP domain RMSD vs frame 0 (RMSD class with select='backbone', ref_frame=0, run) and its tabulation; recovered by faithful rerun of the unchanged call, producing requested output 2 (it was excluded from exports only because R/df are name-overwritten later).",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-131-5",
+        "call-133-0"
+      ],
+      "rationale": "Line plot and y-axis label rendering of the endpoint-2 values; underlying values are retained in the backbone_rmsd.csv output, so this is presentation only.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-147-5"
+      ],
+      "rationale": "Selects the 'name CA' AtomGroup that restricts the endpoint-3 CORE analysis; no independent result.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [
+        "core_ca_rmsd.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-149-4",
+        "call-150-0",
+        "call-152-5"
+      ],
+      "rationale": "CORE-domain alpha-carbon RMSD over the trajectory (RMSD(ca, ca, select=CORE, ref_frame=0)) and its tabulation; exported as core_ca_rmsd.csv, requested output 3.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-156-5",
+        "call-157-0"
+      ],
+      "rationale": "Plot of the endpoint-3 values; values retained in core_ca_rmsd.csv, so plot-only rendering.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [
+        "mass_weighted_rmsd.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-167-9",
+        "call-171-0",
+        "call-175-10"
+      ],
+      "rationale": "Mass-weighted C-alpha RMSD plus CORE/LID/NMP domain RMSDs (weights='mass'; per the executed code, weights propagate to groupselections) and its tabulation; exported as mass_weighted_rmsd.csv, requested output 4.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-180-10",
+        "call-182-0"
+      ],
+      "rationale": "Plot and y-axis label of endpoint-4 values; values retained in mass_weighted_rmsd.csv.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-190-5"
+      ],
+      "rationale": "Selects 'protein and name CA' to build the resid weight array (ag.resids) used by endpoint 5; preparatory.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-191-0"
+      ],
+      "rationale": "Prints the shape of the C-alpha charges array; a diagnostic statement, not a scientific endpoint.",
+      "role": "diagnostic"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-192-7",
+        "call-193-6",
+        "call-194-6"
+      ],
+      "rationale": "Selects CORE/LID/NMP domains to build the weights_groupselections arrays (resids) for endpoint 5; preparatory.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [
+        "resid_weighted_rmsd.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-198-11",
+        "call-205-0",
+        "call-211-12"
+      ],
+      "rationale": "Resid-weighted C-alpha RMSD plus resid-weighted CORE/LID/NMP domain RMSDs (weights=ag.resids, weights_groupselections=[core.resids, lid.resids, nmp.resids]) and its tabulation; exported as resid_weighted_rmsd.csv, requested output 5.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-216-12",
+        "call-218-0"
+      ],
+      "rationale": "Plot and y-axis label of endpoint-5 values; values retained in resid_weighted_rmsd.csv.",
+      "role": "presentation"
+    }
+  ],
+  "oracle_code": "#!/usr/bin/env python3\n\"\"\"Reference oracle: solve the public AdK RMSD task from the supplied inputs.\"\"\"\nimport argparse\nimport os\n\nimport MDAnalysis as mda\nfrom MDAnalysis.analysis import rms\nimport pandas as pd\n\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument(\"--input-dir\", required=True)\n    ap.add_argument(\"--output-dir\", required=True)\n    args = ap.parse_args()\n    os.makedirs(args.output_dir, exist_ok=True)\n\n    psf = os.path.join(args.input_dir, \"adk.psf\")\n    dcd = os.path.join(args.input_dir, \"adk_dims.dcd\")\n    crd = os.path.join(args.input_dir, \"adk_open.crd\")\n\n    CORE = \"backbone and (resid 1-29 or resid 60-121 or resid 160-214)\"\n    LID = \"backbone and resid 122-159\"\n    NMP = \"backbone and resid 30-59\"\n\n    u = mda.Universe(psf, dcd)\n    ref = mda.Universe(psf, crd)\n\n    # 1) open vs closed backbone RMSD (trajectory frame 0 vs open CRD)\n    value = float(rms.rmsd(u.select_atoms(\"backbone\").positions,\n                           ref.select_atoms(\"backbone\").positions,\n                           center=True,\n                           superposition=True))\n    with open(os.path.join(args.output_dir,\n                           \"open_closed_backbone_rmsd.csv\"), \"w\") as fh:\n        fh.write(\"backbone_rmsd_angstrom\\n\")\n        fh.write(repr(value) + \"\\n\")\n\n    # 2) whole-trajectory backbone + domain RMSDs vs frame 0\n    R = rms.RMSD(u, u, select=\"backbone\",\n                 groupselections=[CORE, LID, NMP], ref_frame=0)\n    R.run()\n    pd.DataFrame(R.results.rmsd,\n                 columns=[\"Frame\", \"Time (ps)\", \"Backbone\", \"CORE\", \"LID\",\n                          \"NMP\"]).to_csv(\n        os.path.join(args.output_dir, \"backbone_rmsd.csv\"), index=False)\n\n    # 3) CORE domain alpha-carbon RMSD vs frame 0\n    ca = u.select_atoms(\"name CA\")\n    R = rms.RMSD(ca, ca, select=CORE, ref_frame=0)\n    R.run()\n    pd.DataFrame(R.results.rmsd,\n                 columns=[\"Frame\", \"Time (ps)\", \"CORE\"]).to_csv(\n        os.path.join(args.output_dir, \"core_ca_rmsd.csv\"), index=False)\n\n    # 4) mass-weighted RMSDs\n    R_mass = rms.RMSD(u, u, select=\"protein and name CA\", weights=\"mass\",\n                      groupselections=[CORE, LID, NMP])\n    R_mass.run()\n    pd.DataFrame(R_mass.results.rmsd,\n                 columns=[\"Frame\", \"Time (ps)\", \"C-alphas\", \"CORE\", \"LID\",\n                          \"NMP\"]).to_csv(\n        os.path.join(args.output_dir, \"mass_weighted_rmsd.csv\"), index=False)\n\n    # 5) resid-weighted RMSDs\n    ag = u.select_atoms(\"protein and name CA\")\n    core = u.select_atoms(CORE)\n    lid = u.select_atoms(LID)\n    nmp = u.select_atoms(NMP)\n    R_resid = rms.RMSD(u, u,\n                       select=\"protein and name CA\",\n                       groupselections=[CORE, LID, NMP],\n                       weights=ag.resids,\n                       weights_groupselections=[core.resids, lid.resids,\n                                               nmp.resids])\n    R_resid.run()\n    pd.DataFrame(R_resid.results.rmsd,\n                 columns=[\"Frame\", \"Time (ps)\", \"C-alphas\", \"CORE\", \"LID\",\n                          \"NMP\"]).to_csv(\n        os.path.join(args.output_dir, \"resid_weighted_rmsd.csv\"), index=False)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "output_paths": [
+    "open_closed_backbone_rmsd.csv",
+    "backbone_rmsd.csv",
+    "core_ca_rmsd.csv",
+    "mass_weighted_rmsd.csv",
+    "resid_weighted_rmsd.csv"
+  ],
+  "rationale": "SCOPE. Source: MDAnalysis UserGuide rmsd.ipynb (rev b20b22d, inputs/original.py), executed offline with MDAnalysis 2.9.0 / MDAnalysisTests 2.9.0. The task preserves all eligible scientific endpoints of the source across both reachable branches: (a) the open-vs-closed backbone RMSD scalar (original.py lines 92-95), (b) the whole-trajectory backbone + CORE/LID/NMP domain RMSDs vs frame 0 (lines 107-112), (c) the AtomGroup-restricted CORE alpha-carbon RMSD (lines 149-150), (d) the mass-weighted C-alpha + domain RMSDs (lines 167-171) and (e) the resid-weighted C-alpha + domain RMSDs (lines 198-205). Endpoints (a) and (b) were excluded from the preparation exports only by the plan's no-capture rule and by name overwriting; per the endpoint_recovery policy both are faithfully recovered by rerunning the unchanged source calls on the same inputs and required state. Plot cells and the diagnostic charges-shape print are not scientific endpoints.\n\nINPUTS. No original input files were recorded (original_inputs is empty) because the notebook imports PSF/DCD/CRD from the installed MDAnalysisTests distribution (adk.psf, adk_dims.dcd, adk_open.crd under MDAnalysisTests/data, verified present by the reference run). derive_code copies these three files byte-for-byte into destination/inputs/ (md5/sha256 recorded in reference/recovery_provenance.json); no data content is edited. Input redistribution licensing review is still pending upstream (same caveat as in the source review) \u2014 a licensing blocker would be an environment/packaging issue, not a scientific one.\n\nREFERENCE PROJECTION. The three original export CSVs are retained byte-for-byte under destination/reference/original_exports/. The projected copies at the top of reference/ differ only in the header label 'Time (ns)' \u2192 'Time (ps)'; every data byte is preserved (textual header replacement only, no re-serialization). Reason: the DCDReader declares AKMA time units and converts the header delta to ps at init, assigning ts.time in ps (units.py base time unit is ps); the observed first-frame value \u2248 1 ps reflects the reader's istart offset, confirming picoseconds, so the source label 'Time (ns)' was an inaccuracy. This is a documented representation change of the same source-computed quantity; the public contract fixes the label to 'Time (ps)' while the values stay exactly reader-reported.\n\nRECOVERY. Both recovered endpoints rerun the exact source calls: rms.rmsd(u.select_atoms('backbone').positions, ref.select_atoms('backbone').positions, center=True, superposition=True) with the trajectory Universe freshly loaded (state = frame 0, as at line 92), and rms.RMSD(u, u, select='backbone', groupselections=[CORE, LID, NMP], ref_frame=0); R.run(). Same original inputs, same MDAnalysis 2.9.0 implementations, unchanged methods/arguments. Recovered artifacts: reference/open_closed_backbone_rmsd.csv (header backbone_rmsd_angstrom, one row, full-precision scalar) and reference/backbone_rmsd.csv (header Frame, Time (ps), Backbone, CORE, LID, NMP; 98 rows). Provenance (source lines, required state, input hashes) is written to reference/recovery_provenance.json.\n\nFIDELITY NOTES (from the pinned 2.9.0 review, preserved). (1) In the mass-weighted run the weights propagate to the group selections (rms.py _prepare sets weights_groupselections when weights is non-iterable and substitutes .masses), so CORE/LID/NMP in mass_weighted_rmsd.csv ARE mass-weighted, contradicting the notebook prose; the public question defines the quantity as executed. (2) ref_frame=0 for all trajectory analyses; weight mean-normalization cancels in the RMSD ratio, so only relative weights matter. (3) Group selections are evaluated after applying the select-derived superposition with no further fitting (rms.py). (4) RMSD in \u00c5 (coordinates in \u00c5, convert_units default True). The oracle reproduces these behaviors by using the same installed rms.RMSD/rms.rmsd implementations on the supplied inputs.\n\nORACLE. Mirrors the source computation on top-level paths of the supplied inputs only: no reference access, no embedded measured answers, no hidden cache. Output 1 is written before any trajectory iteration to keep the frame-0 state identical to the source (the RMSD analysis class itself uses ref_frame=0 internally, so iteration order is not state-relevant for outputs 2\u20135). The DCD trajectory yields 98 frames, so outputs 2\u20135 have 98 data rows each; Frame is the 0-based frame index and Time (ps) is the reader-reported frame time (first-frame value \u2248 1 ps due to the reader's istart offset, present identically in the reference exports).\n\nLEAKAGE / ENVIRONMENT. The dependency-asset review found no answer fixtures for these tables in MDAnalysisTests (contaminating constants in test_rms.py differ in select/reference/ref_frame; adk_oplsaa_rmsf.npy is an unrelated RMSF fixture). Remaining caveats carried from the source review: numerical grading tolerances are uncalibrated (deferred to validation); the comparator must use the relabeled 'Time (ps)' schema while the original bytes (retained in original_exports/) keep 'Time (ns)'; exact atomic membership of the 'backbone' token was not independently enumerated, so populations are fixed by the source-stable MDAnalysis selection strings. No test/source code file is executed by the oracle beyond the MDAnalysis library itself."
+}

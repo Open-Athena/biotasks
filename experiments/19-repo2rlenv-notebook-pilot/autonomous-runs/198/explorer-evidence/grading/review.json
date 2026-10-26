@@ -1,0 +1,118 @@
+{
+  "asset_value_assessments": [],
+  "decision": "revise",
+  "issues": [
+    "Probe defect (mass-weighted-to-unweighted): the executed script reads backbone_rmsd.csv and asserts its header, but its rewrite loop never uses those values; it rewrites each cell of mass_weighted_rmsd.csv as a reformatting of its own value, so no unweighted values were substituted and the file hash changed only cosmetically. The executed record shows report.passed=true with 'mass_weighted_rmsd.csv: all 98 rows match', so the mass-weighting rule received no real wrong-result coverage. The probe's rationale and evidence quotes claiming substitution are contradicted by the executed script and grading outcome.",
+    "Probe defect (resid-weighted-to-mass-weighted): the executed script uses the mass-weighted values only to compute an assertion counter (n>=380) but writes each original cell of resid_weighted_rmsd.csv back; the executed record shows report.passed=true ('all 98 rows match') after a cosmetic hash change, so the resid-weighting rule received no real wrong-result coverage.",
+    "Unmet negative-control outcomes (control_summary.expected_outcomes_met=11 of 19): the two broken probes above directly account for the missing negative coverage of the mass_weighted_rmsd and resid_weighted_rmsd scientific rules; corrected probes and a fresh full execution of all controls on the new candidate are required.",
+    "Candidate rationale misrepresents executed evidence: it claims that substituting an unweighted-domain cell into the mass-weighted table was verified to fail only that check, but no executed control demonstrates this; the corresponding probe rewrote self-values and its grading run passed. The controller's measured reports are authoritative over the candidate's verification claims.",
+    "Public addendum precision example is factually wrong: it states that rounding an RMSD cell to 6 significant digits violates the at-least-12-significant-digits requirement and is rejected, but under the actual rule (abs<=1e-5 angstrom OR rel<=1e-6, reference as denominator), 6-significant-digit roundings at the observed magnitudes (e.g. 6.823686867261616 to 6.82369, difference about 1e-6; 5.834343817915898 to 5.83434, difference about 2e-6) fall inside the tolerance and pass. Only the executed five-significant-digit rounding exceeds the bounds for most cells, so the addendum's example overstates the rule.",
+    "Public addendum asserts an unproven discrimination claim: permitted equivalent results agree within the bound while genuinely different scientific results still fail, with weighting/domain conventions diverging by at least 0.5 angstrom. No executed control demonstrates rejection near the bound, and the two probes intended to demonstrate weighting-convention rejection did not perform their mutations. The wording should be grounded in executed evidence or removed.",
+    "Addendum non-exchangeability prose is not matched by any executed cross-file test: same-name columns across mass_weighted_rmsd.csv and resid_weighted_rmsd.csv are only compared per file against their own reference copies; no control exercises the implied wrong-file-value failure mode, and the phrasing implies a guarantee the code implements solely through per-cell reference comparison.",
+    "Advisory coverage gap: the candidate rationale claims a one-frame-shifted CORE value and shuffled row order each fail their own check, but no probe in the recorded probes array performs a frame-shift or row-order mutation; all executed negative probes are value substitutions, time edits or rounding. Either such a probe should exist or the rationale's claim should be corrected."
+  ],
+  "question_issues": [],
+  "rationale": "The controller's measured reports override the candidate's claims: control_summary.expected_outcomes_met=11 of 19, and two of the eight wrong_solution probes (mass-weighted-to-unweighted, resid-weighted-to-mass-weighted) failed to perform their intended scientific mutations. Their scripts rewrite each target file's own values instead of copying the other file's values, so the executed grading runs returned report.passed=true with no scientific check failing. Consequently, neither the mass_weighted_rmsd nor the resid_weighted_rmsd scientific rule has executed evidence that a genuinely different weighting convention is rejected, and the candidate's private rationale explicitly (and falsely) claims those substitution tests verified the rules' rejections. The grader code itself (RMSD tolerance 1e-5 angstrom absolute or 1e-6 relative plus the tighter 1e-6 ps time bound; decoded-value comparison; Frame==row-index identity; exact headers; cross-table row-count agreement; per-check exception isolation) is sound, and the reference, empty, misplaced, recomputed, alternative and all five per-file missing controls executed correctly, as did the other seven probes. The public addendum additionally carries a factually wrong precision example (six-significant-digit rounding is not rejected at these magnitudes under the stated tolerances) and an unproven discrimination claim. These defects are repairable within the existing route: rewrite the two probe scripts to actually substitute the other file's values, re-execute the full control set on the new candidate, and align the addendum's precision and discrimination prose with the executed evidence without changing the tolerance rules themselves. I therefore return revise rather than blocked, since the underlying question and check design are sound and only probe execution and addendum wording need repair.",
+  "scientific_admission": {
+    "answer_isolation": {
+      "blockers": [
+        "The asset-value scan is admittedly non-exhaustive (integer-valued constants, strings, comments, nonpriority files and non-Python formats are not covered), and I could not independently enumerate installed files beyond the supplied catalogs, so verified absence of answer copies outside catalog coverage, caches or backups is not established here."
+      ],
+      "decision": "unresolved",
+      "evidence": [
+        "asset_value_hints /findings is empty with /reference_coverage reporting numeric_cells_inspected for all five reference files.",
+        "final_environment_review additional_exclusions records verbatim-inspection-backed removal of MDAnalysisTests/analysis/test_rms.py and test_align.py after they were found to embed literals matching backbone_rmsd.csv frame-97 Backbone and mass_weighted_rmsd.csv frame-5 C-alphas cells; executed_exclusions.excluded_files_absent is true and the post-removal catalog 919014ebcfabc0cb9d066fb9de64225b8dbf33f95202336fb571f201e714be1a reports zero value findings across all five files.",
+        "independent_execution.status is executed_without_answer_access, and the required data files (adk.psf, adk_dims.dcd, adk_open.crd), the MDAnalysis.tests.datafiles shim and runtime code are recorded as remaining present with the five outputs reproduced identically."
+      ],
+      "output_paths": [
+        "backbone_rmsd.csv",
+        "core_ca_rmsd.csv",
+        "mass_weighted_rmsd.csv",
+        "open_closed_backbone_rmsd.csv",
+        "resid_weighted_rmsd.csv"
+      ],
+      "rationale": "Solver-visible inputs comprise the three trusted input files plus the installed environment. The grader itself reads only through the two directory arguments, uses no environment variables or extra paths, and embeds no answer values beyond the two public tolerances. The controller's recorded asset-value hints (zero findings across all five reference files), the executed hash-verified removal of two answer-bearing pytest modules, and a post-removal rescanned catalog with fresh controlled execution support that no requested answer value is disclosed by installed assets, including the endpoints recovered after setup. However, the negative claim rests on a targeted advisory scan with stated gaps; the earlier genuine exposure found in this same catalog shows why a non-exhaustive scan cannot be treated as proof of absence, so residual uninspected coverage remains a blocker to a definitive clean-environment claim."
+    },
+    "comparisons": [
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "reference control: executed, grader exit 0, report.passed=true, submission hashes match the reference_inspection manifest exactly for all five files.",
+          "open-closed-scaled-one-percent probe: real scalar inflation (6.823686867261616 to 6.830510554128876) rejected by open_closed_backbone_rmsd only, with structural_schema still passing.",
+          "misplaced control (files nested under an outputs/ prefix per the submission SHA-256 records): all checks fail on the declared top-level paths, confirming placement resolution directly under the submission root."
+        ],
+        "output_paths": [
+          "open_closed_backbone_rmsd.csv"
+        ],
+        "rationale": "Single scalar compared as a decoded float against the reference copy (abs<=1e-5 angstrom or rel<=1e-6 with the reference as denominator), non-negativity enforced, exactly one data row and exact header required. Reference, missing-file, placement and a real tolerance-level scientific mutation all executed with the expected outcomes."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "reference control reports 'backbone_rmsd.csv: all 98 rows match the reference frame indices, times and per-frame RMSD values within the stated tolerances'.",
+          "backbone-lid-nmp-column-swap probe: real LID/NMP value swap rejected at row 1 (0.4745572261841976 vs reference 0.4871914516599885) with structural_schema passing.",
+          "missing-file control for backbone_rmsd.csv fails structural_schema and backbone_rmsd only, demonstrating check separation."
+        ],
+        "output_paths": [
+          "backbone_rmsd.csv"
+        ],
+        "rationale": "Row-aligned comparison: Frame must equal row index and the reference frame, Time within 1e-6 ps, and all four RMSD columns within the stated tolerance; reordering, mis-indexing, extra rows and negative values fail by construction. Advisory note only, not a blocker: executed wrong-result coverage relies on the LID/NMP domain swap; no control exercises a wrong-reference-group substitution for the Backbone column itself, but that probe demonstrates per-cell rejection within this file."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "core-ca-backbone-pool-contamination probe: genuine population substitution rejected ('core_ca_rmsd.csv: row 1 column CORE value 0.4550181433046967 differs from the reference 0.40756080970089986') with structural_schema passing.",
+          "time-shift-plus-five-e-minus-six and time-round-to-grid probes fail core_ca_rmsd via the tighter 1e-6 ps time bound on real frame data while structural checks pass.",
+          "missing-file control for core_ca_rmsd.csv fails only structural_schema and core_ca_rmsd."
+        ],
+        "output_paths": [
+          "core_ca_rmsd.csv"
+        ],
+        "rationale": "Unweighted CORE alpha-carbon RMSD compared per frame with the stated tolerance and frame/time alignment; both a wrong-population error and a coarse-time-grid error are demonstrated rejected by executed controls."
+      },
+      {
+        "blockers": [
+          "No executed control demonstrates rejection of genuinely unweighted values in the mass-weighted columns: the mass-weighted-to-unweighted probe rewrote the file's own values (reformatting each original cell) and its grading run returned report.passed=true ('all 98 rows match'), so the rule's rejection behavior for the weighting convention is unverified.",
+          "The candidate rationale's claim that this rule was verified against an unweighted substitution is contradicted by the executed records."
+        ],
+        "decision": "unresolved",
+        "evidence": [
+          "reference control passes for mass_weighted_rmsd.csv ('all 98 rows match the reference frame indices, times and per-frame RMSD values within the stated tolerances').",
+          "mass-weighted-to-unweighted probe: the executed script asserts backbone_rmsd.csv's header and row count but its rewrite loop never uses the backbone values; the grading run ended with report.passed=true despite a changed file hash (submission_after_probe shows a new sha vs submission_before).",
+          "The grader's per-cell comparison (as shown by the other substitution probes in this file set) would reject a real substitution, so the gap is in probe execution, not the comparison rule."
+        ],
+        "output_paths": [
+          "mass_weighted_rmsd.csv"
+        ],
+        "rationale": "The check implementation and decoded-value tolerance convention are sound and reference agreement is established, but scientific equivalence for the mass-weighting convention lacks executed negative evidence: the intended probe's mutation was not carried out and its grading run passed. Missing negative coverage for this scientific branch is unresolved rather than approvable on the passing reference control alone."
+      },
+      {
+        "blockers": [
+          "No executed control demonstrates rejection of mass-weighted values in the resid-weighted table: the resid-weighted-to-mass-weighted probe used the mass-weighted values only for an assertion counter (n>=380) and wrote each original cell back; its grading run returned report.passed=true, so mass-versus-resid discrimination was never exercised with a real scientific error.",
+          "The candidate rationale's claim of verified rejection for this rule is contradicted by the executed records."
+        ],
+        "decision": "unresolved",
+        "evidence": [
+          "reference control passes for resid_weighted_rmsd.csv.",
+          "resid-weighted-to-mass-weighted probe: the script computes would-be differences only for the assertion (n>=380) and writes each original cell back; the grading run ended with report.passed=true ('all 98 rows match') after a hash change.",
+          "cells-rounded-to-five-sig-digits does fail resid_weighted_rmsd, but via rounding, not via a weighting-convention error."
+        ],
+        "output_paths": [
+          "resid_weighted_rmsd.csv"
+        ],
+        "rationale": "As with the mass-weighted check, the implementation and tolerance convention are sound and reference agreement holds, but the resid-weighting rule's consequential wrong-answer rejection has no executed evidence because the intended probe's mutation was not performed and its grading run passed. This comparison-coverage gap requires a corrected probe and a fresh full execution of all controls before packaging."
+      }
+    ]
+  },
+  "source_coverage": {
+    "decision": "approve",
+    "omitted_scientific_endpoints": [],
+    "rationale": "Audited source_operations (0010.json) against the five delivered endpoints. Every terminal scientific result in the source has a delivered counterpart: the open-vs-closed backbone RMSD (rms.rmsd call-92-0, center=True/superposition=True on u backbone vs ref CRD backbone) maps to open_closed_backbone_rmsd.csv; the backbone-superposition table with CORE/LID/NMP groupselections (rms.RMSD call-107-4, R.run call-112-0) maps to backbone_rmsd.csv; the CORE alpha-carbon RMSD (u.select_atoms('name CA') call-147-5, rms.RMSD(ca, ca, select=CORE, ref_frame=0) call-149-4) maps to core_ca_rmsd.csv; the mass-weighted table (rms.RMSD(..., select='protein and name CA', weights='mass', groupselections=[CORE, LID, NMP]) call-167-9 with R_mass.run call-171-0) maps to mass_weighted_rmsd.csv; and the resid-weighted table (rms.RMSD(..., weights=ag.resids, weights_groupselections=[core.resids, lid.resids, nmp.resids]) call-198-11 with R_charge.run call-205-0) maps to resid_weighted_rmsd.csv. Each table's pd.DataFrame construction (calls 124-5, 152-5, 175-10, 211-12) is the source-faithful serialization of the corresponding results.rmsd array. Remaining source calls are non-scientific or preparatory: the df.plot/set_ylabel calls (131, 133, 156, 157, 180, 182, 216, 218) are plot renderings downstream of the already-delivered tables; Universe constructions (61, 62) are inputs; and print(ag.charges.shape) (call-191) plus the CORE/LID/NMP select_atoms calls (192-194) are a diagnostic and selections feeding the delivered resid-weighted endpoint. No independent terminal scientific result is missing, no delivered endpoint is invented, and the two endpoints recovered after setup (open-vs-closed scalar, backbone table) are faithful reruns of unchanged source calls on the same inputs per final_environment_review, satisfying the endpoint-recovery policy. The 'Time (ns)' to 'Time (ps)' header relabel is a unit-corrected description of the same reader-reported quantities (reader dt = 0.9999999119200186 ps per the candidate rationale and independent solution), not a scientific scope change. Caveats recorded in the overall review's issues rather than here, since they concern the grader candidate and addendum rather than source coverage: (a) the candidate rationale cites frame-shift/row-shuffle probes that do not exist in the executed control set; (b) the addendum's six-significant-digit rejection example and blanket divergence claims are unexecuted; these affect probe execution and public wording, not the set of scientific endpoints derived from the source.",
+    "remaining_validation": [],
+    "scientific_scope_changes": [],
+    "unsupported_evidence_claims": []
+  }
+}
