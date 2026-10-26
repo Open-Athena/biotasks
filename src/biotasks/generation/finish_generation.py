@@ -4,16 +4,30 @@ from pathlib import Path
 
 from biotasks.generation import resources, run_generation
 from biotasks.generation.generation_pipeline import GenerationPipeline
-from biotasks.validation.files import inventory, read_json, require, sha
+from biotasks.validation.files import MAX_ARCHIVE, MAX_FILE, read_json, require, safe, sha
 from biotasks.validation.journal import STAGES
 
 
 def verify_generation_source(directory, readback):
+    # Native archives already enforce these byte bounds. History batches may
+    # legitimately contain more than the small-input inventory's 1,000 files.
+    root = directory / "generation-source"
+    require(root.is_dir() and not root.is_symlink(), "Unsafe generation source")
     expected = [{**row, "mode": oct(row["mode"])[2:]} for row in readback["source_members"]]
-    require(
-        inventory(directory / "generation-source") == expected,
-        "Extracted raw/cache lineage differs from verified original generation",
-    )
+    require(len(expected) <= 10_000, "Generation evidence exceeds 10000 files")
+    rows, total = [], 0
+    for path in root.rglob("*"):
+        require(not path.is_symlink(), "Symlinked generation evidence")
+        if not path.is_file():
+            continue
+        size = path.stat().st_size
+        total += size
+        require(size <= MAX_FILE and total <= MAX_ARCHIVE, "Generation evidence exceeds byte bounds")
+        rows.append({"path": safe(path.relative_to(root).as_posix()), "bytes": size,
+                     "mode": oct(path.stat().st_mode & 0o777)[2:], "sha256": sha(path)})
+        require(len(rows) <= 10_000, "Generation evidence exceeds 10000 files")
+    rows.sort(key=lambda row: row["path"])
+    require(rows == expected, "Extracted raw/cache lineage differs from verified original generation")
 
 
 def generation_ready(root):

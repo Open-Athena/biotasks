@@ -31,7 +31,8 @@ def save(path, value):
 
 
 def alive():
-    process = read(ROOT / 'controller-process.json')
+    active = read(ROOT / 'active-workflow.json', {})
+    process = read(ROOT / active.get('controller_process', 'controller-process.json'))
     assert len(process) == 1
     p = process[0]
     try:
@@ -47,11 +48,13 @@ def complete(directory):
 
 
 def snapshot():
-    manifest = read(ROOT / 'manifest.json')
+    active = read(ROOT / 'active-workflow.json', {})
+    manifest = read(ROOT / active.get('manifest', 'manifest.json'))
+    work = ROOT / active['work_dir'] if active else WORK
     budget = read(Path(manifest['budget_ledger']))
     cases = []
     for case in manifest['cases']:
-        name = case['id']; gen = WORK / name / 'runs/generation'
+        name = case['id']; gen = (Path(case['generation_root']) if case.get('mode') == 'completed' else work / name) / 'runs/generation'
         listing = read(Path(case['candidates']['path']))
         journal = read(gen / 'journal.json', {})
         r = read(gen / 'readback.json', {})
@@ -73,7 +76,7 @@ def snapshot():
             assert proof.get('verified_empty') is True
             c['generation_cleanup_verified'] = True
             c['phase'] = 'zero_exports_complete' if not r['exported_tasks'] else 'export_ready'
-        val = WORK / (name + '-handoff') / 'validation'
+        val = work / (name + '-handoff') / 'validation'
         vp = read(val / 'plan.json')
         if vp:
             c['controls_planned'] = len(vp['tasks'])
