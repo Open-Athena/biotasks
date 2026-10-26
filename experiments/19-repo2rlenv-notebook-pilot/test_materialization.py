@@ -108,7 +108,7 @@ def test_reset_does_not_recursively_delete_an_unexpected_report_directory(tmp_pa
     assert (unexpected / "evidence.txt").read_text() == "preserve"
 
 
-@pytest.mark.parametrize("mode", ["fresh", "finalize", "construct_with_prior"])
+@pytest.mark.parametrize("mode", ["fresh", "finalize", "construct_with_prior", "repair"])
 @pytest.mark.parametrize("remove_fixture", [False, True])
 @pytest.mark.parametrize("corruption", ["none", "catalog", "hints", "hint_binding"])
 def test_materialization_controller_preserves_candidate_and_checks_downloads(
@@ -121,6 +121,18 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(
 
     from materialization_environment import binding, removal_receipt
     from task_materialization import run_materialization
+
+    context = {
+        "specification": {
+            "task_brief": "Synthetic question",
+            "review": "Observed scientific uncertainty",
+            "validation_handoff": "Later grader plan",
+        },
+        "policy": {},
+        "source_evidence": {"inputs/original.py": "result = analyze(data)\n"},
+        "reference_observations": {},
+        "paths": {},
+    }
 
     source = tmp_path / "source"
     (source / "trial").mkdir(parents=True)
@@ -196,6 +208,38 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(
             "asset_summary": catalog["summary"],
         },
     }
+    repair_file = tmp_path / "construction-repair.json"
+    if mode == "repair":
+        import copy
+
+        from construction_repair import digest
+        from task_materialization import materialization_context
+
+        original = {**candidate, "derive_code": "previous_generated_code()"}
+        original["environment_review"] = {
+            **binding(controlled),
+            "assessment": "Original synthetic environment assessment",
+            "additional_exclusions": removals,
+        }
+        repair_file.write_text(
+            json.dumps(
+                {
+                    "kind": "generated_construction_repair_v1",
+                    "source_context_sha256": digest(materialization_context(context, source, 600)),
+                    "original_candidate": original,
+                    "original_execution": copy.deepcopy(controlled),
+                    "blocked_grader": {
+                        "disposition": "blocked",
+                        "instruction": "",
+                        "grader_code": "",
+                        "checks": [],
+                        "rationale": "Generated reference defect",
+                    },
+                    "original_records": {},
+                    "prior_acceptance_reused": False,
+                }
+            )
+        )
 
     async def upload(local, remote):
         uploads.append(remote)
@@ -223,6 +267,8 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(
         assert argv[-1] == "/work/materialization_remote.py"
         assert time.time() < request["controlled_execution_deadline"] <= time.time() + 60
         executions.append(label)
+        if mode == "repair" and len(executions) == 1:
+            assert request["new_dependency_exclusions"] == {"files": removals}
         merged = request["effective_dependency_exclusions"]
         catalog["summary"]["candidate_files"] = int(not merged["files"])
         catalog_raw = (json.dumps(catalog, indent=2) + "\n").encode()
@@ -284,6 +330,9 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(
         if mode == "construct_with_prior":
             assert "Inspect the actual input keys" in payload["messages"][0]["content"]
             assert "prior_worker_draft" in payload["messages"][1]["content"]
+        if mode == "repair":
+            assert "Repair generated task construction" in payload["messages"][0]["content"]
+            assert model_input["construction_repair"]["prior_acceptance_reused"] is False
         review_only = mode == "construct_with_prior" and len(calls) > 1
         return {
             "choices": [
@@ -326,23 +375,18 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(
     result = asyncio.run(
         run_materialization(
             session=session,
-            context={
-                "specification": {
-                    "task_brief": "Synthetic question",
-                    "review": "Observed scientific uncertainty",
-                    "validation_handoff": "Later grader plan",
-                },
-                "policy": {},
-                "source_evidence": {"inputs/original.py": "result = analyze(data)\n"},
-                "reference_observations": {},
-                "paths": {},
-            },
+            context=context,
             root=root,
             config={
                 "reference_seconds": 600,
                 "request_timeout_seconds": 600,
-                **({"prior_author_files": str(prior)} if mode != "fresh" else {}),
+                **(
+                    {"prior_author_files": str(prior)}
+                    if mode in {"finalize", "construct_with_prior"}
+                    else {}
+                ),
                 **({"authoring_mode": "construct"} if mode == "construct_with_prior" else {}),
+                **({"construction_repair_file": str(repair_file)} if mode == "repair" else {}),
             },
             endpoint="unused",
             credential="unused",
@@ -355,8 +399,10 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(
         "review": "Observed scientific uncertainty",
     }
     assert result["oracle_executed"]
-    assert len(calls) == (3 if remove_fixture else 2)
-    assert len(executions) == (2 if remove_fixture or corruption != "none" else 1)
+    assert len(calls) == (3 if remove_fixture and mode != "repair" else 2)
+    assert len(executions) == (
+        2 if (remove_fixture and mode != "repair") or corruption != "none" else 1
+    )
     assert (
         json.loads((root / "materialized/manifest.json").read_text())["environment"]["exclusions"][
             "files"

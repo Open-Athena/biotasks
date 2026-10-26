@@ -97,6 +97,20 @@ async def run_materialization(
     config = {**config, "reasoning_effort": native_effort(config)}
     source = session.snapshot["directory"]
     context = materialization_context(context, source, config["reference_seconds"])
+    repair_record = None
+    repair_original = None
+    if config.get("construction_repair_file"):
+        from construction_repair import load_repair
+
+        if (
+            config.get("prior_author_files")
+            or config.get("authoring_mode", "construct") != "construct"
+        ):
+            raise ValueError("Construction repair cannot reuse another authoring mode")
+        repair_record = json.loads((HERE / config["construction_repair_file"]).read_text())
+        repair_original = load_repair(repair_record, context)
+        context["construction_repair"] = repair_record
+        save_record(root / "construction-repair.json", repair_record)
     prior_files = config.get("prior_author_files")
     mode = config.get("authoring_mode", "finalize" if prior_files else "construct")
     if mode not in {"construct", "finalize"} or (mode == "finalize" and not prior_files):
@@ -119,6 +133,11 @@ async def run_materialization(
         )
         complete = completion_transport(client)
     attempts = []
+    repair_exclusions = (
+        [item.model_dump() for item in repair_original.environment_review.additional_exclusions]
+        if repair_original is not None and repair_original.environment_review is not None
+        else []
+    )
     applied_additions = []
     last_execution = None
     last_execution_key = None
@@ -128,13 +147,23 @@ async def run_materialization(
         nonlocal applied_additions, last_execution, last_execution_key, last_catalog
         if candidate.disposition == "blocked":
             return
+        if repair_original is not None:
+            from construction_repair import check_candidate
+
+            check_candidate(repair_original, candidate)
         check_operation_coverage(candidate, context["source_operations"])
         review = candidate.environment_review.model_dump() if candidate.environment_review else None
         if review is not None:
             if last_execution is None:
                 raise ValueError("Execute an initial candidate before assessing its environment")
             check_review(review, last_execution)
-        additional = review["additional_exclusions"] if review else applied_additions
+        additional = (
+            review["additional_exclusions"]
+            if review
+            else repair_exclusions
+            if repair_original is not None
+            else applied_additions
+        )
         merged = merge_exclusions(
             session.snapshot.get("dependency_exclusions"),
             additional,
@@ -199,6 +228,10 @@ async def run_materialization(
             or result["execution"]["status"] != "executed_requires_scientific_validation"
         ):
             raise ValueError("Materialization/oracle execution failed: " + json.dumps(result))
+        if repair_record is not None:
+            from construction_repair import check_execution
+
+            check_execution(repair_record, result["execution"])
         last_execution = result["execution"]
         last_catalog = folder / "dependency-assets-final.json"
         await session.remote.download(
@@ -265,7 +298,11 @@ async def run_materialization(
         candidate = await stage(
             schema=Materialization,
             name="materialize",
-            prompt_name="notebook-task-finalize" if finalize else "notebook-task-materialize",
+            prompt_name="notebook-task-materialization-repair"
+            if repair_record is not None
+            else "notebook-task-finalize"
+            if finalize
+            else "notebook-task-materialize",
             context=context,
             root=root / "materialize",
             ledger=ledger,

@@ -188,6 +188,25 @@ stay distinct, and `pipeline.json` records the effective materialization/grading
 paths for downstream use. This is a bounded attempt, not a guarantee of
 correction or broad software portability.
 
+## Generated construction repair
+
+The next-version controller can return a blocked generated reference to the
+construction worker, using the same single global quality-repair allowance.
+Original blocked-worker evidence and verified cleanup are required. The source
+context, public instruction, operation ledger and input/output paths stay fixed;
+controlled solver-input inventories must preserve the original bytes. Only
+generated derivation/oracle code and its rationale may be corrected, with a fresh
+environment assessment and unchanged exclusions. A needed scientific-contract,
+input or source change blocks this narrow route.
+
+Original and replacement evidence remain separate. Fresh independent grading,
+probes, source review and native qualification are required; no previous solution,
+grader, expected-result feedback or acceptance enters those independent workers.
+An already-consumed specification/grader repair disables this route, and a further
+blocker cannot replenish it. Existing stage reservations, resource limits and the
+absolute campaign deadline remain in force. This is tested offline and absent
+from frozen campaign195; it does not claim live scientific adoption.
+
 ## Model response recovery
 
 The model adapter permits one retry after a timeout, typed SDK connection

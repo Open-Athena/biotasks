@@ -97,6 +97,17 @@ def check_config(config):
         raise ValueError(
             "Independent repair requires fresh grading, frozen science and no extra repair"
         )
+    if config.get("construction_repair_file") and (
+        not grading
+        or config.get("materialize_task") is not True
+        or config.get("allow_quality_repair") is not False
+        or config.get("materialization_directory")
+        or config.get("prior_author_files")
+        or any(config.get(key) for key in recovery_keys)
+        or config.get("frozen_grader_file")
+        or config.get("independent_repair_file")
+    ):
+        raise ValueError("Construction repair requires fresh construction and a consumed allowance")
     if config.get("resume_probe_draft_directory") and (
         not config.get("resume_grading_directory") or config.get("resume_probes_directory")
     ):
@@ -140,6 +151,7 @@ def check_config(config):
         "contract_feedback_file",
         "frozen_grader_file",
         "independent_repair_file",
+        "construction_repair_file",
     ):
         if key in config and (
             not config[key] or Path(config[key]).is_absolute() or ".." in Path(config[key]).parts

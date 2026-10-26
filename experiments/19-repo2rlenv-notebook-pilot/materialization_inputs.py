@@ -31,6 +31,22 @@ def load_materialized(directory):
                 raise ValueError("Question revision identity changed: " + name)
         verify_revision(directory, candidate)
     execution = json.loads((directory / "manifest.json").read_text())
+    if (
+        "construction-revision.json" in recorded
+        or (directory / "construction-revision.json").exists()
+    ):
+        from construction_repair import verify_revision
+
+        path = directory / "construction-revision.json"
+        if (
+            path.name not in recorded
+            or path.is_symlink()
+            or not path.is_file()
+            or path.stat().st_size != recorded[path.name]["bytes"]
+            or sha256(path) != recorded[path.name]["sha256"]
+        ):
+            raise ValueError("Construction revision identity changed")
+        verify_revision(json.loads(path.read_text()), candidate, execution)
     if candidate.get("environment_review") is not None or "environment" in execution:
         from materialization_environment import effective_exclusions
 

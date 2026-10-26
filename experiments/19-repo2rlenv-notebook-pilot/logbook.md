@@ -5161,3 +5161,7 @@ A generic experiment auditor reads the panel configuration, verifies all ten exa
 ### 2026-10-26 — Prepare conditional publication checks for195
 
 Refreshed primary GNPS direct-contribution/default and third-party policy, named NIH library attribution, and pinned mixed matchms-docs notices. Prior171review is reusable only after exact195input equality and full native-bundle/qualification proof; no195publication clearance is inferred. No new dataset download, model, science or task edit. Preserve MIT/code and NC-SA/book-artwork distinctions and attribution; no blanket commercial-training grant. Conditions recorded separately while grading runs.
+
+### 2026-10-26 — Route one unused global repair to generated construction
+
+The general controller can return a blocked grader diagnosis to a fresh GLM construction session, preserving original evidence. Protect source context, public instruction, input/output paths, operation ledger, exclusions and actual solver-input bytes; reexecute derivation/oracle and reassess its environment. Fresh independent grading/probes/source review/native follow with no prior acceptance or private diagnostic feedback to independent workers. No extra repair, campaign deadline, spending ceiling or manual task correction.367affected+234projecttests/Ruff/format/ty pass;33.39s/167368KiBRSS; initial121pass. Candidate only, not in195. Live195 has separately passed scientific review and reached native; original sealed qualification remains pending.

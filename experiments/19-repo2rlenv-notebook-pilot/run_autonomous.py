@@ -128,6 +128,8 @@ def seal_materialization(raw, view):
     shutil.copytree(raw / "materialized", view)
     copy_verified(raw / "materialization-candidate.json", view / "candidate.json")
     copy_verified(raw / "result.json", view / "result.json")
+    if (raw / "construction-repair.json").exists():
+        copy_verified(raw / "construction-repair.json", view / "construction-revision.json")
     write(view / "artifact-manifest.json", dict(original_small_files=records(view)))
 
 
@@ -178,6 +180,11 @@ def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
         for path in selected
         if path.startswith("grading/")
     )
+    selected += tuple(
+        path.replace("grading/", "grading-construction-repair/", 1)
+        for path in selected
+        if path.startswith("grading/")
+    )
     selected += (
         "question-repair/question-repair.json",
         "question-repair/result.json",
@@ -186,6 +193,11 @@ def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
         "comparison-repair/comparison-repair.json",
         "comparison-repair/result.json",
         "grading-comparison-repair/independent-repair-feedback.json",
+        "construction-repair-input.json",
+        "materialization-repair-raw/result.json",
+        "materialization-repair-raw/cleanup.json",
+        "materialization-repair-raw/materialization-candidate.json",
+        "materialization-repair-raw/construction-repair.json",
     )
     selected += tuple(
         path.relative_to(root).as_posix()
@@ -198,6 +210,8 @@ def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
         "grading",
         "grading-question-repair",
         "grading-comparison-repair",
+        "materialization-repair-raw",
+        "grading-construction-repair",
     ):
         for path in sorted((root / stage / "operations").glob("*/operation.json"))[-3:]:
             selected += (path.relative_to(root).as_posix(),)
@@ -217,6 +231,8 @@ def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
         "specification-review-revised",
         "materialization-raw",
         "grading",
+        "materialization-repair-raw",
+        "grading-construction-repair",
     ):
         # A one-call author may return a rejected draft without a transport or
         # tool failure. Preserve upstream's actual validation feedback as well
@@ -644,7 +660,7 @@ class Pipeline:
             base["materialization_directory"] = self.relative(mat)
 
             async def grading():
-                nonlocal mat, grade
+                nonlocal mat_raw, mat, grade
                 shutil.copytree(
                     mat_raw / "materialized", Path("/work/grading-inputs/grading/materialized")
                 )
@@ -658,6 +674,83 @@ class Pipeline:
                     endpoint=self.endpoint,
                     credential=self.credential,
                 )
+                if (
+                    result["status"] == "grader_blocked"
+                    and not (grade / "repair.json").exists()
+                    and not self.receipt.get("quality_repair")
+                ):
+                    from construction_repair import repair_context as construction_context
+
+                    feedback = construction_context(mat_raw, mat, grade)
+                    self.receipt["quality_repair"] = {
+                        "kind": "generated_construction",
+                        "allowance_consumed": True,
+                        "original_materialization": self.relative(mat),
+                        "original_grading": self.relative(grade),
+                    }
+                    write(self.root / "pipeline.json", self.receipt)
+                    feedback_file = self.root / "construction-repair-input.json"
+                    write(feedback_file, feedback)
+                    mat_raw = self.root / "materialization-repair-raw"
+                    repair_base = {
+                        key: value
+                        for key, value in base.items()
+                        if key != "materialization_directory"
+                    }
+                    retry = self.config_for(
+                        "construction-repair",
+                        "run_notebook_grader.py",
+                        **repair_base,
+                        materialize_task=True,
+                        allow_quality_repair=False,
+                        construction_repair_file=self.relative(feedback_file),
+                    )
+                    retry["max_tests"] = None
+                    os.environ["BIOTASKS_ARTIFACT_PREFIX"] = (
+                        self.prefix + "/stages/construction-repair"
+                    )
+                    repaired = await remote(
+                        retry,
+                        root=mat_raw,
+                        deadline=self.deadline,
+                        endpoint=self.endpoint,
+                        credential=self.credential,
+                    )
+                    if repaired["status"] == "materialization_blocked":
+                        raise Rejected(
+                            "grading", "construction_repair_blocked", str(mat_raw / "result.json")
+                        )
+                    mat = self.root / "materialization-repair"
+                    seal_materialization(mat_raw, mat)
+                    # These are task-owned transport copies, not original evidence.
+                    # Keep both sealed constructions and all earlier grading unchanged.
+                    staged = Path("/work/grading-inputs/grading/materialized")
+                    shutil.rmtree(staged)
+                    shutil.copytree(mat_raw / "materialized", staged)
+                    grade = self.root / "grading-construction-repair"
+                    base["materialization_directory"] = self.relative(mat)
+                    retry = self.config_for(
+                        "grading-construction-repair",
+                        "run_notebook_grader.py",
+                        **base,
+                        allow_quality_repair=False,
+                    )
+                    retry["max_tests"] = None
+                    os.environ["BIOTASKS_ARTIFACT_PREFIX"] = (
+                        self.prefix + "/stages/grading-construction-repair"
+                    )
+                    result = await remote(
+                        retry,
+                        root=grade,
+                        deadline=self.deadline,
+                        endpoint=self.endpoint,
+                        credential=self.credential,
+                    )
+                    self.receipt["quality_repair"].update(
+                        effective_materialization=self.relative(mat),
+                        effective_grading=self.relative(grade),
+                        validation_status=result["status"],
+                    )
                 if (
                     result["status"]
                     in {"independent_comparison_unresolved", "public_question_defect"}

@@ -136,6 +136,11 @@ def test_setup_time_admission_receipt_survives_bounded_diagnostics(tmp_path, sta
         "independent-repair-blocked",
         "independent-repair-failed",
         "early-repair-grading",
+        "construction-repair",
+        "construction-repair-blocked",
+        "construction-repair-failed",
+        "construction-repair-used",
+        "early-repair-construction",
     ],
 )
 @pytest.mark.parametrize("reviewed", [False, True])
@@ -203,11 +208,36 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             m.write(root / "result.json", result)
             return result
         if config.get("materialize_task"):
+            if config.get("construction_repair_file"):
+                assert config["allow_quality_repair"] is False
+                assert "materialization_directory" not in config
+                assert not any(key.startswith("resume_") for key in config)
+                assert root.name == "materialization-repair-raw"
+                if failure == "construction-repair-blocked":
+                    return {"status": "materialization_blocked"}
             if failure == "construction":
                 m.write(root / "materialization-candidate.json", {"disposition": "blocked"})
                 return {"status": "materialization_blocked"}
             (root / "materialized").mkdir(parents=True)
             return {"status": "materialized_requires_scientific_validation"}
+        if failure and (
+            failure.startswith("construction-repair") or failure == "early-repair-construction"
+        ):
+            if root.name == "grading":
+                if failure == "construction-repair-used":
+                    m.write(root / "repair.json", {"already_consumed": True})
+                if failure == "early-repair-construction":
+                    assert config["allow_quality_repair"] is False
+                return {"status": "grader_blocked", "final_controls_passed": False}
+            assert root.name == "grading-construction-repair"
+            assert config["allow_quality_repair"] is False
+            assert "frozen_grader_file" not in config
+            assert "independent_repair_file" not in config
+            assert "review_observation_directories" not in config
+            assert not any(key.startswith("resume_") for key in config)
+            assert config["materialization_directory"].endswith("/materialization-repair")
+            if failure == "construction-repair-failed":
+                return {"status": "grader_blocked", "final_controls_passed": False}
         if failure == "early-repair-grading":
             assert config["allow_quality_repair"] is False
             return {"status": "public_question_defect", "final_controls_passed": False}
@@ -270,7 +300,10 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
     async def specify(config, *, root, **kwargs):
         assert config["reasoning_effort"] == "high"
         if config.get("specification_review"):
-            revise = failure == "early-repair-grading" and root.name == "specification-review"
+            revise = (
+                failure in {"early-repair-grading", "early-repair-construction"}
+                and root.name == "specification-review"
+            )
             m.write(
                 root / "specification-review.json",
                 {
@@ -378,6 +411,14 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         )
 
     monkeypatch.setattr(m, "seal_materialization", seal_materialization)
+    if failure and failure.startswith("construction-repair"):
+        import construction_repair
+
+        monkeypatch.setattr(
+            construction_repair,
+            "repair_context",
+            lambda *args: {"fixture": "unchanged original worker feedback"},
+        )
     if failure and failure.startswith(("question", "independent-repair")):
         import question_repair
 
@@ -435,6 +476,14 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         return copytree(source, target)
 
     monkeypatch.setattr(m.shutil, "copytree", isolated_copy)
+    rmtree = m.shutil.rmtree
+
+    def isolated_remove(path, *args, **kwargs):
+        if str(path).startswith("/work/"):
+            path = tmp_path / "work" / str(path).removeprefix("/work/")
+        return rmtree(path, *args, **kwargs)
+
+    monkeypatch.setattr(m.shutil, "rmtree", isolated_remove)
     copyfile = m.shutil.copyfile
 
     def isolated_file(source, target, **kwargs):
@@ -485,11 +534,16 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             "independent-repair-blocked": "rejected",
             "independent-repair-failed": "rejected",
             "early-repair-grading": "rejected",
+            "construction-repair": "validated",
+            "construction-repair-blocked": "rejected",
+            "construction-repair-failed": "rejected",
+            "construction-repair-used": "rejected",
+            "early-repair-construction": "rejected",
         }[failure]
     )
     if failure in {"blocked", "infrastructure"}:
         assert called == ["prepare"]
-    elif failure == "early-repair-grading":
+    elif failure in {"early-repair-grading", "early-repair-construction"}:
         assert called == [
             "prepare",
             "run_reference_setup.py",
@@ -505,6 +559,24 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         assert not (tmp_path / "run/comparison-repair").exists()
         assert receipt["daytona_reserved_usd"] == 4
         assert receipt["rejection"]["stage"] == "grading"
+        assert not (tmp_path / "run/construction-repair-input.json").exists()
+    elif failure and failure.startswith("construction-repair"):
+        completed = failure == "construction-repair"
+        assert receipt["daytona_reserved_usd"] == (5 if completed else 4)
+        assert called.count("specify") == 1
+        assert called.count("run_notebook_grader.py") == (
+            2 if failure.endswith("used") else 3 if failure.endswith("blocked") else 4
+        )
+        if failure.endswith("used"):
+            assert "quality_repair" not in receipt
+        else:
+            assert receipt["quality_repair"]["kind"] == "generated_construction"
+            assert receipt["quality_repair"]["allowance_consumed"] is True
+        assert not (tmp_path / "run/comparison-repair-input.json").exists()
+        assert (tmp_path / "run/materialization/candidate.json").exists()
+        if completed:
+            assert receipt["effective_materialization"] == "run/materialization-repair"
+            assert receipt["effective_grading"] == "run/grading-construction-repair"
     elif failure and failure.startswith(("question", "independent-repair")):
         assert called.count("specify") == (1 if failure == "question-used" else 2)
         assert called.count("run_notebook_grader.py") == (
