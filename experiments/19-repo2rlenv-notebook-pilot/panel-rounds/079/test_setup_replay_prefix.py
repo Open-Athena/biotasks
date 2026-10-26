@@ -12,6 +12,37 @@ module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 
 
+@pytest.mark.parametrize(
+    "upper, retained",
+    [("0.139", "0.25"), ("0.15", "0.25"), ("0.150001", "0.50"), ("0.611", "0.75")],
+)
+def test_closed_hold_refinement_adds_margin_and_rounds_up(upper, retained):
+    row = {
+        "state": "terminal_known_sdk_prefix_closed_lifetimes_reconciled",
+        "ceiling_usd": "1.00",
+    }
+    assert module.retained_hold(row, 4, Decimal(upper), refine=True) == (
+        Decimal(1),
+        Decimal(retained),
+    )
+
+
+@pytest.mark.parametrize(
+    "state,hold,upper",
+    [
+        ("reserved_not_submitted", "5.00", "0.10"),
+        ("running", "1.00", "0.10"),
+        ("terminal_known_sdk_prefix_closed_lifetimes_refined", "0.50", "0.10"),
+        ("terminal_known_sdk_prefix_closed_lifetimes_reconciled", "5.00", "0.10"),
+        ("terminal_known_sdk_prefix_closed_lifetimes_reconciled", "1.00", "0"),
+        ("terminal_known_sdk_prefix_closed_lifetimes_reconciled", "1.00", "0.90"),
+    ],
+)
+def test_refinement_rejects_live_duplicate_or_insufficiently_bounded_holds(state, hold, upper):
+    with pytest.raises(AssertionError):
+        module.retained_hold({"state": state, "ceiling_usd": hold}, 4, Decimal(upper), refine=True)
+
+
 def evidence():
     pipeline = {
         "status": "infrastructure_failed",

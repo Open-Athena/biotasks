@@ -6,7 +6,7 @@ import json
 import sys
 import tarfile
 from datetime import UTC, datetime
-from decimal import Decimal
+from decimal import ROUND_CEILING, Decimal
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "070"))
@@ -103,6 +103,26 @@ def digest(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
+def retained_hold(row, prior_hold, upper, *, refine=False):
+    """Refine only closed, independently re-audited SDK lifetimes.
+
+    The original full reservation remains mandatory for every new campaign.
+    Refinement uses the existing research convention: add ten cents, then
+    round upward to a quarter dollar, after the two 300-second clock margins.
+    """
+    if refine:
+        assert row["state"] == "terminal_known_sdk_prefix_closed_lifetimes_reconciled"
+        assert row["ceiling_usd"] == "1.00"
+        assert Decimal(0) < upper < Decimal(1)
+        retained = ((upper + Decimal("0.10")) / Decimal("0.25")).to_integral_value(
+            rounding=ROUND_CEILING
+        ) * Decimal("0.25")
+        assert Decimal(0) < retained < Decimal(1)
+        return Decimal(1), retained
+    assert row["ceiling_usd"] == f"{prior_hold:.2f}"
+    return Decimal(prior_hold), Decimal(1)
+
+
 def audit(pipeline, sources, claims, sessions, clean, *, profile="setup_replay"):
     folders, names, expected_sources = profile_config(profile)
     assert sources == expected_sources
@@ -183,6 +203,11 @@ def main():
     p.add_argument("--ledger", type=Path, required=True)
     p.add_argument("--proof", type=Path, required=True)
     p.add_argument("--apply", action="store_true")
+    p.add_argument(
+        "--refine-existing",
+        action="store_true",
+        help="Re-audit an already closed1USD hold; round its bound plus0.10USD upward to0.25USD",
+    )
     p.add_argument(
         "--profile",
         choices=[
@@ -325,19 +350,24 @@ def main():
     )
     native_unused = a.profile == "current_native_preparation_failure"
     prior_hold = len(folders) + int(native_unused)
-    assert row["ceiling_usd"] == f"{prior_hold:.2f}"
-    assert row["state"] == (
-        "terminal_native_preparation_failure_full_reservation_held"
-        if native_unused
-        else "unused_stage_allowances_released_used_holds_unchanged"
-    )
+    previous, retained = retained_hold(row, prior_hold, upper, refine=a.refine_existing)
+    if not a.refine_existing:
+        assert row["state"] == (
+            "terminal_native_preparation_failure_full_reservation_held"
+            if native_unused
+            else "unused_stage_allowances_released_used_holds_unchanged"
+        )
     row.update(
-        ceiling_usd="1.00",
-        state="terminal_known_sdk_prefix_closed_lifetimes_reconciled",
-        reconciliation="All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Retain1USD; no invoices or credits assumed. See "
+        ceiling_usd=f"{retained:.2f}",
+        state="terminal_known_sdk_prefix_closed_lifetimes_refined"
+        if a.refine_existing
+        else "terminal_known_sdk_prefix_closed_lifetimes_reconciled",
+        reconciliation="All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. "
+        + ("Add0.10USD and round upward to0.25USD; " if a.refine_existing else "Retain1USD; ")
+        + "no invoices or credits assumed. See "
         + a.proof.relative_to(a.ledger.parent).as_posix(),
     )
-    released = Decimal(prior_hold - 1)
+    released = previous - retained
     ledger.update(
         reserved_upper_bound_usd=f"{held - released:.2f}",
         unallocated_usd=f"{Decimal(ledger['ceiling_before_credits']) - held + released:.2f}",
@@ -363,7 +393,11 @@ def main():
         resource_upper_bound_usd=str(upper),
         records=records,
         native_preparation_non_dispatch=native_preparation,
-        retained_usd="1.00",
+        retained_usd=f"{retained:.2f}",
+        previous_hold_usd=f"{previous:.2f}",
+        refinement=a.refine_existing,
+        additional_margin_usd="0.10" if a.refine_existing else None,
+        rounding="upward_to_0.25USD" if a.refine_existing else None,
         released_usd=f"{released:.2f}",
         aggregate_held_usd=ledger["reserved_upper_bound_usd"],
         unallocated_usd=ledger["unallocated_usd"],
