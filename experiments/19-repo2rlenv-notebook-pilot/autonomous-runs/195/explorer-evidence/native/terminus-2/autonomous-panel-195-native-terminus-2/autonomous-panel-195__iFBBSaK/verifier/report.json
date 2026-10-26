@@ -1,0 +1,35 @@
+{
+  "passed": false,
+  "checks": [
+    {
+      "id": "files_present",
+      "passed": true,
+      "message": "all five declared output files present and non-empty"
+    },
+    {
+      "id": "processed_spectra_library",
+      "passed": false,
+      "message": "spectrum 0 metadata field set differs (missing: adduct; unexpected: none)"
+    },
+    {
+      "id": "cosine_greedy_matrices",
+      "passed": true,
+      "message": "CosineGreedy_score and CosineGreedy_matches match the reference (1267 x 1267; scores within 1e-08 absolute, match counts exact)"
+    },
+    {
+      "id": "modified_cosine_matrices",
+      "passed": false,
+      "message": "ModifiedCosine_score matrix is not symmetric (max |M - M.T| exceeds 1e-08)"
+    },
+    {
+      "id": "spectrum_metadata_table",
+      "passed": false,
+      "message": "row 0 compound_name differs from the reference"
+    },
+    {
+      "id": "ranked_matches_spectrum97",
+      "passed": true,
+      "message": "all 10 ranked matches match the reference (identifiers exact, score within 1e-08, match counts exact) and are consistent with the submitted modified-cosine matrices and metadata table"
+    }
+  ]
+}
