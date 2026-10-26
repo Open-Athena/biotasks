@@ -5153,3 +5153,7 @@ Reserve1USD for a synthetic provider control-budget check, freezing9relevant sou
 ### 2026-10-26 — Real-provider mandatory-control boundary validated
 
 Three synthetic cases pass on one offline4CPU/8GiB/10GiBsandbox: pre-dispatch isolation refusal, ordinary isolation/restoration, then deliberately injected budget exhaustion after a real completed command with no restoration/later command. Six exact returned completion receipts corroborate the sequence.13.096secondswork+cleanup; original deletion and freshID/owner absence independently verified. No model/biology/natural-stall reproduction. Retain full1USDsynthetic hold;197held/3unallocated.195stilluses its earlier frozen229runtime; scientific adoption of this fix remains unproven.
+
+### 2026-10-26 — Recheck the full fixed-round input and evidence bindings
+
+A generic experiment auditor reads the panel configuration, verifies all ten exact private frozen input archives against their 224-file runtime/source maps and submission manifests, binds each original pipeline/readback/root/cleanup record, and recomputes7generated-candidate rejections/1source-fidelity rejection/2infrastructure failures/0qualified. No provider/model/science call or repeat biology readback. This checks the full stated round rather than inferring completeness from individual summaries; readiness remains unproven.
