@@ -17,6 +17,7 @@ from reference_setup import (
     TEST_TOOL,
     PreparedReference,
     SetupBudgetExceeded,
+    SetupControlBudgetExceeded,
     SetupOutcome,
     SetupSession,
     direct_source_invocation,
@@ -226,6 +227,61 @@ def test_workspace_controls_use_existing_cumulative_setup_budget(tmp_path, monke
         assert json.loads(await s.test_reference())["status"] == "reference_executed"
         assert s.setup_remaining == before - 6
         assert s.tests == 1
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize("control", ["isolation", "restoration"])
+def test_exhausted_workspace_control_terminates_without_uncertain_dispatch(tmp_path, control):
+    async def run():
+        remote = FakeRemote()
+        s = session(tmp_path, remote)
+        await s.initialize()
+        # Consume the allowance immediately before the mandatory control:
+        # reset before isolation, or a known completed build before restoration.
+        original = remote.command
+
+        async def exhaust(argv, seconds, label, **kwargs):
+            reply = await original(argv, seconds, label, **kwargs)
+            if label.startswith("reset-env-" if control == "isolation" else "setup-"):
+                s.setup_remaining = 0
+            return reply
+
+        remote.command = exhaust
+        with pytest.raises(SetupControlBudgetExceeded) as error:
+            await s.test_reference()
+        assert error.value.control == control
+        assert not remote.uncertain
+        assert s.setup_remaining <= 0 and s.tests == 0 and s.last_pass is None
+        assert not any(label.startswith("reference-") for label, _, _ in remote.events)
+        assert not any(label.startswith("workspace-restore-") for label, _, _ in remote.events)
+        isolation = json.loads((tmp_path / "trials/1/workspace-isolation.json").read_text())
+        assert isolation["state"] == control + "_not_dispatched_budget_exhausted"
+        result = json.loads((tmp_path / "trials/1/result.json").read_text())
+        assert result["status"] == "setup_budget_exhausted"
+        assert result["mandatory_control"] == control
+        # No request can resume the isolated workspace: the terminal exception
+        # escapes the worker tool handler for the runner to export and clean up.
+        assert bool(remote.isolated_workspaces) == (control == "restoration")
+
+    asyncio.run(run())
+
+
+def test_cancelled_stage_preserves_cancellation_when_restoration_has_no_budget(tmp_path):
+    async def run():
+        remote = FakeRemote()
+        s = session(tmp_path, remote)
+        directory = tmp_path / "cancelled"
+        directory.mkdir()
+        with pytest.raises(asyncio.CancelledError):
+            async with s.isolated_authoring_workspace(directory):
+                s.setup_remaining = 0
+                raise asyncio.CancelledError()
+        assert not remote.uncertain
+        record = json.loads((directory / "workspace-isolation.json").read_text())
+        assert record["state"] == "restoration_not_dispatched_budget_exhausted"
+        assert record["build_error_type"] == "CancelledError"
+        assert record["restore_error_type"] == "SetupBudgetExceeded"
 
     asyncio.run(run())
 
@@ -1151,6 +1207,61 @@ def test_upstream_worker_uses_extra_test_tool_and_validates_submission(tmp_path)
     asyncio.run(exercise())
 
 
+def test_workspace_budget_termination_does_not_make_another_model_or_tool_call(tmp_path):
+    async def exercise():
+        s = session(tmp_path / "setup")
+        await s.initialize()
+        original = s.remote.command
+
+        async def exhaust(argv, seconds, label, **kwargs):
+            reply = await original(argv, seconds, label, **kwargs)
+            if label.startswith("setup-"):
+                s.setup_remaining = 0
+            return reply
+
+        s.remote.command = exhaust
+        calls = []
+
+        async def complete(payload):
+            calls.append(payload)
+            assert len(calls) == 1, "A terminal controller boundary must not restart the model"
+            return response("test_reference", {}, 1)
+
+        ledger = RequestLedger(tmp_path / "requests.sqlite", {"setup": Allowance(None, None)})
+        with pytest.raises(SetupControlBudgetExceeded, match="restoration"):
+            await stage(
+                schema=SetupOutcome,
+                name="setup",
+                prompt_name="notebook-reference-setup",
+                context={"paths": {}},
+                root=tmp_path / "worker",
+                ledger=ledger,
+                budget=AuthorBudget(
+                    RunBudget(BudgetLedger(tmp_path / "cost.sqlite", limit_usd="1"), "setup", "1"),
+                    tmp_path / "charges",
+                    "setup",
+                ),
+                complete=complete,
+                deadline=time.time() + 60,
+                limits=ChatLimits(reasoning_effort="high"),
+                max_requests=None,
+                validate=s.validate_outcome,
+                recover_output_limit=False,
+                shell=s.shell,
+                extra_tools=[TEST_TOOL],
+                extra_handlers={"test_reference": s.test_reference},
+            )
+        assert len(calls) == 1 and s.tests == 0
+        assert s.remote.events[-1][0].startswith("setup-")
+        assert not s.remote.uncertain
+        operation = json.loads((tmp_path / "worker/artifact-stage/operation.json").read_text())
+        assert operation["status"] == "incomplete"
+        assert "SetupControlBudgetExceeded" in operation["error"]
+        assert not (tmp_path / "worker/artifact-stage/artifact.json").exists()
+
+    asyncio.run(exercise())
+
+
 def test_uncertain_remote_command_closes_tools_instead_of_retrying(tmp_path):
     from types import SimpleNamespace
 
@@ -1201,7 +1312,7 @@ def test_failed_offline_policy_prevents_analysis(tmp_path):
 
 @pytest.mark.parametrize("transport", ["blocking", "async_session"])
 @pytest.mark.parametrize("export_failure", [False, True])
-@pytest.mark.parametrize("blocked_reason", [None, "budget", "uncertain"])
+@pytest.mark.parametrize("blocked_reason", [None, "budget", "uncertain", "control_budget"])
 def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
     tmp_path, monkeypatch, export_failure, blocked_reason, transport
 ):
@@ -1265,6 +1376,9 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
         ]
         if blocked_reason:
             session = kwargs["validate"].__self__
+            if blocked_reason == "control_budget":
+                session.setup_remaining = -0.5
+                raise runner.SetupControlBudgetExceeded("restoration")
             if blocked_reason == "budget":
                 session.setup_remaining = -30.18
             else:
@@ -1291,12 +1405,16 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
         "command_transport": transport,
     }
     error = (
-        runner.SetupBudgetExceeded
+        runner.SetupControlBudgetExceeded
+        if blocked_reason == "control_budget" and not export_failure
+        else runner.SetupBudgetExceeded
         if blocked_reason == "budget" and not export_failure
         else RuntimeError
     )
     message = (
-        "before any controlled reference dispatch"
+        "authoring-workspace restoration"
+        if blocked_reason == "control_budget" and not export_failure
+        else "before any controlled reference dispatch"
         if blocked_reason == "budget" and not export_failure
         else "uncertain remote state"
         if blocked_reason == "uncertain" and not export_failure
@@ -1332,3 +1450,10 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
         assert result["incomplete_reason"] == "remote_state_uncertain"
         assert result["error_type"] == "RuntimeError"
         assert json.loads((tmp_path / "run/outcome.json").read_text())["disposition"] == "blocked"
+    if blocked_reason == "control_budget":
+        assert result["incomplete_reason"] == "setup_budget_exhausted_during_workspace_control"
+        assert result["error_type"] == "SetupControlBudgetExceeded"
+        assert result["mandatory_control"] == "restoration"
+        assert result["reference_tests"] == 0
+        assert result["setup_seconds_remaining"] == -0.5
+        assert not (tmp_path / "run/outcome.json").exists()

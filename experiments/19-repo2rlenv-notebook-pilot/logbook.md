@@ -5135,3 +5135,15 @@ Plan explicit229-file candidate versus old224:5added/12changed runtime paths, no
 ### 2026-10-26 — Prefer unchanged artifact copies at serialization boundaries
 
 General construction prompt now defaults to byte copies when an export already fits the requested schema; necessary conversions must inspect the actual serialized representation and preserve entity correspondence, multiplicity, missingness and precision. This follows the existing187read-only identifier audit without naming a biological method, package or identifier value. Additional eligible source endpoints still require faithful recovery. No task/source edits, extra stage/repair/test allowance or weaker comparison. Prompt behavior is not guaranteed; no live adoption yet, and194/195 remain frozen unchanged.
+
+### 2026-10-26 — Complete fixed-round evidence; Sgkit setup lifecycle failure
+
+194 ended infrastructure_failed/RuntimeError in setup,0scientificreference dispatches. Last build completed with verified163-second timeout; required authoring-workspace restoration could not dispatch under exhausted setup allowance. Controller marked uncertain and the next worker call failed its guard. Hash-bound exact sequence retained, no command replay.858sciencefiles/32,464,745bytes and21rootfiles/988,443bytes verified; original/fresh one-owner/exactIDabsence.39.76minutes/91requests. No broken-source claim, original redistribution hold preserved.
+
+Only4undispatched stage allowances released; retain full1USDusedsetuphold.196USDheld/4USDunallocated under200authorized. Fixed224round now10/10audited:7generated-candidate rejections,1corroborated source-fidelity rejection,2infrastructure failures,0qualifiedtasks. This does not establish readiness. New229Matchms195remains separate and running.
+
+### 2026-10-26 — Stop known setup-control budget exhaustion without resuming authoring
+
+Add a typed terminal boundary for mandatory isolation/restoration refused before dispatch because cumulative setup allowance is exhausted. Do not turn known completion into command uncertainty or return to GLM in an isolated workspace. Record actual counters/control, keep infrastructure incomplete (no source-fitness claim), export and clean up through unchanged paths. Real uncertain operations still fail closed; cancellation remains primary. No extra budget/time/stage/test/repair.
+
+224affected+234projectchecks/Ruff/ty/precommit pass;34.73s/162248KiBRSS. Initial isolation fixture stopped at earlier reset; preserved failure and corrected trigger, focused101pass. Actual upstream author fixture confirms one mock model request, no further tool/model call or accepted artifact. Original194payload/source audit proves Remote/control commands/setup charging/capture/validation and final export/SDKcleanup AST unchanged. No provider/model/biology, no live adoption;195 remains frozen.

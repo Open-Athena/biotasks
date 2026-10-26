@@ -27,6 +27,18 @@ class SetupBudgetExceeded(TimeoutError):
     """The tool was refused before dispatch because setup time is exhausted."""
 
 
+class SetupControlBudgetExceeded(SetupBudgetExceeded):
+    """A mandatory workspace control cannot dispatch; terminate the stage."""
+
+    def __init__(self, control):
+        self.control = control
+        super().__init__(
+            "Setup allowance exhausted before authoring-workspace "
+            + control
+            + "; terminate the stage and clean up without further worker calls."
+        )
+
+
 def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -476,6 +488,16 @@ class SetupSession:
             )
             if hidden != {"state": "isolated", "workspace": "/work/setup"}:
                 raise RuntimeError("Authoring-workspace isolation was not established")
+        except SetupBudgetExceeded as error:
+            # The control was refused before dispatch. This is not an unknown
+            # command outcome, but no more worker calls may proceed here.
+            record.update(
+                state="isolation_not_dispatched_budget_exhausted",
+                error_type=type(error).__name__,
+                finished=time.time(),
+            )
+            save_record(path, record)
+            raise SetupControlBudgetExceeded("isolation") from error
         except BaseException as error:
             self.remote.uncertain = True
             record.update(error_type=type(error).__name__, finished=time.time())
@@ -514,6 +536,17 @@ class SetupSession:
                                 "Authoring-workspace restoration was not established"
                             )
                         record.update(state="restored", restoration=restored)
+                    except SetupBudgetExceeded as error:
+                        record.update(
+                            state="restoration_not_dispatched_budget_exhausted",
+                            restore_error_type=type(error).__name__,
+                        )
+                        # A known completed build does not become uncertain
+                        # because restoration lacked budget. The workspace is
+                        # still isolated: stop the stage, never resume authoring.
+                        # Preserve cancellation/system-exit as the primary error.
+                        if primary is None or isinstance(primary, Exception):
+                            raise SetupControlBudgetExceeded("restoration") from error
                     except BaseException as error:
                         self.remote.uncertain = True
                         record.update(
@@ -779,6 +812,13 @@ class SetupSession:
                         save_record(directory / "runtime-export-repair.json", repair)
                     return json.dumps({**record, "runtime_export_repair": repair})
             return json.dumps(record)
+        except SetupControlBudgetExceeded as exc:
+            record.update(
+                status="setup_budget_exhausted",
+                error=str(exc),
+                mandatory_control=exc.control,
+            )
+            raise
         except SetupBudgetExceeded as exc:
             record.update(status="setup_budget_exhausted", error=str(exc))
             return json.dumps(record)

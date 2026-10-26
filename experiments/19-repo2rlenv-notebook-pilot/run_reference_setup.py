@@ -25,6 +25,7 @@ from reference_setup import (
     TEST_TOOL,
     PreparedReference,
     SetupBudgetExceeded,
+    SetupControlBudgetExceeded,
     SetupOutcome,
     SetupSession,
 )
@@ -551,6 +552,7 @@ async def run(
     }
     provider = provider or Daytona()
     client = None
+    session = None
     owner = config["campaign"]
     created, creation_started = False, False
     work_deadline = (
@@ -769,6 +771,17 @@ async def run(
                     )
     except BaseException as error:
         result.update(status="incomplete", error_type=type(error).__name__)
+        if isinstance(error, SetupControlBudgetExceeded):
+            result.update(
+                incomplete_reason="setup_budget_exhausted_during_workspace_control",
+                mandatory_control=error.control,
+            )
+            if isinstance(session, SetupSession):
+                result.update(
+                    reference_tests=session.tests,
+                    reference_test_requests=session.test_requests,
+                    setup_seconds_remaining=session.setup_remaining,
+                )
         raise
     finally:
         try:
