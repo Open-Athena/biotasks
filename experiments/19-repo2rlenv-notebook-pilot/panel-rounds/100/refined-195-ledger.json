@@ -1,0 +1,1527 @@
+{
+  "currency": "USD",
+  "ceiling_before_credits": "200.00",
+  "authorization_date": "2026-10-13",
+  "basis": "User authorized $100 total, then explicitly authorized $100 more on2026-10-23; aggregate authorization is$200 before credits. Routine approved-scope recovery/retries do not require repeated approval.",
+  "reserved_upper_bound_usd": "194.00",
+  "unallocated_usd": "6.00",
+  "reservations": [
+    {
+      "scope": "original pilot 001",
+      "ceiling_usd": "1.00"
+    },
+    {
+      "scope": "replacement slots 1 through 10, including read-only recovery allocations",
+      "ceiling_usd": "10.75",
+      "reconciliation": "Three preflight-only terminal slots 002/004/005 retained at $1 each after original hash-bound resource/lifecycle receipts and fresh sandbox-ID/campaign-label absence checks; other five sandbox-using slots remain $2 each. Read-only 003/007 remain zero. See budget-reconciliation-simple-legacy-slots.json and the previous 20261021 reconciliation. Not an invoice. Further original-receipt/fresh-absence audit retains$0.25 for each preflight-only slot002/004/005 using enclosing host time plus$0.10 rounded upward in$0.25 increments; releases$2.25 more. See budget-reconciliation-preflight-rounding.json. No invoice or assumed free credits."
+    },
+    {
+      "scope": "additional campaign 012 and recovery worker 013 combined",
+      "ceiling_usd": "2.00",
+      "reconciliation": "Original hash-verified preflight/native resource receipts, shared absolute deadline and historical cleanup reconciliation checked; seven fresh ownership queries found no sandbox. Original failed cleanup remains preserved. Retain historical storage/rounding margin; see budget-reconciliation-original-012-013.json. Not a measured invoice."
+    },
+    {
+      "scope": "contract-repair campaign 014",
+      "ceiling_usd": "3.00",
+      "reconciliation": "Includes continuations 014, 015, 016 under the original absolute deadline. Original hash-bound resource/cleanup receipts and fifteen fresh ownership queries verified. Retain historical storage/rounding margin; see budget-reconciliation-legacy-014-018.json. Not a measured invoice."
+    },
+    {
+      "scope": "schema-contract campaign 017",
+      "ceiling_usd": "2.00",
+      "reconciliation": "Includes continuations 017, 018 under the original absolute deadline. Original hash-bound resource/cleanup receipts and fifteen fresh ownership queries verified. Retain historical storage/rounding margin; see budget-reconciliation-legacy-014-018.json. Not a measured invoice."
+    },
+    {
+      "scope": "post-review coercion campaign 019",
+      "ceiling_usd": "2.00",
+      "reconciliation": "Terminal original 019 and recovery 020 shared one absolute deadline; both report cleanup verified. Retain $2 against bounded sequential CPU sandbox execution and four fresh native trials. See budget-reconciliation-radiomics018.json. No free credits or measured invoice inferred."
+    },
+    {
+      "scope": "post-review validation campaign 021",
+      "ceiling_usd": "2.00",
+      "reconciliation": "Includes completed continuation 022 within the original absolute deadline. Original hashes/resource flags and all cleanup verified; seven fresh ownership queries found no sandbox. Retain historical storage/rounding margin; see budget-reconciliation-postreview-021-022.json. Not an invoice or free-credit claim."
+    },
+    {
+      "scope": "artifact-reference-001: full-source plain-script reference gate",
+      "ceiling_usd": "1.00",
+      "reconciliation": "Terminal single-sandbox 4 CPU/8 GiB/10 GiB run; controlled two-hour plus cleanup lifetime and cleanup receipts support the existing $1 running-resource bound. See budget-reconciliation-20261021.json."
+    },
+    {
+      "scope": "artifact-reference-002: bounded output recovery and host export integration",
+      "ceiling_usd": "0.00",
+      "reconciliation": "Released $5: reference-runs/002/summary.json records generated_setup_executed=false, scientific_computation_executed=false, cleanup_verified=true; preparation/review and artifact recovery did not provision a task sandbox."
+    },
+    {
+      "scope": "artifact-reference-003: explicit review defect schema and scientific-data exports",
+      "ceiling_usd": "1.00",
+      "reconciliation": "Terminal single-sandbox 4 CPU/8 GiB/10 GiB run; controlled two-hour plus cleanup lifetime and cleanup receipts support the existing $1 running-resource bound. See budget-reconciliation-20261021.json."
+    },
+    {
+      "scope": "artifact-reference-setup-001: tool-enabled setup and offline reference tests",
+      "ceiling_usd": "1.00",
+      "reconciliation": "Terminal single-sandbox 4 CPU/8 GiB/10 GiB run; controlled two-hour plus cleanup lifetime and cleanup receipts support the existing $1 running-resource bound. See budget-reconciliation-20261021.json."
+    },
+    {
+      "scope": "artifact-reference-replay-001: two programmatic frozen reference repeats, no model calls",
+      "ceiling_usd": "1.00",
+      "reconciliation": "Two repeats shared one rebuilt environment/sandbox, completed in under eight minutes; cleanup verified and independent ownership inventory empty. Retain $1, not the former $2 hold. See budget-reconciliation-development020.json."
+    },
+    {
+      "scope": "artifact-grading-001: GLM grader, independent controls and optional repair; no solver",
+      "ceiling_usd": "0.75",
+      "reconciliation": "budget-reconciliation-legacy-grading001.json",
+      "state": "terminal_reconciled"
+    },
+    {
+      "scope": "artifact-materialization-001: GLM input projection and isolated oracle execution",
+      "ceiling_usd": "0.50",
+      "reconciliation": "budget-reconciliation-materialization001-002-rounding.json",
+      "state": "terminal_reconciled"
+    },
+    {
+      "scope": "artifact-materialization-002: retry with explicit foreground shell semantics and stage boundaries",
+      "ceiling_usd": "0.25",
+      "reconciliation": "budget-reconciliation-materialization001-002-rounding.json",
+      "state": "terminal_reconciled"
+    },
+    {
+      "scope": "artifact-materialization-003: focused stage inputs and correctable tool argument errors",
+      "ceiling_usd": "0.50",
+      "reconciliation": "budget-reconciliation-materialization003-004-rounding.json",
+      "state": "terminal_reconciled"
+    },
+    {
+      "scope": "artifact-materialization-004: schema-response finalization of unchanged captured GLM draft, with controlled execution feedback",
+      "ceiling_usd": "0.25",
+      "reconciliation": "budget-reconciliation-materialization003-004-rounding.json",
+      "state": "terminal_reconciled"
+    },
+    {
+      "scope": "artifact-materialization-005: finalization retry after client timeout, longer authoring request wait within unchanged campaign deadline",
+      "ceiling_usd": "1.00",
+      "reconciliation": "Released $1 using verified one-sandbox cleanup, full pre-creation-to-provider-absence duration and published resource rates; see budget-reconciliation-20261019.json."
+    },
+    {
+      "scope": "artifact-materialization-006: submit/revise-only finalization, no exploratory shell",
+      "ceiling_usd": "0.25",
+      "state": "terminal_reconciled",
+      "reconciliation": "budget-reconciliation-materialization006-rounding.json"
+    },
+    {
+      "scope": "artifact-grading-002: independent implementation, numerical calibration, deterministic grader, probes, review and optional repair for materialization 006",
+      "ceiling_usd": "0.75",
+      "state": "terminal_reconciled",
+      "reconciliation": "budget-reconciliation-legacy-grading-rounding-20261023.json"
+    },
+    {
+      "scope": "artifact-grading-003: reexecute saved independent solution and grader controls, finish separate probes/review and optional GLM repair",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "reconciliation": "budget-reconciliation-legacy-grading-rounding-20261023.json"
+    },
+    {
+      "scope": "artifact-grading-004: reuse submitted solution/grader with narrowed, raw-input-isolated probe authoring, review and GLM repair",
+      "ceiling_usd": "1.00"
+    },
+    {
+      "scope": "artifact-grading-005: reuse submitted independent solution, grader and frozen probes; reexecute controls and finish GLM review/repair",
+      "ceiling_usd": "0.75",
+      "state": "terminal_reconciled",
+      "reconciliation": "budget-reconciliation-legacy-grading-rounding-20261023.json"
+    },
+    {
+      "scope": "artifact-grading-006: GLM prose-only contract correction with unchanged executable grader and probes, fresh controls and review",
+      "ceiling_usd": "0.25",
+      "state": "terminal_reconciled",
+      "reconciliation": "budget-reconciliation-legacy-grading-rounding-20261023.json"
+    },
+    {
+      "scope": "artifact-native-001 and replacement 002: Harbor oracle/no-op controls and one blind GLM solver attempt",
+      "ceiling_usd": "1.00",
+      "reconciliation": "001 failed before supervisor/sandbox creation with zero model calls; 002 uses the same unused $1 allocation. See native-runs/001."
+    },
+    {
+      "scope": "artifact-native-003: repeat native controls and first provider-accepted blind solver attempt after uncapped gateway fix",
+      "ceiling_usd": "1.00"
+    },
+    {
+      "scope": "autonomous campaigns 001 through 014, including native trials",
+      "ceiling_usd": "9.50",
+      "reconciliation": "budget-reconciliation-early-autonomous-20261023.json Additional exact original cleanup/time/fresh-absence audit releases $2 for002/007/008/012 only;011andnativeholdsunchanged. See budget-reconciliation-additional-early-nonnative-20261023.json. Original001nowretains0.25aftersealedlifecycle/currentterminal/cleanupverification;009/010/013remain1.00eachaftercheckedlongintervals. See budget-reconciliation-remaining-nonnative-20261023.json. Native011/014andallpreviousreconciliationsunchanged.",
+      "state": "terminal_partially_reconciled",
+      "basis": "Retain$1each for eleven unrefined campaigns plus$0.75/$0.25/$0.25 for original004/005/006 after exact archived receipt hashes, sequential stage evidence, authoritative terminal host intervals and fresh provider absence. No native hold or actual invoice claim changed."
+    },
+    {
+      "scope": "operator-assisted Bioframe transfer: setup 001, replay 001, materialization 001-005, grading 001-004, native 001",
+      "ceiling_usd": "5.75",
+      "reconciliation": "budget-reconciliation-bioframe-transfer-20261023.json",
+      "state": "terminal_partially_reconciled",
+      "basis": "Retain ten individually verified stage bounds plus$1each for unaudited materialization003andnative001. This releases only proven unused portions of the old$12group; no invoice/free-credit claim."
+    },
+    {
+      "scope": "additional notebook examples: autonomous-rmsd-015 and autonomous-fba-016",
+      "ceiling_usd": "2.00",
+      "reconciliation": "Both first attempts are terminal with verified empty provider inventories; retain $1 each against the existing 4 CPU/8 GiB/10 GiB sequential sandbox lifetime bound. Original records: autonomous-runs/015 and 016. Released $8 in conservative holds, not an invoice adjustment."
+    },
+    {
+      "scope": "autonomous-rmsd-017: fresh rerun after bounded empty-response recovery",
+      "ceiling_usd": "0.50",
+      "reconciliation": "budget-reconciliation-remaining-nonnative-20261023.json",
+      "state": "terminal_reconciled"
+    },
+    {
+      "scope": "autonomous-radiomics-018: original PyRadiomics seed through the current factory",
+      "ceiling_usd": "1.00",
+      "reconciliation": "Terminal host, single 4 CPU/8 GiB/10 GiB sandbox deleted and independently absent. Retain $1 against the established bounded lifetime/profile cost; see budget-reconciliation-development020.json. Original outcome remains infrastructure_failed."
+    },
+    {
+      "scope": "autonomous-pyhmmer-019: fresh profile-HMM notebook from the frozen development panel",
+      "ceiling_usd": "0.00",
+      "reconciliation": "Cancelled before handoff after scheduling allowance elapsed; terminal state and absence of any host task verified. No model or Daytona execution. Original placement failure preserved in autonomous-runs/019."
+    },
+    {
+      "scope": "autonomous-hrv-020: fresh NeuroKit notebook with general setup-inventory validation",
+      "ceiling_usd": "1.00",
+      "reconciliation": "Terminal after unstarted placement; peer reported job gone, and all owned sandbox labels independently absent. Retain $1 conservatively because no worker request ledger was recovered; do not claim a measured zero invoice. See autonomous-runs/020."
+    },
+    {
+      "scope": "autonomous-pyhmmer-021: replacement placement after unstarted 019 was cancelled",
+      "ceiling_usd": "0.25",
+      "reconciliation": "Original lifecycle interval and hash-bound CPU/resource configuration, original cleanup and fresh exact-owner absence verified. Full-profile enclosing time plus$0.10 rounded upward to$0.25; no native image builds. Not a measured invoice, zero-call claim or assumed credit. See panel-rounds/005/budget-reconciliation.json.",
+      "state": "terminal_reconciled"
+    },
+    {
+      "scope": "autonomous-pyhmmer-022: compact source-payload placement and fresh pipeline test",
+      "ceiling_usd": "0.25",
+      "reconciliation": "Original lifecycle interval and hash-bound CPU/resource configuration, original cleanup and fresh exact-owner absence verified. Full-profile enclosing time plus$0.10 rounded upward to$0.25; no native image builds. Not a measured invoice, zero-call claim or assumed credit. See panel-rounds/005/budget-reconciliation.json.",
+      "state": "terminal_reconciled"
+    },
+    {
+      "scope": "autonomous-pyhmmer-023: fresh retry after user requested current Iris availability check",
+      "ceiling_usd": "1.00",
+      "reconciliation": "Terminal host; all four sandbox-stage cleanup receipts passed and independent provider inventory found no owned sandboxes. Retain $1 using the established bounded sequential 4 CPU/8 GiB/10 GiB profile. Original transport failure in autonomous-runs/023; not a measured invoice."
+    },
+    {
+      "scope": "autonomous-pyhmmer-025: fresh original-seed run after the generic one-time generation-timeout retry fix",
+      "ceiling_usd": "1.00",
+      "reconciliation": "Terminal failed host; original download-checked resource/cleanup receipts all passed and fresh provider inventory found no owned sandboxes. No native trial started. Retain $1 for the bounded sequential CPU profile; original failure unchanged. See autonomous-runs/025/terminal-receipts and provider-cleanup.json. Not a measured invoice."
+    },
+    {
+      "scope": "autonomous-hrv-024: original NeuroKit development seed, same frozen factory as PyHMMER 025",
+      "ceiling_usd": "1.00",
+      "reconciliation": "Terminal failed host after recorded candidate rejection; all original download-checked cleanup/resource receipts passed, no native stage, fresh provider ownership inventory empty. Retain $1 for the bounded sequential CPU profile. Original archive timeout and scientific rejection remain separate; see autonomous-runs/024/terminal-receipts. Not a measured invoice."
+    },
+    {
+      "scope": "autonomous-deletions-041: original COBRApy deletions seed, frozen native-high development panel",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Hash-bound original whole-host lifecycle interval bounds sequential task sandbox runtime; successful original stage cleanup and fresh exact provider absence. Retain computed upper bound plus $0.10, rounded upward to $0.25. No native Harbor trial in this case. Not an actual invoice or free-credit claim; legacy/storage margins elsewhere unchanged. See factory-checks/terminal-resource-intervals/verification.json.",
+      "reconciliation": "Terminal successful host with explicit generated-candidate rejection; original resource/cleanup receipts hash-verified and all four exact ownership labels absent. No native trial. Retain $1 for bounded sequential CPU execution, not a measured invoice. See autonomous-runs/041/terminal-receipts."
+    },
+    {
+      "scope": "autonomous-psm-038: original Pyteomics filtering seed, same frozen native-high factory as 041",
+      "ceiling_usd": "1.00",
+      "state": "terminal_reconciled",
+      "reconciliation": "All original 4 CPU/8 GiB/10 GiB cleanup receipts verified and fresh provider queries empty. Retain $1 against bounded sequential execution, disk and rounding; not an invoice. See autonomous-runs/038/provider-cleanup.json and budget-reconciliation-terminal-035-038.json."
+    },
+    {
+      "scope": "autonomous-motifs-035: original Bioframe motif-to-peak notebook, same frozen native-high development factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_reconciled",
+      "reconciliation": "Hash-bound whole terminal host interval encloses sequential 4CPU/8GiB/10GiB sandbox runtime; no native/image-building trials; original cleanup and fresh exact-owner absence verified. Full profile cost plus $0.10 rounded upward to $0.25. Legacy/storage allowances elsewhere unchanged. See panel-rounds/001/budget-reconciliation.json. Not an invoice or assumed credits."
+    },
+    {
+      "scope": "autonomous-scanpy-clustering-034: original source, common frozen native-high development factory",
+      "ceiling_usd": "0.75",
+      "state": "terminal_reconciled",
+      "reconciliation": "Hash-bound whole terminal host interval encloses sequential 4CPU/8GiB/10GiB sandbox runtime; no native/image-building trials; original cleanup and fresh exact-owner absence verified. Full profile cost plus $0.10 rounded upward to $0.25. Legacy/storage allowances elsewhere unchanged. See panel-rounds/001/budget-reconciliation.json. Not an invoice or assumed credits."
+    },
+    {
+      "scope": "autonomous-rmsd-036: original source, common frozen native-high development factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_reconciled",
+      "reconciliation": "Hash-bound whole terminal host interval encloses sequential 4CPU/8GiB/10GiB sandbox runtime; no native/image-building trials; original cleanup and fresh exact-owner absence verified. Full profile cost plus $0.10 rounded upward to $0.25. Legacy/storage allowances elsewhere unchanged. See panel-rounds/001/budget-reconciliation.json. Not an invoice or assumed credits."
+    },
+    {
+      "scope": "autonomous-pyradiomics-brain-037: original source, common frozen native-high development factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_reconciled",
+      "reconciliation": "Hash-bound whole terminal host interval encloses sequential 4CPU/8GiB/10GiB sandbox runtime; no native/image-building trials; original cleanup and fresh exact-owner absence verified. Full profile cost plus $0.10 rounded upward to $0.25. Legacy/storage allowances elsewhere unchanged. See panel-rounds/001/budget-reconciliation.json. Not an invoice or assumed credits."
+    },
+    {
+      "scope": "autonomous-spectra-039: original matchms seed, common frozen native-high development factory",
+      "ceiling_usd": "0.75",
+      "state": "terminal_reconciled",
+      "reconciliation": "Original controller-recovered resource/cleanup receipts hash-verified against their download-checked diagnostic manifest; host terminal, no native stage, four exact provider owners absent. Bounded 4 CPU/8 GiB/10 GiB sequential lifecycle supports a retained $1 planning upper bound. Subsequently the whole-root archive manifest and 83 critical originals were independently retrieved/hash-verified. No scientific acceptance is claimed. Not a measured invoice. See budget-reconciliation-terminal-039-040.json.",
+      "basis": "Hash-bound original whole-host lifecycle interval bounds sequential task sandbox runtime; successful original stage cleanup and fresh exact provider absence. Retain computed upper bound plus $0.10, rounded upward to $0.25. No native Harbor trial in this case. Not an actual invoice or free-credit claim; legacy/storage margins elsewhere unchanged. See factory-checks/terminal-resource-intervals/verification.json."
+    },
+    {
+      "scope": "autonomous-hrv-040: original NeuroKit seed, common frozen native-high development factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Hash-bound original whole-host lifecycle interval bounds sequential task sandbox runtime; successful original stage cleanup and fresh exact provider absence. Retain computed upper bound plus $0.10, rounded upward to $0.25. No native Harbor trial in this case. Not an actual invoice or free-credit claim; legacy/storage margins elsewhere unchanged. See factory-checks/terminal-resource-intervals/verification.json.",
+      "reconciliation": "Original controller-recovered resource/cleanup receipts hash-verified against their download-checked diagnostic manifest; host terminal, no native stage, four exact provider owners absent. Bounded 4 CPU/8 GiB/10 GiB sequential lifecycle supports a retained $1 planning upper bound. Subsequently the whole-root archive manifest and 61 critical originals were independently retrieved/hash-verified. No scientific acceptance is claimed. Not a measured invoice. See budget-reconciliation-terminal-039-040.json."
+    },
+    {
+      "scope": "autonomous-relatedness-042: original SGKit seed, common frozen native-high development factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Hash-bound original whole-host lifecycle interval bounds sequential task sandbox runtime; successful original stage cleanup and fresh exact provider absence. Retain computed upper bound plus $0.10, rounded upward to $0.25. No native Harbor trial in this case. Not an actual invoice or free-credit claim; legacy/storage margins elsewhere unchanged. See factory-checks/terminal-resource-intervals/verification.json."
+    },
+    {
+      "scope": "autonomous-pyhmmer-043: original PyHMMER seed, common frozen native-high development factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Hash-bound original whole-host lifecycle interval bounds sequential task sandbox runtime; successful original stage cleanup and fresh exact provider absence. Retain computed upper bound plus $0.10, rounded upward to $0.25. No native Harbor trial in this case. Not an actual invoice or free-credit claim; legacy/storage margins elsewhere unchanged. See factory-checks/terminal-resource-intervals/verification.json."
+    },
+    {
+      "scope": "autonomous-pyhmmer-044: original PyHMMER source with the revised general factory, including controller-owned repair check inventory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_reconciled",
+      "basis": "All seven original stages complete, original stage/native cleanup passes and seven exact fresh ownership queries are empty. Retain the established $1 bound for the 4 CPU/8 GiB/10 GiB sequential two-hour-plus-cleanup profile, including native storage margin. Scientific acceptance returned, but release remains held for notices and the serialization-boundary follow-up. Not an actual invoice."
+    },
+    {
+      "scope": "autonomous-pyhmmer-045: unchanged original source with reviewed notices present before native validation",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Original terminal controller result, four original cleanup receipts and four fresh exact provider owners absent. Full-root manifest and 25 critical originals independently downloaded/hash-verified. No native execution or release acceptance. Retain the established $1 sequential profile bound, not an actual invoice or free-credit claim.",
+      "reconciliation": "Hash-bound whole terminal host interval encloses sequential 4CPU/8GiB/10GiB sandbox runtime; no native/image-building trials; original cleanup and fresh exact-owner absence verified. Full profile cost plus $0.10 rounded upward to $0.25. Legacy/storage allowances elsewhere unchanged. See panel-rounds/001/budget-reconciliation.json. Not an invoice or assumed credits."
+    },
+    {
+      "scope": "saved-artifact-diagnostic-001: one GLM-authored paired experiment against unchanged 044 reference and grader",
+      "ceiling_usd": "1.00",
+      "state": "terminal_reconciled",
+      "basis": "One GLM creation call and one offline oracle diagnostic completed. Original scientific grader unchanged; direct branch passes eight checks, stored branch fails only domain-hit c-Evalue. Hash-verified original artifacts and exact diagnostic task archive; host SUCCEEDED, original cleanup and fresh exact provider ownership query empty. Retain $1 conservatively; not an invoice. No benchmark regrade or release."
+    },
+    {
+      "scope": "autonomous-pyradiomics-brain-046: original 037 source after general dependency parser and contract fixes",
+      "ceiling_usd": "0.25",
+      "state": "terminal_reconciled",
+      "basis": "Original setup/replay cleanup receipts verify the 4 CPU/8 GiB/10 GiB resource profile; both fresh exact-owner queries are empty and the host is terminal FAILED after 455 seconds including archival. Retain conservative $1 sequential CPU/snapshot bound, releasing $4; not a measured invoice. Scientific reference ran in setup, but frozen setup replay failed before computation because Git was not declared. Original 046 remains infrastructure_failed.",
+      "reconciliation": "Hash-bound whole terminal host interval encloses sequential 4CPU/8GiB/10GiB sandbox runtime; no native/image-building trials; original cleanup and fresh exact-owner absence verified. Full profile cost plus $0.10 rounded upward to $0.25. Legacy/storage allowances elsewhere unchanged. See panel-rounds/001/budget-reconciliation.json. Not an invoice or assumed credits."
+    },
+    {
+      "scope": "autonomous-pyradiomics-brain-047: original source with general installer-declaration preflight",
+      "ceiling_usd": "1.00",
+      "state": "terminal_reconciled",
+      "basis": "Seven original cleanup receipts and seven fresh exact-owner queries verify absence; host SUCCEEDED after 22m14s. Exact task/native identity and 14 final controls independently checked from 122 original downloads. Retain established conservative $1 sequential CPU bound including storage margin; release $4. Not a measured invoice. Public release remains held for actual input terms and pre-native notices. The read-only archive host is KILLED."
+    },
+    {
+      "scope": "autonomous-bioframe-048: original full source with reviewed input identities and pre-native notices",
+      "ceiling_usd": "0.25",
+      "state": "terminal_rejected",
+      "basis": "Existing approved original Bioframe notebook and source-only metadata, GLM-5.3 high, CPU/offline/time/repair limits unchanged. Source/data terms reviewed separately; no legacy task design or scientific programs supplied. Reject any final input inventory outside the reviewed identities. Within original $100 aggregate authorization.",
+      "reconciliation": "Hash-bound whole terminal host interval encloses sequential 4CPU/8GiB/10GiB sandbox runtime; no native/image-building trials; original cleanup and fresh exact-owner absence verified. Full profile cost plus $0.10 rounded upward to $0.25. Legacy/storage allowances elsewhere unchanged. See panel-rounds/001/budget-reconciliation.json. Not an invoice or assumed credits."
+    },
+    {
+      "scope": "autonomous-bioframe-049: original full source, general parsing-fidelity check",
+      "ceiling_usd": "1.00",
+      "state": "terminal_native_profile_passed_publication_held",
+      "basis": "At most one 4-CPU/8-GiB/10-GiB sandbox for 7500 seconds at previously verified $0.332280/hour = $0.692250, plus $0.307750 storage/rounding margin. Internal stage-dispatch reservations do not describe simultaneous sandbox spend. See budget-reconciliation-20261021.json. Reserved Iris capacity, no GPU."
+    },
+    {
+      "scope": "autonomous-rmsd-050: unchanged original source with frozen simulation-input notices",
+      "ceiling_usd": "0.25",
+      "state": "terminal_rejected_repair_blocked",
+      "basis": "At most one 4-CPU/8-GiB/10-GiB sandbox for 7500 seconds at previously verified $0.332280/hour = $0.692250, plus $0.307750 storage/rounding margin; existing reserved Iris capacity.",
+      "reconciliation": "Hash-bound whole terminal host interval encloses sequential 4CPU/8GiB/10GiB sandbox runtime; no native/image-building trials; original cleanup and fresh exact-owner absence verified. Full profile cost plus $0.10 rounded upward to $0.25. Legacy/storage allowances elsewhere unchanged. See panel-rounds/001/budget-reconciliation.json. Not an invoice or assumed credits."
+    },
+    {
+      "scope": "autonomous-bioframe-051: fresh source-only input-observation validation",
+      "ceiling_usd": "0.25",
+      "state": "terminal_rejected_source_fidelity",
+      "basis": "At most one 4-CPU/8-GiB/10-GiB sandbox for 7500 seconds at previously verified $0.332280/hour = $0.692250, plus $0.307750 storage/rounding margin. Internal stage-dispatch reservations do not describe simultaneous sandbox spend. See budget-reconciliation-20261021.json. Reserved Iris capacity, no GPU.",
+      "reconciliation": "Verified 905-second whole-host enclosure, sequential 4 CPU/8 GiB/10 GiB sandboxes and original successful deletion/fresh empty owners. $0.0835315 running upper bound plus $0.1664685 margin retained; release $0.75. See budget-reconciliation-051.json. Not an invoice or credit claim."
+    },
+    {
+      "scope": "autonomous-rmsd-052: fresh full source with retained-field repair contract",
+      "ceiling_usd": "0.25",
+      "state": "terminal_rejected_independent_comparison",
+      "basis": "At most one 4-CPU/8-GiB/10-GiB sandbox for 7500 seconds at previously verified $0.332280/hour = $0.692250, plus $0.307750 storage/rounding margin; existing reserved Iris capacity.",
+      "reconciliation": "Hash-bound whole terminal host interval encloses sequential 4CPU/8GiB/10GiB sandbox runtime; no native/image-building trials; original cleanup and fresh exact-owner absence verified. Full profile cost plus $0.10 rounded upward to $0.25. Legacy/storage allowances elsewhere unchanged. See panel-rounds/001/budget-reconciliation.json. Not an invoice or assumed credits."
+    },
+    {
+      "scope": "autonomous-rmsd-053: original source with one shared question-or-grader repair allowance",
+      "ceiling_usd": "1.00",
+      "state": "terminal_validated_published_download_verified",
+      "basis": "At most one 4-CPU/8-GiB/10-GiB sandbox for 7500 seconds at $0.332280/hour = $0.692250, plus $0.307750 storage/rounding margin. Fresh validation after a question repair is sequential within the same campaign deadline; reserved Iris CPU capacity. No new scientific inputs or manual task edits.",
+      "reconciliation": "All seven stages completed, public release and immutable download verified; all owned workers and sandboxes terminal/deleted. Retain the full $1 conservative hold, not an invoice."
+    },
+    {
+      "scope": "autonomous-panel-054: frozen ten-domain Python development round001",
+      "ceiling_usd": "0.25",
+      "state": "terminal_infrastructure_failed_cleanup_verified",
+      "basis": "One sequential 4CPU/8GiB/10GiB sandbox at a time for at most7500seconds; full-profile published-rate upper bound$0.692250 plus$0.307750 margin. Reserved Iris CPU capacity, GLM5.3 only; existing shared repair,600second reference/solver and offline task limits. No task-specific operator instructions.",
+      "reconciliation": "Original whole-host interval and original/fresh cleanup bound sequential task runtime; full profile plus$0.10 rounded upward to$0.25. No native image builds. See autonomous-runs/054/budget-reconciliation.json. Not an invoice."
+    },
+    {
+      "scope": "autonomous-panel-055: frozen ten-domain Python development round001",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "One sequential 4CPU/8GiB/10GiB sandbox at a time for at most7500seconds; full-profile published-rate upper bound$0.692250 plus$0.307750 margin. Reserved Iris CPU capacity, GLM5.3 only; existing shared repair,600second reference/solver and offline task limits. No task-specific operator instructions.",
+      "reconciliation": "budget-reconciliation-native055063080.json; sealed original whole-host interval, original/fresh exact cleanup and full profile/serial native/no snapshot identities verified; plus0.10USDroundedUPto0.25USD. No invoice or credits assumed."
+    },
+    {
+      "scope": "autonomous-panel-056: frozen ten-domain Python development round001",
+      "ceiling_usd": "0.25",
+      "state": "terminal_controller_inspection_failure_cleanup_verified",
+      "basis": "Same existing full-lifetime4CPU/8GiB/10GiB,7500second envelope; costupperbound$0.692250 plusmargin. Existing approved reserved Iris CPU and GLM high only; no new token/byte/request caps.",
+      "reconciliation": "Original whole-host interval bounds sequential sandbox lifetime; successful original/fresh cleanup, no native builds. Full profile plus $0.10 rounded up to $0.25; see autonomous-runs/056/budget-reconciliation.json. Source failure not inferred."
+    },
+    {
+      "scope": "autonomous-panel-057: frozen ten-domain Python development round001",
+      "ceiling_usd": "0.50",
+      "state": "terminal_rejected_missing_source_inputs_cleanup_verified",
+      "basis": "Same approved full-lifetime4CPU/8GiB/10GiB,7500second envelope; costupperbound$0.692250 plusmargin. Reserved IrisCPU,GLMhigh,same frozen factory and controls.",
+      "reconciliation": "Original whole-host interval and original/fresh cleanup bound sequential task sandbox usage; full profile plus $0.10 rounded upward in $0.25 increments, no native builds. See autonomous-runs/057/budget-reconciliation.json; not an invoice."
+    },
+    {
+      "scope": "autonomous-panel-058: frozen ten-domain Python development round001",
+      "ceiling_usd": "0.50",
+      "state": "terminal_rejected_generated_metadata_contract_cleanup_verified",
+      "basis": "Same approved full-lifetime 4CPU/8GiB/10GiB,7500second envelope; maximum running-profile cost $0.692250 plusmargin; reserved Iris CPU, GLMhigh, unchanged frozen factory.",
+      "reconciliation": "Hash-bound whole-host interval and four original/fresh cleanups bound sequential task resources, no native image builds. Full profile plus $0.10 rounded upward in $0.25 increments; see autonomous-runs/058/budget-reconciliation.json."
+    },
+    {
+      "scope": "autonomous-panel-059: frozen ten-domain Python development round001",
+      "ceiling_usd": "0.75",
+      "state": "terminal_rejected_generated_public_input_claim_cleanup_verified",
+      "basis": "Same approved full-lifetime 4CPU/8GiB/10GiB,7500second envelope; maximum running-profile cost $0.692250 plusmargin; reserved IrisCPU,GLMhigh, unchanged frozen factory and original full source.",
+      "reconciliation": "Original whole-host interval and four original/fresh cleanups bound sequential task usage; full-profile cost plus $0.10 rounded upward in $0.25 increments. No native builds. See autonomous-runs/059/budget-reconciliation.json; not an invoice."
+    },
+    {
+      "scope": "autonomous-panel-060: frozen ten-domain Python development round001",
+      "ceiling_usd": "0.50",
+      "state": "terminal_rejected_generated_grading_contract_cleanup_verified",
+      "basis": "Same approved full-lifetime4CPU/8GiB/10GiB,7500second envelope; running-cost ceiling $0.692250 plusmargin; reserved IrisCPU, GLMhigh, identical frozen runtime and original source.",
+      "reconciliation": "Hash-bound whole-host interval and four original/fresh cleanups bound sequential sandbox use; full-profile runtime plus $0.10 rounded upward in $0.25 increments. No native builds; see autonomous-runs/060/budget-reconciliation.json. Not an invoice."
+    },
+    {
+      "scope": "autonomous-panel-061: frozen ten-domain Python development round001",
+      "ceiling_usd": "0.25",
+      "state": "terminal_replay_execution_failed_cleanup_verified",
+      "basis": "Same approved full-lifetime4CPU/8GiB/10GiB,7500second envelope; maximum running-profile cost$0.692250plusmargin. Reserved IrisCPU, GLMhigh, original frozen source and runtime.",
+      "reconciliation": "Whole original host interval and original/fresh cleanup bound all sequential no-native task usage; full profile plus $0.10 rounded upward in $0.25 increments. See autonomous-runs/061/budget-reconciliation.json. Not an invoice."
+    },
+    {
+      "scope": "autonomous-panel-062: frozen ten-domain Python development round001",
+      "ceiling_usd": "0.25",
+      "state": "terminal_source_fidelity_evidence_stop_cleanup_verified",
+      "basis": "Same approved full-lifetime 4CPU/8GiB/10GiB,7500second envelope; running upper bound $0.692250 plus margin. Reserved IrisCPU, GLMhigh, original frozen source and runtime.",
+      "reconciliation": "Whole original host interval and original/fresh cleanup bound all sequential no-native task usage; full profile plus $0.10 rounded upward in $0.25 increments. See autonomous-runs/062/budget-reconciliation.json; not an invoice."
+    },
+    {
+      "scope": "autonomous-panel-063: frozen ten-domain Python development round001",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Same approved full-lifetime4CPU/8GiB/10GiB,7500second envelope; full-profile running ceiling$0.692250plusmargin. Reserved IrisCPU,GLMhigh,source-only original notebook and frozen179runtime files.",
+      "reconciliation": "budget-reconciliation-native055063080.json; sealed original whole-host interval, original/fresh exact cleanup and full profile/serial native/no snapshot identities verified; plus0.10USDroundedUPto0.25USD. No invoice or credits assumed."
+    },
+    {
+      "scope": "autonomous-panel-064: fresh original matchms source, generic round002 factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_campaign_deadline_exhausted_cleanup_verified",
+      "basis": "One conservative full-lifetime hold before dispatch; same CPU/time/network/repair profile, original source assets. Existing unused holds reconciled; no new authorization.",
+      "job_id": "/exedev/biotasks19-autonomous-panel-064"
+    },
+    {
+      "scope": "autonomous-panel-065: fresh original COBRApy source, generic round002 factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_scientific_validated_archival_recovered",
+      "basis": "Same profile and independent validation; reserve before dispatch within standing$100authorization, no seed-specific task edits.",
+      "job_id": "/exedev/biotasks19-autonomous-panel-065",
+      "reconciliation": "Retain full$1nativehold.18scientificcontrols/native1/0/1andfull1403file recovery readback verified; seven sandboxes absent, workerKILLEDafterverifiedrecovery. Not a fully unattended E2Ecompletion or measuredinvoice."
+    },
+    {
+      "scope": "autonomous-panel-067: original PyHMMER source with general progress-aware transport",
+      "ceiling_usd": "0.00",
+      "state": "terminal_preexecution_rejection",
+      "basis": "Last existing reservation within$100; same GLMhigh/CPU/time/network/repair profile, unchanged scientific source assets. Existing066preparedpayload notrun.",
+      "job_id": "/exedev/biotasks19-autonomous-panel-067",
+      "reconciliation": "No task/container start and zero stage executions in original Iris status; four fresh exact-owner Daytona queries found no sandbox. The unused $1 planning hold is released; this is not an invoice or credit claim. See autonomous-runs/067/progress.json and provider-cleanup.json."
+    },
+    {
+      "scope": "autonomous-panel-068: fresh unchanged protein-analysis seed after preexecution067rejection; personal submitter credentials and expanded credential redaction only",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Uses the$1released after067neverstarted; no increase above approved$100aggregate ceiling. No new scientific method, model, time or sandbox limit.",
+      "reconciliation": "Original lifecycle interval and hash-bound CPU/resource configuration, original cleanup and fresh exact-owner absence verified. Full-profile enclosing time plus$0.10 rounded upward to$0.25; no native image builds. Not a measured invoice, zero-call claim or assumed credit. See panel-rounds/005/budget-reconciliation.json."
+    },
+    {
+      "scope": "autonomous-panel-069: fresh original seed with generic completion reconciliation and independent-library guidance",
+      "ceiling_usd": "0.50",
+      "state": "terminal_generated_contract_rejection_cleanup_verified",
+      "basis": "Existing unused terminal holds independently reconciled; no increase to$100authorization. Original scientific source unchanged; same resources/time/repair/GLMhigh/offline profile, one sequential sandbox per host.",
+      "job_id": "/exedev/biotasks19-autonomous-panel-069",
+      "reconciliation": "Original enclosing host interval and hash-bound cleanup, four fresh exact-owner absence checks, no native builds. Retain full-profile time+$0.10rounded upward to$0.25; see autonomous-runs/069/budget-reconciliation.json. Not an invoice."
+    },
+    {
+      "scope": "autonomous-panel-070: fresh original seed with generic completion reconciliation and independent-library guidance",
+      "ceiling_usd": "0.00",
+      "state": "terminal_preparation_failed_no_sandbox",
+      "basis": "Existing unused terminal holds independently reconciled; no increase to$100authorization. Original scientific source unchanged; same resources/time/repair/GLMhigh/offline profile, one sequential sandbox per host.",
+      "job_id": "/exedev/biotasks19-autonomous-panel-070",
+      "reconciliation": "Original preparation receipt records one response received and zero Daytona sandboxes; all four fresh exact ownership queries are empty. Release the unused$1sandbox planning hold, preserving the original authoring failure. No actual invoice or zero model-cost claim."
+    },
+    {
+      "scope": "autonomous-panel-071: fresh original metabolomics seed with one approved preparation validation repair",
+      "ceiling_usd": "0.50",
+      "state": "terminal_generated_source_coverage_rejection_cleanup_verified",
+      "basis": "Uses the unused070sandbox hold; same approved CPU/time/network/quality-repair/GLMhigh profile. Preparation may use one initial response and one validation-driven correction, no transport retry. Existing$100aggregate unchanged.",
+      "job_id": "/exedev/biotasks19-autonomous-panel-071",
+      "reconciliation": "autonomous-runs/071/budget-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-072: fresh original pyradiomics-brain development seed on the shared general factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_infrastructure_failed_cleanup_verified",
+      "basis": "Uses independently reconciled unused terminal holds under the same$100authorization; same CPU/time/network/quality/GLMhigh limits. One preparation validation repair approved. Reserve before dispatch, max2activehosts/sandboxes.",
+      "job_id": "/exedev/biotasks19-autonomous-panel-072",
+      "reconciliation": "autonomous-runs/072/budget-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-073: fresh original scanpy-clustering development seed on the shared general factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_cleanup_verified",
+      "basis": "Uses independently reconciled unused terminal holds under the same$100authorization; same CPU/time/network/quality/GLMhigh limits. One preparation validation repair approved. Reserve before dispatch, max2activehosts/sandboxes.",
+      "reconciliation": "autonomous-runs/073/budget-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-074: unchanged original imaging seed after generic network-policy reconciliation and source-scope authority clarification",
+      "ceiling_usd": "0.25",
+      "state": "terminal_generated_setup_accounting_stop_cleanup_verified",
+      "basis": "Existing$100 authorization; same4CPU/8GiB/10GiB,7200+300smaximum full-lifetime hold as rounds006/007.",
+      "reconciliation": "autonomous-runs/074/budget-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-075: unchanged original imaging seed with general reference-computation accounting correction",
+      "ceiling_usd": "0.25",
+      "state": "terminal_cleanup_verified",
+      "basis": "Standing$100 authorization; no increase to CPU/RAM/disk, computation, setup or campaign time limits.",
+      "reconciliation": "autonomous-runs/075/budget-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-076: originalpyradiomics-brainseed, common foreground/setup-accounting/timeout-aligned recovery factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_bootstrap_failure_cleanup_verified",
+      "basis": "Existing$100 approval, original4CPU/8GiB/10GiB and7200+300seconds limits; fresh$1full-lifetime hold before dispatch.",
+      "reconciliation": "autonomous-runs/076/budget-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-077: originalscanpy-clusteringseed, common foreground/setup-accounting/timeout-aligned recovery factory",
+      "ceiling_usd": "0.75",
+      "state": "terminal_model_connection_failure_cleanup_verified",
+      "basis": "Existing$100 approval, original4CPU/8GiB/10GiB and7200+300seconds limits; fresh$1full-lifetime hold before dispatch.",
+      "reconciliation": "autonomous-runs/077/budget-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-078: original Pyteomics source, same frozen round010factory; wait for a free authorized slot",
+      "ceiling_usd": "0.00",
+      "state": "never_submitted_superseded",
+      "basis": "Standing$100 authorization; same4CPU/8GiB/10GiB and7200+300secondfull-lifetime bound.",
+      "reconciliation": "panel-rounds/010/queued-078-disposition.json"
+    },
+    {
+      "scope": "autonomous-panel-079: original proteomics source with general workspace-root initialization correction",
+      "ceiling_usd": "0.25",
+      "state": "terminal_model_connection_failure_cleanup_verified",
+      "basis": "Standing$100 approval; previous078neverlaunched, all execution/time/model bounds unchanged.",
+      "reconciliation": "autonomous-runs/079/budget-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-080: unchanged pyradiomics-brain source on shared workspace and generation-connection retry factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Standing $100 authorization; same 4CPU/8GiB/10GiB, one sandbox at a time, whole campaign7200+cleanup300seconds bound; no native persistent snapshot requested.",
+      "reconciliation": "budget-reconciliation-native055063080.json; sealed original whole-host interval, original/fresh exact cleanup and full profile/serial native/no snapshot identities verified; plus0.10USDroundedUPto0.25USD. No invoice or credits assumed."
+    },
+    {
+      "scope": "autonomous-panel-081: unchanged pyhmmer-msa-to-hmm source on shared workspace and generation-connection retry factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_native_cleanup_conflict_reconciled",
+      "basis": "Standing $100 authorization; same 4CPU/8GiB/10GiB, one sandbox at a time, whole campaign7200+cleanup300seconds bound; no native persistent snapshot requested.",
+      "reconciliation": "Full1582-file/47,457,235byte autonomousarchive independentlyread;20finalscientificcontrols passed and raw native1/0/1separately verified. Originalsupervisorcleanupfailed; later7freshowners/knownexactIDabsent. Retain$1nativehold. Notanunattendedsuccessorinvoice."
+    },
+    {
+      "scope": "autonomous-panel-082: unchanged original matchms-spectral-matching source on same frozen round012factory",
+      "ceiling_usd": "0.75",
+      "state": "terminal_reconciled",
+      "basis": "Standing $100 authorization; same 4CPU/8GiB/10GiB and7500second whole-lifetime bound. No new host before an authorized slot is free.",
+      "reconciliation": "autonomous-runs/082/budget-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-083: unchanged original scanpy-clustering source on same frozen round012factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_generated_setup_rejection_cleanup_verified",
+      "basis": "Standing $100 authorization; same 4CPU/8GiB/10GiB and7500second whole-lifetime bound. No new host before an authorized slot is free.",
+      "reconciliation": "autonomous-runs/083/budget-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-086: original pyhmmer-msa-to-hmm source with general bounded cleanup and setup-API inspection guidance; includes general reviewed probe-kind correction",
+      "ceiling_usd": "0.50",
+      "state": "terminal_rejected_generated_candidate_cleanup_verified",
+      "basis": "Standing $100 authorization; unchanged resources, time, repair and concurrency limits. Original unsubmitted freeze preserved; no new aggregate allocation.",
+      "transferred_from": "undispatched autonomous-panel-084",
+      "reconciliation": "autonomous-runs/086/budget-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-087: original scanpy-clustering source with general bounded cleanup and setup-API inspection guidance; includes general reviewed probe-kind correction",
+      "ceiling_usd": "1.00",
+      "state": "submitted",
+      "basis": "Standing $100 authorization; unchanged resources, time, repair and concurrency limits. Original unsubmitted freeze preserved; no new aggregate allocation.",
+      "transferred_from": "undispatched autonomous-panel-085"
+    },
+    {
+      "scope": "autonomous-panel-088: unchanged original pyteomics-filtering seed on common round014 factory",
+      "ceiling_usd": "0.75",
+      "state": "terminal_reconciled",
+      "basis": "Within standing $100 authorization after original-receipt/terminal-lifetime/fresh-absence Bioframe reconciliation. Same resource, time, model, stage and concurrency bounds; no source/task scientific patches.",
+      "reconciliation": "budget-reconciliation-current-nonnative-20261023.json"
+    },
+    {
+      "scope": "autonomous-panel-089: unchanged original matchms-spectral-matching seed on common round014 factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Within standing $100 authorization after original-receipt/terminal-lifetime/fresh-absence Bioframe reconciliation. Same resource, time, model, stage and concurrency bounds; no source/task scientific patches.",
+      "reconciliation": "budget-reconciliation-current-nonnative-20261023.json"
+    },
+    {
+      "scope": "autonomous-panel-090: unchanged original neurokit-hrv seed on common round014 factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Within standing $100 authorization after original-receipt/terminal-lifetime/fresh-absence Bioframe reconciliation. Same resource, time, model, stage and concurrency bounds; no source/task scientific patches.",
+      "reconciliation": "budget-reconciliation-recent-complete-20261023.json"
+    },
+    {
+      "scope": "autonomous-panel-091: unchanged original cobrapy-deletions seed on common round014 factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_reconciled",
+      "basis": "Within standing $100 authorization after original-receipt/terminal-lifetime/fresh-absence Bioframe reconciliation. Same resource, time, model, stage and concurrency bounds; no source/task scientific patches.",
+      "reconciliation": "budget-reconciliation-current-nonnative-20261023.json"
+    },
+    {
+      "scope": "autonomous-panel-092: unchanged original bioframe-motifs-to-peaks seed on common round014 factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Within standing $100 authorization after original-receipt/terminal-lifetime/fresh-absence Bioframe reconciliation. Same resource, time, model, stage and concurrency bounds; no source/task scientific patches.",
+      "reconciliation": "budget-reconciliation-current-nonnative-20261023.json"
+    },
+    {
+      "scope": "autonomous-panel-093: unchanged original mdanalysis-rmsd seed on common round014 factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_reconciled",
+      "basis": "Within standing $100 authorization after original-receipt/terminal-lifetime/fresh-absence Bioframe reconciliation. Same resource, time, model, stage and concurrency bounds; no source/task scientific patches.",
+      "reconciliation": "budget-reconciliation-current-nonnative-20261023.json"
+    },
+    {
+      "scope": "autonomous-panel-094: unchanged original sgkit-relatedness seed on common round014 factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_reconciled",
+      "basis": "Within standing $100 authorization after verified early non-native campaign reconciliation. Same frozen payload, scientific/resource/time/repair/concurrency limits. Imaging remains private unless actual data redistribution is separately cleared.",
+      "reconciliation": "budget-reconciliation-recent-complete-20261023.json"
+    },
+    {
+      "scope": "autonomous-panel-095: unchanged original pyradiomics-brain seed on common round014 factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_reconciled",
+      "basis": "Within standing $100 authorization after verified early non-native campaign reconciliation. Same frozen payload, scientific/resource/time/repair/concurrency limits. Imaging remains private unless actual data redistribution is separately cleared.",
+      "reconciliation": "budget-reconciliation-recent-complete-20261023.json"
+    },
+    {
+      "scope": "autonomous-panel-096: unchanged original pyhmmer-msa-to-hmm on shared round015 general factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Within existing $100 authorization after original-cleanup/actual-lifetime/fresh-absence reconciliation. Same source, resource/time/repair limits. Prior cohort must be terminal and clean; at most two hosts/sandboxes. No past generated artifacts or diagnoses supplied.",
+      "reconciliation": "budget-reconciliation-terminal096118.json; independently hash/size-verified sealed root bootstrap metadata, current terminal status, full original archive/resource/serial-native/cleanup evidence and fresh exact-ID/owner absence. Fullprofile+0.10USD roundedUPto0.25USD; no invoice/credit assumption."
+    },
+    {
+      "scope": "autonomous-panel-098: unchanged original pyteomics-filtering on shared round015 general factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_hold_retained",
+      "basis": "Within existing $100 authorization after original-cleanup/actual-lifetime/fresh-absence reconciliation. Same source, resource/time/repair limits. Prior cohort must be terminal and clean; at most two hosts/sandboxes. No past generated artifacts or diagnoses supplied.",
+      "reconciliation": "Original hash-bound configuration, whole-host lifecycle, sequential native trials, disabled persistent snapshots, all original cleanup receipts and fresh sandbox-ID/owner absence verified. Retain whole-host full-profile upper bound plus$0.10 rounded UP to$0.25. Not an invoice or assumed credit. See budget-reconciliation-native-015-complete.json."
+    },
+    {
+      "scope": "autonomous-panel-099: unchanged original matchms-spectral-matching on shared round015 general factory",
+      "ceiling_usd": "0.25",
+      "state": "completed_reconciled",
+      "basis": "Original manifest-bound cleanup, current exact-ID and owner-label absence, sequential stage records and actual enclosing Iris host lifetime; full 4CPU/8GiB/10GiB profile upper bound plus $0.10 margin rounded UP to $0.25. Not an invoice or credit assumption."
+    },
+    {
+      "scope": "autonomous-panel-101: unchanged original cobrapy-deletions on shared round015 general factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_hold_retained",
+      "basis": "Within existing $100 authorization after original-cleanup/actual-lifetime/fresh-absence reconciliation. Same source, resource/time/repair limits. Prior cohort must be terminal and clean; at most two hosts/sandboxes. No past generated artifacts or diagnoses supplied.",
+      "reconciliation": "Original hash-bound configuration, whole-host lifecycle, sequential native trials, disabled persistent snapshots, all original cleanup receipts and fresh sandbox-ID/owner absence verified. Retain whole-host full-profile upper bound plus$0.10 rounded UP to$0.25. Not an invoice or assumed credit. See budget-reconciliation-native-015-complete.json."
+    },
+    {
+      "scope": "autonomous-panel-103: unchanged original mdanalysis-rmsd on shared round015 general factory",
+      "ceiling_usd": "0.25",
+      "state": "completed_reconciled",
+      "basis": "Original manifest-bound cleanup, current exact-ID and owner-label absence, sequential stage records and actual enclosing Iris host lifetime; full 4CPU/8GiB/10GiB profile upper bound plus $0.10 margin rounded UP to $0.25. Not an invoice or credit assumption."
+    },
+    {
+      "scope": "autonomous-panel-100: unchanged original neurokit-hrv on shared round015 general factory",
+      "ceiling_usd": "0.00",
+      "state": "cancelled_before_submission",
+      "basis": "No worker or sandbox was launched. Move this unchanged $1 reservation from a redundant older-factory physiology repeat to the latest general-factory metabolomics regression. Original physiology validation090 remains preserved."
+    },
+    {
+      "scope": "autonomous-panel-102: unchanged original bioframe-motifs-to-peaks on shared round015 general factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_hold_retained",
+      "basis": "Within standing $100 authorization after original-hash/serial-native/no-persistent-snapshot/fresh-absence/actual-host-lifetime reconciliation. Same frozen source, resources, timing and repair limits.",
+      "reconciliation": "Original hash-bound configuration, whole-host lifecycle, sequential native trials, disabled persistent snapshots, all original cleanup receipts and fresh sandbox-ID/owner absence verified. Retain whole-host full-profile upper bound plus$0.10 rounded UP to$0.25. Not an invoice or assumed credit. See budget-reconciliation-native-015-complete.json."
+    },
+    {
+      "scope": "autonomous-panel-106: unchanged original pyhmmer-msa-to-hmm on prospective round016 general factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_reconciled",
+      "basis": "Within standing $100 authorization after independently verified completed-run lifecycle reconciliation. Same original source/resource/time/repair policy. No past generated tasks or diagnostic answers supplied. At most two total active hosts/sandboxes; reserve alone is not dispatch. Fresh approved-policy198-file runtime submitted after all prior hosts were terminal and original/fresh cleanup was verified. Existing1USDhold reused; no new reservation.",
+      "frozen_payload": "panel-rounds/018/freeze.json",
+      "reconciliation": "budget-reconciliation-terminal106.json; original sealed full723sbootstrap encloses3sequential4CPU/8GiB/10GiBsandboxes; original+freshcleanup; full-profile+0.10USD roundedUPto0.25USD. No invoice/credit assumption."
+    },
+    {
+      "scope": "autonomous-panel-113: unchanged original mdanalysis-rmsd on prospective round016 general factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Within standing $100 authorization after independently verified completed-run lifecycle reconciliation. Same original source/resource/time/repair policy. No past generated tasks or diagnostic answers supplied. At most two total active hosts/sandboxes; reserve alone is not dispatch.",
+      "reconciliation": "budget-reconciliation-terminal107113.json; verified enclosing original host/profile, serial trials, no persistent snapshot request, original cleanup plus current fresh exact-ID/owner absence; full profile+0.10USD rounded UP to0.25USD. No invoice or credits assumed."
+    },
+    {
+      "scope": "autonomous-panel-109: unchanged original matchms-spectral-matching on latest common round016 factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Transfers the cancelled, never-submitted100 reservation. Same original source and current shared general factory; no past generated task/answer supplied. Test compact-reference pagination and read-only context recovery in the full pipeline. Standing two-host,resource,time/repair and $100 limits remain.",
+      "reconciliation": "budget-reconciliation-terminal109.json; original hash-bound whole-bootstrap interval, full4CPU/8GiB/10GiBprofile+0.10roundedUPto0.25, all original/freshcleanup. No native trials, no credits/invoice claim."
+    },
+    {
+      "scope": "autonomous-panel-111: unchanged original cobrapy-deletions on the identical193-file round016 factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_reconciled",
+      "basis": "Use reconciled unused holds inside the standing$100ceiling; unchanged notebook/source, one campaign7200s+300scleanup, native-highGLMonly,4CPU/8GiB/10GiB/noGPU, atmostone sandbox and2hosts total. No operator scientific edits or new repair allowance.",
+      "reconciliation": "budget-reconciliation-export-failure111.json; original hash-bound complete bootstrap interval encloses the sole sandbox; original cleanup and fresh exact ID/owner absence verified. Full profile charged for all host time plus $0.10 rounded UP to $0.25. No credit assumption."
+    },
+    {
+      "scope": "autonomous-panel-116: unchanged original cobrapy-deletions on general runtime-export-feedback factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Within standing $100 authorization after hash-bound short111lifecycle/original+freshcleanup reconciliation. Same source, model/resource/time limits. Existing prep one repair shared across static/runtime validation, no extra allowance or prior generated task supplied.",
+      "cleanup_evidence": "panel-rounds/017/progress.json; exact original/fresh provider cleanup verified; no hold reduction in this update.",
+      "reconciliation": "budget-reconciliation-terminal017.json; sealed original host/resource/serial/native/snapshot/cleanup identities verified; full-profile host interval plus0.10USD rounded UP to0.25USD. No invoice or credits assumed."
+    },
+    {
+      "scope": "autonomous-panel-117: unchanged original matchms-spectral-matching on general bounded process-cleanup factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_reconciled",
+      "basis": "Within standing100USDceiling after original109whole-bootstrap/sequentialprofile/original+freshcleanup reconciliation. No prior generated task/diagnostic answer, changed science or added repair allowance. At most2hosts/2sandboxes total and one per campaign.",
+      "cleanup_evidence": "panel-rounds/017/progress.json; exact original/fresh provider cleanup verified; no hold reduction in this update.",
+      "reconciliation": "budget-reconciliation-terminal017.json; sealed original host/resource/serial/native/snapshot/cleanup identities verified; full-profile host interval plus0.10USD rounded UP to0.25USD. No invoice or credits assumed."
+    },
+    {
+      "scope": "autonomous-panel-107: unchanged original scanpy-clustering on general approved-policy round018 factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Reconciled verified unused holds inside standing100USDceiling; original notebook/seed/notices and same a036e55d198-file runtime as106. Approved explicit intermediate inputs selected only by GLM. No prior generated task or diagnostic answers supplied; no additional repair/reference/time allowance; at most2hosts/2sandboxes.",
+      "frozen_payload": "panel-rounds/018/freeze-107.json",
+      "reconciliation": "budget-reconciliation-terminal107113.json; verified enclosing original host/profile, serial trials, no persistent snapshot request, original cleanup plus current fresh exact-ID/owner absence; full profile+0.10USD rounded UP to0.25USD. No invoice or credits assumed."
+    },
+    {
+      "scope": "autonomous-panel-118: unchanged original pyhmmer-msa-to-hmm after general canonical-role fix",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Reused verified unused106hold plus0.25previous unallocated, inside standing100USDceiling. Same original source/assets/model/resources/time/repair allowances; new generic controller-role fix only. No previous generated task or diagnostic answers supplied. At most2hosts/2sandboxes;107may remain sole prior active host.",
+      "frozen_payload": "panel-rounds/019/freeze.json",
+      "reconciliation": "budget-reconciliation-terminal096118.json; independently hash/size-verified sealed root bootstrap metadata, current terminal status, full original archive/resource/serial-native/cleanup evidence and fresh exact-ID/owner absence. Fullprofile+0.10USD roundedUPto0.25USD; no invoice/credit assumption."
+    },
+    {
+      "scope": "autonomous-panel-119: unchanged original scanpy-clustering on general canonical-role fixed runtime",
+      "ceiling_usd": "0.75",
+      "state": "terminal_reconciled",
+      "basis": "Verified unused107/113holds fund this original-source retry within standing100USDcap. Same model/resources/time/repair policy; no prior generated task, diagnostic answer, manual scientific edit or extra reference test. At most2hosts/2sandboxes, with118as sole possible prior active host.",
+      "frozen_payload": "panel-rounds/019/freeze-119.json",
+      "reconciliation": "budget-reconciliation-terminal119120.json; complete original finite host interval, sequential resource use and all original/fresh cleanup verified, full profile+0.10USD roundedUPto0.25USD. Failed bootstrap handled by its sealed finished time and typed FAILED state, not treated as a scientific success. No invoice/credit assumption."
+    },
+    {
+      "scope": "autonomous-panel-120: unchanged original pyhmmer-msa-to-hmm with general actual-installed answer-candidate feedback",
+      "ceiling_usd": "0.75",
+      "state": "terminal_reconciled",
+      "basis": "Within standing100USDcap using verified unused096/118holds; original source/assets unchanged. GLM owns asset relevance/unused assessment, exclusion declarations and revalidation. No manually selected file-removal patch, prior generated task or diagnostic answer supplied. Existing2reference tests, sharedprep1repair, phase/campaign/resource/model policy retained; max2hosts/2sandboxes with119as sole possible prior active host.",
+      "reconciliation": "budget-reconciliation-terminal119120.json; complete original finite host interval, sequential resource use and all original/fresh cleanup verified, full profile+0.10USD roundedUPto0.25USD. Failed bootstrap handled by its sealed finished time and typed FAILED state, not treated as a scientific success. No invoice/credit assumption."
+    },
+    {
+      "scope": "autonomous-panel-121: unchanged original matchms-spectral-matching on common installed-asset review factory",
+      "ceiling_usd": "0.75",
+      "state": "terminal_reconciled",
+      "basis": "Verified unused055/063/080holds reused inside standing100USDceiling. Same original source, same general198-file runtime as120; no past generated task/diagnostic answers, changed science or extra repair/test/deadline. Wait for a verified slot; at most2hosts/2sandboxes.",
+      "reconciliation": "budget-reconciliation-terminal121122.json"
+    },
+    {
+      "scope": "autonomous-panel-122: unchanged original cobrapy-deletions after next general factory improvement checkpoint",
+      "ceiling_usd": "0.25",
+      "state": "terminal_reconciled",
+      "basis": "Reuse verified unused119/120holds plus0.50priorunallocated within standing100USD. Existing original source/model/resources/time/repair/concurrency bounds. No previous generated task or source-specific diagnostic answers. Do not freeze/dispatch until the general repair-routing implementation and checks exist.",
+      "reconciliation": "budget-reconciliation-terminal121122.json"
+    },
+    {
+      "scope": "autonomous-panel-123: unchanged original COBRApy after general exploratory-package declaration guard",
+      "ceiling_usd": "0.50",
+      "state": "terminal_reconciled",
+      "basis": "Reuse verified unused121/122holds within existing100USD. Same source/model/resources/time/test/repair bounds; no prior task or diagnostic answers. Require tested clean factory checkpoint and fresh freeze before launch.",
+      "reconciliation": "budget-reconciliation-terminal123.json"
+    },
+    {
+      "scope": "autonomous-panel-124: unchanged original protein-HMM notebook on the same general factory as123",
+      "ceiling_usd": "1.00",
+      "state": "submitted",
+      "basis": "Reuse verified unused001/017holds within100USD. Same model/source/resources/time/test/repair bounds; no prior generated task or diagnostic answers. Require exact clean checkpoint/freeze; atmostoneotherlivehost."
+    },
+    {
+      "scope": "autonomous-panel-125: unchanged original matchms-spectral-matching on the common501fbc2f factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_incomplete_cleanup_verified",
+      "reconciliation": "budget-reconciliation-legacy-grading001.json"
+    },
+    {
+      "scope": "autonomous-panel-126: unchanged original neurokit-hrv on the common501fbc2f factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_rejected_cleanup_verified",
+      "reconciliation": "budget-reconciliation-legacy-grading001.json"
+    },
+    {
+      "scope": "autonomous-panel-127: unchanged original scanpy-clustering on the frozen common501fbc2f factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_incomplete_cleanup_verified",
+      "basis": "User authorized100USDadditional(200USDaggregate);same frozen source/runtime, resources, deadlines and test/repair allowances.",
+      "funding_record": "panel-rounds/025/funding-127-132.json"
+    },
+    {
+      "scope": "autonomous-panel-128: unchanged original bioframe-motifs-to-peaks on the frozen common501fbc2f factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_incomplete_grader_authoring_timeout",
+      "basis": "User authorized100USDadditional(200USDaggregate);same frozen source/runtime, resources, deadlines and test/repair allowances.",
+      "funding_record": "panel-rounds/025/funding-127-132.json",
+      "terminal_evidence": "panel-rounds/025/result-128.json",
+      "hold_released": false
+    },
+    {
+      "scope": "autonomous-panel-129: unchanged original pyteomics-filtering on the frozen common501fbc2f factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_incomplete_independent_timeout_archive_gap",
+      "basis": "User authorized100USDadditional(200USDaggregate);same frozen source/runtime, resources, deadlines and test/repair allowances.",
+      "funding_record": "panel-rounds/025/funding-127-132.json",
+      "terminal_evidence": "panel-rounds/025/result-129.json",
+      "hold_released": false
+    },
+    {
+      "scope": "autonomous-panel-130: unchanged original mdanalysis-rmsd on the frozen common501fbc2f factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_incomplete_independent_admission",
+      "basis": "User authorized100USDadditional(200USDaggregate);same frozen source/runtime, resources, deadlines and test/repair allowances.",
+      "funding_record": "panel-rounds/025/funding-127-132.json",
+      "terminal_evidence": "panel-rounds/025/result-130.json",
+      "hold_released": false
+    },
+    {
+      "scope": "autonomous-panel-131: unchanged original pyradiomics-brain on the frozen common501fbc2f factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_native_validated_publication_hold",
+      "basis": "User authorized100USDadditional(200USDaggregate);same frozen source/runtime, resources, deadlines and test/repair allowances.",
+      "funding_record": "panel-rounds/025/funding-127-132.json",
+      "terminal_evidence": "panel-rounds/025/result-131.json",
+      "hold_released": false
+    },
+    {
+      "scope": "autonomous-panel-132: unchanged original sgkit-relatedness on the frozen common501fbc2f factory",
+      "ceiling_usd": "1.00",
+      "state": "incomplete_remote_probe_controller_failure",
+      "basis": "User authorized100USDadditional(200USDaggregate);same frozen source/runtime, resources, deadlines and test/repair allowances.",
+      "funding_record": "panel-rounds/025/funding-127-132.json",
+      "submission_evidence": "panel-rounds/025/progress.json"
+    },
+    {
+      "scope": "autonomous-panel-133: unchanged original cobrapy-deletions on common37a82b5e next-version factory",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Within existing200USDaggregate authorization; full configured5USDmaximum reserved. Frozen source/policy unchanged; existing shared2host/2sandbox pool may include original132. Terminal slots require original-evidence audit and provider-cleanup proof. Explicit input holds remain blocking.",
+      "funding_record": "panel-rounds/026/funding.json",
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh seven-owner absence, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/047/funding-reconciliation-133139.json"
+    },
+    {
+      "scope": "autonomous-panel-134: unchanged original pyhmmer-msa-to-hmm on common37a82b5e next-version factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_full_closed_sdk_lifetimes_bound_reconciled",
+      "basis": "Within existing200USDaggregate authorization; full configured5USDmaximum reserved. Frozen source/policy unchanged; existing shared2host/2sandbox pool may include original132. Terminal slots require original-evidence audit and provider-cleanup proof. Explicit input holds remain blocking.",
+      "funding_record": "panel-rounds/026/funding.json",
+      "reconciliation": "Exact known creator, all recorded closed controller lifetimes priced at full resources plus300s at each end and fresh cleanup. Provider analytics is recorded separately when available and never shortens a lifetime. Retain1USD; no credits or final invoice assumption. See panel-rounds/082/closed-134-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-135: unchanged original matchms-spectral-matching on common37a82b5e next-version factory",
+      "ceiling_usd": "1.00",
+      "state": "unused_stage_allowances_released_used_holds_unchanged",
+      "basis": "Within existing200USDaggregate authorization; full configured5USDmaximum reserved. Frozen source/policy unchanged; existing shared2host/2sandbox pool may include original132. Terminal slots require original-evidence audit and provider-cleanup proof. Explicit input holds remain blocking.",
+      "funding_record": "panel-rounds/026/funding.json",
+      "reconciliation": "Retain1USDfor every original dispatched sandbox stage; release only mandatory stages never dispatched. Full original archives, exact frozen reservation code, typed terminal state and fresh original-ID/owner cleanup verified. Not an invoice, credits or used-provider cost audit. See panel-rounds/039/reconciliation.json."
+    },
+    {
+      "scope": "autonomous-panel-136: unchanged original neurokit-hrv on common37a82b5e next-version factory",
+      "ceiling_usd": "1.00",
+      "state": "unused_stage_allowances_released_used_holds_unchanged",
+      "basis": "Within existing200USDaggregate authorization; full configured5USDmaximum reserved. Frozen source/policy unchanged; existing shared2host/2sandbox pool may include original132. Terminal slots require original-evidence audit and provider-cleanup proof. Explicit input holds remain blocking.",
+      "funding_record": "panel-rounds/026/funding.json",
+      "reconciliation": "Retain1USDfor every original dispatched sandbox stage; release only mandatory stages never dispatched. Full original archives, exact frozen reservation code, typed terminal state and fresh original-ID/owner cleanup verified. Not an invoice, credits or used-provider cost audit. See panel-rounds/037/reconciliation.json."
+    },
+    {
+      "scope": "autonomous-panel-137: unchanged original scanpy-clustering on common37a82b5e next-version factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_full_closed_sdk_lifetimes_bound_reconciled",
+      "basis": "Within existing200USDaggregate authorization; full configured5USDmaximum reserved. Frozen source/policy unchanged; existing shared2host/2sandbox pool may include original132. Terminal slots require original-evidence audit and provider-cleanup proof. Explicit input holds remain blocking.",
+      "funding_record": "panel-rounds/026/funding.json",
+      "terminal_host_state": "SUCCEEDED",
+      "terminal_refresh": "panel-rounds/081/prior-ledger-state-refresh.json",
+      "reconciliation": "Exact known creator, all recorded closed controller lifetimes priced at full resources plus300s at each end and fresh cleanup. Provider analytics is recorded separately when available and never shortens a lifetime. Retain1USD; no credits or final invoice assumption. See panel-rounds/082/closed-137-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-138: unchanged original bioframe-motifs-to-peaks on common37a82b5e next-version factory",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Within existing200USDaggregate authorization; full configured5USDmaximum reserved. Frozen source/policy unchanged; existing shared2host/2sandbox pool may include original132. Terminal slots require original-evidence audit and provider-cleanup proof. Explicit input holds remain blocking.",
+      "funding_record": "panel-rounds/026/funding.json",
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh seven-owner absence, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/049/closed-resource-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-139: unchanged original pyteomics-filtering on common37a82b5e next-version factory",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Within existing200USDaggregate authorization; full configured5USDmaximum reserved. Frozen source/policy unchanged; existing shared2host/2sandbox pool may include original132. Terminal slots require original-evidence audit and provider-cleanup proof. Explicit input holds remain blocking.",
+      "funding_record": "panel-rounds/026/funding.json",
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh seven-owner absence, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/047/funding-reconciliation-133139.json"
+    },
+    {
+      "scope": "autonomous-panel-140: unchanged original mdanalysis-rmsd on common37a82b5e next-version factory",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Within existing200USDaggregate authorization; full configured5USDmaximum reserved. Frozen source/policy unchanged; existing shared2host/2sandbox pool may include original132. Terminal slots require original-evidence audit and provider-cleanup proof. Explicit input holds remain blocking.",
+      "funding_record": "panel-rounds/026/funding.json",
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh seven-owner absence, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/049/closed-resource-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-141: unchanged original pyradiomics-brain on common37a82b5e next-version factory",
+      "ceiling_usd": "0.00",
+      "state": "never_submitted_reservation_transferred_to151",
+      "basis": "The never-submitted imaging campaign remains on its execution/access hold. Its unused5USD reservation was transferred in full to151 after exclusive-claim absence, typed Iris NOT_FOUND and six known authoring-owner absence checks. No used campaign reservation changed.",
+      "funding_record": "panel-rounds/026/funding.json",
+      "execution_hold_evidence": "panel-rounds/025/rights-review-131.json",
+      "transfer_evidence": "panel-rounds/034/reservation-transfer.json"
+    },
+    {
+      "scope": "autonomous-panel-142: unchanged original sgkit-relatedness on common37a82b5e next-version factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_full_closed_sdk_lifetimes_bound_reconciled",
+      "basis": "Within existing200USDaggregate authorization; full configured5USDmaximum reserved. Frozen source/policy unchanged; existing shared2host/2sandbox pool may include original132. Terminal slots require original-evidence audit and provider-cleanup proof. Explicit input holds remain blocking.",
+      "funding_record": "panel-rounds/026/funding.json",
+      "reconciliation": "Exact known creator, all recorded closed controller lifetimes priced at full resources plus300s at each end and fresh cleanup. Provider analytics is recorded separately when available and never shortens a lifetime. Retain1USD; no credits or final invoice assumption. See panel-rounds/082/closed-142-applied.json"
+    },
+    {
+      "scope": "session-compat-001: one synthetic AsyncDaytona transport compatibility check",
+      "ceiling_usd": "1.00",
+      "basis": "One approved-profile4CPU8GiB10GiB CPU-only offline sandbox,300seconds plus180cleanup; no Iris host or model calls. Original success/nonzero and one acknowledgement-loss injection, no uncertain submit retries. Fresh pool admission with only142nonterminal; exact source/config frozen before creation.",
+      "state": "terminal_original_result_and_fresh_cleanup_verified",
+      "evidence": "factory-checks/daytona-session-transport/live-check-result.json"
+    },
+    {
+      "scope": "autonomous-panel-144: fresh Matchms validation of integrated general factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_full_closed_sdk_lifetimes_bound_reconciled",
+      "basis": "Same original source-only seed and scientific/resource/time/repair policy as135; future general runtime includes live-checked async sessions and recorded review/input/precision/error fixes. No prior generated task, repairs, answers or solver trajectories in inputs. At most one task sandbox alongside existing142campaign.",
+      "reconciliation": "Exact known creator, all recorded closed controller lifetimes priced at full resources plus300s at each end and fresh cleanup. Provider analytics is recorded separately when available and never shortens a lifetime. Retain1USD; no credits or final invoice assumption. See panel-rounds/077/closed-144-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-143: tenth-domain PyMC original-source pilot",
+      "ceiling_usd": "0.00",
+      "state": "unused_provider_reservation_released_after_intake_only_proof",
+      "basis": "Source choice within the agreed diverse Python development panel. Same CPU/resource/time/test/repair policy; GLM owns all endpoints and scientific artifacts. Full unchanged source, no prior generated task. No launch until a current campaign has terminal original evidence and fresh verified cleanup.",
+      "reconciliation": "Full original science/root archive, typed terminal status and fresh six-owner absence establish no provider stage, sandbox or model call. No paid Daytona exposure; this releases an unused allowance, not used charges. See panel-rounds/036/unused143-reconciliation.json. Iris used existing reserved capacity. No invoice or free-credit claim."
+    },
+    {
+      "scope": "autonomous-panel-145: PyMC full-source converter-v6 pilot",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Fresh unchanged source-only PyMC seed tests documented presentation normalization; original143intake rejection remains preserved. Existing per-case7200+300s, CPU/offline, high-requested, reference/solver/test/repair policies unchanged. Shared maximum2planned hosts/2task sandboxes.",
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh seven-owner absence, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/054/resource-bound-145.json"
+    },
+    {
+      "scope": "autonomous-panel-146: MDAnalysis complete-fixture-discovery validation",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Fresh unchanged original MDAnalysis seed and reviewed notice identities; GLM must inspect complete package-data coverage and remove only verified unused answer copies if present, then revalidate. No manual generated-task fixes. Existing per-case7200+300s, CPU/offline, high-requested, reference/solver/test/repair policies unchanged. Shared maximum2planned hosts/2task sandboxes.",
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh seven-owner absence, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/049/closed-resource-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-147: original Matchms additive-probe coverage validation",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Fresh unchanged original144/135notebook and seed, no prior generated tasks supplied. General independently authored append-only probe coverage within existing one quality repair, criteria/source/time/resource/offline policies unchanged. Queue only; no submission while145/146occupy both approved slots.",
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh seven-owner absence, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/043/cross-domain-resource-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-148: fresh MDAnalysis quantity-unit provenance validation",
+      "ceiling_usd": "5.00",
+      "state": "terminal_original_audited_cleanup_reconciled",
+      "basis": "Exact original146/140source/seed/notices; no prior generated tasks or unit-specific hints. General source-quantity/producer-conversion guidance in specification/construction/review, existing independent additive-coverage repair and all scientific/time/resource/offline/repair policies unchanged. Queued until an original terminal archive audit and fresh cleanup free an approved slot.147frozenpayload retained unchanged."
+    },
+    {
+      "scope": "autonomous-panel-149: unchanged MDAnalysis autonomous repeat after provider cleanup failure",
+      "ceiling_usd": "1.00",
+      "state": "terminal_full_closed_sdk_lifetimes_bound_reconciled",
+      "basis": "Source-only repeat of148with identical207runtime files, source, seeds and notices; no prior task, unit-specific advice or manual scientific edits. Original148full science/root archive and five-owner late cleanup independently verified. Existing per-case7200+300s, CPU/offline/high-requested, test/repair limits and two-host pool unchanged.",
+      "reconciliation": "Exact known creator, all recorded closed controller lifetimes priced at full resources plus300s at each end and fresh cleanup. Provider analytics is recorded separately when available and never shortens a lifetime. Retain1USD; no credits or final invoice assumption. See panel-rounds/076/closed-149-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-150: unchanged Scanpy source tests general numeric-precision guidance",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Within existing200USDaggregate. Fresh unchanged137source/seed with current general factory; no prior task, precision-specific hint or manual scientific edits. Existing CPU/offline/high-requested/time/test/repair limits and maximumtwo-host pool unchanged. Admission requires original147full archive/native audit and fresh seven-owner absence;149may be the only other live campaign.",
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh seven-owner absence, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/056/resource-bound-150.json"
+    },
+    {
+      "scope": "autonomous-panel-151: unchanged MDAnalysis source tests general source-import asset discovery",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Reuses the entire unspent141reservation within existing200USDtotal; aggregate197USDholds/3USDunallocated unchanged. Exact original149source/seed/notices, current general factory, no prior tasks or answer-file lists/diagnostic hints supplied. Existing CPU/offline/high-requested/time/test/repair limits and maximumtwo-host pool unchanged. Admission requires original149full archive audit and fresh four-owner absence.",
+      "funding_record": "panel-rounds/034/reservation-transfer.json",
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh seven-owner absence, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/043/cross-domain-resource-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-152: unchanged MDAnalysis seed, general scientific-admission/final-endpoint review validation",
+      "ceiling_usd": "3.00",
+      "state": "terminal_conservative_hold_unreconciled",
+      "basis": "Allocate the remaining authorized3USD; below the approved5USD per-campaign ceiling. Same CPU/RAM/disk/time/model/repair constraints. No used holds reclaimed or free credits assumed.",
+      "submission_record": "panel-rounds/035/submission-152.json",
+      "terminal_host_state": "FAILED",
+      "terminal_refresh": "panel-rounds/081/prior-ledger-state-refresh.json"
+    },
+    {
+      "scope": "autonomous-panel-153: unchanged MDAnalysis seed, correctly funded scientific-admission validation",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Reallocate143unused pre-provider allowance. Same200USD total, no used-provider holds reclaimed. Correct the operator152underfunding; frozen152stays unchanged and its original outcome will be retained.",
+      "submission_record": "panel-rounds/036/submission-153.json",
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh seven-owner absence, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/043/resource-bound-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-154: source-only MDAnalysis validation of general shared-input fixture discovery and all-scientific-branch prompts",
+      "ceiling_usd": "1.00",
+      "state": "terminal_full_closed_sdk_lifetimes_bound_reconciled",
+      "basis": "Remaining5USDinside existing200USDaggregate authorization; unchanged resources, deadlines, native-high GLM, stage and repair allowances. Do not supply prior tasks, fixture identities, answer values or diagnoses. No used-provider hold reclaimed.",
+      "reconciliation": "Exact known creator, all recorded closed controller lifetimes priced at full resources plus300s at each end and fresh cleanup. Provider analytics is recorded separately when available and never shortens a lifetime. Retain1USD; no credits or final invoice assumption. See panel-rounds/070/closed-sessions-154-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-155: fresh source-only Bioframe cross-domain validation with same factory as154",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Previously reserved but undispatched135future-stage4USDand144native1USD released after exact original code/config/archive/root/terminal/freshcleanup audit; used-stage allowances untouched. Same200USDauthorization and all resource/time/model/repair limits. No prior generated task, fixture, numeric answers or diagnostic hints.",
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh seven-owner absence, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/043/resource-bound-reconciliation.json"
+    },
+    {
+      "scope": "trusted-input-compat-001: one no-model original-input boundary validation",
+      "ceiling_usd": "1.00",
+      "state": "terminal_original_and_fresh_cleanup_verified",
+      "basis": "Use only remaining authorized1USD. One4CPU8GiB10GiB CPU-only offline disposable sandbox;300seconds plus180cleanup, no Iris/model/scientific task. Existing maximum2task-sandbox pool;155may be the only concurrent campaign.",
+      "evidence": "factory-checks/trusted-grader-inputs/live-check-configuration.json"
+    },
+    {
+      "scope": "autonomous-panel-156: fresh unchanged MDAnalysis seed tests general setup, readiness and trusted-input factory fixes",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Funded only from verified closed153/155exposure reconciliation, retaining2USDfor each against1.384500USDtwice-serial full-lifetime resource bound. Same200USDauthorization and original per-run CPU/time/model/repair rules. No prior tasks, fixtures, answer constants or diagnoses in source input.",
+      "funding_record": "panel-rounds/043/resource-bound-reconciliation.json",
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh seven-owner absence, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/046/resource-bound-156.json"
+    },
+    {
+      "scope": "autonomous-panel-157: unchanged original Matchms source, same general factory as156",
+      "ceiling_usd": "1.00",
+      "state": "unused_stage_allowances_released_used_holds_unchanged",
+      "basis": "Funded from verified complete147/151 resource-bound reconciliation retaining2USDperclosedrun against1.384500USDtwice-serial7500sbound. Same200USDauthorization and original resource/time/model/repair policy. No prior generated task, answer, fixture identity or diagnosis.",
+      "funding_record": "panel-rounds/043/cross-domain-resource-reconciliation.json",
+      "reconciliation": "Retain1USDfor every original dispatched sandbox stage; release only mandatory stages never dispatched. Full original archives, exact frozen reservation code, typed terminal state and fresh original-ID/owner cleanup verified. Not an invoice, credits or used-provider cost audit. See panel-rounds/051/unused-stage-reconciliation-157.json."
+    },
+    {
+      "scope": "autonomous-panel-158: unchanged original mdanalysis-rmsd on common general final-output asset-hint factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_full_closed_sdk_lifetimes_bound_reconciled",
+      "basis": "Existing200USDauthorization;5USDperfullpipeline. Same CPU/time/model/repair limits, no GPU, maximum2activehosts/sandboxes. No prior generated task or operator diagnostic supplied.",
+      "funding_record": "panel-rounds/047/funding-reconciliation-133139.json",
+      "reconciliation": "Exact known creator, all recorded closed controller lifetimes priced at full resources plus300s at each end and fresh cleanup. Provider analytics is recorded separately when available and never shortens a lifetime. Retain1USD; no credits or final invoice assumption. See panel-rounds/078/closed-158-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-159: unchanged original matchms-spectral-matching on common general final-output asset-hint factory",
+      "ceiling_usd": "1.00",
+      "state": "terminal_full_closed_sdk_lifetimes_bound_reconciled",
+      "basis": "Existing200USDauthorization;5USDperfullpipeline. Same CPU/time/model/repair limits, no GPU, maximum2activehosts/sandboxes. No prior generated task or operator diagnostic supplied.",
+      "funding_record": "panel-rounds/047/funding-reconciliation-133139.json",
+      "reconciliation": "Exact known creator, all five closed controller lifetimes priced at full resources plus300s at each end, cross-checked with original-ID provider usage and fresh cleanup. Retain1USD; no credits or final invoice assumption. See panel-rounds/070/closed-sessions-159-applied.json"
+    },
+    {
+      "scope": "session-create-recovery-001: bounded synthetic provider compatibility; no model or science",
+      "ceiling_usd": "1.00",
+      "state": "incomplete_original_and_fresh_cleanup_verified_full_hold_retained",
+      "configuration": "factory-checks/session-create-recovery/live-check-configuration.json",
+      "basis": "Existing200USDauthorization; one offline4CPU8GiB10GiB sandbox for300splus180cleanup; one free poolslot while159mayremainactive. No Iris host, GPU, model or biological computation."
+    },
+    {
+      "scope": "session-create-recovery-002: synthetic API subclass compatibility after preserved failed001",
+      "ceiling_usd": "1.00",
+      "state": "synthetic_checks_passed_original_and_fresh_cleanup_verified_full_hold_retained",
+      "configuration": "factory-checks/session-create-recovery/live-check-configuration-002.json",
+      "basis": "Existing200USDauthorization. Oneoffline4CPU8GiB10GiBsandbox,300swork+180cleanup,noIris/GPU/model/science.001original/freshabsenceverified; maximum2activepoolslots including159."
+    },
+    {
+      "scope": "autonomous-panel-160: unchanged original MDAnalysis source, generic asset review and session creation recovery",
+      "ceiling_usd": "1.00",
+      "state": "terminal_full_closed_sdk_lifetimes_bound_reconciled",
+      "basis": "Within existing200USDauthorization. Same original4CPU8GiB10GiB CPU-only policy, model/time/repair limits; no prior task, answer, fixture identity or operator diagnosis. Maximum2activehosts/task-sandboxslots;159maybeonlyconcurrentrun.",
+      "funding_record": "panel-rounds/049/closed-resource-reconciliation.json",
+      "reconciliation": "Exact known creator, all recorded closed controller lifetimes priced at full resources plus300s at each end, cross-checked with original-ID provider usage and fresh cleanup. Retain1USD; no credits or final invoice assumption. See panel-rounds/070/closed-sessions-160-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-161: original PyHMMER source on common live-tested general factory",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Existing 200USD authorization. Source-only original seed, common unchanged scientific prompts and execution policy; no prior answers or operator diagnoses. Dispatch only after typed admission establishes one free slot in the maximum-two pool.",
+      "funding_record": "panel-rounds/051/unused-stage-reconciliation-157.json",
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh eight-owner absence with one declared question repair, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/068/question-repair-161-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-162: original COBRApy source with general repair-scope clarifications",
+      "ceiling_usd": "0.25",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Existing200USDauthorization. Unchanged original source-only inputs from133 and common model/resource/time/repair policy. Only two general canonical prompts differ from160; no prior task, answer or operator diagnosis. Maximum2activehosts/task-sandboxslots,161maybetheonlyconcurrentrun.",
+      "funding_record": "panel-rounds/054/resource-bound-145.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/090/refined-162-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-163: original Scanpy source on the same general runtime as162",
+      "ceiling_usd": "1.00",
+      "state": "unused_stage_allowances_released_used_holds_unchanged",
+      "basis": "Existing 200 USD authorization; original notebook, metadata and notices unchanged from150. Frozen runtime includes source-bound live-tested general bounded network probe. No earlier task, answer, labels or diagnosis. Typed admission found no other live campaigns after161cleanup. Maximum two hosts/task-sandbox slots.",
+      "funding_record": "panel-rounds/056/unused-native-160.json",
+      "reconciliation": "Retain1USDfor every original dispatched sandbox stage; release only mandatory stages never dispatched. Full original archives, exact frozen reservation code, typed terminal state and fresh original-ID/owner cleanup verified. Not an invoice, credits or used-provider cost audit. See panel-rounds/059/unused-stages-163.json."
+    },
+    {
+      "scope": "bounded-network-probe-001: same targets, bounded resolver and fail-closed synthetic provider compatibility",
+      "ceiling_usd": "1.00",
+      "state": "checks_passed_original_and_fresh_cleanup_verified_full_hold_retained",
+      "configuration": "factory-checks/bounded-network-probe/live-check-configuration.json",
+      "basis": "Existing200USDauthorization. One4CPU8GiB10GiBoffline-owned sandbox,300swork+180cleanup,noIris/GPU/model/biology. Maximum2poolslots; only161mayconcurrentlyrun. Original162allarchivesandtwoownercleanupverified; unchangedauditreleasedonly3undispatchedstages."
+    },
+    {
+      "scope": "autonomous-panel-164: original Scanpy source on general operation-dependency and offline-loader preflight clarification",
+      "ceiling_usd": "1.00",
+      "state": "unused_stage_allowances_released_used_holds_unchanged",
+      "basis": "Within existing 200 USD authorization; unchanged original source-only notebook/metadata/notices from150. General setup prompt clarifies preflight for lazily imported scientific dependencies and offline metadata lookups. Same tools, two reference dispatches, repairs, model, resources and clocks. No earlier task, answers, package names, labels or diagnostic hints in seed input. Typed admission and source-bound compatibility are required before dispatch.",
+      "funding_record": "panel-rounds/059/unused-stages-163.json",
+      "reconciliation": "Retain1USDfor every original dispatched sandbox stage; release only mandatory stages never dispatched. Full original archives, exact frozen reservation code, typed terminal state and fresh original-ID/owner cleanup verified. Not an invoice, credits or used-provider cost audit. See panel-rounds/061/unused-stages-164.json."
+    },
+    {
+      "scope": "autonomous-panel-165: original COBRApy source on the same frozen general factory as164",
+      "ceiling_usd": "1.00",
+      "state": "unused_stage_allowances_released_used_holds_unchanged",
+      "basis": "Existing200USDauthorization. Original source/metadata/notices from133, same216runtimefiles and unchanged existing two-reference-test policy as164. No earlier task, answer or operator diagnosis. Source-only cross-domain validation; shared setup-execution-budget proposal remains pending and is not adopted. Maximum2activehosts/task-sandboxslots; typed admission/cleanup required before dispatch.",
+      "funding_record": "panel-rounds/061/unused-stages-164.json",
+      "reconciliation": "Retain1USDfor every original dispatched sandbox stage; release only mandatory stages never dispatched. Full original archives, exact frozen reservation code, typed terminal state and fresh original-ID/owner cleanup verified. Not an invoice, credits or used-provider cost audit. See panel-rounds/064/unused-stages-165.json."
+    },
+    {
+      "scope": "autonomous-panel-166: fresh original COBRApy notebook under the general minimal export-repair interface",
+      "ceiling_usd": "1.00",
+      "state": "unused_stage_allowances_released_used_holds_unchanged",
+      "basis": "Full unchanged campaign reservation from audited unused balance; source-only166, no task-specific repair or prior generated answers supplied.",
+      "reconciliation": "Retain1USDfor every original dispatched sandbox stage; release only mandatory stages never dispatched. Full original archives, exact frozen reservation code, typed terminal state and fresh original-ID/owner cleanup verified. Not an invoice, credits or used-provider cost audit. See panel-rounds/066/unused-stages-166.json."
+    },
+    {
+      "scope": "autonomous-panel-167: original COBRApy source with general artifact-tool runtime export repair",
+      "ceiling_usd": "1.00",
+      "state": "terminal_full_closed_sdk_lifetimes_bound_reconciled",
+      "basis": "Full unchanged campaign reservation from audited unused balance. Fresh original source only; no previous generated task, answer or diagnostic hints.",
+      "reconciliation": "Exact known creator, all recorded closed controller lifetimes priced at full resources plus300s at each end and fresh cleanup. Provider analytics is recorded separately when available and never shortens a lifetime. Retain1USD; no credits or final invoice assumption. See panel-rounds/070/closed-sessions-167-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-168: original Scanpy source with general chained-call identity correction",
+      "ceiling_usd": "1.00",
+      "state": "terminal_full_closed_sdk_lifetimes_bound_reconciled",
+      "basis": "Full unchanged campaign reservation from audited unused balance; original notebook and metadata only, with no earlier generated task, expected answer or diagnostic hint.",
+      "reconciliation": "Exact known creator, all recorded closed controller lifetimes priced at full resources plus300s at each end and fresh cleanup. Provider analytics is recorded separately when available and never shortens a lifetime. Retain1USD; no credits or final invoice assumption. See panel-rounds/070/closed-sessions-168-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-169: original Bioframe source on current general factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Full unchanged campaign reservation from verified closed160 resource balance. Original source, provenance and rights metadata only; no earlier generated task, answer or operator diagnostic hints.",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/090/refined-169-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-170: original Scanpy source on general conditioning and numerical-target safeguards",
+      "ceiling_usd": "5.00",
+      "state": "terminal_conservative_hold_unreconciled",
+      "basis": "Full unchanged reservation funded from verified unused169 stages and source-verified closed154 lifetime bound. Original source/provenance/rights assets only. Three general prompt changes; no previous task, expected answer or diagnostic hints are supplied. All model, resource, repair, timing and two-slot limits remain unchanged.",
+      "funding_records": [
+        "panel-rounds/071/unused-stages-169-applied.json",
+        "panel-rounds/070/closed-sessions-154-applied.json"
+      ],
+      "terminal_host_state": "FAILED",
+      "terminal_refresh": "panel-rounds/081/prior-ledger-state-refresh.json"
+    },
+    {
+      "scope": "autonomous-panel-171: original Matchms source on the same frozen general factory as170",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Full unchanged reservation funded from verified completed167/168 resource lifetimes. Same217runtime files, original source/provenance/rights assets only, no earlier task, answer or diagnostic hint. GLM/model/time/resource/repair policies unchanged; typed max-two-slot admission before dispatch. No automatic publication from this scientific run.",
+      "funding_records": [
+        "panel-rounds/065/sdk-only-167-applied.json",
+        "panel-rounds/068/sdk-only-168-applied.json",
+        "panel-rounds/070/closed-sessions-167-applied.json",
+        "panel-rounds/070/closed-sessions-168-applied.json"
+      ],
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh seven-owner absence, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/074/resource-bound-reconciliation-171.json"
+    },
+    {
+      "scope": "autonomous-panel-172: fresh original Bioframe source, general early specification review",
+      "ceiling_usd": "3.00",
+      "state": "unused_stage_allowances_released_used_holds_unchanged",
+      "scientific_policy": "Original source-only seed; no earlier task, answer, population diagnosis or operator hint; shared single quality repair; no model/resource/timing change.",
+      "reconciliation": "Retain1USDfor every original dispatched sandbox stage; release only mandatory stages never dispatched. Full original archives, exact frozen reservation code, typed terminal state and fresh original-ID/owner cleanup verified. Not an invoice, credits or used-provider cost audit. See panel-rounds/076/unused-172-applied.json."
+    },
+    {
+      "scope": "autonomous-panel-173: fresh original Bioframe source after general typed-proposal handoff fix",
+      "ceiling_usd": "0.50",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Existing200USDauthorization; full5USDstage reservation. No prior generated task/review/diagnostic input; unchanged model/resource/time and shared-repair policy.",
+      "submission_record": "panel-rounds/077/submission-173.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/090/refined-173-applied.json"
+    },
+    {
+      "scope": "network-policy-convergence-001: source-bound provider compatibility, no models or biology",
+      "ceiling_usd": "0.00",
+      "state": "covered_by_shared_compatibility_hold",
+      "basis": "One unchanged300-second infrastructure-check profile plus180-second cleanup,4CPU/8GiB/10GiB/noGPU; no model or biological computation; typed max-two-slot admission and exact source verification before creation.",
+      "evidence": "factory-checks/network-policy-convergence/integration-summary.json",
+      "covered_by": "authoring-workspace-compat-001",
+      "reconciliation": "Original incurred usage remains covered, not released: both full480-second profiles bound0.088608USD under the shared1USD hold. Original execution evidence unchanged."
+    },
+    {
+      "scope": "autonomous-panel-174: fresh original Bioframe source after general bounded network-policy convergence",
+      "ceiling_usd": "1.00",
+      "state": "terminal_two_sdk_closed_lifetimes_reconciled",
+      "basis": "Existing200USD authorization; unchanged full5USD reservation funded from source-verified terminal158 resource bounds. Original169source/provenance assets only, no prior generated proposal/review/answer or diagnostic hint. Only general network control/tests differ from173; all model/resource/time/test/repair policies remain unchanged.",
+      "funding_record": "panel-rounds/078/closed-158-applied.json",
+      "submission_record": "panel-rounds/078/submission-174.json",
+      "reconciliation": "Both complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Retain1USD; no invoices or credits assumed. See panel-rounds/079/closed-174-applied.json"
+    },
+    {
+      "scope": "authoring-workspace-compat-001: shared hold for completed network compatibility and one prepared workspace check",
+      "ceiling_usd": "1.00",
+      "state": "both_compatibility_members_terminal_cleanup_verified",
+      "members": [
+        "network-policy-convergence-001",
+        "authoring-workspace-compat-001"
+      ],
+      "basis": "Two complete unchanged300+180-second4CPU/8GiB/10GiB profiles cost at most0.088608USD at recorded0.332280USD/hour; retain1USD including margin. No models, biology, snapshots or extra resources.",
+      "evidence": "factory-checks/authoring-workspace-isolation/compatibility-budget.json",
+      "result_evidence": "factory-checks/authoring-workspace-isolation/integration-summary.json"
+    },
+    {
+      "scope": "autonomous-panel-175: fresh original Bioframe source with general workspace-isolated setup feedback",
+      "ceiling_usd": "0.50",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original169notebook/provenance only; six reviewed general runtime paths differ from174. Both workspace controls consume existing setup time; no extra stage/reference/repair/model allowance. Three synthetic real-provider cases and fresh cleanup pass; full fresh scientific/native validation remains required.",
+      "funding_record": "panel-rounds/079/closed-174-applied.json",
+      "submission_record": "panel-rounds/079/submission-175.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/090/refined-175-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-176: fresh NeuroKit physiological-signal regression on workspace-isolated factory",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Reuse original136source/provenance only. Same frozen general runtime as175; no prior outputs/reviews/setup recipes or targeted fixes. Full existing5USDreservation, two-host pool, GLMhighrequested, CPU/offline/time/repair policies unchanged.",
+      "funding_records": [
+        "panel-rounds/079/closed-162-applied.json",
+        "panel-rounds/079/closed-169-applied.json",
+        "panel-rounds/079/closed-173-applied.json"
+      ],
+      "submission_record": "panel-rounds/080/submission-176.json",
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh seven-owner absence, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/080/completed-176-applied.json"
+    },
+    {
+      "scope": "upload-retry-compat-001: real-provider immutable upload compatibility with synthetic transient faults",
+      "ceiling_usd": "1.00",
+      "state": "terminal_compatibility_cleanup_verified",
+      "basis": "One sandbox at4CPU/8GiB/10GiB/noGPU,300swork+180scleanup; three tiny synthetic file cases; no model/scientific calls. Retain original campaign175 unchanged.",
+      "funding_record": "panel-rounds/080/completed-176-applied.json",
+      "configuration": "factory-checks/upload-retry/live-check-configuration.json",
+      "evidence": "factory-checks/upload-retry/live-result.json",
+      "cleanup": "factory-checks/upload-retry/live-fresh-cleanup.json"
+    },
+    {
+      "scope": "autonomous-panel-177: original COBRApy deletions on general immutable-upload factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original167source/provenance only; no previous generated task/review/staging recipe. Three general runtime delta paths; scientific prompts/policy unchanged. Existing CPU/offline/time/repair/model limits retained. Full5USDreservation and typed two-host pool admission required.",
+      "funding_record": "panel-rounds/079/closed-175-applied.json",
+      "configuration_plan": "panel-rounds/081/development-panel.json",
+      "submission_record": "panel-rounds/081/submission-177.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/090/refined-177-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-178: fresh original PyHMMER protein sequence profiles on immutable-upload factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original161source/provenance only; same221-file runtime and scientific prompts/policy as177. No previous task/review/staging recipe or diagnostic hints. Existing CPU/offline/time/repair/model settings and typed two-host pool admission retained.",
+      "funding_records": [
+        "panel-rounds/082/closed-134-applied.json",
+        "panel-rounds/082/closed-137-applied.json",
+        "panel-rounds/082/closed-142-applied.json"
+      ],
+      "configuration_plan": "panel-rounds/081/development-panel.json",
+      "submission_record": "panel-rounds/082/submission-178.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/090/refined-178-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-179: fresh original Matchms metabolite mass spectra on immutable-upload factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original171source/provenance only; same221-file runtime and scientific prompts/policy as177. No previous task/review/staging recipe or diagnostic hints. Existing CPU/offline/time/repair/model settings and typed two-host pool admission retained.",
+      "funding_records": [
+        "panel-rounds/082/closed-134-applied.json",
+        "panel-rounds/082/closed-137-applied.json",
+        "panel-rounds/082/closed-142-applied.json"
+      ],
+      "configuration_plan": "panel-rounds/081/development-panel.json",
+      "submission_record": "panel-rounds/083/submission-179.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/090/refined-179-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-180: original Scanpy notebook on unchanged immutable-upload factory",
+      "ceiling_usd": "0.75",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original170source/provenance only, same221-file runtime and scientific policy as177/178/179; no prior task/review/staging recipe. Full5USDreservation and typed two-host pool admission required; no third host launch.",
+      "funding_record": "panel-rounds/081/unused-177-applied.json",
+      "configuration_plan": "panel-rounds/081/development-panel.json",
+      "submission_record": "panel-rounds/084/submission-180.json",
+      "terminal_evidence": "panel-rounds/084/result-180.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/090/refined-180-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-181: fresh original Pyteomics proteomic search results on unchanged immutable-upload factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original139source/provenance only. Same221-file runtime and scientific policy as177\u2013180, no prior tasks/reviews/staging/diagnostic hints. Full5USDreservation, existing CPU/offline/model/time/repair limits and typed two-host pool admission. No automatic rights clearance or publication.",
+      "funding_records": [
+        "panel-rounds/083/unused-179-applied.json",
+        "panel-rounds/081/closed-177-applied.json",
+        "panel-rounds/082/closed-178-applied.json",
+        "panel-rounds/083/closed-179-applied.json"
+      ],
+      "configuration_plan": "panel-rounds/081/development-panel.json",
+      "submission_record": "panel-rounds/085/submission-181.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/085/refined-181-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-182: fresh original MDAnalysis molecular dynamics on unchanged immutable-upload factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original160source/provenance only. Same221-file runtime and scientific policy as177\u2013180, no prior tasks/reviews/staging/diagnostic hints. Full5USDreservation, existing CPU/offline/model/time/repair limits and typed two-host pool admission. No automatic rights clearance or publication.",
+      "funding_records": [
+        "panel-rounds/083/unused-179-applied.json",
+        "panel-rounds/081/closed-177-applied.json",
+        "panel-rounds/082/closed-178-applied.json",
+        "panel-rounds/083/closed-179-applied.json"
+      ],
+      "configuration_plan": "panel-rounds/081/development-panel.json",
+      "submission_record": "panel-rounds/086/submission-182.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/090/refined-182-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-183: original Sgkit statistical genetics on the frozen immutable-upload factory",
+      "ceiling_usd": "0.75",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original142source/provenance only, explicit public runtime b0e1f4f and empty reviewed runtime delta. Full5USDreservation, CPU/offline/model/time/repair policies and typed two-host admission unchanged. No earlier task, answer, staging or diagnostic hints.",
+      "funding_record": "panel-rounds/087/funding.json",
+      "configuration_plan": "panel-rounds/081/development-panel.json",
+      "submission_record": "panel-rounds/087/submission-183.json",
+      "terminal_evidence": "panel-rounds/087/result-183.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/090/refined-183-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-184: original PyMC hierarchical biological inference on the frozen immutable-upload factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original145source/provenance only, explicit public runtime b0e1f4f and empty reviewed runtime delta. Full5USDreservation, CPU/offline/model/time/repair policies and typed two-host admission unchanged. No earlier task, answer, staging or diagnostic hints.",
+      "funding_record": "panel-rounds/088/funding.json",
+      "configuration_plan": "panel-rounds/081/development-panel.json",
+      "submission_record": "panel-rounds/088/submission-184.json",
+      "terminal_evidence": "panel-rounds/088/result-184.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/090/refined-184-applied.json"
+    },
+    {
+      "scope": "final-environment-compat-001: synthetic final-inventory removal and controlled-execution boundary",
+      "ceiling_usd": "1.00",
+      "state": "terminal_compatibility_cleanup_verified",
+      "basis": "One existing300-second plus180-second cleanup 4CPU/8GiB/10GiB offline compatibility profile; no model or biology. Launch only after typed shared-pool admission and cleanup proofs.",
+      "configuration": "factory-checks/final-environment/live-check-configuration.json",
+      "evidence": "factory-checks/final-environment/integration-summary.json",
+      "cleanup": "factory-checks/final-environment/live-fresh-cleanup.json"
+    },
+    {
+      "scope": "autonomous-panel-185: original MDAnalysis source on final-environment and response-recovery factory",
+      "ceiling_usd": "0.75",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original160notebook/provenance only. General final-inventory environment assessment/removal, scientific specification boundary, native preparation deadline and empty provider-abort handling; no prior task, answer, exclusion filename, staging recipe or diagnostic hint. All model/resource/time/global-repair policies unchanged. Typed two-host admission required.",
+      "funding_record": "panel-rounds/089/funding.json",
+      "submission_record": "panel-rounds/089/submission-185.json",
+      "terminal_evidence": "panel-rounds/089/result-185.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/089/refined-185-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-186: original PyMC notebook on common224-file factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original145source/provenance only; exact same224runtime as185. Unchanged scientific/model/resource/time/repair policies. Full5USD and typed2host admission; no earlier task, answer, staging recipe or diagnostic hints.",
+      "funding_record": "panel-rounds/091/funding.json",
+      "configuration_plan": "panel-rounds/090/development-panel.json",
+      "submission_record": "panel-rounds/091/submission-186.json",
+      "terminal_evidence": "panel-rounds/091/result-186.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/091/refined-186-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-187: original COBRApy deletions on common224-file factory",
+      "ceiling_usd": "0.75",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Exact original167source/provenance only, frozen identical224runtime9641467. No earlier generated task, answer, staging or diagnostic hints. Same model/scientific/resource/time/global-repair policy. Two-host typed admission required after a slot is freed; no third host.",
+      "funding_record": "panel-rounds/092/funding.json",
+      "configuration_plan": "panel-rounds/090/development-panel.json",
+      "submission_record": "panel-rounds/092/submission-187.json",
+      "terminal_evidence": "panel-rounds/092/result-187.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/092/refined-187-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-188: original PyHMMER source on common224-file factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original161source/provenance only; exact frozen224runtime9641467. Unchanged scientific/model/resource/time/global-repair policy. Full5USDand typed2host admission; no prior task, answer, staging or diagnostic hints.",
+      "funding_record": "panel-rounds/093/funding.json",
+      "configuration_plan": "panel-rounds/090/development-panel.json",
+      "submission_record": "panel-rounds/093/submission-188.json",
+      "terminal_evidence": "panel-rounds/093/result-188.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/093/refined-188-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-189: original matchms-spectral-matching on common224-file factory",
+      "ceiling_usd": "0.75",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original171source/provenance only, exact frozen224runtime9641467. Full5USDwith unchanged scientific/model/resource/time/global-repair policy; typed2host admission and terminal cleanup required. No prior task/answers/staging/diagnostic hints.",
+      "funding_record": "panel-rounds/094/funding.json",
+      "configuration_plan": "panel-rounds/090/development-panel.json",
+      "submission_record": "panel-rounds/094/submission-189.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/094/refined-189-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-190: original neurokit-hrv on common224-file factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original136source/provenance only, exact frozen224runtime9641467. Full5USDwith unchanged scientific/model/resource/time/global-repair policy; typed2host admission and terminal cleanup required. No prior task/answers/staging/diagnostic hints.",
+      "funding_record": "panel-rounds/095/funding.json",
+      "configuration_plan": "panel-rounds/090/development-panel.json",
+      "submission_record": "panel-rounds/095/submission-190.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/095/refined-190-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-191: original scanpy on common224-file factory",
+      "ceiling_usd": "0.75",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original170source/provenance only, exact frozen224runtime9641467. Full5USDwith unchanged scientific/model/resource/time/global-repair policy; typed2host admission and terminal cleanup required. No prior task/answers/staging/diagnostic hints.",
+      "funding_record": "panel-rounds/096/funding.json",
+      "configuration_plan": "panel-rounds/090/development-panel.json",
+      "submission_record": "panel-rounds/096/submission-191.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/096/refined-191-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-192: original bioframe-motifs-to-peaks on common224-file factory",
+      "ceiling_usd": "0.50",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original169source/provenance only, exact frozen224runtime9641467; unchanged model/resource/time/scientific/repair policy. New candidate code is not included. No prior task/answers/staging/exclusions/diagnostic hints. Typed max2host admission and original/fresh terminal cleanup required.",
+      "funding_record": "panel-rounds/097/funding.json",
+      "configuration_plan": "panel-rounds/090/development-panel.json",
+      "submission_record": "panel-rounds/097/submission-192.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/097/refined-192-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-193: original pyteomics-filtering on common224-file factory",
+      "ceiling_usd": "0.25",
+      "state": "terminal_known_sdk_prefix_closed_lifetimes_refined",
+      "basis": "Original139source/provenance only; exact frozen224runtime9641467 with unchanged model/resource/time/scientific/repair policy. No new candidates or earlier tasks/answers/staging/exclusions/diagnostic hints. Source/data redistribution hold remains; publication not automatic. Typed max2host admission and terminal cleanup required.",
+      "funding_record": "panel-rounds/098/funding.json",
+      "configuration_plan": "panel-rounds/090/development-panel.json",
+      "submission_record": "panel-rounds/098/submission-193.json",
+      "reconciliation": "All complete original SDK sessions priced at full resources plus300seconds at EACH end, against exact reviewed source family and fresh cleanup. Add0.10USD and round upward to0.25USD; no invoices or credits assumed. See panel-rounds/098/refined-193-applied.json"
+    },
+    {
+      "scope": "autonomous-panel-194: original sgkit-relatedness on common224-file factory",
+      "ceiling_usd": "1.00",
+      "state": "unused_stage_allowances_released_used_holds_unchanged",
+      "basis": "Original142source/provenance only; exact frozen224runtime9641467 with unchanged model/resource/time/scientific/repair policy. No new candidates, prior tasks, answers, staging recipes, exclusions or diagnostic hints. Typed max2host admission and terminal cleanup required.",
+      "funding_record": "panel-rounds/099/funding.json",
+      "configuration_plan": "panel-rounds/090/development-panel.json",
+      "submission_record": "panel-rounds/099/submission-194.json",
+      "reconciliation": "Retain1USDfor every original dispatched sandbox stage; release only mandatory stages never dispatched. Full original archives, exact frozen reservation code, typed terminal state and fresh original-ID/owner cleanup verified. Not an invoice, credits or used-provider cost audit. See panel-rounds/099/unused-194-applied.json."
+    },
+    {
+      "scope": "early-installed-hints-compat-001: synthetic installed-hint identity, role privacy and invalidation",
+      "ceiling_usd": "1.00",
+      "state": "terminal_compatibility_cleanup_verified",
+      "basis": "Existing bounded300-second plus180-second cleanup 4CPU/8GiB/10GiB offline synthetic compatibility profile; no model or biology. May launch only after a campaign slot is free and terminal cleanup is verified.",
+      "configuration": "factory-checks/early-installed-hints/live-check-configuration.json",
+      "funding_record": "factory-checks/early-installed-hints/compatibility-funding.json",
+      "evidence": "factory-checks/early-installed-hints/integration-summary.json",
+      "cleanup": "factory-checks/early-installed-hints/live-fresh-provider-cleanup.json"
+    },
+    {
+      "scope": "autonomous-panel-195: original Matchms source on explicit229-file hints/review-packet candidate",
+      "ceiling_usd": "2.00",
+      "state": "terminal_full_lifecycle_resource_bound_reconciled",
+      "basis": "Fresh source-only rerun of original171notebook/provenance, identical scientific/model/resource/time/global-repair policy to189. No prior task, answer, exclusion filename, staging recipe or diagnostic hints. Provider hint-role/lifecycle controls and exact readback/cleanup passed. Still requires frozen payload validation and typed max2host admission. This is development evidence, not an untouched holdout.",
+      "funding_record": "panel-rounds/100/funding.json",
+      "configuration_plan": "panel-rounds/100/plan.json",
+      "submission_record": "panel-rounds/100/submission-195.json",
+      "reconciliation": "Verified completed serial stages and native trials, full original archive/root readback, original/fresh seven-owner absence, pinned no-snapshot backend and exact resource overrides. Retain2USDagainst1.384500USDtwice-serial full-lifetime resource bound, no credits or invoice assumption. See panel-rounds/100/refined-195-applied.json"
+    },
+    {
+      "scope": "setup-control-budget-compat-001: synthetic cumulative-budget workspace termination",
+      "ceiling_usd": "1.00",
+      "state": "terminal_compatibility_cleanup_verified",
+      "basis": "Existing bounded300-second plus180-second cleanup4CPU/8GiB/10GiBoffline compatibility profile. No model/biology; one shared-pool slot only after typed admission and terminal cleanup proofs.",
+      "configuration": "factory-checks/setup-control-budget/live-check-configuration.json",
+      "funding_record": "factory-checks/setup-control-budget/compatibility-funding.json",
+      "evidence": "factory-checks/setup-control-budget/integration-summary.json",
+      "cleanup": "factory-checks/setup-control-budget/live-fresh-provider-cleanup.json"
+    }
+  ],
+  "actual_provider_invoice_usd": null,
+  "limitations": [
+    "Remaining reservations are conservative holds, not measured charges. Releases require documented absence of sandbox usage or verified lifetime/profile cost bounds.",
+    "Recovery worker 013 carries prior campaign 012 holds and does not add another $5 reservation.",
+    "Any further run must reserve within the unallocated balance before submission."
+  ],
+  "reconciliation_date": "2026-10-23",
+  "current_summary": "200USDauthorized once /197.00USDconservative holds /3.00USDunallocated. All10fixed224runtimecasesaudited;195Matchms running. Synthetic workspace-control budget boundary passed and exact cleanup verified; no new model or scientific run. No invoices or credits assumed.",
+  "authorization_updates": [
+    {
+      "date": "2026-10-23",
+      "recorded_at": "2026-10-23T22:06:03.599163+00:00",
+      "user_instruction": "I authorize $100 more",
+      "additional_usd": "100.00",
+      "previous_total_usd": "100.00",
+      "new_total_usd": "200.00",
+      "other_constraints_changed": false
+    }
+  ],
+  "last_updated_at": "2026-10-26T18:28:36.580642+00:00"
+}
