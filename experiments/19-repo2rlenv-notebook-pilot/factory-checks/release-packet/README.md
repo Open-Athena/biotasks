@@ -1,0 +1,9 @@
+# Recheck the actual file-backed review input at release time
+
+Matchms 195 completed scientific/native validation, but the independent release checker stopped with `KeyError: candidate`. It expected the old inline review-input shape. The new reviewer had correctly recorded a complete immutable packet and supplied its identity-bound index instead. The [original checker failure](original-failure-195.json) remains recorded; it did not establish a scientific defect or permit bypassing release validation.
+
+The general checker now opens the recorded packet read-only. It verifies the descriptor, manifest identity, ordered document index, normalized document names, each full document's bytes/hash and the reconstructed complete context hash. It checks that inline orientation fields equal their packet originals. It does not regenerate missing evidence, follow links, infer a candidate, change permissions or execute recorded programs. Missing, changed, linked or mismatched evidence blocks release. The legacy inline format remains supported.
+
+The original exact-candidate/review binding, source-coverage approval, scientific admission, installed-hint assessments and executed scientific-negative coverage checks still run on the reconstructed original context. Native acceptance and publication gates remain separate. No task, source, oracle, grader, probe, reward or historical review was edited or rerun.
+
+[205 affected checks and 234 project tests pass](offline-checks.json), including stale candidates, unresolved hint findings, inline/packet disagreement, missing/changed/linked documents, manifest corruption/path escape, and byte/mode preservation during read-only verification. Ruff, formatting, ty and pre-commit pass. These are offline checks; a successful archived-task check is recorded separately and does not validate later publication or a download.

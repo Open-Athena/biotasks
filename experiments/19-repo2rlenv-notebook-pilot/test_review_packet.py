@@ -139,6 +139,54 @@ def test_same_context_reuses_exact_packet_but_changed_context_gets_a_new_identit
     assert later.reconstruct()["controls"][0]["passed_control"]
 
 
+def test_recorded_packet_opens_without_writing_or_recreating_evidence(tmp_path):
+    value = packet(tmp_path)
+    before = {p: (p.read_bytes(), p.stat().st_mode) for p in value.root.iterdir()}
+    restored = ReviewPacket.open_recorded(
+        value.root.parent, value.model_context["review_evidence"], deadline=time.time() + 30
+    )
+    assert restored.reconstruct() == context()
+    assert before == {p: (p.read_bytes(), p.stat().st_mode) for p in value.root.iterdir()}
+
+
+@pytest.mark.parametrize(
+    "change", ["descriptor", "index", "missing", "manifest", "document", "linked", "escape"]
+)
+def test_recorded_packet_refuses_changed_missing_linked_or_escaping_evidence(tmp_path, change):
+    import hashlib
+
+    value = packet(tmp_path)
+    descriptor = copy.deepcopy(value.model_context["review_evidence"])
+    document = value.root / value.catalog["candidate"]["path"]
+    if change == "descriptor":
+        descriptor["context_sha256"] = "../outside"
+    elif change == "index":
+        descriptor["fields"]["candidate"]["bytes"] += 1
+    elif change == "missing":
+        document.unlink()
+    elif change == "document":
+        document.chmod(0o600)
+        document.write_text("{}")
+    elif change == "linked":
+        document.unlink()
+        document.symlink_to(value.root / value.catalog["controls"]["path"])
+    else:
+        manifest = value.root / "manifest.json"
+        manifest.chmod(0o600)
+        if change == "manifest":
+            manifest.write_text("{}")
+        else:
+            data = json.loads(manifest.read_text())
+            data["fields"]["candidate"]["path"] = "../outside.json"
+            manifest.write_text(json.dumps(data))
+            descriptor["manifest_sha256"] = hashlib.sha256(manifest.read_bytes()).hexdigest()
+    with pytest.raises((ValueError, OSError)):
+        restored = ReviewPacket.open_recorded(
+            value.root.parent, descriptor, deadline=time.time() + 30
+        )
+        restored.reconstruct()
+
+
 def test_original_object_member_order_is_preserved_in_documents_and_packet_identity(tmp_path):
     original = context()
     first = packet(tmp_path, original)

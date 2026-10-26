@@ -1,6 +1,7 @@
 """Recheck the final recorded review without new model or scientific execution."""
 
 import json
+import time
 
 from grading_protocol import (
     Grader,
@@ -10,6 +11,25 @@ from grading_protocol import (
     check_review_source_coverage,
 )
 from probe_coverage import unexercised_scientific_checks
+
+
+def recorded_review_context(grading, inputs):
+    if "review_evidence" not in inputs:
+        return inputs
+    from review_packet import ReviewPacket
+
+    packet = ReviewPacket.open_recorded(
+        grading / "review-inspection/review-packets",
+        inputs["review_evidence"],
+        deadline=time.time() + 60,
+    )
+    original = packet.reconstruct()
+    inline = {key: value for key, value in inputs.items() if key != "review_evidence"}
+    if inline != {
+        key: value for key, value in original.items() if key in ReviewPacket.INLINE_FIELDS
+    }:
+        raise ValueError("Inline review inputs differ from their recorded packet")
+    return original
 
 
 def check_final_review(grading):
@@ -34,9 +54,10 @@ def check_final_review(grading):
         if not artifact.is_file():
             continue
         observed = Review.model_validate(read(artifact)["artifact"])
-        inputs = read(path)
-        if observed == review and inputs["candidate"] == candidate:
-            matched.append(inputs)
+        if observed == review:
+            inputs = recorded_review_context(grading, read(path))
+            if inputs["candidate"] == candidate:
+                matched.append(inputs)
     if not matched:
         raise ValueError("Final review is not bound to a recorded input and exact candidate")
     for inputs in matched:

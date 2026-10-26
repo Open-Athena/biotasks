@@ -44,6 +44,67 @@ class ReviewPacket:
         "author_input_control_summary",
     }
 
+    @classmethod
+    def open_recorded(cls, parent, descriptor, *, deadline):
+        """Open archived evidence read-only; never regenerate a missing document."""
+        if (
+            not isinstance(descriptor, dict)
+            or type(descriptor.get("format_version")) is not int
+            or descriptor.get("format_version") != cls.FORMAT_VERSION
+            or not all(
+                isinstance(descriptor.get(key), str)
+                and re.fullmatch(r"[0-9a-f]{64}", descriptor[key])
+                for key in ("context_sha256", "manifest_sha256")
+            )
+        ):
+            raise ValueError("Invalid recorded review packet descriptor")
+        self = cls.__new__(cls)
+        self.deadline = deadline
+        self.remaining()
+        self.context_sha256 = descriptor["context_sha256"]
+        self.manifest_sha256 = descriptor["manifest_sha256"]
+        self.root = Path(parent) / f"v{cls.FORMAT_VERSION}-{self.context_sha256}"
+        manifest = self.root / "manifest.json"
+        if (
+            manifest.is_symlink()
+            or any(p.is_symlink() for p in manifest.parents)
+            or not manifest.is_file()
+        ):
+            raise ValueError("Recorded review manifest is unavailable or linked")
+        raw = manifest.read_bytes()
+        if hashlib.sha256(raw).hexdigest() != self.manifest_sha256:
+            raise ValueError("Recorded review manifest identity changed")
+        self.manifest = json.loads(raw)
+        if (
+            set(self.manifest) != {"format_version", "context_sha256", "fields"}
+            or type(self.manifest["format_version"]) is not int
+            or self.manifest["format_version"] != cls.FORMAT_VERSION
+            or self.manifest["context_sha256"] != self.context_sha256
+            or not isinstance(self.manifest["fields"], dict)
+        ):
+            raise ValueError("Recorded review manifest differs from its descriptor")
+        self.catalog = self.manifest["fields"]
+        for index, row in enumerate(self.catalog.values()):
+            if (
+                not isinstance(row, dict)
+                or set(row) != {"path", "bytes", "sha256", "type"}
+                or row["path"] != f"{index:04}.json"
+                or type(row["bytes"]) is not int
+                or row["bytes"] < 0
+                or not isinstance(row["sha256"], str)
+                or not re.fullmatch(r"[0-9a-f]{64}", row["sha256"])
+                or not isinstance(row["type"], str)
+                or row["type"]
+                not in {"object", "array", "string", "integer", "number", "boolean", "null"}
+            ):
+                raise ValueError("Invalid recorded review document identity")
+        if descriptor.get("fields") != {
+            key: {k: v for k, v in row.items() if k != "path"} for key, row in self.catalog.items()
+        }:
+            raise ValueError("Recorded review field index changed")
+        self.remaining()
+        return self
+
     def __init__(self, parent, context, deadline):
         if not isinstance(context, dict) or any(not isinstance(k, str) for k in context):
             raise ValueError("Review input must have string field names")
