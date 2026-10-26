@@ -5157,3 +5157,7 @@ Three synthetic cases pass on one offline4CPU/8GiB/10GiBsandbox: pre-dispatch is
 ### 2026-10-26 — Recheck the full fixed-round input and evidence bindings
 
 A generic experiment auditor reads the panel configuration, verifies all ten exact private frozen input archives against their 224-file runtime/source maps and submission manifests, binds each original pipeline/readback/root/cleanup record, and recomputes7generated-candidate rejections/1source-fidelity rejection/2infrastructure failures/0qualified. No provider/model/science call or repeat biology readback. This checks the full stated round rather than inferring completeness from individual summaries; readiness remains unproven.
+
+### 2026-10-26 — Prepare conditional publication checks for195
+
+Refreshed primary GNPS direct-contribution/default and third-party policy, named NIH library attribution, and pinned mixed matchms-docs notices. Prior171review is reusable only after exact195input equality and full native-bundle/qualification proof; no195publication clearance is inferred. No new dataset download, model, science or task edit. Preserve MIT/code and NC-SA/book-artwork distinctions and attribution; no blanket commercial-training grant. Conditions recorded separately while grading runs.
