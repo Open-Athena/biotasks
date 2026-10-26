@@ -214,7 +214,9 @@ if trajectory_path:
         f'<p><a href="{BASE}{trajectory_path.relative_to(ROOT)}">Full recorded trajectory</a></p>'
     )
     for name in ["result.json", "verifier/report.json"]:
-        selected = profile.get("trial_result") if name == "result.json" else None
+        selected = (
+            profile.get("trial_result") if name == "result.json" else profile.get("verifier_report")
+        )
         selected = selected or str((trajectory_path.parent.parent / name).relative_to(EXP))
         label = profile.get("trial_result_label") if name == "result.json" else None
         attempt_html += artifact(selected, label or Path(selected).name)

@@ -73,6 +73,9 @@ def main():
     trajectory_path = Path("native") / native["solver"]["result_path"]
     trajectory_path = trajectory_path.parent / "agent/trajectory.json"
     profile["trajectory_glob"] = PREFIX + trajectory_path.as_posix()
+    profile["verifier_report"] = (
+        PREFIX + (trajectory_path.parent.parent / "verifier/report.json").as_posix()
+    )
     manifest = json.loads((ARCHIVE / "sealed-manifest.json").read_text())
     rows = {row["path"]: row for row in manifest["files"]}
     selected, derived = {}, {}
