@@ -1,0 +1,7 @@
+# Preserve already exported reference artifacts
+
+A generated construction step reinterpreted serialized entity identifiers as collections, destroying their correspondence to scientific scenarios. The [original streaming audit](../../panel-rounds/092/identifier-audit-187.json) retained the valid source exports and measured non-injective derived keys; the independent grader correctly refused the candidate. No source notebook or generated task is edited here.
+
+The general construction prompt now defaults to a byte-for-byte copy when an existing artifact already fits the requested output schema, including when only its destination name changes. A necessary projection must start from the observed exported representation, preserve entities/multiplicity/missingness/precision, and document its mapping. Serialized strings are not assumed to retain the source object's container type. This adds no named biological method, package, identifier value, model stage, test or repair allowance. Source-faithful recovery of additional required branches remains available under the existing policy.
+
+This is a prompt candidate, not a programmatic proof that a worker will follow it. It is absent from the frozen 224-file panel and running 229-file Matchms 195. A future version must freeze the new prompt and obtain actual construction/grading/native evidence. The valid source exports and rejected derived originals remain unchanged; no reward or comparison is weakened.

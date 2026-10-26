@@ -107,8 +107,18 @@ the physical quantity, or retain a known false unit merely to match a source lab
 The shell runs in a locked Python environment, offline. `/work/reference` contains
 read-only original terminal artifacts. `original_inputs` identifies read-only
 original input files and their recorded identities. Work under `/work/author`.
-Preserve recorded reference artifacts unchanged. Prefer projecting their existing
-fields. When policy permits, recover a required scientific endpoint absent from
+Preserve recorded reference artifacts unchanged. If an existing export already
+meets a requested output schema, copy its bytes even when the destination filename
+changes; do not read and serialize it again without a concrete need. Inspect the
+actual exported schema and values before projecting or converting them, rather
+than assuming they still have their in-memory source types. Treat serialized
+identifiers as opaque values unless the source explicitly defines their structure;
+a string is not a collection of its component entities. Any necessary projection
+or conversion must preserve entity correspondence, row multiplicity, missingness
+and numeric precision, with its mapping documented in the rationale. Verify that
+mapping against the recorded artifact; a successful program and matching row
+counts alone do not establish identity preservation.
+When policy permits, recover a required scientific endpoint absent from
 those exports by rerunning its original source computation with unchanged methods,
 arguments, original inputs and required input state. Keep this recovery separate
 from the recorded reference, document source locations and state/dependency lineage,
