@@ -131,11 +131,22 @@ class ReviewInspection:
         self.context["execution_inspection"] = {**manifest, "manifest_sha256": identity}
         (self.root / "identities.json").write_text(json.dumps(self.context, indent=2) + "\n")
 
+    def prepare_review_context(self, context):
+        from review_packet import ReviewPacket
+
+        self.packet = ReviewPacket(self.root / "review-packets", context, self.deadline)
+        return self.packet.model_context
+
     @property
     def tools(self):
         from execution_inspection import EXECUTION_TOOLS
 
-        return [*PACKAGE_TOOLS, *REFERENCE_TOOLS, *(EXECUTION_TOOLS if self.executions else [])]
+        return [
+            *PACKAGE_TOOLS,
+            *REFERENCE_TOOLS,
+            *(EXECUTION_TOOLS if self.executions else []),
+            *(self.packet.tools if getattr(self, "packet", None) else []),
+        ]
 
     @property
     def handlers(self):
@@ -143,4 +154,5 @@ class ReviewInspection:
             **self.packages.handlers,
             **self.references.handlers,
             **(self.executions.handlers if self.executions else {}),
+            **(self.packet.handlers if getattr(self, "packet", None) else {}),
         }

@@ -1128,30 +1128,33 @@ async def run_grading(
                         "check; missing: " + json.dumps(missing)
                     )
 
+            review_input = {
+                **context,
+                **(inspection.context if inspection else {}),
+                "candidate": (reviewed_candidate or candidate).model_dump(),
+                "probes": (reviewed_probes or probes).model_dump(),
+                "initial_probes": initial_probes.model_dump(),
+                "probe_supplement": probe_supplement_record,
+                "unexercised_scientific_checks": unexercised_scientific_checks(
+                    reviewed_candidate or candidate, session.last_controls
+                ),
+                "initial_checks": quality_revision["grader_candidate"]["checks"]
+                if quality_revision
+                else [check.model_dump() for check in session.frozen_checks],
+                "check_description_updates": check_description_updates
+                if descriptions is None
+                else descriptions,
+                "controls": session.last_controls,
+                "control_summary": control_summary(session.last_controls),
+                "author_input_control_summary": author_input_control_summary,
+            }
+            if inspection:
+                review_input = inspection.prepare_review_context(review_input)
             return await call(
                 Review,
                 name,
                 "notebook-grader-review",
-                {
-                    **context,
-                    **(inspection.context if inspection else {}),
-                    "candidate": (reviewed_candidate or candidate).model_dump(),
-                    "probes": (reviewed_probes or probes).model_dump(),
-                    "initial_probes": initial_probes.model_dump(),
-                    "probe_supplement": probe_supplement_record,
-                    "unexercised_scientific_checks": unexercised_scientific_checks(
-                        reviewed_candidate or candidate, session.last_controls
-                    ),
-                    "initial_checks": quality_revision["grader_candidate"]["checks"]
-                    if quality_revision
-                    else [check.model_dump() for check in session.frozen_checks],
-                    "check_description_updates": check_description_updates
-                    if descriptions is None
-                    else descriptions,
-                    "controls": session.last_controls,
-                    "control_summary": control_summary(session.last_controls),
-                    "author_input_control_summary": author_input_control_summary,
-                },
+                review_input,
                 validate_review,
                 record_name=record_name,
                 inspection=inspection,

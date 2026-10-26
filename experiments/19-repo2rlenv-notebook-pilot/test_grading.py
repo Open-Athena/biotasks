@@ -916,11 +916,13 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
 
     effective_repair = repair and not contract_only and not frozen_grader
     conflict_on = (2 if effective_repair else 1) if comparison_conflict else None
+    active_sessions = []
 
     class Session:
         independent_command = module.GradingSession.independent_command
 
         def __init__(self, **kwargs):
+            active_sessions.append(self)
             self.config = kwargs["config"]
             self.independent_conflict = None
             self.validation_count = 0
@@ -1029,6 +1031,22 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         inputs = kwargs["context"]
         calls.append(name)
         if inspect_review and name in {"review", "review-repair"}:
+            assert "review_evidence" in inputs and "candidate" not in inputs
+            assert "controls" not in inputs and "read_review_evidence" in kwargs["extra_handlers"]
+            restored = {}
+            for field, identity in inputs["review_evidence"]["fields"].items():
+                response = json.loads(
+                    await kwargs["extra_handlers"]["read_review_evidence"](
+                        field=field,
+                        end_line=100000,
+                        end_column=None,
+                    )
+                )
+                text = "\n".join(row["text"] for row in response["lines"])
+                restored[field] = text if identity["type"] == "string" else json.loads(text)
+            # The fake reviewer actually reads the packet through its supplied
+            # tool; it does not bypass the transport by accessing host files.
+            inputs = restored
             assert "package_inspection" in inputs and "reference_inspection" in inputs
             assert inputs["input_observations"]["status"] == "recorded"
             assert inputs["input_observations"]["observations"] == {"files": []}
@@ -1163,7 +1181,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             assert inputs["candidate"]["grader_code"] == c.grader_code
             assert len(inputs["controls"]) >= 1
             validator = kwargs["validate"]
-            controls = inputs["controls"]
+            controls = active_sessions[-1].last_controls
+            assert controls == inputs["controls"]
             original = controls[0]["passed_control"]
             controls[0]["passed_control"] = False
             with pytest.raises(ValueError):

@@ -1,0 +1,82 @@
+{
+  "asset_value_assessments": [],
+  "decision": "revise",
+  "issues": [
+    "structure_files check description falsely claims 'all fields non-empty, and all numeric fields must parse as finite decimal numbers' \u2014 the actual check_structure implementation only validates file presence, empty-file, header match, and ragged rows. Non-empty/finite-numeric enforcement lives in check_cell_meta (unique_nonempty for cell_id), check_umap and check_de (to_floats), not in check_structure. This mismatch caused the markers-numeric-nonfinite probe control to fail (structure_files passed where the annotation expected it to fail; passed_control: false in the executed control record). Fix by either implementing the claimed validations in check_structure or correcting the structure_files check description, then re-executing all controls on the revised candidate; any affected probe annotations must then match the fresh grader behavior."
+  ],
+  "question_issues": [],
+  "rationale": "The grader's binary acceptance behavior is scientifically sound: all eight wrong-result probes are correctly rejected (categorical corruption, cell-set trims, tolerance-boundary score perturbations, non-finite values, ordering violation, missing gene row, cluster-splitting, UMAP coordinate swap/shift), while the reference, recomputed, independent-solution and valid representation-probe submissions all pass. Source coverage of eligible scientific endpoints is complete (four Leiden solutions, level-1 annotation, UMAP, full per-cluster Wilcoxon DE table), every exclusion is source-backed, and the scrublet/QC exclusions are causally inert, which is empirically confirmed by the byte-identical cell_metadata.csv between the reference and independent runs. Answer isolation is verified: the oracle input tree contains only the two hash-verified matrices, reference answers live only in the oracle-inaccessible reference projection, and the 12,089-file installed-distribution scan found no answer fixture. However, one defect must be repaired before packaging: the structure_files check's public requirement claims validations ('all fields non-empty, all numeric fields parse as finite decimals') that its implementation does not perform \u2014 directly evidenced by the failed markers-numeric-nonfinite control, where structure_files passed although the probe annotation expected it to fail. This check-description/implementation mismatch is repairable within the existing candidate without changing science, tolerances, or endpoint scope (either implement the claimed validations in check_structure or correct the check description), but requires fresh re-execution of all controls. Hence revise, not blocked.",
+  "scientific_admission": {
+    "answer_isolation": {
+      "blockers": [],
+      "decision": "approve",
+      "evidence": [
+        "The three reference outputs exist only in destination/reference/ (cell_metadata 4a347f4d..., umap d2df2a5e..., markers 9c1bb801...), byte-for-byte projections of the read-only --reference-dir for the comparison stage; the isolated oracle receives only inputs/ (oracle_isolation stdout 'isolated', exit 0).",
+        "Solver-visible inputs are the two staged 10x h5 matrices only (s1d1 sha256 322c30a7..., s1d3 sha256 ca40b287...), verified hash-identical to the original manifest; materialization.derive_code stages no other values into inputs/.",
+        "The independent solution code references --input-dir/--output-dir only and its execution is recorded as executed_without_answer_access, producing cell_metadata.csv byte-identical to the reference and marker/umap files within tolerance.",
+        "Dependency-asset review over 12,089 installed regular files (4,730 candidates, 67 distributions): zero matches for s1d1/s1d3, marrow/bone/donor, filtered_feature, leiden (only networkx's own test_leiden.py unit test), umap, cell_metadata, marker_genes, rank_genes, scrublet; the scanpy wheel ships no notebooks or data; asset_value_hints findings is empty (the single priority candidate numba/tests/test_annotations.py has literal_count 0).",
+        "Scrublet exclusion inertness is empirically confirmed: cell_metadata.csv is byte-identical between the reference run (which executed sc.pp.scrublet) and the independent solution (which did not), ruling out RNG-state carryover into any exported endpoint."
+      ],
+      "output_paths": [
+        "cell_metadata.csv",
+        "umap_embedding.csv",
+        "marker_genes_leiden_res_0.50.csv"
+      ],
+      "rationale": "No requested answer value is disclosed through solver-visible inputs or installed assets. The reference answers exist only in the reference projection tree that the isolated oracle cannot access; the oracle and the independently executed solution recompute all three endpoints from the two hash-verified matrices alone. The environment scan (all 67 distributions, name-level screening over 4,730 candidate paths plus targeted source walks of the scientific stack) found no cluster-label, UMAP-coordinate or DE-statistic fixture. Stated coverage limitation: these scans are the catalog of record plus targeted path screening, not an exhaustive semantic audit of every file byte, but no positive exposure hint exists and the only floating-literal candidate inspected had zero matching literals; the trusted-inputs copy (BIOTASKS_TRUSTED_INPUT_DIR) is controller-hash-verified around grading."
+    },
+    "comparisons": [
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Reference sha256 4a347f4d...; the independent solution's cell_metadata.csv is byte-identical (same 4a347f4d... per independent_execution.outputs), despite the independent run omitting scrublet and QC-metric computation and writing via a separate code path.",
+          "Reference structural profile: 17041 rows, 17041 distinct cell_id values (bare barcodes plus 20 occurrence-rank-suffixed ids), sample values {s1d1, s1d3}, leiden 25 labels, leiden_res_0.02 5 labels, leiden_res_0.50 17 labels, leiden_res_2.00 36 labels, cell_type_lvl1 4 distinct labels with 0 empty values.",
+          "Grader check cell_metadata_values enforces exact per-cell categorical identity under cell_id alignment, canonical decimal labels, and consistency of cell_type_lvl1 with the submitted leiden_res_0.02 labels; the metadata-categories, cellid-suffix-drop and cover-missing-clusters probes all fail as intended.",
+          "Repeatability: two byte-identical replays of the reference pipeline (same 4a347f4d... hash)."
+        ],
+        "output_paths": [
+          "cell_metadata.csv"
+        ],
+        "rationale": "The per-cell endpoint (sample of origin, four Leiden partitions, fixed-map level-1 annotation) is scientifically equivalent between the reference execution and an independently authored float64 implementation on the same inputs: byte-identical, which additionally proves the omitted diagnostic steps (scrublet, QC metrics) have no effect on any downstream endpoint, including the RNG-sensitive PCA/neighbors/UMAP chain. The grader's exact identity mapping on this column is anchored to a reproducible quantity, not a one-shot realization; the label-numbering caveat (no validated relabeling equivalence) is explicitly disclosed in the public contract and check description rather than silently resolved."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Reference sha256 d2df2a5e... (671,819 bytes, 17041 rows); the independent solution's output 2420b642... differs only in serialization and passes the grader's umap_embedding_values check.",
+          "Recorded reference-vs-independent coordinate difference at most ~4.8e-7 absolute (same seeded float64 UMAP computation; the reference stores float32 X_umap), within the 1e-6 absolute bound; the umap-accuracy probe's 2.5e-6 shifts and UMAP_1/UMAP_2 swaps fail as intended.",
+          "The fmt-float64-promotion probe (repr float64 re-emission plus reversed row order) passes, confirming the tolerance admits only representation noise and not a coordinate transform.",
+          "Repeatability: two byte-identical reference replays (d2df2a5e...)."
+        ],
+        "output_paths": [
+          "umap_embedding.csv"
+        ],
+        "rationale": "The 2-D embedding endpoint is componentwise comparable under the declared cell_id identity mapping: both coordinates are finite, the reference is reproducible byte-identically within the stack, and an independent execution of the same seeded graph-embedding methodology agrees within one float32 unit roundoff. The absolute 1e-6 bound is grounded in these measurements; the grader compares per-dimension after cell_id alignment, so index swaps and systematic transforms are rejected."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Reference sha256 9c1bb801... (398,259 rows = 17 clusters x 23,427 retained genes); the independent solution's output 1e0f9a4f... passes the grader's marker_de_values check under (group, gene) alignment.",
+          "Recorded reference-vs-independent differences (candidate rationale grounded in the recorded independent run): max score diff 0.0074, max lfc diff 2.2e-5 absolute / 0.5 relative on tiny values, max pvals diff 0.0057 \u2014 all inside the bounds (scores atol 3e-2; lfc atol 2e-4 + rtol 1e-3; pvals/pvals_adj atol 3e-2 with [0,1] range), while score shifts of +0.04/+0.05 fail the markers-values probe.",
+          "Full gene-universe coverage is enforced by exact (group, names) set equality (markers-missing-gene fails); within-group non-increasing score order is enforced (markers-order-nonincreasing fails); reference p-values of exactly 0 are required to be resubmitted as 0; non-finite values fail (markers-numeric-nonfinite rejected in marker_de_values).",
+          "Repeatability: two byte-identical reference replays (9c1bb801...)."
+        ],
+        "output_paths": [
+          "marker_genes_leiden_res_0.50.csv"
+        ],
+        "rationale": "The full one-vs-rest Wilcoxon DE endpoint matches between the reference (scanpy float32 storage) and an independent float64 reimplementation of the documented formulas (column-wise ranks, z = (W - n1(n+1)/2)/sqrt(n1*n2*(n+1)/12) without tie correction, two-sided normal-approximation p-values, BH FDR per group over the full gene universe, log2FC from expm1 of group/rest means of log-normalized data with 1e-9 added). The tolerances are anchored in the observed float32/tie-ordering noise envelope and straddled by calibrated probes; the group column is the distinct leiden_res_0.50 label set, keeping the identity mapping consistent across dependent outputs (cross_file_consistency)."
+      }
+    ]
+  },
+  "source_coverage": {
+    "decision": "approve",
+    "omitted_scientific_endpoints": [],
+    "rationale": "Every eligible terminal scientific result of the source notebook is covered: the four Leiden clusterings (default resolution-1 n_iterations=2 plus resolutions 0.02/0.50/2.00), the level-1 annotation through the fixed five-entry map on leiden_res_0.02, the 2-D UMAP embedding, and the per-cluster one-vs-rest Wilcoxon DE table over the full retained-gene universe. Exclusions are source-backed and causally inert: scrublet (operates on an internal copy and writes only doublet_score/predicted_doublet obs columns consumed solely by excluded QC-reassessment plots; empirically confirmed by the byte-identical cell_metadata.csv between the reference run, which executed scrublet, and the independent run, which did not), QC metrics/flags (consulted for judgment, not filtering \u2014 the only executed filters are min_genes=100/min_cells=3, which are retained), the raw-counts layer (no reader after normalization), PCA/variance-ratio/HVG annotation/neighborhood graph (intermediate representations whose products are exported downstream), and all sc.pl.* calls (presentation-only). The line-312/314 rank_genes_groups_df head(5) previews are display slices of the already-exported DE table, not separate endpoints. The public brief states the shared methodology (steps 1-8) faithfully, including the occurrence-rank cell_id rule that the reference execution demonstrably exercises (non-unique obs warning in the oracle stderr; 20 suffixed ids present in the reference). One grader-level defect exists (structure_files check description claims non-empty/finite-numeric validations that check_structure does not implement, evidenced by the failed markers-numeric-nonfinite control where structure_files unexpectedly passed); it is recorded in the top-level issues list and does not concern source endpoint coverage, so it is not listed here.",
+    "remaining_validation": [
+      "Fresh full re-execution of all controls on the revised candidate after the structure_files check description/validation mismatch is repaired (see issues list)."
+    ],
+    "scientific_scope_changes": [],
+    "unsupported_evidence_claims": []
+  }
+}

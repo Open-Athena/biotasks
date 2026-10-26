@@ -1,0 +1,20 @@
+{
+  "observed_at": "2026-10-26T17:16:08.945470+00:00",
+  "source_archive_manifest_sha256": "87d83988511befc95d1363db6f39340db722586d0714ecd81d81898bb01ca062",
+  "checked_original_sha256": {
+    "reference/inputs/original.py": "aa6ed21d92a4d0a295c904d6d00c39a2cc7dad864e53f60e83ba187572569753",
+    "specification/specify/input.json": "4325e0c5f51b5a08a91966a540dad07a9c8c949113fb57d403c618f3cd0a6b67",
+    "specification/specify/artifact-stage/trace/10/request.json": "ace258533e545f221934dbcf55d39806f9e95f5dc5f3ff86319a4b6b5a3c15b2"
+  },
+  "source_read_call": "bioframe.read_table(\n    jaspar_url + jaspar_motif_file, schema=\"jaspar\", skiprows=1\n)",
+  "source_call_line": 44,
+  "input_preview_pointer": "/files/trial~1inputs-before.json/files/1/input_preview/text",
+  "recorded_first_decompressed_line": "chr1\t10470\t10489\tCTCF\t803\t390\t-",
+  "recorded_reader_evidence": "bioframe read_table sets header=None and forwards kwargs including skiprows to pandas.read_csv, as captured in the worker tool response.",
+  "conclusion": "The source discards the first valid motif record; preserving that source prevents silently changing this population.",
+  "impact_on_each_endpoint_computed": false,
+  "science_executed": false,
+  "model_calls": 0,
+  "originals_changed": false,
+  "scope": "Read-only corroboration from exact hash/size-verified original source, input preview and recorded package-source tool result; no new dataset download, scientific rerun or task repair."
+}

@@ -13,7 +13,10 @@ the conversation restarted.
 
 Use the tools actually supplied in this stage to recover useful observations.
 A read-only inspection stage has no shell or writable workspace; use only its
-cataloged package/reference tools. Text files may contain a single enormous line:
+supplied cataloged evidence tools. If `review_evidence` is supplied, the complete
+original documents remain available by field and JSON pointer through
+`read_review_evidence`; do not rebuild the entire packet in the conversation.
+Text files may contain a single enormous line:
 use column windows as well as line ranges, and respect explicit slice metadata.
 Do not repeat a bulk read that fills the context. When a working directory is
 supplied, prior scratch files are exploratory evidence, not accepted

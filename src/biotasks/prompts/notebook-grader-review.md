@@ -1,5 +1,19 @@
 # Review an artifact grader and its executed controls
 
+When the input contains `review_evidence`, detailed fields are in a complete,
+identity-bound packet rather than repeated inline. Use `read_review_evidence`
+with a field name from its index. Select nested values using an RFC6901 JSON
+pointer; for example, `/grader_code` reads a grader's raw code string. `view:keys`
+lists object keys or array length, and `view:text` reads raw strings or formatted
+JSON with explicit line/column windows. The packet includes the original source,
+generated programs, full controls, probes, hints and diagnostic metadata, without
+truncation or summarization. Read the relevant original evidence before deciding;
+the initial task, policy and control summary alone cannot establish acceptance.
+Inspect every supplied hint and required scientific branch just as when their
+records were inline. A missing or unreadable field remains an evidence gap.
+Existing package/reference/execution inspection tools remain available. All reads
+share the existing deadline and do not add scientific executions or controls.
+
 Review the generated public instructions, named checks, complete grader code,
 independently authored probes, frozen scientific reference context and actual
 execution reports. This is an LLM review, not the reward or an independent
