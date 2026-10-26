@@ -16,6 +16,7 @@ from decimal import Decimal
 from pathlib import Path
 
 from native_resource_record import verify_native_resource_record
+from serial_clock_bound import observed_bound
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("numbers", type=int, nargs="+")
@@ -24,6 +25,11 @@ parser.add_argument("--harbor-wheel", type=Path, required=True)
 parser.add_argument("--ledger", type=Path, required=True)
 parser.add_argument("--proof", type=Path, required=True)
 parser.add_argument("--apply", action="store_true")
+parser.add_argument(
+    "--refine-observed-clock",
+    action="store_true",
+    help="Refine an existing2USDhold only after exact SDK/source/native clocks and all original gates pass",
+)
 args = parser.parse_args()
 assert len(set(args.numbers)) == len(args.numbers) and not args.proof.exists()
 ledger_before = args.ledger.read_bytes()
@@ -191,7 +197,56 @@ for number in args.numbers:
     row = next(
         r for r in ledger["reservations"] if r["scope"].startswith(f"autonomous-panel-{number:03}:")
     )
-    assert row["ceiling_usd"] == "5.00"
+    expected_hold = "2.00" if args.refine_observed_clock else "5.00"
+    assert row["ceiling_usd"] == expected_hold
+    if args.refine_observed_clock:
+        assert row["state"] == "terminal_full_lifecycle_resource_bound_reconciled"
+        sessions = {
+            name: original(folder + "/result.json")
+            for name, folder in zip(
+                ("setup", "replay", "construction", "grading"),
+                ("setup-raw", "replay", "materialization-raw", "grading"),
+                strict=True,
+            )
+        }
+        with tarfile.open(payload / "biotasks.tar") as source:
+            exact_sources = {
+                name: hashlib.sha256(
+                    source.extractfile("experiments/19-repo2rlenv-notebook-pilot/" + name).read()
+                ).hexdigest()
+                for name in ("run_autonomous.py", "run_reference_setup.py", "reference_setup.py")
+            }
+        clock = observed_bound(
+            pipeline, sessions, native_intervals, exact_sources, Decimal("0.332280")
+        )
+        keep = Decimal(clock["retained_usd"])
+        prior_reconciliation = row["reconciliation"]
+        row.update(
+            ceiling_usd=clock["retained_usd"],
+            state="terminal_full_lifecycle_observed_clock_refined",
+            reconciliation="All original scientific/native/resource/backend/archive/cleanup gates retained; exact known SDK creators and every closed clock enclosed in the original serial pipeline. Price TWO full profiles for the entire observed interval plus300seconds at EACH end, add0.10USD and round upward to0.25USD. No invoice, credits or outcome changes. See "
+            + args.proof.relative_to(args.ledger.parent).as_posix(),
+        )
+        records.append(
+            {
+                "campaign": number,
+                "source_manifest_sha256": readback["source_manifest_sha256"],
+                "checked_originals": checked,
+                "sources": exact_sources,
+                "clock": clock,
+                "prior_reconciliation": prior_reconciliation,
+                "fresh_cleanup_sha256": hashlib.sha256(
+                    (archive / "fresh-provider-cleanup.json").read_bytes()
+                ).hexdigest(),
+                "locked_harbor_wheel_sha256": wheel_hash,
+                "locked_daytona_backend_sha256": hashlib.sha256(backend).hexdigest(),
+                "native_exception_types": native_exceptions,
+                "prior_hold_usd": expected_hold,
+                "retained_usd": f"{keep:.2f}",
+                "released_excess_escrow_usd": f"{Decimal(expected_hold) - keep:.2f}",
+            }
+        )
+        continue
     # Price twice the verified serial sandbox exposure, over the full approved
     # lifetime rather than the shorter observed duration. Retain further margin.
     rate = 4 * Decimal("0.0504") + 8 * Decimal("0.0162") + 10 * Decimal("0.000108")
@@ -249,10 +304,18 @@ proof = {
     "free_credits_assumed": False,
     "original_limits_or_scientific_outcomes_changed": False,
     "base_strict_auditor_sha256": "036241de95a1d148af94020839568966c80bb14bba7202c36d73cbc4324cb772",
+    "observed_clock_refinement": args.refine_observed_clock,
+    "observed_clock_helper_sha256": hashlib.sha256(
+        Path(__file__).with_name("serial_clock_bound.py").read_bytes()
+    ).hexdigest(),
     "native_resource_record_validator_sha256": hashlib.sha256(
         Path(__file__).with_name("native_resource_record.py").read_bytes()
     ).hexdigest(),
-    "profile_difference": "Allow only a handled600secondsolverAgentTimeoutError with originalresultverification, completedwrapper, returncode0 and retries0; all original resource/interval/archive/cleanup/backend constraints retained.",
+    "profile_difference": (
+        "Retain every original seven-owner/native/backend/archive/cleanup gate, require the exact already-admitted SDK creator family and enclose every SDK/native clock in the original serial campaign. Reprice TWO complete resource profiles over that observed interval with300seconds at each end, plus0.10USD/upward0.25USDrounding. New execution reservations and scientific outcomes unchanged."
+        if args.refine_observed_clock
+        else "Allow only a handled600secondsolverAgentTimeoutError with originalresultverification, completedwrapper, returncode0 and retries0; all original resource/interval/archive/cleanup/backend constraints retained."
+    ),
     "new_resources_or_models": 0,
 }
 args.proof.parent.mkdir(parents=True, exist_ok=True)
