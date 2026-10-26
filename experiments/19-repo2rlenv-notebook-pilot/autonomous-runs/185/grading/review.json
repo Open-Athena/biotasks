@@ -1,0 +1,90 @@
+{
+  "asset_value_assessments": [
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "Installed source test_align.py lines 252-266 (asset sha256 7f5ae503...): computes rms.rmsd(first_frame, last_frame, superposition=True) between the trajectory's own first and last backbone frames, asserted with atol=1.5e-5; a self-comparison within the trajectory, not the analysis-B frame-to-reference-0 fit.",
+        "Matches only one cell (frame-97 Backbone) of the 490-cell file 2 by methodological coincidence; discloses no CORE/LID/NMP values and no other endpoint table. Not an answer fixture."
+      ],
+      "hint_id": "e3d70406375226f203b759c763bd30ee20b0304d19dd366859a4364e9110ede1",
+      "rationale": "Rounded regression constant for a different comparison (trajectory frame 0 vs frame -1, tolerance-tested) in MDAnalysisTests/analysis/test_align.py:262; incidentally equals one Backbone cell of the final 98-row table. MDAnalysisTests also supplies the required PSF/DCD/CRD inputs, so it cannot be removed, but its constants do not supply the requested answer tables."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "Installed source test_rms.py lines 93-102 (asset sha256 2ec2810d...): u/u2 fixture pair frames 0/-1 backbone RMSD with superposition and no groupselections; a different quantity from analysis B.",
+        "Single-cell coincidence (frame-97 Backbone) of file 2; no full table, no domain columns."
+      ],
+      "hint_id": "9589b2225647982e4670339fd4e1490b0dcefdca9a1e8b7df72040cd7d10f7ed",
+      "rationale": "The same value in test_rms.py:102 asserts backbone RMSD between two separate fixture universes' first/last frames; not the requested reference-frame-0 fit with CORE/LID/NMP groups, and only one cell of one output is incidentally matched."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "Installed source test_rms.py lines 244-255: single_frame = [[5, 6, 0.91544906]] for RMSD(universe, select='name CA').run(start=5, stop=6), asserted with assert_almost_equal precision 4.",
+        "The matching mass-weighted CORE cell is a domain-restricted derived value not computed by this test path; the match is coincidental."
+      ],
+      "hint_id": "72b0d67ba91f4677734552f5fb2a05c1b70ef32acc767a2e1623e09e9d78f470",
+      "rationale": "Five-decimal truncated spot-check constant for a 'name CA' single-frame RMSD (frame 5, no CORE restriction, 4-decimal comparison tolerance) in test_rms.py:249; it coincides with one analysis-D CORE cell within ~8e-9 but is a different quantity and one truncated value, not a fixture for the 98-row mass-weighted table."
+    }
+  ],
+  "decision": "revise",
+  "issues": [
+    "Grader defect (Time failures do not fail the named value checks): in grader_code main(), Time cell mismatches set time_problem/struct_fail entries only, while results[cid]['passed'] is decided solely from rfail (RMSD entries); the cols_fail bookkeeping and the 'bad = {...}' line are dead/broken code. Thus the public_requirement of backbone_unweighted_values and ca_core_values ('every cell equal to the same cell of the reference table', including Time) is not implemented by those named checks. Executed evidence: probe control 'dcd-time-offset-omitted' recorded backbone_unweighted_values passed=true while every Time cell was wrong (passed_control=false); probe 'time-sign-flip-ca-table' recorded ca_core_values passed=true with all Time cells negated (passed_control=false). The overall verdict failed only via csv_structure_headers, so check-level attribution contradicts the published check descriptions.",
+    "Probe authoring flaw (valid_alternative 'tolerance-midpoint-encoding', passed_control=false): its script shifts every cell including Frame, producing Frame value 5e-10, which violates the probe's own contract that Frame equal the 0-based ordinal exactly. The recorded report shows csv_structure_headers failed with 'Frame value 5e-10 does not equal the 0-based row ordinal'. The probe must leave the Frame column untouched and shift only Time/RMSD cells; after repair, all affected controls must be re-executed on the new candidate.",
+    "Minor grader cleanup: the frame-ordinal branch breaks the column loop when sv != ri; remove the unused/broken 'bad = {...}' comprehension and route Time mismatches into the same failure decision that drives each per-file value check, so code and published check text agree."
+  ],
+  "question_issues": [],
+  "rationale": "All five scientific endpoints (analyses A-E) are correctly covered by named checks matching the declared output paths and schemas; the reference is reproducible (byte-identical repeats) and independently cross-validated (independent solution matched all 2059 cells, max relative difference 0); the 1e-9 + 1e-9*|ref| tolerance is publicly disclosed, calibrated against alternate decimal spellings, and validated by passing reference/recomputed/alternative controls; endpoint recovery for A and B followed the permitted faithful-recomputation route; and the three asset-value hints were each inspected in installed test source and judged unrelated rounded spot-check constants of differently-configured regression runs. However, acceptance is blocked by executed control failures caused by grader and probe defects: (1) Time-cell mismatches are attributed only to the structural check and never fail the per-file value checks whose public text declares Time comparison, so probes 'dcd-time-offset-omitted' and 'time-sign-flip-ca-table' recorded passed_control=false; (2) the valid-alternative probe 'tolerance-midpoint-encoding' failed because it shifted the Frame column itself, violating the exact-ordinal Frame rule it meant to preserve. Repair the grader so Time comparisons feed each per-file value-check decision and fix the representation probe to leave Frame untouched, then re-execute all controls on the new candidate.",
+  "scientific_admission": {
+    "answer_isolation": {
+      "blockers": [],
+      "decision": "approve",
+      "evidence": [
+        "asset_value_hints: 3 findings, each inspected in installed source (test_align.py:240-266, test_rms.py:93-102 and 244-255) and assessed as unrelated rounded spot-check constants for different quantities (trajectory first-vs-last frame comparisons, single-frame 'name CA' RMSD at frame 5), covering at most one truncated cell each and no requested table.",
+        "Materialization environment review: the five reference CSVs exist only under destination/reference, hidden from the isolated oracle user; /work/cache is empty; the oracle_isolation execution printed 'isolated' with exit 0; no exclusions declared and the removal receipt is empty.",
+        "MDAnalysisTests (726 installed files, dedicated test distribution) cannot be removed because it supplies topology.psf/trajectory.dcd/reference_open.crd themselves; its embedded constants were inspected directly and do not disclose the requested per-frame domain-decomposed endpoints.",
+        "Grader embeds no expected rows, values or answer hashes; reference values and row counts are read dynamically from the reference tables."
+      ],
+      "output_paths": [
+        "rmsd_open_closed_backbone.csv",
+        "rmsd_backbone_unweighted.csv",
+        "rmsd_ca_core.csv",
+        "rmsd_mass_weighted.csv",
+        "rmsd_resid_weighted.csv"
+      ],
+      "rationale": "No installed asset discloses the answers. Solver-visible inputs are the PSF/DCD/CRD data files; the only answer-bearing content (reference CSVs) is isolated from the solver. The three hint literals are regression constants for scientifically different comparisons, not fixtures for the requested endpoints."
+    },
+    "comparisons": [
+      {
+        "blockers": [
+          "Time-cell comparison is a permissive rule at the named-check level: value checks backbone_unweighted_values and ca_core_values returned passed=true for submissions with wrong and negated Time cells, contradicting the public_requirement text of those checks. The overall binary verdict failed via csv_structure_headers, but this check-level contract mismatch must be repaired and the failed controls (dcd-time-offset-omitted, time-sign-flip-ca-table) re-executed on a new candidate.",
+          "The valid-alternative representation probe tolerance-midpoint-encoding failed execution (passed_control=false) because its script shifted the Frame column out of contract; it must be corrected to shift only Time/RMSD cells and re-run."
+        ],
+        "decision": "defect",
+        "evidence": [
+          "Executed control records: probe 'dcd-time-offset-omitted' recorded backbone_unweighted_values passed=true with message '98 rows ... all cells within atol+rtol*|ref|' while csv_structure_headers reported 98 Time mismatches; passed_control=false. Probe 'time-sign-flip-ca-table' recorded ca_core_values passed=true with every Time cell negated; passed_control=false.",
+          "Grader code: Time differences set time_problem/struct_fail and tfail, but results[cid]['passed'] is set from rfail only; the 'bad = {...}' line and the cols_fail set do not influence the value-check decision, so Time never fails the named value checks.",
+          "Positive and negative controls otherwise behave correctly: reference/recomputed/alternative controls passed with the declared tolerance; the decimal-reencode-native valid alternative passed all checks, establishing representation acceptance; wrong-solution probes for A-E values, fitted-frame domain values, mass/resid weighting, frame order, lazy tail and non-finite cells were all correctly rejected by their targeted checks.",
+          "Mass-weighting propagation for analysis D was verified against MDAnalysis 2.11.0 rms.py lines 691-711 (weights broadcast to groupselections when weights_groupselections is falsy), and analysis E resid weighting against the executed source, both matching the public brief and reference outputs."
+        ],
+        "output_paths": [
+          "rmsd_open_closed_backbone.csv",
+          "rmsd_backbone_unweighted.csv",
+          "rmsd_ca_core.csv",
+          "rmsd_mass_weighted.csv",
+          "rmsd_resid_weighted.csv"
+        ],
+        "rationale": "The five endpoints' numeric content is scientifically sound and independently validated, but the comparison contract has a check-attribution defect: Time cells are publicly declared to be part of each per-file value comparison, yet the implementation routes Time failures exclusively into the structural check, leaving the named value checks passing on submissions with wrong Time values. This permissive rule at the check level caused two executed wrong-solution probes to record failed controls and conflicts with the published check descriptions."
+      }
+    ]
+  },
+  "source_coverage": {
+    "decision": "approve",
+    "omitted_scientific_endpoints": [],
+    "rationale": "All eligible scientific branches of the source notebook are retained: analyses C, D and E were exported by preparation, and endpoints A (unnamed rms.rmsd expression, source lines 92-95) and B (backbone multi-selection table, source lines 107-112, whose variables were later overwritten) were recovered by faithful rerun of the unchanged source calls on the same original inputs and required state under the endpoint-recovery policy, with independent validation via the oracle and comparison controls. Matplotlib plots are presentation artifacts of the retained tables, the charges-shape print is a diagnostic, and the pd.DataFrame constructions are pure repackaging of the retained results. No eligible endpoint is omitted and no scientific scope was changed.",
+    "remaining_validation": [],
+    "scientific_scope_changes": [],
+    "unsupported_evidence_claims": []
+  }
+}

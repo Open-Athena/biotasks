@@ -1,0 +1,9 @@
+# MDAnalysis185 — late environment blocker during grading repair
+
+The original source passed reference/replay, independent specification review and controlled construction of all five analyses. Final grading review requested repair of Time-cell check attribution and a valid-alternative probe that altered the exact Frame index. The single existing GLM repair then reported a separate environment blocker: installed regression-test source contained an expected scalar lying inside the proposed tolerance for one requested output cell. The repair role could modify the grading contract but could not alter installed assets or the exclusion manifest. It returned `blocked`; no native controls, solver or publication ran.
+
+This is a rejected generated candidate, not a broken source. The initial final-environment assessment did not prevent the later partial-answer concern. The general environment mechanism ran, but this does not establish a scientifically qualified adoption. The early review had interpreted the numerical hints as unrelated rounded regression constants; the repair worker disagreed after closer comparison. Its[exact rationale](../../autonomous-runs/185/grading/repair-rationale.md) and[original review](../../autonomous-runs/185/grading/review.json) preserve that distinction. No operator removed a file or edited the task.
+
+The gap to assess across the panel is discovery and ownership of late environment findings: the general factory must avoid retaining unused answer assets, and a grading-only repair cannot fix such a defect. Do not silently increase repair allowances or treat this unqualified task as published. The remaining common-runtime cases stay frozen; any new general correction requires an explicitly separate runtime.
+
+Complete science/root archives and original/fresh cleanup are verified. Four SDK owners and exact IDs are absent. See[result](result-185.json) and[performance](performance-185-detail.json).
