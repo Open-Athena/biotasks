@@ -5067,3 +5067,5 @@ Existing source/clock/cleanup audits retain0.75/0.25USD and release9USDexcesshol
 NeuroKit190 rejected during setup after two input-loading failures; no scientific call or exported endpoint ran. The worker later reported a focused corrected-loader check but correctly did not claim untested files passed. Original523sciencefiles/4,948,641bytes and21rootfiles/999,117bytes verified, fresh one-owner/exact-ID absence confirmed.7.06minutes/34recordedrequests. Original response retained; no operator task fixes or extra tests. General diagnostic-before-reference-test gap recorded, no seed-specific workaround adopted.
 
 Release only4USDfor190 stages never dispatched, retain full1USDsetup allowance. Reserve full5USDfor191Scanpy on identical frozen224-file/source-only policy.198.25held/1.75available within200authorized. Fixed panel5/10terminal,0qualified;189Matchms still live. Previous qualified NeuroKit176/release/viewer retained.
+
+Scanpy191 submitted after frozen-input validation and typed pool admission, with only189 nonterminal. No scientific/runtime/prompt changes or additional repair allowances; exact224runtime retained.
