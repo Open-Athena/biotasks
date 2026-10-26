@@ -25,17 +25,23 @@ try:
     assert coverage['entered']==3 and coverage['backlog']==1 and coverage['unfinished_native_batch']
     closed = {'batches':[{'entered':[1,2,3],'finished':3}], 'backlog_pr_numbers':[4]}
     assert module.history_coverage(closed, observations)['entered']==3
-    budget={'events':[], 'recorded_paid_cost_usd':2.196603, 'additional_allocated_cpu_hours':14.89, 'outstanding_cpu_hour_reservations':6.33, 'outstanding_reservations_usd':23.07}
+    budget={'events':[], 'recorded_paid_cost_usd':2.196603, 'additional_allocated_cpu_hours':14.89, 'additional_reserved_cpu_hour_ceiling':32, 'outstanding_cpu_hour_reservations':6.33, 'outstanding_reservations_usd':23.07}
     write(scratch/'budget.json', budget); write(scratch/'candidates.json', {'candidates':[{},{}]})
     write(scratch/'manifest.json', {'budget_ledger':str(scratch/'budget.json'), 'cases':[{'id':'nibabel','run_id':'test','candidates':{'path':str(scratch/'candidates.json')}}]})
     value=module.snapshot(); c=value['cases'][0]
     assert value['state']=='monitoring' and c['phase']=='not_started' and c['exports'] is None
     assert 'pending' in module.render(value) and c['model_cost_usd'] is None
+    assert 'all admitted generation billing is reconciled' in module.render(value)
+    # Reporting an authorized amendment must use the actual ledger limit.
+    budget['additional_reserved_cpu_hour_ceiling']=64; write(scratch/'budget.json', budget)
+    amended=module.snapshot(); assert amended['epic_cpu_hour_ceiling']==64 and '64 CPUh ceiling' in module.render(amended)
+    budget['additional_reserved_cpu_hour_ceiling']=32; write(scratch/'budget.json', budget)
     gen=module.WORK/'nibabel/runs/generation'
     write(gen/'journal.json', {'stages':[{'stage':s} for s in module.STAGES]})
     write(gen/'readback.json', {'durable_readback_verified':True,'exported_tasks':['test-one']})
     write(gen/'cleanup-proof.json', {'verified_empty':True})
     value=module.snapshot(); assert value['cases'][0]['phase']=='export_ready' and value['cases'][0]['exports']==1
+    assert 'unfinished billing remains pending' in module.render(value)
     val=module.WORK/'nibabel-handoff/validation'; write(val/'plan.json', {'tasks':[{'id':'test-task'}]})
     directory=val/'runs/test-task'
     write(directory/'readback.json', {'positive_control_pair':True,'clean_oracle_command':True,'complete_parseable_pair':True,'all_p2p_pass_both':True})

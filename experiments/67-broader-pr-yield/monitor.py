@@ -124,11 +124,12 @@ def snapshot():
     running = alive()
     terminal_cases = all(c['phase'] in ['zero_exports_complete', 'controls_complete'] for c in cases)
     state = 'monitoring' if running else ('workflow_complete' if terminal_cases else 'controller_stopped_requires_review')
-    return {'report_profile': 'cumulative-table-v4', 'observed_utc': datetime.now(timezone.utc).isoformat(), 'state': state, 'controller_alive': running,
+    return {'report_profile': 'cumulative-table-v5', 'observed_utc': datetime.now(timezone.utc).isoformat(), 'state': state, 'controller_alive': running,
             'cases': cases, 'settled_issue67_model_usd': str(sum((Decimal(c['model_cost_usd']) for c in cases if c['model_cost_usd'] is not None), Decimal(0))),
             'settled_issue67_model_calls': sum(c['model_calls'] or 0 for c in cases),
             'epic_actual_model_usd': budget['recorded_paid_cost_usd'],
             'epic_allocated_cpu_hours': budget['additional_allocated_cpu_hours'],
+            'epic_cpu_hour_ceiling': budget['additional_reserved_cpu_hour_ceiling'],
             'epic_reserved_cpu_hours': budget.get('outstanding_cpu_hour_reservations', 0),
             'epic_outstanding_usd_including_storage': budget['outstanding_reservations_usd'],
             'native_or_model_submission_by_monitor': False}
@@ -166,6 +167,8 @@ def cumulative_table(body, value):
 
 def render(value):
     stamp = datetime.fromisoformat(value['observed_utc']).astimezone(ZoneInfo('America/New_York')).strftime('%b %d, %I:%M %p %Z')
+    pending_billing = any(c['phase'] != 'not_started' and c['model_cost_usd'] is None for c in value['cases'])
+    billing = 'unfinished billing remains pending' if pending_billing else 'all admitted generation billing is reconciled'
     rows = [START, f'**Monitored progress — {stamp}:** `{value["state"]}`. The original controller owns execution; this monitor only reads artifacts and reports changes.', '',
             '| Repository | Stage | Entered / queued | Exports | Positive / clean controls | Settled OpenRouter USD |',
             '| --- | --- | ---: | ---: | ---: | ---: |']
@@ -175,7 +178,7 @@ def render(value):
         cost = 'pending' if c['model_cost_usd'] is None else c['model_cost_usd']
         controls = 'pending' if not c['controls_cleaned'] else f'{c["positive"]} / {c["clean"]}'
         rows.append(f'| {REPOS[c["case"]]} | {c["phase"].replace("_", " ")} | {entered} / {c["inventory_queued"]} | {exports} | {controls} | {cost} |')
-    rows += ['', f'Settled new model cost: **${value["settled_issue67_model_usd"]}**; unfinished billing remains pending. Shared ledger: **${value["epic_actual_model_usd"]} settled model cost**, **{value["epic_allocated_cpu_hours"]:.3f} CPUh used / {value["epic_reserved_cpu_hours"]:.3f} reserved**; outstanding dollars include the existing storage reserve. Counts enter this block only from retained readbacks, with positive/clean controls requiring verified cleanup.', END]
+    rows += ['', f'Settled new model cost: **${value["settled_issue67_model_usd"]}**; {billing}. Shared ledger: **${value["epic_actual_model_usd"]} settled model cost**, **{value["epic_allocated_cpu_hours"]:.3f} CPUh used / {value["epic_reserved_cpu_hours"]:.3f} reserved / {value.get("epic_cpu_hour_ceiling", 32)} CPUh ceiling**; outstanding dollars include the existing storage reserve. Counts enter this block only from retained readbacks, with positive/clean controls requiring verified cleanup.', END]
     return '\n'.join(rows)
 
 
@@ -204,7 +207,7 @@ def publish(value):
     fresh = api(['repos/Open-Athena/biotasks/issues/33'])
     assert fresh['body'] == body and 'agent-generated' in [x['name'] for x in fresh['labels']]
     save(ROOT / 'monitor/last-issue-readback.json', {'body': body, 'verified': True})
-    child_body = '**Agent-owned broader historical reassessment:** ' + value['state'].replace('_', ' ') + '. The overall summary is in #33.\n\n' + block + '\n\nComplete history through October17; known exports excluded, successive batches at most100 with no repository count cap. Original controller owns admission, native execution, billing and cleanup. Shared $90 operating / 32 reserved CPUh limits remain; no new allowance or capacity. Raw evidence remains private pending redistribution review. Detailed logs and receipts belong in comments and durable artifacts. No additional run, retry or model call is made by this monitor.\n'
+    child_body = '**Agent-owned broader historical reassessment:** ' + value['state'].replace('_', ' ') + '. The overall summary is in #33.\n\n' + block + f'\n\nComplete history through October 17; known exports excluded, successive batches at most 100 with no repository count cap. Original controller owns admission, native execution, billing and cleanup. Shared $90 operating / {value.get("epic_cpu_hour_ceiling", 32)} cumulative CPUh limits are read from the campaign ledger; this reporter grants no allowance or capacity. Raw evidence remains private pending redistribution review. Detailed logs and receipts belong in comments and durable artifacts. No additional run, retry or model call is made by this monitor.\n'
     api(['--method', 'PATCH', 'repos/Open-Athena/biotasks/issues/67'], {'body': child_body})
     child = api(['repos/Open-Athena/biotasks/issues/67'])
     assert child['body'] == child_body and 'agent-generated' in [x['name'] for x in child['labels']]
