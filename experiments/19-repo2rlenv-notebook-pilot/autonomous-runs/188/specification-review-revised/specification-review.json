@@ -1,0 +1,46 @@
+{
+  "assessment": "The scientific question is well-defined and source-faithful: build a Plan7 profile HMM from the byte-identity-pinned LuxC.sto (13 sequences, verified, PF05893.5) with default Builder parameters and search LuxC.faa with default Pipeline parameters, producing LuxC.hmm and LuxC.domtbl. I independently verified the handoff's parameter-signature claims against the pyhmmer 0.12.3 sdist (Builder: architecture=\"fast\", weighting=\"pb\", effective_number=\"entropy\", symfrac=0.5, fragthresh=0.5, wid=0.62, seed=42; Pipeline: bias_filter=True, null2=True, seed=42, Z=None, domZ=None, F1=0.02, F2=1e-3, F3=1e-5, E=10.0, domE=10.0, incE=0.01, incdomE=0.01), the reference HMM header (NAME LuxC, ACC PF05893.5, LENG 400, NSEQ 13, EFFN 1.989990, CKSUM 395769323, three STATS lines, 1228 lines), the reference domtbl (3 comment lines + 12 single-domain rows ordered by ascending E-value 2e-169\u21929.8e-57), and the MSA sequence count (=13, matching NSEQ 13). The replay evidence supports the handoff's exclusion of the DATE/COM/version lines (replay HMM hashes differ only in stamped fields; domtbl was byte-identical across both replays). Two correctable defects block readiness: (1) the confirmed full-copy answer fixture pyhmmer/tests/data/hmms/txt/LuxC.hmm remains in the packaged solver environment with an empty exclusion declaration, violating the dependency-answers policy (\"do not expose answer copies\") and the proposal's own mandatory-cleanup directive; I verified its scientific header (NSEQ, EFFN, CKSUM, GA/TC/NC, STATS, COMPO) is identical to the reference output, confirming the exposure is real; (2) the public brief misstates the default weighting as \"GSC/PB relative-entropy weighting\", conflating alternative HMMER weighting schemes with the actual default (position-based \"pb\" weighting, with \"entropy\" targeting applying to effective sequence number); a solver following the public text could apply a non-default scheme and produce a scientifically wrong model that the brief simultaneously forbids. Non-blocking observations recorded for later stages: outcome.json's \"47 sequences\" is an incorrect private note (the file and reference both show 13) with no effect on the public brief; the public brief's \"fragthres\" spelling differs from the actual \"fragthresh\" keyword (harmless in a by-reference definition); the public task-relative paths (input/, results/) differ cosmetically from the recorded staging paths (/inputs/data/..., /work/outputs) and construction must keep the byte-identity mapping explicit; the handoff's open questions (row-order vs keyed-set comparison, float tolerance, mutation probes such as symfrac\u22600.5, HMM body comparison mode) are correctly deferred to executable validation and are not blocking. Both required changes are concrete and must happen before assets are frozen; the science itself needs no reformulation.",
+  "disposition": "revise",
+  "findings": [
+    {
+      "evidence": [
+        {
+          "path": "proposal/validation_handoff",
+          "quote": "This must be removed from the solver environment (and its removal validated by re-running the reference"
+        },
+        {
+          "path": "candidate/dependency-exclusions.json",
+          "quote": "\"files\": []"
+        },
+        {
+          "path": "trial/dependency-exclusions-applied.json",
+          "quote": "\"excluded_files_absent\": true"
+        },
+        {
+          "path": "outcome.json",
+          "quote": "CONFIRMED FULL ANSWER EXPOSURE (not removed; prevention deferred to the exclusion worker)"
+        }
+      ],
+      "problem": "A full-copy answer for the first required output remains present in the packaged solver environment and no exclusion has been declared or validated. The installed pyhmmer 0.12.3 distribution bundles pyhmmer/tests/data/hmms/txt/LuxC.hmm, whose scientific content I independently verified against the reference output: NAME LuxC, ACC PF05893.5, LENG 400, NSEQ 13, EFFN 1.989990, CKSUM 395769323, identical GA/TC/NC cutoffs and STATS LOCAL calibration constants, and an identical COMPO row \u2014 i.e. it is the requested HMM body, differing only in version banner, DATE and COM lines, exactly as the handoff records. Yet candidate/dependency-exclusions.json declares an empty exclusion list, the applied-exclusions record confirms nothing was removed, and the reference-run allowance was consumed without testing a cleaned environment. Task policy requires verified exclusions of answer files with content identities and reasons, and validation of the cleaned environment (\"do not expose answer copies through caches or backups\"). As it stands, a solver can simply copy the shipped fixture (adjusting at most the stamped lines) and the solver-facing question does not withhold its private answer.",
+      "required_change": "Before assets are frozen, declare the exclusion of pyhmmer/tests/data/hmms/txt/LuxC.hmm in dependency-exclusions.json with its content identity (sha256 e7a4dd57c83fb17cc12640f20c4f02f126d8230b16d6c6ef596bf791c8075865, 187123 bytes) and the verified completeness-of-exposure reason, including the actual diff evidence against the produced artifact; additionally review and, at construction's discretion, exclude the other non-required LuxC test-data fixtures under pyhmmer/tests/data as the handoff permits, while staging the required inputs from their separately pinned bytes. Then re-run the full reference pipeline in the cleaned environment and verify the recorded LuxC.hmm (517b5b21...) and LuxC.domtbl (fc3da85a...) hashes are still produced, and record the validated cleanup in the task package so no LuxC.hmm-identical file is reachable by the solver."
+    },
+    {
+      "evidence": [
+        {
+          "path": "proposal/task_brief",
+          "quote": "sequence weights are computed with GSC/PB relative-entropy weighting (wid 0.62); effective sequence number is computed with the entropy-target strategy"
+        },
+        {
+          "path": "proposal/validation_handoff",
+          "quote": "architecture=\"fast\", weighting=\"pb\", effective_number=\"entropy\", prior_scheme=\"alphabet\", symfrac=0.5, fragthres=0.5, wid=0.62"
+        },
+        {
+          "path": "proposal/validation_handoff",
+          "quote": "verified line-by-line from the recorded `LuxC.hmm`"
+        }
+      ],
+      "problem": "The public solver-facing brief misdescribes the default sequence-weighting method. It says \"GSC/PB relative-entropy weighting (wid 0.62)\", mixing names of distinct, mutually exclusive HMMER3 weighting schemes (GSC, PB, and the relative-entropy/clustered variants) into a single label, and attaching the entropy concept to weighting rather than to effective sequence number. The handoff and the actual pyhmmer 0.12.3 default signature (which I verified in the sdist at src/pyhmmer/plan7.pyx, Builder __init__ lines 640-665) pin the operative values as weighting=\"pb\" (position-based sequence weighting, with wid=0.62) and effective_number=\"entropy\" (entropy-target strategy for effective sequence number). These choices materially determine EFFN (1.989990 in the reference) and the model parameters; selecting GSC or a relative-entropy weighting scheme would be a different, scientifically incorrect build under the task's own rule that \"no alternate weighting scheme, symfrac, threshold, calibration source, or E-value denominator may be applied\". A solver relying on the public text rather than the pinned signature could therefore be steered toward a wrong model while believing they followed the instructions.",
+      "required_change": "Rewrite the weighting sentence in the public brief to state the actual hmmbuild/pyhmmer default: position-based (\"pb\") sequence weighting with identity cutoff wid 0.62, with the entropy-target strategy applied to the effective sequence number \u2014 matching the handoff's recorded default signature and the CLI-equivalent HMMER 3.4 defaults \u2014 and drop the \"GSC\" label so the public question names exactly one default scheme rather than a conflated set of alternatives."
+    }
+  ]
+}

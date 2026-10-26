@@ -1,0 +1,28 @@
+{
+  "assessment": "The proposed scientific objective is sound and source-faithful: build the LuxC (PF05893.5) profile HMM from the supplied Stockholm alignment using default HMMER3/Plan7 construction parameters, then search the supplied protein FASTA and report the per-domain hits table. Both terminal notebook products are preserved as the two outputs; the excluded printed alignment and consensus preview are plausibly contained in the exported files, and no independent scientific branch is dropped. Reference facts I could verify hold up: the recorded LuxC.hmm header (LENG 400, NSEQ 13 matching #=GF SQ 13, EFFN 1.989990, STATS lines), the domtbl structure (15 lines, 3 comment lines, 12 domain rows, E-value-ascending order), and byte-stability of the domtbl across replays. However, the proposal is not ready: (1) the solver-facing task brief is corrupted \u2014 a wrong input path (data/msq/), a bogus pyhmmer URL, several incoherent contract sentences, and grammar that changes the stated requirements; (2) the brief's blanket metadata prohibition directly contradicts the reference output, which necessarily contains a run-time DATE stamp and a COM provenance record, leaving the contract internally unsatisfiable; (3) a confirmed full-answer fixture (pyhmmer/tests/data/hmms/txt/LuxC.hmm, body byte-identical to the requested first endpoint apart from version/DATE/COM lines) is bundled in the offline solver environment and the exclusion declaration is empty, contrary to the dependency_answers policy; and (4) the private validation handoff contains garbled and factually wrong recorded claims (truncated LuxC.faa sha, \"Marc format\"/\"instrecord\" nonsense, an internally inconsistent domtbl line accounting of 3+3+12 lines for a 15-line file, and an unverified assertion that replay .hmm variants differ only in header stamps while the recorded observations explicitly show scientific equivalence not established). Downstream concerns that are not blocking at this stage: tolerance calibration for HMMER text formatting, control of DATE/COM divergence handling in grading, and how the staged /inputs via wheel-duplicated LuxC inputs are handled \u2014 these belong to independent validation work, provided the handoff stops asserting them as verified facts.",
+  "disposition": "revise",
+  "findings": [
+    {
+      "evidence": [
+        {
+          "path": "proposal/task_brief",
+          "quote": "`data/msq/LuxC.faa` \u2014 the protein sequence database in FASTA format."
+        },
+        {
+          "path": "proposal/task_brief",
+          "quote": "**the default data parameters of HMM ([pyhmmer](http://www.dclk.org)-bound only if you choose it; any source is allowed)}"
+        },
+        {
+          "path": "proposal/task_brief",
+          "quote": "The long alignment's `extra` data must be stored in the HMM as-is in the profile's coordinate system."
+        },
+        {
+          "path": "proposal/task_brief",
+          "quote": "HMMER `hmmbuild`'s naming protocol for an MSA; where the workbook hand-wrote over a named alignment itself, the study-defined name This applies."
+        }
+      ],
+      "problem": "The solver-facing task brief is corrupted to the point where the required outputs and a stated input are ambiguous or wrong. The Supplied inputs section names `data/msq/LuxC.faa`, a path that does not exist (the actual and staged input is `data/seqs/LuxC.faa`), making one required input invisible to a solver following the brief. The Objective paragraph contains a nonsense sentence with a bogus link to pyhmmer ('http://www.dclk.org'). The acceptance criteria contain incoherent clauses ('The long alignment's `extra` data must be stored in the HMM as-is in the profile's coordinate system', a broken hmmbuild-naming clause ending in 'This applies.'). Requirements such as 'do not add your own metadata or sync state' are not scientifically defined for this analysis. A solver cannot determine the exact contract from this text, and the grader contract would be built on materially misrepresented requirements.",
+      "required_change": "Rewrite the task brief in coherent, accurate language before freezing: correct the input path to `data/seqs/LuxC.faa` (as staged and hash-recorded), remove or correct the pyhmmer link, delete or rewrite the incoherent clauses about 'extra data', the hmmbuild naming protocol and 'sync state' so each acceptance criterion states a determinable scientific requirement (HMMER3 text profile built with default Builder/Background parameters; per-domain hits table with HMMER pipeline statistics and coordinates)."
+    }
+  ]
+}
