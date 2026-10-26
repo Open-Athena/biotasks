@@ -5183,3 +5183,9 @@ Existing conservative full-lifetime audit retained2USDand released3USDfor195:194
 ### 2026-10-26 — Freeze the next common version and launch original COBRApy196
 
 All ten original source/provenance assets are byte-preserved in separate source-only payloads against one232-file runtime; no prior generated task, expected answer, setup recipe or diagnostic hints. Exact tested source admission and unchanged resource/config/budget/provider boundaries pass.196 is RUNNING on reserved Iris CPU capacity with one task sandbox at a time; nine other cases are frozen but not funded or submitted. No scientific result yet; new construction repair is not live-qualified. Retain full5USDfor196;199held/1unallocated within200authorized, not invoices or credits. Fixed224round and qualified229Matchms195 remain separate.
+
+### 2026-10-26 — Refine original closed three-SDK holds and fund the next common-version case
+
+Exact original152/172source/config/archive/terminal records and all three closed SDK lifetimes verified; current exactID/owner queries confirm absence. Resource creators match the admitted154/173versions;152controller differences are only the reviewed one-dollar reservation refactor and stage-name guard. Full lifetimes plus300seconds at each end,0.10USDmargin and upward0.25USDrounding retain0.50USD each, releasing5USDtotal without changing either infrastructure failure.60tests/Ruff/formatpass;0.27seconds/36044KiBRSS. Original default-cache and missing-Daytona interpreter checks failed before mutation and were resolved with existing pinned tools.
+
+Reserve full5USDfor197PyMC within200total;199held/1unallocated again.196remainsrunning;197not yet submitted; no other case funded. The common232source remains unchanged. These are exposure bounds, not invoices or assumed credits.
