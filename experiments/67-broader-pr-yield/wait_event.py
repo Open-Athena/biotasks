@@ -8,7 +8,7 @@ import struct
 root=Path(__file__).resolve().parent
 active=json.loads((root/'active-workflow.json').read_text());work=root/active['work_dir']
 manifest=json.loads((root/active['manifest']).read_text())
-paths={work,root/'inputs-private',Path(manifest['budget_ledger']).parent}
+paths={work,root/'inputs-private',root/'monitor',Path(manifest['budget_ledger']).parent}
 for case in manifest['cases']:
     gen=Path(case['generation_root']) if case.get('mode')=='completed' else work/case['id']
     for p in [gen,gen/'runs',gen/'runs/generation',gen/'runs/generation/cleanup',gen/'runs/generation/stop']:
@@ -37,7 +37,7 @@ while not out:
     while offset<len(raw):
         wd,mask,cookie,size=struct.unpack_from('iIII',raw,offset);offset+=16
         name=raw[offset:offset+size].split(b'\0',1)[0].decode();offset+=size
-        if (mask&0x40000000 and work in watched.get(wd,Path('/')).parents) or name in ['budget.json','journal.json','readback.json','cleanup-proof.json','held.json','accounting.json','model-accounting.json','controller-output-003.log','dendropy-generation-controller.log','anndata-generation-controller.log','biopython-generation-controller.log']:
+        if (mask&0x40000000 and work in watched.get(wd,Path('/')).parents) or name in ['budget.json','journal.json','readback.json','cleanup-proof.json','held.json','accounting.json','model-accounting.json','latest.json','resume-handoff-controller.log','resume-handoff-state.json','controller-output-003.log','dendropy-generation-controller.log','anndata-generation-controller.log','biopython-generation-controller.log']:
             out.append({'directory':str(watched.get(wd,'')),'name':name,'mask':mask})
 import monitor
 value=monitor.snapshot()
