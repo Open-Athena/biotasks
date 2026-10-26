@@ -99,7 +99,7 @@ def snapshot():
     running = alive()
     terminal_cases = all(c['phase'] in ['zero_exports_complete', 'controls_complete'] for c in cases)
     state = 'monitoring' if running else ('workflow_complete' if terminal_cases else 'controller_stopped_requires_review')
-    return {'observed_utc': datetime.now(timezone.utc).isoformat(), 'state': state, 'controller_alive': running,
+    return {'report_profile': 'cumulative-table-v2', 'observed_utc': datetime.now(timezone.utc).isoformat(), 'state': state, 'controller_alive': running,
             'cases': cases, 'settled_issue67_model_usd': str(sum((Decimal(c['model_cost_usd']) for c in cases if c['model_cost_usd'] is not None), Decimal(0))),
             'settled_issue67_model_calls': sum(c['model_calls'] or 0 for c in cases),
             'epic_actual_model_usd': budget['recorded_paid_cost_usd'],
@@ -107,6 +107,33 @@ def snapshot():
             'epic_reserved_cpu_hours': budget.get('outstanding_cpu_hour_reservations', 0),
             'epic_outstanding_usd_including_storage': budget['outstanding_reservations_usd'],
             'native_or_model_submission_by_monitor': False}
+
+
+def cumulative_table(body, value):
+    # Frozen pre-reassessment outcomes, already deduplicated in issue33's ledger.
+    baseline = {
+        'nibabel': ('NiBabel / neuroimaging', 1, 1, 1, Decimal('0.473580')),
+        'dendropy': ('DendroPy / phylogenetics', 1, 1, 0, Decimal('0.087849')),
+        'anndata': ('AnnData / transcriptomics', 0, 0, 0, Decimal('0.313983')),
+        'biopython': ('Biopython / sequence-analysis tooling', 0, 0, 0, Decimal('1.033545')),
+    }
+    for c in value['cases']:
+        if c['exports'] is None:
+            continue
+        label, exports, positive, clean, cost = baseline[c['case']]
+        coverage = f"{c['entered']} / {c['inventory_queued']} historical PRs entered; {c['backlog']} backlog; prior small-run results included"
+        cost += Decimal(c['model_cost_usd']) if c['model_cost_usd'] is not None else Decimal(0)
+        row = f"| {label} | {coverage} | {exports+c['exports']} | {positive+c['positive']} | {clean+c['clean']} | {cost:.6f} |"
+        body, changed = re.subn(r'^\| '+re.escape(label)+r' \|[^\n]+$', lambda match: row, body, count=1, flags=re.M)
+        assert changed == 1, 'Expected unique overall repository row'
+    exports = 85 + sum(c['exports'] or 0 for c in value['cases'])
+    positive = 84 + sum(c['positive'] for c in value['cases'])
+    clean = 68 + sum(c['clean'] for c in value['cases'])
+    cost = Decimal('8.310168') + Decimal(value['settled_issue67_model_usd'])
+    total = f'| **Recorded cohort total** | **Incomplete coverage** | **{exports}** | **{positive}** | **{clean}** | **{cost:.6f}** |'
+    body, changed = re.subn(r'^\| \*\*Recorded cohort total\*\* \|[^\n]+$', lambda match: total, body, count=1, flags=re.M)
+    assert changed == 1, 'Expected unique overall total row'
+    return body
 
 
 def render(value):
@@ -132,7 +159,7 @@ def api(args, value=None):
 
 def publish(value):
     old = api(['repos/Open-Athena/biotasks/issues/33'])
-    body = old['body']; block = render(value)
+    body = cumulative_table(old['body'], value); block = render(value)
     if START in body:
         assert body.count(START) == body.count(END) == 1
         body = body[:body.index(START)] + block + body[body.index(END) + len(END):]
