@@ -5121,3 +5121,9 @@ Reserve1USD for the prepared synthetic provider check within the existing ceilin
 Unchanged original-source/stage/closed-clock auditors retain0.25USD after two-sided300seconds, extra0.10 and quarter-up, release4.75.195.00held/5.00unallocated including funded1USDsynthetic check. Fixed panel9/10audited: seven generated-candidate rejections, one source-fidelity rejection, one infrastructure failure; zero qualified new tasks.194remains running.
 
 Synthetic check initial launcher stopped during module imports (repo2rlenv missing), before creating an evidence root or provider sandbox. Import-only diagnosis also found checkout biotasks needed its source path; both paths then import/compile without environment mutation. Full original admission/diagnosis preserved, fresh owner empty, no resources/model calls. Separate recovery admission prepared under the same1USDhold; scientific cases unchanged.
+
+### 2026-10-26 — Provider hint boundary passes; reserve explicit new-version campaign
+
+Same funded synthetic check continued after corrected process-only imports and fresh typed admission. All3cases pass in28.724seconds, no model/biology: installed identities/author read/oracle denial; declared removal with fresh unchanged outputs; failed-attempt visible-report invalidation. Original check cleanup and fresh exactID/owner absence verified. Initial pre-creation failure retained. This establishes the checked provider boundary, not notebook qualification.
+
+Plan explicit229-file candidate versus old224:5added/12changed runtime paths, no removals; only general hint discovery/review-packet code, prompts and tests. Full5USDreserved for195 fresh original-source Matchms rerun,200held/0unallocated. No freeze or submission yet, no prior tasks/answers/exclusions/staging/diagnostic hints.194remains fixed-version. All scientific/model/resource/time/shared-repair allowances unchanged.

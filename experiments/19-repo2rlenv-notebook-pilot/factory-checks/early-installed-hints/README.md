@@ -1,4 +1,4 @@
-# Earlier installed-answer discovery — offline candidate
+# Earlier installed-answer discovery — candidate with provider boundary checks
 
 The fixed 224-file panel is unchanged. This next-version candidate gives the existing construction worker numeric discovery evidence while it still owns final environment assessment and exact unused-file removals. It adds no scientific method, seed-specific rule, model stage, formal quality repair or resource allowance. No campaign has used this version yet.
 
@@ -12,4 +12,4 @@ The next-version proposal review prompt also assigns a suspected removable setup
 
 These are advisory magnitude matches, never a grading tolerance or automatic removal/acceptance. Integers, comments, strings, other artifact formats and nonpriority files remain discovery gaps; unrelated matches are possible. A match cannot establish unused status, and absence cannot certify answer isolation.
 
-Before adopting a new runtime, validate actual author readability/oracle denial and lifecycle cleanup on the provider, then run fresh source-only notebooks with the complete unchanged scientific and native qualification gates. Keep current failures and releases intact. Do not supply a historical task, exclusion filename or expected answer to a fresh seed.
+[Three real-provider synthetic controls now pass](integration-summary.json): actual installed ownership/bytes and author access/oracle denial, exact declared removal with fresh unchanged copy outputs, and failed-attempt invalidation of visible reports. Fresh exact sandbox-ID and owner absence are independently verified. The initial pre-creation import failure remains preserved. These establish the checked provider boundary, not biological qualification. Before scientific adoption, run fresh source-only notebooks with the complete unchanged scientific and native qualification gates. Keep current failures and releases intact. Do not supply a historical task, exclusion filename or expected answer to a fresh seed.

@@ -1,6 +1,6 @@
 # Provider validation before notebook adoption
 
-The [synthetic check](run_live_check.py) is prepared and funded, not launched. It reuses the existing provider runner: one offline 4-CPU/8-GiB/10-GiB sandbox, 300 seconds of work plus 180 seconds of cleanup, no GPU, model call, biological input or scientific computation. Its full $1 is reserved within the existing $200 aggregate ceiling; execution must still prove that one of the two shared campaign slots is free. Both running fixed-panel cases must keep their original inputs and factory version.
+The [synthetic check](run_live_check.py) is executed with all three synthetic cases passing and independent cleanup verified. It reuses the existing provider runner: one offline 4-CPU/8-GiB/10-GiB sandbox, 300 seconds of work plus 180 seconds of cleanup, no GPU, model call, biological input or scientific computation. Its full $1 is reserved within the existing $200 aggregate ceiling; execution must still prove that one of the two shared campaign slots is free. Both running fixed-panel cases must keep their original inputs and factory version.
 
 The check exercises the current controller path, rather than calling the hint collector alone:
 
@@ -10,7 +10,7 @@ The check exercises the current controller path, rather than calling the hint co
 
 Freeze the runner, its imported shared compatibility runners, all uploaded controller modules and the configuration before launch. Preserve original command receipts, input requests, full downloaded reports, case results and cleanup receipts. Independently check the original sandbox ID and owner label after completion. A timeout is an uncertain observation until reconciled; never create a replacement sandbox merely to recover an observation.
 
-Static checks currently establish only script syntax and lint/format correctness. Real provider permissions, report lifecycle and cleanup remain unverified. Passing these synthetic cases would establish that boundary, not qualify a biological task or prove answer isolation for an arbitrary environment.
+[Actual provider results](integration-summary.json) establish the three synthetic role/identity/lifecycle cases and independent cleanup. They do not qualify a biological task or prove answer isolation for an arbitrary environment.
 
 After provider validation, freeze an explicitly new factory revision containing the earlier-hints and lossless-review-packet changes. Run fresh source-only notebooks with the existing scientific/native/release gates, repair allowance and full per-campaign reservation. The current 224-file panel remains a separate, unchanged comparison. A newer candidate must not inherit previous generated tasks, excluded filenames, private answers or staging recipes as seed guidance.
 

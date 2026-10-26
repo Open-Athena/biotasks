@@ -1,0 +1,110 @@
+{
+  "status": "executed_requires_scientific_validation",
+  "derivation": {
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "",
+    "stderr": "",
+    "role_process_cleanup_verified": true,
+    "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns."
+  },
+  "environment_removal_receipt": {
+    "files": [
+      {
+        "distribution": "synthetic-tests",
+        "path": "synthetic/tests/final.py",
+        "sha256": "494e4598ae49402a6906b1bf3873373f68cbfab6f98111fd057fa1981522754e"
+      }
+    ],
+    "excluded_files_absent": true
+  },
+  "inputs": [
+    {
+      "path": "data.csv",
+      "sha256": "763827dfc327314745cd5420d1e6cfb58b51caba54fc661d6e3d72af1b62e2fa",
+      "bytes": 17
+    }
+  ],
+  "reference": [
+    {
+      "path": "final.csv",
+      "sha256": "763827dfc327314745cd5420d1e6cfb58b51caba54fc661d6e3d72af1b62e2fa",
+      "bytes": 17
+    }
+  ],
+  "oracle_isolation": {
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "isolated\n",
+    "stderr": "",
+    "role_process_cleanup_verified": true,
+    "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns."
+  },
+  "oracle": {
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "",
+    "stderr": "",
+    "role_process_cleanup_verified": true,
+    "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns."
+  },
+  "oracle_outputs": [
+    {
+      "path": "final.csv",
+      "sha256": "763827dfc327314745cd5420d1e6cfb58b51caba54fc661d6e3d72af1b62e2fa",
+      "bytes": 17
+    }
+  ],
+  "environment": {
+    "exclusions": {
+      "files": [
+        {
+          "distribution": "synthetic-tests",
+          "path": "synthetic/tests/final.py",
+          "sha256": "494e4598ae49402a6906b1bf3873373f68cbfab6f98111fd057fa1981522754e",
+          "reason": "Synthetic unused test literal matches final.csv; copy programs never import this package"
+        }
+      ]
+    },
+    "removal_receipt": {
+      "files": [
+        {
+          "distribution": "synthetic-tests",
+          "path": "synthetic/tests/final.py",
+          "sha256": "494e4598ae49402a6906b1bf3873373f68cbfab6f98111fd057fa1981522754e"
+        }
+      ],
+      "excluded_files_absent": true
+    },
+    "asset_catalog": {
+      "bytes": 999,
+      "sha256": "3aba5fb1015086f2d7618cd4f7e70687a5adee3a1615918046d9c457f461eb70"
+    },
+    "asset_summary": {
+      "scope": "Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit.",
+      "installed_files_inspected": 1,
+      "candidate_files": 1,
+      "distribution_coverage": [
+        {
+          "distribution": "synthetic-tests",
+          "installed_regular_files_inspected": 1,
+          "candidate_files": 1,
+          "dedicated_test_distribution_hint": true
+        }
+      ],
+      "priority_matches": [],
+      "source_import_terms": []
+    },
+    "asset_value_hints": {
+      "sha256": "da986ce64aabf25ef125d89fdf2daae5b919906901be5dfd0419a1d178ff5bc0",
+      "bytes": 835,
+      "source": {
+        "asset_catalog_sha256": "3aba5fb1015086f2d7618cd4f7e70687a5adee3a1615918046d9c457f461eb70",
+        "reference_inventory_sha256": "b683dc1ed62c63510c307688eb6d310797d9d75cc09a7cc233b82375246af2aa"
+      },
+      "finding_count": 0,
+      "scope": "Advisory magnitude matches in hash/size-verified Python files owned by the actual installed distribution and final CSV/TSV references. No package imports, scientific execution, network requests, removal or isolation verdict. Integer-valued constants, comments, strings, nonpriority files and other formats are gaps. Matches can be unrelated; absence is not approval.",
+      "distance_is_not_grading_tolerance": true
+    }
+  }
+}
