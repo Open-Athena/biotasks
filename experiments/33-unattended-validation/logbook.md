@@ -272,3 +272,5 @@ Final actual $2.196603 /61 original upstream calls and14.892111111/32 allocated 
 ## 2026-10-26 — Overall synthesis and agent-owned issue review
 
 User requests overall review only. Reconciled historical per-repository counts against the 83-task ledger and generation costs against #28/#33 ledgers; separated fresh integration outcomes from historical task counts and earlier September spending. Added overall-summary.md and a 32-issue review register. Plan: close 27 completed bounded questions and retain five substantive research follow-ups. No new execution, spending, scientific reclassification or merge. Earlier dated audits remain intact; their leave-all-children-open instruction is superseded.
+
+Publication verified: all 32 issue bodies, agent-generated labels, states and conclusion comments read back exactly; 27 closed and five open. Epic #33 and PR #63 link the published overall summary. PR head remains c19e7369, draft/open, CI green; no source change or rerun. All 24 evidence references in the prior completion audit matched their recorded hashes on this review. Historical counts rechecked directly from all 83 ledger rows.
