@@ -4,6 +4,10 @@ Updated 2026-10-26. This is the overall review document for epic #33 and its pre
 
 The pipeline can produce useful biology coding tasks cheaply in model dollars, but yield depends strongly on repository compatibility. Across the recorded #28/#33 cohorts we have **85 unique exports, 84 with at least one positive control pair and 68 with at least one clean oracle command**. The original ten-repository subset contributes 83/82/67; DendroPy and NiBabel add two exports. These are observations from unequal, incomplete coverage, not 68 released, portable tasks. The later implementation automates generation through validation and cleanup; a fresh NiBabel case demonstrates the full path. Draft [PR #63](https://github.com/Open-Athena/biotasks/pull/63) is open, with 186 local tests and both CI checks passing at c19e7369. Nothing is merged or released.
 
+## Broader reassessment in progress
+
+[Issue #67](https://github.com/Open-Athena/biotasks/issues/67) now executes the broader assessment requested after this summary. Full inventory through October17 contains 5,031 PRs across NiBabel, DendroPy, AnnData and Biopython; excluding two already-exported AnnData tasks from #27 leaves 5,029 queued. Successive batches are at most100, not a repository cap. Original NiBabel job is submitted on reserved TRC CPUs; remaining stages/repositories share the existing budget. No new yield is counted until measured. The totals below intentionally cover #28/#33, not the earlier #27 AnnData exports.
+
 ## Repository yield: all assessed repositories
 
 One table covers both the history-wide survey and the four partially assessed repositories. Counts are unique PR tasks in these recorded #28/#33 cohorts, not generation attempts; they exclude earlier #24/#25 work and the separately adapted MACS diagnostic. Costs include the recorded #33 generation comparisons, including failed and duplicate-task runs. Different discovery windows and execution profiles mean these rows are not comparable estimates of population yield.
