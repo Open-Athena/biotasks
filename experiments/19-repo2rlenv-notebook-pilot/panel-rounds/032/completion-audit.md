@@ -2,19 +2,19 @@
 
 Checked 27 October 2026. **Issue #19 remains incomplete.**
 
-| Requirement | Current evidence | Assessment |
+| Requirement | Authoritative evidence | Assessment |
 | --- | --- | --- |
-| Autonomous notebook to validated task or justified rejection | Five historical domains released; current PyMC 215 qualified, PyHMMER 216 candidate rejected and COBRApy 217 stopped by a questionable review, with no operator scientific edits | Demonstrated outcomes; broader reliability unproven |
-| Diverse Python panel | Ten domains exercised across development versions; latest outcomes: two qualified, four candidate rejects, one review rejection under audit, one source-fidelity reject, one input-access reject, one infrastructure failure | Mixed versions are not a common-version success rate |
-| Same factory across the panel | 215–219completed with identical232-file108runtime;220dispatched on the same hashes | Five of ten cases audited;220running and four unfunded |
-| Scientific/native validation | 215 passed 19 controls and native reference/empty/blind solver 1/0/1; 216's missing statistic comparison was caught by an executed probe and final review | Proved for these exact outcomes, not inherited by unrun cases |
-| Publication/download | 215 public revision 1a27dec5aceb5d0b592fce41b129a996893b89b9 and exact native bundle passed forced anonymous empty-cache download | Proved for 215 |
-| Latest HTML inspection | PyMC 215 has 13 actual stages and 13 solver steps; browser routes/mobile/contrast pass; public Git readback matches the checked HTML | Local browser and public blob verification complete |
-| Evidence/cleanup | Complete original science and root exports for 215–219; all recorded resources freshly absent; two native IDs unrecorded but their executed owner labels/cleanup are bound | Proved within explicit recording limits |
-| General factory changes | 114 affected tests plus source-admission checks; live 108 outcome now includes one qualified task | Does not complete the full panel assessment |
-| Funds | $200 authorized/$195.75held/$4.25unallocated;220retains full$5reservation;218/219retain$0.50/$0.75after complete lifetime audits | Reconcile closed reservations before new execution; not an invoice |
-| Promotion | PR #23 draft/unmerged; permanent research branch retained | Supported extraction and sufficient validation remain; never merge research branch |
+| Autonomous notebook to validated task or justified rejection | Five original workflows executed on frozen 108 without operator scientific edits; one qualified release, three candidate rejects, one questionable review rejection | Demonstrated exact outcomes; yield and review reliability remain concerns |
+| Diverse Python panel | Ten planned domains; five audited on the common factory | Scanpy 220 running; four domains unstarted |
+| Same factory | Cases 215–220 have identical 232-file runtime hashes and original source-only inputs | Verified for dispatched cases; remaining sources are not frozen or funded |
+| Scientific/native validation | PyMC 215 passed 19 controls and native reference/empty/blind solver 1/0/1 | Proved for 215; rejected cases have no native qualification |
+| Publication/download | Exact 215 public bundle and revision passed forced anonymous empty-cache readback | Proved for 215 only |
+| Latest HTML | PyMC 215 with actual stages, prompts, inputs, outputs and attempt; browser/mobile/contrast/public readback pass | Verified; no new qualified release replaces it |
+| Evidence/cleanup | Complete science/root exports for 215–219; all original SDK IDs and executed native owners checked absent | Verified within explicit native-ID recording limits |
+| General changes and checks | 114 affected runtime tests and source-admission checks; accounting checks are separate | Does not substitute for the remaining live panel |
+| Funds | $200 authorized; $195.75 held; $4.25 unallocated; 220 retains a full $5 reservation | No 221 funding; holds are not invoices or credits |
+| Promotion | PR #23 open, draft and unmerged | Supported extraction and sufficient validation remain; never merge the research branch |
 
-Next: complete Scanpy220and execute the four remaining original Python sources on the same factory as funds become available through strict accounting. The latest HTML and its public readback are verified. Preserve the rejected candidate and its evidence rather than adding a seed-specific fix. Publication remains gated by scientific validation and source terms.
+Next: complete Scanpy 220 and the four remaining original Python sources on the same factory, then assess general failure patterns. Preserve failed responses, controls and rejection reasons. Publish only scientifically qualified, rights-cleared tasks with verified downloads. Rejections caused by generated artifacts or review errors must not be described as broken notebooks.
 
-Original campaign/resource/model/repair limits remain. The proposed three-hour authoring window and cumulative-reference-budget change are unanswered; no default numerical yield threshold has been adopted. [Detailed assessment](current-panel-assessment.md), [common plan](../108/development-panel.json).
+Original campaign/resource/model/repair limits remain. The proposed three-hour window and cumulative-reference-budget change are unanswered; no numerical yield threshold has been adopted. [Detailed assessment](current-panel-assessment.md), [common plan](../108/development-panel.json).
