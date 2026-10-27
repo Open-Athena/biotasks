@@ -1,6 +1,6 @@
 # Shared syntax reader for generated artifact graders
 
-Status: offline candidate, awaiting source admission and a fresh live run. The completed ten-source 108 cohort and published tasks remain unchanged.
+Status: admitted for a fresh original-source round 109 trial; NeuroKit 225 is running. Its outcome is pending. The completed ten-source 108 cohort and published tasks remain unchanged. [Current trial](../../panel-rounds/109/README.md).
 
 The final controls in case 219 rejected a generated grader that promised to accept empty trailing CSV records but misread the standard parser's return value. This is reusable I/O work. The optional [shared reader](../../../../src/biotasks/table_io.py) uses Python's strict CSV reader and preserves decoded strings, quoted delimiters/newlines and ordinary line endings. Completely empty records may be skipped when the worker explicitly enables that convention in its public contract. Quoted empty fields and delimiter-only rows remain data. Equal-width validation retains extra/missing-field failures.
 

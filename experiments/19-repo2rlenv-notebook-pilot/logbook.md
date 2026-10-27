@@ -5544,3 +5544,12 @@ This remains an offline candidate with no new paid host/model call, source admis
 
 
 The shared-reader packaging review additionally requires its full Apache-2.0 project license beside every copied module. The controller captures the canonical source-root license already included in frozen payloads, checks its identity for each control and includes it in private Harbor tests. Editable package metadata advertises the license but does not provide its file here, so the research runner reads its frozen source root rather than depending on the current directory or fetching another copy. Four extra missing/changed/symlink notice cases bring the final combined suite to498passing tests. The earlier494-test candidate and source comparison remain preserved; no paid run or published task changed.
+
+
+### 27 October 2026 — Combined runtime admitted; original NeuroKit running
+
+Round 109 source admission re-ran the original 108 validator against its exact pinned source snapshot (1,119 files / 6.8 MB), verified all 232 parent runtime hashes and removed the temporary source-only clone. It independently checked the 14 changed/added reader/export files in the 235-file candidate; 11 admission/refusal tests pass. Dispatcher adaptation changes only four profile-path constants and its immediate-parent fingerprint. All existing provider, secret, funding, typed-pool and cleanup checks remain.
+
+Reserved the original full $5 within $200 authorization, froze exact original 219 source assets without prior generated artifacts/hints, passed launch preflight and submitted 225. Typed admission found no prior active campaign host; 225 is confirmed RUNNING and has reached setup. Its declared model/resource/time/reference-dispatch/repair allowances remain unchanged. Ledger $199.75 held / $0.25 unallocated is reservations, not an invoice or credits. [Admission and running state](panel-rounds/109/README.md).
+
+The new primary export uses the existing original snapshot transport. Final recovery and any publication must preserve both transport/member manifests and explicit snapshot provenance; an absent normal seal must not be reconstructed. No scientific or native result is inferred from the running state.
