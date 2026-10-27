@@ -23,6 +23,8 @@ The latest completed outcomes are **one qualified/published task, four rejected 
 
 The successor has 155 affected tests, 25 preparation/packaging tests and 10 source-admission/AST checks. These are not fresh scientific qualification. A shorter control request is permitted only after a certified pre-dispatch refusal; executed or uncertain outcomes are not retried automatically. Scientific verdicts, required negative controls, original deadlines, resource maxima, two-reference-dispatch limit and repair budgets remain unchanged.
 
+[Matchms 214](../106/development-panel.json) is funded for a fresh original-source test of the same 232 runtime hashes as 213. It is not yet submitted. No previous generated task, answer, environment recipe or diagnostic will be supplied.
+
 ## Latest qualified release
 
 [MDAnalysis 198](https://huggingface.co/datasets/gonzalobenegas/biotasks-notebook-pilot-issue-19-mdanalysis-rmsd/tree/166d99e941b7e154fc6360f48e739bd19127cfb2) covers five source analyses, passed 19 controls/final reviews, and has native reference/empty/blind-GLM rewards **1/0/1**. Complete original artifacts, cleanup and forced anonymous download are verified. The matching latest viewer shows the notebook, task, attempt and captured pipeline. Its native-ID recording limitations remain explicit. [Release audit](../../autonomous-runs/198/release-audit.json).
@@ -46,6 +48,6 @@ Validate the general fixes on original-source runs and establish credible reliab
 
 A possible future reference-budget change from two dispatches to the same cumulative 20-minute computation maximum remains undecided. Frozen runs retain two dispatches. Pyteomics and Sgkit redistribution remain unestablished.
 
-**$200 authorized / $197 conservative holds / $3 unallocated**, including the unchanged full $5 reservation for active 213. Matchms 210 now retains $1 after auditing each complete original creation-to-cleanup interval, adding 300 seconds at each end of every session, $0.10 margin and upward quarter-dollar rounding. The $0.834534 resource bound releases $3 from the earlier full-profile hold. This is not an invoice or a free-credit assumption. A new campaign still requires the full $5. [Ledger](../../aggregate-budget.json), [original-bound accounting](../103/closed-210-applied.json).
+**$200 authorized / $200 conservative holds / $0 unallocated**, including full $5 reservations for active 213 and planned 214. Complete creation-to-cleanup lifetimes, 300-second margins at both ends, $0.10 margin and upward quarter-dollar rounding retain $1 for Matchms 210, $0.50 for Sgkit 209 and $0.50 for PyMC 212. Their verified refinements release the $5 used for 214. No scientific outcome, invoice, free-credit assumption or new-campaign $5 reservation changes. [Ledger](../../aggregate-budget.json), [210 audit](../103/closed-210-applied.json), [209 audit](../105/closed-209-applied.json), [212 audit](../105/closed-212-applied.json).
 
 Keep #19 open and PR #23 draft/unmerged. Publish only qualified, rights-cleared tasks and verify anonymous downloads. Never merge the research branch; supported promotion requires a fresh branch from main and relevant validation.

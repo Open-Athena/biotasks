@@ -16,10 +16,12 @@ Checked on 27 October 2026. **Issue #19 is incomplete; PR #23 must remain draft/
 | Original evidence and resource removal | 2,893 science files / 256,050,864 bytes; 106 root files / 1,832,440 bytes; original cleanup and fresh 4 SDK-ID / 7 owner queries; host SUCCEEDED | Proved for 198 with explicit native-ID recording limitation |
 | Frozen common-version panel |224-file historical round: seven generated-candidate rejections, one source-fidelity rejection, two infrastructure failures, zero qualified new tasks; all originals and cleanup verified | Completed negative development evidence; does not establish readiness |
 | Newer general fixes | 198 uses common 232 scientific code; one generated-grader repair; zero operator scientific edits. Additional owning-worker construction repair not used | That extra repair route still lacks live qualified adoption |
-| Budget and further execution | $200 authorized / $197 conservative holds / $3 unallocated; 213 running with its full $5 reservation; all earlier campaigns terminal and cleanup verified | Fresh 213 outcome pending; no invoice/credit assumption |
+| Budget and further execution | $200 authorized / $200 conservative holds / $0 unallocated; 213 running and 214 funded, each at full $5; all earlier campaigns terminal and cleanup verified | Fresh 213 outcome pending; no invoice/credit assumption |
 | Supported promotion | Research branch retained; PR #23 draft/unmerged | Still required after broader confidence and user-approved promotion; never merge the research branch |
 
 Current original-source validation: **PyMC 213 is running on 105**, with no previous task, answer, export, dependency recipe or diagnostic hint. Its 232 frozen runtime files and typed-pool/source/provider/funding checks are recorded in the [105 panel](../105/development-panel.json). The new native-writer guidance and shorter pre-dispatch control admission have 155 affected tests, 25 preparation/packaging tests and 10 source-admission/AST checks. No new biological qualification follows from these checks.
+
+Matchms 214 is funded for a fresh original-source test of the same 232 factory hashes, pending freeze and typed-pool admission. No prior generated artifacts or diagnostics will be supplied.
 
 The [current assessment](current-panel-assessment.md) distinguishes the completed 101–104 outcomes and preserved historical releases. The latest completed source-level outcomes span versions: one qualified/published, four generated-candidate rejections, one source-fidelity rejection, one input-access rejection and three infrastructure failures. Ten exercised sources are not evidence of a reliable common-version factory.
 
