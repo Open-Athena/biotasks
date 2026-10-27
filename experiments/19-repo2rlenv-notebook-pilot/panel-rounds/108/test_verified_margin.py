@@ -15,6 +15,7 @@ spec.loader.exec_module(module)
 PROOFS = [
     (151, "043/cross-domain-resource-reconciliation.json"),
     (176, "080/completed-176-applied.json"),
+    (195, "100/refined-195-applied.json"),
     (198, "101/closed-198-native-applied.json"),
     (215, "108/closed-215-native-applied.json"),
 ]

@@ -12,6 +12,8 @@ EXPERIMENT = Path(__file__).resolve().parents[2]
 PREFIX = "experiments/19-repo2rlenv-notebook-pilot/"
 AUDITORS = {
     "036241de95a1d148af94020839568966c80bb14bba7202c36d73cbc4324cb772",
+    # Earlier handled-timeout auditor, before optional observed-clock refinement.
+    "25fcbda8ca350cc04434d8c150b25527ae44e868766acfa9be8134184cb50c29",
     "857053031d2eadcf0c22d659d1896ba3c391214eb795f4d8fd3e446483723664",
 }
 

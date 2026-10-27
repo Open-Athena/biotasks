@@ -1,0 +1,105 @@
+{
+  "source_archive_format": "per-file-export-v1",
+  "source_archive_manifest_sha256": "6ac7fd46dfdc9f9e1c48d120ebdb6dd8664ef43538b434f9242c43a798158f23",
+  "pipeline_status": "rejected",
+  "source_id": "matchms-spectral-matching",
+  "elapsed_pipeline_seconds": 2393.289,
+  "stage_elapsed_seconds": {
+    "preparation": 42.47,
+    "setup": 867.201,
+    "replay": 240.468,
+    "specification": 1236.816
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "completed",
+    "replay": "completed",
+    "specification": "rejected"
+  },
+  "accounted_model_request_attempts": 104,
+  "request_ledgers": [
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "2c76722b67aa2a14921dda1e1e29f859bf36d2382ea6dd3e76575aa7cdd79cd3",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "replay/requests.sqlite",
+      "sha256": "e2f280d7b17f832639376556a77f40ca2dc283bfd9df736e7768584274fcf1fa",
+      "count": 0,
+      "calls": []
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "490c93e625a7286eb0d275b0228c5311e050604329bc3d22b01d81bfc050cb9e",
+      "count": 38,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 38
+        }
+      ]
+    },
+    {
+      "path": "specification-review-revised/requests.sqlite",
+      "sha256": "c784601b8d4ea5ae120bda2200cabe7c84e5e3983fc64a819de2a25d7f8317bd",
+      "count": 18,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 18
+        }
+      ]
+    },
+    {
+      "path": "specification-review/requests.sqlite",
+      "sha256": "a248fe12345ba02d2cd4140dd8226a741ccc5806084524c699769721d469619c",
+      "count": 23,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 23
+        }
+      ]
+    },
+    {
+      "path": "specification-revision/requests.sqlite",
+      "sha256": "9dc72bee45f47023fb6c05c624d7ff4cd8e74fdbd596c14492397c7bb6f368bb",
+      "count": 8,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 8
+        }
+      ]
+    },
+    {
+      "path": "specification/requests.sqlite",
+      "sha256": "70c62964127535c72985adf75bc4581e6c394d4341de902fb69ef628b190a444",
+      "count": 16,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 16
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 104,
+  "distinct_author_response_operations_within_stage": 104,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 1
+}
