@@ -37,6 +37,21 @@ def admitted_implementation(sources):
     Every pair must also have passed its preceding lifetime auditor.
     """
     assert set(sources) == {"run_autonomous.py", "run_reference_setup.py", "reference_setup.py"}
+    # Common108 already passed the full-lifetime resource auditor. Common109
+    # changes only its final export mode/prefix; the recorded AST proof preserves
+    # resource creation, clocks and cleanup. Both retain the same SDK creators.
+    if (
+        sources["run_autonomous.py"]
+        in {
+            "7ff0e8dbcc69ebaf927c431740eb63ad2965a507514d349ca3767aff6187c685",
+            "2f8994be3c6f8cad3e8a9f8599ee3e5a97d32f2093720bd9bdc3ce313516e240",
+        }
+        and sources["run_reference_setup.py"]
+        == "cfeefdda2dc0f2ba4a62618e9202b6ef3af038a48ff78a35337e1567fcfe25f3"
+        and sources["reference_setup.py"]
+        == "be1e5009087203457ee9ccaae19774cf0624a9a76a300cc431a4637f210218da"
+    ):
+        return dict(sources)
     if sources == {
         "run_autonomous.py": "d90fd8c6f121d46c0f6bc6faea54172f18035887ba07dca076609f2e6d16bae9",
         "run_reference_setup.py": "34ae1de16e432cb6926e9d0f56158a35d65bebe3b06b5c4769f86d53c145eb2a",

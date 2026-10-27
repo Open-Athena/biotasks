@@ -19,7 +19,9 @@ from pathlib import Path
 
 HISTORICAL = Path(__file__).resolve().parents[1] / "054"
 sys.path.insert(0, str(HISTORICAL))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "109"))
 from native_resource_record import verify_native_resource_record  # noqa: E402
+from primary_accounting import check_bootstrap_role, check_primary_terminal  # noqa: E402
 from serial_clock_bound import observed_bound  # noqa: E402
 
 SNAPSHOT_READER = Path(__file__).resolve().parents[1] / "079/reconcile_setup_replay_prefix.py"
@@ -35,13 +37,15 @@ parser.add_argument("--ledger", type=Path, required=True)
 parser.add_argument("--proof", type=Path, required=True)
 parser.add_argument("--apply", action="store_true")
 parser.add_argument("--snapshot", action="store_true")
+parser.add_argument("--primary-snapshot", action="store_true")
 parser.add_argument(
     "--refine-observed-clock",
     action="store_true",
     help="Refine an existing2USDhold only after exact SDK/source/native clocks and all original gates pass",
 )
 args = parser.parse_args()
-assert not args.refine_observed_clock, "This format adapter retains full approved clocks"
+assert not args.primary_snapshot or args.snapshot
+assert not args.refine_observed_clock or not args.snapshot or args.primary_snapshot
 assert len(set(args.numbers)) == len(args.numbers) and not args.proof.exists()
 ledger_before = args.ledger.read_bytes()
 ledger = json.loads(ledger_before)
@@ -120,7 +124,20 @@ for number in args.numbers:
             == snapshot_evidence["original_bootstrap_sha256"]
         )
         bootstrap = json.loads(bootstrap_raw)
-        assert bootstrap["completed"] is False and bootstrap["error_type"] == "TimeoutExpired"
+        check_bootstrap_role(bootstrap, primary=args.primary_snapshot)
+        if args.primary_snapshot:
+            claim_hash = hashlib.sha256(
+                (args.private_root / f"launch/{number:03}-submission.json").read_bytes()
+            ).hexdigest()
+            check_primary_terminal(
+                [
+                    json.loads(p.read_text())
+                    for p in (args.private_root / "launch/typed-observations").glob(
+                        f"{number:03}-*.json"
+                    )
+                ],
+                claim_sha256=claim_hash,
+            )
         assert pipeline["finished"] <= bootstrap["finished"]
         assert bootstrap["finished"] - bootstrap["started"] <= 7500
     assert clean["source_configuration_sha256"] == hashlib.sha256(raw_config).hexdigest()
@@ -331,7 +348,7 @@ proof = {
     "result_ledger_sha256": hashlib.sha256(after).hexdigest(),
     "rates_source": "https://www.daytona.io/pricing",
     "billing_source": "https://www.daytona.io/docs/billing",
-    "rates_verified_date": "2026-10-25",
+    "rates_verified_date": "2026-10-27",
     "records": records,
     "aggregate_authorized_usd": ledger["ceiling_before_credits"],
     "aggregate_held_after_usd": ledger["reserved_upper_bound_usd"],
@@ -356,6 +373,13 @@ proof = {
     "format_adapter_base_sha256": "857053031d2eadcf0c22d659d1896ba3c391214eb795f4d8fd3e446483723664",
     "snapshot_reader_sha256": hashlib.sha256(SNAPSHOT_READER.read_bytes()).hexdigest(),
     "snapshot_format_adapted_only": args.snapshot,
+    "primary_snapshot": args.primary_snapshot,
+    "resource_source_admission_sha256": hashlib.sha256(
+        (HISTORICAL.parent / "070/closed_session_bound.py").read_bytes()
+    ).hexdigest(),
+    "primary_archive_role_helper_sha256": hashlib.sha256(
+        (HISTORICAL.parent / "109/primary_accounting.py").read_bytes()
+    ).hexdigest(),
 }
 args.proof.parent.mkdir(parents=True, exist_ok=True)
 args.proof.write_text(json.dumps(proof, indent=2) + "\n")
