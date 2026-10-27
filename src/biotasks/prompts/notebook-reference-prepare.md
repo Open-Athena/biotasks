@@ -59,7 +59,12 @@ rather than adding an export just for completeness.
 Then locate the selected results in existing named variables or fields in the
 ORIGINAL script. They must still hold the intended values at script completion.
 If a result has been overwritten, deleted or is out of scope, explain its
-exclusion; do not insert earlier captures or rerun computation to recover it.
+unavailability for append-only export; do not insert earlier captures or rerun
+computation to recover it. Variable scope or persistence is not scientific
+eligibility. Record an independently interpreted endpoint as still required,
+with its original source location and the state needed to recover it. A later
+construction worker may faithfully recompute it only when task policy permits;
+do not claim that recovery has happened or promise it is feasible.
 A result displayed in a plot can qualify if its values already exist outside
 the plotting function. Values computed only inside plotting functions cannot.
 
@@ -74,8 +79,11 @@ any omissions. Selecting stored fields is allowed; changing the analyzed
 population or adding scientific computation is not. Output size alone does not
 determine eligibility.
 
-Explain meaningful exclusions and any independent outcome without an eligible
-stored result in `excluded_outputs`. Do not enumerate every processing step.
+In `excluded_outputs`, distinguish source-backed scientific non-targets from
+required endpoints unavailable to this export step. For each unavailable result,
+identify its original computation and why the intended value is not accessible
+at completion. This is a recovery handoff, not permission to omit that endpoint
+from the eventual task. Do not enumerate every processing step.
 If no eligible terminal result can be exported, return disposition=reject.
 Excluding an output never permits skipping its original computation.
 
@@ -125,8 +133,12 @@ Preserve source-level reductions; add none. Do not suppress analysis errors.
   Keep this inventory consistent with the export code: every declared path must
   be written under that exact name, with no placeholder or undeclared output
   filenames. Check that correspondence before returning the response.
-- `excluded_outputs`: meaningful non-target outputs and branches with no eligible
-  terminal result, with a brief reason. Do not enumerate every intermediate.
+- `excluded_outputs`: meaningful scientific non-targets with their source-backed
+  reasons, and independently interpreted endpoints unavailable for append-only
+  export with the source location and recovery gap. State which kind each entry
+  is in its existing explanation; do not add another inventory or new fields.
+  Unavailability does not settle eventual task coverage. Do not enumerate every
+  intermediate.
 - `unresolved_assumptions`: specific questions for subsequent inspection or
   execution; do not invent observed dimensions, values, timing or resource use.
 

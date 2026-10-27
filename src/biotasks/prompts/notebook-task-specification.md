@@ -82,6 +82,19 @@ provenance and later independent validation. You cannot execute it here or claim
 its values have been observed. Do not invent an analysis, repair the source, guess
 missing state or alter inputs/methods to recover it. Block unsupported recovery.
 
+A preparation entry saying a value was unavailable is a recovery obligation to
+assess, not a scientific exclusion to copy into the task. For each eligible
+endpoint, identify its actual retained output or the unresolved blocker. Where
+policy permits supplied upstream dependencies, distinguish the work supplied as
+context from the substantial downstream result the solver must still produce;
+this does not authorize supplying or removing an independent scientific answer.
+Another output subsumes it only when the same scientific operation, entities,
+input state and consequential parameters produce the same meaningful result
+fields, obtainable by a stated projection. Shared inputs, a larger population
+or another analysis of the same entities do not establish that relationship.
+Keep genuine diagnostics and repeated views of the same result excludable with
+source evidence; do not make every operation a separate target.
+
 Choose meaningful representations for all required endpoints. Identify what
 defines the same scientific result without prescribing its executable comparator.
 Arbitrary identifiers must not become exact answer keys; dependent outputs still

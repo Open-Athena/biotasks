@@ -1,13 +1,16 @@
-"""Build a diagnostic-only candidate; leave the frozen scientific files intact."""
+"""Reproduce a diagnostic patch against a pinned baseline without editing files."""
 
 import ast
 import difflib
+import hashlib
+import subprocess
 from collections import Counter
 from pathlib import Path
 
 EXPERIMENT = Path(__file__).resolve().parents[2]
 PROTOCOL = EXPERIMENT / "grading_protocol.py"
 PROMPT = EXPERIMENT.parents[1] / "src/biotasks/prompts/notebook-grader-review.md"
+BASELINE = "23fd6d275b8d7bafca6186595bbd0e18668c8bcf"
 OLD = '        raise ValueError("Explicitly assess every supplied asset value hint exactly once")'
 NEW = """        counts = Counter(observed)
         raise ValueError(
@@ -50,14 +53,30 @@ def checker(source):
 
 
 def proposed_changes():
-    source = PROTOCOL.read_text()
-    prompt = PROMPT.read_text()
+    originals = original_sources()
+    source, prompt = originals[PROTOCOL], originals[PROMPT]
     # Keep the opening orientation followed by this explicit tool-output rule.
     first_break = prompt.index("\n\n") + 2
     return {
         PROTOCOL: (source, protocol_candidate(source)),
         PROMPT: (prompt, prompt[:first_break] + PROMPT_GUIDANCE.lstrip() + prompt[first_break:]),
     }
+
+
+def original_sources():
+    """Keep the original diagnostic comparison reproducible after adoption."""
+    repo = EXPERIMENT.parents[1]
+    records = {}
+    for path in (PROTOCOL, PROMPT):
+        raw = subprocess.check_output(
+            ["git", "show", BASELINE + ":" + str(path.relative_to(repo))], cwd=repo
+        )
+        if path == PROTOCOL:
+            assert hashlib.sha256(raw).hexdigest() == (
+                "325e428aef16dbb5dd197f6b7ebf7b12efc69a6083479996157b4a4e335466bd"
+            )
+        records[path] = raw.decode()
+    return records
 
 
 def patch():

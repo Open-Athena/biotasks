@@ -41,6 +41,12 @@ Check:
   exhaust the analysis. A plot-only consumer or an awkward representation does not
   establish that a separate scientific result is merely diagnostic. Respect
   source-backed exclusions and permitted faithful source recomputation.
+  Distinguish an export-unavailability handoff from a scientific exclusion.
+  Challenge a subsumption claim against its actual retained counterpart: the
+  same scientific operation, entities, input state, consequential parameters and
+  meaningful result fields must support the stated projection. A larger result
+  or shared input alone is insufficient. Do not require an additional target
+  for a genuine diagnostic or a repeated view of the same scientific result.
 - Identify what the solver is actually asked to infer or compute. Distinguish
   scientific quantities from incidental numerical realizations. A fixed seed,
   byte-identical replay or same-library agreement does not make arbitrary

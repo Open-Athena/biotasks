@@ -189,7 +189,15 @@ def check_review_asset_hints(review, findings):
     expected = {row["hint_id"] for row in findings}
     observed = [row.hint_id for row in review.asset_value_assessments]
     if len(set(observed)) != len(observed) or set(observed) != expected:
-        raise ValueError("Explicitly assess every supplied asset value hint exactly once")
+        counts = Counter(observed)
+        raise ValueError(
+            "Explicitly assess every supplied asset value hint exactly once; "
+            f"missing_hint_ids={sorted(expected - set(observed))}; "
+            f"unexpected_hint_ids={sorted(set(observed) - expected)}; "
+            f"duplicate_hint_ids={sorted(key for key, count in counts.items() if count > 1)}. "
+            "Use the recorded hint IDs verbatim. Correct the coverage without "
+            "changing scientific assessments to satisfy validation."
+        )
     if review.decision == "accept_for_packaging" and any(
         row.decision != "unrelated" for row in review.asset_value_assessments
     ):

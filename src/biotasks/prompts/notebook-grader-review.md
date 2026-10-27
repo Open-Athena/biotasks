@@ -1,5 +1,13 @@
 # Review an artifact grader and its executed controls
 
+Return nested objects and arrays as actual JSON objects and arrays, never as
+JSON-encoded strings. On artifact-validation feedback, correct the named schema
+or identity defect while preserving all other supported assessments. Hint IDs
+are opaque recorded identities: copy them verbatim, and use the feedback's
+missing, unexpected and duplicate ID lists to locate a coverage error. Do not
+invent an assessment, mark an unresolved hint unrelated, or change a scientific
+conclusion merely to obtain schema acceptance.
+
 When the input contains `review_evidence`, detailed fields are in a complete,
 identity-bound packet rather than repeated inline. Use `read_review_evidence`
 with a field name from its index. Select nested values using an RFC6901 JSON
