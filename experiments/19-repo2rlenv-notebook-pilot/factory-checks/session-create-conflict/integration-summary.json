@@ -1,0 +1,58 @@
+{
+  "cases": [
+    {
+      "actual_provider_conflict": false,
+      "command_submission_attempts": 1,
+      "creation_attempts": 1,
+      "injected_faults": "creation acknowledgement loss; one stale404 in late-visibility case",
+      "name": "existing-empty",
+      "observed_executions": 1,
+      "original_nonce_and_log_hash_verified": true,
+      "passed": true,
+      "recovery": "existing_empty_session"
+    },
+    {
+      "actual_provider_conflict": false,
+      "command_submission_attempts": 1,
+      "creation_attempts": 2,
+      "injected_faults": "creation acknowledgement loss; one stale404 in late-visibility case",
+      "name": "confirmed-absent",
+      "observed_executions": 1,
+      "original_nonce_and_log_hash_verified": true,
+      "passed": true,
+      "recovery": "created_after_confirmed_absence"
+    },
+    {
+      "actual_provider_conflict": true,
+      "command_submission_attempts": 1,
+      "creation_attempts": 2,
+      "injected_faults": "creation acknowledgement loss; one stale404 in late-visibility case",
+      "name": "late-visible-conflict",
+      "observed_executions": 1,
+      "original_nonce_and_log_hash_verified": true,
+      "passed": true,
+      "recovery": "existing_empty_session"
+    }
+  ],
+  "cleanup_verified": true,
+  "finished": 1793065240.6263468,
+  "new_model_calls": 0,
+  "scientific_computation": false,
+  "started": 1793065223.949807,
+  "status": "provider_boundary_observed_not_scientific_qualification",
+  "synthetic_failure_injection": null,
+  "source_configuration_sha256": "2794fa3cdf1ed8a72a2814dc742e1b9045d195878a4ee91a579a64751eb124ea",
+  "fresh_cleanup_sha256": "714c79fe4d02ba38eec68f1a7abe550ea46e6e9e1baf227689e0802ae49031a4",
+  "source_result_sha256": "d9bffffe94a2b0908176e1d75fe93e984f7eb2dff497aa57f3dd48b36208acc5",
+  "full_control_evidence_retained_privately": true,
+  "initial_launch_failure": {
+    "stage": "import before run/root creation",
+    "error_type": "ModuleNotFoundError",
+    "missing_module": "biotasks",
+    "cause": "launcher omitted src from PYTHONPATH",
+    "new_resources": 0,
+    "new_model_calls": 0,
+    "retry": "same reserved control after correcting import path"
+  },
+  "initial_readback_check": "Refused byte inequality between original supplied and sorted-key saved config; subsequent verified JSON equality records both distinct hashes without rewriting either input."
+}

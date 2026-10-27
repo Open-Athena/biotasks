@@ -1,15 +1,15 @@
 {
-  "observed_at": "2026-10-27T00:34:00.335005+00:00",
+  "observed_at": "2026-10-27T01:43:34.747174+00:00",
   "scope": "Latest completed attempt per source across development versions, including infrastructure outcomes. Not a common-version holdout or success-rate estimate.",
   "source_count": 10,
   "counts": {
-    "generated_candidate_rejected": 4,
-    "infrastructure_failed": 3,
+    "generated_candidate_rejected": 3,
+    "infrastructure_failed": 4,
     "validated_published": 2,
     "source_fidelity_rejection": 1
   },
   "runtime_minutes_all_outcomes": {
-    "min": 7.06,
+    "min": 8.7,
     "max": 114.9
   },
   "native_completed_runtime_minutes": {
@@ -155,56 +155,70 @@
       }
     },
     {
-      "campaign": 191,
+      "campaign": 206,
       "domain": "Single-cell transcriptomics",
       "source_url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb",
       "source_id": "scanpy-clustering",
-      "factory_revision_recorded": "11afed01062c167c724e7e4c284b7658166a8db5",
-      "classification": "generated_candidate_rejected",
-      "audited_state": "autonomous_generated_grading_rejection",
-      "original_pipeline_status": "rejected",
+      "factory_revision_recorded": "98daad259791c6e20af76f357a13a87a341bc905",
+      "classification": "infrastructure_failed",
+      "audited_state": "infrastructure_failed_setup_session_creation_conflict",
+      "original_pipeline_status": "infrastructure_failed",
       "operator_interventions": 0,
-      "pipeline_minutes": 85.11,
-      "accounted_model_request_attempts": 214,
+      "pipeline_minutes": 20.44,
+      "accounted_model_request_attempts": 45,
       "native_complete": false,
       "published": false,
       "full_original_archive_verified": true,
-      "source_archive_manifest_sha256": "d71623cd5b818319bcce31759227565d6f212dac9774d472ddc15ffa54374691",
-      "public_result_path": "panel-rounds/096/result-191.json",
-      "public_result_sha256": "5bb9aae0f9836bf3da2f11356520c90aab552e8977b4b64344726f280a510a8e",
-      "public_performance_path": "panel-rounds/096/performance-191-detail.json",
-      "public_performance_sha256": "23aa4cc871a78940ab91a206b0ae35173fc2d05f114cbd385db70b7af5e944a2",
-      "public_runtime_revision": "9641467df098e8d8fe2c431fe0e5df1e7a228f34",
+      "source_archive_manifest_sha256": "ab5438cc3f8b4241905f1cc3027450867ddc5d62bf29d30c809772ff7d0086f4",
+      "public_result_path": "panel-rounds/102/result-206.json",
+      "public_result_sha256": "7bce5d26c4370e6181b167d79bcc95a29c01135a1ea5b0932a8e45686fc198f7",
+      "public_performance_path": "panel-rounds/102/performance-206-detail.json",
+      "public_performance_sha256": "e5cc83a86828d13fe2dbd5939ca2f0e02c0f2c2cbbd224b786f3156b4882a13c",
+      "public_runtime_revision": "98daad259791c6e20af76f357a13a87a341bc905",
       "previous_scientific_outcome": {
         "campaign": 168,
         "classification": "generated_candidate_rejected",
         "retained": true
+      },
+      "previous_selected_outcome": {
+        "campaign": 191,
+        "classification": "generated_candidate_rejected",
+        "public_result_path": "panel-rounds/096/result-191.json",
+        "public_result_sha256": "5bb9aae0f9836bf3da2f11356520c90aab552e8977b4b64344726f280a510a8e",
+        "retained": true
       }
     },
     {
-      "campaign": 192,
+      "campaign": 207,
       "domain": "Genomic intervals",
       "source_url": "https://github.com/open2c/bioframe/blob/95007ed6fc03b01005d75f95cac511b2df286854/docs/tutorials/tutorial_assign_motifs_to_peaks.ipynb",
       "source_id": "bioframe-motifs-to-peaks",
-      "factory_revision_recorded": "2e693d033e40001dd529dbbd2ab8714158bfe99f",
+      "factory_revision_recorded": "d22dce7e2003c00a7d217b186546f7de9b67b33d",
       "classification": "source_fidelity_rejection",
       "audited_state": "autonomous_source_fidelity_rejection",
       "original_pipeline_status": "rejected",
       "operator_interventions": 0,
-      "pipeline_minutes": 42.93,
-      "accounted_model_request_attempts": 82,
+      "pipeline_minutes": 19.78,
+      "accounted_model_request_attempts": 36,
       "native_complete": false,
       "published": false,
       "full_original_archive_verified": true,
-      "source_archive_manifest_sha256": "87d83988511befc95d1363db6f39340db722586d0714ecd81d81898bb01ca062",
-      "public_result_path": "panel-rounds/097/result-192.json",
-      "public_result_sha256": "0c87ec887bf048d1f84991137985a79eac32b610a18fa8e1820c3034f09a212f",
-      "public_performance_path": "panel-rounds/097/performance-192-detail.json",
-      "public_performance_sha256": "c784f66cf5a9a0bb6c3ad892193917eacfef2c67343384f40e4855c20bc5ee74",
-      "public_runtime_revision": "9641467df098e8d8fe2c431fe0e5df1e7a228f34",
+      "source_archive_manifest_sha256": "ac6d44cb8e4999e4561650059eb764f1499ff7389bb25ef3cbc68987ea9c0df5",
+      "public_result_path": "panel-rounds/102/result-207.json",
+      "public_result_sha256": "945fdb82490c8239d34abcbe1c96bd2a47aa35fa63d3a8ab1de9a9fcc3eb4c17",
+      "public_performance_path": "panel-rounds/102/performance-207-detail.json",
+      "public_performance_sha256": "23232f0d54bb30b6b307a00762eaca55916a0b217d77f055a3b84060803cd063",
+      "public_runtime_revision": "d22dce7e2003c00a7d217b186546f7de9b67b33d",
       "previous_scientific_outcome": {
         "campaign": 169,
         "classification": "generated_candidate_rejected",
+        "retained": true
+      },
+      "previous_selected_outcome": {
+        "campaign": 192,
+        "classification": "source_fidelity_rejection",
+        "public_result_path": "panel-rounds/097/result-192.json",
+        "public_result_sha256": "0c87ec887bf048d1f84991137985a79eac32b610a18fa8e1820c3034f09a212f",
         "retained": true
       }
     },
@@ -316,10 +330,7 @@
       "source_snapshot_manifest_sha256": "11040e7469b5ab9a68fa4899b34ad1f1afdfb46a4adae26d4a028c560daaf953"
     }
   ],
-  "active_campaigns": [
-    199,
-    200
-  ],
+  "active_campaigns": [],
   "historically_published_domains": [
     "matchms-spectral-matching",
     "neurokit-hrv",
@@ -331,7 +342,7 @@
   "fixed_224_round": "../090/fixed-round-outcomes.json",
   "latest_qualified_release": 198,
   "latest_qualified_release_publication_revision": "166d99e941b7e154fc6360f48e739bd19127cfb2",
-  "prior_assessment_snapshot_revision": "29797969",
+  "prior_assessment_snapshot_revision": "f01792fa",
   "limits": [
     "Latest independently archived scientific outcome per source across development versions; subsequent infrastructure failures are explicit separately. Not a common-version holdout or success-rate estimate.",
     "Generated-candidate failures are factory outcomes, not proof of broken source notebooks.",
@@ -341,13 +352,12 @@
     "No new models, scientific execution or resources were used by this read-only rollup."
   ],
   "does_not_establish_pipeline_readiness": true,
-  "active_campaign_evidence": [
-    "../101/submission-199.json",
-    "../101/submission-200.json"
-  ],
-  "next_common_version_panel": "../101/development-panel.json",
+  "active_campaign_evidence": [],
+  "next_common_version_panel": "../103/development-panel.json",
   "active_campaigns_not_scientifically_qualified": true,
-  "next_common_version_completed_cases": 3,
-  "next_common_version_qualified_tasks": 1,
-  "next_common_version_reserved_queued_cases": []
+  "next_common_version_completed_cases": 0,
+  "next_common_version_qualified_tasks": 0,
+  "next_common_version_reserved_queued_cases": [
+    208
+  ]
 }
