@@ -3810,7 +3810,7 @@ Patch0014observes known-owned asynchronous deletion after409within the original6
 
 083rejected its generated setup after two realPythonreference dispatches, both before scientific computation: an offline data-registry request failed, then an invalid assignment to a read-only loader property failed. Source brokenness is not established; the same unchanged source already completed reference/replay in077. Preserve both failures. The setup prompt now corrects its old contradictory invocation-count sentence and asks for installed-API/input-loading smoke tests before consuming controlled scientific tests. No package/notebook/method names, new tools, test allowances or reduced data are introduced.
 
-083and legacy materialization006original hashes/actual terminal lifetimes/cleanup support retaining$0.25each, releasing$1.50in unused planning holds. Reserve84proteinsequence and85transcriptomics freshoriginalseedregressions after frozenround012completes; aggregate$99.75held/$0.25unallocated. Keep82frozen while it runs, preserve83as generated-setupfailure, and do not relabel81cleanupfailure as unattendedsuccess.
+083and legacy materialization006original hashes/actual terminal lifetimes/cleanup support retaining$0.25each, releasing $1.50in unused planning holds. Reserve84proteinsequence and85transcriptomics freshoriginalseedregressions after frozenround012completes; aggregate$99.75held/$0.25unallocated. Keep82frozen while it runs, preserve83as generated-setupfailure, and do not relabel81cleanupfailure as unattendedsuccess.
 
 ### 2026-10-23 — Imaging publication review identifies separate data terms
 
@@ -5216,7 +5216,7 @@ Original MDAnalysis198is RUNNING after full196archive/root/freshcleanup verifica
 
 ### 2026-10-26 — Reuse the closed SDK auditor for the admitted common version
 
-The existing prefix auditor now has an explicit common-runtime profile: it delegates to the previously tested source/provider/unchanged-resource-AST admission and verifies every executable archive file against the complete232-file identity, not only the selected resource modules. It retains the original four-session/clock/resource/cleanup/terminal/repair-kind guards and refuses extra or linked archive members, changed source, other repairs and overlapping sessions.163tests/Ruff/formatpass;1.30seconds/39020KiBRSS. Scientific runtime232is unchanged.
+The existing prefix auditor now has an explicit common-runtime profile: it delegates to the previously tested source/provider/unchanged-resource-AST admission and verifies every executable archive file against the complete 232-file identity, not only the selected resource modules. It retains the original four-session/clock/resource/cleanup/terminal/repair-kind guards and refuses extra or linked archive members, changed source, other repairs and overlapping sessions.163tests/Ruff/formatpass;1.30seconds/39020KiBRSS. Scientific runtime232is unchanged.
 
 Exact196lifetimes bound0.54085765140355USDincluding300seconds at each end; the existing margin/quarter-rounding convention retains0.75USD. Release3.25USDfrom the remaining4USDdispatched-stage hold. Full5USDreserved for199PyHMMER, leaving198held/2unallocated within200authorized.197/198remainactive;199is funded but not submitted until a typed slot is free and completed originals/cleanup verified. Original source-only188inputs carry no old task, answer or fixture-removal hint. No scientific outcomes, task artifacts or execution limits changed.
 
@@ -5499,7 +5499,7 @@ All 1,376 science files / 74,126,478 bytes and 65 root files / 1,238,237 bytes a
 
 Frozen108 case222 passed18 controls and the existing scientific/native gate; native reference/empty/solver rewards1/0/0, with a600second solver timeout. Host finalization timed out after controller completion. The original fallback snapshot/root exports and fresh resource absence are verified; no missing ordinary seal was reconstructed. The exact five input files match original source-archive members, but external-data redistribution permission remains unresolved. Keep the bundle private and retain215 as the viewer's latest public release. [Result](panel-rounds/108/result-222.json).
 
-An operator-only format adapter retains the prior strict seven-owner/native/resource/backend/full-lifetime accounting gates while reading the original fallback inventory. It retains$2 against the unchanged$1.384500 bound plus margin, releasing$3 of excess reservation; ledger now$194 held/$6 unallocated. The unchanged inventory reader's19 focused tests pass;31 broader historical101 admission tests fail against intentional108 source changes and are not reported as passing. [Adapter checks](panel-rounds/108/completed-snapshot-adapter-checks.json). Next run still requires a full$5 reservation; two original domains remain.
+An operator-only format adapter retains the prior strict seven-owner/native/resource/backend/full-lifetime accounting gates while reading the original fallback inventory. It retains$2 against the unchanged$1.384500 bound plus margin, releasing$3 of excess reservation; ledger now$194 held/$6 unallocated. The unchanged inventory reader's19 focused tests pass;31 broader historical101 admission tests fail against intentional108 source changes and are not reported as passing. [Adapter checks](panel-rounds/108/completed-snapshot-adapter-checks.json). Next run still requires a full $5 reservation; two original domains remain.
 
 
 ### 27 October 2026 — Sgkit original URLs unavailable
@@ -5513,4 +5513,11 @@ The closed-prefix accounting helper now also admits this ordinary one-SDK setup 
 
 Prepared a general transport correction after Pyteomics222's controller completed before its normal export timed out. The controller can select the existing verified snapshot transport after all stage writers return; stage exports, scientific acceptance, resources, deadlines and repair policy are unchanged.158affected checks pass, including real host-subprocess/default/snapshot roundtrips and nine source-boundary refusal checks. The restricted environment's minimal asyncio thread wakeup stalled; the full checks pass outside it under the shared guard. No cloud/model call or new package install. [Candidate checks](factory-checks/primary-snapshot/offline-checks.json).
 
-This is not a live adoption: the final common108 MDAnalysis224 payload remains unchanged and has completed reference execution/replay, with its specification review repair in progress. Keep its original allowance and assess the complete panel before new live factory adoption.
+This is not a live adoption: the final common 108 MDAnalysis 224 payload remains unchanged and has completed reference execution/replay, with its specification review repair in progress. Keep its original allowance and assess the complete panel before new live factory adoption.
+
+
+### 27 October 2026 — Closed historical SDK exposure and final panel milestone
+
+The exact 102 software family can now use the existing closed-SDK audit; its entire 232-file executable map is pinned, native prefixes remain excluded and 46 accounting/refusal checks pass. Fresh original 207 IDs/owners are absent, previous cleanup receipts are preserved, and all original archive/config/clock checks pass. Retaining $0.50 against $0.15197227072404 plus unchanged margins releases $1.50 of excess reservation. Aggregate now $197.75 held/$2.25 unallocated; MDAnalysis 224 keeps its full $5 reservation. [Applied audit](panel-rounds/108/closed-207-applied.json).
+
+MDAnalysis 224 has reached grading after source execution/replay, one reviewed specification repair and construction. No scientific or native outcome is inferred before original final records are verified. The final compressed-export candidate remains separate and unadopted.

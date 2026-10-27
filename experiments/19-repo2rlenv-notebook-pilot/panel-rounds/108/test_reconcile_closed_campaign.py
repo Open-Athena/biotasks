@@ -13,7 +13,7 @@ module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 
 
-@pytest.mark.parametrize("version", [72, 105, 108])
+@pytest.mark.parametrize("version", [72, 102, 105, 108])
 def test_exact_recorded_creator_family_is_required(version):
     runtime = json.loads(
         (module.EXPERIMENT / f"panel-rounds/{version:03}/runtime-identity.json").read_text()
@@ -286,3 +286,14 @@ def test_setup_rejection_cannot_release_unknown_or_unclosed_exposure(defect):
         pipeline["stages"][-1]["status"] = "incomplete"
     with pytest.raises(AssertionError):
         module.price(pipeline, sessions)
+
+
+@pytest.mark.parametrize("defect", ["native", "unbound_module"])
+def test_older102_prefix_requires_whole_recorded_runtime_and_no_native_hold(defect):
+    runtime = json.loads(
+        (module.EXPERIMENT / "panel-rounds/102/runtime-identity.json").read_text()
+    )["runtime_files"]
+    if defect == "unbound_module":
+        runtime = {**runtime, module.PREFIX + "daytona_session.py": "unknown"}
+    with pytest.raises(AssertionError):
+        module.admit_resource_family(runtime, 102, 1 if defect == "native" else 0)

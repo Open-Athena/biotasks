@@ -1,6 +1,6 @@
 """Refine closed SDK holds while retaining the original full native-stage hold.
 
-Accounting only: exact frozen72/105/108 sources, complete original archives, terminal
+Accounting only: exact frozen72/102/105/108 sources, complete original archives, terminal
 observations and fresh ID/owner cleanup are required. No scientific verdict,
 new-campaign reservation, time allowance or invoice claim changes.
 """
@@ -119,6 +119,19 @@ def admit_resource_family(runtime, version, native_hold):
                 "be1e5009087203457ee9ccaae19774cf0624a9a76a300cc431a4637f210218da",
             ),
         )
+    elif version == 102:
+        assert native_hold == 0
+        assert digest(json.dumps(runtime, sort_keys=True, separators=(",", ":")).encode()) == (
+            "4e8ca93efa1ad3ba43cd40dd350d7899fb7e545d42f4a83d846ea9b52919bc30"
+        )
+        count, expected = (
+            232,
+            (
+                "7ff0e8dbcc69ebaf927c431740eb63ad2965a507514d349ca3767aff6187c685",
+                "cfeefdda2dc0f2ba4a62618e9202b6ef3af038a48ff78a35337e1567fcfe25f3",
+                "6fff50b96c0df7488057a0e14f9ab277549843418ad9a6144930884c4af18475",
+            ),
+        )
     else:
         assert version == 72 and native_hold == 0
         count, expected = (
@@ -145,7 +158,7 @@ def main():
     parser.add_argument("--private-root", type=Path, required=True)
     parser.add_argument("--proof", type=Path, required=True)
     parser.add_argument("--snapshot", action="store_true")
-    parser.add_argument("--runtime-round", type=int, choices=(72, 105, 108), default=105)
+    parser.add_argument("--runtime-round", type=int, choices=(72, 102, 105, 108), default=105)
     parser.add_argument("--previous-unused-proof", type=Path)
     parser.add_argument("--apply", action="store_true")
     args = parser.parse_args()
