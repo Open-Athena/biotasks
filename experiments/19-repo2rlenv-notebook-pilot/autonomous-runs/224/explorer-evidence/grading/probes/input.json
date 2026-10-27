@@ -1,0 +1,115 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "backbone_domain_rmsd.csv",
+      "ca_core_rmsd.csv",
+      "mass_weighted_rmsd.csv",
+      "open_closed_backbone_rmsd.json",
+      "resid_weighted_rmsd.csv"
+    ],
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "structure.psf",
+        "trajectory.dcd",
+        "reference_open.crd"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "checks": [
+    {
+      "artifacts": [
+        "backbone_domain_rmsd.csv",
+        "ca_core_rmsd.csv",
+        "mass_weighted_rmsd.csv",
+        "resid_weighted_rmsd.csv"
+      ],
+      "id": "csv_schema",
+      "kind": "structural",
+      "public_requirement": "Each of backbone_domain_rmsd.csv, ca_core_rmsd.csv, mass_weighted_rmsd.csv and resid_weighted_rmsd.csv is a UTF-8 comma-separated file at the declared path whose header row is exactly the required column names in the required order, with one data row per trajectory frame in trajectory frame order, no index column, no ragged, blank, duplicated or extra rows, and no non-finite or unparseable values."
+    },
+    {
+      "artifacts": [
+        "open_closed_backbone_rmsd.json"
+      ],
+      "id": "json_schema",
+      "kind": "structural",
+      "public_requirement": "open_closed_backbone_rmsd.json is a UTF-8 JSON object containing exactly the keys \"value\" (a finite, non-negative number) and \"unit\" (the exact string \"angstrom\")."
+    },
+    {
+      "artifacts": [
+        "backbone_domain_rmsd.csv",
+        "ca_core_rmsd.csv",
+        "mass_weighted_rmsd.csv",
+        "resid_weighted_rmsd.csv"
+      ],
+      "id": "time_ps",
+      "kind": "scientific",
+      "public_requirement": "In each of the four CSV outputs, time_ps is the per-frame trajectory time in picoseconds: either the tool-reported trajectory time or the (frame + 1) ps convention. Every submitted time_ps must lie within 1e-4 ps (absolute) of the reference time_ps for the same 0-based frame."
+    },
+    {
+      "artifacts": [
+        "open_closed_backbone_rmsd.json"
+      ],
+      "id": "analysis_a_open_closed_rmsd",
+      "kind": "scientific",
+      "public_requirement": "The single unweighted open-vs-closed backbone RMSD (Angstrom; center of geometry plus optimal QCP superposition) reported in open_closed_backbone_rmsd.json matches the reference value within |x - r| <= 1e-6 + 1e-6 * |r|, where r is the reference value."
+    },
+    {
+      "artifacts": [
+        "backbone_domain_rmsd.csv"
+      ],
+      "id": "analysis_b_backbone_domain_rmsd",
+      "kind": "scientific",
+      "public_requirement": "All four RMSD columns of backbone_domain_rmsd.csv (the unweighted backbone fit RMSD and the CORE, LID and NMP backbone RMSDs computed after that fit without further alignment, in Angstrom) match the reference values row-by-row (aligned by 0-based frame index) within |x - r| <= 1e-6 + 1e-6 * |r|."
+    },
+    {
+      "artifacts": [
+        "ca_core_rmsd.csv"
+      ],
+      "id": "analysis_c_ca_core_rmsd",
+      "kind": "scientific",
+      "public_requirement": "The CORE-domain alpha-carbon RMSD column of ca_core_rmsd.csv (Angstrom) matches the reference values row-by-row (aligned by 0-based frame index) within |x - r| <= 1e-6 + 1e-6 * |r|."
+    },
+    {
+      "artifacts": [
+        "mass_weighted_rmsd.csv"
+      ],
+      "id": "analysis_d_mass_weighted_rmsd",
+      "kind": "scientific",
+      "public_requirement": "All four RMSD columns of mass_weighted_rmsd.csv (the mass-weighted CA fit RMSD plus the mass-weighted CORE, LID and NMP backbone RMSDs, in Angstrom) match the reference values row-by-row (aligned by 0-based frame index) within |x - r| <= 1e-6 + 1e-6 * |r|."
+    },
+    {
+      "artifacts": [
+        "resid_weighted_rmsd.csv"
+      ],
+      "id": "analysis_e_resid_weighted_rmsd",
+      "kind": "scientific",
+      "public_requirement": "All four RMSD columns of resid_weighted_rmsd.csv (the residue-number-weighted CA fit RMSD plus the residue-number-weighted CORE, LID and NMP backbone RMSDs, in Angstrom) match the reference values row-by-row (aligned by 0-based frame index) within |x - r| <= 1e-6 + 1e-6 * |r|."
+    }
+  ],
+  "output_paths": [
+    "backbone_domain_rmsd.csv",
+    "ca_core_rmsd.csv",
+    "mass_weighted_rmsd.csv",
+    "open_closed_backbone_rmsd.json",
+    "resid_weighted_rmsd.csv"
+  ],
+  "paths": {
+    "reference_outputs": "/work/reference",
+    "working_directory": "/work/probe"
+  },
+  "public_instruction": "# Quantifying adenylate kinase's open-to-closed transition with RMSD\n\n## Scientific question\n\nAdenylate kinase (AdK) transitions between a closed and an open conformation; its LID and NMP domains move around a comparatively stable CORE domain. Using the supplied topology, a trajectory that samples the closed-to-open transition, and a separate open-conformer coordinate set, quantify this motion with root-mean-square deviations (RMSD, in Angstrom) of atomic positions under several selection and weighting schemes.\n\nAdK's domains, restricted to **backbone atoms**, are defined by residue identifier:\n\n- CORE: `resid 1-29` or `resid 60-121` or `resid 160-214`\n- LID: `resid 122-159`\n- NMP: `resid 30-59`\n\nHere \"backbone\" means **the atoms named N, CA, C and O within recognized protein residues** (the standard MDAnalysis `backbone` selection). Terminal carboxyl oxygens are **not** part of the backbone for this analysis: the supplied topology's C-terminal residue (GLY 214) carries terminal oxygens named OT1 and OT2 and no atom named O, and those OT atoms are excluded from every backbone quantity below.\n\n## Supplied inputs\n\n- `inputs/structure.psf` \u2014 CHARMM PSF topology for AdK (defines atoms, masses, residue numbers, bonds; also the selection universe for both coordinate sets).\n- `inputs/trajectory.dcd` \u2014 DCD trajectory sampling the closed-to-open transition (98 frames). **Frame index 0** (a closed conformer) is the reference structure for all trajectory-based RMSD analyses below.\n- `inputs/reference_open.crd` \u2014 CHARMM coordinate file of the open conformer, read together with the same PSF topology.\n\n## Method\n\nFor every RMSD below, coordinates are optimally superimposed (translation + rotation minimizing the weighted RMSD, as in the QCP algorithm) before or as part of the deviation calculation, unless stated otherwise. A weighted RMSD uses weights normalized by the mean of the weights. All RMSD values are in Angstrom.\n\n### A. Single open-vs-closed backbone RMSD\n\nCompute the unweighted RMSD between the backbone atoms (N, CA, C, O; excluding OT atoms) of the trajectory's frame 0 (closed conformer) and the backbone atoms of the open reference structure (`inputs/reference_open.crd`), after centering each coordinate set at its center of geometry and optimally superimposing them. Report one value.\n\n### B. Backbone and per-domain RMSD vs. frame 0\n\nOver every frame of the trajectory, superimpose the full protein **backbone** onto the frame-0 backbone conformation (unweighted best fit). Record:\n\n1. the unweighted backbone RMSD of that fit;\n2. then, **without any further alignment**, the unweighted RMSD of the CORE, LID and NMP backbone groups (each computed on the coordinates after the backbone fit has been applied to all atoms, against the corresponding frame-0 reference coordinates).\n\nOne row per frame.\n\n### C. Alpha-carbon CORE RMSD vs. frame 0\n\nRestricting the analysis universe to the alpha-carbon (CA) atoms of the protein, superimpose on, and report the unweighted RMSD of, the CORE-domain CA atoms versus their frame-0 positions. One row per frame.\n\n### D. Mass-weighted RMSD\n\nOver every frame, superimpose and report the RMSD of the **protein CA atoms weighted by atomic mass** (mass-weighted fit and mass-weighted RMSD, reference frame 0). Then, without further alignment, report the RMSD of the CORE, LID and NMP backbone groups against their frame-0 coordinates with **each atom weighted by its atomic mass**. One row per frame.\n\n### E. Residue-number-weighted RMSD (custom-weighting variant)\n\nOver every frame, superimpose and report the RMSD of the protein CA atoms with each CA **weighted by its residue number** (reference frame 0). Then, without further alignment, report the RMSD of the CORE, LID and NMP backbone groups with each atom **weighted by its residue number**. One row per frame. (This weighting is a defined comparison of weighting schemes, not a conventional physical metric.)\n\n## Required outputs\n\nWrite the following files (UTF-8, comma-separated, header row exactly as given, one data row per trajectory frame **in trajectory frame order**, no index column; RMSD in Angstrom):\n\n1. `outputs/backbone_domain_rmsd.csv` (analysis B):\n   `frame,time_ps,backbone_rmsd_angstrom,core_rmsd_angstrom,lid_rmsd_angstrom,nmp_rmsd_angstrom`\n2. `outputs/ca_core_rmsd.csv` (analysis C):\n   `frame,time_ps,ca_core_rmsd_angstrom`\n3. `outputs/mass_weighted_rmsd.csv` (analysis D):\n   `frame,time_ps,ca_mass_weighted_rmsd_angstrom,core_rmsd_angstrom,lid_rmsd_angstrom,nmp_rmsd_angstrom`\n4. `outputs/resid_weighted_rmsd.csv` (analysis E):\n   `frame,time_ps,ca_resid_weighted_rmsd_angstrom,core_rmsd_angstrom,lid_rmsd_angstrom,nmp_rmsd_angstrom`\n5. `outputs/open_closed_backbone_rmsd.json` (analysis A): a JSON object\n   `{\"value\": <number>, \"unit\": \"angstrom\"}`\n\nCommon conventions: `frame` is the 0-based trajectory frame index. `time_ps` is the per-frame trajectory time in picoseconds; use your tool's reported trajectory time if it provides one, else `(frame + 1)` ps \u2014 the reader's timestep is approximately 1 ps and the first frame sits at t approximately 1 ps, so both agree to within float rounding. All frames of the trajectory are included; no frames are filtered, subsampled or interpolated.\n\n## Resources and software\n\nAny tool chain may be used provided the outputs satisfy the definitions above (an MDAnalysis-compatible environment can be supplied for convenience; it is not a requirement). The reference method semantics are those of the MDAnalysis `MDAnalysis.analysis.rms` module (QCP superposition; group-selection RMSDs computed without re-fitting after the primary fit; mass/residue-number weighting normalized by the mean weight; \"backbone\" = N, CA, C, O atoms of protein residues).\n\nExecution limits: offline, 4 CPUs, 8 GiB RAM, 10 GiB disk, 600 s wall clock.\n\n## Acceptance rules\n\n## Acceptance rules (grading addendum)\n\nThe reference method semantics are those of the MDAnalysis `MDAnalysis.analysis.rms` module (QCP optimal superposition; group-selection RMSDs computed without re-fitting after the primary fit; mass and residue-number weights normalized by the mean weight; \"backbone\" = N, CA, C, O atoms of protein residues). Acceptance compares the parsed scientific content of your emitted outputs against reference values computed with those semantics on the supplied inputs; no particular library is mandated.\n\n**Compared artifacts.** Exactly the five declared files, each read at its declared path relative to the submitted output root: the four CSV tables and the single JSON object. No other files are inspected, and no fallback locations are searched.\n\n**Row alignment and ordering.** Each CSV must carry exactly one data row per trajectory frame, in trajectory frame order. The `frame` column must equal the 0-based frame index (row i carries frame i); rows are aligned with the reference by this frame index, so the frame column is checked exactly, not numerically. Row count must match the reference exactly (no missing, extra, subsampled or duplicated frames).\n\n**Headers.** Each CSV header row must match the required column names exactly, in order, with no extra or index column (strict string comparison). The JSON object must contain exactly the keys `value` and `unit`, with `unit` exactly the string `angstrom` and `value` a finite non-negative number.\n\n**time_ps.** Per the question's convention, `time_ps` is accepted either as the tool-reported trajectory time or as `(frame + 1)` ps; a submitted value passes if it lies within 1e-4 ps (absolute) of the reference `time_ps` (the two documented conventions agree well within that bound).\n\n**RMSD numeric comparison.** Every RMSD column is compared row-by-row against the reference value r with the limit `|x - r| <= 1e-6 + 1e-6 * |r|` (rtol 1e-6, atol 1e-6, denominator = the reference magnitude), applied per cell; i.e. the maximum accepted deviation is the largest of 1e-6 absolute and a 1e-6 relative difference. This bound covers permutation-level differences (e.g. reordering summations) and ordinary CSV float round-tripping, while remaining far below the ~1e-3-scale differences between genuinely different selections, weightings or superposition choices. Non-finite (NaN/Inf), negative, unparseable or missing values fail, including the meaningful near-zero frame-0 self-RMSD values, which must be reported rather than replaced by exact 0.\n\n**Structural integrity.** Malformed CSV (ragged rows, empty fields, duplicated or blank rows), unreadable JSON, missing files and wrong declared paths are failed checks, not errors.\n\n**No leakage reliance.** Grading reads only the declared output files; agreement is with the reference scientific values, not with any particular serialization format or library version, beyond the tolerances stated above.",
+  "reference_seconds": 600,
+  "verifier_seconds": 120
+}

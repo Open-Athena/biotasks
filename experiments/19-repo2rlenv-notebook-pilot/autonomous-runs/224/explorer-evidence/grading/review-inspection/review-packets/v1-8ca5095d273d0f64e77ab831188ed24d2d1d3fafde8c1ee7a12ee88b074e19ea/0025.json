@@ -1,0 +1,72 @@
+[
+  {
+    "id": "csv_schema",
+    "kind": "structural",
+    "artifacts": [
+      "backbone_domain_rmsd.csv",
+      "ca_core_rmsd.csv",
+      "mass_weighted_rmsd.csv",
+      "resid_weighted_rmsd.csv"
+    ],
+    "public_requirement": "Each of backbone_domain_rmsd.csv, ca_core_rmsd.csv, mass_weighted_rmsd.csv and resid_weighted_rmsd.csv is a UTF-8 comma-separated file at the declared path whose header row is exactly the required column names in the required order, with one data row per trajectory frame in trajectory frame order, no index column, no ragged, blank, duplicated or extra rows, and no non-finite or unparseable values."
+  },
+  {
+    "id": "json_schema",
+    "kind": "structural",
+    "artifacts": [
+      "open_closed_backbone_rmsd.json"
+    ],
+    "public_requirement": "open_closed_backbone_rmsd.json is a UTF-8 JSON object containing exactly the keys \"value\" (a finite, non-negative number) and \"unit\" (the exact string \"angstrom\")."
+  },
+  {
+    "id": "time_ps",
+    "kind": "scientific",
+    "artifacts": [
+      "backbone_domain_rmsd.csv",
+      "ca_core_rmsd.csv",
+      "mass_weighted_rmsd.csv",
+      "resid_weighted_rmsd.csv"
+    ],
+    "public_requirement": "In each of the four CSV outputs, time_ps is the per-frame trajectory time in picoseconds: either the tool-reported trajectory time or the (frame + 1) ps convention. Every submitted time_ps must lie within 1e-4 ps (absolute) of the reference time_ps for the same 0-based frame."
+  },
+  {
+    "id": "analysis_a_open_closed_rmsd",
+    "kind": "scientific",
+    "artifacts": [
+      "open_closed_backbone_rmsd.json"
+    ],
+    "public_requirement": "The single unweighted open-vs-closed backbone RMSD (Angstrom; center of geometry plus optimal QCP superposition) reported in open_closed_backbone_rmsd.json matches the reference value within |x - r| <= 1e-6 + 1e-6 * |r|, where r is the reference value."
+  },
+  {
+    "id": "analysis_b_backbone_domain_rmsd",
+    "kind": "scientific",
+    "artifacts": [
+      "backbone_domain_rmsd.csv"
+    ],
+    "public_requirement": "All four RMSD columns of backbone_domain_rmsd.csv (the unweighted backbone fit RMSD and the CORE, LID and NMP backbone RMSDs computed after that fit without further alignment, in Angstrom) match the reference values row-by-row (aligned by 0-based frame index) within |x - r| <= 1e-6 + 1e-6 * |r|."
+  },
+  {
+    "id": "analysis_c_ca_core_rmsd",
+    "kind": "scientific",
+    "artifacts": [
+      "ca_core_rmsd.csv"
+    ],
+    "public_requirement": "The CORE-domain alpha-carbon RMSD column of ca_core_rmsd.csv (Angstrom) matches the reference values row-by-row (aligned by 0-based frame index) within |x - r| <= 1e-6 + 1e-6 * |r|."
+  },
+  {
+    "id": "analysis_d_mass_weighted_rmsd",
+    "kind": "scientific",
+    "artifacts": [
+      "mass_weighted_rmsd.csv"
+    ],
+    "public_requirement": "All four RMSD columns of mass_weighted_rmsd.csv (the mass-weighted CA fit RMSD plus the mass-weighted CORE, LID and NMP backbone RMSDs, in Angstrom) match the reference values row-by-row (aligned by 0-based frame index) within |x - r| <= 1e-6 + 1e-6 * |r|."
+  },
+  {
+    "id": "analysis_e_resid_weighted_rmsd",
+    "kind": "scientific",
+    "artifacts": [
+      "resid_weighted_rmsd.csv"
+    ],
+    "public_requirement": "All four RMSD columns of resid_weighted_rmsd.csv (the residue-number-weighted CA fit RMSD plus the residue-number-weighted CORE, LID and NMP backbone RMSDs, in Angstrom) match the reference values row-by-row (aligned by 0-based frame index) within |x - r| <= 1e-6 + 1e-6 * |r|."
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "artifacts": [
+    {
+      "description": "Per-frame RMSD of the CORE domain, computed over alpha-carbons of the trajectory's reference frame 0 (columns: Frame, Time (ns), CORE).",
+      "path": "rmsd_calpha_core.csv",
+      "source_evidence": "The notebook's stated goal is to 'calculate the RMSD of domains in adenylate kinase as it transitions from an open to closed structure'; the section 'RMSD of an AtomGroup with multiple selections' interprets this trajectory table as the measured domain movement and plots it. Produced by 'R = rms.RMSD(ca, ca, select=CORE, ref_frame=0); R.run()' followed by 'df = pd.DataFrame(R.results.rmsd, columns=[...])'; df retains this value at completion."
+    },
+    {
+      "description": "Mass-weighted per-frame RMSD table for C-alphas and the CORE, LID and NMP domains (columns: Frame, Time (ns), C-alphas, CORE, LID, NMP).",
+      "path": "rmsd_mass_weighted.csv",
+      "source_evidence": "The 'Weighted RMSD of a trajectory - Mass' section presents and interprets this weighted RMSD trajectory ('It is common to weight RMSD analyses by particle weight') and plots it. Produced by 'R_mass = rms.RMSD(u, u, select='protein and name CA', weights='mass', groupselections=[CORE, LID, NMP]); R_mass.run()' and 'df_mass = pd.DataFrame(R_mass.results.rmsd, ...)'; both R_mass and df_mass hold these values at completion."
+    },
+    {
+      "description": "Resid-weighted (custom-weights demo) per-frame RMSD table for C-alphas and CORE, LID, NMP domains (columns: Frame, Time (ns), C-alphas, CORE, LID, NMP).",
+      "path": "rmsd_resid_weighted.csv",
+      "source_evidence": "The 'Custom weights' section computes this table and draws a substantive comparison from it ('the NMP domain has much higher RMSD than before... residues later in the NMP domain are mobile'), an independently interpreted result. Produced by 'R_charge = rms.RMSD(u, u, ..., weights=ag.resids, weights_groupselections=[core.resids, lid.resids, nmp.resids]); R_charge.run()' and 'df_charge = pd.DataFrame(R_charge.results.rmsd, ...)'; both R_charge and df_charge hold these values at completion."
+    }
+  ],
+  "disposition": "prepare",
+  "excluded_outputs": [
+    "Unavailable required endpoint (not a scientific non-target): the backbone-and-domain RMSD trajectory from 'RMSD of a Universe with multiple selections' (Table with Frame, Time (ns), Backbone, CORE, LID, NMP). It is the notebook's core quantification of the open-to-closed domain motion and is plotted and interpreted, but the script later rebinds both 'R' (in the AtomGroup section, 'R = rms.RMSD(ca, ca, ...)') and 'df' (the CA-CORE DataFrame), so the original array and DataFrame no longer hold these values at completion. Recovery requires re-running the original 'rms.RMSD(u, u, select='backbone', groupselections=[CORE, LID, NMP], ref_frame=0)' analysis; this export step neither recomputed nor captured it.",
+    "Unavailable required endpoint (not a scientific non-target): the single backbone RMSD between the open and closed AdK conformations from the 'RMSD between two sets of coordinates' section, produced by the bare expression 'rms.rmsd(u.select_atoms('backbone').positions, ref.select_atoms('backbone').positions, center=True, superposition=True)'. The value is displayed and interpreted in the narrative but was never assigned to a variable, so it does not exist in any named object at completion; append-only export cannot capture it without assigning a new variable to an unnamed expression or recomputing it."
+  ],
+  "explanation": "The notebook's terminal scientific results are the per-domain RMSD trajectory tables it builds, plots and interprets: the AtomGroup (alpha-carbon CORE) RMSD (`df`), the mass-weighted RMSD (`df_mass`), and the resid-weighted RMSD (`df_charge`). All three persist as named pandas DataFrames at script completion, so the append-only export code writes each to CSV under /work/outputs using pandas' own writer, preserving columns, labels and row order without recomputation. The earlier backbone RMSD trajectory and the single open-vs-closed backbone RMSD value are unavailable (see excluded_outputs).",
+  "export_code": "import os as _export_os\n\n_export_out = '/work/outputs'\n_export_os.makedirs(_export_out, exist_ok=True)\n\ndf.to_csv(_export_os.path.join(_export_out, 'rmsd_calpha_core.csv'), index=False)\ndf_mass.to_csv(_export_os.path.join(_export_out, 'rmsd_mass_weighted.csv'), index=False)\ndf_charge.to_csv(_export_os.path.join(_export_out, 'rmsd_resid_weighted.csv'), index=False)",
+  "unresolved_assumptions": [
+    "CSV serialization via pandas' default to_csv precision is assumed sufficient for the RMSD values; if higher float fidelity is later required, an execution-stage check can revisit float_format.",
+    "Whether the trajectories and MDAnalysis test data load and run within the CPU/time limits is an execution-stage question; this plan makes no claim about successful execution."
+  ]
+}

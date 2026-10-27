@@ -1,0 +1,436 @@
+{
+  "limits": {
+    "base_image": "python:3.13.13-slim-bookworm",
+    "campaign_seconds": 7200,
+    "gpu": false,
+    "max_requests": null,
+    "max_tests": 2,
+    "network": "Internet during setup only; reference is offline",
+    "reference_seconds": 600,
+    "request_timeout_seconds": 600,
+    "setup_seconds": 1800,
+    "task_cpus": 4,
+    "task_disk_gib": 10,
+    "task_memory_gib": 8
+  },
+  "paths": {
+    "exports.py": "/work/frozen/exports.py",
+    "original.py": "/work/frozen/original.py",
+    "plan.json": "/work/frozen/plan.json",
+    "reference_cwd": "/work/run",
+    "setup": "/work/setup"
+  },
+  "preparation": {
+    "conversion": {
+      "code_cells": 15,
+      "converter": "jupytext",
+      "converter_version": "1.19.6",
+      "directory_normalizations": [],
+      "documentation_execution_policy": {},
+      "equivalence_basis": "Python statements after recorded presentation and directory normalization",
+      "executable_ast_sha256": "86a8c9048da275ba408a47135e12ba5dfbc3444d3fae5116a7407bf19230763a",
+      "executed": false,
+      "format": "py:nomarker",
+      "ignored_cell_editor_metadata": [],
+      "ignored_editor_metadata": {
+        "celltoolbar": "Raw Cell Format",
+        "vscode": {
+          "interpreter": {
+            "hash": "5edc5d8d8cbc0935a054a8e44024f729bc376180aae27775d15f2ff38c68f892"
+          }
+        }
+      },
+      "ignored_presentation_tags": [],
+      "markdown_cells": 21,
+      "markdown_representation": "line_comments",
+      "ordered_code_equivalence": true,
+      "presentation_normalizations": [
+        {
+          "cell_index": 1,
+          "directive": "%matplotlib inline",
+          "line": 7
+        }
+      ],
+      "profile": "python-narrative-v6",
+      "script_sha256": "afca45640d1a4d9abd7ce1ff25cd0bdee446a60dcbf1231bda9a261836e11ec7",
+      "source_sha256": "58132de825e5e266f2c9890594a32b548167ac23f43826a3341db7abd71e3e7b",
+      "stored_outputs_used_as_evidence": false
+    },
+    "plan": {
+      "artifacts": [
+        {
+          "description": "Per-frame RMSD of the CORE domain, computed over alpha-carbons of the trajectory's reference frame 0 (columns: Frame, Time (ns), CORE).",
+          "path": "rmsd_calpha_core.csv",
+          "source_evidence": "The notebook's stated goal is to 'calculate the RMSD of domains in adenylate kinase as it transitions from an open to closed structure'; the section 'RMSD of an AtomGroup with multiple selections' interprets this trajectory table as the measured domain movement and plots it. Produced by 'R = rms.RMSD(ca, ca, select=CORE, ref_frame=0); R.run()' followed by 'df = pd.DataFrame(R.results.rmsd, columns=[...])'; df retains this value at completion."
+        },
+        {
+          "description": "Mass-weighted per-frame RMSD table for C-alphas and the CORE, LID and NMP domains (columns: Frame, Time (ns), C-alphas, CORE, LID, NMP).",
+          "path": "rmsd_mass_weighted.csv",
+          "source_evidence": "The 'Weighted RMSD of a trajectory - Mass' section presents and interprets this weighted RMSD trajectory ('It is common to weight RMSD analyses by particle weight') and plots it. Produced by 'R_mass = rms.RMSD(u, u, select='protein and name CA', weights='mass', groupselections=[CORE, LID, NMP]); R_mass.run()' and 'df_mass = pd.DataFrame(R_mass.results.rmsd, ...)'; both R_mass and df_mass hold these values at completion."
+        },
+        {
+          "description": "Resid-weighted (custom-weights demo) per-frame RMSD table for C-alphas and CORE, LID, NMP domains (columns: Frame, Time (ns), C-alphas, CORE, LID, NMP).",
+          "path": "rmsd_resid_weighted.csv",
+          "source_evidence": "The 'Custom weights' section computes this table and draws a substantive comparison from it ('the NMP domain has much higher RMSD than before... residues later in the NMP domain are mobile'), an independently interpreted result. Produced by 'R_charge = rms.RMSD(u, u, ..., weights=ag.resids, weights_groupselections=[core.resids, lid.resids, nmp.resids]); R_charge.run()' and 'df_charge = pd.DataFrame(R_charge.results.rmsd, ...)'; both R_charge and df_charge hold these values at completion."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "Unavailable required endpoint (not a scientific non-target): the backbone-and-domain RMSD trajectory from 'RMSD of a Universe with multiple selections' (Table with Frame, Time (ns), Backbone, CORE, LID, NMP). It is the notebook's core quantification of the open-to-closed domain motion and is plotted and interpreted, but the script later rebinds both 'R' (in the AtomGroup section, 'R = rms.RMSD(ca, ca, ...)') and 'df' (the CA-CORE DataFrame), so the original array and DataFrame no longer hold these values at completion. Recovery requires re-running the original 'rms.RMSD(u, u, select='backbone', groupselections=[CORE, LID, NMP], ref_frame=0)' analysis; this export step neither recomputed nor captured it.",
+        "Unavailable required endpoint (not a scientific non-target): the single backbone RMSD between the open and closed AdK conformations from the 'RMSD between two sets of coordinates' section, produced by the bare expression 'rms.rmsd(u.select_atoms('backbone').positions, ref.select_atoms('backbone').positions, center=True, superposition=True)'. The value is displayed and interpreted in the narrative but was never assigned to a variable, so it does not exist in any named object at completion; append-only export cannot capture it without assigning a new variable to an unnamed expression or recomputing it."
+      ],
+      "explanation": "The notebook's terminal scientific results are the per-domain RMSD trajectory tables it builds, plots and interprets: the AtomGroup (alpha-carbon CORE) RMSD (`df`), the mass-weighted RMSD (`df_mass`), and the resid-weighted RMSD (`df_charge`). All three persist as named pandas DataFrames at script completion, so the append-only export code writes each to CSV under /work/outputs using pandas' own writer, preserving columns, labels and row order without recomputation. The earlier backbone RMSD trajectory and the single open-vs-closed backbone RMSD value are unavailable (see excluded_outputs).",
+      "export_code": "import os as _export_os\n\n_export_out = '/work/outputs'\n_export_os.makedirs(_export_out, exist_ok=True)\n\ndf.to_csv(_export_os.path.join(_export_out, 'rmsd_calpha_core.csv'), index=False)\ndf_mass.to_csv(_export_os.path.join(_export_out, 'rmsd_mass_weighted.csv'), index=False)\ndf_charge.to_csv(_export_os.path.join(_export_out, 'rmsd_resid_weighted.csv'), index=False)",
+      "unresolved_assumptions": [
+        "CSV serialization via pandas' default to_csv precision is assumed sufficient for the RMSD values; if higher float fidelity is later required, an execution-stage check can revisit float_format.",
+        "Whether the trajectories and MDAnalysis test data load and run within the CPU/time limits is an execution-stage question; this plan makes no claim about successful execution."
+      ]
+    },
+    "source": {
+      "id": "mdanalysis-rmsd",
+      "license": "LGPL-2.1",
+      "provenance": {
+        "data_lineage": "Supplied molecular-dynamics simulation trajectory, not an observed experimental time series.",
+        "data_redistribution_review": "Not yet established; keep biological inputs and generated bundles private until checked separately.",
+        "notebook": {
+          "license": "LGPL-2.1",
+          "license_url": "https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/LICENSE",
+          "revision": "b20b22d2b050238436c76df0f984be7827854bce",
+          "sha256": "58132de825e5e266f2c9890594a32b548167ac23f43826a3341db7abd71e3e7b",
+          "url": "https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/doc/source/examples/analysis/alignment_and_rms/rmsd.ipynb"
+        }
+      },
+      "source_revision": "b20b22d2b050238436c76df0f984be7827854bce",
+      "source_sha256": "58132de825e5e266f2c9890594a32b548167ac23f43826a3341db7abd71e3e7b",
+      "title": "MDAnalysis: RMSD of atomic structures",
+      "url": "https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/doc/source/examples/analysis/alignment_and_rms/rmsd.ipynb"
+    }
+  },
+  "source_imports": {
+    "analysis": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 42,
+        "statement": "import MDAnalysis as mda"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 43,
+        "statement": "from MDAnalysis.tests.datafiles import PSF, DCD, CRD"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 44,
+        "statement": "from MDAnalysis.analysis import rms"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 46,
+        "statement": "import pandas as pd"
+      }
+    ],
+    "exports": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 1,
+        "statement": "import os as _export_os"
+      }
+    ],
+    "scope": "Literal source statements and locations only; dynamic imports, native libraries and availability remain unverified."
+  },
+  "source_operations": {
+    "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+    "operations": [
+      {
+        "column": 4,
+        "end_column": 26,
+        "end_line": 61,
+        "function": "mda.Universe",
+        "id": "call-61-4",
+        "line": 61,
+        "source": "mda.Universe(PSF, DCD)"
+      },
+      {
+        "column": 6,
+        "end_column": 28,
+        "end_line": 62,
+        "function": "mda.Universe",
+        "id": "call-62-6",
+        "line": 62,
+        "source": "mda.Universe(PSF, CRD)"
+      },
+      {
+        "column": 0,
+        "end_column": 28,
+        "end_line": 95,
+        "function": "rms.rmsd",
+        "id": "call-92-0",
+        "line": 92,
+        "source": "rms.rmsd(u.select_atoms('backbone').positions,  # coordinates to align\n         ref.select_atoms('backbone').positions,  # reference coordinates\n         center=True,  # subtract the center of geometry\n         superposition=True)"
+      },
+      {
+        "column": 9,
+        "end_column": 35,
+        "end_line": 92,
+        "function": "u.select_atoms",
+        "id": "call-92-9",
+        "line": 92,
+        "source": "u.select_atoms('backbone')"
+      },
+      {
+        "column": 9,
+        "end_column": 37,
+        "end_line": 93,
+        "function": "ref.select_atoms",
+        "id": "call-93-9",
+        "line": 93,
+        "source": "ref.select_atoms('backbone')"
+      },
+      {
+        "column": 4,
+        "end_column": 25,
+        "end_line": 111,
+        "function": "rms.RMSD",
+        "id": "call-107-4",
+        "line": 107,
+        "source": "rms.RMSD(u,  # universe to align\n             u,  # reference universe or atomgroup\n             select='backbone',  # group to superimpose and calculate RMSD\n             groupselections=[CORE, LID, NMP],  # groups for RMSD\n             ref_frame=0)"
+      },
+      {
+        "column": 0,
+        "end_column": 7,
+        "end_line": 112,
+        "function": "R.run",
+        "id": "call-112-0",
+        "line": 112,
+        "source": "R.run()"
+      },
+      {
+        "column": 5,
+        "end_column": 41,
+        "end_line": 127,
+        "function": "pd.DataFrame",
+        "id": "call-124-5",
+        "line": 124,
+        "source": "pd.DataFrame(R.results.rmsd, \n                  columns=['Frame', 'Time (ns)', \n                           'Backbone', 'CORE', \n                           'LID', 'NMP'])"
+      },
+      {
+        "column": 5,
+        "end_column": 25,
+        "end_line": 132,
+        "function": "df.plot",
+        "id": "call-131-5",
+        "line": 131,
+        "source": "df.plot(x='Frame', y=['Backbone', 'CORE', 'LID', 'NMP'],\n             kind='line')"
+      },
+      {
+        "column": 0,
+        "end_column": 30,
+        "end_line": 133,
+        "function": "ax.set_ylabel",
+        "id": "call-133-0",
+        "line": 133,
+        "source": "ax.set_ylabel(r'RMSD ($\\AA$)')"
+      },
+      {
+        "column": 5,
+        "end_column": 30,
+        "end_line": 147,
+        "function": "u.select_atoms",
+        "id": "call-147-5",
+        "line": 147,
+        "source": "u.select_atoms('name CA')"
+      },
+      {
+        "column": 4,
+        "end_column": 46,
+        "end_line": 149,
+        "function": "rms.RMSD",
+        "id": "call-149-4",
+        "line": 149,
+        "source": "rms.RMSD(ca, ca, select=CORE, ref_frame=0)"
+      },
+      {
+        "column": 0,
+        "end_column": 7,
+        "end_line": 150,
+        "function": "R.run",
+        "id": "call-150-0",
+        "line": 150,
+        "source": "R.run()"
+      },
+      {
+        "column": 5,
+        "end_column": 35,
+        "end_line": 154,
+        "function": "pd.DataFrame",
+        "id": "call-152-5",
+        "line": 152,
+        "source": "pd.DataFrame(R.results.rmsd, \n                  columns=['Frame', 'Time (ns)', \n                           'CORE'])"
+      },
+      {
+        "column": 5,
+        "end_column": 46,
+        "end_line": 156,
+        "function": "df.plot",
+        "id": "call-156-5",
+        "line": 156,
+        "source": "df.plot(x='Frame', y='CORE', kind='line')"
+      },
+      {
+        "column": 0,
+        "end_column": 29,
+        "end_line": 157,
+        "function": "ax.set_ylabel",
+        "id": "call-157-0",
+        "line": 157,
+        "source": "ax.set_ylabel('RMSD ($\\AA$)')"
+      },
+      {
+        "column": 9,
+        "end_column": 51,
+        "end_line": 170,
+        "function": "rms.RMSD",
+        "id": "call-167-9",
+        "line": 167,
+        "source": "rms.RMSD(u, u,\n                  select='protein and name CA',\n                  weights='mass',\n                  groupselections=[CORE, LID, NMP])"
+      },
+      {
+        "column": 0,
+        "end_column": 12,
+        "end_line": 171,
+        "function": "R_mass.run",
+        "id": "call-171-0",
+        "line": 171,
+        "source": "R_mass.run()"
+      },
+      {
+        "column": 10,
+        "end_column": 46,
+        "end_line": 179,
+        "function": "pd.DataFrame",
+        "id": "call-175-10",
+        "line": 175,
+        "source": "pd.DataFrame(R_mass.results.rmsd, \n                       columns=['Frame', \n                                'Time (ns)', \n                                'C-alphas', 'CORE', \n                                'LID', 'NMP'])"
+      },
+      {
+        "column": 10,
+        "end_column": 60,
+        "end_line": 181,
+        "function": "df_mass.plot",
+        "id": "call-180-10",
+        "line": 180,
+        "source": "df_mass.plot(x='Frame', \n                       y=['C-alphas', 'CORE', 'LID', 'NMP'])"
+      },
+      {
+        "column": 0,
+        "end_column": 48,
+        "end_line": 182,
+        "function": "ax_mass.set_ylabel",
+        "id": "call-182-0",
+        "line": 182,
+        "source": "ax_mass.set_ylabel('Mass-weighted RMSD ($\\AA$)')"
+      },
+      {
+        "column": 5,
+        "end_column": 42,
+        "end_line": 190,
+        "function": "u.select_atoms",
+        "id": "call-190-5",
+        "line": 190,
+        "source": "u.select_atoms('protein and name CA')"
+      },
+      {
+        "column": 0,
+        "end_column": 52,
+        "end_line": 191,
+        "function": "print",
+        "id": "call-191-0",
+        "line": 191,
+        "source": "print('Shape of C-alpha charges:', ag.charges.shape)"
+      },
+      {
+        "column": 7,
+        "end_column": 27,
+        "end_line": 192,
+        "function": "u.select_atoms",
+        "id": "call-192-7",
+        "line": 192,
+        "source": "u.select_atoms(CORE)"
+      },
+      {
+        "column": 6,
+        "end_column": 25,
+        "end_line": 193,
+        "function": "u.select_atoms",
+        "id": "call-193-6",
+        "line": 193,
+        "source": "u.select_atoms(LID)"
+      },
+      {
+        "column": 6,
+        "end_column": 25,
+        "end_line": 194,
+        "function": "u.select_atoms",
+        "id": "call-194-6",
+        "line": 194,
+        "source": "u.select_atoms(NMP)"
+      },
+      {
+        "column": 11,
+        "end_column": 57,
+        "end_line": 204,
+        "function": "rms.RMSD",
+        "id": "call-198-11",
+        "line": 198,
+        "source": "rms.RMSD(u, u,\n                    select='protein and name CA',\n                    groupselections=[CORE, LID, NMP],\n                    weights=ag.resids,\n                    weights_groupselections=[core.resids, \n                                             lid.resids, \n                                             nmp.resids])"
+      },
+      {
+        "column": 0,
+        "end_column": 14,
+        "end_line": 205,
+        "function": "R_charge.run",
+        "id": "call-205-0",
+        "line": 205,
+        "source": "R_charge.run()"
+      },
+      {
+        "column": 12,
+        "end_column": 46,
+        "end_line": 215,
+        "function": "pd.DataFrame",
+        "id": "call-211-12",
+        "line": 211,
+        "source": "pd.DataFrame(R_charge.results.rmsd, \n                         columns=['Frame', \n                                'Time (ns)', \n                                'C-alphas', 'CORE', \n                                'LID', 'NMP'])"
+      },
+      {
+        "column": 12,
+        "end_column": 64,
+        "end_line": 217,
+        "function": "df_charge.plot",
+        "id": "call-216-12",
+        "line": 216,
+        "source": "df_charge.plot(x='Frame',\n                           y=['C-alphas', 'CORE', 'LID', 'NMP'])"
+      },
+      {
+        "column": 0,
+        "end_column": 52,
+        "end_line": 218,
+        "function": "ax_charge.set_ylabel",
+        "id": "call-218-0",
+        "line": 218,
+        "source": "ax_charge.set_ylabel('Charge-weighted RMSD ($\\AA$)')"
+      }
+    ],
+    "source_sha256": "afca45640d1a4d9abd7ce1ff25cd0bdee446a60dcbf1231bda9a261836e11ec7"
+  }
+}

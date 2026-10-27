@@ -1,0 +1,1626 @@
+{
+  "candidate": {
+    "derive_code": "#!/usr/bin/env python3\n\"\"\"Stage inputs and build reference artifacts for the AdK RMSD task.\n\nEndpoints C, D, E are projected from the recorded reference exports\n(rmsd_calpha_core.csv, rmsd_mass_weighted.csv, rmsd_resid_weighted.csv):\nlabel-only projections (header renames, no numeric change) into the\nrequested schemas.\n\nEndpoints A and B were not exported by the notebook (A was an unassigned\nbare expression, B lived in variables later rebound) and are recovered here\nby re-running the unchanged original source computations on freshly\nconstructed Universes built from byte-identical copies of the same\nscientific data files the notebook resolves via MDAnalysis.tests.datafiles.\n\"\"\"\nimport argparse\nimport hashlib\nimport json\nimport os\nimport shutil\n\nimport pandas as pd\n\n\ndef sha256_file(path):\n    h = hashlib.sha256()\n    with open(path, 'rb') as fh:\n        for chunk in iter(lambda: fh.read(1 << 20), b''):\n            h.update(chunk)\n    return h.hexdigest()\n\n\ndef resolve_datafiles():\n    try:\n        from MDAnalysis.tests.datafiles import PSF, DCD, CRD\n        return PSF, DCD, CRD\n    except Exception:\n        from MDAnalysisTests.datafiles import PSF, DCD, CRD\n        return PSF, DCD, CRD\n\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument('--source-inputs', required=True)\n    ap.add_argument('--reference-dir', required=True)\n    ap.add_argument('--destination', required=True)\n    args = ap.parse_args()\n\n    inputs_dir = os.path.join(args.destination, 'inputs')\n    reference_dir = os.path.join(args.destination, 'reference')\n    os.makedirs(inputs_dir, exist_ok=True)\n    os.makedirs(reference_dir, exist_ok=True)\n\n    # --- stage the three scientific data files byte-for-byte ---\n    psf_src, dcd_src, crd_src = resolve_datafiles()\n    staged = {\n        'structure.psf': psf_src,\n        'trajectory.dcd': dcd_src,\n        'reference_open.crd': crd_src,\n    }\n    for name, src in staged.items():\n        shutil.copyfile(src, os.path.join(inputs_dir, name))\n        assert sha256_file(os.path.join(inputs_dir, name)) == sha256_file(src)\n\n    # --- label-only projections of C, D, E into the requested schemas ---\n    # Source: the recorded reference exports in --reference-dir (unchanged\n    # originals; read in place, not copied). Same source-computed quantities;\n    # only headers change: 'Frame' -> 'frame' (exact integers, 0.0 -> 0),\n    # 'Time (ns)' -> 'time_ps' (the notebook's header is a mislabel:\n    # MDAnalysis reports DCD time in ps; the values ~1, 2, ... ps), and\n    # payload columns renamed to the requested snake_case names.\n    # No numeric value is changed.\n    generic_tail = {'C-alphas': None, 'CORE': 'core_rmsd_angstrom',\n                    'LID': 'lid_rmsd_angstrom', 'NMP': 'nmp_rmsd_angstrom'}\n\n    def project(src_csv, first_map, out_csv):\n        df = pd.read_csv(src_csv)\n        ren = {'Frame': 'frame', 'Time (ns)': 'time_ps'}\n        ren.update(first_map)\n        df = df.rename(columns=ren)\n        df = df.rename(columns={k: v for k, v in generic_tail.items() if v})\n        df['frame'] = df['frame'].astype(int)\n        df.to_csv(out_csv, index=False)\n\n    project(os.path.join(args.reference_dir, 'rmsd_calpha_core.csv'),\n            {'CORE': 'ca_core_rmsd_angstrom'},\n            os.path.join(reference_dir, 'ca_core_rmsd.csv'))\n    project(os.path.join(args.reference_dir, 'rmsd_mass_weighted.csv'),\n            {'C-alphas': 'ca_mass_weighted_rmsd_angstrom'},\n            os.path.join(reference_dir, 'mass_weighted_rmsd.csv'))\n    project(os.path.join(args.reference_dir, 'rmsd_resid_weighted.csv'),\n            {'C-alphas': 'ca_resid_weighted_rmsd_angstrom'},\n            os.path.join(reference_dir, 'resid_weighted_rmsd.csv'))\n\n    # --- source-faithful recovery of endpoints A and B ---\n    import MDAnalysis as mda\n    from MDAnalysis.analysis import rms\n\n    psf = os.path.join(inputs_dir, 'structure.psf')\n    dcd = os.path.join(inputs_dir, 'trajectory.dcd')\n    crd = os.path.join(inputs_dir, 'reference_open.crd')\n\n    CORE = 'backbone and (resid 1-29 or resid 60-121 or resid 160-214)'\n    LID = 'backbone and resid 122-159'\n    NMP = 'backbone and resid 30-59'\n\n    # Endpoint A (original.py lines 92-95): unchanged call; u is freshly\n    # constructed from (PSF, DCD) and therefore rests at trajectory frame 0,\n    # exactly as in the notebook cell.\n    u = mda.Universe(psf, dcd)\n    ref_open = mda.Universe(psf, crd)\n    a_value = rms.rmsd(u.select_atoms('backbone').positions,\n                       ref_open.select_atoms('backbone').positions,\n                       center=True, superposition=True)\n    with open(os.path.join(reference_dir, 'open_closed_backbone_rmsd.json'), 'w') as fh:\n        json.dump({'value': float(a_value), 'unit': 'angstrom'}, fh)\n        fh.write('\\n')\n\n    # Endpoint B (original.py lines 107-112): unchanged call on a fresh Universe.\n    u_b = mda.Universe(psf, dcd)\n    R = rms.RMSD(u_b, u_b, select='backbone',\n                 groupselections=[CORE, LID, NMP], ref_frame=0)\n    R.run()\n    d = R.results.rmsd\n    pd.DataFrame({\n        'frame': d[:, 0].astype(int),\n        'time_ps': d[:, 1],\n        'backbone_rmsd_angstrom': d[:, 2],\n        'core_rmsd_angstrom': d[:, 3],\n        'lid_rmsd_angstrom': d[:, 4],\n        'nmp_rmsd_angstrom': d[:, 5],\n    }).to_csv(os.path.join(reference_dir, 'backbone_domain_rmsd.csv'), index=False)\n\n\nif __name__ == '__main__':\n    main()\n",
+    "disposition": "ready",
+    "environment_review": {
+      "additional_exclusions": [
+        {
+          "distribution": "MDAnalysisTests",
+          "path": "MDAnalysisTests/analysis/test_align.py",
+          "reason": "Answer exposure: the literal constant 6.820321761927005 at line 262 is the expected AdK first-vs-last-frame backbone QCP RMSD on exactly the supplied inputs (assert_allclose rtol=0, atol=1.5e-5 against the same PSF/DCD), numerically identical to the final-frame (frame 97) backbone_rmsd_angstrom value 6.820321761026975 in the requested backbone_domain_rmsd.csv output (confirmed by the controller's installed_asset_value_hints finding and direct inspection of the read-only installed copy). Unused: the source and oracle only import MDAnalysis's analysis.rms API and the three staged data files (resolved via the tests.datafiles data-path module); nothing imports MDAnalysisTests.analysis.test_align, so removal does not affect any required computation, input loading or notice.",
+          "sha256": "7f5ae503ea618bc1fff96cb103341858c53438a1865111b9ff295479e29f6386"
+        }
+      ],
+      "artifact_inventory_sha256": "f660555e7ee3af8d65d3437505c82e3306177b1b027380f9ab1d01ee373b2ca5",
+      "assessment": "The candidate executed cleanly: derivation staged the three byte-identical AdK data files (structure.psf, trajectory.dcd, reference_open.crd), projected endpoints C/D/E label-only from the recorded reference exports into the requested schemas, and source-faithfully recovered endpoints A (open_closed_backbone_rmsd.json, value 6.823686867261616 angstrom) and B (backbone_domain_rmsd.csv, 98 rows; final-frame backbone_rmsd_angstrom 6.820321761026975); the oracle reproduced all five outputs from the supplied inputs alone. Environment review against the post-execution inventory: both earlier answer-exposure removals are in effect (MDAnalysisTests/analysis/test_rms.py and, per this round's exclusion, MDAnalysisTests/analysis/test_align.py are absent from the installed tree; MDAnalysisTests is down to 724 inspected files). The refreshed advisory value-hint report lists zero findings, and I independently re-checked the environment: direct greps of site-packages for the recovered answer values (6.823686867261616, 6.820321761026975), the requested output filenames and the exported per-frame endpoint values found no other installed file containing any requested answer. Residual non-answer observations: MDAnalysis/tests/datafiles.py is the data-path module the source itself imports to load the three staged inputs (required, kept); the raw legacy_DCD_adk_coords.npy / legacy_DCD_NAMD_coords.npy fixtures cover different frame/atom subsets and encode no requested RMSD value; the JSON reference is flagged unsupported_format for literal scanning rather than being exposed. No required data, runtime code or notices were removed.",
+      "asset_catalog_sha256": "a832418e9d41b7090b9929569867d53b2be7274706ed2f4158bdb5f1c63db710"
+    },
+    "input_paths": [
+      "structure.psf",
+      "trajectory.dcd",
+      "reference_open.crd"
+    ],
+    "instruction": "# Quantifying adenylate kinase's open-to-closed transition with RMSD\n\n## Scientific question\n\nAdenylate kinase (AdK) transitions between a closed and an open conformation; its LID and NMP domains move around a comparatively stable CORE domain. Using the supplied topology, a trajectory that samples the closed-to-open transition, and a separate open-conformer coordinate set, quantify this motion with root-mean-square deviations (RMSD, in Angstrom) of atomic positions under several selection and weighting schemes.\n\nAdK's domains, restricted to **backbone atoms**, are defined by residue identifier:\n\n- CORE: `resid 1-29` or `resid 60-121` or `resid 160-214`\n- LID: `resid 122-159`\n- NMP: `resid 30-59`\n\nHere \"backbone\" means **the atoms named N, CA, C and O within recognized protein residues** (the standard MDAnalysis `backbone` selection). Terminal carboxyl oxygens are **not** part of the backbone for this analysis: the supplied topology's C-terminal residue (GLY 214) carries terminal oxygens named OT1 and OT2 and no atom named O, and those OT atoms are excluded from every backbone quantity below.\n\n## Supplied inputs\n\n- `inputs/structure.psf` — CHARMM PSF topology for AdK (defines atoms, masses, residue numbers, bonds; also the selection universe for both coordinate sets).\n- `inputs/trajectory.dcd` — DCD trajectory sampling the closed-to-open transition (98 frames). **Frame index 0** (a closed conformer) is the reference structure for all trajectory-based RMSD analyses below.\n- `inputs/reference_open.crd` — CHARMM coordinate file of the open conformer, read together with the same PSF topology.\n\n## Method\n\nFor every RMSD below, coordinates are optimally superimposed (translation + rotation minimizing the weighted RMSD, as in the QCP algorithm) before or as part of the deviation calculation, unless stated otherwise. A weighted RMSD uses weights normalized by the mean of the weights. All RMSD values are in Angstrom.\n\n### A. Single open-vs-closed backbone RMSD\n\nCompute the unweighted RMSD between the backbone atoms (N, CA, C, O; excluding OT atoms) of the trajectory's frame 0 (closed conformer) and the backbone atoms of the open reference structure (`inputs/reference_open.crd`), after centering each coordinate set at its center of geometry and optimally superimposing them. Report one value.\n\n### B. Backbone and per-domain RMSD vs. frame 0\n\nOver every frame of the trajectory, superimpose the full protein **backbone** onto the frame-0 backbone conformation (unweighted best fit). Record:\n\n1. the unweighted backbone RMSD of that fit;\n2. then, **without any further alignment**, the unweighted RMSD of the CORE, LID and NMP backbone groups (each computed on the coordinates after the backbone fit has been applied to all atoms, against the corresponding frame-0 reference coordinates).\n\nOne row per frame.\n\n### C. Alpha-carbon CORE RMSD vs. frame 0\n\nRestricting the analysis universe to the alpha-carbon (CA) atoms of the protein, superimpose on, and report the unweighted RMSD of, the CORE-domain CA atoms versus their frame-0 positions. One row per frame.\n\n### D. Mass-weighted RMSD\n\nOver every frame, superimpose and report the RMSD of the **protein CA atoms weighted by atomic mass** (mass-weighted fit and mass-weighted RMSD, reference frame 0). Then, without further alignment, report the RMSD of the CORE, LID and NMP backbone groups against their frame-0 coordinates with **each atom weighted by its atomic mass**. One row per frame.\n\n### E. Residue-number-weighted RMSD (custom-weighting variant)\n\nOver every frame, superimpose and report the RMSD of the protein CA atoms with each CA **weighted by its residue number** (reference frame 0). Then, without further alignment, report the RMSD of the CORE, LID and NMP backbone groups with each atom **weighted by its residue number**. One row per frame. (This weighting is a defined comparison of weighting schemes, not a conventional physical metric.)\n\n## Required outputs\n\nWrite the following files (UTF-8, comma-separated, header row exactly as given, one data row per trajectory frame **in trajectory frame order**, no index column; RMSD in Angstrom):\n\n1. `outputs/backbone_domain_rmsd.csv` (analysis B):\n   `frame,time_ps,backbone_rmsd_angstrom,core_rmsd_angstrom,lid_rmsd_angstrom,nmp_rmsd_angstrom`\n2. `outputs/ca_core_rmsd.csv` (analysis C):\n   `frame,time_ps,ca_core_rmsd_angstrom`\n3. `outputs/mass_weighted_rmsd.csv` (analysis D):\n   `frame,time_ps,ca_mass_weighted_rmsd_angstrom,core_rmsd_angstrom,lid_rmsd_angstrom,nmp_rmsd_angstrom`\n4. `outputs/resid_weighted_rmsd.csv` (analysis E):\n   `frame,time_ps,ca_resid_weighted_rmsd_angstrom,core_rmsd_angstrom,lid_rmsd_angstrom,nmp_rmsd_angstrom`\n5. `outputs/open_closed_backbone_rmsd.json` (analysis A): a JSON object\n   `{\"value\": <number>, \"unit\": \"angstrom\"}`\n\nCommon conventions: `frame` is the 0-based trajectory frame index. `time_ps` is the per-frame trajectory time in picoseconds; use your tool's reported trajectory time if it provides one, else `(frame + 1)` ps — the reader's timestep is approximately 1 ps and the first frame sits at t approximately 1 ps, so both agree to within float rounding. All frames of the trajectory are included; no frames are filtered, subsampled or interpolated.\n\n## Resources and software\n\nAny tool chain may be used provided the outputs satisfy the definitions above (an MDAnalysis-compatible environment can be supplied for convenience; it is not a requirement). The reference method semantics are those of the MDAnalysis `MDAnalysis.analysis.rms` module (QCP superposition; group-selection RMSDs computed without re-fitting after the primary fit; mass/residue-number weighting normalized by the mean weight; \"backbone\" = N, CA, C, O atoms of protein residues).\n\nExecution limits: offline, 4 CPUs, 8 GiB RAM, 10 GiB disk, 600 s wall clock.",
+    "operation_coverage": [
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-61-4"
+        ],
+        "rationale": "Universe(PSF, DCD) loads the closed-conformer trajectory universe whose coordinates feed every endpoint (A-D, E); input loading, not itself a requested output.",
+        "role": "support"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-62-6"
+        ],
+        "rationale": "Universe(PSF, CRD) loads the open-conformer reference used only by endpoint A.",
+        "role": "support"
+      },
+      {
+        "artifact_paths": [
+          "open_closed_backbone_rmsd.json"
+        ],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-92-0"
+        ],
+        "rationale": "Endpoint A: the open-vs-closed unweighted backbone RMSD (geometry-centered, QCP-superposed). Unassigned in the notebook; recovered by re-running the identical call and emitted as the JSON requested output.",
+        "role": "result"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-92-9"
+        ],
+        "rationale": "Backbone selection of the closed trajectory frame 0 inside endpoint A's argument list.",
+        "role": "support"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-93-9"
+        ],
+        "rationale": "Backbone selection of the open CRD reference inside endpoint A's argument list.",
+        "role": "support"
+      },
+      {
+        "artifact_paths": [
+          "backbone_domain_rmsd.csv"
+        ],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-107-4"
+        ],
+        "rationale": "Endpoint B constructor: backbone fit to frame 0 with CORE/LID/NMP groupselections; its results array is the per-frame backbone+domain RMSD table. R was later rebound so the value was not exported; recovered by re-running the identical call.",
+        "role": "result"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-112-0"
+        ],
+        "rationale": "Executes the analysis defined by call-107-4; the scientific computation is attributed to the constructor call, not the runner.",
+        "role": "support"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-124-5"
+        ],
+        "rationale": "DataFrame construction over R.results.rmsd for endpoint B; tabulation/labeling of the computed values, no new scientific computation.",
+        "role": "presentation"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-131-5"
+        ],
+        "rationale": "Line plot of endpoint B's table; visualization only.",
+        "role": "presentation"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-133-0"
+        ],
+        "rationale": "Plot y-axis label.",
+        "role": "presentation"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-147-5"
+        ],
+        "rationale": "Selects the CA AtomGroup that bounds the endpoint-C analysis universe.",
+        "role": "support"
+      },
+      {
+        "artifact_paths": [
+          "ca_core_rmsd.csv"
+        ],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-149-4"
+        ],
+        "rationale": "Endpoint C: alpha-carbon CORE RMSD of the trajectory vs frame 0; exported by the notebook as rmsd_calpha_core.csv and projected into the requested schema.",
+        "role": "result"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-150-0"
+        ],
+        "rationale": "Executes the analysis defined by call-149-4.",
+        "role": "support"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-152-5"
+        ],
+        "rationale": "DataFrame construction over the endpoint-C results array; tabulation only.",
+        "role": "presentation"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-156-5"
+        ],
+        "rationale": "Line plot of endpoint C's table.",
+        "role": "presentation"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-157-0"
+        ],
+        "rationale": "Plot y-axis label.",
+        "role": "presentation"
+      },
+      {
+        "artifact_paths": [
+          "mass_weighted_rmsd.csv"
+        ],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-167-9"
+        ],
+        "rationale": "Endpoint D: mass-weighted CA RMSD with mass-weighted CORE/LID/NMP groupselections (weights propagate to groupselections per rms.py 691-711); exported as rmsd_mass_weighted.csv and projected into the requested schema.",
+        "role": "result"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-171-0"
+        ],
+        "rationale": "Executes the analysis defined by call-167-9.",
+        "role": "support"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-175-10"
+        ],
+        "rationale": "DataFrame construction over the endpoint-D results array; tabulation only.",
+        "role": "presentation"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-180-10"
+        ],
+        "rationale": "Line plot of endpoint D's table.",
+        "role": "presentation"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-182-0"
+        ],
+        "rationale": "Plot y-axis label.",
+        "role": "presentation"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-190-5"
+        ],
+        "rationale": "Selects the CA AtomGroup ag whose resids supply the endpoint-E primary weights.",
+        "role": "support"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-191-0"
+        ],
+        "rationale": "Diagnostic print of the C-alpha charge array shape; no requested output.",
+        "role": "diagnostic"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-192-7"
+        ],
+        "rationale": "Selects the CORE backbone group whose resids supply endpoint-E groupselection weights.",
+        "role": "support"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-193-6"
+        ],
+        "rationale": "Selects the LID backbone group whose resids supply endpoint-E groupselection weights.",
+        "role": "support"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-194-6"
+        ],
+        "rationale": "Selects the NMP backbone group whose resids supply endpoint-E groupselection weights.",
+        "role": "support"
+      },
+      {
+        "artifact_paths": [
+          "resid_weighted_rmsd.csv"
+        ],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-198-11"
+        ],
+        "rationale": "Endpoint E: residue-number-weighted CA RMSD with resid-weighted CORE/LID/NMP groupselections; exported as rmsd_resid_weighted.csv and projected into the requested schema.",
+        "role": "result"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-205-0"
+        ],
+        "rationale": "Executes the analysis defined by call-198-11.",
+        "role": "support"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-211-12"
+        ],
+        "rationale": "DataFrame construction over the endpoint-E results array; tabulation only.",
+        "role": "presentation"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-216-12"
+        ],
+        "rationale": "Line plot of endpoint E's table.",
+        "role": "presentation"
+      },
+      {
+        "artifact_paths": [],
+        "counterpart_id": null,
+        "operation_ids": [
+          "call-218-0"
+        ],
+        "rationale": "Plot y-axis label.",
+        "role": "presentation"
+      }
+    ],
+    "oracle_code": "#!/usr/bin/env python3\n\"\"\"Solve the AdK RMSD task from the supplied inputs only.\"\"\"\nimport argparse\nimport json\nimport os\n\nimport MDAnalysis as mda\nfrom MDAnalysis.analysis import rms\nimport pandas as pd\n\nCORE = ('backbone and (resid 1-29 or resid 60-121 or resid 160-214)')\nLID = 'backbone and resid 122-159'\nNMP = 'backbone and resid 30-59'\n\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument('--input-dir', required=True)\n    ap.add_argument('--output-dir', required=True)\n    args = ap.parse_args()\n    inp = args.input_dir\n    out = args.output_dir\n    os.makedirs(out, exist_ok=True)\n\n    psf = os.path.join(inp, 'structure.psf')\n    dcd = os.path.join(inp, 'trajectory.dcd')\n    crd = os.path.join(inp, 'reference_open.crd')\n\n    u = mda.Universe(psf, dcd)\n    u_ref_open = mda.Universe(psf, crd)\n\n    # A. single open-vs-closed backbone RMSD (u rests at frame 0)\n    a_value = rms.rmsd(u.select_atoms('backbone').positions,\n                       u_ref_open.select_atoms('backbone').positions,\n                       center=True, superposition=True)\n    with open(os.path.join(out, 'open_closed_backbone_rmsd.json'), 'w') as fh:\n        json.dump({'value': float(a_value), 'unit': 'angstrom'}, fh)\n        fh.write('\\n')\n\n    # B. backbone + per-domain RMSD vs frame 0\n    R = rms.RMSD(u, u, select='backbone',\n                 groupselections=[CORE, LID, NMP], ref_frame=0)\n    R.run()\n    d = R.results.rmsd\n    pd.DataFrame({\n        'frame': d[:, 0].astype(int),\n        'time_ps': d[:, 1],\n        'backbone_rmsd_angstrom': d[:, 2],\n        'core_rmsd_angstrom': d[:, 3],\n        'lid_rmsd_angstrom': d[:, 4],\n        'nmp_rmsd_angstrom': d[:, 5],\n    }).to_csv(os.path.join(out, 'backbone_domain_rmsd.csv'), index=False)\n\n    # C. alpha-carbon CORE RMSD vs frame 0\n    ca = u.select_atoms('name CA')\n    Rc = rms.RMSD(ca, ca, select=CORE, ref_frame=0)\n    Rc.run()\n    d = Rc.results.rmsd\n    pd.DataFrame({\n        'frame': d[:, 0].astype(int),\n        'time_ps': d[:, 1],\n        'ca_core_rmsd_angstrom': d[:, 2],\n    }).to_csv(os.path.join(out, 'ca_core_rmsd.csv'), index=False)\n\n    # D. mass-weighted RMSD\n    Rm = rms.RMSD(u, u, select='protein and name CA', weights='mass',\n                  groupselections=[CORE, LID, NMP])\n    Rm.run()\n    d = Rm.results.rmsd\n    pd.DataFrame({\n        'frame': d[:, 0].astype(int),\n        'time_ps': d[:, 1],\n        'ca_mass_weighted_rmsd_angstrom': d[:, 2],\n        'core_rmsd_angstrom': d[:, 3],\n        'lid_rmsd_angstrom': d[:, 4],\n        'nmp_rmsd_angstrom': d[:, 5],\n    }).to_csv(os.path.join(out, 'mass_weighted_rmsd.csv'), index=False)\n\n    # E. residue-number-weighted RMSD\n    ag = u.select_atoms('protein and name CA')\n    core = u.select_atoms(CORE)\n    lid = u.select_atoms(LID)\n    nmp = u.select_atoms(NMP)\n    Re = rms.RMSD(u, u, select='protein and name CA',\n                  groupselections=[CORE, LID, NMP],\n                  weights=ag.resids,\n                  weights_groupselections=[core.resids, lid.resids, nmp.resids])\n    Re.run()\n    d = Re.results.rmsd\n    pd.DataFrame({\n        'frame': d[:, 0].astype(int),\n        'time_ps': d[:, 1],\n        'ca_resid_weighted_rmsd_angstrom': d[:, 2],\n        'core_rmsd_angstrom': d[:, 3],\n        'lid_rmsd_angstrom': d[:, 4],\n        'nmp_rmsd_angstrom': d[:, 5],\n    }).to_csv(os.path.join(out, 'resid_weighted_rmsd.csv'), index=False)\n\n\nif __name__ == '__main__':\n    main()\n",
+    "output_paths": [
+      "backbone_domain_rmsd.csv",
+      "ca_core_rmsd.csv",
+      "mass_weighted_rmsd.csv",
+      "resid_weighted_rmsd.csv",
+      "open_closed_backbone_rmsd.json"
+    ],
+    "rationale": "Scope: all five scientific endpoints of the source notebook are retained in one task. (A) open-vs-closed single backbone RMSD (original.py:92-95); (B) per-frame backbone + CORE/LID/NMP domain RMSD vs frame 0 (107-112); (C) alpha-carbon CORE RMSD vs frame 0 (147-152); (D) mass-weighted CA + domain RMSD (167-171); (E) residue-number-weighted CA + domain RMSD (198-205). Plotting calls, the charges-shape print and Universe loading are excluded from outputs as presentation/diagnostic/support.\n\nInputs: the source resolves its three data files (adk.psf, adk_dims.dcd, adk_open.crd) from MDAnalysis.tests.datafiles; the original_inputs manifest is empty because these files are package data, not standalone originals. derive_code resolves them exactly as the source does (MDAnalysis.tests.datafiles, falling back to MDAnalysisTests.datafiles) and copies them byte-for-byte (verified equal sha256 in provenance.json) into destination/inputs/ as structure.psf, trajectory.dcd, reference_open.crd.\n\nReference construction: the recorded exports for C, D, E are retained unchanged under destination/reference/source_exports/. Label-only projections into the requested schemas are written separately (reference/ca_core_rmsd.csv, mass_weighted_rmsd.csv, resid_weighted_rmsd.csv). The projection only renames headers: 'Frame'->'frame' (integers), 'Time (ns)'->'time_ps', payload columns to the requested snake_case names; no numeric value changes. The notebook's \"Time (ns)\" header is a false unit label — MDAnalysis reports DCD time in ps and the values are approximately 1, 2, ... ps — so the requested time_ps column carries the same source-computed quantity with an accurate unit label, as the private review verified.\n\nRecovery (policy endpoint_recovery): A (bare unassigned expression) and B (R and df later rebound) do not exist in any export. derive_code re-runs the unchanged original calls on freshly constructed Universes from the staged byte-identical inputs with the source's required initial state (u freshly loaded rests at frame 0), writing reference/open_closed_backbone_rmsd.json and reference/backbone_domain_rmsd.csv, with source locations, methods and lineage recorded in reference/provenance.json. The recorded reference exports remain untouched.\n\nBackbone definition: the brief defines backbone as atoms named N, CA, C, O in protein residues; the pinned MDAnalysis 2.11.0 BackboneSelection excludes OT* on C-termini and the supplied PSF's GLY 214 ends in OT1/OT2 with no atom O, so the OT atoms are excluded from every backbone quantity — verified against source in the review and kept explicit in the public question.\n\nMass-weight propagation: the notebook narrative claims groupselections \"remain unweighted\" for D, but the executed behavior propagates weights='mass' to all groupselections (rms.py:691-711 in MDAnalysis 2.11.0). The public contract states the executed behavior; the oracle follows it.\n\nLeakage and environment: MDAnalysis 2.11.0 (MDAnalysisTests 2.11.0) is installed. MDAnalysisTests/analysis/test_rms.py was already excluded in the verified construction environment (declared sha256-matched removal). MDAnalysisTests/analysis/test_align.py contains the constant 6.820321761927005, which a prior review identified as equal to endpoint B's final-frame backbone RMSD; the staged solver inputs are only the three data files, so any MDAnalysisTests test modules in the final environment that expose requested answers must be declared as additional exclusions in environment_review once the executed inventory and asset catalog are observed. The three data files themselves are the required inputs and remain. The legacy DCD .npy coordinate fixtures cover different frame/atom subsets and are not answer tables.\n\nOracle: uses only the installed MDAnalysis/pandas and destination/inputs; it recomputes every endpoint with the source semantics (QCP superposition, groupselections computed after the primary fit without re-fitting, mean-normalized weights, RMSD results array's frame/time columns for frame and time_ps). No embedded answers, no reference access.\n\nRemaining comparison questions (left to validation): tolerance calibration for QCP float64 over float32 coordinates, near-zero frame-0 self-RMSD values (~1e-7/1e-8), and the ~1e-6 relative time-column float32 drift; behavior of mass propagation on other solver-eligible MDAnalysis versions (the public contract fixes the semantics, not the package)."
+  },
+  "execution": {
+    "derivation": {
+      "exit_code": 0,
+      "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+      "role_process_cleanup_verified": true,
+      "stderr": "/work/venv/lib/python3.13/site-packages/MDAnalysis/coordinates/DCD.py:176: DeprecationWarning: DCDReader currently makes independent timesteps by copying self.ts while other readers update self.ts inplace. This behavior will be changed in 3.0 to be the same as other readers. Read more at https://github.com/MDAnalysis/mdanalysis/issues/3889 to learn if this change in behavior might affect you.\n  warnings.warn(\n",
+      "stdout": "",
+      "timed_out": false
+    },
+    "environment": {
+      "asset_catalog": {
+        "bytes": 1348214,
+        "sha256": "a832418e9d41b7090b9929569867d53b2be7274706ed2f4158bdb5f1c63db710"
+      },
+      "asset_summary": {
+        "candidate_files": 3269,
+        "distribution_coverage": [
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "cloudpickle",
+            "installed_regular_files_inspected": 9
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "contourpy",
+            "installed_regular_files_inspected": 26
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "cycler",
+            "installed_regular_files_inspected": 9
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "filelock",
+            "installed_regular_files_inspected": 30
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "fonttools",
+            "installed_regular_files_inspected": 375
+          },
+          {
+            "candidate_files": 14,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "GridDataFormats",
+            "installed_regular_files_inspected": 30
+          },
+          {
+            "candidate_files": 1,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "hypothesis",
+            "installed_regular_files_inspected": 118
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "iniconfig",
+            "installed_regular_files_inspected": 12
+          },
+          {
+            "candidate_files": 92,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "joblib",
+            "installed_regular_files_inspected": 143
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "kiwisolver",
+            "installed_regular_files_inspected": 12
+          },
+          {
+            "candidate_files": 112,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "matplotlib",
+            "installed_regular_files_inspected": 603
+          },
+          {
+            "candidate_files": 2,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "mda-xdrlib",
+            "installed_regular_files_inspected": 12
+          },
+          {
+            "candidate_files": 3,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "MDAnalysis",
+            "installed_regular_files_inspected": 474
+          },
+          {
+            "candidate_files": 724,
+            "dedicated_test_distribution_hint": true,
+            "distribution": "MDAnalysisTests",
+            "installed_regular_files_inspected": 724
+          },
+          {
+            "candidate_files": 2,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "mmtf-python",
+            "installed_regular_files_inspected": 29
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "mrcfile",
+            "installed_regular_files_inspected": 23
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "msgpack",
+            "installed_regular_files_inspected": 12
+          },
+          {
+            "candidate_files": 493,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "numpy",
+            "installed_regular_files_inspected": 928
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "packaging",
+            "installed_regular_files_inspected": 31
+          },
+          {
+            "candidate_files": 1143,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "pandas",
+            "installed_regular_files_inspected": 1560
+          },
+          {
+            "candidate_files": 2,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "pillow",
+            "installed_regular_files_inspected": 141
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "pluggy",
+            "installed_regular_files_inspected": 21
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "Pygments",
+            "installed_regular_files_inspected": 351
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "pyparsing",
+            "installed_regular_files_inspected": 25
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "pytest",
+            "installed_regular_files_inspected": 91
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "python-dateutil",
+            "installed_regular_files_inspected": 29
+          },
+          {
+            "candidate_files": 681,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "scipy",
+            "installed_regular_files_inspected": 1434
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "six",
+            "installed_regular_files_inspected": 8
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "sortedcontainers",
+            "installed_regular_files_inspected": 11
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "threadpoolctl",
+            "installed_regular_files_inspected": 7
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "tqdm",
+            "installed_regular_files_inspected": 41
+          },
+          {
+            "candidate_files": 0,
+            "dedicated_test_distribution_hint": false,
+            "distribution": "tzdata",
+            "installed_regular_files_inspected": 635
+          }
+        ],
+        "installed_files_inspected": 7954,
+        "priority_matches": [
+          {
+            "bytes": 2072,
+            "distribution": "MDAnalysis",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysis/tests/datafiles.py",
+            "sha256": "706e41d95260cf0c9a8c8122813e3b87a67a718e0d1d6659cba146106ac1edcb",
+            "source_import_group_matches": [],
+            "source_import_matches": [
+              "datafiles"
+            ]
+          },
+          {
+            "bytes": 21035,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/analysis/test_base.py",
+            "sha256": "ef558a509afc80d638d74167ab8304d6f02d5c909dd43c90c8ecaf20c807bccc",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 5555,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/analysis/test_bat.py",
+            "sha256": "7e41f9d5d343574406f16ca73154bec511754b308107bcab2e07c4bc926987b4",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 19101,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/analysis/test_contacts.py",
+            "sha256": "7b9df2a2a12abceb872b1313f946033ade34563cacb9d60cb5871efdc935be4f",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 42693,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/analysis/test_encore.py",
+            "sha256": "bb9cb2b732cdc61d7358e0674c1a406e8a1b6e30ad09c7f98a759053b590ef15",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 20095,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/analysis/test_helix_analysis.py",
+            "sha256": "2a31e9cb9565d647ec5be82b74845397017cdd5459863ef62aef96180af49228",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": [
+              "analysis"
+            ]
+          },
+          {
+            "bytes": 25244,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/analysis/test_hydrogenbonds_analysis.py",
+            "sha256": "ff037eded90fa3c8f4c01e7c4b2f312f9c6e18e27d98263bf013e5a90fea572e",
+            "source_import_group_matches": [],
+            "source_import_matches": [
+              "analysis"
+            ]
+          },
+          {
+            "bytes": 62911,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/analysis/test_msd.py",
+            "sha256": "58fc1e73a83808e03a549fee5cd039628389e8391ce69a170467b5177c2b17b7",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 12761,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/analysis/test_pca.py",
+            "sha256": "b04ab48d50d88b3bf931a922f36957e19e545370981734eb6249c32df6aabb10",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 21253,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/coordinates/test_chainreader.py",
+            "sha256": "efcfbd56d57b02cb2729ec17219dd6e37733ae96c5db4c5a042ad09d4798de31",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "CRD",
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 9934,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/coordinates/test_copying.py",
+            "sha256": "851513fcf0125bf30ebfc0c5dd59bfa89f9d3ed049c8f11ece54e7aef3330c38",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "CRD",
+                  "DCD"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 4915,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/coordinates/test_crd.py",
+            "sha256": "a466571d441a20a16d23025f734f1855a17f2c7e689ec561d517b516fe611dba",
+            "source_import_group_matches": [],
+            "source_import_matches": [
+              "crd"
+            ]
+          },
+          {
+            "bytes": 18542,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/coordinates/test_dcd.py",
+            "sha256": "90acaacab1b242a4cbd96fe15dd4ee00d26f8f0b57b482c6e862d483fd7690dc",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": [
+              "dcd"
+            ]
+          },
+          {
+            "bytes": 15073,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/coordinates/test_memory.py",
+            "sha256": "dbcffe36ddacc2fd0c8ef474075a675af451a8860f3856012a2637f523b377d4",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 51790,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/coordinates/test_pdb.py",
+            "sha256": "775fd1ee7bdfe49151f347420b30ae3eea296f97656239de2cfa62e4be7ad117",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "CRD",
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 25099,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/coordinates/test_timestep_api.py",
+            "sha256": "a11314952e8639e4f83e0b9af7e36c5f8a0bdff254af6fc09ad7ee61f1cbe439",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 11685,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/core/test_accumulate.py",
+            "sha256": "5e1ca463f9ca8404db86b9aaa9d5898d54ef9ec2d17719e831f75bda2c11fa74",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 4640,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/core/test_atom.py",
+            "sha256": "a009d5f63b7b4760ea1a0f275638a8c7f63ac314f017dd5611fb340762e0a630",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 71197,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/core/test_atomgroup.py",
+            "sha256": "b6dac3904b9a135ad366dbf9922a4b5421dee68357057e69a2975e4e5b94e69b",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 56022,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/core/test_atomselections.py",
+            "sha256": "d91baa0f0cd6634cfeb8daea71fcc3aef272be77b495eb28cc1653710840b9c4",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysis.tests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 6361,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/core/test_copying.py",
+            "sha256": "f357e85d89ab4d2b55796dcefb5aa0a88d6541b8bd8240849dacd186b6da2dbb",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 62905,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/core/test_groups.py",
+            "sha256": "763adfdb0b60cc8aead42696478d948a3b1f8c208c2d45b36eaa9dfe662bcfd8",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 1903,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/core/test_residue.py",
+            "sha256": "112be1c7054ec30d21b13e1aa441635440995c3afe344eccfc795245fc020472",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 11805,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/core/test_residuegroup.py",
+            "sha256": "4c0e6cebebf5cb5499953b9974df8b2f3cb0feaa6cddcb70efc58d70a76ae678",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 2467,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/core/test_segment.py",
+            "sha256": "1b29825f967bc64cda25e02fcd17a54518af00fac471fab667b4f30b90f072ce",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysis.tests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 3868,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/core/test_segmentgroup.py",
+            "sha256": "e4eb89b5361648066fd6f1c0760badab5fe8be6e635bd2d96c8eefab392647bf",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 24826,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/core/test_topologyattrs.py",
+            "sha256": "20cc19bc71ab85499729bc08ca0f5daefc31dda16a4e0fe915a83ed805104b3b",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 25583,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/core/test_topologyobjects.py",
+            "sha256": "4855654d2f430c8fd98e11895e35bfd729a199dd91c8a68a12087df4a5e6a432",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 68328,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/core/test_universe.py",
+            "sha256": "a30f70b558f6481351ed3effa7b30dad42bb53f3341226f24a94dd3536cc886d",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 282600,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/data/analysis/1k5i_c36.psf.gz",
+            "sha256": "8dfdf5d6187c6b5ff9d8c90d73a08aaf39ba580a5fb1c92e0b23b72349f84d74",
+            "source_import_group_matches": [],
+            "source_import_matches": [
+              "psf"
+            ]
+          },
+          {
+            "bytes": 66620,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/data/legacy_DCD_NAMD_coords.npy",
+            "sha256": "ad5121c40d153b9bc2bed579d5615594656fbe1e555d62eaa2b90d1df145d508",
+            "source_import_group_matches": [],
+            "source_import_matches": [
+              "dcd"
+            ]
+          },
+          {
+            "bytes": 80264,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/data/legacy_DCD_adk_coords.npy",
+            "sha256": "0e1326ce209fa7deda6c95760a952a6f1440b6ccb9dfdbf12981b055dcbb7ebb",
+            "source_import_group_matches": [],
+            "source_import_matches": [
+              "dcd"
+            ]
+          },
+          {
+            "bytes": 9080,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/data/legacy_DCD_c36_coords.npy",
+            "sha256": "5a6a83e32227c6712c4f6c20aea715c7a280f0961f301446d07d6d61923734aa",
+            "source_import_group_matches": [],
+            "source_import_matches": [
+              "dcd"
+            ]
+          },
+          {
+            "bytes": 574426,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/data/trz_psf.psf",
+            "sha256": "fd6eeea2a1764feb07d34d4df09da8b84cb257bd13332d0321e71671dd2943f7",
+            "source_import_group_matches": [],
+            "source_import_matches": [
+              "psf"
+            ]
+          },
+          {
+            "bytes": 39515,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/datafiles.py",
+            "sha256": "a188319f547006d023cb152186e3195a869506f79541dcc5986a0fb2f90e984b",
+            "source_import_group_matches": [],
+            "source_import_matches": [
+              "datafiles"
+            ]
+          },
+          {
+            "bytes": 20682,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/formats/test_libdcd.py",
+            "sha256": "73db523bd63591017c076a0d67164c489fd933a1023d478b1d992cae7c32e845",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 92026,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/lib/test_distances.py",
+            "sha256": "1fd693219571c1fb4a93e52a109df3c1c636f4c8aca35aa38d6780ba9ba47a7a",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysis.tests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 20186,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/lib/test_mdamath.py",
+            "sha256": "e98895f4e9ecf5e60274de662363ba6f267f0d777edf5c4f3ed4596a5659b30f",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 2335,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/lib/test_neighborsearch.py",
+            "sha256": "032a5ce00de3a943886539819c7a7ca4ab0bf72560ecd956a7c64356aaf7989d",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 2719,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/lib/test_qcprot.py",
+            "sha256": "707cd47cb36e42d7b3cd4d627041b11000a2122f758ab4d92c43758927746250",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 62721,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/lib/test_util.py",
+            "sha256": "651301ac8672bc79651cb9f35f1bc0390620acbbb57821a232c0768e555d85a2",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 7421,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/parallelism/test_multiprocessing.py",
+            "sha256": "e7f4afcf56e9a1caf1f77a124ce0e227bf9719a7083aba5974c33515bb248639",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "CRD",
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 2041,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/topology/test_crd.py",
+            "sha256": "51132e2aca082c155d9f95d997c3a55431b4598ddd0cb83b45e56de031285583",
+            "source_import_group_matches": [],
+            "source_import_matches": [
+              "crd"
+            ]
+          },
+          {
+            "bytes": 5275,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/topology/test_psf.py",
+            "sha256": "24c8b30a299971a5b633ae0236fb7d488971c0dae3e05f9eb15a00eff696b309",
+            "source_import_group_matches": [],
+            "source_import_matches": [
+              "psf"
+            ]
+          },
+          {
+            "bytes": 2528,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/topology/test_topology_str_types.py",
+            "sha256": "f5eaaa50f669cc1334922d9657a31f53c0b68f705e951201fd092e713ad9ee5c",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysis.tests.datafiles",
+                "members": [
+                  "CRD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 3543,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/transformations/test_base.py",
+            "sha256": "7da344850fa47c161af2e62b485a42d13b1a7ee2c4c0315fa3f6280a7f4a3645",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysisTests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 2553,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/utils/test_datafiles.py",
+            "sha256": "2a6457607d7dcf5c6f9869ad06d49b3b84cdf9c1808e612de26346248a3b84f2",
+            "source_import_group_matches": [],
+            "source_import_matches": [
+              "datafiles"
+            ]
+          },
+          {
+            "bytes": 11642,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/utils/test_modelling.py",
+            "sha256": "cc9df4f894ec34e07bdfbb828576c265fd687ba3d7efff155e8dab270c852e30",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysis.tests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 8123,
+            "distribution": "MDAnalysisTests",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "MDAnalysisTests/utils/test_selections.py",
+            "sha256": "091c77c781afb268a3edaf89b8fc3c23f74105d3ec30671fea47dc4039a75e4f",
+            "source_import_group_matches": [
+              {
+                "candidate_module": "MDAnalysis.tests.datafiles",
+                "members": [
+                  "DCD",
+                  "PSF"
+                ],
+                "source_module": "MDAnalysis.tests.datafiles"
+              }
+            ],
+            "source_import_matches": []
+          },
+          {
+            "bytes": 104370,
+            "distribution": "pandas",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "pandas/tests/io/json/test_pandas.py",
+            "sha256": "975865a336f2d08b786c9ddb9a9eb70c3dc6c3e89b92fdba370626902b020632",
+            "source_import_group_matches": [],
+            "source_import_matches": [
+              "pandas"
+            ]
+          },
+          {
+            "bytes": 10678,
+            "distribution": "scipy",
+            "eligible_for_declared_removal": true,
+            "matches": [],
+            "packaged_test_or_example": true,
+            "path": "scipy/stats/tests/test_sensitivity_analysis.py",
+            "sha256": "9cd17f07a665e58c66be9a48f1310f386ae80ec6e0c8b4c5ea30667491f6014c",
+            "source_import_group_matches": [],
+            "source_import_matches": [
+              "analysis"
+            ]
+          }
+        ],
+        "scope": "Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit.",
+        "source_import_terms": [
+          "analysis",
+          "crd",
+          "datafiles",
+          "dcd",
+          "mdanalysis",
+          "pandas",
+          "psf",
+          "rms"
+        ]
+      },
+      "asset_value_hints": {
+        "bytes": 15447,
+        "distance_is_not_grading_tolerance": true,
+        "finding_count": 0,
+        "scope": "Advisory magnitude matches in hash/size-verified Python files owned by the actual installed distribution and final CSV/TSV references. No package imports, scientific execution, network requests, removal or isolation verdict. Integer-valued constants, comments, strings, nonpriority files and other formats are gaps. Matches can be unrelated; absence is not approval.",
+        "sha256": "82e6d8c9c1c30ec78d4546a68c2e2bae94061c6e5655c42acba83b4767e8e18d",
+        "source": {
+          "asset_catalog_sha256": "a832418e9d41b7090b9929569867d53b2be7274706ed2f4158bdb5f1c63db710",
+          "reference_inventory_sha256": "6e8bbb3fdbf4e0c0a895f2ba448ac2c23f2ed0c72383cf75441fccce4d1da955"
+        }
+      },
+      "exclusions": {
+        "files": [
+          {
+            "distribution": "MDAnalysisTests",
+            "path": "MDAnalysisTests/analysis/test_align.py",
+            "reason": "Answer exposure: the literal constant 6.820321761927005 at line 262 is the expected AdK first-vs-last-frame backbone QCP RMSD on exactly the supplied inputs (assert_allclose rtol=0, atol=1.5e-5 against the same PSF/DCD), numerically identical to the final-frame (frame 97) backbone_rmsd_angstrom value 6.820321761026975 in the requested backbone_domain_rmsd.csv output (confirmed by the controller's installed_asset_value_hints finding and direct inspection of the read-only installed copy). Unused: the source and oracle only import MDAnalysis's analysis.rms API and the three staged data files (resolved via the tests.datafiles data-path module); nothing imports MDAnalysisTests.analysis.test_align, so removal does not affect any required computation, input loading or notice.",
+            "sha256": "7f5ae503ea618bc1fff96cb103341858c53438a1865111b9ff295479e29f6386"
+          },
+          {
+            "distribution": "MDAnalysisTests",
+            "path": "MDAnalysisTests/analysis/test_rms.py",
+            "reason": "Packaged test module containing hardcoded expected RMSD values computed from the exact same scientific inputs as this task (MDAnalysisTests PSF adk.psf + DCD adk_dims.dcd, loaded via MDAnalysis.tests.datafiles). Verified concrete answer overlap: the constant 4.68953 (assert_almost_equal, 4 decimals, for RMSD(universe, select='name CA', weights='mass') at frame 49) equals the exported rmsd_mass_weighted.csv 'C-alphas' value at frame 49 (4.689532149658401) from the passing reference run; the constant 4.6997 ('backbone' select, frame 49) equals the recoverable backbone-selection RMSD endpoint; further constants (4.74920, 4.7857, 1.9154, 2.7139, 6.820321761927005) are additional RMSD values on the same trajectory. The original analysis never imports this module (it only uses MDAnalysisTests/datafiles.py to resolve PSF/DCD/CRD paths), so removal does not affect execution.",
+            "sha256": "2ec2810df7ff0141dc5b14fb1b91b7b7f294ebafcd30fa58b901115de2f8f60e"
+          }
+        ]
+      },
+      "removal_receipt": {
+        "excluded_files_absent": true,
+        "files": [
+          {
+            "distribution": "MDAnalysisTests",
+            "path": "MDAnalysisTests/analysis/test_align.py",
+            "sha256": "7f5ae503ea618bc1fff96cb103341858c53438a1865111b9ff295479e29f6386"
+          },
+          {
+            "distribution": "MDAnalysisTests",
+            "path": "MDAnalysisTests/analysis/test_rms.py",
+            "sha256": "2ec2810df7ff0141dc5b14fb1b91b7b7f294ebafcd30fa58b901115de2f8f60e"
+          }
+        ]
+      }
+    },
+    "environment_removal_receipt": {
+      "excluded_files_absent": true,
+      "files": [
+        {
+          "distribution": "MDAnalysisTests",
+          "path": "MDAnalysisTests/analysis/test_align.py",
+          "sha256": "7f5ae503ea618bc1fff96cb103341858c53438a1865111b9ff295479e29f6386"
+        },
+        {
+          "distribution": "MDAnalysisTests",
+          "path": "MDAnalysisTests/analysis/test_rms.py",
+          "sha256": "2ec2810df7ff0141dc5b14fb1b91b7b7f294ebafcd30fa58b901115de2f8f60e"
+        }
+      ]
+    },
+    "inputs": [
+      {
+        "bytes": 237319,
+        "path": "reference_open.crd",
+        "sha256": "cd7f5e207a374af19b702b0f46aa554b729bca1d7db8cee2e4ff8dea00f78eb9"
+      },
+      {
+        "bytes": 931992,
+        "path": "structure.psf",
+        "sha256": "96cec916c4b5b19a7acb91bd1e672fb9c8b032aee1e7f0868a50655902c9b5b8"
+      },
+      {
+        "bytes": 3931724,
+        "path": "trajectory.dcd",
+        "sha256": "859a5bd9e7de45a0f2401f7971c5ffc296168e7c23f6f65382bde7c1686c19f1"
+      }
+    ],
+    "oracle": {
+      "exit_code": 0,
+      "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+      "role_process_cleanup_verified": true,
+      "stderr": "/work/venv/lib/python3.13/site-packages/MDAnalysis/coordinates/DCD.py:176: DeprecationWarning: DCDReader currently makes independent timesteps by copying self.ts while other readers update self.ts inplace. This behavior will be changed in 3.0 to be the same as other readers. Read more at https://github.com/MDAnalysis/mdanalysis/issues/3889 to learn if this change in behavior might affect you.\n  warnings.warn(\n",
+      "stdout": "",
+      "timed_out": false
+    },
+    "oracle_isolation": {
+      "exit_code": 0,
+      "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+      "role_process_cleanup_verified": true,
+      "stderr": "",
+      "stdout": "isolated\n",
+      "timed_out": false
+    },
+    "oracle_outputs": [
+      {
+        "bytes": 9380,
+        "path": "backbone_domain_rmsd.csv",
+        "sha256": "495b7fd7ebc3394666090b85b66b2538716db82868ee0a9190c9e625e37b63e6"
+      },
+      {
+        "bytes": 3953,
+        "path": "ca_core_rmsd.csv",
+        "sha256": "0fafa2559f6fbcc9e1ebdc8236b0bf3436e2142aa0eb000f93f45c411a9b42fe"
+      },
+      {
+        "bytes": 9400,
+        "path": "mass_weighted_rmsd.csv",
+        "sha256": "1364a2ff645caf523b805c155b4e4a576635bec3827488c2286ff7f26b224ad1"
+      },
+      {
+        "bytes": 49,
+        "path": "open_closed_backbone_rmsd.json",
+        "sha256": "9f6584f0914b47ccc6730942ee88b156e8a4e805f56a8d9a23bc7a1daae59d22"
+      },
+      {
+        "bytes": 9373,
+        "path": "resid_weighted_rmsd.csv",
+        "sha256": "ee7d440751f4e5cb929a95a90402acb118f1d50935d44181f0679a09acd08954"
+      }
+    ],
+    "reference": [
+      {
+        "bytes": 9380,
+        "path": "backbone_domain_rmsd.csv",
+        "sha256": "495b7fd7ebc3394666090b85b66b2538716db82868ee0a9190c9e625e37b63e6"
+      },
+      {
+        "bytes": 3953,
+        "path": "ca_core_rmsd.csv",
+        "sha256": "0fafa2559f6fbcc9e1ebdc8236b0bf3436e2142aa0eb000f93f45c411a9b42fe"
+      },
+      {
+        "bytes": 9400,
+        "path": "mass_weighted_rmsd.csv",
+        "sha256": "1364a2ff645caf523b805c155b4e4a576635bec3827488c2286ff7f26b224ad1"
+      },
+      {
+        "bytes": 49,
+        "path": "open_closed_backbone_rmsd.json",
+        "sha256": "9f6584f0914b47ccc6730942ee88b156e8a4e805f56a8d9a23bc7a1daae59d22"
+      },
+      {
+        "bytes": 9373,
+        "path": "resid_weighted_rmsd.csv",
+        "sha256": "ee7d440751f4e5cb929a95a90402acb118f1d50935d44181f0679a09acd08954"
+      }
+    ],
+    "status": "executed_requires_scientific_validation"
+  }
+}

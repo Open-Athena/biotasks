@@ -1,0 +1,323 @@
+{
+  "derive_code": "#!/usr/bin/env python3\n\"\"\"Stage inputs and build reference artifacts for the AdK RMSD task.\n\nEndpoints C, D, E are projected from the recorded reference exports\n(rmsd_calpha_core.csv, rmsd_mass_weighted.csv, rmsd_resid_weighted.csv):\nlabel-only projections (header renames, no numeric change) into the\nrequested schemas.\n\nEndpoints A and B were not exported by the notebook (A was an unassigned\nbare expression, B lived in variables later rebound) and are recovered here\nby re-running the unchanged original source computations on freshly\nconstructed Universes built from byte-identical copies of the same\nscientific data files the notebook resolves via MDAnalysis.tests.datafiles.\n\"\"\"\nimport argparse\nimport hashlib\nimport json\nimport os\nimport shutil\n\nimport pandas as pd\n\n\ndef sha256_file(path):\n    h = hashlib.sha256()\n    with open(path, 'rb') as fh:\n        for chunk in iter(lambda: fh.read(1 << 20), b''):\n            h.update(chunk)\n    return h.hexdigest()\n\n\ndef resolve_datafiles():\n    try:\n        from MDAnalysis.tests.datafiles import PSF, DCD, CRD\n        return PSF, DCD, CRD\n    except Exception:\n        from MDAnalysisTests.datafiles import PSF, DCD, CRD\n        return PSF, DCD, CRD\n\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument('--source-inputs', required=True)\n    ap.add_argument('--reference-dir', required=True)\n    ap.add_argument('--destination', required=True)\n    args = ap.parse_args()\n\n    inputs_dir = os.path.join(args.destination, 'inputs')\n    reference_dir = os.path.join(args.destination, 'reference')\n    os.makedirs(inputs_dir, exist_ok=True)\n    os.makedirs(reference_dir, exist_ok=True)\n\n    # --- stage the three scientific data files byte-for-byte ---\n    psf_src, dcd_src, crd_src = resolve_datafiles()\n    staged = {\n        'structure.psf': psf_src,\n        'trajectory.dcd': dcd_src,\n        'reference_open.crd': crd_src,\n    }\n    for name, src in staged.items():\n        shutil.copyfile(src, os.path.join(inputs_dir, name))\n        assert sha256_file(os.path.join(inputs_dir, name)) == sha256_file(src)\n\n    # --- label-only projections of C, D, E into the requested schemas ---\n    # Source: the recorded reference exports in --reference-dir (unchanged\n    # originals; read in place, not copied). Same source-computed quantities;\n    # only headers change: 'Frame' -> 'frame' (exact integers, 0.0 -> 0),\n    # 'Time (ns)' -> 'time_ps' (the notebook's header is a mislabel:\n    # MDAnalysis reports DCD time in ps; the values ~1, 2, ... ps), and\n    # payload columns renamed to the requested snake_case names.\n    # No numeric value is changed.\n    generic_tail = {'C-alphas': None, 'CORE': 'core_rmsd_angstrom',\n                    'LID': 'lid_rmsd_angstrom', 'NMP': 'nmp_rmsd_angstrom'}\n\n    def project(src_csv, first_map, out_csv):\n        df = pd.read_csv(src_csv)\n        ren = {'Frame': 'frame', 'Time (ns)': 'time_ps'}\n        ren.update(first_map)\n        df = df.rename(columns=ren)\n        df = df.rename(columns={k: v for k, v in generic_tail.items() if v})\n        df['frame'] = df['frame'].astype(int)\n        df.to_csv(out_csv, index=False)\n\n    project(os.path.join(args.reference_dir, 'rmsd_calpha_core.csv'),\n            {'CORE': 'ca_core_rmsd_angstrom'},\n            os.path.join(reference_dir, 'ca_core_rmsd.csv'))\n    project(os.path.join(args.reference_dir, 'rmsd_mass_weighted.csv'),\n            {'C-alphas': 'ca_mass_weighted_rmsd_angstrom'},\n            os.path.join(reference_dir, 'mass_weighted_rmsd.csv'))\n    project(os.path.join(args.reference_dir, 'rmsd_resid_weighted.csv'),\n            {'C-alphas': 'ca_resid_weighted_rmsd_angstrom'},\n            os.path.join(reference_dir, 'resid_weighted_rmsd.csv'))\n\n    # --- source-faithful recovery of endpoints A and B ---\n    import MDAnalysis as mda\n    from MDAnalysis.analysis import rms\n\n    psf = os.path.join(inputs_dir, 'structure.psf')\n    dcd = os.path.join(inputs_dir, 'trajectory.dcd')\n    crd = os.path.join(inputs_dir, 'reference_open.crd')\n\n    CORE = 'backbone and (resid 1-29 or resid 60-121 or resid 160-214)'\n    LID = 'backbone and resid 122-159'\n    NMP = 'backbone and resid 30-59'\n\n    # Endpoint A (original.py lines 92-95): unchanged call; u is freshly\n    # constructed from (PSF, DCD) and therefore rests at trajectory frame 0,\n    # exactly as in the notebook cell.\n    u = mda.Universe(psf, dcd)\n    ref_open = mda.Universe(psf, crd)\n    a_value = rms.rmsd(u.select_atoms('backbone').positions,\n                       ref_open.select_atoms('backbone').positions,\n                       center=True, superposition=True)\n    with open(os.path.join(reference_dir, 'open_closed_backbone_rmsd.json'), 'w') as fh:\n        json.dump({'value': float(a_value), 'unit': 'angstrom'}, fh)\n        fh.write('\\n')\n\n    # Endpoint B (original.py lines 107-112): unchanged call on a fresh Universe.\n    u_b = mda.Universe(psf, dcd)\n    R = rms.RMSD(u_b, u_b, select='backbone',\n                 groupselections=[CORE, LID, NMP], ref_frame=0)\n    R.run()\n    d = R.results.rmsd\n    pd.DataFrame({\n        'frame': d[:, 0].astype(int),\n        'time_ps': d[:, 1],\n        'backbone_rmsd_angstrom': d[:, 2],\n        'core_rmsd_angstrom': d[:, 3],\n        'lid_rmsd_angstrom': d[:, 4],\n        'nmp_rmsd_angstrom': d[:, 5],\n    }).to_csv(os.path.join(reference_dir, 'backbone_domain_rmsd.csv'), index=False)\n\n\nif __name__ == '__main__':\n    main()\n",
+  "disposition": "ready",
+  "environment_review": {
+    "additional_exclusions": [
+      {
+        "distribution": "MDAnalysisTests",
+        "path": "MDAnalysisTests/analysis/test_align.py",
+        "reason": "Answer exposure: the literal constant 6.820321761927005 at line 262 is the expected AdK first-vs-last-frame backbone QCP RMSD on exactly the supplied inputs (assert_allclose rtol=0, atol=1.5e-5 against the same PSF/DCD), numerically identical to the final-frame (frame 97) backbone_rmsd_angstrom value 6.820321761026975 in the requested backbone_domain_rmsd.csv output (confirmed by the controller's installed_asset_value_hints finding and direct inspection of the read-only installed copy). Unused: the source and oracle only import MDAnalysis's analysis.rms API and the three staged data files (resolved via the tests.datafiles data-path module); nothing imports MDAnalysisTests.analysis.test_align, so removal does not affect any required computation, input loading or notice.",
+        "sha256": "7f5ae503ea618bc1fff96cb103341858c53438a1865111b9ff295479e29f6386"
+      }
+    ],
+    "artifact_inventory_sha256": "f660555e7ee3af8d65d3437505c82e3306177b1b027380f9ab1d01ee373b2ca5",
+    "assessment": "The candidate executed cleanly: derivation staged the three byte-identical AdK data files (structure.psf, trajectory.dcd, reference_open.crd), projected endpoints C/D/E label-only from the recorded reference exports into the requested schemas, and source-faithfully recovered endpoints A (open_closed_backbone_rmsd.json, value 6.823686867261616 angstrom) and B (backbone_domain_rmsd.csv, 98 rows; final-frame backbone_rmsd_angstrom 6.820321761026975); the oracle reproduced all five outputs from the supplied inputs alone. Environment review against the post-execution inventory: both earlier answer-exposure removals are in effect (MDAnalysisTests/analysis/test_rms.py and, per this round's exclusion, MDAnalysisTests/analysis/test_align.py are absent from the installed tree; MDAnalysisTests is down to 724 inspected files). The refreshed advisory value-hint report lists zero findings, and I independently re-checked the environment: direct greps of site-packages for the recovered answer values (6.823686867261616, 6.820321761026975), the requested output filenames and the exported per-frame endpoint values found no other installed file containing any requested answer. Residual non-answer observations: MDAnalysis/tests/datafiles.py is the data-path module the source itself imports to load the three staged inputs (required, kept); the raw legacy_DCD_adk_coords.npy / legacy_DCD_NAMD_coords.npy fixtures cover different frame/atom subsets and encode no requested RMSD value; the JSON reference is flagged unsupported_format for literal scanning rather than being exposed. No required data, runtime code or notices were removed.",
+    "asset_catalog_sha256": "a832418e9d41b7090b9929569867d53b2be7274706ed2f4158bdb5f1c63db710"
+  },
+  "input_paths": [
+    "structure.psf",
+    "trajectory.dcd",
+    "reference_open.crd"
+  ],
+  "instruction": "# Quantifying adenylate kinase's open-to-closed transition with RMSD\n\n## Scientific question\n\nAdenylate kinase (AdK) transitions between a closed and an open conformation; its LID and NMP domains move around a comparatively stable CORE domain. Using the supplied topology, a trajectory that samples the closed-to-open transition, and a separate open-conformer coordinate set, quantify this motion with root-mean-square deviations (RMSD, in Angstrom) of atomic positions under several selection and weighting schemes.\n\nAdK's domains, restricted to **backbone atoms**, are defined by residue identifier:\n\n- CORE: `resid 1-29` or `resid 60-121` or `resid 160-214`\n- LID: `resid 122-159`\n- NMP: `resid 30-59`\n\nHere \"backbone\" means **the atoms named N, CA, C and O within recognized protein residues** (the standard MDAnalysis `backbone` selection). Terminal carboxyl oxygens are **not** part of the backbone for this analysis: the supplied topology's C-terminal residue (GLY 214) carries terminal oxygens named OT1 and OT2 and no atom named O, and those OT atoms are excluded from every backbone quantity below.\n\n## Supplied inputs\n\n- `inputs/structure.psf` \u2014 CHARMM PSF topology for AdK (defines atoms, masses, residue numbers, bonds; also the selection universe for both coordinate sets).\n- `inputs/trajectory.dcd` \u2014 DCD trajectory sampling the closed-to-open transition (98 frames). **Frame index 0** (a closed conformer) is the reference structure for all trajectory-based RMSD analyses below.\n- `inputs/reference_open.crd` \u2014 CHARMM coordinate file of the open conformer, read together with the same PSF topology.\n\n## Method\n\nFor every RMSD below, coordinates are optimally superimposed (translation + rotation minimizing the weighted RMSD, as in the QCP algorithm) before or as part of the deviation calculation, unless stated otherwise. A weighted RMSD uses weights normalized by the mean of the weights. All RMSD values are in Angstrom.\n\n### A. Single open-vs-closed backbone RMSD\n\nCompute the unweighted RMSD between the backbone atoms (N, CA, C, O; excluding OT atoms) of the trajectory's frame 0 (closed conformer) and the backbone atoms of the open reference structure (`inputs/reference_open.crd`), after centering each coordinate set at its center of geometry and optimally superimposing them. Report one value.\n\n### B. Backbone and per-domain RMSD vs. frame 0\n\nOver every frame of the trajectory, superimpose the full protein **backbone** onto the frame-0 backbone conformation (unweighted best fit). Record:\n\n1. the unweighted backbone RMSD of that fit;\n2. then, **without any further alignment**, the unweighted RMSD of the CORE, LID and NMP backbone groups (each computed on the coordinates after the backbone fit has been applied to all atoms, against the corresponding frame-0 reference coordinates).\n\nOne row per frame.\n\n### C. Alpha-carbon CORE RMSD vs. frame 0\n\nRestricting the analysis universe to the alpha-carbon (CA) atoms of the protein, superimpose on, and report the unweighted RMSD of, the CORE-domain CA atoms versus their frame-0 positions. One row per frame.\n\n### D. Mass-weighted RMSD\n\nOver every frame, superimpose and report the RMSD of the **protein CA atoms weighted by atomic mass** (mass-weighted fit and mass-weighted RMSD, reference frame 0). Then, without further alignment, report the RMSD of the CORE, LID and NMP backbone groups against their frame-0 coordinates with **each atom weighted by its atomic mass**. One row per frame.\n\n### E. Residue-number-weighted RMSD (custom-weighting variant)\n\nOver every frame, superimpose and report the RMSD of the protein CA atoms with each CA **weighted by its residue number** (reference frame 0). Then, without further alignment, report the RMSD of the CORE, LID and NMP backbone groups with each atom **weighted by its residue number**. One row per frame. (This weighting is a defined comparison of weighting schemes, not a conventional physical metric.)\n\n## Required outputs\n\nWrite the following files (UTF-8, comma-separated, header row exactly as given, one data row per trajectory frame **in trajectory frame order**, no index column; RMSD in Angstrom):\n\n1. `outputs/backbone_domain_rmsd.csv` (analysis B):\n   `frame,time_ps,backbone_rmsd_angstrom,core_rmsd_angstrom,lid_rmsd_angstrom,nmp_rmsd_angstrom`\n2. `outputs/ca_core_rmsd.csv` (analysis C):\n   `frame,time_ps,ca_core_rmsd_angstrom`\n3. `outputs/mass_weighted_rmsd.csv` (analysis D):\n   `frame,time_ps,ca_mass_weighted_rmsd_angstrom,core_rmsd_angstrom,lid_rmsd_angstrom,nmp_rmsd_angstrom`\n4. `outputs/resid_weighted_rmsd.csv` (analysis E):\n   `frame,time_ps,ca_resid_weighted_rmsd_angstrom,core_rmsd_angstrom,lid_rmsd_angstrom,nmp_rmsd_angstrom`\n5. `outputs/open_closed_backbone_rmsd.json` (analysis A): a JSON object\n   `{\"value\": <number>, \"unit\": \"angstrom\"}`\n\nCommon conventions: `frame` is the 0-based trajectory frame index. `time_ps` is the per-frame trajectory time in picoseconds; use your tool's reported trajectory time if it provides one, else `(frame + 1)` ps \u2014 the reader's timestep is approximately 1 ps and the first frame sits at t approximately 1 ps, so both agree to within float rounding. All frames of the trajectory are included; no frames are filtered, subsampled or interpolated.\n\n## Resources and software\n\nAny tool chain may be used provided the outputs satisfy the definitions above (an MDAnalysis-compatible environment can be supplied for convenience; it is not a requirement). The reference method semantics are those of the MDAnalysis `MDAnalysis.analysis.rms` module (QCP superposition; group-selection RMSDs computed without re-fitting after the primary fit; mass/residue-number weighting normalized by the mean weight; \"backbone\" = N, CA, C, O atoms of protein residues).\n\nExecution limits: offline, 4 CPUs, 8 GiB RAM, 10 GiB disk, 600 s wall clock.",
+  "operation_coverage": [
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-61-4"
+      ],
+      "rationale": "Universe(PSF, DCD) loads the closed-conformer trajectory universe whose coordinates feed every endpoint (A-D, E); input loading, not itself a requested output.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-62-6"
+      ],
+      "rationale": "Universe(PSF, CRD) loads the open-conformer reference used only by endpoint A.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [
+        "open_closed_backbone_rmsd.json"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-92-0"
+      ],
+      "rationale": "Endpoint A: the open-vs-closed unweighted backbone RMSD (geometry-centered, QCP-superposed). Unassigned in the notebook; recovered by re-running the identical call and emitted as the JSON requested output.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-92-9"
+      ],
+      "rationale": "Backbone selection of the closed trajectory frame 0 inside endpoint A's argument list.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-93-9"
+      ],
+      "rationale": "Backbone selection of the open CRD reference inside endpoint A's argument list.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [
+        "backbone_domain_rmsd.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-107-4"
+      ],
+      "rationale": "Endpoint B constructor: backbone fit to frame 0 with CORE/LID/NMP groupselections; its results array is the per-frame backbone+domain RMSD table. R was later rebound so the value was not exported; recovered by re-running the identical call.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-112-0"
+      ],
+      "rationale": "Executes the analysis defined by call-107-4; the scientific computation is attributed to the constructor call, not the runner.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-124-5"
+      ],
+      "rationale": "DataFrame construction over R.results.rmsd for endpoint B; tabulation/labeling of the computed values, no new scientific computation.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-131-5"
+      ],
+      "rationale": "Line plot of endpoint B's table; visualization only.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-133-0"
+      ],
+      "rationale": "Plot y-axis label.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-147-5"
+      ],
+      "rationale": "Selects the CA AtomGroup that bounds the endpoint-C analysis universe.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [
+        "ca_core_rmsd.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-149-4"
+      ],
+      "rationale": "Endpoint C: alpha-carbon CORE RMSD of the trajectory vs frame 0; exported by the notebook as rmsd_calpha_core.csv and projected into the requested schema.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-150-0"
+      ],
+      "rationale": "Executes the analysis defined by call-149-4.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-152-5"
+      ],
+      "rationale": "DataFrame construction over the endpoint-C results array; tabulation only.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-156-5"
+      ],
+      "rationale": "Line plot of endpoint C's table.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-157-0"
+      ],
+      "rationale": "Plot y-axis label.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [
+        "mass_weighted_rmsd.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-167-9"
+      ],
+      "rationale": "Endpoint D: mass-weighted CA RMSD with mass-weighted CORE/LID/NMP groupselections (weights propagate to groupselections per rms.py 691-711); exported as rmsd_mass_weighted.csv and projected into the requested schema.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-171-0"
+      ],
+      "rationale": "Executes the analysis defined by call-167-9.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-175-10"
+      ],
+      "rationale": "DataFrame construction over the endpoint-D results array; tabulation only.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-180-10"
+      ],
+      "rationale": "Line plot of endpoint D's table.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-182-0"
+      ],
+      "rationale": "Plot y-axis label.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-190-5"
+      ],
+      "rationale": "Selects the CA AtomGroup ag whose resids supply the endpoint-E primary weights.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-191-0"
+      ],
+      "rationale": "Diagnostic print of the C-alpha charge array shape; no requested output.",
+      "role": "diagnostic"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-192-7"
+      ],
+      "rationale": "Selects the CORE backbone group whose resids supply endpoint-E groupselection weights.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-193-6"
+      ],
+      "rationale": "Selects the LID backbone group whose resids supply endpoint-E groupselection weights.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-194-6"
+      ],
+      "rationale": "Selects the NMP backbone group whose resids supply endpoint-E groupselection weights.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [
+        "resid_weighted_rmsd.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-198-11"
+      ],
+      "rationale": "Endpoint E: residue-number-weighted CA RMSD with resid-weighted CORE/LID/NMP groupselections; exported as rmsd_resid_weighted.csv and projected into the requested schema.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-205-0"
+      ],
+      "rationale": "Executes the analysis defined by call-198-11.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-211-12"
+      ],
+      "rationale": "DataFrame construction over the endpoint-E results array; tabulation only.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-216-12"
+      ],
+      "rationale": "Line plot of endpoint E's table.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-218-0"
+      ],
+      "rationale": "Plot y-axis label.",
+      "role": "presentation"
+    }
+  ],
+  "oracle_code": "#!/usr/bin/env python3\n\"\"\"Solve the AdK RMSD task from the supplied inputs only.\"\"\"\nimport argparse\nimport json\nimport os\n\nimport MDAnalysis as mda\nfrom MDAnalysis.analysis import rms\nimport pandas as pd\n\nCORE = ('backbone and (resid 1-29 or resid 60-121 or resid 160-214)')\nLID = 'backbone and resid 122-159'\nNMP = 'backbone and resid 30-59'\n\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument('--input-dir', required=True)\n    ap.add_argument('--output-dir', required=True)\n    args = ap.parse_args()\n    inp = args.input_dir\n    out = args.output_dir\n    os.makedirs(out, exist_ok=True)\n\n    psf = os.path.join(inp, 'structure.psf')\n    dcd = os.path.join(inp, 'trajectory.dcd')\n    crd = os.path.join(inp, 'reference_open.crd')\n\n    u = mda.Universe(psf, dcd)\n    u_ref_open = mda.Universe(psf, crd)\n\n    # A. single open-vs-closed backbone RMSD (u rests at frame 0)\n    a_value = rms.rmsd(u.select_atoms('backbone').positions,\n                       u_ref_open.select_atoms('backbone').positions,\n                       center=True, superposition=True)\n    with open(os.path.join(out, 'open_closed_backbone_rmsd.json'), 'w') as fh:\n        json.dump({'value': float(a_value), 'unit': 'angstrom'}, fh)\n        fh.write('\\n')\n\n    # B. backbone + per-domain RMSD vs frame 0\n    R = rms.RMSD(u, u, select='backbone',\n                 groupselections=[CORE, LID, NMP], ref_frame=0)\n    R.run()\n    d = R.results.rmsd\n    pd.DataFrame({\n        'frame': d[:, 0].astype(int),\n        'time_ps': d[:, 1],\n        'backbone_rmsd_angstrom': d[:, 2],\n        'core_rmsd_angstrom': d[:, 3],\n        'lid_rmsd_angstrom': d[:, 4],\n        'nmp_rmsd_angstrom': d[:, 5],\n    }).to_csv(os.path.join(out, 'backbone_domain_rmsd.csv'), index=False)\n\n    # C. alpha-carbon CORE RMSD vs frame 0\n    ca = u.select_atoms('name CA')\n    Rc = rms.RMSD(ca, ca, select=CORE, ref_frame=0)\n    Rc.run()\n    d = Rc.results.rmsd\n    pd.DataFrame({\n        'frame': d[:, 0].astype(int),\n        'time_ps': d[:, 1],\n        'ca_core_rmsd_angstrom': d[:, 2],\n    }).to_csv(os.path.join(out, 'ca_core_rmsd.csv'), index=False)\n\n    # D. mass-weighted RMSD\n    Rm = rms.RMSD(u, u, select='protein and name CA', weights='mass',\n                  groupselections=[CORE, LID, NMP])\n    Rm.run()\n    d = Rm.results.rmsd\n    pd.DataFrame({\n        'frame': d[:, 0].astype(int),\n        'time_ps': d[:, 1],\n        'ca_mass_weighted_rmsd_angstrom': d[:, 2],\n        'core_rmsd_angstrom': d[:, 3],\n        'lid_rmsd_angstrom': d[:, 4],\n        'nmp_rmsd_angstrom': d[:, 5],\n    }).to_csv(os.path.join(out, 'mass_weighted_rmsd.csv'), index=False)\n\n    # E. residue-number-weighted RMSD\n    ag = u.select_atoms('protein and name CA')\n    core = u.select_atoms(CORE)\n    lid = u.select_atoms(LID)\n    nmp = u.select_atoms(NMP)\n    Re = rms.RMSD(u, u, select='protein and name CA',\n                  groupselections=[CORE, LID, NMP],\n                  weights=ag.resids,\n                  weights_groupselections=[core.resids, lid.resids, nmp.resids])\n    Re.run()\n    d = Re.results.rmsd\n    pd.DataFrame({\n        'frame': d[:, 0].astype(int),\n        'time_ps': d[:, 1],\n        'ca_resid_weighted_rmsd_angstrom': d[:, 2],\n        'core_rmsd_angstrom': d[:, 3],\n        'lid_rmsd_angstrom': d[:, 4],\n        'nmp_rmsd_angstrom': d[:, 5],\n    }).to_csv(os.path.join(out, 'resid_weighted_rmsd.csv'), index=False)\n\n\nif __name__ == '__main__':\n    main()\n",
+  "output_paths": [
+    "backbone_domain_rmsd.csv",
+    "ca_core_rmsd.csv",
+    "mass_weighted_rmsd.csv",
+    "resid_weighted_rmsd.csv",
+    "open_closed_backbone_rmsd.json"
+  ],
+  "rationale": "Scope: all five scientific endpoints of the source notebook are retained in one task. (A) open-vs-closed single backbone RMSD (original.py:92-95); (B) per-frame backbone + CORE/LID/NMP domain RMSD vs frame 0 (107-112); (C) alpha-carbon CORE RMSD vs frame 0 (147-152); (D) mass-weighted CA + domain RMSD (167-171); (E) residue-number-weighted CA + domain RMSD (198-205). Plotting calls, the charges-shape print and Universe loading are excluded from outputs as presentation/diagnostic/support.\n\nInputs: the source resolves its three data files (adk.psf, adk_dims.dcd, adk_open.crd) from MDAnalysis.tests.datafiles; the original_inputs manifest is empty because these files are package data, not standalone originals. derive_code resolves them exactly as the source does (MDAnalysis.tests.datafiles, falling back to MDAnalysisTests.datafiles) and copies them byte-for-byte (verified equal sha256 in provenance.json) into destination/inputs/ as structure.psf, trajectory.dcd, reference_open.crd.\n\nReference construction: the recorded exports for C, D, E are retained unchanged under destination/reference/source_exports/. Label-only projections into the requested schemas are written separately (reference/ca_core_rmsd.csv, mass_weighted_rmsd.csv, resid_weighted_rmsd.csv). The projection only renames headers: 'Frame'->'frame' (integers), 'Time (ns)'->'time_ps', payload columns to the requested snake_case names; no numeric value changes. The notebook's \"Time (ns)\" header is a false unit label \u2014 MDAnalysis reports DCD time in ps and the values are approximately 1, 2, ... ps \u2014 so the requested time_ps column carries the same source-computed quantity with an accurate unit label, as the private review verified.\n\nRecovery (policy endpoint_recovery): A (bare unassigned expression) and B (R and df later rebound) do not exist in any export. derive_code re-runs the unchanged original calls on freshly constructed Universes from the staged byte-identical inputs with the source's required initial state (u freshly loaded rests at frame 0), writing reference/open_closed_backbone_rmsd.json and reference/backbone_domain_rmsd.csv, with source locations, methods and lineage recorded in reference/provenance.json. The recorded reference exports remain untouched.\n\nBackbone definition: the brief defines backbone as atoms named N, CA, C, O in protein residues; the pinned MDAnalysis 2.11.0 BackboneSelection excludes OT* on C-termini and the supplied PSF's GLY 214 ends in OT1/OT2 with no atom O, so the OT atoms are excluded from every backbone quantity \u2014 verified against source in the review and kept explicit in the public question.\n\nMass-weight propagation: the notebook narrative claims groupselections \"remain unweighted\" for D, but the executed behavior propagates weights='mass' to all groupselections (rms.py:691-711 in MDAnalysis 2.11.0). The public contract states the executed behavior; the oracle follows it.\n\nLeakage and environment: MDAnalysis 2.11.0 (MDAnalysisTests 2.11.0) is installed. MDAnalysisTests/analysis/test_rms.py was already excluded in the verified construction environment (declared sha256-matched removal). MDAnalysisTests/analysis/test_align.py contains the constant 6.820321761927005, which a prior review identified as equal to endpoint B's final-frame backbone RMSD; the staged solver inputs are only the three data files, so any MDAnalysisTests test modules in the final environment that expose requested answers must be declared as additional exclusions in environment_review once the executed inventory and asset catalog are observed. The three data files themselves are the required inputs and remain. The legacy DCD .npy coordinate fixtures cover different frame/atom subsets and are not answer tables.\n\nOracle: uses only the installed MDAnalysis/pandas and destination/inputs; it recomputes every endpoint with the source semantics (QCP superposition, groupselections computed after the primary fit without re-fitting, mean-normalized weights, RMSD results array's frame/time columns for frame and time_ps). No embedded answers, no reference access.\n\nRemaining comparison questions (left to validation): tolerance calibration for QCP float64 over float32 coordinates, near-zero frame-0 self-RMSD values (~1e-7/1e-8), and the ~1e-6 relative time-column float32 drift; behavior of mass propagation on other solver-eligible MDAnalysis versions (the public contract fixes the semantics, not the package)."
+}

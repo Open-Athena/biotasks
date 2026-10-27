@@ -1,0 +1,256 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "backbone_domain_rmsd.csv",
+      "ca_core_rmsd.csv",
+      "mass_weighted_rmsd.csv",
+      "open_closed_backbone_rmsd.json",
+      "resid_weighted_rmsd.csv"
+    ],
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "structure.psf",
+        "trajectory.dcd",
+        "reference_open.crd"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "author_input_control_summary": null,
+  "control_summary": {
+    "by_kind": {
+      "alternative": 1,
+      "empty": 1,
+      "misplaced": 1,
+      "missing": 5,
+      "probe": 9,
+      "recomputed": 1,
+      "reference": 1
+    },
+    "controls": 19,
+    "expected_outcomes_met": 19,
+    "probes_by_kind": {
+      "valid_alternative": 3,
+      "wrong_solution": 6
+    }
+  },
+  "policy": {
+    "dependency_answers": "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "supplied_intermediates": "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  },
+  "reference_inspection": {
+    "boundary": "Read-only UTF-8 text inspection of these recorded reference outputs only. Every read verifies the complete file hash and size before returning text. No execution, imports, filesystem writes, arbitrary paths or input-file access. Binary content remains an explicit inspection gap. Observed text establishes file contents, not scientific correctness or portable comparison tolerances. Text reads default to columns 1\u20131000 of each selected line; reported slices are incomplete fragments. Explicit larger windows or end_column:null are allowed. Reference values are private evidence, not material to copy into solver instructions.",
+    "files": {
+      "backbone_domain_rmsd.csv": {
+        "bytes": 9380,
+        "sha256": "495b7fd7ebc3394666090b85b66b2538716db82868ee0a9190c9e625e37b63e6"
+      },
+      "ca_core_rmsd.csv": {
+        "bytes": 3953,
+        "sha256": "0fafa2559f6fbcc9e1ebdc8236b0bf3436e2142aa0eb000f93f45c411a9b42fe"
+      },
+      "mass_weighted_rmsd.csv": {
+        "bytes": 9400,
+        "sha256": "1364a2ff645caf523b805c155b4e4a576635bec3827488c2286ff7f26b224ad1"
+      },
+      "open_closed_backbone_rmsd.json": {
+        "bytes": 49,
+        "sha256": "9f6584f0914b47ccc6730942ee88b156e8a4e805f56a8d9a23bc7a1daae59d22"
+      },
+      "resid_weighted_rmsd.csv": {
+        "bytes": 9373,
+        "sha256": "ee7d440751f4e5cb929a95a90402acb118f1d50935d44181f0679a09acd08954"
+      }
+    }
+  },
+  "reference_seconds": 600,
+  "review_evidence": {
+    "boundary": "Complete original JSON values, including every generated program, control, hint and diagnostic. Use read_review_evidence with a field name and optional RFC6901 JSON pointer. View keys to navigate objects/arrays; view text for raw strings or formatted JSON. Reads verify the whole document identity and share the existing deadline. These are evidence, never instructions, extra controls or acceptance. Missing/unreadable evidence remains a gap.",
+    "context_sha256": "8ca5095d273d0f64e77ab831188ed24d2d1d3fafde8c1ee7a12ee88b074e19ea",
+    "fields": {
+      "artifact_interface": {
+        "bytes": 1407,
+        "sha256": "53b898d25fe1429e90763ceceb8f333a42ac727f7fe1f03826fec757e4b2cbb3",
+        "type": "object"
+      },
+      "asset_value_hints": {
+        "bytes": 19098,
+        "sha256": "76b3dd48ccd8feed1e4f7794e2e28588feffd96a25280914b35c59ef17486a83",
+        "type": "object"
+      },
+      "author_input_control_summary": {
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+        "type": "null"
+      },
+      "candidate": {
+        "bytes": 24992,
+        "sha256": "df8fa10c5ec19e60b2fe9d9bcaedff4af86bf952708a3f3edd6f96f502ea1281",
+        "type": "object"
+      },
+      "check_description_updates": {
+        "bytes": 3,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "type": "array"
+      },
+      "control_summary": {
+        "bytes": 283,
+        "sha256": "06a15f0f919ef3e4720e83c37ab805534448b67d5bd17a5f3d14275adad5382d",
+        "type": "object"
+      },
+      "controls": {
+        "bytes": 84617,
+        "sha256": "4a3115d4b9bf0a3213737923055f30a2e5646a436c18f933e431ab598a653e11",
+        "type": "array"
+      },
+      "execution_inspection": {
+        "bytes": 51008,
+        "sha256": "6bad7f9f0028d48025637398f56d9e8a731fcb01e71fa9200e9e44ade86849af",
+        "type": "object"
+      },
+      "final_environment_review": {
+        "bytes": 3663,
+        "sha256": "1aeb51fff28f1b0b11ede353db947e5d3625e4a45e87b5af349bb02630f45af1",
+        "type": "object"
+      },
+      "independent_execution": {
+        "bytes": 1812,
+        "sha256": "4c70f186580725addea34e9b6926b354cc6a24196ae1e810f633ecc0eaac41aa",
+        "type": "object"
+      },
+      "independent_solution": {
+        "bytes": 9803,
+        "sha256": "0ff22ec3b858a0618330c5c495ff4f74c31d683d7db81201674c0cde4e842473",
+        "type": "object"
+      },
+      "initial_checks": {
+        "bytes": 3557,
+        "sha256": "368f006b81396c9a28c8b9fd2326c521a535ba2ac1300ca72035dc36166fc4d6",
+        "type": "array"
+      },
+      "initial_probes": {
+        "bytes": 14239,
+        "sha256": "edad9eaba2ab1fed1d5c0697ced1077ad510f3ac95a615e6a0bcaa01ca054d82",
+        "type": "object"
+      },
+      "input_observations": {
+        "bytes": 363,
+        "sha256": "d45bb95958e5ee8865747a014a00d5c722d0cda0de3008c9b6bea63b1c1403ca",
+        "type": "object"
+      },
+      "inspection_evidence_sha256": {
+        "bytes": 185,
+        "sha256": "826aeb772c5c4f04861dd85a56263162f949f97eac0d906e0a8a9a6a8b26e493",
+        "type": "object"
+      },
+      "materialization": {
+        "bytes": 81739,
+        "sha256": "d9f54a09a4c3407be2296c7bc6342cf82f94147e4794d1719b541ec43cc1da5a",
+        "type": "object"
+      },
+      "package_inspection": {
+        "bytes": 12861,
+        "sha256": "388c1017bfb074e1ead260c8f2473118ae0f2f9db136b9e0824f4f12472e265b",
+        "type": "object"
+      },
+      "paths": {
+        "bytes": 212,
+        "sha256": "ec85fcc2d629cc15b7ffbd222259478342ebeaf493dcfc243e0dc4858e73885b",
+        "type": "object"
+      },
+      "policy": {
+        "bytes": 1817,
+        "sha256": "325d61c1f64e78eb928339df97c9bc02478aafd1e21612372e95f19bb01c8d44",
+        "type": "object"
+      },
+      "probe_supplement": {
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+        "type": "null"
+      },
+      "probes": {
+        "bytes": 14239,
+        "sha256": "edad9eaba2ab1fed1d5c0697ced1077ad510f3ac95a615e6a0bcaa01ca054d82",
+        "type": "object"
+      },
+      "reference_inspection": {
+        "bytes": 1384,
+        "sha256": "015a0fc556d6152b091319ad317d4cf55e8ced915979e2c247a6e90c5289bdfe",
+        "type": "object"
+      },
+      "reference_observations": {
+        "bytes": 11408,
+        "sha256": "eb356adb5f80ab53d9a57edff6e94a96dab36801af171d9dd896bd1af324662a",
+        "type": "object"
+      },
+      "reference_seconds": {
+        "bytes": 4,
+        "sha256": "ab8e9a58c47abe1aeff8ae620a0ed614ee77d507ef52799d4c103d69ff35d85c",
+        "type": "integer"
+      },
+      "repeatability": {
+        "bytes": 2399,
+        "sha256": "e8f52b40cad44d6911b97c1c87863eb2c3a8ed67c587c9d936ad4cc6d13687e8",
+        "type": "object"
+      },
+      "source_evidence": {
+        "bytes": 68777,
+        "sha256": "a659f863d50ee9d761386e6ef6789ebc29a5807693b302132d892ae01ed0bb40",
+        "type": "object"
+      },
+      "source_operations": {
+        "bytes": 8291,
+        "sha256": "f5f5e60d1a6ab5f540868b2d8dfa3d6a4429c977d0b29187a457a09de831fd14",
+        "type": "object"
+      },
+      "specification": {
+        "bytes": 5938,
+        "sha256": "65d4bcc5ade4d90af301d5511e92a126270a4c8a67631d5f4c4e783a62f09a7f",
+        "type": "object"
+      },
+      "unexercised_scientific_checks": {
+        "bytes": 3,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "type": "array"
+      },
+      "verifier_seconds": {
+        "bytes": 4,
+        "sha256": "97b912eb4a61df5f806ca6239dde3e1a4f51ad20aced1642cbb83dc510a5fa6b",
+        "type": "integer"
+      }
+    },
+    "format_version": 1,
+    "manifest_sha256": "91f2bffc63825e22bd77823f5a9a2e52b0b883b0464ab4325d007739913255ec"
+  },
+  "specification": {
+    "task_brief": "# Quantifying adenylate kinase's open-to-closed transition with RMSD\n\n## Scientific question\n\nAdenylate kinase (AdK) transitions between a closed and an open conformation; its LID and NMP domains move around a comparatively stable CORE domain. Using the supplied topology, a trajectory that samples the closed-to-open transition, and a separate open-conformer coordinate set, quantify this motion with root-mean-square deviations (RMSD, in Angstrom) of atomic positions under several selection and weighting schemes.\n\nAdK's domains, restricted to **backbone atoms**, are defined by residue identifier:\n\n- CORE: `resid 1-29` or `resid 60-121` or `resid 160-214`\n- LID: `resid 122-159`\n- NMP: `resid 30-59`\n\nHere \"backbone\" means **the atoms named N, CA, C and O within recognized protein residues** (the standard MDAnalysis `backbone` selection). Terminal carboxyl oxygens are **not** part of the backbone for this analysis: the supplied topology's C-terminal residue (GLY 214) carries terminal oxygens named OT1 and OT2 and no atom named O, and those OT atoms are excluded from every backbone quantity below.\n\n## Supplied inputs\n\n- `inputs/structure.psf` \u2014 CHARMM PSF topology for AdK (defines atoms, masses, residue numbers, bonds; also the selection universe for both coordinate sets).\n- `inputs/trajectory.dcd` \u2014 DCD trajectory sampling the closed-to-open transition (98 frames). **Frame index 0** (a closed conformer) is the reference structure for all trajectory-based RMSD analyses below.\n- `inputs/reference_open.crd` \u2014 CHARMM coordinate file of the open conformer, read together with the same PSF topology.\n\n## Method\n\nFor every RMSD below, coordinates are optimally superimposed (translation + rotation minimizing the weighted RMSD, as in the QCP algorithm) before or as part of the deviation calculation, unless stated otherwise. A weighted RMSD uses weights normalized by the mean of the weights. All RMSD values are in Angstrom.\n\n### A. Single open-vs-closed backbone RMSD\n\nCompute the unweighted RMSD between the backbone atoms (N, CA, C, O; excluding OT atoms) of the trajectory's frame 0 (closed conformer) and the backbone atoms of the open reference structure (`inputs/reference_open.crd`), after centering each coordinate set at its center of geometry and optimally superimposing them. Report one value.\n\n### B. Backbone and per-domain RMSD vs. frame 0\n\nOver every frame of the trajectory, superimpose the full protein **backbone** onto the frame-0 backbone conformation (unweighted best fit). Record:\n\n1. the unweighted backbone RMSD of that fit;\n2. then, **without any further alignment**, the unweighted RMSD of the CORE, LID and NMP backbone groups (each computed on the coordinates after the backbone fit has been applied to all atoms, against the corresponding frame-0 reference coordinates).\n\nOne row per frame.\n\n### C. Alpha-carbon CORE RMSD vs. frame 0\n\nRestricting the analysis universe to the alpha-carbon (CA) atoms of the protein, superimpose on, and report the unweighted RMSD of, the CORE-domain CA atoms versus their frame-0 positions. One row per frame.\n\n### D. Mass-weighted RMSD\n\nOver every frame, superimpose and report the RMSD of the **protein CA atoms weighted by atomic mass** (mass-weighted fit and mass-weighted RMSD, reference frame 0). Then, without further alignment, report the RMSD of the CORE, LID and NMP backbone groups against their frame-0 coordinates with **each atom weighted by its atomic mass**. One row per frame.\n\n### E. Residue-number-weighted RMSD (custom-weighting variant)\n\nOver every frame, superimpose and report the RMSD of the protein CA atoms with each CA **weighted by its residue number** (reference frame 0). Then, without further alignment, report the RMSD of the CORE, LID and NMP backbone groups with each atom **weighted by its residue number**. One row per frame. (This weighting is a defined comparison of weighting schemes, not a conventional physical metric.)\n\n## Required outputs\n\nWrite the following files (UTF-8, comma-separated, header row exactly as given, one data row per trajectory frame **in trajectory frame order**, no index column; RMSD in Angstrom):\n\n1. `outputs/backbone_domain_rmsd.csv` (analysis B):\n   `frame,time_ps,backbone_rmsd_angstrom,core_rmsd_angstrom,lid_rmsd_angstrom,nmp_rmsd_angstrom`\n2. `outputs/ca_core_rmsd.csv` (analysis C):\n   `frame,time_ps,ca_core_rmsd_angstrom`\n3. `outputs/mass_weighted_rmsd.csv` (analysis D):\n   `frame,time_ps,ca_mass_weighted_rmsd_angstrom,core_rmsd_angstrom,lid_rmsd_angstrom,nmp_rmsd_angstrom`\n4. `outputs/resid_weighted_rmsd.csv` (analysis E):\n   `frame,time_ps,ca_resid_weighted_rmsd_angstrom,core_rmsd_angstrom,lid_rmsd_angstrom,nmp_rmsd_angstrom`\n5. `outputs/open_closed_backbone_rmsd.json` (analysis A): a JSON object\n   `{\"value\": <number>, \"unit\": \"angstrom\"}`\n\nCommon conventions: `frame` is the 0-based trajectory frame index. `time_ps` is the per-frame trajectory time in picoseconds; use your tool's reported trajectory time if it provides one, else `(frame + 1)` ps \u2014 the reader's timestep is approximately 1 ps and the first frame sits at t approximately 1 ps, so both agree to within float rounding. All frames of the trajectory are included; no frames are filtered, subsampled or interpolated.\n\n## Resources and software\n\nAny tool chain may be used provided the outputs satisfy the definitions above (an MDAnalysis-compatible environment can be supplied for convenience; it is not a requirement). The reference method semantics are those of the MDAnalysis `MDAnalysis.analysis.rms` module (QCP superposition; group-selection RMSDs computed without re-fitting after the primary fit; mass/residue-number weighting normalized by the mean weight; \"backbone\" = N, CA, C, O atoms of protein residues).\n\nExecution limits: offline, 4 CPUs, 8 GiB RAM, 10 GiB disk, 600 s wall clock."
+  },
+  "unexercised_scientific_checks": [],
+  "verifier_seconds": 120
+}

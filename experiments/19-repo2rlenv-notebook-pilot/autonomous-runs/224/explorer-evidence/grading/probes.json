@@ -1,0 +1,177 @@
+{
+  "concerns": [],
+  "disposition": "ready",
+  "probes": [
+    {
+      "check_ids": [
+        "analysis_a_open_closed_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "open_closed_backbone_rmsd.json",
+          "quote": "{\"value\": 6.823686867261616, \"unit\": \"angstrom\"}"
+        },
+        {
+          "path": "backbone_domain_rmsd.csv",
+          "quote": "97,97.99999136816182,6.820321761026975,3.507119391295211,11.384735982399015,10.368205773613319"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "json-value-close-trajectory-rmsd",
+      "rationale": "Attempts analysis A with a wrong value: replaces the open-vs-closed reference RMSD with the final trajectory backbone RMSD (6.820321761026975), an unambiguously different quantity (difference ~0.0034, far above the 1e-6+1e-6*r tolerance). The JSON object still contains exactly the keys value/unit with unit \"angstrom\" and a finite non-negative number, and no other file is changed, so only the analysis_a scientific comparison can reject it.",
+      "script": "import json, io\n\np = \"open_closed_backbone_rmsd.json\"\nwith io.open(p, \"r\", encoding=\"utf-8\") as f:\n    obj = json.load(f)\nbound = 1e-6 + 1e-6 * abs(obj[\"value\"])\nwith io.open(p, \"w\", encoding=\"utf-8\") as f:\n    f.write(json.dumps({\"value\": 6.820321761026975, \"unit\": \"angstrom\"}))\nassert obj[\"unit\"] == \"angstrom\"\nassert abs(6.820321761026975 - obj[\"value\"]) > bound\n"
+    },
+    {
+      "check_ids": [
+        "analysis_b_backbone_domain_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "ca_core_rmsd.csv",
+          "quote": "1,1.9999998238400372,0.40756080970089986"
+        },
+        {
+          "path": "backbone_domain_rmsd.csv",
+          "quote": "1,1.9999998238400372,0.46365921745665056,0.4550181433046967,0.4871914516599885,0.4745572261841976"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "backbone-core-vs-ca-core",
+      "rationale": "Attempts analysis B with a CORE selection error: the CORE-domain backbone RMSD column is replaced by the CORE alpha-carbon RMSD from analysis C (CA-only selection instead of the N,CA,C,O backbone). Per-frame differences are at least ~0.047 A (frames>=1), far above 1e-6+1e-6*r, while header, row count, frame alignment and time_ps remain valid, so only the analysis_b scientific comparison fails.",
+      "script": "import csv\npB = \"backbone_domain_rmsd.csv\"\npC = \"ca_core_rmsd.csv\"\nwith open(pC, \"r\", newline=\"\") as f:\n    r = list(csv.reader(f))\nassert r[0] == [\"frame\", \"time_ps\", \"ca_core_rmsd_angstrom\"]\nassert [row[0] for row in r[1:]] == [str(i) for i in range(98)]\nca_by_frame = {row[0]: row[2] for row in r[1:]}\nwith open(pB, \"r\", newline=\"\") as f:\n    rows = list(csv.reader(f))\nassert rows[0] == [\"frame\", \"time_ps\", \"backbone_rmsd_angstrom\", \"core_rmsd_angstrom\", \"lid_rmsd_angstrom\", \"nmp_rmsd_angstrom\"]\nassert len(rows) == 99\nfor row in rows[1:]:\n    sub = ca_by_frame[row[0]]\n    if float(row[3]) >= 1.0:\n        assert abs(float(row[3]) - float(sub)) > 1e-6 + 1e-6 * float(row[3])\n    row[3] = sub\nwith open(pB, \"w\", newline=\"\") as f:\n    csv.writer(f).writerows(rows)\n"
+    },
+    {
+      "check_ids": [
+        "analysis_c_ca_core_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "backbone_domain_rmsd.csv",
+          "quote": "1,1.9999998238400372,0.46365921745665056,0.4550181433046967,0.4871914516599885,0.4745572261841976"
+        },
+        {
+          "path": "ca_core_rmsd.csv",
+          "quote": "1,1.9999998238400372,0.40756080970089986"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "ca-core-vs-full-backbone-fit",
+      "rationale": "Attempts analysis C with a fit/target error: the CORE CA RMSD value is replaced by the full protein backbone fit RMSD from analysis B (fitting and measuring over all backbone atoms instead of the CA-only universe). Per-frame differences are at least ~0.056 A, far above tolerance. Frame identity, row count, header and time_ps are unchanged, so only the analysis_c scientific comparison fails.",
+      "script": "import csv\npC = \"ca_core_rmsd.csv\"\npB = \"backbone_domain_rmsd.csv\"\nwith open(pB, \"r\", newline=\"\") as f:\n    r = list(csv.reader(f))\nassert r[0][2] == \"backbone_rmsd_angstrom\"\nassert len(r) == 99\nbb_by_frame = {row[0]: row[2] for row in r[1:]}\nwith open(pC, \"r\", newline=\"\") as f:\n    rows = list(csv.reader(f))\nassert rows[0] == [\"frame\", \"time_ps\", \"ca_core_rmsd_angstrom\"]\nassert [row[0] for row in rows[1:]] == [str(i) for i in range(98)]\nfor row in rows[1:]:\n    sub = bb_by_frame[row[0]]\n    if float(row[2]) >= 1.0:\n        assert abs(float(row[2]) - float(sub)) > 1e-6 + 1e-6 * float(row[2])\n    row[2] = sub\nwith open(pC, \"w\", newline=\"\") as f:\n    csv.writer(f).writerows(rows)\n"
+    },
+    {
+      "check_ids": [
+        "analysis_d_mass_weighted_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "mass_weighted_rmsd.csv",
+          "quote": "1,1.9999998238400372,0.4234302962314481,0.46215147409844226,0.4968180560689264,0.4867389984803548"
+        },
+        {
+          "path": "resid_weighted_rmsd.csv",
+          "quote": "1,1.9999998238400372,0.4322756870631961,0.45986633006728567,0.47653188389891205,0.48186377931443886"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "mass-weighted-vs-resid-weighted",
+      "rationale": "Attempts analysis D with the wrong weighting scheme: every mass-weighted CA and domain RMSD row is replaced by the value of the similar residue-number-weighted variant (analysis E). For the physically meaningful frames (RMSD far above the numerical-noise floor of the frame-0 self-comparison) the values differ by at least ~2.7e-4 A, above the 1e-6+1e-6*r bound, exactly the near-miss regime the tolerance is designed to reject. All structural constraints stay satisfied, so only the analysis_d scientific comparison fails.",
+      "script": "import csv\npM = \"mass_weighted_rmsd.csv\"\npR = \"resid_weighted_rmsd.csv\"\nwith open(pR, \"r\", newline=\"\") as f:\n    r = list(csv.reader(f))\nassert r[0] == [\"frame\", \"time_ps\", \"ca_resid_weighted_rmsd_angstrom\", \"core_rmsd_angstrom\", \"lid_rmsd_angstrom\", \"nmp_rmsd_angstrom\"]\nassert len(r) == 99\nres_by_frame = {row[0]: row[2:] for row in r[1:]}\nwith open(pM, \"r\", newline=\"\") as f:\n    rows = list(csv.reader(f))\nassert rows[0] == [\"frame\", \"time_ps\", \"ca_mass_weighted_rmsd_angstrom\", \"core_rmsd_angstrom\", \"lid_rmsd_angstrom\", \"nmp_rmsd_angstrom\"]\nassert len(rows) == 99\ncount = 0\nfor row in rows[1:]:\n    sub = res_by_frame[row[0]]\n    v = float(row[2])\n    d = abs(v - float(sub[0]))\n    if v > 1e-3:\n        assert d > 1e-6 + 1e-6 * v\n        count += 1\n    row[2:] = sub\nassert count > 0\nwith open(pM, \"w\", newline=\"\") as f:\n    csv.writer(f).writerows(rows)\n"
+    },
+    {
+      "check_ids": [
+        "analysis_e_resid_weighted_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "mass_weighted_rmsd.csv",
+          "quote": "1,1.9999998238400372,0.4234302962314481,0.46215147409844226,0.4968180560689264,0.4867389984803548"
+        },
+        {
+          "path": "resid_weighted_rmsd.csv",
+          "quote": "1,1.9999998238400372,0.4322756870631961,0.45986633006728567,0.47653188389891205,0.48186377931443886"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "resid-weighted-to-mass-values",
+      "rationale": "Attempts analysis E with an inverted weighting error: the residue-number-weighted values are replaced by the mass-weighted values of the same file, simulating a construction that ignored the custom residue-number weighting. Observable per-frame differences (CA minimum about 2.7e-4; domain differences up to ~2e-2) far exceed 1e-6+1e-6*r, while frame ordering, header and structural integrity are preserved, so the failure is confined to the analysis_e scientific comparison.",
+      "script": "import csv\npM = \"mass_weighted_rmsd.csv\"\npR = \"resid_weighted_rmsd.csv\"\nwith open(pM, \"r\", newline=\"\") as f:\n    r = list(csv.reader(f))\nassert r[0] == [\"frame\", \"time_ps\", \"ca_mass_weighted_rmsd_angstrom\", \"core_rmsd_angstrom\", \"lid_rmsd_angstrom\", \"nmp_rmsd_angstrom\"]\nassert len(r) == 99\nmass_by_frame = {row[0]: row[2:] for row in r[1:]}\nwith open(pR, \"r\", newline=\"\") as f:\n    rows = list(csv.reader(f))\nassert rows[0] == [\"frame\", \"time_ps\", \"ca_resid_weighted_rmsd_angstrom\", \"core_rmsd_angstrom\", \"lid_rmsd_angstrom\", \"nmp_rmsd_angstrom\"]\nassert len(rows) == 99\nfor row in rows[1:]:\n    row[2:] = mass_by_frame[row[0]]\nwith open(pR, \"w\", newline=\"\") as f:\n    csv.writer(f).writerows(rows)\nfor row in rows[1:]:\n    assert len(row) == 6\n"
+    },
+    {
+      "check_ids": [
+        "time_ps"
+      ],
+      "evidence": [
+        {
+          "path": "backbone_domain_rmsd.csv",
+          "quote": "0,0.9999999119200186,5.834343817915898e-07,3.92148642971737e-08,1.1969998121003948e-07,6.276496925603961e-08"
+        },
+        {
+          "path": "backbone_domain_rmsd.csv",
+          "quote": "1,1.9999998238400372,0.46365921745665056,0.4550181433046967,0.4871914516599885,0.4745572261841976"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "time-ps-frame-index-offset",
+      "rationale": "Attempts the time_ps convention with an off-by-one frame indexing mistake: the per-frame time is written as the 0-based frame index (frame k -> k ps, first frame at t=0) instead of the accepted (frame + 1) ps or tool-reported convention. The saved times are shifted by about 1 ps (differences of ~1 >> the 1e-4 ps bound) while all RMSD columns, headers, row counts and frame indices are unchanged, so only the time_ps comparison fails.",
+      "script": "import csv\nfiles = [\"backbone_domain_rmsd.csv\", \"ca_core_rmsd.csv\", \"mass_weighted_rmsd.csv\", \"resid_weighted_rmsd.csv\"]\nfor p in files:\n    with open(p, \"r\", newline=\"\") as f:\n        rows = list(csv.reader(f))\n    assert rows[0][0] == \"frame\" and rows[0][1] == \"time_ps\"\n    assert len(rows) == 99\n    for row in rows[1:]:\n        frame = int(row[0])\n        assert abs(float(row[1]) - (frame + 1)) < 1e-4\n        row[1] = \"%d\" % frame\n    with open(p, \"w\", newline=\"\") as f:\n        csv.writer(f).writerows(rows)\n"
+    },
+    {
+      "check_ids": [
+        "analysis_a_open_closed_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "open_closed_backbone_rmsd.json",
+          "quote": "{\"value\": 6.823686867261616, \"unit\": \"angstrom\"}"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "json-object-key-reorder",
+      "rationale": "Tolerant JSON representation control: the parsed JSON object (key set, unit string, exact numeric value) is unchanged, but the key order in the serialized file is reversed. The acceptance rule compares parsed scientific content, not a canonical byte string, so this is a valid alternative.",
+      "script": "import io, json\np = \"open_closed_backbone_rmsd.json\"\nwith io.open(p, \"r\", encoding=\"utf-8\") as f:\n    obj = json.load(f)\nassert obj[\"unit\"] == \"angstrom\"\nnew_text = json.dumps({\"unit\": \"angstrom\", \"value\": obj[\"value\"]})\nassert json.loads(new_text) == obj\nwith io.open(p, \"w\", encoding=\"utf-8\") as f:\n    f.write(new_text)\n"
+    },
+    {
+      "check_ids": [
+        "analysis_c_ca_core_rmsd",
+        "csv_schema",
+        "time_ps"
+      ],
+      "evidence": [
+        {
+          "path": "ca_core_rmsd.csv",
+          "quote": "0,0.9999999119200186,2.2323827208734618e-07"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "ca-csv-float-string-style",
+      "rationale": "Representation control: the CSV field semantic values (frame index, time_ps, RMSD) are unchanged, only the saved numeric strings are re-serialized (formatted decimal and standard float repr, Python repr being the shortest exact round-trip encoding of the parsed value), which stays within the ordinary CSV float round-tripping covered by the 1e-6 atol and keeps every structural constraint satisfied.",
+      "script": "import csv\np = \"ca_core_rmsd.csv\"\nwith open(p, \"r\", newline=\"\") as f:\n    rows = list(csv.reader(f))\nassert rows[0] == [\"frame\", \"time_ps\", \"ca_core_rmsd_angstrom\"]\nassert [row[0] for row in rows[1:]] == [str(i) for i in range(98)]\nfor row in rows[1:]:\n    row[1] = \"%.12g\" % float(row[1])\n    row[2] = repr(float(row[2]))\nwith open(p, \"w\", newline=\"\") as f:\n    csv.writer(f).writerows(rows)\n"
+    },
+    {
+      "check_ids": [
+        "csv_schema",
+        "time_ps"
+      ],
+      "evidence": [
+        {
+          "path": "backbone_domain_rmsd.csv",
+          "quote": "1,1.9999998238400372,0.46365921745665056,0.4550181433046967,0.4871914516599885,0.4745572261841976"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "time-ps-frame-plus-one-convention",
+      "rationale": "Representation control for the declared time_ps freedom: the tool-reported trajectory time and the (frame + 1) ps convention are both accepted. The saved time values (e.g. 1.9999998238400372) agree with (frame+1) to within ~1.2e-7 ps, so replacing them with the exact integer convention keeps every value inside the stated 1e-4 ps bound in all four CSVs while leaving all RMSD columns untouched.",
+      "script": "import csv\nfiles = [\"backbone_domain_rmsd.csv\", \"ca_core_rmsd.csv\", \"mass_weighted_rmsd.csv\", \"resid_weighted_rmsd.csv\"]\nfor p in files:\n    with open(p, \"r\", newline=\"\") as f:\n        rows = list(csv.reader(f))\n    assert rows[0][0] == \"frame\" and rows[0][1] == \"time_ps\"\n    assert len(rows) == 99\n    for row in rows[1:]:\n        frame = int(row[0])\n        assert abs(float(row[1]) - (frame + 1)) < 1e-4\n        row[1] = \"%d\" % (frame + 1)\n    with open(p, \"w\", newline=\"\") as f:\n        csv.writer(f).writerows(rows)\n"
+    }
+  ]
+}

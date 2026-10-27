@@ -1,0 +1,35 @@
+{
+  "worker_review": {
+    "additional_exclusions": [
+      {
+        "distribution": "MDAnalysisTests",
+        "path": "MDAnalysisTests/analysis/test_align.py",
+        "reason": "Answer exposure: the literal constant 6.820321761927005 at line 262 is the expected AdK first-vs-last-frame backbone QCP RMSD on exactly the supplied inputs (assert_allclose rtol=0, atol=1.5e-5 against the same PSF/DCD), numerically identical to the final-frame (frame 97) backbone_rmsd_angstrom value 6.820321761026975 in the requested backbone_domain_rmsd.csv output (confirmed by the controller's installed_asset_value_hints finding and direct inspection of the read-only installed copy). Unused: the source and oracle only import MDAnalysis's analysis.rms API and the three staged data files (resolved via the tests.datafiles data-path module); nothing imports MDAnalysisTests.analysis.test_align, so removal does not affect any required computation, input loading or notice.",
+        "sha256": "7f5ae503ea618bc1fff96cb103341858c53438a1865111b9ff295479e29f6386"
+      }
+    ],
+    "artifact_inventory_sha256": "f660555e7ee3af8d65d3437505c82e3306177b1b027380f9ab1d01ee373b2ca5",
+    "assessment": "The candidate executed cleanly: derivation staged the three byte-identical AdK data files (structure.psf, trajectory.dcd, reference_open.crd), projected endpoints C/D/E label-only from the recorded reference exports into the requested schemas, and source-faithfully recovered endpoints A (open_closed_backbone_rmsd.json, value 6.823686867261616 angstrom) and B (backbone_domain_rmsd.csv, 98 rows; final-frame backbone_rmsd_angstrom 6.820321761026975); the oracle reproduced all five outputs from the supplied inputs alone. Environment review against the post-execution inventory: both earlier answer-exposure removals are in effect (MDAnalysisTests/analysis/test_rms.py and, per this round's exclusion, MDAnalysisTests/analysis/test_align.py are absent from the installed tree; MDAnalysisTests is down to 724 inspected files). The refreshed advisory value-hint report lists zero findings, and I independently re-checked the environment: direct greps of site-packages for the recovered answer values (6.823686867261616, 6.820321761026975), the requested output filenames and the exported per-frame endpoint values found no other installed file containing any requested answer. Residual non-answer observations: MDAnalysis/tests/datafiles.py is the data-path module the source itself imports to load the three staged inputs (required, kept); the raw legacy_DCD_adk_coords.npy / legacy_DCD_NAMD_coords.npy fixtures cover different frame/atom subsets and encode no requested RMSD value; the JSON reference is flagged unsupported_format for literal scanning rather than being exposed. No required data, runtime code or notices were removed.",
+    "asset_catalog_sha256": "a832418e9d41b7090b9929569867d53b2be7274706ed2f4158bdb5f1c63db710"
+  },
+  "executed_exclusions": {
+    "excluded_files_absent": true,
+    "files": [
+      {
+        "distribution": "MDAnalysisTests",
+        "path": "MDAnalysisTests/analysis/test_align.py",
+        "sha256": "7f5ae503ea618bc1fff96cb103341858c53438a1865111b9ff295479e29f6386"
+      },
+      {
+        "distribution": "MDAnalysisTests",
+        "path": "MDAnalysisTests/analysis/test_rms.py",
+        "sha256": "2ec2810df7ff0141dc5b14fb1b91b7b7f294ebafcd30fa58b901115de2f8f60e"
+      }
+    ]
+  },
+  "asset_catalog": {
+    "bytes": 1348214,
+    "sha256": "a832418e9d41b7090b9929569867d53b2be7274706ed2f4158bdb5f1c63db710"
+  },
+  "scope": "Worker scientific assessment plus controller-observed cleanup; not independent answer-isolation approval."
+}
