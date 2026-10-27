@@ -1,0 +1,42 @@
+{
+  "number": 219,
+  "observed_at": "2026-10-27T11:44:58.032005+00:00",
+  "source_id": "neurokit-hrv",
+  "original_pipeline_status": "rejected",
+  "terminal_host_state": "SUCCEEDED",
+  "audited_state": "autonomous_generated_representation_parser_rejection",
+  "classification": "generated_candidate_rejected",
+  "scientific_acceptance": false,
+  "fully_qualified_task": false,
+  "published": false,
+  "source_rejected_as_broken": false,
+  "failure_stage": "grading",
+  "failure_boundary": "The generated grader promised to accept completely empty trailing CSV lines, but checked for a single empty field rather than the empty record returned by csv.reader. A valid-representation control therefore failed all four scientific output checks while preserving exactly the same numeric values. Final review rejected the grader; the single quality repair had already been spent at specification.",
+  "control_outcomes": {
+    "expected_outcomes_met": 14,
+    "total": 15,
+    "failed_required_control": "valid-representation-reencode",
+    "failed_control_kind": "valid_alternative"
+  },
+  "false_annotation_caught": "The generated rationale described the representation as accepted, but execution contradicted that claim. Final review explicitly used the failed test rather than accepting the annotation.",
+  "general_failure_pattern": "Generic output parsing and honest interpretation of executed control results, not a biological notebook defect. No manual grader patch or extra repair/native/solver attempt.",
+  "quality_repairs_used": 1,
+  "operator_interventions": 0,
+  "operator_scientific_edits": 0,
+  "pipeline_seconds": 2407.03,
+  "accounted_model_request_attempts": 149,
+  "original_archive_files": 2106,
+  "original_archive_bytes": 111651211,
+  "original_archive_manifest_sha256": "98edb0c4bd327e37f8c7a51acaad4d601a23d7a35ccfb6cb84d65e15cbc2ce85",
+  "complete_original_root_export_verified": true,
+  "fresh_cleanup_verified": true,
+  "runtime_files": 232,
+  "same_frozen_runtime_as": [
+    215,
+    216,
+    217,
+    218,
+    220
+  ],
+  "limitations": "Reference/replay and an independently executed program matched in the pinned environment; this is not a native Harbor/solver qualification or evidence of numerical portability across software stacks."
+}
