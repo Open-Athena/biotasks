@@ -98,6 +98,26 @@ def test_overlapping_sdk_lifetimes_receive_no_serialization_or_idle_discount():
     assert upper == sum(Decimal(row["resource_upper_bound_usd"]) for row in clocks.values())
 
 
+def test_public_question_diagnosis_keeps_the_same_five_complete_sdk_lifetimes():
+    pipeline, sessions = evidence()
+    expected = module.price(pipeline, sessions)
+    pipeline["quality_repair"]["kind"] = "public_question_diagnosis"
+    before = deepcopy((pipeline, sessions))
+    assert module.price(pipeline, sessions) == expected
+    assert set(expected[0]) == set(sessions) and len(sessions) == 5
+    assert (pipeline, sessions) == before
+
+
+@pytest.mark.parametrize("native", [False, True])
+def test_public_question_diagnosis_cannot_admit_an_incompatible_target_or_native_prefix(native):
+    pipeline, sessions = evidence(native)
+    pipeline["quality_repair"]["kind"] = "public_question_diagnosis"
+    if not native:
+        pipeline["quality_repair"]["target"] = "independent_solution"
+    with pytest.raises(AssertionError):
+        module.price(pipeline, sessions)
+
+
 @pytest.mark.parametrize(
     "defect",
     [

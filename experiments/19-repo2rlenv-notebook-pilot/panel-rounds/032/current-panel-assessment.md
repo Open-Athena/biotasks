@@ -8,7 +8,7 @@ Checked 27 October 2026. Issue #19 remains incomplete. Latest completed attempts
 | Protein sequence profiles | [pyhmmer-msa-to-hmm](https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/docs/examples/msa_to_hmm.ipynb) | [216](../../panel-rounds/108/result-216.json) | 58.74 | 170 | Generated grader omitted a promised HMM statistic comparison; executed probe exposed it; repair allowance exhausted; no native/solver run |
 | Metabolite mass spectra | [matchms-spectral-matching](https://github.com/matchms/matchms-docs/blob/796f156c58d25adfb7e1528fcb24eb8c40c143a5/notebooks/matchms_tutorial_01_building_analysis_pipeline.ipynb) | [218](../../panel-rounds/108/result-218.json) | 39.89 | 104 | Reference/replay passed; repaired specification introduced unsupported input companions and was rejected before construction |
 | Physiological signals | [neurokit-hrv](https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/docs/examples/ecg_hrv/ecg_hrv.ipynb) | [219](../../panel-rounds/108/result-219.json) | 40.12 | 149 | Required valid CSV representation rejected;14/15control expectations met; final review stopped the generated grader; no native/solver run |
-| Single-cell transcriptomics | [scanpy-clustering](https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb) | [206](../../panel-rounds/102/result-206.json) | 20.44 | 45 | Infrastructure failure during session creation; failed operation submitted no command |
+| Single-cell transcriptomics | [scanpy-clustering](https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb) | [220](../../panel-rounds/108/result-220.json) | 114.26 | 211 | Public-question repair completed; fresh grading exhausted operation admission; no native/solver trial; exact embedding/label target concern remains |
 | Genomic intervals | [bioframe-motifs-to-peaks](https://github.com/open2c/bioframe/blob/95007ed6fc03b01005d75f95cac511b2df286854/docs/tutorials/tutorial_assign_motifs_to_peaks.ipynb) | [207](../../panel-rounds/102/result-207.json) | 19.78 | 36 | Autonomous source-fidelity rejection: parser skips a real motif observation |
 | Proteomic search results | [pyteomics-filtering](https://github.com/levitsky/pyteomics/blob/a133667b090e41c645ed682861b73d98bef2d045/doc/source/_static/filtering.ipynb) | [208](../../panel-rounds/103/result-208.json) | 14.32 | 41 | Two setup tests failed; final recipe untested; shell-policy violation retained |
 | Molecular dynamics | [mdanalysis-rmsd](https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/doc/source/examples/analysis/alignment_and_rms/rmsd.ipynb) | [198](../../panel-rounds/101/result-198.json) | 81.59 | 236 | Qualified/published; native reference/empty/solver rewards 1/0/1 |
@@ -19,17 +19,20 @@ The latest outcomes are two qualified/published tasks, four rejected generated c
 
 ## Current common factory
 
-Five cases (215–219) completed with identical 232-file runtime hashes, original notebook/provenance inputs only, and zero operator scientific edits. All five original reference workflows and clean replays ran successfully. Their generated-task outcomes are one qualified public release, three rejected candidates, and one review rejection under audit:
+Six cases (215–220) completed with identical 232-file runtime hashes, original notebook/provenance inputs only, and zero operator scientific edits. All six original reference workflows and clean replays ran successfully. Their generated-task outcomes are one qualified public release, three rejected candidates, one review rejection under audit and one infrastructure failure:
 
 - PyMC passed 19 controls and native reference/empty/blind-GLM rewards 1/0/1; publication and forced anonymous download are verified.
 - PyHMMER's grader omitted a promised statistic comparison. An executed negative probe exposed it.
 - COBRApy's final review alleged an ordering ambiguity contradicted by the public contract.
 - Matchms's repair restored an omitted cosine-analysis branch but introduced unverified input companions.
 - NeuroKit's grader rejected a valid trailing-blank-line CSV representation. Fourteen of fifteen control expectations were met, so final review stopped it.
+- Scanpy initially met all 16 executed control expectations, but review identified missing Gene Expression input context, incomplete comparison coverage and a missing scientific negative. GLM used the existing single repair to correct the public question and grader proposal. Fresh grading could not admit another full operation under the remaining worker clock; repaired controls, native trials and solver are absent. This was not a ten-minute scientific computation timeout.
 
-Complete original science/root exports and fresh cleanup are verified for all five. These failures do not establish broken notebooks. One accepted task from five completed development cases is not a reliability estimate for new notebooks. [Plan](../108/development-panel.json), [Matchms](../108/result-218.json), [NeuroKit](../108/result-219.json).
+A separate read-only audit flags Scanpy's near-exact embedding coordinates and arbitrary cluster-label arrays as unresolved scientific targets: same-stack byte-identical recomputation does not establish the scientific equivalence claim. No manual task fix, reward or acceptance override was supplied. This concern is distinct from the recorded infrastructure stop.
 
-Scanpy 220 is running on the same factory; Bioframe, Pyteomics, MDAnalysis and Sgkit remain unfunded/unfrozen. No worker code, prompt or repair allowance was changed for the observed failures. [Identical-runtime proof](../108/same-runtime-215-through-220.json).
+Complete original science/root exports and fresh cleanup are verified for all six. Scanpy uses its original quiescent fallback snapshot; its absent regular seal was not reconstructed. These outcomes do not establish broken notebooks. One accepted task from six development cases does not establish reliability on new notebooks. [Plan](../108/development-panel.json), [Scanpy](../108/result-220.json).
+
+Bioframe 221 has its full funding reservation but is not frozen/submitted; Pyteomics, MDAnalysis and Sgkit remain unfunded/unfrozen. No worker code, prompt or repair allowance was changed for the observed failures. [Identical-runtime proof](../108/same-runtime-215-through-220.json).
 
 ## Latest qualified release and inspection
 
@@ -43,8 +46,8 @@ The table above reports the latest completed case per domain across development 
 
 ## Remaining work and budget
 
-Complete Scanpy 220 and the four remaining sources on the unchanged factory. Then assess shared failure patterns, including repair drift, grader implementation errors and review reliability. Publish only qualified, rights-cleared tasks with verified downloads. Keep #19 open and PR #23 draft/unmerged; supported promotion requires sufficient evidence and a fresh branch from main. Never merge the research branch.
+Complete the four remaining sources on the unchanged factory. Then assess shared failure patterns, including repair drift, grader implementation errors and review reliability. Publish only qualified, rights-cleared tasks with verified downloads. Keep #19 open and PR #23 draft/unmerged; supported promotion requires sufficient evidence and a fresh branch from main. Never merge the research branch.
 
-$200 is authorized; $195.75 is held conservatively and $4.25 is unallocated, including a full $5 reservation for running 220. Closed 218/219 retain $0.50/$0.75 after complete lifetime audits. A new campaign still requires a full $5 reservation; 221 is not funded. These are not invoices or assumed credits. [Ledger](../../aggregate-budget.json), [219 audit](../108/closed-219-applied.json).
+$200 is authorized; $196.75 is held conservatively and $3.25 is unallocated, including a full $5 reservation for Bioframe 221. Closed 220 retains $1 after all five full SDK lifetimes, 300 seconds at each end, margin and upward quarter-dollar rounding. A new campaign still requires a full $5 reservation. These are not invoices or assumed credits. [Ledger](../../aggregate-budget.json), [220 audit](../108/closed-220-applied.json).
 
 Original model, resource, two-hour campaign, ten-minute reference/solver, two-minute verifier, two-reference-dispatch and repair limits remain. The proposed three-hour window and reference-dispatch change are unanswered; neither has been adopted. No numerical yield threshold has been assumed.

@@ -74,8 +74,9 @@ def profile(pipeline):
     if native:
         assert repair["kind"] == "specification_review"
         return BASE, Decimal("1.00")
-    assert repair["kind"] == "comparison_diagnosis"
+    assert repair["kind"] in {"comparison_diagnosis", "public_question_diagnosis"}
     assert repair["target"] in {"public_question", "independent_solution"}
+    assert repair["kind"] != "public_question_diagnosis" or repair["target"] == "public_question"
     return BASE | {"grading-comparison-repair"}, Decimal("0.00")
 
 
