@@ -5,8 +5,8 @@ Checked 27 October 2026. **Issue #19 remains incomplete.**
 | Requirement | Authoritative evidence | Assessment |
 | --- | --- | --- |
 | Autonomous notebook to validated task or justified rejection | Seven original workflows executed on frozen 108 without operator scientific edits; one qualified release, four candidate rejects, one questionable review rejection and one infrastructure failure | Demonstrated exact outcomes; yield and review reliability remain concerns |
-| Diverse Python panel | Ten planned domains; seven audited on the common factory | Three domains unstarted; Pyteomics 222 funded but not frozen/submitted |
-| Same factory | Cases 215–221 have identical 232-file runtime hashes and original source-only inputs | Seven cases dispatched/audited; 222 funded but not frozen; two other sources unprepared |
+| Diverse Python panel | Ten planned domains; seven audited on the common factory | Three domains unstarted; Pyteomics 222 funded/frozen but not submitted |
+| Same factory | Cases 215–221 have identical 232-file runtime hashes and original source-only inputs | Seven cases dispatched/audited; 222 funded/frozen but not submitted; two other sources unprepared |
 | Scientific/native validation | PyMC 215 passed 19 controls and native reference/empty/blind solver 1/0/1 | Proved for 215; rejected cases have no native qualification |
 | Publication/download | Exact 215 public bundle and revision passed forced anonymous empty-cache readback | Proved for 215 only |
 | Latest HTML | PyMC 215 with actual stages, prompts, inputs, outputs and attempt; browser/mobile/contrast/public readback pass | Verified; no new qualified release replaces it |
