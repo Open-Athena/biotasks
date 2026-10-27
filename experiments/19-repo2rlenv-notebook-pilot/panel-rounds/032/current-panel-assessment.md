@@ -21,11 +21,11 @@ The latest completed outcomes are **one qualified/published task, four rejected 
 
 [PyMC 213](../105/development-panel.json) is running on the 105 successor. It receives only the original 186 notebook/provenance: no previous task, answer, export, environment recipe or failure diagnosis. Its 232 runtime files differ from 104 in exactly three files: general native-writer guidance, shorter pre-dispatch control admission, and tests. Source/provider/funding and typed-pool admission passed. All earlier campaign hosts are terminal and their recorded sandbox IDs/owners are verified absent.
 
-Live 213 metadata shows setup and replay completed. After citation/schema submission failures, the reviewer completed; the controller used its one global quality repair for the proposal and the revised review returned ready. Construction is now running. This is proposal-stage acceptance, not task qualification; no grader/native/solver success is claimed.
+Live 213 metadata shows setup and replay completed. After citation/schema submission failures, the reviewer completed; the controller used its one global quality repair for the proposal and the revised review returned ready. Construction has completed and grading is now running. An independent program executed without answer access; comparison agreement and negative controls remain pending. This is not task qualification; no native/solver success is claimed.
 
 The successor has 155 affected tests, 25 preparation/packaging tests and 10 source-admission/AST checks. These are not fresh scientific qualification. A shorter control request is permitted only after a certified pre-dispatch refusal; executed or uncertain outcomes are not retried automatically. Scientific verdicts, required negative controls, original deadlines, resource maxima, two-reference-dispatch limit and repair budgets remain unchanged.
 
-[Matchms 214](../106/development-panel.json) is running a fresh original-source test of the same 232 runtime hashes as 213. Typed admission found only 213 active and verified all earlier terminal cleanup. No previous generated task, answer, environment recipe or diagnostic was supplied.
+[Matchms 214](../106/development-panel.json) is running a fresh original-source test of the same 232 runtime hashes as 213. Typed admission found only 213 active and verified all earlier terminal cleanup. No previous generated task, answer, environment recipe or diagnostic was supplied. Its setup and fresh replay have completed; specification is now running.
 
 ## Latest qualified release
 
@@ -46,7 +46,7 @@ The [common 232-file baseline](../101/development-panel.json) completed five cas
 
 ## Future candidate, not active-run changes
 
-A [citation-feedback candidate](../../factory-checks/review-citation-feedback/README.md) names the rejected finding/evidence index, map key and unmatched literal quote, and reinforces native JSON arrays. It retains the existing schema and exact-quote predicates; 44 affected tests pass, including 300 acceptance-equivalence scenarios against the preceding validator. No scientific/provider validation of that candidate has run, and the frozen 213/214 payloads remain unchanged.
+A [citation-feedback candidate](../../factory-checks/review-citation-feedback/README.md) names the rejected finding/evidence index, map key and unmatched literal quote, and reinforces native JSON arrays. It retains the existing schema and exact-quote predicates; 50 affected tests pass, including 300 acceptance-equivalence scenarios and six whole-module/prompt source-proof/refusal cases. Ten source-admission/proof tests also pass; the groups overlap. The [107 admission](../107/README.md) binds those exact changes while rechecking inherited provider/resource proofs. No new scientific/provider validation of that candidate has run, and the frozen 213/214 payloads remain unchanged.
 
 ## Remaining work and budget
 
