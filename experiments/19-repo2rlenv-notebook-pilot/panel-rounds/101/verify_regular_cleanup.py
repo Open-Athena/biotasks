@@ -105,6 +105,7 @@ def main():
         owners = []
         sdk_claims = []
         native_unrecorded = []
+        native_undispatched = []
         evidence = []
         for folder in folders:
             stage_config, _ = original(folder + "/configuration.json")
@@ -135,7 +136,22 @@ def main():
             native, _ = original("native/execution.json")
             assert native["task_resources"] == {"cpus": 4, "memory_mb": 8192, "storage_mb": 10240}
             records = sorted((root / "native").glob("*/remote-job.json"))
-            assert len(records) == 3
+            if len(records) != 3:
+                # A complete original trace and exact source identities can
+                # disprove a third dispatch. Missing receipts alone cannot.
+                sys.path.insert(
+                    0,
+                    str(
+                        Path(__file__).resolve().parents[2]
+                        / "factory-checks/partial-native-cleanup"
+                    ),
+                )
+                from predispatch_refusal import verify_original_refusal
+
+                assert len(records) == 2
+                native_undispatched.append(
+                    verify_original_refusal(archive, claim, configurations[0].parent)
+                )
             for path in records:
                 relative = path.relative_to(root).as_posix()
                 record, sha = original(relative)
@@ -189,6 +205,7 @@ def main():
             "all_original_sdk_claim_ids_checked": True,
             "original_sdk_claims": sdk_claims,
             "native_unrecorded_id_owners": native_unrecorded,
+            "native_undispatched_preflight_claims": native_undispatched,
             "source_configuration_sha256": expected_hash,
             "source_archive_manifest_sha256": hashlib.sha256(
                 (archive / "sealed-manifest.json").read_bytes()
