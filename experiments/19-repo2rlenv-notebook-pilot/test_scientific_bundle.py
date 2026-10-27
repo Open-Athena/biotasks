@@ -199,10 +199,11 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(
     )
     task = package(**options)
     if parsing_support:
-        from grader_support import MANIFEST, MODULE, load_support
+        from grader_support import MANIFEST, MODULE, NOTICE, load_support
 
         assert load_support(task / "tests", support) == support
         assert (task / "tests" / MODULE).read_bytes() == (grading / MODULE).read_bytes()
+        assert (task / "tests" / NOTICE).read_bytes() == (grading / NOTICE).read_bytes()
         assert not (task / "environment" / MODULE).exists()
         assert not (task / "solution" / MODULE).exists()
         (grading / MANIFEST).unlink()

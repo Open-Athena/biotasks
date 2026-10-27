@@ -69,8 +69,9 @@ def prove_session(before, after):
         tree,
         """capture_support(self.root.parent)
 await self.remote.upload(self.root.parent / MODULE, "/work/" + MODULE)
+await self.remote.upload(self.root.parent / NOTICE, "/work/" + NOTICE)
 await self.remote.upload(self.root.parent / MANIFEST, "/work/grading-private/" + MANIFEST)
-sealed_support = await self.command(["chmod", "444", "/work/" + MODULE], 30, "seal-parsing-support")
+sealed_support = await self.command(["chmod", "444", "/work/" + MODULE, "/work/" + NOTICE], 30, "seal-parsing-support")
 if sealed_support["exit_code"]:
     raise RuntimeError("Cannot seal factory parsing support")
 """,
@@ -136,6 +137,7 @@ def prove_remote(before, after):
     assert len(function) == 1
     tree.body.remove(function[0])
     remove_block(tree, 'TABLE_SUPPORT = Path("/work/biotasks_table_io.py")')
+    remove_block(tree, 'TABLE_NOTICE = Path("/work/LICENSE.biotasks")')
     remove_block(tree, 'record["parsing_support"] = stage_parsing_support()')
     same(before, tree)
 
@@ -151,6 +153,7 @@ if support is not None:
         raise ValueError("Control parsing support differs from its packaged source")
     assets["tests/" + MODULE] = TaskFile((grading / MODULE).read_bytes())
     assets["tests/" + MANIFEST] = TaskFile((grading / MANIFEST).read_bytes())
+    assets["tests/" + NOTICE] = TaskFile((grading / NOTICE).read_bytes())
 """,
     )
     same(before, tree)

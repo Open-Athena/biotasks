@@ -2,10 +2,18 @@
 
 import importlib.util
 import json
+from pathlib import Path
 
 import grading_remote
 import pytest
-from grader_support import MANIFEST, MODULE, capture_support, load_support, support_interface
+from grader_support import (
+    MANIFEST,
+    MODULE,
+    NOTICE,
+    capture_support,
+    load_support,
+    support_interface,
+)
 
 
 def test_capture_is_complete_repeatable_and_exposes_actual_source(tmp_path):
@@ -16,10 +24,23 @@ def test_capture_is_complete_repeatable_and_exposes_actual_source(tmp_path):
     assert interface["source"] == (root / MODULE).read_text()
     assert interface["sha256"] == metadata["sha256"]
     assert "scientific comparisons" in interface["scope"]
+    assert (root / NOTICE).read_bytes() == (
+        Path(__file__).resolve().parents[2] / "LICENSE"
+    ).read_bytes()
 
 
 @pytest.mark.parametrize(
-    "change", ["source", "hash", "missing_source", "missing_manifest", "symlink"]
+    "change",
+    [
+        "source",
+        "hash",
+        "missing_source",
+        "missing_manifest",
+        "symlink",
+        "missing_notice",
+        "changed_notice",
+        "symlink_notice",
+    ],
 )
 def test_changed_or_incomplete_support_is_refused(tmp_path, change):
     metadata = capture_support(tmp_path)
@@ -31,6 +52,14 @@ def test_changed_or_incomplete_support_is_refused(tmp_path, change):
         (tmp_path / MODULE).unlink()
     elif change == "missing_manifest":
         (tmp_path / MANIFEST).unlink()
+    elif change == "missing_notice":
+        (tmp_path / NOTICE).unlink()
+    elif change == "changed_notice":
+        (tmp_path / NOTICE).write_text("Incomplete notice")
+    elif change == "symlink_notice":
+        other = tmp_path / "other-license"
+        (tmp_path / NOTICE).rename(other)
+        (tmp_path / NOTICE).symlink_to(other)
     else:
         other = tmp_path / "other.py"
         (tmp_path / MODULE).rename(other)
@@ -45,7 +74,7 @@ def test_expected_identity_cannot_disappear_as_legacy(tmp_path):
         load_support(tmp_path, {"sha256": "a" * 64})
 
 
-@pytest.mark.parametrize("name", [MODULE, MANIFEST])
+@pytest.mark.parametrize("name", [MODULE, MANIFEST, NOTICE])
 def test_capture_and_legacy_read_refuse_dangling_links(tmp_path, name):
     root = tmp_path / "grading"
     root.mkdir()
@@ -66,9 +95,11 @@ def test_remote_case_uses_exact_reader_and_refuses_tampering(tmp_path, monkeypat
     monkeypatch.setattr(grading_remote, "PRIVATE", root)
     monkeypatch.setattr(grading_remote, "CASE", case)
     monkeypatch.setattr(grading_remote, "TABLE_SUPPORT", root / MODULE)
+    monkeypatch.setattr(grading_remote, "TABLE_NOTICE", root / NOTICE)
     assert grading_remote.stage_parsing_support() == metadata
     assert (case / MODULE).read_bytes() == (root / MODULE).read_bytes()
     assert (case / MODULE).stat().st_mode & 0o777 == 0o444
+    assert (case / NOTICE).read_bytes() == (root / NOTICE).read_bytes()
     spec = importlib.util.spec_from_file_location("captured_parser", case / MODULE)
     reader = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(reader)

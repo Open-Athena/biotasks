@@ -17,6 +17,7 @@ CASE = Path("/case")
 AUTHOR, GRADER, PROBE, ORACLE = 18001, 18002, 18003, 18004
 WORKER_ROLES = frozenset({AUTHOR, GRADER, PROBE, ORACLE})
 TABLE_SUPPORT = Path("/work/biotasks_table_io.py")
+TABLE_NOTICE = Path("/work/LICENSE.biotasks")
 
 
 def stage_parsing_support():
@@ -26,20 +27,29 @@ def stage_parsing_support():
         raise ValueError("Unsafe parsing support manifest")
     if not manifest.exists():
         return None  # Historical sessions have no support module.
-    if manifest.is_symlink() or TABLE_SUPPORT.is_symlink() or not TABLE_SUPPORT.is_file():
+    if any(p.is_symlink() or not p.is_file() for p in (manifest, TABLE_SUPPORT, TABLE_NOTICE)):
         raise ValueError("Unsafe parsing support")
     raw = TABLE_SUPPORT.read_bytes()
+    notice = TABLE_NOTICE.read_bytes()
     metadata = json.loads(manifest.read_text())
     if metadata != {
         "schema": "delimited-table-reader-v1",
         "module": "biotasks_table_io.py",
         "sha256": hashlib.sha256(raw).hexdigest(),
         "bytes": len(raw),
+        "license": {
+            "path": "LICENSE.biotasks",
+            "spdx": "Apache-2.0",
+            "sha256": hashlib.sha256(notice).hexdigest(),
+            "bytes": len(notice),
+        },
     }:
         raise ValueError("Parsing support identity changed")
     destination = CASE / metadata["module"]
     destination.write_bytes(raw)
     destination.chmod(0o444)
+    (CASE / "LICENSE.biotasks").write_bytes(notice)
+    (CASE / "LICENSE.biotasks").chmod(0o444)
     return metadata
 
 

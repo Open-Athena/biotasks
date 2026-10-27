@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 """Read delimited output syntax without choosing scientific comparison rules."""
 
 import csv

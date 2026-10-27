@@ -8,7 +8,14 @@ from pathlib import Path
 
 import httpx
 from design_stage import completion_transport
-from grader_support import MANIFEST, MODULE, capture_support, load_support, support_interface
+from grader_support import (
+    MANIFEST,
+    MODULE,
+    NOTICE,
+    capture_support,
+    load_support,
+    support_interface,
+)
 from grading_protocol import (
     AlternativeSolution,
     ContractText,
@@ -246,9 +253,10 @@ class GradingSession:
         await self.helper(["initialize"], 30, "grading-users")
         capture_support(self.root.parent)
         await self.remote.upload(self.root.parent / MODULE, "/work/" + MODULE)
+        await self.remote.upload(self.root.parent / NOTICE, "/work/" + NOTICE)
         await self.remote.upload(self.root.parent / MANIFEST, "/work/grading-private/" + MANIFEST)
         sealed_support = await self.command(
-            ["chmod", "444", "/work/" + MODULE], 30, "seal-parsing-support"
+            ["chmod", "444", "/work/" + MODULE, "/work/" + NOTICE], 30, "seal-parsing-support"
         )
         if sealed_support["exit_code"]:
             raise RuntimeError("Cannot seal factory parsing support")
