@@ -48,3 +48,5 @@ Later factory changes do not alter the recorded prompts or imply a new run.
 view/stage navigation, the selected solver trace and mobile layout using
 Playwright and the node's Chromium. Large biological inputs and reference outputs
 are represented by manifests and linked through the release when published.
+
+Large notebook evidence may be stored as a lossless gzip copy. The viewer decodes it, renders all source cells and labels any shortened raw-JSON display as an excerpt; the pinned original remains linked. Large CSV outputs use labeled row previews with exact download URLs and original checksums. These are display choices, not changes to worker inputs, scientific outputs or model limits.
