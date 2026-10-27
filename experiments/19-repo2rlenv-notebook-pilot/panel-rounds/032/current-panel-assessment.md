@@ -33,7 +33,7 @@ A separate read-only audit flags Scanpy's near-exact embedding coordinates and a
 
 Complete original science/root exports and fresh cleanup are verified for all seven. Scanpy uses its original quiescent fallback snapshot; its absent regular seal was not reconstructed. These outcomes do not establish broken notebooks. One accepted task from seven development cases does not establish reliability on new notebooks. [Plan](../108/development-panel.json), [Scanpy](../108/result-220.json).
 
-Pyteomics 222 is funded/frozen but not submitted; MDAnalysis and Sgkit remain unfunded/unfrozen. No worker code, prompt or repair allowance was changed for the observed failures. [Identical-runtime proof, including frozen 221](../108/same-runtime-215-through-222.json).
+Pyteomics 222 is submitted; MDAnalysis and Sgkit remain unfunded/unfrozen. No worker code, prompt or repair allowance was changed for the observed failures. [Identical-runtime proof, including frozen 221](../108/same-runtime-215-through-222.json).
 
 ## Latest qualified release and inspection
 
