@@ -1,0 +1,47 @@
+{
+  "source_archive_format": "per-file-export-v1",
+  "source_archive_manifest_sha256": "39f6bda62c2ce9ff00202c7df67334b24bb3c63d75940f0452851570db550e45",
+  "pipeline_status": "rejected",
+  "source_id": "sgkit-relatedness",
+  "elapsed_pipeline_seconds": 604.288,
+  "stage_elapsed_seconds": {
+    "preparation": 18.112,
+    "setup": 580.176
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "rejected"
+  },
+  "accounted_model_request_attempts": 52,
+  "request_ledgers": [
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "b8325306631043f407c6a8e3d978180ce08840c76dd111931fbf99a105c0e4df",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "8e0c32b938949f6ed9bdb8980ffed7dcab542d7ed3bd73ad6485ef94adbdde75",
+      "count": 51,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 51
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 52,
+  "distinct_author_response_operations_within_stage": 52,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 0
+}

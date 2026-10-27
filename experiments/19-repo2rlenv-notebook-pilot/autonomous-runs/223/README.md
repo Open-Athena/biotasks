@@ -1,0 +1,7 @@
+# Sgkit original input retrieval stopped
+
+The autonomous factory rejected this candidate during setup after both recorded input URLs returned404. A preserved pedigree request returned `NoSuchBucket`. No original data were staged, no reference test or solver attempt ran, and scientific methods were not changed. The host finished successfully; all503original scientific files and19root files are verified, and the original SDK creation ID/owner are freshly absent. [Result](../../panel-rounds/108/result-223.json), [readback](archive-readback.json), [cleanup](provider-cleanup.json).
+
+The worker's broader claim that the cited article does not redistribute tabular data is not established by its Crossref article-PDF links. A primary article search result lists a supplementary ZIP, but direct attachment bytes and a mapping to the tutorial's particular data/subset are not verified. This is a bounded input-retrieval failure, not proof that the observations are unavailable everywhere or that the notebook's science is broken. That discovery was not supplied to the worker. Preserve the original rejection and investigate general cited-dataset/supporting-material discovery after the common panel. Do not fabricate or manually substitute data.
+
+Source software is recorded as Apache-2.0. Actual derived-input redistribution review remains incomplete; no public task/data release is authorized by inference. [Preflight](publication-preflight.json).

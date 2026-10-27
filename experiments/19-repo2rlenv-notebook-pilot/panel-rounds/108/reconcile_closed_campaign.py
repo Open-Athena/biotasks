@@ -30,6 +30,7 @@ def rejected_profile(pipeline):
     stages = pipeline["stages"]
     names = [row["name"] for row in stages]
     prefixes = {
+        ("preparation", "setup"): {"setup-raw"},
         ("preparation", "setup", "replay", "specification"): {"setup-raw", "replay"},
         ("preparation", "setup", "replay", "specification", "construction", "grading"): BASE,
     }
@@ -45,6 +46,8 @@ def rejected_profile(pipeline):
     assert all(row["started"] <= row["finished"] for row in stages)
     assert all(a["finished"] <= b["started"] for a, b in zip(stages, stages[1:], strict=False))
     repair = pipeline.get("quality_repair")
+    if names[-1] == "setup":
+        assert repair is None
     if repair is not None:
         assert repair["kind"] == "specification_review"
         assert repair["target"] == "task_specification" and repair["allowance_consumed"] is True

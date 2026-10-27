@@ -242,3 +242,47 @@ def test_rejection_profiles_refuse_unproved_dispatch_or_repair_shapes(defect):
         )
     with pytest.raises(AssertionError):
         module.price(pipeline, sessions)
+
+
+def setup_rejection():
+    pipeline, sessions = rejected_evidence("specification", False)
+    pipeline["stages"] = pipeline["stages"][:2]
+    pipeline["stages"][-1]["status"] = "rejected"
+    pipeline["finished"] = pipeline["stages"][-1]["finished"]
+    pipeline["rejection"]["stage"] = "setup"
+    pipeline["daytona_reserved_usd"] = 1
+    return pipeline, {"setup-raw": sessions["setup-raw"]}
+
+
+def test_closed_setup_rejection_keeps_its_entire_lifetime_and_both_margins():
+    pipeline, sessions = setup_rejection()
+    before = deepcopy((pipeline, sessions))
+    clocks, upper, native, retained = module.price(pipeline, sessions)
+    assert set(clocks) == {"setup-raw"}
+    assert clocks["setup-raw"]["priced_seconds"] == "700"
+    assert native == 0 and retained == Decimal("0.25")
+    assert retained >= upper + Decimal("0.10")
+    assert (pipeline, sessions) == before
+
+
+@pytest.mark.parametrize(
+    "defect", ["repair", "extra_dispatch", "unclosed", "outside_stage", "incomplete"]
+)
+def test_setup_rejection_cannot_release_unknown_or_unclosed_exposure(defect):
+    pipeline, sessions = setup_rejection()
+    if defect == "repair":
+        pipeline["quality_repair"] = {
+            "kind": "specification_review",
+            "target": "task_specification",
+            "allowance_consumed": True,
+        }
+    elif defect == "extra_dispatch":
+        sessions["replay"] = dict(sessions["setup-raw"])
+    elif defect == "unclosed":
+        sessions["setup-raw"]["cleanup_verified"] = False
+    elif defect == "outside_stage":
+        sessions["setup-raw"]["finished"] = pipeline["finished"] + 1
+    else:
+        pipeline["stages"][-1]["status"] = "incomplete"
+    with pytest.raises(AssertionError):
+        module.price(pipeline, sessions)

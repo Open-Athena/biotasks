@@ -1,0 +1,78 @@
+{
+  "number": 223,
+  "observed_at": "2026-10-27T18:49:11.486760+00:00",
+  "source_id": "sgkit-relatedness",
+  "original_pipeline_status": "rejected",
+  "terminal_host_state": "SUCCEEDED",
+  "classification": "setup_blocked_original_input_urls_unavailable",
+  "failure_stage": "setup",
+  "reason": "worker_declined",
+  "scientific_acceptance": false,
+  "published": false,
+  "source_rejected_as_broken": false,
+  "original_source_executed": false,
+  "reference_tests": 0,
+  "reference_test_requests": 0,
+  "solver_attempts": 0,
+  "quality_repairs_used": 0,
+  "operator_interventions": 0,
+  "operator_scientific_edits": 0,
+  "worker_blocker": "The two original GCS URLs returned404; the recorded pedigree request response is NoSuchBucket. No original data files were staged, so no reference test was dispatched.",
+  "scope_limitations": [
+    "This proves the recorded URL failures and bounded unsuccessful retrieval, not permanent global absence of the scientific data.",
+    "The worker claim that the cited article has no tabular supporting data is unsupported by its Crossref PDF-link inspection. A primary article search result lists a supplementary ZIP; current attachment access and exact tutorial-subset lineage remain unverified.",
+    "Do not fabricate replacement data or classify the notebook scientific methods as broken; they have not executed."
+  ],
+  "source_url_evidence": [
+    {
+      "path": "setup-raw/worker/artifact-stage/trace/33/tool-result.json",
+      "sha256": "67733070ea9ef293f5976ac225d910c92acb679b0c484aaebf85010ffd428ccc",
+      "log_sha256": "e1ea4b1d77a8c74d83c7268af9ac07475c059ed6d5e8ca6eeafa431d95a730b9",
+      "observation": "ERR HTTP Error 404: Not Found https://storage.googleapis.com/sgkit-data/tutorial/1kg.vcf.bgz\nERR HTTP Error 404: Not Found https://storage.googleapis.com/sgkit-data/tutorial/Cleveland2012_pedigree.txt.gz\nERR HTTP Error 404: Not Found https://storage.googleapis.com/sgkit-data/tutorial/Cleveland2012_snps1000.txt.gz\n"
+    },
+    {
+      "path": "setup-raw/worker/artifact-stage/trace/42/tool-result.json",
+      "sha256": "ddc99010478a743bd4029e28151a3bbc2d9445a1a9bfab2c7544b3801e4823b5",
+      "log_sha256": "9cd5aa9ec00df0e656b4312a7dffcc5b74410a53c031540e48638ce7bc199400",
+      "observation": "Crossref returned article PDF links; this does not prove no supporting data exists."
+    },
+    {
+      "path": "setup-raw/worker/artifact-stage/trace/50/tool-result.json",
+      "sha256": "39b89462d9263a333a2ef50f40fc8a24da2073370bc7930ef79ea9f5c112b5a4",
+      "log_sha256": "17c8d1871e7553bf9a5fbfd1034fd5cd8c60f5697c07c7dc8757f3ec09ff33e5",
+      "observation": "status: 404\n<?xml version='1.0' encoding='UTF-8'?><Error><Code>NoSuchBucket</Code><Message>The specified bucket does not exist.</Message></Error>\n"
+    }
+  ],
+  "paper_discovery": {
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3337471/",
+    "source": "primary article search result, not verified attachment readback",
+    "listed_supplementary_filename": "supp_2.4.429_FileS1.zip",
+    "reported_size": "64.1MB",
+    "direct_article_readback": "browser challenge",
+    "official_oa_metadata_request": "HTTP404",
+    "actual_supplement_or_tutorial_subset_bytes_verified": false,
+    "not_supplied_to_worker": true
+  },
+  "pipeline_seconds": 604.288,
+  "accounted_model_request_attempts": 52,
+  "original_archive_manifest_sha256": "39f6bda62c2ce9ff00202c7df67334b24bb3c63d75940f0452851570db550e45",
+  "original_archive_files": 503,
+  "original_archive_bytes": 15368073,
+  "complete_original_root_export_verified": true,
+  "original_root_files": 19,
+  "original_root_bytes": 984064,
+  "fresh_cleanup_verified": true,
+  "original_sdk_creation_ids_absent": true,
+  "owners_verified_absent": 1,
+  "runtime_files": 232,
+  "same_frozen_runtime_as": [
+    215,
+    216,
+    217,
+    218,
+    219,
+    220,
+    221,
+    222
+  ]
+}
