@@ -1,0 +1,59 @@
+diff --git a/experiments/19-repo2rlenv-notebook-pilot/panel-rounds/079/reconcile_setup_replay_prefix.py b/experiments/19-repo2rlenv-notebook-pilot/panel-rounds/079/reconcile_setup_replay_prefix.py
+index 29035599..a8df513a 100644
+--- a/experiments/19-repo2rlenv-notebook-pilot/panel-rounds/079/reconcile_setup_replay_prefix.py
++++ b/experiments/19-repo2rlenv-notebook-pilot/panel-rounds/079/reconcile_setup_replay_prefix.py
+@@ -450,8 +450,11 @@ def main():
+     folders, _, expected_sources = profile_config(a.profile)
+     assert not a.proof.exists()
+     assert not a.snapshot or a.profile == "common_grading_failure"
++    # Both original archive formats have independently verified inventories.
++    # Explicit late-absence pricing uses the same source/claim/time guards;
++    # it must not require or manufacture a fallback snapshot for a regular seal.
+     assert not a.price_through_fresh_absence or (
+-        a.snapshot and a.profile == "common_grading_failure" and not a.refine_existing
++        a.profile == "common_grading_failure" and not a.refine_existing
+     )
+     archive = a.private_root / f"archives/{a.number:03}"
+     content_root, manifest, manifest_hash, snapshot_evidence = archive_inventory(
+diff --git a/experiments/19-repo2rlenv-notebook-pilot/panel-rounds/079/test_snapshot_prefix.py b/experiments/19-repo2rlenv-notebook-pilot/panel-rounds/079/test_snapshot_prefix.py
+index 668f6a4d..2b72aadd 100644
+--- a/experiments/19-repo2rlenv-notebook-pilot/panel-rounds/079/test_snapshot_prefix.py
++++ b/experiments/19-repo2rlenv-notebook-pilot/panel-rounds/079/test_snapshot_prefix.py
+@@ -108,6 +108,37 @@ def test_snapshot_reader_names_the_original_format_and_never_manufactures_a_regu
+         module.archive_inventory(archive)
+ 
+ 
++@pytest.mark.parametrize("defect", [None, "unverified", "wrong_hash", "duplicate", "root"])
++def test_regular_original_inventory_keeps_its_own_readback_guards(tmp_path, defect):
++    archive = tmp_path / "regular"
++    row = {"path": "pipeline.json", "bytes": 2, "sha256": module.digest(b"{}"), "mode": 384}
++    write(
++        archive / "sealed-manifest.json", {"files": [row, row] if defect == "duplicate" else [row]}
++    )
++    raw = (archive / "sealed-manifest.json").read_bytes()
++    write(
++        archive / "independent-readback.json",
++        {
++            "all_files_download_verified": defect != "unverified",
++            "source_manifest_sha256": "wrong" if defect == "wrong_hash" else module.digest(raw),
++        },
++    )
++    write(
++        archive / "root-evidence/readback.json",
++        {
++            "all_manifest_files_hash_size_mode_verified": defect != "root",
++        },
++    )
++    if defect:
++        with pytest.raises(AssertionError):
++            module.archive_inventory(archive)
++    else:
++        root, rows, identity, extra = module.archive_inventory(archive)
++        assert root == archive / "files" and set(rows) == {"pipeline.json"}
++        assert identity == module.digest(raw) and extra is None
++        assert not (archive / "snapshot-restored").exists()
++
++
+ @pytest.mark.parametrize(
+     "defect",
+     [

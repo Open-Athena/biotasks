@@ -9,7 +9,11 @@ from types import SimpleNamespace
 
 import pytest
 from daytona._async.process import AsyncProcess
-from daytona.common.errors import DaytonaNotFoundError, DaytonaProcessNotFoundError
+from daytona.common.errors import (
+    DaytonaConflictError,
+    DaytonaNotFoundError,
+    DaytonaProcessNotFoundError,
+)
 from daytona_session import session_command
 from daytona_toolbox_api_client_async.models.command import Command
 from repo2rlenv.execution.base import RemoteCommandError
@@ -106,6 +110,63 @@ class CreationLoss(Process):
         )
 
 
+class LateCreation(CreationLoss):
+    """The first create becomes visible only after the retry conflicts."""
+
+    async def create_session(self, session, **kwargs):
+        self.creations += 1
+        self.events.append("create")
+        if self.creations == 1:
+            raise ConnectionError("creation acknowledgement lost")
+        raise DaytonaConflictError("session already exists")
+
+    async def get_session(self, session, **kwargs):
+        if self.lookups == 0:
+            self.lookups += 1
+            self.events.append("lookup")
+            raise DaytonaProcessNotFoundError("not visible yet")
+        return await super().get_session(session, **kwargs)
+
+
+def test_late_creation_conflict_recovers_only_the_same_empty_session(tmp_path):
+    process = LateCreation()
+    result = asyncio.run(session_command(process, ["original"], timeout=10, directory=tmp_path))
+    assert result.returncode == 0
+    assert process.creations == process.lookups == 2
+    assert len(process.submissions) == 1
+    receipt = json.loads((tmp_path / "session-transport.json").read_text())
+    assert receipt["submission_attempts"] == 1 and not receipt["command_reexecuted"]
+    assert receipt["creation_reconciliation"][1] == {
+        "attempt": 2,
+        "error_type": "DaytonaConflictError",
+        "state": "same_empty_session_verified",
+    }
+
+
+@pytest.mark.parametrize(
+    "mode", ["lookup_failure", "wrong_identity", "existing_commands", "absence"]
+)
+def test_late_creation_conflict_fails_closed_without_empty_identity(tmp_path, mode):
+    process = LateCreation(**{mode: True})
+    with pytest.raises(
+        DaytonaConflictError if mode in {"lookup_failure", "absence"} else ValueError
+    ):
+        asyncio.run(session_command(process, ["original"], timeout=10, directory=tmp_path))
+    assert process.creations == process.lookups == 2
+    assert process.submissions == [] and "delete" not in process.events
+
+
+def test_first_creation_conflict_does_not_adopt_an_unexpected_session(tmp_path):
+    class FirstConflict(CreationLoss):
+        async def create_session(self, session, **kwargs):
+            raise DaytonaConflictError("unexpected first conflict")
+
+    process = FirstConflict()
+    with pytest.raises(DaytonaConflictError):
+        asyncio.run(session_command(process, ["original"], timeout=10, directory=tmp_path))
+    assert process.lookups == 0 and process.submissions == []
+
+
 @pytest.mark.parametrize("absence", [False, True])
 @pytest.mark.parametrize("not_found", [DaytonaNotFoundError, DaytonaProcessNotFoundError])
 def test_creation_loss_is_reconciled_before_the_only_command_submission(
@@ -144,16 +205,18 @@ def test_unresolved_creation_or_nonempty_session_never_dispatches_a_command(tmp_
     assert receipt["submission_attempts"] == 0 and receipt["session_cleanup"] == "owner_required"
 
 
-def test_recovered_creation_does_not_retry_a_lost_execute_response(tmp_path):
-    process = CreationLoss()
+@pytest.mark.parametrize("recovery_type", [CreationLoss, LateCreation])
+def test_recovered_creation_does_not_retry_a_lost_execute_response(tmp_path, recovery_type):
+    process = recovery_type()
     process.fail = "submit"
     with pytest.raises(ConnectionError, match="submit response lost"):
         asyncio.run(session_command(process, ["original"], timeout=10, directory=tmp_path))
-    assert process.creations == 1 and process.lookups == 1
+    assert process.creations == process.lookups == (2 if recovery_type is LateCreation else 1)
     assert len(process.submissions) == 1
 
 
-def test_creation_recovery_keeps_the_original_deadline(tmp_path, monkeypatch):
+@pytest.mark.parametrize("recovery_type", [CreationLoss, LateCreation])
+def test_creation_recovery_keeps_the_original_deadline(tmp_path, monkeypatch, recovery_type):
     import daytona_session
 
     clock = [0]
@@ -166,7 +229,7 @@ def test_creation_recovery_keeps_the_original_deadline(tmp_path, monkeypatch):
         ),
     )
 
-    class ExpiredCreation(CreationLoss):
+    class ExpiredCreation(recovery_type):
         async def get_session(self, session, **kwargs):
             result = await super().get_session(session, **kwargs)
             clock[0] = 11
@@ -175,7 +238,8 @@ def test_creation_recovery_keeps_the_original_deadline(tmp_path, monkeypatch):
     process = ExpiredCreation()
     with pytest.raises(TimeoutError, match="original allowance"):
         asyncio.run(session_command(process, ["original"], timeout=10, directory=tmp_path))
-    assert process.creations == 1 and process.lookups == 1 and not process.submissions
+    assert process.creations == process.lookups == (2 if recovery_type is LateCreation else 1)
+    assert not process.submissions
 
 
 @pytest.mark.parametrize("fast", [False, True])

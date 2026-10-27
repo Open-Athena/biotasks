@@ -13,7 +13,7 @@ import uuid
 from contextlib import asynccontextmanager
 
 from daytona import AsyncDaytona, SessionExecuteRequest
-from daytona.common.errors import DaytonaNotFoundError
+from daytona.common.errors import DaytonaConflictError, DaytonaNotFoundError
 from repo2rlenv.execution.base import CommandResult
 from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.execution.read_retry import transient_connection_error
@@ -87,7 +87,13 @@ async def session_command(process, argv, *, timeout, directory):
             except Exception as error:
                 # No execute request has been made. Resolve this same session;
                 # never turn an uncertain command into a second submission.
-                if not transient_connection_error(error) or not inspect.iscoroutinefunction(
+                # A first create can appear after a timed-out acknowledgement
+                # and an intervening 404. A conflict on its sole creation retry
+                # is another uncertain creation, not evidence of a command.
+                recoverable = transient_connection_error(error) or (
+                    creation == 1 and isinstance(error, DaytonaConflictError)
+                )
+                if not recoverable or not inspect.iscoroutinefunction(
                     getattr(process, "get_session", None)
                 ):
                     raise
