@@ -21,13 +21,13 @@ The latest outcomes are two qualified/published tasks, four rejected generated c
 
 PyMC 215 and PyHMMER 216 completed on identical 232-file 108 runtime hashes with original notebooks/provenance only. PyMC passed 19 scientific controls and native reference/empty/blind-GLM rewards 1/0/1 without a quality repair. Its public release and forced anonymous empty-cache download are verified. PyHMMER was rejected because an executed HMM-statistic mutation passed a grader that promised to check that field. Its single global repair had already been used for the specification; no extra repair, native execution or solver attempt was launched. All original science/root archives and resource cleanup are verified for both. [Plan](../108/development-panel.json), [PyMC](../108/result-215.json), [PyHMMER](../108/result-216.json), [same runtime](../108/same-runtime-215-216.json).
 
-The full ten-domain common-version assessment remains incomplete; eight original-source cases are planned but unfunded/unfrozen. This one accepted task and one rejected candidate establish those outcomes, not a statistical reliability estimate. The factory changes are general citation feedback, batched evidence reads and earlier solver-time refusal. The previously recorded 114 affected tests and 19 source-admission/proof checks remain separate from these live scientific results.
+The full ten-domain common-version assessment remains incomplete; eight cases remain incomplete: COBRApy 217 is running and seven are unfunded/unfrozen. This one accepted task and one rejected candidate establish those outcomes, not a statistical reliability estimate. The factory changes are general citation feedback, batched evidence reads and earlier solver-time refusal. The previously recorded 114 affected tests and 19 source-admission/proof checks remain separate from these live scientific results.
 
 ## Latest qualified release and inspection
 
 [PyMC 215](https://huggingface.co/datasets/gonzalobenegas/biotasks-notebook-pilot-issue-19-pymc-215/tree/1a27dec5aceb5d0b592fce41b129a996893b89b9) preserves both original analysis branches and all 71 historical count pairs. Native rewards are 1/0/1; 86.33 pipeline minutes and 126 recorded requests exclude bootstrap, archival and publication. Exact source-input comparison and the MIT/BDA3 notice are verified. [Release audit](../../autonomous-runs/215/release-audit.json). Shared model families/stacks and one blind success do not establish universal portability, biological validity or benchmark performance.
 
-The latest HTML now displays PyMC 215: 13 actual pipeline stages and 13 solver trajectory steps, with captured prompts, inputs and outputs. The original notebook is losslessly compressed in the viewer assets; large grid CSVs use labeled previews and exact public downloads. Browser navigation, mobile layout and text contrast passed. COBRApy 217 is running setup on the same 232-file factory; seven further cases remain unfunded.
+The latest HTML now displays PyMC 215: 13 actual pipeline stages and 13 solver trajectory steps, with captured prompts, inputs and outputs. The original notebook is losslessly compressed in the viewer assets; large grid CSVs use labeled previews and exact public downloads. Browser navigation, mobile layout and text contrast passed. COBRApy 217 is running on the same 232-file factory; seven further cases remain unfunded.
 
 ## Preserved earlier findings
 
@@ -35,7 +35,7 @@ PyMC 213 and Matchms 214 ended with timing infrastructure failures on frozen 105
 
 ## Remaining work and budget
 
-Refresh and validate the latest HTML, reconcile eligible closed reservations, then run the remaining eight sources on the identical factory. Preserve source science, complete negative controls and final review; publish only qualified rights-cleared tasks with forced anonymous download. Keep #19 open and PR #23 draft/unmerged; supported promotion requires a fresh branch from main. Never merge the research branch.
+Continue COBRApy 217 and run the seven remaining sources on the identical factory as eligible closed reservations are reconciled. The latest HTML is published and verified. Preserve source science, complete negative controls and final review; publish only qualified rights-cleared tasks with forced anonymous download. Keep #19 open and PR #23 draft/unmerged; supported promotion requires a fresh branch from main. Never merge the research branch.
 
 $200 authorized / $200 conservative holds / $0 unallocated. Existing strict auditors retained $2/$4 for closed 215/216, releasing $4 to fund the full $5 for 217. These are not invoices or credits. No further campaign is funded.
 
