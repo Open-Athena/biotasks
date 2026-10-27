@@ -144,6 +144,62 @@ def test_host_guard_prevents_accidental_local_execution(monkeypatch):
         AttachedHost("test-worker")
 
 
+@pytest.mark.parametrize("remaining", [121, 300, 719])
+def test_short_campaign_refuses_solver_before_claim_or_reservation(
+    tmp_path, monkeypatch, remaining
+):
+    monkeypatch.setenv("BIOTASKS_IRIS_WORKER_ID", "test-worker")
+    ledger = Mock()
+    adapter = IrisDaytonaExecution(
+        worker_id="test-worker",
+        deadline=datetime.now(UTC) + timedelta(seconds=remaining),
+        records=tmp_path / "claims",
+        max_trials=3,
+        max_solver_attempts=1,
+        solver_seconds=600,
+        usage_ledger=ledger,
+        trial_reservation_usd="0.25",
+    )
+    dispatch = Mock()
+    monkeypatch.setattr(harbor, "run_trial", dispatch)
+    with pytest.raises(TimeoutError, match="Insufficient allocation time"):
+        adapter.run_trial(
+            adapter.worker,
+            Path("fixture"),
+            tmp_path / "solver",
+            trial_id="short-solver",
+            agent="terminus-2",
+        )
+    dispatch.assert_not_called()
+    ledger.reserve.assert_not_called()
+    assert not adapter.records.exists()
+
+
+@pytest.mark.parametrize("agent", ["oracle", "nop"])
+def test_short_campaign_still_allows_deterministic_controls(tmp_path, monkeypatch, agent):
+    monkeypatch.setenv("BIOTASKS_IRIS_WORKER_ID", "test-worker")
+    adapter = IrisDaytonaExecution(
+        worker_id="test-worker",
+        deadline=datetime.now(UTC) + timedelta(seconds=450),
+        records=tmp_path / "claims",
+        max_trials=3,
+        max_solver_attempts=1,
+        solver_seconds=600,
+    )
+    dispatch = Mock(side_effect=RuntimeError("reached upstream"))
+    monkeypatch.setattr(harbor, "run_trial", dispatch)
+    with pytest.raises(RuntimeError, match="reached upstream"):
+        adapter.run_trial(
+            adapter.worker,
+            Path("fixture"),
+            tmp_path / agent,
+            trial_id="short-" + agent,
+            agent=agent,
+        )
+    assert dispatch.call_args.kwargs["agent_timeout_sec"] is None
+    assert 30 <= dispatch.call_args.kwargs["timeout_sec"] < 600
+
+
 def test_transfer_paths_cannot_escape_owned_directories():
     with pytest.raises(ValueError, match="outside"):
         AttachedHost._remote("/work/../../etc/passwd")

@@ -1,7 +1,7 @@
 """Lossless, identity-bound review inputs, inspected without executing artifacts.
 
 The initial request carries the task/policy and a document index. Generated code,
-controls and diagnostics remain available through one read-only structured tool.
+controls and diagnostics remain available through read-only structured tools.
 There are no size thresholds, truncation rules or scientific selection heuristics.
 """
 
@@ -280,21 +280,34 @@ class ReviewPacket:
     def tools(self):
         from package_inspection import tool
 
+        single = tool(
+            "read_review_evidence",
+            "Read a complete-input review document by field name, optionally selecting an RFC6901 pointer. Keys view lists object keys or array length; text view returns raw strings or formatted JSON in explicit line/column windows. The entire document identity is verified before any selected content is returned. No code execution, scientific computation, writes or arbitrary paths.",
+            {
+                "field": {"type": "string"},
+                "pointer": {"type": "string"},
+                "view": {"type": "string", "enum": ["text", "keys"]},
+                "start_line": {"type": "integer", "minimum": 1},
+                "end_line": {"type": "integer", "minimum": 1},
+                "start_column": {"type": "integer", "minimum": 1},
+                "end_column": {"anyOf": [{"type": "integer", "minimum": 1}, {"type": "null"}]},
+            },
+            ["field"],
+        )
         return [
+            single,
             tool(
-                "read_review_evidence",
-                "Read a complete-input review document by field name, optionally selecting an RFC6901 pointer. Keys view lists object keys or array length; text view returns raw strings or formatted JSON in explicit line/column windows. The entire document identity is verified before any selected content is returned. No code execution, scientific computation, writes or arbitrary paths.",
+                "read_review_evidence_batch",
+                "Read multiple known review-evidence fields/pointers in one call. Each request uses exactly the single-read arguments, document identity checks and line/column windows. Results remain in request order; an unavailable item stays an explicit evidence gap. All reads share the existing deadline. No writes, code execution, new controls or acceptance.",
                 {
-                    "field": {"type": "string"},
-                    "pointer": {"type": "string"},
-                    "view": {"type": "string", "enum": ["text", "keys"]},
-                    "start_line": {"type": "integer", "minimum": 1},
-                    "end_line": {"type": "integer", "minimum": 1},
-                    "start_column": {"type": "integer", "minimum": 1},
-                    "end_column": {"anyOf": [{"type": "integer", "minimum": 1}, {"type": "null"}]},
+                    "requests": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": single["function"]["parameters"],
+                    }
                 },
-                ["field"],
-            )
+                ["requests"],
+            ),
         ]
 
     @property
@@ -312,4 +325,27 @@ class ReviewPacket:
                     }
                 )
 
-        return {"read_review_evidence": read}
+        async def batch(requests):
+            self.remaining()
+            if not isinstance(requests, list) or not requests:
+                return json.dumps(
+                    {
+                        "error": "review_evidence_unavailable",
+                        "message": "Supply a nonempty requests array of single-read argument objects. No evidence was read or inferred.",
+                    }
+                )
+            results = []
+            for request in requests:
+                self.remaining()
+                if isinstance(request, dict):
+                    response = json.loads(await read(**request))
+                else:
+                    response = {
+                        "error": "review_evidence_unavailable",
+                        "message": "Each request must be a single-read argument object. This item remains an evidence gap.",
+                    }
+                results.append(response)
+            self.remaining()
+            return json.dumps({"results": results}, ensure_ascii=False, allow_nan=False)
+
+        return {"read_review_evidence": read, "read_review_evidence_batch": batch}

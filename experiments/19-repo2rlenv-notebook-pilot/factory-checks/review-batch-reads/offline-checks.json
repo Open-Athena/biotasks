@@ -1,0 +1,31 @@
+{
+  "observed_at": "2026-10-27T07:06:29.628066+00:00",
+  "status": "offline_tested_not_adopted",
+  "baseline_revision": "afddb9f671ae57412dd0eb3a3292e9cfae3123a8",
+  "prior_review_tests_passed": 91,
+  "combined_affected_tests_passed": 114,
+  "combined_test_seconds": 3.57,
+  "wall_seconds": 4.72,
+  "peak_rss_kib": 165004,
+  "coverage": "Packet identity/windows/reconstruction, mixed unavailable items, Unicode/escaped pointers, tampering between reads, deadlines, scripted real authoring transport, source-preservation/refusal proofs; plus native/execution regression tests.",
+  "motivation": {
+    "campaign": 213,
+    "original_review_observation_sha256": "a0898cb8d81e9da568a6068958d95bdf1183a8055cfd6d85be3f37b3f0801a52",
+    "single_read_calls": 49,
+    "unavailable_items": 2,
+    "maximum_identical_call_repetitions": 1
+  },
+  "source_sha256": {
+    "experiments/19-repo2rlenv-notebook-pilot/review_packet.py": "322232bb84729ae4bb30f43c961aaf4ff79ec0c49dbaf42de4cc9218d717ddbd",
+    "experiments/19-repo2rlenv-notebook-pilot/test_review_packet.py": "a4c691b14d92d4b98a30de8c8a8f9d47537ae8f5302762d9ea5359d9ce76afae",
+    "src/biotasks/prompts/notebook-grader-review.md": "f1eaffa53e7ff9e6fd60eae2de6a227364a9ece7b876a405bc6ced75709e401e",
+    "experiments/19-repo2rlenv-notebook-pilot/factory-checks/review-batch-reads/source_proof.py": "44726af6ca91b0f3d5f397440d8fe4d24b07776f37a3799a875218eedec19ab3",
+    "experiments/19-repo2rlenv-notebook-pilot/factory-checks/review-batch-reads/test_source_proof.py": "4e105f6d1c04bf61173415b2c60e74e0074b40d7bf6af33e270733e71c9f4615"
+  },
+  "initial_failures": "An added transport test initially assumed the last chat message was the tool response, overlooking the timing notice; fixture corrected. Combined suite first lacked pinned Harbor imports; wheel made available via PYTHONPATH without installation. A new near-expired-clock test expected the solver-specific error rather than the existing generic timeout; broadened its assertion. Production was unchanged for these fixture/environment corrections.",
+  "scientific_acceptance_or_existing_reader_changed": false,
+  "new_model_calls": 0,
+  "new_jobs": 0,
+  "live_speed_improvement_demonstrated": false,
+  "requires_new_source_admission_and_funded_campaign_before_execution": true
+}

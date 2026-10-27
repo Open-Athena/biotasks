@@ -200,11 +200,13 @@ def test_original_object_member_order_is_preserved_in_documents_and_packet_ident
 
 def test_deadline_is_shared_and_packet_tools_cannot_execute_or_write(tmp_path):
     value = packet(tmp_path)
-    assert set(value.handlers) == {"read_review_evidence"}
+    assert set(value.handlers) == {"read_review_evidence", "read_review_evidence_batch"}
     assert {x["function"]["name"] for x in value.tools} == set(value.handlers)
     value.deadline = time.time() - 1
     with pytest.raises(TimeoutError):
         read(value, field="candidate")
+    with pytest.raises(TimeoutError):
+        asyncio.run(value.handlers["read_review_evidence_batch"](requests=[{"field": "candidate"}]))
     with pytest.raises(TimeoutError):
         ReviewPacket(tmp_path / "expired", context(), time.time() - 1)
 
@@ -233,6 +235,7 @@ def test_review_inspection_exposes_packet_only_to_its_readonly_review_tools(tmp_
 
     inspection = ReviewInspection(snapshot(tmp_path), tmp_path / "inspection", time.time() + 30)
     assert "read_review_evidence" not in inspection.handlers
+    assert "read_review_evidence_batch" not in inspection.handlers
     result = inspection.prepare_review_context(context())
     assert result == inspection.packet.model_context
     response = json.loads(
@@ -243,4 +246,187 @@ def test_review_inspection_exposes_packet_only_to_its_readonly_review_tools(tmp_
         )
     )
     assert response["lines"][0]["text"] == "false"
+    batch = json.loads(
+        asyncio.run(
+            inspection.handlers["read_review_evidence_batch"](
+                requests=[{"field": "controls", "pointer": "/0/passed_control"}]
+            )
+        )
+    )
+    assert batch == {"results": [response]}
     assert {t["function"]["name"] for t in inspection.tools} == set(inspection.handlers)
+
+
+def test_batch_reads_equal_individual_verified_results_in_the_same_order(tmp_path):
+    value = packet(tmp_path)
+    before = value.reconstruct()
+    requests = [
+        {"field": "candidate", "pointer": "/grader_code"},
+        {"field": "controls", "pointer": "/0/output", "end_column": None},
+        {"field": "source_evidence", "pointer": "/a~0b~1c"},
+        {"field": "candidate", "view": "keys"},
+        {"field": "controls", "pointer": "/0/passed_control"},
+    ]
+    expected = [read(value, **request) for request in requests]
+    result = json.loads(
+        asyncio.run(value.handlers["read_review_evidence_batch"](requests=requests))
+    )
+    assert result == {"results": expected}
+    assert value.reconstruct() == before
+    tools = {t["function"]["name"]: t["function"]["parameters"] for t in value.tools}
+    assert (
+        tools["read_review_evidence_batch"]["properties"]["requests"]["items"]
+        == tools["read_review_evidence"]
+    )
+    assert "maxItems" not in tools["read_review_evidence_batch"]["properties"]["requests"]
+
+
+@pytest.mark.parametrize(
+    "bad_request",
+    [
+        {"field": "missing"},
+        {"field": "../candidate"},
+        {"field": "candidate", "extra": True},
+        "candidate",
+        {},
+    ],
+)
+def test_batch_preserves_an_unavailable_item_without_losing_other_observations(
+    tmp_path, bad_request
+):
+    value = packet(tmp_path)
+    good = {"field": "controls", "view": "keys"}
+    result = json.loads(
+        asyncio.run(
+            value.handlers["read_review_evidence_batch"](requests=[good, bad_request, good])
+        )
+    )
+    assert len(result["results"]) == 3
+    assert result["results"][0] == result["results"][2] == read(value, **good)
+    assert result["results"][1]["error"] == "review_evidence_unavailable"
+
+
+@pytest.mark.parametrize("requests", [[], "[]", {"field": "candidate"}, None])
+def test_malformed_batch_is_explicit_feedback_not_a_silent_empty_review(tmp_path, requests):
+    value = packet(tmp_path)
+    result = json.loads(
+        asyncio.run(value.handlers["read_review_evidence_batch"](requests=requests))
+    )
+    assert result["error"] == "review_evidence_unavailable"
+    assert "results" not in result
+
+
+def test_batch_checks_document_identity_again_for_each_item(tmp_path, monkeypatch):
+    value = packet(tmp_path)
+    original = value.read_review_evidence
+    calls = []
+
+    async def corrupt_after_first(**kwargs):
+        result = await original(**kwargs)
+        calls.append(kwargs)
+        if len(calls) == 1:
+            path = value.root / value.catalog["candidate"]["path"]
+            path.chmod(0o600)
+            path.write_text('{"changed":true}')
+        return result
+
+    monkeypatch.setattr(value, "read_review_evidence", corrupt_after_first)
+    result = json.loads(
+        asyncio.run(
+            value.handlers["read_review_evidence_batch"](
+                requests=[{"field": "candidate"}, {"field": "candidate"}]
+            )
+        )
+    )
+    assert result["results"][0]["source_identity"]["sha256"] == value.catalog["candidate"]["sha256"]
+    assert result["results"][1]["error"] == "review_evidence_unavailable"
+
+
+def test_batch_stops_at_the_same_deadline_before_another_read(tmp_path, monkeypatch):
+    value = packet(tmp_path)
+    original = value.read_review_evidence
+    calls = []
+
+    async def expire_after_first(**kwargs):
+        result = await original(**kwargs)
+        calls.append(kwargs)
+        value.deadline = time.time() - 1
+        return result
+
+    monkeypatch.setattr(value, "read_review_evidence", expire_after_first)
+    with pytest.raises(TimeoutError):
+        asyncio.run(
+            value.handlers["read_review_evidence_batch"](
+                requests=[{"field": "candidate"}, {"field": "controls"}]
+            )
+        )
+    assert calls == [{"field": "candidate"}]
+
+
+def test_actual_authoring_transport_can_batch_reads_then_submit_once(tmp_path):
+    from reference_protocol import StrictModel
+    from reference_stage import stage
+    from repo2rlenv.campaigns.budget import BudgetLedger
+    from repo2rlenv.quality.loop.client import RunBudget
+    from repo2rlenv.tasksmith.author.budget import AuthorBudget
+    from test_design_stage import response
+
+    from biotasks.chat_author import ChatLimits
+    from biotasks.inference_gate import Allowance, RequestLedger
+
+    class ReadReceipt(StrictModel):
+        note: str
+
+    value = packet(tmp_path)
+    queries = [{"field": "candidate", "pointer": "/grader_code"}, {"field": "controls"}]
+    expected = {"results": [read(value, **query) for query in queries]}
+    answers = [
+        response("read_review_evidence_batch", {"requests": queries}, 1),
+        response("submit_artifact", {"note": "Read observations, no scientific acceptance"}, 2),
+    ]
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        assert "max_tokens" not in payload
+        if len(calls) == 2:
+            observed = next(
+                message for message in reversed(payload["messages"]) if message["role"] == "tool"
+            )
+            assert observed["tool_call_id"] == "call-1"
+            assert json.loads(observed["content"]) == expected
+        return answers[len(calls) - 1]
+
+    ledger = RequestLedger(tmp_path / "requests.sqlite", {"review": Allowance(None, None)})
+    result = asyncio.run(
+        stage(
+            schema=ReadReceipt,
+            name="review",
+            prompt_name="notebook-grader-review",
+            context=value.model_context,
+            root=tmp_path / "worker",
+            ledger=ledger,
+            budget=AuthorBudget(
+                RunBudget(BudgetLedger(tmp_path / "cost.sqlite", limit_usd="1"), "review", "1"),
+                tmp_path / "charges",
+                "review",
+            ),
+            complete=complete,
+            deadline=time.time() + 30,
+            limits=ChatLimits(
+                max_output_tokens=None,
+                max_input_bytes=None,
+                max_response_bytes=None,
+                tool_output_chars=None,
+                reasoning_effort="high",
+            ),
+            max_requests=None,
+            recover_output_limit=False,
+            output_format="tools",
+            extra_tools=value.tools,
+            extra_handlers=value.handlers,
+        )
+    )
+    assert result.note == "Read observations, no scientific acceptance"
+    assert len(calls) == 2
+    assert value.reconstruct() == context()

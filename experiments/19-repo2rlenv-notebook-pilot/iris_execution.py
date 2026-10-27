@@ -170,6 +170,9 @@ class IrisDaytonaExecution:
         timeout = min(kwargs.get("timeout_sec", 1500), 1500, math.floor(remaining) - 120)
         if timeout <= 0:
             raise TimeoutError("Insufficient allocation time for trial and cleanup")
+        solving = agent not in {"nop", "oracle", "probe"}
+        if solving and timeout < self.solver_seconds:
+            raise TimeoutError("Insufficient allocation time for the solver allowance and cleanup")
         kwargs["timeout_sec"] = timeout
         # Every attempted dispatch consumes a slot, including uncertain outcomes.
         # Re-observing the same upstream receipt does not authorize another launch.
@@ -183,7 +186,6 @@ class IrisDaytonaExecution:
             raise RuntimeError(
                 "Prior trial cleanup is unresolved; reconcile before further dispatch"
             )
-        solving = agent not in {"nop", "oracle", "probe"}
         if len(previous) >= self.max_trials:
             raise RuntimeError("Total trial allowance exhausted")
         if solving and sum(row["solving"] for row in previous) >= self.max_solver_attempts:

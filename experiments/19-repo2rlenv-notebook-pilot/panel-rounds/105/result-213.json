@@ -1,0 +1,62 @@
+{
+  "observed_at": "2026-10-27T07:06:29.628066+00:00",
+  "number": 213,
+  "source_id": "pymc-rat-tumor",
+  "audited_state": "infrastructure_failed_before_solver_dispatch_after_passing_controls",
+  "original_pipeline_status": "infrastructure_failed",
+  "terminal_host_state": "FAILED",
+  "operator_interventions": 0,
+  "operator_scientific_edits": 0,
+  "factory_runtime_revision": "835ed3a9308286c55431844405522364350f18ce",
+  "runtime_file_count": 232,
+  "source_assets_identical_to": 186,
+  "elapsed_pipeline_seconds": 6585.382,
+  "accounted_model_request_attempts": 151,
+  "final_scientific_controls": 14,
+  "all_scientific_controls_passed": true,
+  "native_reference_reward": 1,
+  "native_empty_baseline_reward": 0,
+  "solver_attempted": false,
+  "fully_qualified_task": false,
+  "published": false,
+  "original_archive_files": 2103,
+  "original_archive_bytes": 222315316,
+  "source_archive_manifest_sha256": "050d07f9d092e13c99bc4627a7c34facabdd6d3cfb0b17f08463fc1860518fb1",
+  "all_original_files_hash_size_mode_verified": true,
+  "original_root_files": 98,
+  "original_root_bytes": 1528842,
+  "complete_root_export_verified": true,
+  "recorded_creation_ids_absent": 4,
+  "recorded_owners_absent": 6,
+  "all_recorded_creations_freshly_absent": true,
+  "native_dispatch_claims_without_receipt": [
+    {
+      "path": "native/trial-claims/21943309244e5ec1d4239994c8166da417e0a642188f11a05fef44aa6841393e.json",
+      "trial_id": "autonomous-panel-213-native-terminus-2",
+      "solving": true
+    }
+  ],
+  "all_dispatch_claims_resolved": false,
+  "cleanup_limit": "Four recorded SDK IDs and six recorded owners are freshly absent. The solver claim predates upstream argument validation and has no outcome receipt; retain that provenance gap rather than passing the complete three-trial cleanup gate.",
+  "failure": {
+    "stage": "native",
+    "error_type": "ValueError",
+    "message": "An agent limit requires a blind trial and a finite task timeout",
+    "source": "Original hash-verified campaign.log traceback at pinned upstream execution/harbor.py:257. This preflight rejects agent_timeout_sec greater than outer timeout before any remote dispatch.",
+    "campaign_deadline": "2026-10-27T06:58:59.464571+00:00",
+    "solver_seconds_requested": 600,
+    "diagnosis": "Fewer than 600 seconds remained after the existing 120-second adapter cleanup reserve. No solver trajectory, model request, remote-job or result exists in the complete original archive.",
+    "scientific_failure_inferred": false
+  },
+  "accounting_reservation_released": false,
+  "originals_modified": false,
+  "evidence_hashes": {
+    "pipeline.json": "e1a908369431f748cd4c0e968478313f1ef0671f2c4d3bcfeb5d3ade90b5a09e",
+    "grading/result.json": "2ea22144834db878c0dbf4f4f989e8444a4f663ffa8cafe7a2140a03f7100225",
+    "grading/final-controls.json": "c6e4eb0bfac6b9d3269f8011d0cb21a99a677fe478eef4d3d951d3da1d432325",
+    "native/result.json": "457dbdb54cc14218b32c5988265987098d848fab2a626bf669904a22ba3a9126",
+    "native/execution.json": "db71cc6f0b45070b705eb5986a5df931326e3cc5a6505bf0117a4bed13a9bcda"
+  },
+  "root_campaign_log_sha256": "b94f8155aed4bd93effa15a7cea3a96058da281c5960f7ccd1b958338bf6ba3b",
+  "rights_scope": "Operational summary only; no unqualified task or raw biological data published."
+}

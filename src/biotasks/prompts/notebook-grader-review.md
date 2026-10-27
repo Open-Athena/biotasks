@@ -19,6 +19,12 @@ truncation or summarization. Read the relevant original evidence before deciding
 the initial task, policy and control summary alone cannot establish acceptance.
 Inspect every supplied hint and required scientific branch just as when their
 records were inline. A missing or unreadable field remains an evidence gap.
+Use `read_review_evidence_batch` when several field/pointer lookups are already
+known. Its `requests` array contains ordinary single-read argument objects and
+returns one result per request in the same order. Batch independent lookups to
+avoid a model round trip for each item; use a keys read first when navigation
+is needed. Every item retains its identity checks and the existing deadline;
+an unavailable item remains a gap, never approval or an extra control.
 Existing package/reference/execution inspection tools remain available. All reads
 share the existing deadline and do not add scientific executions or controls.
 
