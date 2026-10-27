@@ -1,0 +1,9 @@
+# Authoring idle lifecycle
+
+A source-only campaign lost its grading sandbox after a host-only re-review. The original provider response says the sandbox had been deleted. Its last successful recorded remote operation preceded the first missing-sandbox upload by 1,822.628 seconds. The worker configured 30-minute idle stop and immediate deletion on stop. This matches the documented lifecycle mechanism; the provider deletion event identifying its trigger was not captured. The original failure and all evidence remain unchanged.
+
+The candidate disables inactivity-based stop for the SDK authoring environment. It retains the positive 125-minute absolute TTL, original campaign/work deadlines, automatic deletion on stop, resource envelope and mandatory owner cleanup. This does not increase reference, solver, verifier or model allowances. Host-only review can be active without sandbox API traffic. [Daytona lifecycle documentation](https://www.daytona.io/docs/sandboxes).
+
+The complete runtime AST differs only in that creation keyword. All scientific prompts and all other executable runtime behavior match the preceding frozen version. The associated regression checks actual SDK creation parameters and cleanup across 16 error/export/transport paths. All 127 affected setup/session tests pass. An initial sandboxed suite stalled after 84 cases; its own worker was stopped. The isolated test and full suite then passed outside the sandbox. These are offline configuration/cleanup checks, not a claim of real long-idle survival or new scientific qualification.
+
+Before dispatch, freeze a new source-only payload and record the lifecycle delta explicitly. Keep old frozen inputs and failure records; do not silently relabel a run as the previous common runtime. Native scientific qualification and release checks remain unchanged. The unrelated review-feedback and coverage-handoff candidates are not included.

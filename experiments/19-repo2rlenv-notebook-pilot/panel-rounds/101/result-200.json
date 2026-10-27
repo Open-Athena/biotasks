@@ -1,0 +1,80 @@
+{
+  "observed_at": "2026-10-27T00:31:48.242835+00:00",
+  "number": 200,
+  "source_id": "neurokit-hrv",
+  "audited_state": "autonomous_generated_grading_rejection",
+  "original_pipeline_status": "rejected",
+  "terminal_host_state": "SUCCEEDED",
+  "operator_interventions": 0,
+  "operator_scientific_edits": 0,
+  "factory_runtime_revision": "23fd6d275b8d7bafca6186595bbd0e18668c8bcf",
+  "runtime_file_count": 232,
+  "source_assets_identical_to": 190,
+  "elapsed_pipeline_seconds": 2237.718,
+  "accounted_model_request_attempts": 167,
+  "author_provider_response_receipts": 167,
+  "native_execution_validated": false,
+  "fully_qualified_task": false,
+  "published": false,
+  "solver_attempted": false,
+  "scientific_source_broken_claimed": false,
+  "original_archive_files": 2272,
+  "original_archive_bytes": 88903963,
+  "source_archive_manifest_sha256": "3a61355f88d2a31ce913756aeffd87f5de9958054b79872b614615d5dcc1ecaf",
+  "all_original_files_hash_size_mode_verified": true,
+  "original_root_files": 69,
+  "original_root_bytes": 1297474,
+  "complete_root_export_verified": true,
+  "original_and_fresh_cleanup_verified": true,
+  "cleanup_owners": 4,
+  "quality_repair_allowances_used": 1,
+  "quality_repair_target": "task_specification",
+  "quality_repair_completed": true,
+  "controls_executed": 23,
+  "controls_passed": 21,
+  "failed_probe_expectations": [
+    {
+      "name": "extra-index-column",
+      "kind": "wrong_solution",
+      "expected_failed_checks": [
+        "time_table_structure",
+        "time_index_values",
+        "nonlinear_table_structure",
+        "nonlinear_index_values"
+      ],
+      "actual_failed_checks": [
+        "time_index_values",
+        "nonlinear_index_values",
+        "combined_table_consistency"
+      ],
+      "submission_rejected": true
+    },
+    {
+      "name": "freq-nan-token",
+      "kind": "wrong_solution",
+      "expected_failed_checks": [
+        "freq_table_structure",
+        "freq_index_values",
+        "combined_index_values",
+        "combined_table_consistency"
+      ],
+      "actual_failed_checks": [
+        "freq_table_structure",
+        "freq_index_values",
+        "combined_table_consistency"
+      ],
+      "submission_rejected": true
+    }
+  ],
+  "final_review_accepted": false,
+  "findings": [
+    "Two meaningful wrong-submission probes were rejected overall, but their declared failing-check subsets included checks that actually passed. This is incorrect attribution, not evidence that the grader accepted either wrong submission.",
+    "The public addendum also assigned extra-column rejection to structure checks that did not enforce it. Final review requested correction. The single global quality repair had already been used for specification; no allowance was replenished.",
+    "An invalid generated grader/probe description does not establish that the original physiological notebook is broken."
+  ],
+  "original_pipeline_sha256": "d859505da5031f02cfabf0571aa46a77c6e89f8881f1204eb40c25f406805f2f",
+  "private_claim_sha256": "ea75c91e5337d92d8a647ac84ea7b8ce76336b525ba3f6cc496f3c9d860a6d11",
+  "originals_modified": false,
+  "new_construction_repair_used": false,
+  "rights_scope": "Only audit summaries and operational counts released; no unqualified task bundle or staged input published."
+}

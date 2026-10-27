@@ -93,6 +93,7 @@ result = {
     "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
     "logical_quality_repair_allowances_used": int(
         bool(pipeline.get("quality_repair"))
+        or "grading/repair/artifact-stage/operation.json" in rows
         or any(name.endswith("/repair.json") for name in rows if name.startswith("grading/"))
     ),
 }

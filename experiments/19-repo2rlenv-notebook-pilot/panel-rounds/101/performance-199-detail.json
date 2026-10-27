@@ -1,0 +1,134 @@
+{
+  "source_archive_format": "per-file-export-v1",
+  "source_archive_manifest_sha256": "231889677352753f804f6b52d25eb460b23da8ded7dd075cb84925e53a3fb919",
+  "pipeline_status": "infrastructure_failed",
+  "source_id": "pyhmmer-msa-to-hmm",
+  "elapsed_pipeline_seconds": 4829.552,
+  "stage_elapsed_seconds": {
+    "preparation": 9.652,
+    "setup": 315.782,
+    "replay": 63.408,
+    "specification": 239.535,
+    "construction": 183.464,
+    "grading": 4012.208
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "completed",
+    "replay": "completed",
+    "specification": "completed",
+    "construction": "completed",
+    "grading": "incomplete"
+  },
+  "accounted_model_request_attempts": 281,
+  "request_ledgers": [
+    {
+      "path": "grading/requests.sqlite",
+      "sha256": "616dbe256add41a358218a797fc0f1ba77a183fb3d39d54a98b0583ad21c86cc",
+      "count": 236,
+      "calls": [
+        {
+          "scope": "grader",
+          "state": "response_received",
+          "count": 11
+        },
+        {
+          "scope": "independent",
+          "state": "response_received",
+          "count": 8
+        },
+        {
+          "scope": "probes",
+          "state": "response_received",
+          "count": 37
+        },
+        {
+          "scope": "repair",
+          "state": "response_received",
+          "count": 2
+        },
+        {
+          "scope": "review",
+          "state": "response_received",
+          "count": 64
+        },
+        {
+          "scope": "review-repair",
+          "state": "response_received",
+          "count": 114
+        }
+      ]
+    },
+    {
+      "path": "materialization-raw/requests.sqlite",
+      "sha256": "c5f09ae9ceac9faeac4d0e1ed93fc84ce4fb944ef3ccfc3430f71f909257a327",
+      "count": 5,
+      "calls": [
+        {
+          "scope": "materialize",
+          "state": "response_received",
+          "count": 5
+        }
+      ]
+    },
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "0261cb203c4a89d0e1c58bc992c6625dfda6c7235bca8f8bcb591b5b7fc4714e",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "replay/requests.sqlite",
+      "sha256": "e2f280d7b17f832639376556a77f40ca2dc283bfd9df736e7768584274fcf1fa",
+      "count": 0,
+      "calls": []
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "92e89f5bbab171b9e088b30e271c68afaf2b2260f792f674670de03f17821933",
+      "count": 24,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 24
+        }
+      ]
+    },
+    {
+      "path": "specification-review/requests.sqlite",
+      "sha256": "11a126c9e4db491ce58db11e0af738e2600a6dceb312b2a974bbefcaf3044d1f",
+      "count": 5,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 5
+        }
+      ]
+    },
+    {
+      "path": "specification/requests.sqlite",
+      "sha256": "4ae44685f4ed1009269bbfe634242963adc4fd70488d6fae6cfc981ca5c2b5ab",
+      "count": 10,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 10
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 281,
+  "distinct_author_response_operations_within_stage": 281,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 1
+}

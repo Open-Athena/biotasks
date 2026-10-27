@@ -598,7 +598,9 @@ async def run(
                     disk=target["task_disk_gib"],
                 ),
                 labels={"repo2rlenv.job": owner},
-                auto_stop_interval=30,
+                # Host-side authoring can be active without sandbox API traffic.
+                # The absolute TTL and controller cleanup still bound its lifetime.
+                auto_stop_interval=0,
                 auto_delete_interval=0,
                 ttl_minutes=(config["campaign_seconds"] + config["cleanup_seconds"] + 59) // 60,
                 public=False,

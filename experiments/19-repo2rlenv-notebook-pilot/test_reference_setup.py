@@ -1339,7 +1339,19 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
     sandbox = SimpleNamespace(
         id="owned-fixture", cpu=4, memory=8, disk=10, refresh_data=lambda **kw: None
     )
-    provider = SimpleNamespace(create=lambda *a, **kw: sandbox)
+
+    def create(parameters, **kwargs):
+        # A host-only review must not lose its worker through idle deletion.
+        # Keep a hard lifetime even when every author/export failure is exercised.
+        assert parameters.auto_stop_interval == 0
+        assert parameters.auto_delete_interval == 0
+        assert parameters.ttl_minutes == (7200 + 300 + 59) // 60
+        assert parameters.resources.cpu == 4
+        assert parameters.resources.memory == 8
+        assert parameters.resources.disk == 10
+        return sandbox
+
+    provider = SimpleNamespace(create=create)
 
     class Worker:
         def exec(self, *args, **kwargs):
