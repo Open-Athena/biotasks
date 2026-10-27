@@ -16,6 +16,8 @@ from repo2rlenv.execution.base import CommandResult
 from run_reference_setup import check_config
 
 HERE = Path(__file__).parent
+
+
 CODE = """import argparse,json
 from pathlib import Path
 p=argparse.ArgumentParser()
@@ -26,6 +28,127 @@ try:
 except OSError:ok=False
 Path(a.report).write_text(json.dumps({'passed':ok,'checks':[{'id':'value','passed':ok,'message':'compared value'}]}))
 """
+
+
+@pytest.mark.parametrize("phases", [1, 2])
+def test_control_admission_reduces_both_limits_without_changing_mutation(tmp_path, phases):
+    from grading_session import GradingSession
+    from run_reference_setup import OperationBudgetExceeded
+
+    requests, attempts = [], []
+
+    class Remote:
+        async def upload(self, source, destination):
+            requests.append(json.loads(source.read_text()))
+
+    session = GradingSession(
+        remote=Remote(), snapshot={"outputs": []}, root=tmp_path / "session", config={}
+    )
+    folder = session.root / "fixture"
+    folder.mkdir()
+    request = {"kind": "probe", "seconds": 120, "script": "unchanged mutation"}
+
+    async def helper(args, seconds, label):
+        attempts.append((args, seconds, label))
+        if len(attempts) == 1:
+            raise OperationBudgetExceeded(100)
+        return {"status": "probe_executed", "probe_valid_execution": True}
+
+    session.helper = helper
+    reply = asyncio.run(
+        session.control_request(
+            folder, request, operation="probe-check", label="same-control", phases=phases
+        )
+    )
+    effective = 35 // phases
+    assert [r["seconds"] for r in requests] == [120, effective]
+    assert attempts == [
+        (["probe-check"], 120 * phases + 10, "same-control"),
+        (["probe-check"], effective * phases + 10, "same-control"),
+    ]
+    assert requests[1] == {**request, "seconds": effective}
+    assert request["seconds"] == 120
+    assert json.loads((folder / "request-before-admission.json").read_text()) == request
+    assert (
+        json.loads((folder / "admission.json").read_text())["campaign_deadline_extended"] is False
+    )
+    assert reply["probe_valid_execution"] is True
+
+
+@pytest.mark.parametrize("failure", ["unknown", "empty", "second_refusal"])
+def test_control_admission_never_retries_executed_unknown_or_exhausted_work(tmp_path, failure):
+    from grading_session import GradingSession
+    from run_reference_setup import OperationBudgetExceeded
+
+    attempts = []
+
+    class Remote:
+        async def upload(self, *args):
+            pass
+
+    session = GradingSession(
+        remote=Remote(), snapshot={"outputs": []}, root=tmp_path / "session", config={}
+    )
+    folder = session.root / "fixture"
+    folder.mkdir()
+
+    async def helper(*args):
+        attempts.append(args)
+        if failure == "unknown":
+            raise TimeoutError("executed outcome unknown")
+        raise OperationBudgetExceeded(65 if failure == "empty" or len(attempts) == 2 else 100)
+
+    session.helper = helper
+    with pytest.raises(TimeoutError):
+        asyncio.run(
+            session.control_request(
+                folder,
+                {"kind": "probe", "seconds": 120, "script": "same"},
+                operation="probe-check",
+                label="control",
+            )
+        )
+    assert len(attempts) == (2 if failure == "second_refusal" else 1)
+    if failure == "unknown":
+        assert not (folder / "admission.json").exists()
+
+
+def test_shorter_probe_preflight_still_rejects_unfinished_mutation(tmp_path):
+    from grading_session import GradingSession
+    from run_reference_setup import OperationBudgetExceeded
+
+    attempts = []
+
+    class Remote:
+        async def upload(self, *args):
+            pass
+
+    session = GradingSession(
+        remote=Remote(),
+        snapshot={"outputs": []},
+        root=tmp_path / "session",
+        config={"verifier_seconds": 120},
+    )
+
+    async def helper(*args):
+        attempts.append(args)
+        if len(attempts) == 1:
+            raise OperationBudgetExceeded(100)
+        return {"status": "incomplete", "probe_valid_execution": False}
+
+    session.helper = helper
+    probe = Probe(
+        name="wrong-value",
+        kind="wrong_solution",
+        focus="general",
+        rationale="Change the saved scientific value",
+        evidence=[{"path": "value.txt", "quote": "stored value"}],
+        script="raise RuntimeError('unfinished')",
+        check_ids=["value"],
+    )
+    with pytest.raises(ValueError, match="must exit successfully"):
+        asyncio.run(session.validate_probe_execution(probe))
+    assert len(attempts) == 2
 
 
 @pytest.mark.parametrize("directory", ["specification", "specification-revision"])

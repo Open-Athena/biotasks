@@ -404,6 +404,46 @@ class GradingSession:
             )
         return json.dumps(reply)
 
+    async def control_request(self, folder, request, *, operation, label, phases=1):
+        """Fit bounded validation within the existing deadline before dispatch.
+
+        Only a certified pre-dispatch refusal permits one shorter request.
+        Executed failures and unknown responses are never retried. Both nested
+        limits are reduced together; every control still has to finish and pass.
+        """
+        path = folder / "request.json"
+        save_record(path, request)
+        remote_path = "/work/grading-private/request.json"
+        await self.remote.upload(path, remote_path)
+        padding = 10
+        try:
+            return await self.helper([operation], request["seconds"] * phases + padding, label)
+        except OperationBudgetExceeded as error:
+            effective = min(
+                request["seconds"],
+                (error.available_seconds - COMMAND_RETURN_ALLOWANCE_SECONDS - padding) // phases,
+            )
+            if effective < 1:
+                raise
+            (folder / "request-before-admission.json").write_bytes(path.read_bytes())
+            save_record(
+                folder / "admission.json",
+                {
+                    "requested_phase_seconds": request["seconds"],
+                    "effective_phase_seconds": effective,
+                    "phases": phases,
+                    "outer_padding_seconds": padding,
+                    "available_seconds_before_return_allowance": error.available_seconds,
+                    "return_allowance_seconds": COMMAND_RETURN_ALLOWANCE_SECONDS,
+                    "initial_command_dispatched": False,
+                    "campaign_deadline_extended": False,
+                },
+            )
+            request = {**request, "seconds": effective}
+            save_record(path, request)
+            await self.remote.upload(path, remote_path)
+            return await self.helper([operation], effective * phases + padding, label)
+
     async def validate_probe_execution(self, probe):
         """Check mutation execution without exposing any grader result to its author."""
         self.probe_validation_number += 1
@@ -414,12 +454,11 @@ class GradingSession:
             "seconds": self.config["verifier_seconds"],
             "script": probe.script,
         }
-        save_record(folder / "request.json", request)
-        await self.remote.upload(folder / "request.json", "/work/grading-private/request.json")
-        reply = await self.helper(
-            ["probe-check"],
-            self.config["verifier_seconds"] + 10,
-            "probe-preflight-" + str(self.probe_validation_number),
+        reply = await self.control_request(
+            folder,
+            request,
+            operation="probe-check",
+            label="probe-preflight-" + str(self.probe_validation_number),
         )
         save_record(folder / "result.json", {"probe": probe.model_dump(), "execution": reply})
         if (
@@ -441,12 +480,12 @@ class GradingSession:
             request["omit"] = omit
         if probe:
             request["script"] = probe.script
-        save_record(folder / "request.json", request)
-        await self.remote.upload(folder / "request.json", "/work/grading-private/request.json")
-        reply = await self.helper(
-            ["case"],
-            self.config["verifier_seconds"] * (2 if probe else 1) + 10,
-            "grading-control-" + str(self.case_number),
+        reply = await self.control_request(
+            folder,
+            request,
+            operation="case",
+            label="grading-control-" + str(self.case_number),
+            phases=2 if probe else 1,
         )
         record = {
             "candidate_sha256": sha256(self.last_candidate / "candidate.json"),

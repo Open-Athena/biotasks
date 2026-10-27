@@ -27,6 +27,18 @@ def verify_claim_ids_absent(provider, claims):
             raise RuntimeError("Original claimed sandbox remains")
 
 
+def verify_sdk_inventory(pipeline, folders):
+    """Include a recorded single comparison-repair session, never hide it."""
+    base = {"setup-raw", "replay", "materialization-raw", "grading"}
+    if folders == base:
+        return
+    assert folders == base | {"grading-comparison-repair"}, "Unknown SDK session topology"
+    repair = pipeline.get("quality_repair") or {}
+    assert repair.get("kind") in {"comparison_diagnosis", "public_question_diagnosis"}
+    assert repair.get("allowance_consumed") is True
+    assert repair.get("target") in {"public_question", "independent_solution"}
+
+
 def main(number):
     from daytona import Daytona, ListSandboxesQuery
 
@@ -93,7 +105,7 @@ def main(number):
         for name in entries
         if name.endswith("/sandbox-claim.json")
     }
-    assert folders == {"setup-raw", "replay", "materialization-raw", "grading"}
+    verify_sdk_inventory(pipeline, folders)
     evidence, owners, claims = [], [], []
     for folder in sorted(folders):
         stage, _ = original(folder + "/configuration.json")
@@ -120,7 +132,7 @@ def main(number):
                 "source": "Complete hash/size/mode-verified original quiescent snapshot",
             }
         )
-    assert len(owners) == len(set(owners)) == 4
+    assert len(owners) == len(set(owners)) == len(folders)
     token = subprocess.run(
         [
             "/home/exedev/.local/google-cloud-sdk/bin/gcloud",
@@ -177,7 +189,7 @@ def main(number):
             preserved.write_bytes(prior)
     path.write_bytes(raw)
     assert path.read_bytes() == raw
-    print(json.dumps({"campaign": number, "owners_verified_absent": 4, "complete": True}))
+    print(json.dumps({"campaign": number, "owners_verified_absent": len(owners), "complete": True}))
 
 
 if __name__ == "__main__":

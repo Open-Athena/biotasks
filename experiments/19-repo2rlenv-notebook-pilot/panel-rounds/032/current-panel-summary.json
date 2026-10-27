@@ -1,22 +1,22 @@
 {
-  "observed_at": "2026-10-27T03:48:51.829492+00:00",
+  "observed_at": "2026-10-27T04:43:43.858148+00:00",
   "scope": "Latest completed attempt per source across development versions, including infrastructure outcomes. Not a common-version holdout or success-rate estimate.",
   "source_count": 10,
   "counts": {
-    "generated_candidate_rejected": 3,
+    "generated_candidate_rejected": 4,
     "infrastructure_failed": 3,
-    "validated_published": 2,
     "source_fidelity_rejection": 1,
+    "validated_published": 1,
     "source_input_unavailable_rejection": 1
   },
   "runtime_minutes_all_outcomes": {
     "min": 8.36,
-    "max": 114.9
+    "max": 114.92
   },
   "native_completed_runtime_minutes": {
     "min": 81.59,
-    "max": 92.2,
-    "count": 2
+    "max": 81.59,
+    "count": 1
   },
   "records": [
     {
@@ -86,25 +86,24 @@
       }
     },
     {
-      "campaign": 195,
+      "campaign": 210,
       "domain": "Metabolite mass spectra",
       "source_url": "https://github.com/matchms/matchms-docs/blob/796f156c58d25adfb7e1528fcb24eb8c40c143a5/notebooks/matchms_tutorial_01_building_analysis_pipeline.ipynb",
       "source_id": "matchms-spectral-matching",
-      "factory_revision_recorded": "5ca85269529ecb64d4c92596ae207f91898b1bda",
-      "classification": "validated_published",
-      "audited_state": "autonomous_native_validated_published_anonymous_download_verified",
-      "original_pipeline_status": "validated",
+      "factory_revision_recorded": "05b48c15fc44ed0f8a51e9ab5ac7d7400e19e5d1",
+      "classification": "infrastructure_failed",
+      "audited_state": "infrastructure_failed_before_probe_preflight_after_comparison_repair",
+      "original_pipeline_status": "infrastructure_failed",
       "operator_interventions": 0,
-      "pipeline_minutes": 92.2,
-      "accounted_model_request_attempts": 238,
-      "native_complete": true,
-      "published": true,
+      "pipeline_minutes": 114.92,
+      "accounted_model_request_attempts": 187,
+      "native_complete": false,
+      "published": false,
       "full_original_archive_verified": true,
-      "source_archive_manifest_sha256": "f4ca09b7fca3af9b1e0ec8d777dac084534bfb263f1c7a6b4e8c52134abd9c79",
-      "public_result_path": "panel-rounds/100/result-195.json",
-      "public_result_sha256": "78025410b6ec581df564b1e1dd9f40ba1840bd5981d9e553fc4641fcb86adcae",
-      "public_performance_path": "panel-rounds/100/performance-195-detail.json",
-      "public_performance_sha256": "afc9d0b8ae13c9e81bc52fa2c8dc0583a2145861a4b59aae8bb37159dff39975",
+      "public_result_path": "panel-rounds/103/result-210.json",
+      "public_result_sha256": "83f1fa75e79c36d354e0dc469d4087b86ab7426a1033d4de7956d773e81127a9",
+      "public_performance_path": "panel-rounds/103/performance-210-detail.json",
+      "public_performance_sha256": "7e82041105c22d5a0ccf4ae274dd8a3bd85418e6f29a6dff3ae458d7da45d243",
       "previous_scientific_outcome": {
         "campaign": 159,
         "classification": "generated_candidate_rejected",
@@ -112,14 +111,21 @@
         "public_result_sha256": "1130ec2126fb68b6d0f4f92a43a369af74371d501c02e1b8760516b98e0009b2",
         "retained": true
       },
-      "public_runtime_revision": "2e31d593a4a452553d7c5a84bc4d58423a0014b4",
-      "prior_qualified_run_preserved": 171,
+      "public_runtime_revision": "05b48c15fc44ed0f8a51e9ab5ac7d7400e19e5d1",
+      "prior_qualified_run_preserved": 195,
       "previous_selected_outcome": {
-        "campaign": 179,
-        "classification": "generated_candidate_rejected",
-        "public_result_path": "panel-rounds/083/result-179.json",
-        "public_result_sha256": "0a73b5e4d876835c8fb75c42de29519b137bc41cb24ab4bea08f014abd8b4245"
-      }
+        "campaign": 195,
+        "classification": "validated_published",
+        "public_result_path": "panel-rounds/100/result-195.json",
+        "public_result_sha256": "78025410b6ec581df564b1e1dd9f40ba1840bd5981d9e553fc4641fcb86adcae",
+        "retained": true
+      },
+      "source_archive_format": "quiescent-tar-v1",
+      "source_snapshot_manifest_sha256": "bb23b78f9e7a72689a3f12a704255116c88510bfd5581982ff32cec4fb8e5164",
+      "prior_qualified_runs_preserved": [
+        171,
+        195
+      ]
     },
     {
       "campaign": 200,
@@ -316,33 +322,38 @@
       "public_runtime_revision": "da45986ee60796415f4ac4ff9dab5a98b2f54107"
     },
     {
-      "campaign": 197,
+      "campaign": 212,
       "domain": "Bayesian biological inference",
       "source_url": "https://github.com/pymc-devs/pymc-examples/blob/17c8f90dc90691b41587dfdf477698d74cf5c18c/examples/generalized_linear_models/GLM-hierarchical-binomial-model.ipynb",
       "source_id": "pymc-rat-tumor",
-      "factory_revision_recorded": "23fd6d275b8d7bafca6186595bbd0e18668c8bcf",
-      "classification": "infrastructure_failed",
-      "audited_state": "infrastructure_failed_grading_review_timeout",
-      "original_pipeline_status": "infrastructure_failed",
+      "factory_revision_recorded": "25d7703c755e1cfab73f9fe4b4dedb84b7286046",
+      "classification": "generated_candidate_rejected",
+      "audited_state": "autonomous_generated_setup_rejection",
+      "original_pipeline_status": "rejected",
       "operator_interventions": 0,
-      "pipeline_minutes": 114.9,
-      "accounted_model_request_attempts": 223,
+      "pipeline_minutes": 22.14,
+      "accounted_model_request_attempts": 54,
       "native_complete": false,
       "published": false,
       "full_original_archive_verified": true,
-      "public_result_path": "panel-rounds/101/result-197.json",
-      "public_result_sha256": "4eb34e47b2d08337a1673bb030b96a1506bfd5cc9da425d1b19b30ff21ae58f8",
-      "public_performance_path": "panel-rounds/101/performance-197-detail.json",
-      "public_performance_sha256": "a3ac0627a96fdd3699ab4b4fc643b0d3fa38508ced336b93fa0698b900adcb7e",
-      "public_runtime_revision": "23fd6d275b8d7bafca6186595bbd0e18668c8bcf",
+      "public_result_path": "panel-rounds/104/result-212.json",
+      "public_result_sha256": "f6b421db4eed2bc695709e4adb85f5e7ce927c6f3471e981880126b1ff1c7318",
+      "public_performance_path": "panel-rounds/104/performance-212-detail.json",
+      "public_performance_sha256": "96122b641d9a7bcd6c017e641b5498d2c77224e8be74a354ae558c6a2a8ea673",
+      "public_runtime_revision": "25d7703c755e1cfab73f9fe4b4dedb84b7286046",
       "source_archive_format": "quiescent-tar-v1",
-      "source_snapshot_manifest_sha256": "11040e7469b5ab9a68fa4899b34ad1f1afdfb46a4adae26d4a028c560daaf953"
+      "source_snapshot_manifest_sha256": "11040e7469b5ab9a68fa4899b34ad1f1afdfb46a4adae26d4a028c560daaf953",
+      "previous_selected_outcome": {
+        "campaign": 197,
+        "classification": "infrastructure_failed",
+        "public_result_path": "panel-rounds/101/result-197.json",
+        "public_result_sha256": "4eb34e47b2d08337a1673bb030b96a1506bfd5cc9da425d1b19b30ff21ae58f8",
+        "retained": true
+      },
+      "source_archive_manifest_sha256": "95581ac91fd62909c577f8280ef4b20d4b2a583a3df5675dce40cb7309e54b2c"
     }
   ],
-  "active_campaigns": [
-    210,
-    212
-  ],
+  "active_campaigns": [],
   "historically_published_domains": [
     "matchms-spectral-matching",
     "neurokit-hrv",
@@ -364,14 +375,13 @@
     "No new models, scientific execution or resources were used by this read-only rollup."
   ],
   "does_not_establish_pipeline_readiness": true,
-  "active_campaign_evidence": [
-    "../103/submission-210.json",
-    "../104/submission-212.json"
-  ],
-  "next_common_version_panel": "../104/development-panel.json",
+  "active_campaign_evidence": [],
+  "next_common_version_panel": "../105/candidate-runtime-identity.json",
   "active_campaigns_not_scientifically_qualified": true,
-  "next_common_version_completed_cases": 1,
+  "next_common_version_completed_cases": 0,
   "next_common_version_qualified_tasks": 0,
   "next_common_version_reserved_queued_cases": [],
-  "previous103_completed_cases": 2
+  "previous103_completed_cases": 2,
+  "previous104_completed_cases": 2,
+  "current_common_version_panel": "../104/development-panel.json"
 }

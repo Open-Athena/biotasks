@@ -4,6 +4,7 @@ Uses the submission-bound bootstrap's tested streaming restorer. No scientific
 execution or reconstruction of an absent ordinary autonomous export seal.
 """
 
+import argparse
 import hashlib
 import importlib.util
 import json
@@ -16,18 +17,20 @@ from rigging.filesystem.buckets import filesystem_for
 
 HERE = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(HERE / "factory-checks/archive-recovery"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from readback_cache import store  # noqa: E402
+from snapshot_origin import campaign_prefix  # noqa: E402
 
-number = int(sys.argv[1])
-assert 196 <= number <= 205
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("number", type=int)
+parser.add_argument("--prefix", help="Exact original campaign root, required for later rounds")
+args = parser.parse_args()
+number = args.number
 base = Path("/home/exedev/.local/share/biotasks/handoffs/issue-19")
 root = base / f"archives/{number:03}"
 claim_raw = (base / f"launch/{number:03}-submission.json").read_bytes()
 claim = json.loads(claim_raw)
-prefix = (
-    "s3://marin-us-east-02a/marin/evals/biotasks19/20261026-panel101/"
-    f"biotasks19-autonomous-panel-{number:03}/"
-)
+prefix = campaign_prefix(number, args.prefix)
 cache = {}
 
 
@@ -86,6 +89,8 @@ restored = root / "snapshot-restored"
 assert not restored.exists(), "Do not overwrite an earlier recovery"
 snapshot = module.restore_snapshot(transport, restored)
 assert snapshot["all_snapshot_files_hash_size_mode_verified"] is True
+pipeline = json.loads((restored / "files/pipeline.json").read_text())
+assert pipeline["factory_revision"] == claim["factory_revision"]
 
 root_seal = metadata("export-manifest.json")
 manifest = json.loads(root_seal)

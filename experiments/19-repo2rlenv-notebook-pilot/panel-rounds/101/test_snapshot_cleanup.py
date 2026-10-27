@@ -1,7 +1,7 @@
 """A filtered owner query or an empty cleanup list cannot replace exact IDs."""
 
 import pytest
-from verify_snapshot_cleanup import verify_claim_ids_absent
+from verify_snapshot_cleanup import verify_claim_ids_absent, verify_sdk_inventory
 
 
 class DaytonaNotFoundError(Exception):
@@ -44,3 +44,42 @@ def test_an_access_failure_is_not_absence():
 def test_duplicate_claims_cannot_hide_an_unchecked_resource():
     with pytest.raises(AssertionError):
         verify_claim_ids_absent(Provider(), [claims()[0], claims()[0]])
+
+
+def test_recorded_comparison_repair_adds_a_claim_to_verify():
+    base = {"setup-raw", "replay", "materialization-raw", "grading"}
+    verify_sdk_inventory({}, base)
+    verify_sdk_inventory(
+        {
+            "quality_repair": {
+                "kind": "comparison_diagnosis",
+                "allowance_consumed": True,
+                "target": "public_question",
+            }
+        },
+        base | {"grading-comparison-repair"},
+    )
+
+
+@pytest.mark.parametrize(
+    "repair",
+    [
+        {},
+        {"kind": "other", "allowance_consumed": True, "target": "public_question"},
+        {"kind": "comparison_diagnosis", "allowance_consumed": False, "target": "public_question"},
+        {"kind": "comparison_diagnosis", "allowance_consumed": True, "target": "none"},
+    ],
+)
+def test_extra_session_needs_the_recorded_bounded_repair(repair):
+    with pytest.raises(AssertionError):
+        verify_sdk_inventory(
+            {"quality_repair": repair},
+            {"setup-raw", "replay", "materialization-raw", "grading", "grading-comparison-repair"},
+        )
+
+
+def test_an_unrecorded_additional_session_is_not_ignored():
+    with pytest.raises(AssertionError, match="Unknown"):
+        verify_sdk_inventory(
+            {}, {"setup-raw", "replay", "materialization-raw", "grading", "unknown"}
+        )

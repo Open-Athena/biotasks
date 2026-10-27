@@ -95,6 +95,15 @@ identifiers, labels and ordering of the selected final-state results. A later
 filtered or overwritten object does not preserve an earlier result merely because
 it has the same variable name.
 
+Prefer the selected stored result's own writer, including a writer on an already
+stored child table or array after selecting endpoint fields. Do not rebuild or
+wrap that result in another framework-specific container just to save it when
+the selected value already has an appropriate writer. A new wrapper or separate
+package-level export API can impose an unnecessary version requirement that
+conflicts with the original analysis. If a conversion helper is necessary,
+explain that necessity and leave unsupported runtime/API assumptions explicit;
+do not claim compatibility without execution evidence.
+
 Do not add scientific computation for exports: no new filtering, ranking,
 aggregation, normalization, scaling, statistical tests or reconstruction of
 values computed inside plotting functions. Do not capture a previously unnamed
