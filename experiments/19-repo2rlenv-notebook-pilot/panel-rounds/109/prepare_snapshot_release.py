@@ -35,6 +35,7 @@ def main():
     parser.add_argument("number", type=int)
     parser.add_argument("--private-root", type=Path, required=True)
     parser.add_argument("--notice-review", type=Path, required=True)
+    parser.add_argument("--freeze", type=Path, required=True)
     parser.add_argument("--repo-id", required=True)
     args = parser.parse_args()
     archive = args.private_root / f"archives/{args.number:03}"
@@ -53,6 +54,10 @@ def main():
     files = snapshot.root
     pipeline = snapshot.read_json("pipeline.json")
     assert pipeline["status"] == "validated" and pipeline["operator_interventions"] == 0
+    freeze = read(args.freeze)
+    claim = read(Path(snapshot_config["claim"]))
+    assert freeze["input_revision"] == pipeline["factory_revision"] == claim["factory_revision"]
+    assert freeze["payload_files"] == claim["inputs"]["files"]
     bootstrap = read(archive / "root-evidence/files/bootstrap-status.json")
     assert bootstrap["completed"] is True and not bootstrap.get("error_type")
     cleanup = read(archive / "fresh-provider-cleanup.json")
@@ -117,7 +122,9 @@ def main():
         "primary-snapshot-verification.json",
     )
     config = {
-        "revision": pipeline["factory_revision"],
+        # Public source revision for navigation; private source/input revision
+        # remains unchanged in the original autonomous execution evidence.
+        "revision": freeze["public_runtime_revision"],
         "release_stager_revision": subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=EXPERIMENT.parents[1], text=True
         ).strip(),
