@@ -1,26 +1,20 @@
 # Completion audit
 
-Checked 27 October 2026. **Issue #19 remains incomplete.**
+Checked 27 October 2026 after MDAnalysis 224 publication. **Issue #19 remains incomplete.**
 
 | Requirement | Authoritative evidence | Assessment |
 | --- | --- | --- |
-| Autonomous notebook to validated task or justified rejection | Nine cases completed on frozen 108 without operator scientific edits; PyMC publicly released, Pyteomics passes scientific/native gates but cannot yet be published, six artifact/review/infrastructure failures and one input-retrieval rejection | Autonomy demonstrated for exact outcomes; broad reliability and yield remain concerns |
-| Diverse Python panel | Ten planned domains; nine audited on the common factory | Sgkit 223 stopped on 404 input URLs; MDAnalysis 224 running in grading |
-| Same factory | Cases 215–223 have identical 232-file runtimes and original source-only inputs | No task, answer, recipe or diagnostic hints reused |
-| Scientific/native validation | PyMC 215:19 controls and native reference/empty/solver 1/0/1; Pyteomics 222:18 controls and 1/0/0 with solver timeout | Existing gates pass for these two bundles; not universal scientific correctness or software portability |
-| Publication/download | Exact 215 public revision passed forced anonymous empty-cache readback | Proved for 215 only; 222 external-data redistribution grant unresolved |
-| Latest HTML | PyMC 215 with actual stages, prompts, inputs, outputs and attempt; browser/mobile/contrast/public readback pass | Verified; remains latest qualified public release |
-| Evidence/cleanup | Complete science/root exports 215–223, including original quiescent fallback snapshots 220/222; original SDK IDs and executed native owners checked absent | Verified within explicit native-ID recording limits; 222 host timeout remains recorded |
-| General changes and checks |114 affected runtime tests and source-admission checks; accounting checks are separate | Does not substitute for remaining live panel |
-| Funds |$200 authorized; $197.75 held, $2.25 unallocated after closed-resource audits | Holds are not invoices or credits; reserve a full $5 before a new run |
-| Promotion |PR #23 open, draft and unmerged | Supported extraction and sufficient validation remain; never merge research branch |
+| Autonomous original notebook to validated task or justified rejection | Ten common-factory cases without operator scientific edits; three validated tasks, seven other outcomes | Autonomy demonstrated for these executions; some rejections are factory defects, so reliable disposition is not proved |
+| Diverse Python panel | Ten domains completed on identical 232-file worker runtimes; original source-only inputs | Execution complete; general failure analysis and improvements remain. R deferred |
+| Source science and endpoint coverage | Nine original reference executions/replays; Sgkit blocked before computation | MDAnalysis preserves all five source analyses; source fidelity/target selection remains unresolved in some other cases |
+| Scientific/native validation | PyMC:19 final controls, native 1/0/1; Pyteomics:18, 1/0/0 with solver timeout; MDAnalysis:19, 1/0/1 | Exact accepted bundles pass existing gates; not universal scientific validity, contamination-free evaluation or software portability |
+| Publication/download | Exact PyMC and MDAnalysis public revisions pass forced anonymous empty-cache readback | Proved for these two releases; Pyteomics data redistribution unresolved and remains private |
+| Latest HTML | MDAnalysis with actual original notebook, question, 17-step solver trajectory, 15 pipeline steps, prompts/inputs/outputs and specification repair | Local browser/mobile/contrast/hash checks pass; verify public Git readback after pushing |
+| Evidence/cleanup | Complete original science/root archives for all ten; original SDK IDs and executed native owners checked absent | Verified within explicit native-ID recording limits; preserve 220/222 fallback and host failure records |
+| General fixes and tests | Frozen108 had 114 runtime checks; separate export candidate has 158 offline checks | New primary export not live-tested; recurring contract, comparison, representation and review defects remain |
+| Funds |$200 authorized; $194.75 conservative holds/$5.25 unallocated | Not invoices or assumed credits; no next campaign funded; full $5 reservation required |
+| Promotion |PR #23 open, draft, unmerged | Supported extraction and sufficient validation remain; never merge research branch |
 
-Next: complete the remaining original MDAnalysis source on the same factory, then address recurring general failure patterns. Preserve original failures and distinguish generated-contract defects from broken notebooks. Scanpy's exact embedding/label target concern remains unresolved; its infrastructure failure does not decide scientific suitability. Publish only qualified, rights-cleared tasks with verified downloads.
+Next: improve general public-contract consistency, scientific comparison coverage, legitimate representation handling and evidence-grounded review; validate the primary-export candidate live. Preserve original failures, repeat on original seeds without diagnostic hints and assess the complete panel again. Do not redefine success as three accepted examples or classify every stop as a bad notebook. [Full common-panel results](../108/README.md).
 
-The Pyteomics controller completed before the host timed out; original fallback recovery preserved all evidence without reconstructing a normal export seal. [Result](../108/result-222.json), [acceptance audit](../../autonomous-runs/222/acceptance-audit.json). Redundant compressed local transport caches 210/214/220 were evicted only after fresh remote full-hash and local complete-member verification; original remote objects, unpacked members, manifests and readback receipts remain. Strict checks requiring a compressed local cache must restore and reverify it first. [Eviction receipt](../../factory-checks/archive-recovery/transport-cache-eviction-20261027.json).
-
-Original campaign/resource/model/repair limits remain. Proposed timing changes and a second later-version quality repair are unanswered and not adopted; no numerical yield threshold is assumed. [Common plan](../108/development-panel.json).
-
-Sgkit 223 rejected during setup without a reference test; original input URLs returned 404/NoSuchBucket. The worker overstates what Crossref PDF links prove about supplementary-data availability. Preserve the rejection while treating that broader claim as unresolved; no operator input replacement or source repair was supplied. [Audited result](../108/result-223.json).
-
-A final-export-only candidate passes 158 offline checks, including nine source-boundary checks, but has no fresh live primary-export result. It does not alter MDAnalysis 224 or complete the scientific reliability assessment. [Candidate checks](../../factory-checks/primary-snapshot/offline-checks.json).
+Original model, resource, timing and repair limits remain. Proposed three-hour campaigns, cumulative reference timing and a second later-version quality repair are unanswered and not adopted. No numerical yield threshold is assumed. Public release and HTML publication are explicit bookkeeping steps outside scientific worker execution; rights review is source-specific rather than an autonomous blanket license classifier.
