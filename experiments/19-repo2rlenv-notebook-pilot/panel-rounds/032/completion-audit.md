@@ -5,14 +5,14 @@ Checked 27 October 2026. **Issue #19 remains incomplete.**
 | Requirement | Authoritative evidence | Assessment |
 | --- | --- | --- |
 | Autonomous notebook to validated task or justified rejection | Six original workflows executed on frozen 108 without operator scientific edits; one qualified release, three candidate rejects, one questionable review rejection and one infrastructure failure | Demonstrated exact outcomes; yield and review reliability remain concerns |
-| Diverse Python panel | Ten planned domains; six audited on the common factory | Four domains unstarted; 221 funded but not frozen/submitted |
-| Same factory | Cases 215–220 have identical 232-file runtime hashes and original source-only inputs | Verified for dispatched cases; remaining sources are not frozen or funded |
+| Diverse Python panel | Ten planned domains; six audited on the common factory | Four domains unstarted; 221 funded/frozen but not submitted |
+| Same factory | Cases 215–221 have identical 232-file runtime hashes and original source-only inputs | Six cases dispatched; 221 frozen but not submitted; three other sources unprepared |
 | Scientific/native validation | PyMC 215 passed 19 controls and native reference/empty/blind solver 1/0/1 | Proved for 215; rejected cases have no native qualification |
 | Publication/download | Exact 215 public bundle and revision passed forced anonymous empty-cache readback | Proved for 215 only |
 | Latest HTML | PyMC 215 with actual stages, prompts, inputs, outputs and attempt; browser/mobile/contrast/public readback pass | Verified; no new qualified release replaces it |
 | Evidence/cleanup | Complete science/root exports for 215–220, with original fallback snapshot for 220; all original SDK IDs and executed native owners checked absent | Verified within explicit native-ID recording limits |
 | General changes and checks | 114 affected runtime tests and source-admission checks; accounting checks are separate | Does not substitute for the remaining live panel |
-| Funds | $200 authorized; $196.75 held; $3.25 unallocated; closed 220 retains $1 and 221 has a full $5 reservation | 221 is not yet frozen/submitted; holds are not invoices or credits |
+| Funds | $200 authorized; $196.75 held; $3.25 unallocated; closed 220 retains $1 and 221 has a full $5 reservation | 221 is frozen but not yet submitted; holds are not invoices or credits |
 | Promotion | PR #23 open, draft and unmerged | Supported extraction and sufficient validation remain; never merge the research branch |
 
 Next: complete the four remaining original Python sources on the same factory, then assess general failure patterns. Preserve failed responses, controls and rejection reasons. Scanpy's exact embedding/label target concern also remains unresolved; its recorded infrastructure failure is not a scientific verdict. Publish only scientifically qualified, rights-cleared tasks with verified downloads. Rejections caused by generated artifacts or review errors must not be described as broken notebooks.
