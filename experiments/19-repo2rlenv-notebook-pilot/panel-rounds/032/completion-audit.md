@@ -5,7 +5,7 @@ Checked 27 October 2026. **Issue #19 remains incomplete.**
 | Requirement | Authoritative evidence | Assessment |
 | --- | --- | --- |
 | Autonomous notebook to validated task or justified rejection | Nine cases completed on frozen 108 without operator scientific edits; PyMC publicly released, Pyteomics passes scientific/native gates but cannot yet be published, six artifact/review/infrastructure failures and one input-retrieval rejection | Autonomy demonstrated for exact outcomes; broad reliability and yield remain concerns |
-| Diverse Python panel | Ten planned domains; nine audited on the common factory | Sgkit 223 stopped on 404 input URLs; MDAnalysis224 funded/frozen, not submitted |
+| Diverse Python panel | Ten planned domains; nine audited on the common factory | Sgkit 223 stopped on 404 input URLs; MDAnalysis 224 submitted |
 | Same factory | Cases 215–223 have identical 232-file runtimes and original source-only inputs | No task, answer, recipe or diagnostic hints reused |
 | Scientific/native validation | PyMC 215:19 controls and native reference/empty/solver 1/0/1; Pyteomics 222:18 controls and 1/0/0 with solver timeout | Existing gates pass for these two bundles; not universal scientific correctness or software portability |
 | Publication/download | Exact 215 public revision passed forced anonymous empty-cache readback | Proved for 215 only; 222 external-data redistribution grant unresolved |
