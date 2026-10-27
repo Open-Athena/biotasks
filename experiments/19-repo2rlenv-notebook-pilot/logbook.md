@@ -5577,3 +5577,10 @@ Ledger225state is terminal but its full5USDhold remains; aggregate199.75held/0.2
 
 
 The current explorer now selects qualified public225: original notebook, task,9-step solver trajectory and13actual pipeline steps with captured prompts/inputs/outputs. The presentation selector supports original primary snapshots and discards inherited optional revision stages before rebuilding this run’s actual sequence. All107selected file hashes match, all5views/mobile routes pass, no JavaScript errors and visible notebook-code contrast13.94. Screenshot inspected; exact public HTML readback at878835380499c2066b489c5e1d3ec14d65e2f519matches the local5,188,737-byte artifact. No scientific computation was repeated for presentation.
+
+
+### 27 October 2026 — Closed primary-snapshot resource audit
+
+Added explicit primary-success bootstrap/terminal-claim verification while retaining the recovered-timeout role. Admitted the exact already validated108/109resource-source families; the existing export-only AST proof preserves109creation/time/cleanup logic.69pure accounting/refusal tests pass; actual original archive/native/backend/config/cleanup audits then pass before ledger application. Existing observed-clock arithmetic is unchanged: price TWO full profiles through all model/idle time, add300seconds at each end,0.10USDmargin and upward0.25USDrounding. Current primary pricing/billing sources were rechecked; no free credits/storage discount assumed.
+
+225first retains2USDagainst the unchanged full-lifetime1.384500USDbound, then0.75USDagainst its proven0.52765764702482USDobservedclockbound.224retains1USDagainst0.65372991291478USD. Released5.25USDof excess reservation, leaving194.50held/5.50unallocated under the existing200USDauthorization. A repeated225refinement is refused with the ledger unchanged. No scientific outcome, resource/model/time/repair allowance, invoice claim or new job changed. [Applied proofs](panel-rounds/109/README.md).
