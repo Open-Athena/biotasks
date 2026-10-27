@@ -27,7 +27,7 @@ The full ten-domain common-version assessment remains incomplete; eight original
 
 [PyMC 215](https://huggingface.co/datasets/gonzalobenegas/biotasks-notebook-pilot-issue-19-pymc-215/tree/1a27dec5aceb5d0b592fce41b129a996893b89b9) preserves both original analysis branches and all 71 historical count pairs. Native rewards are 1/0/1; 86.33 pipeline minutes and 126 recorded requests exclude bootstrap, archival and publication. Exact source-input comparison and the MIT/BDA3 notice are verified. [Release audit](../../autonomous-runs/215/release-audit.json). Shared model families/stacks and one blind success do not establish universal portability, biological validity or benchmark performance.
 
-The current HTML still displays the earlier qualified MDAnalysis 198 example. Its PyMC replacement is in preparation: the first 97-file selection was preserved outside Git because the two full grid CSV copies should use compact previews and exact published downloads. The notebook can be stored losslessly compressed for display. Do not label the old HTML as the new release.
+The latest HTML now displays PyMC215: 13 actual pipeline stages and 13 solver trajectory steps, with captured prompts, inputs and outputs. The original notebook is losslessly compressed in the viewer assets; large grid CSVs use labeled previews and exact public downloads. Browser navigation, mobile layout and text contrast passed. COBRApy217is running setup on the same232-filefactory; seven further cases remain unfunded.
 
 ## Preserved earlier findings
 
@@ -37,6 +37,6 @@ PyMC 213 and Matchms 214 ended with timing infrastructure failures on frozen 105
 
 Refresh and validate the latest HTML, reconcile eligible closed reservations, then run the remaining eight sources on the identical factory. Preserve source science, complete negative controls and final review; publish only qualified rights-cleared tasks with forced anonymous download. Keep #19 open and PR #23 draft/unmerged; supported promotion requires a fresh branch from main. Never merge the research branch.
 
-$200 authorized / $199 conservative holds / $1 unallocated. Both terminal 215/216 retain their full $5 reservations pending strict accounting; these are not invoices or assumed credits. New campaigns still require a full $5 reservation before launch.
+$200 authorized / $200 conservative holds / $0 unallocated. Existing strict auditors retained $2/$4 for closed215/216, releasing $4 to fund the full $5 for217. These are not invoices or credits. No further campaign is funded.
 
 Original two-hour campaign, ten-minute reference/solver, two-minute verifier, two-reference-dispatch and repair limits remain. The proposed three-hour window and reference-dispatch change are unanswered; neither has been adopted. No numerical yield threshold has been assumed.
