@@ -4,6 +4,7 @@ import json
 import shlex
 from pathlib import Path
 
+from grader_support import MANIFEST, MODULE, load_support
 from materialization_protocol import Materialization
 from reference_environment import UV_VERSION, validate_environment
 from repo2rlenv.emitter.bundle import TaskBundle, TaskFile, write_bundle
@@ -179,6 +180,12 @@ def package(
             "#!/bin/sh\nset -eu\npython /tests/verify.py\n", executable=True
         ),
     }
+    support = load_support(grading, result.get("parsing_support"))
+    if support is not None:
+        if any(c["execution"].get("parsing_support") != support for c in controls):
+            raise ValueError("Control parsing support differs from its packaged source")
+        assets["tests/" + MODULE] = TaskFile((grading / MODULE).read_bytes())
+        assets["tests/" + MANIFEST] = TaskFile((grading / MANIFEST).read_bytes())
     if exclusions is not None:
         assets["environment/dependency_assets.py"] = TaskFile(
             (environment / "trial/dependency_assets.py").read_bytes()

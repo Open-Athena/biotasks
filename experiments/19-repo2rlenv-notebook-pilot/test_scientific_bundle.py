@@ -15,8 +15,9 @@ def save(path, value):
 @pytest.mark.parametrize("question_revision", [False, True])
 @pytest.mark.parametrize("exclusions", [False, True])
 @pytest.mark.parametrize("final_environment", [False, True])
+@pytest.mark.parametrize("parsing_support", [False, True])
 def test_bundle_keeps_answers_private_and_requires_exact_controls(
-    tmp_path, monkeypatch, question_revision, exclusions, final_environment
+    tmp_path, monkeypatch, question_revision, exclusions, final_environment, parsing_support
 ):
     materialized, grading, environment = [
         tmp_path / p for p in ("materialized", "grading", "environment")
@@ -140,6 +141,16 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(
         )
     ]
     save(grading / "final-controls.json", controls)
+    if parsing_support:
+        from grader_support import capture_support
+
+        support = capture_support(grading)
+        grading_result = json.loads((grading / "result.json").read_text())
+        grading_result["parsing_support"] = support
+        save(grading / "result.json", grading_result)
+        for control in controls:
+            control["execution"] = {"parsing_support": support}
+        save(grading / "final-controls.json", controls)
     (grading / "instruction.md").write_text(
         candidate["instruction"] + "\n\n## Acceptance rules\n\nAcceptance rules\n"
     )
@@ -187,6 +198,17 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(
         attribution={"notebook_license": {"text": "Fixture source notice\n"}},
     )
     task = package(**options)
+    if parsing_support:
+        from grader_support import MANIFEST, MODULE, load_support
+
+        assert load_support(task / "tests", support) == support
+        assert (task / "tests" / MODULE).read_bytes() == (grading / MODULE).read_bytes()
+        assert not (task / "environment" / MODULE).exists()
+        assert not (task / "solution" / MODULE).exists()
+        (grading / MANIFEST).unlink()
+        with pytest.raises(ValueError, match="original regular source and manifest"):
+            package(**{**options, "destination": tmp_path / "missing-support"})
+        save(grading / MANIFEST, support)
     assert (task / "tests/reference/y.txt").read_bytes() == b"1"
     assert (task / "tests/inputs/x.txt").read_bytes() == b"1"
     assert json.loads((task / "tests/inputs-manifest.json").read_text()) == {

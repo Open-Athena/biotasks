@@ -48,6 +48,15 @@ scientific value; an edit changing it must be tested as a wrong answer.
 Prefer an available native format reader over custom physical-line parsing.
 Its accepted representations still need validation, and extra data or malformed
 content must not silently disappear during parsing.
+When `artifact_interface.parsing_support` is present, its optional
+`read_delimited_table` helper is available beside the executed grader. The input
+includes its exact source and a shell import path. Prefer it for ordinary
+delimited tables rather than inventing another parser. It returns header and
+rows as unstripped strings with consistent widths; scientific checks remain
+yours. Enable `allow_blank_records` or an alternative encoding only when your
+public acceptance rules permit it. Empty records are distinct from quoted empty
+fields or delimiter-only rows. Verify every promised representation through
+the actual reader; using this helper alone does not validate a comparison.
 Do not rerun the entire analysis in this grader-author stage; independently
 executed controls are the evidence for recomputation agreement.
 

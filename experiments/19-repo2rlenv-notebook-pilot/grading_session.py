@@ -8,6 +8,7 @@ from pathlib import Path
 
 import httpx
 from design_stage import completion_transport
+from grader_support import MANIFEST, MODULE, capture_support, load_support, support_interface
 from grading_protocol import (
     AlternativeSolution,
     ContractText,
@@ -243,6 +244,14 @@ class GradingSession:
         if reply["exit_code"]:
             raise RuntimeError("Cannot initialize grading workspace")
         await self.helper(["initialize"], 30, "grading-users")
+        capture_support(self.root.parent)
+        await self.remote.upload(self.root.parent / MODULE, "/work/" + MODULE)
+        await self.remote.upload(self.root.parent / MANIFEST, "/work/grading-private/" + MANIFEST)
+        sealed_support = await self.command(
+            ["chmod", "444", "/work/" + MODULE], 30, "seal-parsing-support"
+        )
+        if sealed_support["exit_code"]:
+            raise RuntimeError("Cannot seal factory parsing support")
         locked_logs = await self.command(["chmod", "700", "/work/logs"], 30, "grading-private-logs")
         if locked_logs["exit_code"]:
             raise RuntimeError("Cannot isolate controller logs")
@@ -503,6 +512,9 @@ class GradingSession:
             ):
                 record["problem"] = "Verifier or probe did not complete successfully"
                 return record
+            support = load_support(self.root.parent)
+            if support is not None and reply.get("parsing_support") != support:
+                raise ValueError("Executed grader used different or unrecorded parsing support")
             report = parse_report(reply["report"], candidate)
             failed = {r["id"] for r in report["checks"] if not r["passed"]}
             expected_pass = kind in {"reference", "recomputed", "alternative"} or (
@@ -576,6 +588,7 @@ async def run_grading(
     *, remote, snapshot, root, config, endpoint, credential, deadline, complete=None
 ):
     config = {**config, "reasoning_effort": native_effort(config)}
+    parsing_support = capture_support(root)
     session = GradingSession(remote=remote, snapshot=snapshot, root=root / "grading", config=config)
 
     def comparison_blocker():
@@ -623,7 +636,8 @@ async def run_grading(
             input_paths=snapshot["materialization"]["candidate"]["input_paths"]
             if "materialization" in snapshot
             else None,
-        ),
+        )
+        | {"parsing_support": support_interface(root)},
         "verifier_seconds": config["verifier_seconds"],
         "reference_seconds": config["reference_seconds"],
     }
@@ -1358,6 +1372,7 @@ async def run_grading(
             "review_decision": assessment.decision,
             "harbor_packaging_validated": False,
             "software_portability_validated": False,
+            "parsing_support": parsing_support,
         }
     finally:
         if client:

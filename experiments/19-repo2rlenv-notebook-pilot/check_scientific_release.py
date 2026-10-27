@@ -5,6 +5,7 @@ import json
 import sys
 from pathlib import Path
 
+from grader_support import MANIFEST, MODULE, load_support
 from release_review import check_final_review
 from repo2rlenv.emitter.bundle import inspect_bundle
 from scientific_bundle import runtime_instruction
@@ -74,6 +75,12 @@ assert (task / "instruction.md").read_text() == runtime_instruction(
     (grading / "instruction.md").read_text()
 )
 assert read(task / "tests/checks.json") == candidate["checks"]
+support = load_support(grading, result.get("parsing_support"))
+assert load_support(task / "tests", support) == support
+if support is not None:
+    assert (task / "tests" / MODULE).read_bytes() == (grading / MODULE).read_bytes()
+    assert read(task / "tests" / MANIFEST) == support
+    assert all(c["execution"].get("parsing_support") == support for c in controls)
 print(
     json.dumps(
         dict(

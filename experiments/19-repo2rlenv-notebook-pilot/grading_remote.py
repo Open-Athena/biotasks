@@ -16,6 +16,31 @@ TRUSTED_INPUTS = Path("/work/grader-inputs")
 CASE = Path("/case")
 AUTHOR, GRADER, PROBE, ORACLE = 18001, 18002, 18003, 18004
 WORKER_ROLES = frozenset({AUTHOR, GRADER, PROBE, ORACLE})
+TABLE_SUPPORT = Path("/work/biotasks_table_io.py")
+
+
+def stage_parsing_support():
+    """Use the same controller-owned syntax reader in every executed case."""
+    manifest = PRIVATE / "parsing-support.json"
+    if manifest.is_symlink():
+        raise ValueError("Unsafe parsing support manifest")
+    if not manifest.exists():
+        return None  # Historical sessions have no support module.
+    if manifest.is_symlink() or TABLE_SUPPORT.is_symlink() or not TABLE_SUPPORT.is_file():
+        raise ValueError("Unsafe parsing support")
+    raw = TABLE_SUPPORT.read_bytes()
+    metadata = json.loads(manifest.read_text())
+    if metadata != {
+        "schema": "delimited-table-reader-v1",
+        "module": "biotasks_table_io.py",
+        "sha256": hashlib.sha256(raw).hexdigest(),
+        "bytes": len(raw),
+    }:
+        raise ValueError("Parsing support identity changed")
+    destination = CASE / metadata["module"]
+    destination.write_bytes(raw)
+    destination.chmod(0o444)
+    return metadata
 
 
 def role_processes(uid, proc=Path("/proc")):
@@ -265,6 +290,7 @@ def main():
     submission = hashes(CASE / "submission")
     shutil.copyfile(PRIVATE / "grade.py", CASE / "grade.py")
     (CASE / "grade.py").chmod(0o444)
+    record["parsing_support"] = stage_parsing_support()
     owned(CASE / "result", GRADER, 0o700)
     record["grader"] = run_as(
         GRADER,
