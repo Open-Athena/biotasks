@@ -7,6 +7,7 @@ The source-specific rights decision must already exist as a reviewed document.
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -28,6 +29,29 @@ def digest(path):
 def save(path, value):
     assert not path.exists()
     path.write_text(json.dumps(value, indent=2) + "\n")
+
+
+def notebook_notice_identity(notices):
+    """Read either existing notice format, refusing missing/conflicting hashes."""
+    if not isinstance(notices, dict):
+        raise ValueError("Source notices must be an object")
+    declared = []
+    if "notebook_source_sha256" in notices:
+        declared.append(notices["notebook_source_sha256"])
+    if "notebook" in notices:
+        notebook = notices["notebook"]
+        if not isinstance(notebook, dict):
+            raise ValueError("Nested notebook notices must be an object")
+        if "source_sha256" in notebook:
+            declared.append(notebook["source_sha256"])
+    if not declared or any(
+        not isinstance(value, str) or re.fullmatch("[0-9a-f]{64}", value) is None
+        for value in declared
+    ):
+        raise ValueError("Source notices need an explicit notebook SHA256")
+    if len(set(declared)) != 1:
+        raise ValueError("Conflicting notebook identities in source notices")
+    return declared[0]
 
 
 def main():
@@ -73,6 +97,7 @@ def main():
     task = files / f"native/tasks/autonomous-panel-{args.number:03}"
     notices = read(task / "environment/SOURCE-LICENSES.json")
     reviewed = read(args.notice_review)
+    assert notebook_notice_identity(notices) == reviewed["notebook_source_sha256"]
     assert reviewed["task_science_or_native_bundle_edited"] is False
     assert reviewed["source_notices_sha256"] == digest(task / "environment/SOURCE-LICENSES.json")
     assert reviewed["notebook_source_sha256"] == seeds[0]["source_sha256"]
@@ -162,7 +187,6 @@ def main():
             },
         },
     }
-    assert notices["notebook_source_sha256"] == reviewed["notebook_source_sha256"]
     save(output / "configuration.json", config)
     print(
         json.dumps(
