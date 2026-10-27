@@ -5553,3 +5553,10 @@ Round 109 source admission re-ran the original 108 validator against its exact p
 Reserved the original full $5 within $200 authorization, froze exact original 219 source assets without prior generated artifacts/hints, passed launch preflight and submitted 225. Typed admission found no prior active campaign host; 225 is confirmed RUNNING and has reached setup. Its declared model/resource/time/reference-dispatch/repair allowances remain unchanged. Ledger $199.75 held / $0.25 unallocated is reservations, not an invoice or credits. [Admission and running state](panel-rounds/109/README.md).
 
 The new primary export uses the existing original snapshot transport. Final recovery and any publication must preserve both transport/member manifests and explicit snapshot provenance; an absent normal seal must not be reconstructed. No scientific or native result is inferred from the running state.
+
+
+### 27 October 2026 — Explicit snapshot release provenance and recovery headroom
+
+Added an operator-side publication path for the original compressed snapshot rather than constructing a normal per-file seal. It verifies original transport/member manifests, every restored file and permission, recovery/source binding, pipeline completion and native/source gates.128release/support checks pass (42focused, real local roundtrips and refusal cases included); Ruff/format/ty pass. The unchanged224original release provenance still verifies. Worker225remains frozen at its submitted235-file runtime; no live qualification is inferred from these offline checks.
+
+Using the existing atomic-link implementation, verified/consolidated81duplicate source transports across138task-owned submitted staging paths. Retained every path, content, mode, claim and inputs identity, while freeing489,340,928bytes. The initial private script write was refused by the filesystem sandbox and performed no mutation; the repository helper then ran successfully under the shared resource guard (18,364KiBpeak). Original remote objects and all scientific artifacts remain unchanged. [Checks and receipt](panel-rounds/109/README.md).

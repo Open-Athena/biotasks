@@ -90,20 +90,48 @@ def release_execution_provenance(config, validation):
     """Bind an unattended label to this source's archived pipeline and native result."""
     pipeline_path = config.get("autonomous_pipeline")
     manifest_path = config.get("autonomous_archive_manifest")
-    if pipeline_path is None and manifest_path is None:
+    snapshot_config = config.get("autonomous_snapshot")
+    if pipeline_path is None and manifest_path is None and snapshot_config is None:
         return "assisted", {}
-    if not pipeline_path or not manifest_path or validation.get("accepted") is not True:
+    if (
+        not pipeline_path
+        or (bool(manifest_path) == (snapshot_config is not None))
+        or validation.get("accepted") is not True
+    ):
         raise ValueError("Unattended provenance needs accepted, archived execution evidence")
-    pipeline_path, manifest_path = Path(pipeline_path), Path(manifest_path)
-    manifest = json.loads(manifest_path.read_text())
-    if manifest.get("download_checked") is not True:
-        raise ValueError("Unattended archive must have verified export readback")
-    rows = {row["path"]: row for row in manifest["files"]}
-    if len(rows) != len(manifest["files"]):
-        raise ValueError("Ambiguous unattended archive paths")
+    pipeline_path = Path(pipeline_path)
+    snapshot = None
+    if snapshot_config is not None:
+        from snapshot_archive import verify_snapshot_archive
+
+        if not isinstance(snapshot_config, dict) or set(snapshot_config) != {
+            "restored",
+            "transport",
+            "recovery",
+            "claim",
+            "bootstrap",
+        }:
+            raise ValueError(
+                "Snapshot provenance needs the original archive and recovery identities"
+            )
+        snapshot = verify_snapshot_archive(**snapshot_config)
+        manifest_hash = snapshot.evidence["member_manifest_sha256"]
+    else:
+        manifest_path = Path(manifest_path)
+        manifest = json.loads(manifest_path.read_text())
+        if manifest.get("download_checked") is not True:
+            raise ValueError("Unattended archive must have verified export readback")
+        rows = {row["path"]: row for row in manifest["files"]}
+        if len(rows) != len(manifest["files"]):
+            raise ValueError("Ambiguous unattended archive paths")
+        manifest_hash = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
 
     def archived(path):
         path = Path(path)
+        if snapshot is not None:
+            relative = path.resolve().relative_to(snapshot.root.resolve()).as_posix()
+            record = snapshot.read_json(relative)
+            return record, snapshot.rows[relative]["sha256"]
         relative = path.resolve().relative_to(manifest_path.resolve().parent).as_posix()
         raw = path.read_bytes()
         digest = hashlib.sha256(raw).hexdigest()
@@ -130,11 +158,11 @@ def release_execution_provenance(config, validation):
         or native.get("publication_ready") is not True
     ):
         raise ValueError("Execution does not establish a completed unattended pipeline")
-    return "unattended", {
+    documents = {
         "autonomous-execution.json": {
             "pipeline_sha256": pipeline_hash,
             "native_result_sha256": native_hash,
-            "archive_manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+            "archive_manifest_sha256": manifest_hash,
             "source_sha256": seeds[0]["source_sha256"],
             "factory_revision": pipeline["factory_revision"],
             "bundle_hash": validation["bundle_hash"],
@@ -146,6 +174,10 @@ def release_execution_provenance(config, validation):
             ),
         }
     }
+    if snapshot is not None:
+        documents["autonomous-execution.json"]["archive_format"] = "original-snapshot-v1"
+        documents["autonomous-snapshot-provenance.json"] = snapshot.evidence
+    return "unattended", documents
 
 
 def scientific_probe_documents(grading):

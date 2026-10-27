@@ -129,3 +129,82 @@ def test_partial_or_unverified_evidence_is_not_unattended(tmp_path, defect):
         p.write_text(json.dumps(manifest))
     with pytest.raises(ValueError):
         release_execution_provenance(config, validation)
+
+
+def snapshot_fixture(tmp_path, *, defect=None):
+    from iris_bootstrap import restore_snapshot, snapshot
+    from snapshot_archive import digest
+
+    source = tmp_path / "source"
+    source.mkdir()
+    config, validation = fixture(source)
+    (source / "export-manifest.json").unlink()
+    pipeline_path = source / "pipeline.json"
+    pipeline = json.loads(pipeline_path.read_text())
+    if defect == "rejected":
+        pipeline["status"] = "rejected"
+    elif defect == "operator":
+        pipeline["operator_interventions"] = 1
+    elif defect == "stage":
+        pipeline["stages"].pop()
+    pipeline_path.write_text(json.dumps(pipeline))
+    transport, restored = tmp_path / "transport", tmp_path / "restored"
+    transport.mkdir()
+    snapshot(source, transport.as_uri())
+    readback = restore_snapshot(transport, restored)
+    bootstrap, claim, recovery = [
+        tmp_path / name for name in ("bootstrap.py", "claim.json", "recovery.json")
+    ]
+    bootstrap.write_text("# fixture controller source\n")
+    claim.write_text(json.dumps({"inputs": {"files": {"bootstrap.py": digest(bootstrap)}}}))
+    recovery.write_text(
+        json.dumps(
+            {
+                "snapshot": readback,
+                "source_claim_sha256": digest(claim),
+                "original_bootstrap_sha256": digest(bootstrap),
+            }
+        )
+    )
+    config.pop("autonomous_archive_manifest")
+    config["autonomous_pipeline"] = str(restored / "files/pipeline.json")
+    config["native"] = str(restored / "files/native")
+    config["autonomous_snapshot"] = {
+        "restored": str(restored),
+        "transport": str(transport),
+        "bootstrap": str(bootstrap),
+        "claim": str(claim),
+        "recovery": str(recovery),
+    }
+    return config, validation
+
+
+def test_original_snapshot_qualifies_without_a_manufactured_per_file_seal(tmp_path):
+    config, validation = snapshot_fixture(tmp_path)
+    provenance, documents = release_execution_provenance(config, validation)
+    assert provenance == "unattended"
+    assert documents["autonomous-execution.json"]["archive_format"] == "original-snapshot-v1"
+    evidence = documents["autonomous-snapshot-provenance.json"]
+    assert evidence["original_per_file_seal_reconstructed"] is False
+    assert (
+        documents["autonomous-execution.json"]["archive_manifest_sha256"]
+        == evidence["member_manifest_sha256"]
+    )
+    assert not (tmp_path / "restored/export-manifest.json").exists()
+
+
+@pytest.mark.parametrize(
+    "defect", ["rejected", "operator", "stage", "unaccepted", "ambiguous", "incomplete", "source"]
+)
+def test_snapshot_does_not_bypass_scientific_or_source_gates(tmp_path, defect):
+    config, validation = snapshot_fixture(tmp_path, defect=defect)
+    if defect == "unaccepted":
+        validation["accepted"] = False
+    elif defect == "ambiguous":
+        config["autonomous_archive_manifest"] = str(tmp_path / "absent.json")
+    elif defect == "incomplete":
+        config["autonomous_snapshot"].pop("claim")
+    elif defect == "source":
+        (tmp_path / "source/seed.json").write_text(json.dumps([{"source_sha256": "d" * 64}]))
+    with pytest.raises(ValueError):
+        release_execution_provenance(config, validation)
