@@ -21,7 +21,7 @@ The latest completed outcomes are **one qualified/published task, four rejected 
 
 [PyMC 213](../105/development-panel.json) is running on the 105 successor. It receives only the original 186 notebook/provenance: no previous task, answer, export, environment recipe or failure diagnosis. Its 232 runtime files differ from 104 in exactly three files: general native-writer guidance, shorter pre-dispatch control admission, and tests. Source/provider/funding and typed-pool admission passed. All earlier campaign hosts are terminal and their recorded sandbox IDs/owners are verified absent.
 
-Live 213 metadata shows setup and replay completed, followed by specification review. That reviewer has had repeated exact-quotation and JSON-type validation failures; it remains active, with no accepted final review claimed.
+Live 213 metadata shows setup and replay completed. After citation/schema submission failures, the reviewer completed; the controller used its one global quality repair for the proposal and the revised review returned ready. Construction is now running. This is proposal-stage acceptance, not task qualification; no grader/native/solver success is claimed.
 
 The successor has 155 affected tests, 25 preparation/packaging tests and 10 source-admission/AST checks. These are not fresh scientific qualification. A shorter control request is permitted only after a certified pre-dispatch refusal; executed or uncertain outcomes are not retried automatically. Scientific verdicts, required negative controls, original deadlines, resource maxima, two-reference-dispatch limit and repair budgets remain unchanged.
 
