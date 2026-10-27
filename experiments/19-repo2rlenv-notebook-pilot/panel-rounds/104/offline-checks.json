@@ -22,5 +22,46 @@
   "frozen_running_campaigns_unchanged": [
     209,
     210
+  ],
+  "staging_reproducibility": {
+    "observed_at": "2026-10-27T03:02:49.145097+00:00",
+    "state": "offline_checked_not_live_qualified",
+    "tests": {
+      "setup_contract": {
+        "passed": 109,
+        "test_seconds": 5.75,
+        "wall_seconds": 7.28,
+        "peak_rss_kib": 161112
+      },
+      "complete_affected_reference_group": {
+        "passed": 171,
+        "test_seconds": 8.73,
+        "wall_seconds": 9.93,
+        "peak_rss_kib": 166760
+      }
+    },
+    "new_regression_cases": 7,
+    "source_sha256": {
+      "experiments/19-repo2rlenv-notebook-pilot/reference_setup.py": "be1e5009087203457ee9ccaae19774cf0624a9a76a300cc431a4637f210218da",
+      "experiments/19-repo2rlenv-notebook-pilot/test_reference_setup.py": "35ae9d7e208e44ba6c226623cbec6f91307f02d787150ccd13d1e8e71b41af8d",
+      "experiments/19-repo2rlenv-notebook-pilot/reference_remote.py": "c1d9d4ff46967e179547b287db149e326ff974157d17ac86bfa956a6572ffff3",
+      "experiments/19-repo2rlenv-notebook-pilot/run_reference_setup.py": "cfeefdda2dc0f2ba4a62618e9202b6ef3af038a48ff78a35337e1567fcfe25f3",
+      "experiments/19-repo2rlenv-notebook-pilot/factory-checks/staging-reproducibility/run_live_check.py": "ed97760af79ed4e6dd7315f7b480f68efdbf14cf09eb285e4f4ad36cbca98da7",
+      "experiments/19-repo2rlenv-notebook-pilot/factory-checks/daytona-session-transport/run_live_check.py": "928fcce5a865a99e796e0752434f8f397d6094821781e34d9da5a4325e57b457",
+      "experiments/19-repo2rlenv-notebook-pilot/daytona_session.py": "8d5acf6b3571390e700109e33de24057eed55ac85ffe941adf2f1a6552031dd8"
+    },
+    "gates_unchanged": "Strict original input hashes remain required in replay and after scientific execution; no normalization or input substitution.",
+    "bounded": "Restaging uses existing setup clock and no scientific dispatch; no new test/repair/request/time/resource allowance.",
+    "real_provider_validation": "prepared_not_launched"
+  },
+  "additional_runtime_delta": [
+    "experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py",
+    "experiments/19-repo2rlenv-notebook-pilot/reference_setup.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_reference_setup.py",
+    "src/biotasks/prompts/notebook-grader-review.md",
+    "src/biotasks/prompts/notebook-reference-prepare.md",
+    "src/biotasks/prompts/notebook-reference-setup.md",
+    "src/biotasks/prompts/notebook-specification-review.md",
+    "src/biotasks/prompts/notebook-task-specification.md"
   ]
 }

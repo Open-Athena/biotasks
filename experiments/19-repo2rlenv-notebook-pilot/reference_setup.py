@@ -564,6 +564,90 @@ class SetupSession:
                 record["finished"] = time.time()
                 save_record(path, record)
 
+    async def check_staging_reproducibility(self, directory, initial):
+        """Detect unstable input recipes before spending a scientific dispatch.
+
+        This is an additional setup check under the existing cumulative clock,
+        not a reference execution or a replacement for fresh-sandbox replay.
+        Preserve both independently observed byte identities; never normalize
+        changed inputs or replace the first trusted receipt with the second.
+        """
+        if not initial["files"]:
+            return {"status": "no_declared_inputs", "files": 0}
+        check = directory / "staging-recheck"
+        check.mkdir()
+        async with self.isolated_authoring_workspace(check):
+            reset = await self.setup_command(
+                [
+                    "sh",
+                    "-eu",
+                    "-c",
+                    "rm -rf /inputs /work/cache; mkdir -p /inputs /work/cache; "
+                    "rm -f /work/setup-inputs.json",
+                ],
+                30,
+                f"restage-reset-{self.test_requests}",
+            )
+            if reset["exit_code"]:
+                raise ValueError("Cannot establish clean declared input/cache roots for restaging")
+            rebuilt = await self.setup_command(
+                [
+                    "sh",
+                    "-eu",
+                    "-c",
+                    "export PATH=/work/venv/bin:$PATH; sh -eu /work/stage-inputs.sh",
+                ],
+                max(1, int(self.setup_remaining)),
+                f"restage-{self.test_requests}",
+            )
+            save_record(check / "execution.json", rebuilt)
+        if rebuilt["exit_code"] or rebuilt.get("timed_out"):
+            raise ValueError(
+                "Input restaging failed; repair the recorded recipe before reference execution"
+            )
+        observed = await self.remote.helper(
+            ["snapshot-inputs", "/work/declared-inputs.json", "/work/restaged-inputs.json"],
+            f"inputs-restaged-{self.test_requests}",
+        )
+        save_record(check / "observed.json", observed)
+        if "input_validation_error" in observed:
+            raise ValueError("Restaged inputs are invalid: " + observed["input_validation_error"])
+        before = {item["local_path"]: item for item in initial["files"]}
+        after = {item["local_path"]: item for item in observed["files"]}
+        if (
+            len(before) != len(initial["files"])
+            or len(after) != len(observed["files"])
+            or set(before) != set(after)
+        ):
+            raise ValueError("Restaging changed the declared input inventory")
+        changed = [
+            {
+                "local_path": name,
+                "expected": {key: item[key] for key in ("source", "bytes", "sha256")},
+                "observed": {key: after[name][key] for key in ("source", "bytes", "sha256")},
+            }
+            for name, item in before.items()
+            if any(item[key] != after[name][key] for key in ("source", "bytes", "sha256"))
+        ]
+        result = {
+            "status": "changed" if changed else "byte_identical",
+            "files": len(before),
+            "changed": changed,
+        }
+        save_record(check / "comparison.json", result)
+        if changed:
+            raise ValueError(
+                "Staged inputs are not byte-reproducible before reference dispatch: "
+                + json.dumps(changed)
+                + ". Check source identity and volatile serialization/compression metadata. "
+                "Preserve the actual scientific inputs; do not bypass this check or merely "
+                "replace frozen hashes to accept changed bytes."
+            )
+        # Candidate immutability is checked again by the caller. The original
+        # input receipt is restored before offline execution, even though the
+        # independent second observation matched it.
+        return result
+
     async def test_reference(self):
         if self.tests >= self.max_tests:
             return json.dumps({"error": "Reference-test allowance exhausted; report the blocker."})
@@ -652,6 +736,14 @@ class SetupSession:
                 ),
             ]:
                 await self.remote.download("/work/" + source, directory / name)
+            record["staging_reproducibility"] = await self.check_staging_reproducibility(
+                directory, staged
+            )
+            if staged["files"]:
+                await self.audit_system_packages(recipe, directory, "after-restaging")
+                _, _, after_restaging = await self.capture_candidate(directory / "after-restaging")
+                if after_restaging != hashes:
+                    raise ValueError("Restaging changed its submitted candidate files")
             await self.remote.command(
                 [
                     "sh",

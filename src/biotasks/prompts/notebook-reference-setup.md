@@ -39,6 +39,15 @@ streaming all rows, arrays or mismatches into the conversation.
   and input staging failures before that dispatch do not consume one. Use
   inexpensive file, manifest and import checks with `shell` first.
   Read the returned logs and receipts to diagnose setup failures.
+  Before admitting scientific execution, the controller also rebuilds declared
+  inputs from clean input/cache roots and compares their exact byte identities.
+  Both observations are preserved. A mismatch is setup feedback and consumes
+  setup time, not a scientific dispatch. Keep source identity, transformations
+  and serialization/compression metadata reproducible across fresh workspaces;
+  timestamps or other volatile packaging fields can change otherwise identical
+  data. Repair the recipe without changing scientific inputs, weakening byte
+  checks or merely replacing frozen hashes. This check is not a substitute for
+  the later fresh-sandbox replay or independent scientific review.
   A successful test also reports actual installed dependency-asset candidates,
   with names, distribution ownership and content identities. Read its
   `priority_matches` and inspect the full catalog at the supplied sandbox path.

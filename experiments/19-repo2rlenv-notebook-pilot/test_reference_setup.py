@@ -1,6 +1,7 @@
 """Setup-stage boundaries, using synthetic inputs and an in-memory remote worker."""
 
 import asyncio
+import gzip
 import hashlib
 import json
 import shutil
@@ -170,6 +171,175 @@ def session(tmp_path, remote=None):
         reference_seconds=10,
         max_tests=1,
     )
+
+
+class RestagingRemote(FakeRemote):
+    """Synthetic inputs with independently observed serialization identities."""
+
+    def __init__(self, fault=None):
+        super().__init__()
+        self.fault = fault
+        self.snapshots = 0
+        self.files["/work/setup/inputs.json"] = json.dumps(
+            {"files": [{"local_path": "/inputs/data.gz", "source": "synthetic fixture"}]}
+        ).encode()
+
+    async def command(self, argv, seconds, label, **kwargs):
+        reply = await super().command(argv, seconds, label, **kwargs)
+        if label.startswith("setup-"):
+            self.files["/inputs/data.gz"] = gzip.compress(b"observed values\n", mtime=0)
+        if label.startswith("restage-reset-"):
+            self.files = {
+                key: value
+                for key, value in self.files.items()
+                if not key.startswith(("/inputs/", "/work/cache/"))
+            }
+            self.files.pop("/work/setup-inputs.json", None)
+        elif label.startswith("restage-"):
+            assert not self.blocked
+            assert not any(key.startswith("/work/setup/") for key in self.files)
+            assert "/inputs/data.gz" not in self.files
+            if self.fault == "recipe_failed":
+                return {"exit_code": 1, "log": "synthetic staging failure"}
+            if self.fault != "missing_input":
+                self.files["/inputs/data.gz"] = gzip.compress(
+                    b"different values\n"
+                    if self.fault == "different_data"
+                    else b"observed values\n",
+                    mtime=1 if self.fault == "volatile_metadata" else 0,
+                )
+        return reply
+
+    async def helper(self, args, label):
+        if args[0] == "snapshot-inputs":
+            assert not self.blocked
+            self.snapshots += 1
+            if "/inputs/data.gz" not in self.files:
+                return {"input_validation_error": "missing declared fixture"}
+            value = self.files["/inputs/data.gz"]
+            record = {
+                "files": [
+                    {
+                        "local_path": "/inputs/data.gz",
+                        "source": "synthetic fixture",
+                        "bytes": len(value),
+                        "sha256": hashlib.sha256(value).hexdigest(),
+                    }
+                ]
+            }
+            self.files[args[2]] = json.dumps(record).encode()
+            return record
+        if args[0] == "verify-staging":
+            assert self.blocked
+            record = json.loads(self.files[args[1]])
+            assert len(record["files"]) == 1
+            assert (
+                record["files"][0]["sha256"]
+                == hashlib.sha256(self.files["/inputs/data.gz"]).hexdigest()
+            )
+            return {"staged_inputs_verified": True, "files": 1}
+        return await super().helper(args, label)
+
+
+def test_stable_restaging_precedes_the_only_controlled_reference_dispatch(tmp_path):
+    remote = RestagingRemote()
+    worker = session(tmp_path, remote)
+
+    async def run():
+        await worker.initialize()
+        return json.loads(await worker.test_reference())
+
+    record = asyncio.run(run())
+    assert record["status"] == "reference_executed" and worker.tests == 1
+    assert record["staging_reproducibility"] == {
+        "status": "byte_identical",
+        "files": 1,
+        "changed": [],
+    }
+    labels = [row[0] for row in remote.events]
+    assert labels.index("restage-1") < labels.index("reference-1")
+    assert remote.snapshots == 2
+    assert [label for label in labels if label.startswith("reference-")] == ["reference-1"]
+
+
+@pytest.mark.parametrize(
+    "fault", ["volatile_metadata", "different_data", "recipe_failed", "missing_input"]
+)
+def test_unstable_or_failed_restaging_preserves_evidence_without_spending_reference_test(
+    tmp_path, fault
+):
+    remote = RestagingRemote(fault)
+    worker = session(tmp_path, remote)
+
+    async def run():
+        await worker.initialize()
+        return json.loads(await worker.test_reference())
+
+    record = asyncio.run(run())
+    assert record["status"] == "candidate_invalid" and worker.tests == 0
+    assert worker.last_pass is None
+    assert not any(label.startswith("reference-") for label, _, _ in remote.events)
+    first = json.loads((tmp_path / "trials/1/inputs-before.json").read_text())
+    assert (
+        first["files"][0]["sha256"]
+        == hashlib.sha256(gzip.compress(b"observed values\n", mtime=0)).hexdigest()
+    )
+    assert (tmp_path / "trials/1/staging-recheck/execution.json").is_file()
+    if fault in {"volatile_metadata", "different_data"}:
+        comparison = json.loads((tmp_path / "trials/1/staging-recheck/comparison.json").read_text())
+        assert comparison["status"] == "changed" and len(comparison["changed"]) == 1
+        assert "not byte-reproducible" in record["error"]
+        assert comparison["changed"][0]["expected"]["sha256"] == first["files"][0]["sha256"]
+    if fault == "volatile_metadata":
+        assert gzip.decompress(remote.files["/inputs/data.gz"]) == b"observed values\n"
+
+
+def test_recipe_correction_still_requires_a_new_successful_check_and_uses_original_allowance(
+    tmp_path,
+):
+    remote = RestagingRemote("volatile_metadata")
+    worker = session(tmp_path, remote)
+
+    async def run():
+        await worker.initialize()
+        first = json.loads(await worker.test_reference())
+        remote.fault = None
+        remote.files["/work/setup/stage-inputs.sh"] = b"# corrected synthetic packaging recipe\n"
+        second = json.loads(await worker.test_reference())
+        return first, second
+
+    first, second = asyncio.run(run())
+    assert first["status"] == "candidate_invalid" and second["status"] == "reference_executed"
+    assert worker.tests == worker.max_tests == 1 and worker.test_requests == 2
+    assert (
+        first["candidate_sha256"]["stage-inputs.sh"]
+        != second["candidate_sha256"]["stage-inputs.sh"]
+    )
+    assert (tmp_path / "trials/1/result.json").is_file()
+    assert (tmp_path / "trials/2/staging-recheck/comparison.json").is_file()
+
+
+def test_restaging_consumes_the_existing_setup_clock(tmp_path, monkeypatch):
+    import reference_setup
+
+    clock = [0.0]
+    monkeypatch.setattr(reference_setup.time, "monotonic", lambda: clock[0])
+
+    class TimedRestaging(RestagingRemote):
+        async def command(self, argv, seconds, label, **kwargs):
+            if label.startswith("restage-"):
+                clock[0] += 2
+            return await super().command(argv, seconds, label, **kwargs)
+
+    worker = session(tmp_path, TimedRestaging())
+
+    async def run():
+        await worker.initialize()
+        return json.loads(await worker.test_reference())
+
+    record = asyncio.run(run())
+    assert record["status"] == "reference_executed"
+    assert worker.setup_remaining == 56 and worker.tests == 1
 
 
 def test_authoring_scratch_dependency_fails_before_reference_and_can_be_corrected(tmp_path):
