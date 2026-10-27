@@ -186,15 +186,19 @@ def export(root, prefix):
         json.dump({"files": receipts, "download_checked": True}, stream)
 
 
-def export_on_host(root, prefix, *, deadline, log=None):
-    """Use the provisioned storage client without adding it to upstream's lock."""
+def export_on_host(root, prefix, *, deadline, log=None, snapshot=False):
+    """Use the host storage client and the caller's unchanged transport deadline.
+
+    Snapshot mode is for a quiescent tree after scientific workers have finished.
+    Stage exports keep their existing per-file format by default.
+    """
     for attempt in range(2):
         try:
             command(
                 [
                     os.environ.get("BIOTASKS_EXPORT_PYTHON", sys.executable),
                     str(Path(__file__).resolve()),
-                    "--export",
+                    "--snapshot" if snapshot else "--export",
                     str(root),
                     prefix,
                 ],
@@ -215,8 +219,8 @@ def export_on_host(root, prefix, *, deadline, log=None):
 def snapshot(root, prefix):
     """Archive quiescent original evidence using few storage operations.
 
-    Individual scientific workers and their normal per-file exports are unchanged.
-    This transport is only a backup after the supervisor has stopped its child.
+    Use only after scientific writers have finished, or after the supervisor has
+    stopped its child. Stage-level per-file exports remain independently sealed.
     """
     secrets = [os.environ[key].encode() for key in CREDENTIAL_ENV_NAMES if os.environ.get(key)]
     overlap = max(map(len, secrets), default=0)
@@ -283,7 +287,7 @@ def snapshot(root, prefix):
 
 
 def restore_snapshot(transport, destination):
-    """Verify and restore a downloaded failure snapshot without executing it.
+    """Verify and restore a downloaded original snapshot without executing it.
 
     The caller must obtain the original transport files from its authenticated
     campaign prefix. A verified snapshot is archival evidence, not task acceptance.

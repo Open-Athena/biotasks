@@ -949,8 +949,15 @@ class Pipeline:
             copy_diagnostics(self.root)
             from iris_bootstrap import export_on_host
 
+            # Every stage has returned and closed its writers. The final archive
+            # reuses the fully checked snapshot transport instead of issuing an
+            # object upload/readback for every trace file. No execution extension.
             await asyncio.to_thread(
-                export_on_host, self.root, self.prefix + "/autonomous", deadline=self.deadline
+                export_on_host,
+                self.root,
+                self.prefix + "/autonomous-snapshot",
+                deadline=self.deadline,
+                snapshot=True,
             )
         return self.receipt
 

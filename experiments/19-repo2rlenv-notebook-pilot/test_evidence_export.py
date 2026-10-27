@@ -90,7 +90,10 @@ def test_stalled_export_stops_its_owned_process(tmp_path, monkeypatch):
 
 
 @pytest.mark.parametrize("failure", ["stall", "integrity", "deadline"])
-def test_export_retries_only_stall_without_extending_deadline(tmp_path, monkeypatch, failure):
+@pytest.mark.parametrize("snapshot", [False, True])
+def test_export_retries_only_stall_without_extending_deadline(
+    tmp_path, monkeypatch, failure, snapshot
+):
     import iris_bootstrap
 
     calls = []
@@ -109,18 +112,23 @@ def test_export_retries_only_stall_without_extending_deadline(tmp_path, monkeypa
     monkeypatch.setattr(iris_bootstrap, "command", invoke)
     if failure == "stall":
         iris_bootstrap.export_on_host(
-            tmp_path / "source", "s3://fixture/recovery", deadline=deadline
+            tmp_path / "source", "s3://fixture/recovery", deadline=deadline, snapshot=snapshot
         )
         assert len(calls) == 2
     else:
         with pytest.raises((RuntimeError, TimeoutError)):
             iris_bootstrap.export_on_host(
-                tmp_path / "source", "s3://fixture/recovery", deadline=deadline
+                tmp_path / "source", "s3://fixture/recovery", deadline=deadline, snapshot=snapshot
             )
         assert len(calls) == 1
     assert all(call[1]["deadline"] == deadline for call in calls)
     assert all(
-        call[0][0][2:] == ["--export", str(tmp_path / "source"), "s3://fixture/recovery"]
+        call[0][0][2:]
+        == [
+            "--snapshot" if snapshot else "--export",
+            str(tmp_path / "source"),
+            "s3://fixture/recovery",
+        ]
         for call in calls
     )
 
@@ -385,3 +393,62 @@ def test_snapshot_restore_refuses_nonregular_metadata_without_opening_it(tmp_pat
     with pytest.raises(ValueError, match="regular file"):
         iris_bootstrap.restore_snapshot(transport, tmp_path / "restored")
     assert not (tmp_path / "restored").exists()
+
+
+def test_many_file_snapshot_uses_two_object_transfers_and_exact_restore(tmp_path, monkeypatch):
+    import iris_bootstrap
+
+    for name in CREDENTIAL_ENV_NAMES:
+        monkeypatch.delenv(name, raising=False)
+    source, target, restored = tmp_path / "source", tmp_path / "target", tmp_path / "restored"
+    source.mkdir()
+    target.mkdir()
+    for index in range(256):
+        (source / f"trace-{index:04}.json").write_text(json.dumps({"step": index}))
+    (source / "solve.sh").write_bytes(b"#!/bin/sh\nexit 0\n")
+    (source / "solve.sh").chmod(0o755)
+    iris_bootstrap.snapshot(source, target.as_uri())
+    seal = json.loads((target / "export-manifest.json").read_text())
+    assert seal["download_checked"]
+    assert {row["path"] for row in seal["files"]} == {"evidence.tar.gz", "snapshot-files.json"}
+    receipt = iris_bootstrap.restore_snapshot(target, restored)
+    assert receipt["all_snapshot_files_hash_size_mode_verified"]
+    assert receipt["file_count"] == 257
+    for path in source.iterdir():
+        result = restored / "files" / path.name
+        assert result.read_bytes() == path.read_bytes()
+        assert result.stat().st_mode & 0o777 == path.stat().st_mode & 0o777
+
+
+@pytest.mark.parametrize("snapshot", [False, True])
+def test_host_subprocess_roundtrip_preserves_default_and_snapshot_modes(
+    tmp_path, monkeypatch, snapshot
+):
+    import iris_bootstrap
+
+    for name in CREDENTIAL_ENV_NAMES:
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("BIOTASKS_EXPORT_PYTHON", sys.executable)
+    source, target = tmp_path / "source", tmp_path / "target"
+    source.mkdir()
+    target.mkdir()
+    (source / "result.json").write_text('{"status":"rejected","reason":"fixture"}')
+    (source / "solve.sh").write_bytes(b"#!/bin/sh\nexit 0\n")
+    (source / "solve.sh").chmod(0o755)
+    kwargs = {"snapshot": True} if snapshot else {}
+    iris_bootstrap.export_on_host(source, target.as_uri(), deadline=time.time() + 30, **kwargs)
+    if snapshot:
+        restored = tmp_path / "restored"
+        receipt = iris_bootstrap.restore_snapshot(target, restored)
+        assert receipt["all_snapshot_files_hash_size_mode_verified"]
+        target = restored / "files"
+    else:
+        seal = json.loads((target / "export-manifest.json").read_text())
+        assert seal["download_checked"]
+        modes = {row["path"]: row["mode"] for row in seal["files"]}
+    for name in ("result.json", "solve.sh"):
+        assert (target / name).read_bytes() == (source / name).read_bytes()
+        # Object storage carries permissions in the seal. Snapshot restoration
+        # additionally materializes those recorded permissions on local files.
+        observed_mode = (target / name).stat().st_mode & 0o777 if snapshot else modes[name]
+        assert observed_mode == (source / name).stat().st_mode & 0o777

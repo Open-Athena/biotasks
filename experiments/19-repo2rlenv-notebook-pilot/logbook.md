@@ -5507,3 +5507,10 @@ An operator-only format adapter retains the prior strict seven-owner/native/reso
 Common108 case223 stopped in setup: recorded GCS inputs returned404/NoSuchBucket; no reference computation ran. Complete original503-file science/19-file root evidence and fresh ID/owner cleanup are verified. The worker's paper-data absence claim is broader than its Crossref evidence; a supplementary-data lead remains unverified and was not supplied to the run. [Result](panel-rounds/108/result-223.json).
 
 The closed-prefix accounting helper now also admits this ordinary one-SDK setup rejection, retaining all source/archive/resource/cleanup/clock/margin gates.43focused tests pass, including six setup-profile/refusal cases. Retaining$0.25 against$0.1089298431104 plus margin releases$4.75 and leaves$5.75 unallocated for the final original source. No additional funding, model, resource, timing or repair policy was assumed.
+
+
+### 27 October 2026 — Final compressed export candidate, offline only
+
+Prepared a general transport correction after Pyteomics222's controller completed before its normal export timed out. The controller can select the existing verified snapshot transport after all stage writers return; stage exports, scientific acceptance, resources, deadlines and repair policy are unchanged.158affected checks pass, including real host-subprocess/default/snapshot roundtrips and nine source-boundary refusal checks. The restricted environment's minimal asyncio thread wakeup stalled; the full checks pass outside it under the shared guard. No cloud/model call or new package install. [Candidate checks](factory-checks/primary-snapshot/offline-checks.json).
+
+This is not a live adoption: the final common108 MDAnalysis224 payload remains unchanged and has completed reference execution/replay, with its specification review repair in progress. Keep its original allowance and assess the complete panel before new live factory adoption.

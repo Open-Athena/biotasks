@@ -385,13 +385,24 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         )
         return {"publication_ready": failure != "native"}
 
+    exported = []
+
+    def export_final(root, prefix, *, deadline, snapshot=False):
+        assert snapshot is True and prefix == "private://fixture/autonomous-snapshot"
+        assert deadline == pipeline.deadline
+        recorded = m.read(root / "pipeline.json")
+        assert recorded["status"] in {"validated", "rejected", "infrastructure_failed"}
+        assert recorded["finished"] >= recorded["started"]
+        assert all(row["status"] != "running" for row in recorded["stages"])
+        exported.append((root / "pipeline.json").read_bytes())
+
     for name, attrs in {
         "run_preparation": {"run": prepare, "repair_runtime_exports": prepare},
         "run_reference_setup": {"run": remote},
         "run_specification": {"run": specify},
         "specification_inputs": {"specification_context": lambda *a, **k: {"files": {}}},
         "run_scientific_native": {"run": native},
-        "iris_bootstrap": {"export_on_host": lambda *a, **k: None},
+        "iris_bootstrap": {"export_on_host": export_final},
     }.items():
         monkeypatch.setitem(sys.modules, name, types.SimpleNamespace(**attrs))
     monkeypatch.setattr(
@@ -514,6 +525,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
     else:
         asyncio.run(pipeline.execute())
     receipt = m.read(tmp_path / "run/pipeline.json")
+    assert exported == [(tmp_path / "run/pipeline.json").read_bytes()]
     assert (
         receipt["status"]
         == {

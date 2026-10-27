@@ -1,0 +1,67 @@
+{
+  "observed_at": "2026-10-27T19:16:39.456303+00:00",
+  "status": "offline_candidate_not_adopted",
+  "tests_passed": 158,
+  "test_seconds": 7.06,
+  "guarded_wall_seconds": 8.46,
+  "peak_rss_kib": 168532,
+  "source_boundary_tests_in_total": 9,
+  "test_files": [
+    "test_evidence_export.py",
+    "test_autonomous.py",
+    "test_reference.py",
+    "test_autonomous_payload.py",
+    "factory-checks/primary-snapshot/test_source_proof.py"
+  ],
+  "ruff_lint_and_format_passed": true,
+  "source_proof": "source-proof-final.json",
+  "source_proof_sha256": "f45cad7c90f040efed4681e4c983d739ad1133260d505ba79c245ad7bee6a899",
+  "original_patched_upstream_wheel_sha256": "0bb4bc223dd914b90070568d8fa00534d3fd5fed5b9aa23355f4e2b69f53958e",
+  "imported_harbor_module_sha256": "bb1bdd1aa3246ba773575eb596b40b5b7eb7baca6f7e7a851c20015d6313e05b",
+  "exact_import_origin_verified": true,
+  "runtime_changes": {
+    "experiments/19-repo2rlenv-notebook-pilot/iris_bootstrap.py": {
+      "before": "a17acb66767f33044f81f7bd6ed8c4872178b8d154d36f623f87d459420b7d99",
+      "after": "858ede6f7b5bcc68d0f6334eeaa943586c16c7207b7dfe3d46296eeb291ade72"
+    },
+    "experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py": {
+      "before": "7ff0e8dbcc69ebaf927c431740eb63ad2965a507514d349ca3767aff6187c685",
+      "after": "2f8994be3c6f8cad3e8a9f8599ee3e5a97d32f2093720bd9bdc3ce313516e240"
+    },
+    "experiments/19-repo2rlenv-notebook-pilot/test_autonomous.py": {
+      "before": "6936f87f765b6986ff71460447c1c72baf85221dbe6071bb6f6e89094be6563b",
+      "after": "77e1cbacd852f0b91a0bbe1be60c37dc643ef353904b2faf117dd8662abd7eb9"
+    },
+    "experiments/19-repo2rlenv-notebook-pilot/test_evidence_export.py": {
+      "before": "e881ae8cbe7565d526683f11e998bd753b1b934b75538e2b3bcf08c5507055b8",
+      "after": "3ba3cd77ea9abf78bf5692434a8beb66e42b73618f039ed4507fa392bbc4ca31"
+    }
+  },
+  "primary_host_subprocess_and_default_export_roundtrips": true,
+  "many_small_files_fixture_count": 257,
+  "logical_snapshot_data_objects": 2,
+  "transport_manifest_additional_object": true,
+  "all_fixture_bytes_and_modes_verified": true,
+  "controller_success_rejection_infrastructure_paths_checked": true,
+  "original_deadlines_and_retry_policy_preserved": true,
+  "mdanalysis224_payload_unchanged": true,
+  "new_model_calls": 0,
+  "new_cloud_jobs": 0,
+  "new_package_installs": 0,
+  "new_live_provider_validation": false,
+  "earlier_failures": [
+    {
+      "kind": "restricted_test_environment_stall",
+      "result": "First combined run stopped after53passed cases; isolated controller test also stalled. A three-second minimal asyncio.to_thread reproduction timed out in the restricted sandbox and returned1 immediately outside it. Owned processes were terminated. Full affected suite passes outside that sandbox under the shared resource guard. This does not demonstrate a pipeline deadlock."
+    },
+    {
+      "kind": "test_contract_error",
+      "result": "Added ordinary-export test incorrectly compared local file-store permissions directly. Object-store export represents permissions in its manifest. Corrected the test to verify ordinary manifest modes, while snapshot restoration still verifies materialized file modes. The earlier run was157passed/1failed; final158pass."
+    }
+  ],
+  "limitations": [
+    "Offline tests and unchanged implementation evidence do not measure provider throughput or prove a successful primary export at the end of a fresh campaign.",
+    "The current ten-source common108 campaign remains frozen; this candidate has not been admitted for another live run.",
+    "No scientific output, task, grader, prompt, model setting, resource ceiling or repair allowance changed."
+  ]
+}
