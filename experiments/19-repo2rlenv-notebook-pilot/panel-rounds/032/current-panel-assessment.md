@@ -33,7 +33,7 @@ A separate read-only audit flags Scanpy's near-exact embedding coordinates and a
 
 Complete original science/root exports and fresh cleanup are verified for all seven. Scanpy uses its original quiescent fallback snapshot; its absent regular seal was not reconstructed. These outcomes do not establish broken notebooks. One accepted task from seven development cases does not establish reliability on new notebooks. [Plan](../108/development-panel.json), [Scanpy](../108/result-220.json).
 
-Pyteomics 222 is submitted; MDAnalysis and Sgkit remain unfunded/unfrozen. No worker code, prompt or repair allowance was changed for the observed failures. [Identical-runtime proof, including frozen 221](../108/same-runtime-215-through-222.json).
+Pyteomics 222 is running after successful original reference execution and clean replay; seven full case audits remain complete. MDAnalysis and Sgkit remain unfunded/unfrozen. No worker code, prompt or repair allowance was changed for the observed failures. [Identical-runtime proof, including running 222](../108/same-runtime-215-through-222.json).
 
 ## Latest qualified release and inspection
 
@@ -49,6 +49,8 @@ The table above reports the latest completed case per domain across development 
 
 Complete the three remaining sources on the unchanged factory. Then assess shared failure patterns, including repair drift, grader implementation errors and review reliability. Publish only qualified, rights-cleared tasks with verified downloads. Keep #19 open and PR #23 draft/unmerged; supported promotion requires sufficient evidence and a fresh branch from main. Never merge the research branch.
 
-$200 is authorized; $197.50 is held conservatively and $2.50 is unallocated, including a full $5 reservation for Pyteomics 222. Closed 220/221 retain $1/$0.75 after all complete SDK lifetimes, 300 seconds at each end, margin and upward quarter-dollar rounding. A new campaign still requires a full $5 reservation. These are not invoices or assumed credits. [Ledger](../../aggregate-budget.json), [220 audit](../108/closed-220-applied.json), [221 audit](../108/closed-221-applied.json).
+$200 is authorized; $197.00 is held conservatively and $3.00 is unallocated, including a full $5 reservation for Pyteomics 222. Closed 220/221 retain $1/$0.75 after all complete SDK lifetimes, 300 seconds at each end, margin and upward quarter-dollar rounding. A new campaign still requires a full $5 reservation. These are not invoices or assumed credits. [Ledger](../../aggregate-budget.json), [220 audit](../108/closed-220-applied.json), [221 audit](../108/closed-221-applied.json).
 
 Original model, resource, two-hour campaign, ten-minute reference/solver, two-minute verifier, two-reference-dispatch and repair limits remain. The proposed three-hour window and reference-dispatch change are unanswered; neither has been adopted. No numerical yield threshold has been assumed.
+
+An additional quality-repair opportunity for the next version is under discussion, not adopted. The existing repair was spent on specification before later defects in 216, 219 and 221; whether a second repair improves yield remains a hypothesis requiring fresh validation. The current common panel and original validation/time/resource limits remain unchanged. The operator-only margin helper passed 27 checks and preserves the earlier eight-owner full-lifetime bound; [applied margin](../108/verified-margin-161-applied.json).
