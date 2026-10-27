@@ -338,6 +338,14 @@ held = sum(Decimal(r["ceiling_usd"]) for r in ledger["reservations"])
 ledger.update(
     reserved_upper_bound_usd=f"{held:.2f}",
     unallocated_usd=f"{Decimal(ledger['ceiling_before_credits']) - held:.2f}",
+    last_updated_at=datetime.now(UTC).isoformat(),
+)
+ledger["current_summary"] = (
+    f"{ledger['ceiling_before_credits']}USD authorized/"
+    f"{ledger['reserved_upper_bound_usd']}USD conservative holds/"
+    f"{ledger['unallocated_usd']}USD unallocated. Closed exposure reconciled for "
+    + ", ".join(map(str, args.numbers))
+    + "; other reservations unchanged. No invoice, credits or new campaign funding inferred."
 )
 after = (json.dumps(ledger, indent=2) + "\n").encode()
 proof = {
