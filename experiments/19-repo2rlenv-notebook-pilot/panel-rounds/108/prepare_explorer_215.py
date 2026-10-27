@@ -159,7 +159,6 @@ def main():
                 f"https://huggingface.co/datasets/{publication['repo_id']}/resolve/"
                 f"{publication['commit_sha']}/tasks/autonomous-panel-215/tests/reference/{published_name}"
             )
-            native_path = "native/tasks/autonomous-panel-215/tests/reference/" + Path(path).name
             label = Path(path).name
             if exact_downloads:
                 label = f"[{label}]({download})"

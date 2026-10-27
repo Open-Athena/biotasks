@@ -1,0 +1,293 @@
+{
+  "derive_code": "import argparse\nimport json\nimport os\nimport shutil\n\nimport numpy as np\nimport pandas as pd\n\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument(\"--source-inputs\", required=True)\n    ap.add_argument(\"--reference-dir\", required=True)\n    ap.add_argument(\"--destination\", required=True)\n    args = ap.parse_args()\n\n    # Manifest of original file inputs. The preparation inventory records no\n    # file inputs for this task: the 71 rat-tumor counts are embedded\n    # literally in the source (BDA3, p. 102), so nothing else is stageable.\n    with open(args.source_inputs) as fh:\n        manifest = json.load(fh)\n    staged = manifest.get(\"files\", []) if isinstance(manifest, dict) else manifest\n    if staged:\n        raise RuntimeError(\"unexpected staged original input files: %r\" % (staged,))\n\n    # Original task data, verbatim transcription of source lines 76-89.\n    # (y_i, n_i) pairing is row-wise; source order preserved.\n    y = np.array([\n        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,\n        1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  1,  5,  2,\n        5,  3,  2,  7,  7,  3,  3,  2,  9, 10,  4,  4,  4,  4,  4,  4,  4,\n        10,  4,  4,  4,  5, 11, 12,  5,  5,  6,  5,  6,  6,  6,  6, 16, 15,\n        15,  9,  4\n    ])\n    n = np.array([\n        20, 20, 20, 20, 20, 20, 20, 19, 19, 19, 19, 18, 18, 17, 20, 20, 20,\n        20, 19, 19, 18, 18, 25, 24, 23, 20, 20, 20, 20, 20, 20, 10, 49, 19,\n        46, 27, 17, 49, 47, 20, 20, 13, 48, 50, 20, 20, 20, 20, 20, 20, 20,\n        48, 19, 19, 19, 22, 46, 49, 20, 20, 23, 19, 22, 20, 20, 20, 52, 46,\n        47, 24, 14\n    ])\n    if len(y) != 71 or len(n) != 71:\n        raise RuntimeError(\"expected 71 experiments, got %d/%d\" % (len(y), len(n)))\n    if not np.all(n >= y):\n        raise RuntimeError(\"n_i < y_i in staged counts\")\n\n    # --- supplied input ---\n    inp_dir = os.path.join(args.destination, \"inputs\")\n    os.makedirs(inp_dir, exist_ok=True)\n    pd.DataFrame({\"y\": y, \"n\": n}).to_csv(\n        os.path.join(inp_dir, \"rat_tumor_counts.csv\"), index=False\n    )\n\n    # --- projected reference (private; not supplied to the solver) ---\n    ref_dir = os.path.join(args.destination, \"reference\")\n    os.makedirs(ref_dir, exist_ok=True)\n\n    grid_src = os.path.join(args.reference_dir, \"rat_tumor_analytic_posterior_grid.csv\")\n    # The recorded export already has exactly the requested output-1 schema\n    # (X, Z, alpha, beta, normed_exp_trans); copy its bytes unchanged under the\n    # requested destination filename.\n    shutil.copyfile(grid_src, os.path.join(ref_dir, \"analytic_posterior_grid.csv\"))\n\n    nc_src = os.path.join(args.reference_dir, \"rat_tumor_pymc_posterior_samples.nc\")\n    import xarray as xr\n\n    ds = None\n    for engine in (\"netcdf4\", \"scipy\"):\n        try:\n            ds = xr.open_dataset(nc_src, engine=engine)\n            break\n        except Exception:\n            continue\n    if ds is None:\n        raise RuntimeError(\"could not open reference posterior NetCDF\")\n\n    ab = ds[\"ab\"]  # dims: chain, draw, param\n    param_names = [str(v) for v in ab.coords[\"param\"].values]\n    ia = param_names.index(\"alpha\")\n    ib = param_names.index(\"beta\")\n    vals = ab.transpose(\"chain\", \"draw\", \"param\").values\n    n_chain, n_draw, _ = vals.shape\n    # Project the retained ab draws to the output-2 schema. Identity mapping:\n    # chain label 0..3 -> 1..4, draw index unchanged (0..1999, sampling order),\n    # alpha/beta values unchanged. Row order: chain outer, draw inner.\n    rows = [\n        (c + 1, d, float(vals[c, d, ia]), float(vals[c, d, ib]))\n        for c in range(n_chain)\n        for d in range(n_draw)\n    ]\n    draws_df = pd.DataFrame(rows, columns=[\"chain\", \"draw\", \"alpha\", \"beta\"])\n    draws_df.to_csv(\n        os.path.join(ref_dir, \"pymc_ab_posterior_draws.csv\"), index=False\n    )\n\n    # Scalar endpoints: exact projections of the recorded exports (documented\n    # recovery handoff; no change of method or inputs).\n    grid = pd.read_csv(grid_src)\n    a_grid_mean = float((grid[\"alpha\"] * grid[\"normed_exp_trans\"]).sum())\n    b_grid_mean = float((grid[\"beta\"] * grid[\"normed_exp_trans\"]).sum())\n    a_mc_mean = float(vals[..., ia].mean())\n    b_mc_mean = float(vals[..., ib].mean())\n\n    summary = pd.DataFrame(\n        {\n            \"method\": [\"analytic_grid\", \"analytic_grid\", \"pymc_mcmc\", \"pymc_mcmc\"],\n            \"parameter\": [\"alpha\", \"beta\", \"alpha\", \"beta\"],\n            \"estimate\": [a_grid_mean, b_grid_mean, a_mc_mean, b_mc_mean],\n        }\n    )\n    summary.to_csv(\n        os.path.join(ref_dir, \"posterior_mean_estimates.csv\"), index=False\n    )\n\n    ds.close()\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "disposition": "ready",
+  "environment_review": {
+    "additional_exclusions": [],
+    "artifact_inventory_sha256": "c331b6629e81f26cc9c4c93ee1e7e716f2e6fef0c4ea59bf7e67032c2b915c8b",
+    "assessment": "Controlled execution succeeded: derivation staged inputs/rat_tumor_counts.csv (71 verbatim source count pairs) and built the three private reference projections (analytic_posterior_grid.csv copied byte-for-byte from the recorded reference export sha 14cbefc7...0104; pymc_ab_posterior_draws.csv projected from the recorded ab variable with the documented identity mapping; posterior_mean_estimates.csv as exact column projections of those exports), and the oracle ran the full public task (both branches, 4-chain NUTS) within the reference limit. I reviewed the controller's complete installed-asset value-hints report (asset-value-hints.json: 55 findings across 7 asset files, all owned by pandas, scipy and matplotlib, referencing only analytic_posterior_grid.csv). Every finding is a coincidental numeric-magnitude match between a generic library-test literal (e.g. 2.3, 1.57, 1.5 in JSON round-trip tests, linspace endpoints, polar-plot coordinates) and a grid-coordinate cell of the reference grid CSV. The X/Z grid coordinates are fully and publicly specified in the task statement (100 x-values from -2.3 step 0.01; 400 z-values from 1.0 step 0.01), so these coincidences expose no information beyond the published contract. There are zero findings against posterior_mean_estimates.csv and none against the MCMC draws: the requested scientific endpoints (normalized posterior mass, mass-weighted posterior means, posterior-sample means, and the 8,000 ab draws) have no value matches in any installed package. The matched candidate files are packaged unit tests of general-purpose libraries (pandas JSON/to_numpy tests, scipy special-matrix tests, matplotlib pyplot tests) that contain no rat-tumor binomial hierarchical model, no BDA3 p.102 counts and no posterior-of-(alpha,beta) analysis; they are retained unchanged as parts of the installed scientific stack. No installed file supplies a full or partial answer to the requested outputs, therefore no additional exclusions are declared. Residual gaps of the hint mechanism (integer constants, string literals, comments, nonpriority files, non-CSV formats such as the .nc) do not alter this assessment: the requested quantities are computed by the solver from the supplied 71-pair input, not distributed with any installed package.",
+    "asset_catalog_sha256": "817f496ae7d2cacfb50b9aa5968b529dcb4c426f121f5712d89ceb7fc0648985"
+  },
+  "input_paths": [
+    "rat_tumor_counts.csv"
+  ],
+  "instruction": "# Hierarchical Bayesian analysis of rat-tumor data: analytical grid vs MCMC posterior of (\u03b1, \u03b2)\n\nIn 71 historical rat-tumor experiments, `y_i` out of `n_i` lab rats developed endometrial stromal polyps. The analysis models these counts hierarchically (BDA3 ch. 5): `y_i | \u03b8_i ~ Binomial(n_i, \u03b8_i)`, with `\u03b8_i ~ Beta(\u03b1, \u03b2)` drawn from an unknown population distribution, and a power-law hyperprior on the population parameters. You must carry out both computations in the original study and report their results.\n\n## Input\n\n- `inputs/rat_tumor_counts.csv` \u2014 71 rows, columns `y` (rats developing polyps in the experiment, integer \u2265 0) and `n` (rats at risk, integer \u2265 y). Each row is one experiment; keep each (y, n) pair paired.\n\n## Part 1 \u2014 grid-based analytical marginal posterior\n\nUsing the hyperprior density `p(\u03b1, \u03b2) \u221d (\u03b1 + \u03b2)^(\u22125/2)` and marginalizing the \u03b8's analytically, the marginal posterior of (\u03b1, \u03b2) is, up to an additive constant,\n\n```\nlog p(\u03b1, \u03b2 | y) = \u2212(5/2)\u00b7ln(\u03b1 + \u03b2) + \u03a3_i [ ln\u0393(\u03b1+\u03b2) \u2212 ln\u0393(\u03b1) \u2212 ln\u0393(\u03b2)\n                    + ln\u0393(\u03b1 + y_i) + ln\u0393(\u03b2 + n_i \u2212 y_i) \u2212 ln\u0393(\u03b1 + \u03b2 + n_i) ]\n```\n\nEvaluate it on a rectangular grid in transformed coordinates `x = ln(\u03b1/\u03b2)`, `z = ln(\u03b1+\u03b2)`:\n\n- `x` takes 100 values from \u22122.3 to \u22121.31 in steps of 0.01 (i.e., \u22122.3, \u22122.29, \u2026, \u22121.31; the endpoint \u22121.3 is excluded),\n- `z` takes 400 values from 1.00 to 4.99 in steps of 0.01 (endpoint 5 excluded),\n\ngiving 100 \u00d7 400 = 40,000 grid cells. At each cell, recover `\u03b2 = e^z / (e^x + 1)` and `\u03b1 = e^x \u00b7 \u03b2` (so \u03b1 + \u03b2 = e^z), convert the density to (x, z) coordinates by multiplying by the change-of-variables Jacobian factor `\u03b1 \u00b7 \u03b2` (equivalently, add `ln \u03b1 + ln \u03b2` on the log scale), exponentiate after subtracting the grid maximum, and normalize over all 40,000 cells so the weights sum to exactly 1. The normalized weight is the posterior probability mass assigned to each cell by this discrete approximation.\n\nFrom this grid, estimate the posterior means of the population parameters as the mass-weighted sums: `E[\u03b1|y] \u2248 \u03a3_cells \u03b1 \u00b7 w` and `E[\u03b2|y] \u2248 \u03a3_cells \u03b2 \u00b7 w`.\n\n**Output file 1** \u2014 `outputs/analytic_posterior_grid.csv`: columns `X, Z, alpha, beta, normed_exp_trans` (in that order); one row per grid cell (40,000 data rows); `normed_exp_trans` is the normalized weight w. Row order: for each `z` ascending (1.00 \u2192 4.99), all `x` ascending (\u22122.3 \u2192 \u22121.31). A row is identified scientifically by its (X, Z) grid coordinates; \u03b1 and \u03b2 are the corresponding population-parameter values at that cell. (Floating-point artifacts such as `-2.2800000000000002` from stepwise grid construction are acceptable; cell identity is the (x, z) pair.)\n\n## Part 2 \u2014 hierarchical model fit by NUTS\n\nFit the same data with the study's MCMC model. Note its prior is *not* identical to Part 1's: reproduce it exactly as specified, and do not harmonize the two branches.\n\n- `\u03b1` and `\u03b2` are independent, each with a HalfNormal prior of scale (\u03c3) 10;\n- an additional hyperprior factor `(\u03b1 + \u03b2)^(\u22125/2)` multiplies the joint density (log-density contribution `\u2212(5/2)\u00b7ln(\u03b1+\u03b2)`);\n- `\u03b8_i | \u03b1, \u03b2 ~ Beta(\u03b1, \u03b2)`, one per experiment (i = 1 \u2026 71);\n- `y_i | \u03b8_i ~ Binomial(n_i, \u03b8_i)`.\n\nSample the joint posterior with the No-U-Turn Sampler using dual-averaging step-size adaptation targeting an average acceptance probability of 0.95, running **4 chains**, each with **2000 warmup iterations (discarded) followed by 2000 retained draws**. No random seed is prescribed. (Environment preset: PyMC 6.3.2, `pm.sample(draws=2000, tune=2000, target_accept=0.95, chains=4)` with all other arguments at their defaults, including jittered `adapt_diag` initialization.)\n\n**Output file 2** \u2014 `outputs/pymc_ab_posterior_draws.csv`: columns `chain, draw, alpha, beta`; 8,000 data rows, one per retained draw. Chain labels are the distinct integers 1\u20134 and draw labels are sequential within each chain (0, 1, \u2026, 1999 in sampling order); each row is one posterior draw of the population parameters (\u03b1 and \u03b2). Draws of \u03b8 are not requested.\n\nEstimate the posterior means of \u03b1 and \u03b2 as the mean of each parameter over all retained draws across all chains.\n\n## Summary file\n\n**Output file 3** \u2014 `outputs/posterior_mean_estimates.csv`: columns `method, parameter, estimate`; exactly 4 rows:\n\n| method | parameter | estimate |\n|---|---|---|\n| `analytic_grid` | `alpha` | Part-1 estimate of E[\u03b1 \\| y] |\n| `analytic_grid` | `beta` | Part-1 estimate of E[\u03b2 \\| y] |\n| `pymc_mcmc` | `alpha` | Part-2 posterior-sample mean of \u03b1 |\n| `pymc_mcmc` | `beta` | Part-2 posterior-sample mean of \u03b2 |\n\nReport estimates at your available floating-point precision (do not round).\n\n## Conventions\n\n- \u03b1 and \u03b2 are the (dimensionless) parameters of the Beta population distribution; \u03b8 values are probabilities in [0, 1].\n- `normed_exp_trans` is posterior probability mass per 0.01 \u00d7 0.01 grid cell in (x, z) space; the 40,000 weights sum to 1.\n- Your MCMC results are Monte Carlo estimates: they need not match any particular seed realization bit-for-bit, but they must estimate the posterior means of the exact model specified above. Comparison tolerances for Monte Carlo error will be applied at grading.\n- Missing values are not expected anywhere; if produced, they are errors.\n\n## Environment and resources\n\nOffline (no network). 4 CPUs, 8 GiB RAM, 10 GiB disk, 600 s runtime limit. A Python 3.13 environment with PyMC 6.3.2, NumPy 2.5.4, SciPy 1.18.1, pandas 3.1.0, ArviZ 1.3.0 is provided for convenience; any other software is acceptable provided the model, priors, and sampling configuration above are reproduced.",
+  "operation_coverage": [
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-32-0"
+      ],
+      "rationale": "az.style.use only sets plotting style; no scientific content.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [
+        "rat_tumor_counts.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-76-4",
+        "call-83-4"
+      ],
+      "rationale": "The 71 paired (y_i, n_i) count arrays (BDA3 p. 102, embedded in the source; preparation records no original input files) are materialized verbatim in source order as the sole supplied input rat_tumor_counts.csv.",
+      "role": "supplied_input"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-92-4"
+      ],
+      "rationale": "N = len(n) = 71 is the row count of the supplied counts file, used only to build the model coords.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [
+        "analytic_posterior_grid.csv",
+        "posterior_mean_estimates.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-100-16",
+        "call-102-12",
+        "call-103-14",
+        "call-104-14",
+        "call-105-14",
+        "call-106-14",
+        "call-107-14"
+      ],
+      "rationale": "zip(y, n) plus the six gammaln terms define the beta-binomial marginal log-likelihood summed over the 71 experiments; evaluated at every grid cell it produces the required normalized posterior mass.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "analytic_posterior_grid.csv",
+        "posterior_mean_estimates.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-114-20"
+      ],
+      "rationale": "log_prior's np.log(A + B) implements the \u2212(5/2)\u00b7ln(\u03b1+\u03b2) hyperprior factor of the analytical posterior.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "analytic_posterior_grid.csv",
+        "posterior_mean_estimates.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-118-11",
+        "call-118-24",
+        "call-122-11",
+        "call-122-23"
+      ],
+      "rationale": "np.exp components of trans_to_beta / trans_to_alpha recover \u03b2 = e^z/(e^x+1) and \u03b1 = e^x\u00b7\u03b2 at each grid cell.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "analytic_posterior_grid.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-126-7",
+        "call-126-19",
+        "call-126-48",
+        "call-127-20",
+        "call-127-31",
+        "call-128-5",
+        "call-131-14",
+        "call-132-13"
+      ],
+      "rationale": "meshgrid/arange build the 100 \u00d7 400 (x, z) grid; the raveled DataFrame plus trans_to_alpha/trans_to_beta produce the alpha/beta columns of output 1.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "analytic_posterior_grid.csv",
+        "posterior_mean_estimates.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-134-22",
+        "call-134-53"
+      ],
+      "rationale": "log_prior + log_likelihood evaluated on the grid is the unnormalized log marginal posterior.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "analytic_posterior_grid.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-135-21",
+        "call-135-40"
+      ],
+      "rationale": "ln \u03b1 + ln \u03b2 is the change-of-variables Jacobian converting the (\u03b1, \u03b2) density to (x, z) coordinates.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "analytic_posterior_grid.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-138-18",
+        "call-138-42",
+        "call-141-40"
+      ],
+      "rationale": "exp(transformed \u2212 max) followed by division by exp_trans.sum() yields normed_exp_trans, the requested normalized per-cell posterior mass.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-144-10-to-144-34",
+        "call-144-10-to-144-54",
+        "call-146-10",
+        "call-147-0",
+        "call-148-0",
+        "call-149-0",
+        "call-151-13",
+        "call-151-30",
+        "call-152-0",
+        "call-154-13",
+        "call-154-39",
+        "call-156-0"
+      ],
+      "rationale": "Contour plotting of the already-exported surface. The argmax/unravel_index mode point (\u22121.79, 2.74; \u03b1=2.21, \u03b2=13.27) is an annotated projection of the maximal-normed_exp_trans row of the required grid output, so its scientific content is preserved without a separate field.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [
+        "posterior_mean_estimates.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-175-0-to-175-38",
+        "call-178-0-to-178-37"
+      ],
+      "rationale": "\u03a3 \u03b1\u00b7normed_exp_trans and \u03a3 \u03b2\u00b7normed_exp_trans are the grid-based posterior-mean estimates of E[\u03b1|y] and E[\u03b2|y], requested unrounded in output 3.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-175-0-to-175-47",
+        "call-178-0-to-178-46"
+      ],
+      "rationale": "Display-only .round(3) formatting of the two mean estimates in the source; the estimates themselves are already requested unrounded in the summary output.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-187-14"
+      ],
+      "rationale": "np.arange(N) only builds the obs_id model coordinate; no result field.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [
+        "pymc_ab_posterior_draws.csv",
+        "posterior_mean_estimates.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-194-11",
+        "call-194-18",
+        "call-194-25"
+      ],
+      "rationale": "logp_ab (pt.log/pt.pow/pt.sum) implements the (\u03b1+\u03b2)^(\u22125/2) potential factor of the MCMC model's joint density.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-197-5",
+        "call-199-12"
+      ],
+      "rationale": "pm.Model context and the pm.Data 'n_val' wrapper for the supplied n array are model plumbing with no result field of their own.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [
+        "pymc_ab_posterior_draws.csv",
+        "posterior_mean_estimates.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-200-9",
+        "call-201-4",
+        "call-201-28",
+        "call-206-12",
+        "call-208-8"
+      ],
+      "rationale": "HalfNormal(10) hyperprior envelope, the power-law potential, the per-experiment Beta \u03b8 prior and the Binomial likelihood together define the posterior sampled into outputs 2 and 3.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-203-8",
+        "call-203-30",
+        "call-204-8",
+        "call-204-30",
+        "call-204-37"
+      ],
+      "rationale": "X/Z deterministic registrations are pointwise transforms (ln(\u03b1/\u03b2), ln(\u03b1+\u03b2)) of the retained ab draws, consumed only by diagnostic plots; no X/Z summary is interpreted in the source, so they are subsumed by the ab draws output.",
+      "role": "support"
+    },
+    {
+      "artifact_paths": [
+        "pymc_ab_posterior_draws.csv",
+        "posterior_mean_estimates.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-209-12"
+      ],
+      "rationale": "pm.sample(draws=2000, tune=2000, target_accept=0.95) runs NUTS (jitter+adapt_diag) over 4 chains, producing the 8,000 retained ab draws of output 2.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-212-0",
+        "call-216-0",
+        "call-220-0"
+      ],
+      "rationale": "az.plot_rank_dist / az.plot_pair / az.plot_dist are MCMC convergence and comparison diagnostics over samples already retained in output 2.",
+      "role": "diagnostic"
+    },
+    {
+      "artifact_paths": [
+        "pymc_ab_posterior_draws.csv",
+        "posterior_mean_estimates.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-223-0"
+      ],
+      "rationale": "Mean of ab over (chain, draw) is the sample-based posterior-mean estimate of \u03b1 and \u03b2 requested in output 3.",
+      "role": "result"
+    }
+  ],
+  "oracle_code": "import argparse\nimport os\n\nimport numpy as np\nimport pandas as pd\nfrom scipy.special import gammaln\n\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument(\"--input-dir\", required=True)\n    ap.add_argument(\"--output-dir\", required=True)\n    args = ap.parse_args()\n\n    os.makedirs(args.output_dir, exist_ok=True)\n\n    counts = pd.read_csv(os.path.join(args.input_dir, \"rat_tumor_counts.csv\"))\n    y = counts[\"y\"].to_numpy()\n    n = counts[\"n\"].to_numpy()\n    N = len(n)\n\n    # ------------------------------------------------------------------\n    # Part 1: analytical marginal posterior on the (x, z) grid.\n    # ------------------------------------------------------------------\n    X, Z = np.meshgrid(np.arange(-2.3, -1.3, 0.01), np.arange(1, 5, 0.01))\n    df = pd.DataFrame(np.c_[X.ravel(), Z.ravel()], columns=[\"X\", \"Z\"])\n\n    def trans_to_beta(x, z):\n        return np.exp(z) / (np.exp(x) + 1)\n\n    def trans_to_alpha(x, z):\n        return np.exp(x) * trans_to_beta(x, z)\n\n    df[\"alpha\"] = trans_to_alpha(df.X, df.Z)\n    df[\"beta\"] = trans_to_beta(df.X, df.Z)\n\n    alpha = df[\"alpha\"].to_numpy()\n    beta = df[\"beta\"].to_numpy()\n\n    # Beta-binomial marginal log-likelihood, summed over the 71 experiments\n    # in supplied row order (the sum is order-invariant).\n    LL = np.zeros(alpha.shape)\n    for Y_i, N_i in zip(y, n):\n        LL += (\n            gammaln(alpha + beta)\n            - gammaln(alpha)\n            - gammaln(beta)\n            + gammaln(alpha + Y_i)\n            + gammaln(beta + N_i - Y_i)\n            - gammaln(alpha + beta + N_i)\n        )\n\n    log_posterior = -5.0 / 2 * np.log(alpha + beta) + LL\n    log_jacobian = np.log(alpha) + np.log(beta)\n    transformed = log_posterior + log_jacobian\n    exp_trans = np.exp(transformed - transformed.max())\n    normed = exp_trans / exp_trans.sum()\n\n    df[\"normed_exp_trans\"] = normed\n\n    alpha_grid_mean = float((df[\"alpha\"] * df[\"normed_exp_trans\"]).sum())\n    beta_grid_mean = float((df[\"beta\"] * df[\"normed_exp_trans\"]).sum())\n\n    df[[\"X\", \"Z\", \"alpha\", \"beta\", \"normed_exp_trans\"]].to_csv(\n        os.path.join(args.output_dir, \"analytic_posterior_grid.csv\"), index=False\n    )\n\n    # ------------------------------------------------------------------\n    # Part 2: hierarchical model fit by NUTS (PyMC).\n    # ------------------------------------------------------------------\n    import pymc as pm\n    import pytensor.tensor as pt\n\n    coords = {\n        \"obs_id\": np.arange(N),\n        \"param\": [\"alpha\", \"beta\"],\n    }\n\n    def logp_ab(value):\n        \"\"\"(alpha + beta)^(-5/2) hyperprior factor, on the log scale.\"\"\"\n        return pt.log(pt.pow(pt.sum(value), -5 / 2))\n\n    with pm.Model(coords=coords) as model:\n        n_val = pm.Data(\"n_val\", n)\n        ab = pm.HalfNormal(\"ab\", sigma=10, dims=\"param\")\n        pm.Potential(\"p(a, b)\", logp_ab(ab))\n\n        theta = pm.Beta(\"theta\", alpha=ab[0], beta=ab[1], dims=\"obs_id\")\n        p = pm.Binomial(\"y\", p=theta, observed=y, n=n_val)\n\n        trace = pm.sample(\n            draws=2000, tune=2000, target_accept=0.95, chains=4\n        )\n\n    ab_post = trace.posterior[\"ab\"]\n    param_names = [str(v) for v in ab_post.coords[\"param\"].values]\n    ia = param_names.index(\"alpha\")\n    ib = param_names.index(\"beta\")\n    vals = ab_post.transpose(\"chain\", \"draw\", \"param\").values\n    n_chain, n_draw, _ = vals.shape\n\n    rows = [\n        (c + 1, d, float(vals[c, d, ia]), float(vals[c, d, ib]))\n        for c in range(n_chain)\n        for d in range(n_draw)\n    ]\n    draws_df = pd.DataFrame(rows, columns=[\"chain\", \"draw\", \"alpha\", \"beta\"])\n    draws_df.to_csv(\n        os.path.join(args.output_dir, \"pymc_ab_posterior_draws.csv\"),\n        index=False,\n    )\n\n    alpha_mc_mean = float(vals[..., ia].mean())\n    beta_mc_mean = float(vals[..., ib].mean())\n\n    summary = pd.DataFrame(\n        {\n            \"method\": [\"analytic_grid\", \"analytic_grid\", \"pymc_mcmc\", \"pymc_mcmc\"],\n            \"parameter\": [\"alpha\", \"beta\", \"alpha\", \"beta\"],\n            \"estimate\": [alpha_grid_mean, beta_grid_mean, alpha_mc_mean, beta_mc_mean],\n        }\n    )\n    summary.to_csv(\n        os.path.join(args.output_dir, \"posterior_mean_estimates.csv\"), index=False\n    )\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "output_paths": [
+    "analytic_posterior_grid.csv",
+    "pymc_ab_posterior_draws.csv",
+    "posterior_mean_estimates.csv"
+  ],
+  "rationale": "SCOPE. Two source branches are preserved in one task. (1) Analytical branch: the grid-discretized marginal posterior p(x,z|y) (x=ln(\u03b1/\u03b2), z=ln(\u03b1+\u03b2)) under the improper hyperprior \u221d(\u03b1+\u03b2)^(-5/2), via beta-binomial marginalization, plus the two posterior-mean estimates E[\u03b1|y], E[\u03b2|y]. (2) PyMC branch: the hierarchical model (HalfNormal(10) envelope \u00d7 the same power-law potential, Beta \u03b8, Binomial likelihood) sampled by NUTS with 4 chains \u00d7 (2000 tune + 2000 draws), plus the sample-based posterior-mean estimates. The prior mismatch between branches is faithful to the source; the task explicitly forbids harmonizing them.\n\nINPUT DERIVATION. The 71 paired (y_i, n_i) counts (BDA3 p. 102) are embedded literally in the source; the preparation inventory records no original input files (original_inputs = []), so derive_code transcribes the arrays verbatim (source lines 76\u201389) into inputs/rat_tumor_counts.csv in source order, row-wise pairing y_i\u2194n_i. One row = one experiment = one scientific entity, so no key multiplicity or annotation-conflict question arises. The sum over experiments is order-invariant, but source order is preserved anyway. Two assertions validate expected structure (71 rows, n\u2265y).\n\nREFERENCE PROJECTIONS (destination/reference/, private, not supplied to the solver). Output 1's schema (X, Z, alpha, beta, normed_exp_trans) matches the recorded export rat_tumor_analytic_posterior_grid.csv exactly, so its bytes are copied unchanged under the new filename. The MCMC ground truth is projected from the recorded .nc's `ab` variable into the output-2 schema (chain, draw, alpha, beta) with the documented identity mapping chain 0..3 -> 1..4 and draw index unchanged (0..1999, sampling order); values are untouched and row multiplicity (8000) is preserved. The four scalar endpoints are exact projections of the recorded exports per the preparation plan's recovery handoff: analytic means = \u03a3 \u03b1\u00b7normed_exp_trans and \u03a3 \u03b2\u00b7normed_exp_trans over the grid columns, MCMC means = ('chain','draw') mean of `ab`; these are documented projections of already-recorded endpoint data, not new analysis (no method or input change, no invented recomputation of sampling). No additional source-faithful recovery was needed because the solver re-executes the unchanged methods on the unchanged data themselves.\n\nORACLE. Uses only the supplied counts CSV. Part 1 replicates the source computation exactly (same grid via np.arange(-2.3,-1.3,0.01)\u00d7np.arange(1,5,0.01), same per-experiment gammaln summation order, log-Jacobian ln \u03b1+ln \u03b2, exp(transformed\u2212max), normalization by the total) \u2014 the analytical branch is recorded as byte-deterministic across both reference replays, so the regenerated grid should match the projected reference. Part 2 builds the model exactly as in the source (pm.Model with coords, pm.Data n_val, HalfNormal(10) ab, Potential logp_ab, Beta theta, Binomial likelihood) and calls pm.sample(draws=2000, tune=2000, target_accept=0.95). Chain count: the source left chains at default, which resolved to 4 chains/4 jobs on the 4-CPU reference sandbox; the task pins 4 chains and the oracle passes chains=4 explicitly \u2014 a documented resolution of the sampler default, not a method change (it matches the executed reference configuration). I dropped the X/Z Deterministic registrations and all plotting from the oracle: they are pointwise transforms/diagnostics with no requested output (see exclusions) and do not affect sampling. MCMC draws are deliberately not bit-reproducible (source sets no seed); only distributional and mean-level quantities are fair comparison targets, and per-draw byte equality is scientifically meaningless for output 2. Output 3 carries full floating-point precision, matching the source quantities (the .round(3) in the source is display-only formatting).\n\nLEAKAGE. The reference .nc and grid CSV live only under destination/reference/, which is not part of the solver's supplied inputs; inputs/ contains only the raw counts. No measured answer values are embedded in either derive_code (only the verbatim source count data) or oracle_code. The reference export is byte-copied unchanged at /work/reference (untouched originals).\n\nEXCLUDED SOURCE OUTPUTS (scientific exclusions, with evidence). (a) \u03b8_i draws recorded in the .nc: no source operation consumes theta beyond the model likelihood \u2014 theta never appears in a plot var_names; not requested. (b) X/Z draws recorded in the .nc: pointwise transforms ln(ab0/ab1), ln(ab0+ab1) of the retained ab draws, consumed only by az.plot_pair/plot_rank_dist diagnostics; no X/Z summary is interpreted in the source (mean-of-transform \u2260 transform-of-mean), so they are subsumed by the required ab draws, not requested. (c) Contour plot and mode annotation (argmax at (\u22121.79, 2.74), \u03b1=2.21, \u03b2=13.27): presentation of the required grid surface; the mode is a stated projection of the maximal-normed_exp_trans row of output 1, so its scientific content is preserved. (d) az.plot_rank_dist/plot_pair/plot_dist and az.style.use: diagnostics/presentation. These are per the reviewed proposal and the source evidence; no eligible source endpoint is dropped.\n\nREMAINING COMPARISON QUESTIONS (for the later validation stage, not solved here): Monte Carlo error tolerance for the two pymc_mcmc estimates; coordinate-matching tolerance for the (X, Z) grid (reference serialization contains stepwise-arange float artifacts like -2.2800000000000002, which the oracle's identical construction reproduces); row-order and chain-label conventions for output 2 (labels are conventional, row identity is the draw). ENVIRONMENT REVIEW: none yet \u2014 initial submission; the environment review will be supplied after observing the executed inventory and installed-asset catalog."
+}

@@ -1,0 +1,53 @@
+[
+  {
+    "id": "analytic_grid_structure",
+    "kind": "structural",
+    "artifacts": [
+      "analytic_posterior_grid.csv"
+    ],
+    "public_requirement": "outputs/analytic_posterior_grid.csv exists with exactly the header X,Z,alpha,beta,normed_exp_trans, exactly 40,000 data rows, all cells finite; every (X, Z) pair lies on the declared 0.01 grid within 1e-6 of its rounded hundredth, inside the declared ranges; the 40,000 declared cells are covered exactly once (coverage and multiplicity); alpha and beta strictly positive; normed_exp_trans finite, nonnegative, and summing to 1 within 1e-9."
+  },
+  {
+    "id": "analytic_grid_values",
+    "kind": "scientific",
+    "artifacts": [
+      "analytic_posterior_grid.csv"
+    ],
+    "public_requirement": "The submitted grid agrees with an independent deterministic recomputation of the Part-1 posterior on the original task counts (read from the original-hash-checked input copy): alpha within 1e-9 relative, beta within 1e-9 relative, and normed_exp_trans within 1e-8 relative (plus a 1e-30 absolute floor) of the recomputed per-cell values; the weights sum to 1 within 1e-9. Cell alignment is by (X, Z) grid coordinates; row order is free, but arbitrary row order does not excuse missing, duplicated or out-of-range cells."
+  },
+  {
+    "id": "mcmc_draws_structure",
+    "kind": "structural",
+    "artifacts": [
+      "pymc_ab_posterior_draws.csv"
+    ],
+    "public_requirement": "outputs/pymc_ab_posterior_draws.csv exists with exactly the header chain,draw,alpha,beta, exactly 8,000 data rows; alpha and beta finite and strictly positive; chain labels are exactly the distinct integers 1, 2, 3, 4 with exactly 2,000 rows per chain; within each chain the draw labels are the 2,000 distinct integers 0..1999; the 8,000 (alpha, beta) rows contain no exact duplicate rows. Row order is otherwise free (row identity is the draw, not its position)."
+  },
+  {
+    "id": "mcmc_draws_distribution",
+    "kind": "scientific",
+    "artifacts": [
+      "pymc_ab_posterior_draws.csv",
+      "posterior_mean_estimates.csv"
+    ],
+    "public_requirement": "The submitted retained draws must estimate the posterior of the exact Part-2 model (HalfNormal(10) priors on alpha and beta multiplied by the (alpha+beta)^(-5/2) hyperprior factor, theta marginalized analytically). Acceptance, measured on the submitted draw plain means and the pooled sample sds: the pooled draw means of alpha and beta must each lie within 2.5% relative of the exact posterior mean of the specified model (computed by numerical integration of that model on the supplied counts); the pooled sample sds within 20% relative of the exact posterior sds; the Pearson correlation between the alpha and beta draw columns within 0.15 of the exact posterior correlation; each chain's mean within 0.50 exact posterior sd of the pooled mean (both parameters). These are limits on observable output differences for this fixed sample size, not a guarantee that every wrong sampler configuration is detected; substantially biased samplers, wrong priors, truncated or padded chains fail them."
+  },
+  {
+    "id": "summary_estimates_structure",
+    "kind": "structural",
+    "artifacts": [
+      "posterior_mean_estimates.csv"
+    ],
+    "public_requirement": "outputs/posterior_mean_estimates.csv exists with exactly the header method,parameter,estimate and exactly 4 data rows; the (method, parameter) labels are exactly the pairs (analytic_grid, alpha), (analytic_grid, beta), (pymc_mcmc, alpha), (pymc_mcmc, beta), each appearing exactly once; all fields non-missing; the estimate column numerically finite."
+  },
+  {
+    "id": "summary_estimates_consistency",
+    "kind": "scientific",
+    "artifacts": [
+      "analytic_posterior_grid.csv",
+      "pymc_ab_posterior_draws.csv",
+      "posterior_mean_estimates.csv"
+    ],
+    "public_requirement": "Each summary estimate must match the value derived from the submitter's own other files: analytic_grid rows equal the mass-weighted sums sum(alpha*normed_exp_trans) and sum(beta*normed_exp_trans) over the submitted grid, within 1e-10 relative (plus 1e-12 absolute); pymc_mcmc rows equal the plain arithmetic means of the submitted alpha and beta draw columns, within 1e-8 relative (plus 1e-10 absolute). Estimates must be reported at full available precision (rounding to a few decimals or other precision loss fails these tolerances; the deliberate Part-1 vs Part-2 prior difference is preserved and is not normalized away)."
+  }
+]

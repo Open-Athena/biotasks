@@ -1,0 +1,77 @@
+{
+  "baseline_script": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: arviz_1\n#     language: python\n#     name: python3\n# ---\n\n# # Hierarchical Binomial Model: Rat Tumor Example\n# :::{post} Jan 10, 2023\n# :tags: generalized linear model, hierarchical model \n# :category: intermediate\n# :author: Demetri Pananos, Junpeng Lao, Ra\u00fal Maldonado, Farhan Reynaldo\n# :::\n\nimport arviz as az\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\nimport pymc as pm\nimport pytensor.tensor as pt\n\nfrom scipy.special import gammaln\n\n# Notebook presentation directive: %config InlineBackend.figure_format = 'retina'\naz.style.use(\"arviz-variat\")\n\n# This short tutorial demonstrates how to use PyMC to do inference for the rat tumour example found in chapter 5 of *Bayesian Data Analysis 3rd Edition* {cite:p}`gelman2013bayesian`. Readers should already be familiar with the PyMC API.\n#\n# Suppose we are interested in the probability that a lab rat develops endometrial stromal polyps. We have data from 71 previously performed trials and would like to use this data to perform inference.\n#\n# The authors of BDA3 choose to model this problem hierarchically. Let $y_i$ be the number of lab rats which develop endometrial stromal polyps out of a possible $n_i$. We model the number rodents which develop endometrial stromal polyps as binomial\n#\n# $$ y_i \\sim \\operatorname{Bin}(\\theta_i;n_i)$$\n#\n# allowing the probability of developing an endometrial stromal polyp (i.e. $\\theta_i$) to be drawn from some population distribution. For analytical tractability, we assume that $\\theta_i$ has Beta distribution\n#\n# $$ \\theta_i \\sim \\operatorname{Beta}(\\alpha, \\beta)$$\n#\n# We are free to specify a prior distribution for $\\alpha, \\beta$. We choose a weakly informative prior distribution to reflect our ignorance about the true values of $\\alpha, \\beta$. The authors of BDA3 choose the joint hyperprior for $\\alpha, \\beta$ to be\n#\n# $$ p(\\alpha, \\beta) \\propto (\\alpha + \\beta) ^{-5/2}$$\n#\n# For more information, please see *Bayesian Data Analysis 3rd Edition* pg. 110.\n\n# ## A Directly Computed Solution\n#\n# Our joint posterior distribution is\n#\n# $$p(\\alpha,\\beta,\\theta \\lvert y) \n# \\propto \n# p(\\alpha, \\beta) \n# p(\\theta \\lvert \\alpha,\\beta)\n# p(y \\lvert \\theta)$$\n#\n# which can be rewritten in such a way so as to obtain the marginal posterior distribution for $\\alpha$ and $\\beta$, namely\n#\n# $$ p(\\alpha, \\beta, \\lvert y) = \n# p(\\alpha, \\beta) \n# \\prod_{i = 1}^{N} \\dfrac{\\Gamma(\\alpha+\\beta)}{\\Gamma(\\alpha)\\Gamma(\\beta)}\n# \\dfrac{\\Gamma(\\alpha+y_i)\\Gamma(\\beta+n_i - y_i)}{\\Gamma(\\alpha+\\beta+n_i)}$$\n#\n#\n# See BDA3 pg. 110 for a more information on the deriving the marginal posterior distribution. With a little determination, we can plot the marginal posterior and estimate the means of $\\alpha$ and $\\beta$ without having to resort to MCMC. We will see, however, that this requires considerable effort.\n#\n# The authors of BDA3 choose to plot the surface under the parameterization $(\\log(\\alpha/\\beta), \\log(\\alpha+\\beta))$.  We do so as well. Through the remainder of the example let $x = \\log(\\alpha/\\beta)$ and $z = \\log(\\alpha+\\beta)$.\n\n# rat data (BDA3, p. 102)\n# fmt: off\ny = np.array([\n    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,\n    1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  1,  5,  2,\n    5,  3,  2,  7,  7,  3,  3,  2,  9, 10,  4,  4,  4,  4,  4,  4,  4,\n    10,  4,  4,  4,  5, 11, 12,  5,  5,  6,  5,  6,  6,  6,  6, 16, 15,\n    15,  9,  4\n])\nn = np.array([\n    20, 20, 20, 20, 20, 20, 20, 19, 19, 19, 19, 18, 18, 17, 20, 20, 20,\n    20, 19, 19, 18, 18, 25, 24, 23, 20, 20, 20, 20, 20, 20, 10, 49, 19,\n    46, 27, 17, 49, 47, 20, 20, 13, 48, 50, 20, 20, 20, 20, 20, 20, 20,\n    48, 19, 19, 19, 22, 46, 49, 20, 20, 23, 19, 22, 20, 20, 20, 52, 46,\n    47, 24, 14\n])\n# fmt: on\n\nN = len(n)\n\n\n# Compute on log scale because products turn to sums\ndef log_likelihood(alpha, beta, y, n):\n    LL = 0\n\n    # Summing over data\n    for Y, N in zip(y, n):\n        LL += (\n            gammaln(alpha + beta)\n            - gammaln(alpha)\n            - gammaln(beta)\n            + gammaln(alpha + Y)\n            + gammaln(beta + N - Y)\n            - gammaln(alpha + beta + N)\n        )\n\n    return LL\n\n\ndef log_prior(A, B):\n    return -5 / 2 * np.log(A + B)\n\n\ndef trans_to_beta(x, y):\n    return np.exp(y) / (np.exp(x) + 1)\n\n\ndef trans_to_alpha(x, y):\n    return np.exp(x) * trans_to_beta(x, y)\n\n\n# Create space for the parameterization in which we wish to plot\nX, Z = np.meshgrid(np.arange(-2.3, -1.3, 0.01), np.arange(1, 5, 0.01))\nparam_space = np.c_[X.ravel(), Z.ravel()]\ndf = pd.DataFrame(param_space, columns=[\"X\", \"Z\"])\n\n# Transform the space back to alpha beta to compute the log-posterior\ndf[\"alpha\"] = trans_to_alpha(df.X, df.Z)\ndf[\"beta\"] = trans_to_beta(df.X, df.Z)\n\ndf[\"log_posterior\"] = log_prior(df.alpha, df.beta) + log_likelihood(df.alpha, df.beta, y, n)\ndf[\"log_jacobian\"] = np.log(df.alpha) + np.log(df.beta)\n\ndf[\"transformed\"] = df.log_posterior + df.log_jacobian\ndf[\"exp_trans\"] = np.exp(df.transformed - df.transformed.max())\n\n# This will ensure the density is normalized\ndf[\"normed_exp_trans\"] = df.exp_trans / df.exp_trans.sum()\n\n\nsurface = df.set_index([\"X\", \"Z\"]).exp_trans.unstack().values.T\n\nfig, ax = plt.subplots(figsize=(8, 8))\nax.contourf(X, Z, surface)\nax.set_xlabel(r\"$\\log(\\alpha/\\beta)$\", fontsize=16)\nax.set_ylabel(r\"$\\log(\\alpha+\\beta)$\", fontsize=16)\n\nix_z, ix_x = np.unravel_index(np.argmax(surface, axis=None), surface.shape)\nax.scatter([X[0, ix_x]], [Z[ix_z, 0]], color=\"red\")\n\ntext = rf\"$({np.round(X[0, ix_x], 2)},{np.round(Z[ix_z, 0], 2)})$\"\n\nax.annotate(\n    text,\n    xy=(X[0, ix_x], Z[ix_z, 0]),\n    xytext=(-1.6, 3.5),\n    ha=\"center\",\n    fontsize=16,\n    color=\"white\",\n    arrowprops={\"facecolor\": \"white\"},\n);\n\n# The plot shows that the posterior is roughly symmetric about the mode (-1.79, 2.74). This corresponds to $\\alpha = 2.21$ and $\\beta = 13.27$. We can compute the marginal means as the authors of BDA3 do, using\n#\n# $$ \\operatorname{E}(\\alpha \\lvert y) \\text{   is estimated by   }\n# \\sum_{x,z} \\alpha p(x,z\\lvert y) $$\n#\n# $$ \\operatorname{E}(\\beta \\lvert y) \\text{   is estimated by   }\n# \\sum_{x,z} \\beta p(x,z\\lvert y) $$\n\n# Estimated mean of alpha\n(df.alpha * df.normed_exp_trans).sum().round(3)\n\n# Estimated mean of beta\n(df.beta * df.normed_exp_trans).sum().round(3)\n\n# ## Computing the Posterior using PyMC\n#\n# Computing the marginal posterior directly is a lot of work, and is not always possible for sufficiently complex models. \n#\n# On the other hand, creating hierarchical models in PyMC is simple.  We can use the samples obtained from the posterior to estimate the means of $\\alpha$ and $\\beta$.\n\ncoords = {\n    \"obs_id\": np.arange(N),\n    \"param\": [\"alpha\", \"beta\"],\n}\n\n\ndef logp_ab(value):\n    \"\"\"prior density\"\"\"\n    return pt.log(pt.pow(pt.sum(value), -5 / 2))\n\n\nwith pm.Model(coords=coords) as model:\n    # Uninformative prior for alpha and beta\n    n_val = pm.Data(\"n_val\", n)\n    ab = pm.HalfNormal(\"ab\", sigma=10, dims=\"param\")\n    pm.Potential(\"p(a, b)\", logp_ab(ab))\n\n    X = pm.Deterministic(\"X\", pt.log(ab[0] / ab[1]))\n    Z = pm.Deterministic(\"Z\", pt.log(pt.sum(ab)))\n\n    theta = pm.Beta(\"theta\", alpha=ab[0], beta=ab[1], dims=\"obs_id\")\n\n    p = pm.Binomial(\"y\", p=theta, observed=y, n=n_val)\n    trace = pm.sample(draws=2000, tune=2000, target_accept=0.95)\n\n# Check the trace. Looks good!\naz.plot_rank_dist(trace, var_names=[\"ab\", \"X\", \"Z\"], compact=False);\n\n# We can plot a kernel density estimate for $x$ and $y$. It looks rather similar to our contour plot made from the analytic marginal posterior density.  That's a good sign, and required far less effort.\n\naz.plot_pair(trace, var_names=[\"X\", \"Z\"]);\n\n# From here, we could use the trace to compute the mean of the distribution.\n\naz.plot_dist(trace, var_names=[\"ab\"]);\n\n# estimate the means from the samples\ntrace.posterior[\"ab\"].mean((\"chain\", \"draw\"))\n\n# ## Conclusion\n#\n# Analytically calculating statistics for posterior distributions is difficult if not impossible for some models.  PyMC provides an easy way drawing samples from your model's posterior with only a few lines of code.  Here, we used PyMC to obtain estimates of the posterior mean for the rat tumor example in chapter 5 of BDA3. The estimates obtained from PyMC are encouragingly close to the estimates obtained from the analytical posterior density.\n\n# ## References\n#\n# :::{bibliography}\n# :filter: docname in docnames\n# :::\n\n# ## Authors\n#\n# * Adapted from chapter 5 of Bayesian Data Analysis 3rd Edition {cite:p}`gelman2013bayesian` by Demetri Pananos and Junpeng Lao ([pymc#3054](https://github.com/pymc-devs/pymc/pull/3054))\n# * Updated and reexecuted by Ra\u00fal Maldonado ([pymc-examples#24](https://github.com/pymc-devs/pymc-examples/pull/24), [pymc-examples#45](https://github.com/pymc-devs/pymc-examples/pull/45) and [pymc-examples#147](https://github.com/pymc-devs/pymc-examples/pull/147))\n# * Updated and reexecuted by Farhan Reynaldo in November 2021 ([pymc-examples#248](https://github.com/pymc-devs/pymc-examples/pull/248))\n# * Rerun with PyMC v5, by Reshama Shaikh, January 2023\n# * Updated by Osvaldo Martin, April 2026\n\n# ## Watermark\n\n# Notebook presentation directive: %load_ext watermark\n# Notebook presentation directive: %watermark -n -u -v -iv -w\n\n\n# :::{include} ../page_footer.md\n# :::\n",
+  "conversion": {
+    "code_cells": 14,
+    "converter": "jupytext",
+    "converter_version": "1.19.6",
+    "directory_normalizations": [],
+    "documentation_execution_policy": {},
+    "equivalence_basis": "Python statements after recorded presentation and directory normalization",
+    "executable_ast_sha256": "5d518b0fdf2936fcada313027515cb46fcc5d81d61c2217fe1d8d68d0a17c82c",
+    "executed": false,
+    "format": "py:nomarker",
+    "ignored_cell_editor_metadata": [],
+    "ignored_editor_metadata": {},
+    "ignored_presentation_tags": [],
+    "markdown_cells": 12,
+    "markdown_representation": "line_comments",
+    "ordered_code_equivalence": true,
+    "presentation_normalizations": [
+      {
+        "cell_index": 2,
+        "directive": "%config InlineBackend.figure_format = 'retina'",
+        "kind": "inline_display_format",
+        "line": 1
+      },
+      {
+        "cell_index": 24,
+        "directive": "%load_ext watermark",
+        "kind": "environment_reporting",
+        "line": 1
+      },
+      {
+        "cell_index": 24,
+        "directive": "%watermark -n -u -v -iv -w",
+        "kind": "environment_reporting",
+        "line": 2
+      }
+    ],
+    "profile": "python-narrative-v6",
+    "script_sha256": "11637310cbf77714fcca876df1ddb8a195474d47edad73337de070c1c158a10c",
+    "source_sha256": "b1b2280ac15f9367c50ba7dde7793be23a49e7f858ef12a3713ce22f39b92c9e",
+    "stored_outputs_used_as_evidence": false
+  },
+  "limits": {
+    "base_image": "python:3.13.13-slim-bookworm",
+    "gpu": false,
+    "network": "Internet during setup only; reference is offline",
+    "reference_seconds": 600,
+    "setup_seconds": 1800,
+    "task_cpus": 4,
+    "task_disk_gib": 10,
+    "task_memory_gib": 8
+  },
+  "source": {
+    "id": "pymc-rat-tumor",
+    "license": "MIT",
+    "provenance": {
+      "data_lineage": "Counts from71prior rat-tumor experiments embedded in the original notebook; it cites Bayesian Data Analysis3, page102. Observed historical counts, not newly simulated input data.",
+      "data_redistribution_review": "Notebook MIT notice retained; exact data lineage and any derived materialized inputs still need a separate redistribution review before publication. No automatic public task/data release.",
+      "input_preservation": "Original source bytes and complete source analysis. No operator-specified task, endpoint selection, input reduction or method change.",
+      "notebook": {
+        "git_blob_sha1": "03bc551e9f57aebd5e9633b8cd83db2f8351acbe",
+        "license": "MIT",
+        "license_sha256": "45dee27689bcc6c2618f1be74ef13decde2ac4bf1ae534d36eafe16cc9cb7065",
+        "license_text": "MIT License\n\nCopyright (c) 2020 PyMC\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n",
+        "license_url": "https://github.com/pymc-devs/pymc-examples/blob/17c8f90dc90691b41587dfdf477698d74cf5c18c/LICENSE",
+        "revision": "17c8f90dc90691b41587dfdf477698d74cf5c18c",
+        "sha256": "b1b2280ac15f9367c50ba7dde7793be23a49e7f858ef12a3713ce22f39b92c9e",
+        "url": "https://github.com/pymc-devs/pymc-examples/blob/17c8f90dc90691b41587dfdf477698d74cf5c18c/examples/generalized_linear_models/GLM-hierarchical-binomial-model.ipynb"
+      }
+    },
+    "source_revision": "17c8f90dc90691b41587dfdf477698d74cf5c18c",
+    "source_sha256": "b1b2280ac15f9367c50ba7dde7793be23a49e7f858ef12a3713ce22f39b92c9e",
+    "title": "PyMC: hierarchical binomial modeling of rat-tumor experiments",
+    "url": "https://github.com/pymc-devs/pymc-examples/blob/17c8f90dc90691b41587dfdf477698d74cf5c18c/examples/generalized_linear_models/GLM-hierarchical-binomial-model.ipynb"
+  }
+}

@@ -1,0 +1,35 @@
+{
+ "passed": true,
+ "checks": [
+  {
+   "id": "analytic_grid_structure",
+   "passed": true,
+   "message": "structure ok: 40000 rows, declared grid covered exactly once, weights sum to 1"
+  },
+  {
+   "id": "analytic_grid_values",
+   "passed": true,
+   "message": "grid matches the deterministic recomputation (max relative differences: alpha 1.7e-15, beta 1.5e-15, weight 4.5e-11)"
+  },
+  {
+   "id": "mcmc_draws_distribution",
+   "passed": true,
+   "message": "draw distribution consistent with the exact Part-2 posterior (mean alpha 1.96, mean beta 11.57, correlation 0.921)"
+  },
+  {
+   "id": "mcmc_draws_structure",
+   "passed": true,
+   "message": "structure ok: 8000 rows, chains 1-4 with draws 0..1999, positive values"
+  },
+  {
+   "id": "summary_estimates_structure",
+   "passed": true,
+   "message": "structure ok: 4 rows with the required method/parameter labels"
+  },
+  {
+   "id": "summary_estimates_consistency",
+   "passed": true,
+   "message": "summary estimates reproduce the submitted grid and draw means within tolerance"
+  }
+ ]
+}

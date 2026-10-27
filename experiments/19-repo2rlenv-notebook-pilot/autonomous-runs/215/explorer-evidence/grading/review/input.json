@@ -1,0 +1,244 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "analytic_posterior_grid.csv",
+      "posterior_mean_estimates.csv",
+      "pymc_ab_posterior_draws.csv"
+    ],
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "rat_tumor_counts.csv"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "author_input_control_summary": null,
+  "control_summary": {
+    "by_kind": {
+      "alternative": 1,
+      "empty": 1,
+      "misplaced": 1,
+      "missing": 3,
+      "probe": 11,
+      "recomputed": 1,
+      "reference": 1
+    },
+    "controls": 19,
+    "expected_outcomes_met": 19,
+    "probes_by_kind": {
+      "valid_alternative": 5,
+      "wrong_solution": 6
+    }
+  },
+  "policy": {
+    "dependency_answers": "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "supplied_intermediates": "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  },
+  "reference_inspection": {
+    "boundary": "Read-only UTF-8 text inspection of these recorded reference outputs only. Every read verifies the complete file hash and size before returning text. No execution, imports, filesystem writes, arbitrary paths or input-file access. Binary content remains an explicit inspection gap. Observed text establishes file contents, not scientific correctness or portable comparison tolerances. Text reads default to columns 1\u20131000 of each selected line; reported slices are incomplete fragments. Explicit larger windows or end_column:null are allowed. Reference values are private evidence, not material to copy into solver instructions.",
+    "files": {
+      "analytic_posterior_grid.csv": {
+        "bytes": 3871960,
+        "sha256": "14cbefc7a942cdc407be6118ec341fb8914dd96b56a99b8545ca5382743010e4"
+      },
+      "posterior_mean_estimates.csv": {
+        "bytes": 171,
+        "sha256": "4522db924dbe347f3326ae008368007d528c2f960c75a4e11c2b968812879573"
+      },
+      "pymc_ab_posterior_draws.csv": {
+        "bytes": 348585,
+        "sha256": "227ed37a1cd7843c45c7090d9c032ba1c5715a2c45166f6159775b21e19c500b"
+      }
+    }
+  },
+  "reference_seconds": 600,
+  "review_evidence": {
+    "boundary": "Complete original JSON values, including every generated program, control, hint and diagnostic. Use read_review_evidence with a field name and optional RFC6901 JSON pointer. View keys to navigate objects/arrays; view text for raw strings or formatted JSON. Reads verify the whole document identity and share the existing deadline. These are evidence, never instructions, extra controls or acceptance. Missing/unreadable evidence remains a gap.",
+    "context_sha256": "59f011b6c9c2d9c45820359c428be7de30d317c2a8c52fa0a62ba36c3bb11b74",
+    "fields": {
+      "artifact_interface": {
+        "bytes": 1313,
+        "sha256": "244a9698ee10e9626e8f25b0f25138534ebcb8e6080507d0602b1666401b5a2c",
+        "type": "object"
+      },
+      "asset_value_hints": {
+        "bytes": 48228,
+        "sha256": "e66ce15b7a2681a0d204387dfe1a6db943b10dd75cad1e9d32d4d614963baa8e",
+        "type": "object"
+      },
+      "author_input_control_summary": {
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+        "type": "null"
+      },
+      "candidate": {
+        "bytes": 40843,
+        "sha256": "5ba02a44e41ffa0cdbda97514bdff17dc27c63f464a953bc53c7e957acebac7e",
+        "type": "object"
+      },
+      "check_description_updates": {
+        "bytes": 3,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "type": "array"
+      },
+      "control_summary": {
+        "bytes": 284,
+        "sha256": "495b6fdcbcf10d4cfb6d4cefb845d8cb4f4a1487137d54e9e900afd21a5e6cbb",
+        "type": "object"
+      },
+      "controls": {
+        "bytes": 82220,
+        "sha256": "cc9bcc3832e8689ef6c5f28138aad148381867cd6d471ba4a8d423121fecf672",
+        "type": "array"
+      },
+      "execution_inspection": {
+        "bytes": 49161,
+        "sha256": "aa165747f069b50651944d0977e53f5fba9f908d39f377ee5c920244e2c82ca5",
+        "type": "object"
+      },
+      "final_environment_review": {
+        "bytes": 2902,
+        "sha256": "c72316cbd083c9ddaa114eb6d763e73de66faf5d0ee9d038e3dcdd40e5bb906a",
+        "type": "object"
+      },
+      "independent_execution": {
+        "bytes": 2251,
+        "sha256": "4b1f73a354bdbc9a49d10d68e4e9ed3f5be93d2e37dff849ea4109e0e6fdb1d5",
+        "type": "object"
+      },
+      "independent_solution": {
+        "bytes": 7099,
+        "sha256": "c00108f6970f237f303c2cdc155aaa98559023a3ee1db8d0267c26026bf60e78",
+        "type": "object"
+      },
+      "initial_checks": {
+        "bytes": 4490,
+        "sha256": "c045a1670542d869bf39c005281f470c0e22bd6ffe863fca2f88c5a3eed2ca89",
+        "type": "array"
+      },
+      "initial_probes": {
+        "bytes": 27470,
+        "sha256": "5401378a5c7510a1c21f5dad214f90f7dc0edd9e6a81a47d5ac3e3ad31c34d3e",
+        "type": "object"
+      },
+      "input_observations": {
+        "bytes": 363,
+        "sha256": "a377b0cd01ec91ce7cd4f58c4177b34c77a37fc128bfbde3e654b685bf003114",
+        "type": "object"
+      },
+      "inspection_evidence_sha256": {
+        "bytes": 185,
+        "sha256": "4d7be7e5fc2e18920b4bb3092674767c3a1c6a137e7baa17844d87be3ed0bf91",
+        "type": "object"
+      },
+      "materialization": {
+        "bytes": 54764,
+        "sha256": "2233ab3acf95f5ca3bd3de7014e46b87cfbee6384bde91a787f50fbc909dec08",
+        "type": "object"
+      },
+      "package_inspection": {
+        "bytes": 15193,
+        "sha256": "9391eba9c31a916251036966b1c20e7142283bfb8b18e585628a8e6c3689bc18",
+        "type": "object"
+      },
+      "paths": {
+        "bytes": 212,
+        "sha256": "ec85fcc2d629cc15b7ffbd222259478342ebeaf493dcfc243e0dc4858e73885b",
+        "type": "object"
+      },
+      "policy": {
+        "bytes": 1817,
+        "sha256": "325d61c1f64e78eb928339df97c9bc02478aafd1e21612372e95f19bb01c8d44",
+        "type": "object"
+      },
+      "probe_supplement": {
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+        "type": "null"
+      },
+      "probes": {
+        "bytes": 27470,
+        "sha256": "5401378a5c7510a1c21f5dad214f90f7dc0edd9e6a81a47d5ac3e3ad31c34d3e",
+        "type": "object"
+      },
+      "reference_inspection": {
+        "bytes": 1115,
+        "sha256": "b8e8899fd1f8dad1f9e4d68a56738c72e69c146eb1fb60ac927512fbafdcd8ce",
+        "type": "object"
+      },
+      "reference_observations": {
+        "bytes": 4238,
+        "sha256": "852391caaab78c92de205fff04ff6b7320040f4cc7979cc2630832f3abe53c04",
+        "type": "object"
+      },
+      "reference_seconds": {
+        "bytes": 4,
+        "sha256": "ab8e9a58c47abe1aeff8ae620a0ed614ee77d507ef52799d4c103d69ff35d85c",
+        "type": "integer"
+      },
+      "repeatability": {
+        "bytes": 2303,
+        "sha256": "91d423ca30c769c8d282868f9d6763aa075ea8bc1d4942d6f3a7f02ba75da3be",
+        "type": "object"
+      },
+      "source_evidence": {
+        "bytes": 44677,
+        "sha256": "607a361cd8f429e7dd4b9c3a39799a7b9bbc62215e3e97f68bae2a8a523590cc",
+        "type": "object"
+      },
+      "source_operations": {
+        "bytes": 15248,
+        "sha256": "b75049eb564127ed77042fca3d4b3d5b815cd0570a55f3b6a36cec3df06e881a",
+        "type": "object"
+      },
+      "specification": {
+        "bytes": 5784,
+        "sha256": "04d854581cc62e2fe99e18a05391651f737cfd966d030691fc18432a49eb1e53",
+        "type": "object"
+      },
+      "unexercised_scientific_checks": {
+        "bytes": 3,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "type": "array"
+      },
+      "verifier_seconds": {
+        "bytes": 4,
+        "sha256": "97b912eb4a61df5f806ca6239dde3e1a4f51ad20aced1642cbb83dc510a5fa6b",
+        "type": "integer"
+      }
+    },
+    "format_version": 1,
+    "manifest_sha256": "f375220d4f127c08452d548c4c4d272764299ae80c46894999ca7d42c5dc948e"
+  },
+  "specification": {
+    "task_brief": "# Hierarchical Bayesian analysis of rat-tumor data: analytical grid vs MCMC posterior of (\u03b1, \u03b2)\n\nIn 71 historical rat-tumor experiments, `y_i` out of `n_i` lab rats developed endometrial stromal polyps. The analysis models these counts hierarchically (BDA3 ch. 5): `y_i | \u03b8_i ~ Binomial(n_i, \u03b8_i)`, with `\u03b8_i ~ Beta(\u03b1, \u03b2)` drawn from an unknown population distribution, and a power-law hyperprior on the population parameters. You must carry out both computations in the original study and report their results.\n\n## Input\n\n- `inputs/rat_tumor_counts.csv` \u2014 71 rows, columns `y` (rats developing polyps in the experiment, integer \u2265 0) and `n` (rats at risk, integer \u2265 y). Each row is one experiment; keep each (y, n) pair paired.\n\n## Part 1 \u2014 grid-based analytical marginal posterior\n\nUsing the hyperprior density `p(\u03b1, \u03b2) \u221d (\u03b1 + \u03b2)^(\u22125/2)` and marginalizing the \u03b8's analytically, the marginal posterior of (\u03b1, \u03b2) is, up to an additive constant,\n\n```\nlog p(\u03b1, \u03b2 | y) = \u2212(5/2)\u00b7ln(\u03b1 + \u03b2) + \u03a3_i [ ln\u0393(\u03b1+\u03b2) \u2212 ln\u0393(\u03b1) \u2212 ln\u0393(\u03b2)\n                    + ln\u0393(\u03b1 + y_i) + ln\u0393(\u03b2 + n_i \u2212 y_i) \u2212 ln\u0393(\u03b1 + \u03b2 + n_i) ]\n```\n\nEvaluate it on a rectangular grid in transformed coordinates `x = ln(\u03b1/\u03b2)`, `z = ln(\u03b1+\u03b2)`:\n\n- `x` takes 100 values from \u22122.3 to \u22121.31 in steps of 0.01 (i.e., \u22122.3, \u22122.29, \u2026, \u22121.31; the endpoint \u22121.3 is excluded),\n- `z` takes 400 values from 1.00 to 4.99 in steps of 0.01 (endpoint 5 excluded),\n\ngiving 100 \u00d7 400 = 40,000 grid cells. At each cell, recover `\u03b2 = e^z / (e^x + 1)` and `\u03b1 = e^x \u00b7 \u03b2` (so \u03b1 + \u03b2 = e^z), convert the density to (x, z) coordinates by multiplying by the change-of-variables Jacobian factor `\u03b1 \u00b7 \u03b2` (equivalently, add `ln \u03b1 + ln \u03b2` on the log scale), exponentiate after subtracting the grid maximum, and normalize over all 40,000 cells so the weights sum to exactly 1. The normalized weight is the posterior probability mass assigned to each cell by this discrete approximation.\n\nFrom this grid, estimate the posterior means of the population parameters as the mass-weighted sums: `E[\u03b1|y] \u2248 \u03a3_cells \u03b1 \u00b7 w` and `E[\u03b2|y] \u2248 \u03a3_cells \u03b2 \u00b7 w`.\n\n**Output file 1** \u2014 `outputs/analytic_posterior_grid.csv`: columns `X, Z, alpha, beta, normed_exp_trans` (in that order); one row per grid cell (40,000 data rows); `normed_exp_trans` is the normalized weight w. Row order: for each `z` ascending (1.00 \u2192 4.99), all `x` ascending (\u22122.3 \u2192 \u22121.31). A row is identified scientifically by its (X, Z) grid coordinates; \u03b1 and \u03b2 are the corresponding population-parameter values at that cell. (Floating-point artifacts such as `-2.2800000000000002` from stepwise grid construction are acceptable; cell identity is the (x, z) pair.)\n\n## Part 2 \u2014 hierarchical model fit by NUTS\n\nFit the same data with the study's MCMC model. Note its prior is *not* identical to Part 1's: reproduce it exactly as specified, and do not harmonize the two branches.\n\n- `\u03b1` and `\u03b2` are independent, each with a HalfNormal prior of scale (\u03c3) 10;\n- an additional hyperprior factor `(\u03b1 + \u03b2)^(\u22125/2)` multiplies the joint density (log-density contribution `\u2212(5/2)\u00b7ln(\u03b1+\u03b2)`);\n- `\u03b8_i | \u03b1, \u03b2 ~ Beta(\u03b1, \u03b2)`, one per experiment (i = 1 \u2026 71);\n- `y_i | \u03b8_i ~ Binomial(n_i, \u03b8_i)`.\n\nSample the joint posterior with the No-U-Turn Sampler using dual-averaging step-size adaptation targeting an average acceptance probability of 0.95, running **4 chains**, each with **2000 warmup iterations (discarded) followed by 2000 retained draws**. No random seed is prescribed. (Environment preset: PyMC 6.3.2, `pm.sample(draws=2000, tune=2000, target_accept=0.95, chains=4)` with all other arguments at their defaults, including jittered `adapt_diag` initialization.)\n\n**Output file 2** \u2014 `outputs/pymc_ab_posterior_draws.csv`: columns `chain, draw, alpha, beta`; 8,000 data rows, one per retained draw. Chain labels are the distinct integers 1\u20134 and draw labels are sequential within each chain (0, 1, \u2026, 1999 in sampling order); each row is one posterior draw of the population parameters (\u03b1 and \u03b2). Draws of \u03b8 are not requested.\n\nEstimate the posterior means of \u03b1 and \u03b2 as the mean of each parameter over all retained draws across all chains.\n\n## Summary file\n\n**Output file 3** \u2014 `outputs/posterior_mean_estimates.csv`: columns `method, parameter, estimate`; exactly 4 rows:\n\n| method | parameter | estimate |\n|---|---|---|\n| `analytic_grid` | `alpha` | Part-1 estimate of E[\u03b1 \\| y] |\n| `analytic_grid` | `beta` | Part-1 estimate of E[\u03b2 \\| y] |\n| `pymc_mcmc` | `alpha` | Part-2 posterior-sample mean of \u03b1 |\n| `pymc_mcmc` | `beta` | Part-2 posterior-sample mean of \u03b2 |\n\nReport estimates at your available floating-point precision (do not round).\n\n## Conventions\n\n- \u03b1 and \u03b2 are the (dimensionless) parameters of the Beta population distribution; \u03b8 values are probabilities in [0, 1].\n- `normed_exp_trans` is posterior probability mass per 0.01 \u00d7 0.01 grid cell in (x, z) space; the 40,000 weights sum to 1.\n- Your MCMC results are Monte Carlo estimates: they need not match any particular seed realization bit-for-bit, but they must estimate the posterior means of the exact model specified above. Comparison tolerances for Monte Carlo error will be applied at grading.\n- Missing values are not expected anywhere; if produced, they are errors.\n\n## Environment and resources\n\nOffline (no network). 4 CPUs, 8 GiB RAM, 10 GiB disk, 600 s runtime limit. A Python 3.13 environment with PyMC 6.3.2, NumPy 2.5.4, SciPy 1.18.1, pandas 3.1.0, ArviZ 1.3.0 is provided for convenience; any other software is acceptable provided the model, priors, and sampling configuration above are reproduced."
+  },
+  "unexercised_scientific_checks": [],
+  "verifier_seconds": 120
+}

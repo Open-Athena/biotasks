@@ -1,0 +1,508 @@
+{
+  "asset_value_assessments": [
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 1483 source_text JSON test fixture [1, 2.3, complex(4,-5)]; reference cell analytic_posterior_grid.csv column 1 X=-2.3 (grid endpoint publicly declared as 'x takes 100 values from \u22122.3 to \u22121.31')."
+      ],
+      "hint_id": "837b58aa72448f9d0fff7c452fce7277b601f3f51ed17d8cbbec285629596be7",
+      "rationale": "The matched reference cell is the X grid coordinate -2.3, one of the 100 x values enumerated in the public question itself; the source literal 2.3 is a JSON round-trip test datum in a pandas I/O test, unrelated to the rat-tumor analysis. Grid coordinates disclose no requested answer."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: scipy/linalg/tests/test_special_matrices.py line 557 x = np.linspace(-2.5, 2.2, n); reference cell column 1 X=-2.200000000000002, a stepwise-grid floating artifact of the public x sequence."
+      ],
+      "hint_id": "cd27abc3471e5bd9bd27a1a2fa0b22277f3c1acbb7e62ca57c613a58f9618b36",
+      "rationale": "Match is a publicly-declared X grid coordinate (x=-2.20); the scipy literal is a linspace endpoint in a special-matrix unit test. No scientific answer value involved."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 424 '(1.95, 1, 2.0)'; reference cell column 1 X=-1.9500000000000073, an artifact of the public stepwise x grid."
+      ],
+      "hint_id": "cf46c9fa1c1acc99f09cb334dae842227b5cd349cec0ad8865124aa4806b3f82",
+      "rationale": "Matched cell is the public X coordinate -1.95 (including stepwise float artifact); the source literal is test-table data in a pandas JSON test."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 425 '(-1.95, 1, -2.0)'; reference cell column 1 X=-1.9500000000000073."
+      ],
+      "hint_id": "1c429bc156b9f7e15b7c242ad487616a137f2c6f9e30721520891a98a4f6696c",
+      "rationale": "Same public X coordinate -1.95 matched against a signed test-table constant; unrelated test fixture provenance."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: matplotlib/tests/test_pyplot.py line 309 plt.polar(1.57, .5, 'bo'); reference cell column 1 X=-1.5700000000000154."
+      ],
+      "hint_id": "d5d4cc4583431de3b8b38b9d4bbf45055d7eb9d6a95384f559250066acff9320",
+      "rationale": "Matched cell is the public X coordinate -1.57; the matplotlib literal 1.57 is a polar-plot azimuth angle in a pyplot test. No relation to any requested result."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 126 [[1.5, 2.5], [3.5, 4.5]]; reference cell column 1 X=-1.5000000000000169."
+      ],
+      "hint_id": "d47f9396414c8ec2188dee3643b001f53b9167fb14256413544c2473a9dcc1d1",
+      "rationale": "Public X coordinate -1.5 matched to a DataFrame literal in a JSON round-trip test; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 2459 pd.Series([1.5, pd.NA, 2.5], dtype=\"Float64\"); reference cell column 1 X=-1.5000000000000169."
+      ],
+      "hint_id": "f91fb93f12fd2d8956e133286cdd08c7037bfff3a2119de6f13122bb5c130a2e",
+      "rationale": "Public X coordinate -1.5 vs nullable-dtype test constant; coincidental magnitude match only."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 2460; reference cell column 1 X=-1.5000000000000169."
+      ],
+      "hint_id": "6d4cc8664ef625e5177bab7bb934593edd12b8bb321059e30cee7fd2ea864322",
+      "rationale": "Public X coordinate -1.5 vs test Series literal; unrelated pandas JSON-test fixture."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 2484; reference cell column 1 X=-1.5000000000000169."
+      ],
+      "hint_id": "6b567967b2e0c7feb423e900aed072a4206f1360a19cfa09deebd85aecbc1f7e",
+      "rationale": "Public X coordinate -1.5 vs test Series literal at line 2484; coincidental match."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 2485; reference cell column 1 X=-1.5000000000000169."
+      ],
+      "hint_id": "90cd6bdf49f7bb543dc902cd06d590bdf20ee6e4490ea4a10de0862c485fedad",
+      "rationale": "Public X coordinate -1.5 vs adjacent test Series literal; coincidental match."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: scipy/linalg/tests/test_special_matrices.py line 141 ([-1.25, -1.50],; reference cell column 1 X=-1.5000000000000169."
+      ],
+      "hint_id": "d0c81086523d7b13bbac37cc8d93923c23dad8a92a6d285c901fe7fe17c3f248",
+      "rationale": "Public X coordinate -1.5 vs a scipy test-table constant; the scipy test computes special matrices unrelated to Bayesian inference."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: scipy/linalg/tests/test_special_matrices.py line 161 block_diag(xp.asarray([[1.5]])); reference cell column 1 X=-1.5000000000000169."
+      ],
+      "hint_id": "c3433eb761598c0b12c3b7bff667ef6f93e4177c453ac2f6f676b75b974e9899",
+      "rationale": "Public X coordinate -1.5 vs block_diag test input; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: scipy/linalg/tests/test_special_matrices.py line 559 x = x + 1j*np.linspace(-1.5, 3.1, n); reference cell column 1 X=-1.5000000000000169."
+      ],
+      "hint_id": "f546b47283ac1f4dc98e5535b2ca5822f39b771e25a2ab31cede0c3a1d601545",
+      "rationale": "Public X coordinate -1.5 vs a complex linspace endpoint in a scipy test; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 2427 complex test data (-1.08 - 0.39j); reference cell column 2 Z=1.08."
+      ],
+      "hint_id": "e228370988bc520749afa0a66a93ea44e72437dbf88ef8119b5dd1ee4ae6c968",
+      "rationale": "The matched cell is a Z grid coordinate (z = 1.00 + 0.01\u00b7j, publicly enumerated as 1.00\u21924.99); the source literal is the imaginary/real part of complex JSON round-trip test data. Grid coordinates are public, not answers."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: matplotlib/tests/test_pyplot.py line 165 plt.close(1.1); reference cell column 2 Z=1.1."
+      ],
+      "hint_id": "db6e5d65b17d861d892528eb915c5cebb69a2cb52bd11528fdad59413dd95468",
+      "rationale": "Public Z coordinate 1.1 (row 1002 of the z-ascending grid) vs a figure-number argument in a pyplot test; unrelated to any posterior quantity."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/arrays/floating/test_to_numpy.py line 65 arr = con([0.1, 0.9, 1.1], dtype=\"Float64\"); reference cell column 2 Z=1.1."
+      ],
+      "hint_id": "0497869fcd975c038d05e9f773e6269fa5493ed634fb45cf391de193d720ce1d",
+      "rationale": "Public Z coordinate 1.1 vs an array-construction test constant; coincidental magnitude match."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 74 1.1 * np.arange(10); reference cell column 2 Z=1.1."
+      ],
+      "hint_id": "7e73e4b9ccc20258b9e4362c2fd96336222ce6b62bed7239714d53ce38661b7c",
+      "rationale": "Public Z coordinate 1.1 vs a scaling factor in a JSON test; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/util/test_assert_numpy_array_equal.py line 86 np.array([1.1, 2.000001]); reference cell column 2 Z=1.1."
+      ],
+      "hint_id": "2b83e17cdf615527e883fa7b8fc063707662255370ead62c8d4c66a0daa58b5b",
+      "rationale": "Public Z coordinate 1.1 vs an assertion-test array constant; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/util/test_assert_numpy_array_equal.py line 86 second token 1.1; reference cell column 2 Z=1.1."
+      ],
+      "hint_id": "0350e56365b1506c6750798ccf2df20752455cf20c9331dbff7fd372fd9b3b21",
+      "rationale": "Duplicate token of the same assertion-test literal matched to the public Z coordinate 1.1; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 1483 complex(1.2, 0); reference cell column 2 Z=1.2000000000000002 (stepwise-grid artifact of public z=1.20)."
+      ],
+      "hint_id": "ed874ac1ef385285088ea1cc0e76426f96ee6d1704e4a02b47f1d4f7ecb17d50",
+      "rationale": "Public Z coordinate 1.20 (with documented floating artifact 1.2000000000000002) vs a complex test literal; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: scipy/linalg/tests/test_special_matrices.py line 141 ([-1.25, -1.50]; reference cell column 2 Z=1.2500000000000002 (public z=1.25)."
+      ],
+      "hint_id": "c9879ed99b368d784904a9b157310914e2f498d1975dc39a023bf252c3c42269",
+      "rationale": "Public Z coordinate 1.25 vs a scipy test table constant; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/arrays/numpy_/test_numpy.py line 313 arr[0] = 2.5; reference cell column 2 Z=2.5000000000000013 (public z=2.50)."
+      ],
+      "hint_id": "d79e07ce37000aa8ab26e4c7977ab3430b4e0e6da24268fa202e7b1bdd696be7",
+      "rationale": "Public Z coordinate 2.50 vs an array-mutation test constant; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 126 [[1.5, 2.5], [3.5, 4.5]]; reference cell column 2 Z=2.5000000000000013."
+      ],
+      "hint_id": "076b9ceeeae79a95a30e43e7d79bd0d84bbcd734eadaa0ea53d047f4d5d1a4a1",
+      "rationale": "Public Z coordinate 2.50 vs a DataFrame cell in a JSON round-trip test; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 127 [[1, 2.5], [3, 4.5]]; reference cell column 2 Z=2.5000000000000013."
+      ],
+      "hint_id": "f1a10112b3224b5af7cf776322e9bcbb18876ea6d3198953f0462b6541c8ca4c",
+      "rationale": "Public Z coordinate 2.50 vs an adjacent JSON-test DataFrame literal; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 2459 pd.Series([1.5, pd.NA, 2.5]); reference cell column 2 Z=2.5000000000000013."
+      ],
+      "hint_id": "7ffc39541017081f55b07a6e106d8d9f7bd5bab6bf91974694352ed490fe2d61",
+      "rationale": "Public Z coordinate 2.50 vs a nullable-series test constant; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 2460; reference cell column 2 Z=2.5000000000000013."
+      ],
+      "hint_id": "45316d0a58dac4c7f5bab8d39f8fa699c870b9b6b37867c19fb79777aa8f7406",
+      "rationale": "Public Z coordinate 2.50 vs an adjacent test literal; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 2484; reference cell column 2 Z=2.5000000000000013."
+      ],
+      "hint_id": "b9e8e245b839c62a6ae46ee5466d71e171ea27f20351107e0dc3bb6d7bcff309",
+      "rationale": "Public Z coordinate 2.50 vs the same test Series literal at a repeated test; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 2485; reference cell column 2 Z=2.5000000000000013."
+      ],
+      "hint_id": "a444d807121b8a81fa81031c809b34aa04fe6781f46ec7f05d8f1becf7f82c68",
+      "rationale": "Public Z coordinate 2.50 vs an adjacent test Series literal; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: scipy/linalg/tests/test_special_matrices.py line 132 [-2.5, 5.0]; reference cell column 2 Z=2.5000000000000013."
+      ],
+      "hint_id": "e4a2e4bf3b25b28c66df67393bb79c3ba9b36a026b5a222c1d30e48eaf0c602f",
+      "rationale": "Public Z coordinate 2.50 vs a scipy test-tuple constant; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: scipy/linalg/tests/test_special_matrices.py line 557 np.linspace(-2.5, 2.2, n); reference cell column 2 Z=2.5000000000000013."
+      ],
+      "hint_id": "18b939cf080bfb1ea2787ed1f1f3f3496727eea316ac2908440fd106bb792ef7",
+      "rationale": "Public Z coordinate 2.50 vs a linspace endpoint constant in a scipy test; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: scipy/linalg/tests/test_special_matrices.py line 559 1j*np.linspace(-1.5, 3.1, n); reference cell column 2 Z=3.100000000000002 (public z=3.10)."
+      ],
+      "hint_id": "d0a8c6db4fab36048d697346f4c276a150b2ad053834fe7fa8698b3e3c2d45f9",
+      "rationale": "Public Z coordinate 3.10 vs a complex linspace endpoint in a scipy test; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: matplotlib/tests/test_pyplot.py line 429 plt.yticks(ticks=[3.5, 6.5]); reference cell column 2 Z=3.500000000000002 (public z=3.50)."
+      ],
+      "hint_id": "cf4b686c9706707c81f9617df316e492ea56f4cda1c821a4bf2f16f0776e7019",
+      "rationale": "Public Z coordinate 3.50 vs a tick-position constant in a pyplot test; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: matplotlib/tests/test_pyplot.py line 433 assert np.all(tick_pos == np.array([3.5, 6.5])); reference cell column 2 Z=3.500000000000002."
+      ],
+      "hint_id": "350edbb8846f3016b19562c63354127e45b6db0109d2b34a52a2e5231cf9f006",
+      "rationale": "Public Z coordinate 3.50 vs the same tick-position constant in the paired assertion; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 126 [[1.5, 2.5], [3.5, 4.5]]; reference cell column 2 Z=3.500000000000002."
+      ],
+      "hint_id": "7ce9aa1c276da7d81cae7cede9035dd23f8a6b009dfc4640ce701f4db93a07c8",
+      "rationale": "Public Z coordinate 3.50 vs a JSON-test DataFrame cell; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 128 [[pd.Timestamp(\"20130101\"), 3.5], ...]; reference cell column 2 Z=3.500000000000002."
+      ],
+      "hint_id": "52446c246a9dc1bf79726e349a1a200892597530b3875df06fdaa22ef7bec71d",
+      "rationale": "Public Z coordinate 3.50 vs a Timestamp-table cell in a JSON test; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 2413 pd.Series({1: 3.95 + 9.32j}); reference cell column 2 Z=3.950000000000003 (public z=3.95)."
+      ],
+      "hint_id": "7b1c918cbc63be398caf410283be3b06958ed6302a5c69c2528076a9feee1e31",
+      "rationale": "Public Z coordinate 3.95 vs the real part of complex test data in a JSON round-trip test; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 2413 pd.Series({2: 4.03 - 0.17j}); reference cell column 2 Z=4.030000000000003 (public z=4.03)."
+      ],
+      "hint_id": "2d9377f9c94047818ad15b5f6bc876ce2523468ad047e161df6f67a87a77e394",
+      "rationale": "Public Z coordinate 4.03 vs the real part of complex test data in the same Series; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/frame/methods/test_to_numpy.py line 10 df = pd.DataFrame({\"A\": [1, 2], \"B\": [3, 4.5]}); reference cell column 2 Z=4.5000000000000036 (public z=4.50)."
+      ],
+      "hint_id": "ea81dbc9d624ec5e1c7c1ad00c01bbd6e0b49b7b45f18fae673c3a83181dc561",
+      "rationale": "Public Z coordinate 4.50 vs a to_numpy test DataFrame cell; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/frame/methods/test_to_numpy.py line 11 expected = np.array([[1, 3], [2, 4.5]]); reference cell column 2 Z=4.5000000000000036."
+      ],
+      "hint_id": "dd33be0e2a26ef78411c9852d6d8f3dc605ffdc6af545c68f4736526f0fdcc26",
+      "rationale": "Public Z coordinate 4.50 vs the expected-array constant in the same to_numpy test; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/frame/methods/test_to_numpy.py line 16; reference cell column 2 Z=4.5000000000000036."
+      ],
+      "hint_id": "4307fc6111173b3f634dd129a7606b5a9420aa713e694931e09fa9de166e1ecc",
+      "rationale": "Public Z coordinate 4.50 vs a repeated to_numpy test fixture value; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 126 [[1.5, 2.5], [3.5, 4.5]]; reference cell column 2 Z=4.5000000000000036."
+      ],
+      "hint_id": "657e6cbe040236695edc6a8238af320a738b8ef0810fc5c7cc64c6ddd9a62746",
+      "rationale": "Public Z coordinate 4.50 vs a JSON-test DataFrame cell; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 127 [[1, 2.5], [3, 4.5]]; reference cell column 2 Z=4.5000000000000036."
+      ],
+      "hint_id": "15501e31791d4040c68f3c655e56a5554907ef17090916f9fcb08408a268c148",
+      "rationale": "Public Z coordinate 4.50 vs an adjacent JSON-test table cell; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 128 [[pd.Timestamp(\"20130101\"), 3.5], [pd.Timestamp(\"20130102\"), 4.5]]; reference cell column 2 Z=4.5000000000000036."
+      ],
+      "hint_id": "e34f9c8f3f85728a1882fcc4ea177b879b37b64b3243ce81d3b4aa3528778df3",
+      "rationale": "Public Z coordinate 4.50 vs a Timestamp-table cell; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 768 s = pd.Series([4.56, 4.56, 4.56]); reference cell column 2 Z=4.560000000000003 (public z=4.56)."
+      ],
+      "hint_id": "f6444630a15bece674a5d8d8cc07acbb348285ebcfb9a3828f10ab415004b39c",
+      "rationale": "Public Z coordinate 4.56 (one of the 400 enumerated public z values) vs a repeated Series constant used to test JSON float formatting; the constant's provenance is a serialization test, not the rat-tumor data."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 768 second token 4.56; reference cell column 2 Z=4.560000000000003."
+      ],
+      "hint_id": "63257c4afbb98bb7bb8362dc8f63884ca4918abd04203c59884bf4e0ce4de808",
+      "rationale": "Public Z coordinate 4.56 vs the second token of the same Series literal; unrelated serialization-test constant."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 768 third token 4.56; reference cell column 2 Z=4.560000000000003."
+      ],
+      "hint_id": "726458efd109dc18485ef89562b4ac6397725494061f95c9510dcc969113e6c6",
+      "rationale": "Public Z coordinate 4.56 vs the third token of the same Series literal; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 774 s = pd.Series([4.56, 4.56, 4.56]); reference cell column 2 Z=4.560000000000003."
+      ],
+      "hint_id": "8a18cb3845c5dc2542d255388b142d0c8c784872adea0cf6ddb1e09605f0d272",
+      "rationale": "Public Z coordinate 4.56 vs a repeated Series constant at line 774 of the same JSON formatting test; the public z grid is 1.00 + 0.01\u00b7356; coincidental."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 774 second token; reference cell column 2 Z=4.560000000000003."
+      ],
+      "hint_id": "9d5adbef9e47e8ccbc061e66b52a70ccce716e6a8336b5817ca2452da72f888b",
+      "rationale": "Public Z coordinate 4.56 vs the second token of the line-774 test Series; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 774 third token; reference cell column 2 Z=4.560000000000003."
+      ],
+      "hint_id": "14371df851191b2bdd8195ca507c299ee1dae7ab64e0ad48921ea070d95d8860",
+      "rationale": "Public Z coordinate 4.56 vs the third token of the line-774 test Series; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 800 df = pd.DataFrame([[4.56, 4.56, 4.56], [4.56, 4.56, 4.56]]); reference cell column 2 Z=4.560000000000003."
+      ],
+      "hint_id": "d162784236c43bbe7026a50564d6e6c8b7f9ddf8d50ec3421a6f5af474a66a63",
+      "rationale": "Public Z coordinate 4.56 vs a 6-fold-repeated DataFrame constant used to test JSON serialization of floats; unrelated provenance."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 800 token at column 35; reference cell column 2 Z=4.560000000000003."
+      ],
+      "hint_id": "b8cdd515b7fd546f60062bc4f2c8e42d45bd1e4553cc0753eeef6a984428c6d4",
+      "rationale": "Public Z coordinate 4.56 vs a token of the line-800 DataFrame fixture; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 800 token at column 41; reference cell column 2 Z=4.560000000000003."
+      ],
+      "hint_id": "ddacd1b4d2bbbc6d678f6192b815f9c93eab8d6f98be3770190de7536786429a",
+      "rationale": "Public Z coordinate 4.56 vs a token of the line-800 DataFrame fixture; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 800 token at column 49; reference cell column 2 Z=4.560000000000003."
+      ],
+      "hint_id": "19b7c18cf04fd48e7338623d9a2a867bdf844f3a81c45a38120c4c804a6478a9",
+      "rationale": "Public Z coordinate 4.56 vs a token of the line-800 DataFrame fixture; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 800 token at column 55; reference cell column 2 Z=4.560000000000003."
+      ],
+      "hint_id": "f8e18764d5a4feb560e8314b9bd83026d721c4480e1fdab47222c1354ef9a85a",
+      "rationale": "Public Z coordinate 4.56 vs a token of the line-800 DataFrame fixture; unrelated."
+    },
+    {
+      "decision": "unrelated",
+      "evidence": [
+        "asset_value_hints /findings entry: pandas/tests/io/json/test_pandas.py line 800 token at column 61; reference cell column 2 Z=4.560000000000003."
+      ],
+      "hint_id": "13422ebd2d0b4b7faf75553cdadb3fbaf1373706e36ea4322d605be0f3c0971f",
+      "rationale": "Public Z coordinate 4.56 vs the last token of the line-800 DataFrame fixture; unrelated."
+    }
+  ],
+  "decision": "accept_for_packaging",
+  "issues": [],
+  "question_issues": [],
+  "rationale": "The candidate grader, public question and addendum form a coherent, executable contract, and all 19 controller controls (reference, empty, misplaced, recomputed, alternative, 3 missing, 11 probes: 6 wrong_solution, 5 valid_alternative) executed and met expectations. The grader deterministically recomputes the Part-1 grid posterior from the hash-checked BIOTASKS_TRUSTED_INPUT_DIR input (load_counts, recompute_grid), aligns rows by (X, Z) identity with full coverage/multiplicity enforcement, and validates Part-2 against exact moments obtained by numerical integration of the specified PyMC model (compute_exact_part2); the summary file is checked both structurally and against the submitter's own grid/draw columns. Placement semantics match the executed submission hash records (relative keys; the outputs/ layer control correctly fails). Executed probes reject meaningful scientific errors (per-cell weight redistribution, wrong \u03b1/\u03b2 at a cell, off-lattice coordinates, +20% wrong-prior mean shift with 0.211 sd deviation, correlation collapse, 6-decimal summary rounding) while accepting faithful representation changes (float128 native re-encoding, %.9f draws, row shuffles, exact-hundredth coordinate strings), and three independent MCMC realizations (reference, recomputed, independently solved) all pass the exact-moment checks with means 1.962\u20131.998 / 11.59\u201311.76 and correlations 0.923\u20130.927. All 55 asset-value hints were individually inspected: every one is a coincidental magnitude match between a generic pandas/scipy/matplotlib library-test literal and a public grid coordinate (X or Z) enumerated in the question itself; none touches posterior weights, \u03b1/\u03b2 cell values, draws, or summary estimates, and the installed-asset catalog contains only library distributions. Source coverage preserves both notebook branches' terminal results, including recovery of the two scalar posterior-mean endpoints by faithful recomputation with documented provenance. Minor note (not a defect): the addendum's phrase 'independent hwHalfNormal(\u03c3 = 10) priors' in the draws paragraph is an obvious typographical artifact of 'HalfNormal'; the term is used correctly elsewhere in the same addendum and fully specified in the base question, so it cannot change which submissions pass.",
+  "scientific_admission": {
+    "answer_isolation": {
+      "blockers": [],
+      "decision": "approve",
+      "evidence": [
+        "candidate/grader_code lines 1-659 read in full: only grid constants, tolerances and formulas are embedded; all reference values are recomputed at grading time from the input, and the header states 'No submission code is imported or executed; no answer values are embedded.'",
+        "materialization/execution/environment asset_summary: 2940 candidate files across packaged distributions only (pandas 1143, scipy 680, matplotlib 112, numpy 493, pymc, pytensor, numba, arviz families); materialization/execution/inputs lists only rat_tumor_counts.csv (sha256 167efcb6...); no task answer files are present as installed assets.",
+        "asset_value_hints (all 55 findings read): every finding references analytic_posterior_grid.csv column 1 (X) or column 2 (Z) - grid coordinates enumerated in the public question - matched to generic library-test literals; no finding touches alpha/beta cells, normed_exp_trans, draws, or posterior_mean_estimates.csv values.",
+        "materialization/execution/environment_removal_receipt and final_environment_review/executed_exclusions: exclusions list is empty with no files removed and no answer-copy claims to verify; the removal path was exercised trivially.",
+        "independent_execution status 'executed_without_answer_access' with distinct output hashes (draws 6c238a06..., summary dea02fe0...) and independent_solution/code implementing the model from the input CSV only; the alternative control passed all checks with those outputs."
+      ],
+      "output_paths": [
+        "analytic_posterior_grid.csv",
+        "pymc_ab_posterior_draws.csv",
+        "posterior_mean_estimates.csv"
+      ],
+      "rationale": "Actual solver-visible inputs and installed assets contain none of the requested answers. The only solver-supplied input is rat_tumor_counts.csv; the resolution-dependent environment inventory lists only packaged library distributions, and the recorded value-hint scan compared floating literals in hash-matched installed Python source against every numeric cell of all three final reference CSVs, producing 55 findings that I individually inspected and found to be coincidental matches to publicly-declared grid coordinates. The grader embeds no answer values and recomputes everything from the immutable trusted input. Residual uninspected classes noted in the hints' scope (integer constants, strings/comments, nonpriority files) cannot encode the requested floating-point posterior values, and no answer-copy fixture is recorded anywhere in the environment inventory; I did not rely on filenames or worker assurances alone but on the executed catalog evidence above."
+    },
+    "comparisons": [
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "candidate/grader_code recompute_grid (lines 118-146) implements exactly the public formula: -2.5*ln(alpha+beta), the gammaln likelihood terms, the +ln alpha + ln beta Jacobian, max-subtracted exponentiation and normalization over 40,000 cells, using integer-hundredth grid indices; reference control reports max relative differences alpha 1.7e-14, beta 8.2e-15, weight 3.1e-11 against tolerances 1e-9/1e-9/1e-8 (controls reference, current/0047).",
+          "Alternative control using the independently authored solution (independent_solution/code, stepwise while-loop grid construction instead of np.arange) passed with max relative differences alpha 6.9e-14, beta 6.3e-14, weight 3.3e-11, and reference_observations confirms the reference grid has 40,000 rows, 100 distinct X and 400 distinct Z values on the declared lattice with the documented stepwise artifacts.",
+          "Executed wrong-result probes: wrong-grid-weights (0.2% inflation of the z=2.5 column, renormalized, all structure intact) failed analytic_grid_values with 'normed_exp_trans mismatch at 40000 of 40000 cells (worst relative difference 0.00198 exceeds 1e-08)' and failed summary consistency; wrong-grid-ab (arbitrary (2.5, 12.0) at the highest-mass cell) failed with 'alpha mismatch at 1 of 40000 cells (worst relative difference 0.128 exceeds 1e-09)'; wrong-cell-coverage (X shifted +0.005) failed the 0.01-lattice check.",
+          "Executed representation alternatives all passed: float128 native re-encoding with bit-exact round-trip, seeded full row shuffle (row order is not a scientific target; alignment is by (X, Z)), and '%.2f' exact-hundredth string replacing a stepwise artifact, each with unchanged grid means and weights.",
+          "Mapping between outputs is consistent: summary_estimates_consistency recomputes sum(alpha*w) and sum(beta*w) from the same submitted grid rows used for cell-wise validation, so the analytic_grid summary estimates are the same physical cells under one identity mapping."
+        ],
+        "output_paths": [
+          "analytic_posterior_grid.csv"
+        ],
+        "rationale": "The Part-1 grid output is not compared to a stored reference but to a deterministic recomputation from the original hash-checked counts, and cell identity is defined by (X, Z) rather than row position, which the addendum discloses. Valid-answer acceptance and consequential wrong-answer rejection are both demonstrated: an independently constructed alternative implementation passes, well-formed scientific mutations (per-cell weight redistribution, wrong alpha/beta at a preserved cell identity, off-lattice coordinate) are rejected through the value/coverage rules rather than crashes, and documented serialization freedom is honored. Cross-file consistency ties the summary's analytic_grid estimates to the same cell-aligned submitted grid."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "candidate/grader_code compute_exact_part2 (lines 149-197) integrates the exact specified model (HalfNormal(10) log-density terms -0.5*(a/10)^2 and -0.5*(b/10)^2, the -2.5*ln(a+b) factor, analytically marginalized Beta-Binomial likelihood, Jacobian) on a u in [-5,1] x v in [-1.5,7] grid covering the concentrated posterior; check_draws_distribution applies the publicly disclosed limits (2.5% relative mean, 20% relative sd, 0.15 correlation, 0.50 exact-sd chain means).",
+          "Controls reference / recomputed / alternative executed three distinct MCMC realizations: reference (mean alpha 1.987, beta 11.72, corr 0.923), recomputed oracle run (1.998, 11.76, 0.927), independent solution (1.962, 11.59, 0.925) - all passed, and the independent solution is independently authored code executed without answer access (independent_execution).",
+          "Executed wrong-result probes: wrong-moments-biased-mean (alpha x1.20, emulating the Part-1 prior without the HalfNormal envelope) failed mcmc_draws_distribution with 'mean alpha 2.38411 deviates ... by 0.201 (limit 0.025 relative); sd alpha 0.688359 deviates ... by 0.211 (limit 0.2)'; wrong-prior-corr-collapse (alpha forced toward 5*beta) failed with mean/sd deviations of 4.75; wrong-summary-rounding (6 decimals) failed summary_estimates_consistency with relative deviations 2.0e-7..4.9e-9 vs the 1e-10/1e-8 tolerances.",
+          "Structure checks enforce chains {1,2,3,4} with draws 0..1999 exactly once, 8,000 distinct (alpha, beta) rows, strict positivity and finiteness (candidate/grader_code check_draws_structure lines 338-390), matching the addendum's disclosed rules including duplicate-block padding rejection.",
+          "summary_estimates_consistency ties the pymc_mcmc rows to the plain arithmetic means of the same submitted draw columns (tolerance 1e-8 relative + 1e-10 absolute), preserving the deliberate Part-1/Part-2 prior difference rather than normalizing it away, as the addendum states."
+        ],
+        "output_paths": [
+          "pymc_ab_posterior_draws.csv",
+          "posterior_mean_estimates.csv"
+        ],
+        "rationale": "Because no seed is prescribed, per-draw comparison would be scientifically invalid; the candidate instead validates the submitted draws against the exact posterior moments of the specified model, computed by deterministic numerical integration on the trusted counts, with tolerant Monte-Carlo bounds that are publicly disclosed and that demonstrably reject the documented wrong-prior signature (+20% mean shift) and joint-correlation distortion while accepting three independent correct realizations (reference, recomputed, and independently authored solution). The summary file is validated both as a deterministic function of the submitter's own draws and grid, preventing any cross-file inconsistency, and the deliberate prior difference between the two branches is preserved. Column meanings, row identity (chain, draw) and the 8,000-row/4-summary-row contracts all match the executed checks."
+      }
+    ]
+  },
+  "source_coverage": {
+    "decision": "approve",
+    "omitted_scientific_endpoints": [],
+    "rationale": "I audited the source_evidence plan, the 68-operation source_operations ledger and the materialization record against the three public endpoints. The analytic branch's terminal result (normalized marginal posterior grid) is retained in full with the exact source columns X, Z, alpha, beta, normed_exp_trans; the PyMC branch's terminal result (posterior sample draws of the population parameters) is retained as the 4x2000 ab draws. The two scalar posterior-mean endpoints that the append-only export recorded as unnamed display expressions ('(df.alpha * df.normed_exp_trans).sum().round(3)', 'trace.posterior[\"ab\"].mean((\"chain\", \"draw\"))', source_operations call-175-0-to-178-46 and call-223-0) were recovered by faithful recomputation with documented provenance (plan.json excluded_outputs entries name the exact recovery expressions; final_environment_review confirms posterior_mean_estimates.csv was built from the staged projections), which is the policy-permitted recovery route rather than an omission or invented analysis. Exclusions are limited to genuinely diagnostic items: the contour surface plot and its mode annotation (rendered display of the exported surface), az.plot_rank_dist/plot_pair/plot_dist convergence figures, and the observed counts (inputs, correctly re-supplied as the 71 verbatim (y, n) pairs in rat_tumor_counts.csv). The model variables X and Z (pm.Deterministic of pt.log(ab[0]/ab[1]) and pt.log(pt.sum(ab))) are exact deterministic projections of the retained ab draws, and theta is a latent nuisance parameter that never appears in any terminal narrative result, so neither is an omitted independent endpoint. All scientific branches of the original study are therefore represented in one task.",
+    "remaining_validation": [],
+    "scientific_scope_changes": [],
+    "unsupported_evidence_claims": []
+  }
+}

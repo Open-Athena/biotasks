@@ -1,0 +1,799 @@
+{
+  "limits": {
+    "base_image": "python:3.13.13-slim-bookworm",
+    "campaign_seconds": 7200,
+    "gpu": false,
+    "max_requests": null,
+    "max_tests": 2,
+    "network": "Internet during setup only; reference is offline",
+    "reference_seconds": 600,
+    "request_timeout_seconds": 600,
+    "setup_seconds": 1800,
+    "task_cpus": 4,
+    "task_disk_gib": 10,
+    "task_memory_gib": 8
+  },
+  "paths": {
+    "exports.py": "/work/frozen/exports.py",
+    "original.py": "/work/frozen/original.py",
+    "plan.json": "/work/frozen/plan.json",
+    "reference_cwd": "/work/run",
+    "setup": "/work/setup"
+  },
+  "preparation": {
+    "conversion": {
+      "code_cells": 14,
+      "converter": "jupytext",
+      "converter_version": "1.19.6",
+      "directory_normalizations": [],
+      "documentation_execution_policy": {},
+      "equivalence_basis": "Python statements after recorded presentation and directory normalization",
+      "executable_ast_sha256": "5d518b0fdf2936fcada313027515cb46fcc5d81d61c2217fe1d8d68d0a17c82c",
+      "executed": false,
+      "format": "py:nomarker",
+      "ignored_cell_editor_metadata": [],
+      "ignored_editor_metadata": {},
+      "ignored_presentation_tags": [],
+      "markdown_cells": 12,
+      "markdown_representation": "line_comments",
+      "ordered_code_equivalence": true,
+      "presentation_normalizations": [
+        {
+          "cell_index": 2,
+          "directive": "%config InlineBackend.figure_format = 'retina'",
+          "kind": "inline_display_format",
+          "line": 1
+        },
+        {
+          "cell_index": 24,
+          "directive": "%load_ext watermark",
+          "kind": "environment_reporting",
+          "line": 1
+        },
+        {
+          "cell_index": 24,
+          "directive": "%watermark -n -u -v -iv -w",
+          "kind": "environment_reporting",
+          "line": 2
+        }
+      ],
+      "profile": "python-narrative-v6",
+      "script_sha256": "11637310cbf77714fcca876df1ddb8a195474d47edad73337de070c1c158a10c",
+      "source_sha256": "b1b2280ac15f9367c50ba7dde7793be23a49e7f858ef12a3713ce22f39b92c9e",
+      "stored_outputs_used_as_evidence": false
+    },
+    "plan": {
+      "artifacts": [
+        {
+          "description": "Normalized analytical marginal posterior p(x,z|y) for (alpha, beta) evaluated on the transformed grid, the final representation of the direct-computation (non-MCMC) branch.",
+          "path": "rat_tumor_analytic_posterior_grid.csv",
+          "source_evidence": "The narrative states 'we can plot the marginal posterior and estimate the means of alpha and beta without having to resort to MCMC' and interprets this surface as the analytical solution to compare against PyMC. The values are the existing DataFrame columns df['X'], df['Z'], df['alpha'], df['beta'], df['normed_exp_trans'] built in the grid-computation cells ('Create space for the parameterization...' through 'This will ensure the density is normalized'), where df['normed_exp_trans'] is the density normalized by 'This will ensure the density is normalized'. The grid cells survive unchanged at script completion."
+        },
+        {
+          "description": "Posterior sample draws of the hierarchical model parameters ab (alpha, beta), X, Z, and theta from the PyMC branch.",
+          "path": "rat_tumor_pymc_posterior_samples.nc",
+          "source_evidence": "The narrative states 'We can use the samples obtained from the posterior to estimate the means of alpha and beta' and the Conclusion interprets these samples ('we used PyMC to obtain estimates of the posterior mean for the rat tumor example') as the branch's end product. The data are the existing `trace.posterior` xarray Dataset produced by `trace = pm.sample(draws=2000, tune=2000, target_accept=0.95)` inside the `with pm.Model(coords=coords)` block; the module-level `trace` binding is intact at script completion. Only the posterior group (ab, X, Z, theta) is written, using its native to_netcdf writer."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "Scientific non-target (diagnostic): the contour plot of the analytical surface and its mode annotation. The mode point and annotation text are computed inline within the plotting section and only displayed; the narrative uses them qualitatively ('roughly symmetric about the mode'), and the underlying posterior surface is exported instead.",
+        "Scientific non-target (diagnostic): az.plot_rank_dist, az.plot_pair and az.plot_dist figures. These are MCMC convergence/comparison diagnostics rendered as plots; the compared sample values are already preserved in the exported posterior samples.",
+        "Required endpoint unavailable to this append-only export: the analytical posterior mean estimates of alpha and beta, computed in the source as unnamed standalone display expressions '(df.alpha * df.normed_exp_trans).sum().round(3)' and '(df.beta * df.normed_exp_trans).sum().round(3)' after the narrative 'We can compute the marginal means as the authors of BDA3 do'. The values are interpreted in their own right (the Conclusion compares PyMC estimates against them) but are not retained in any named variable, and recomputing the weighted sums in export code would add new aggregation of a previously unnamed expression. Recovery handoff: they are exactly recoverable as sum(alpha * normed_exp_trans) and sum(beta * normed_exp_trans) over the exported grid CSV columns, with no rerun of the analysis needed.",
+        "Required endpoint unavailable to this append-only export: the sample-based posterior mean estimates 'trace.posterior['ab'].mean(('chain', 'draw'))' under 'estimate the means from the samples', which the Conclusion interprets as the PyMC estimate of the posterior mean. The expression is an unnamed standalone display expression with no retained variable, and evaluating the aggregation in export code would add new scientific computation. Recovery handoff: the exact value is recoverable as the ('chain', 'draw') mean of the exported 'ab' variable in the posterior NetCDF file.",
+        "Scientific non-target (input): the observed counts y and n (BDA3, p. 102). These are analysis inputs embedded at the top of the script, not terminal results; observed_data context also travels with the trace object in the source."
+      ],
+      "explanation": "The notebook has two analysis branches producing terminal results. (1) The analytical branch computes the marginal posterior of (alpha, beta) on a grid and estimates the posterior means of alpha and beta; (2) the PyMC branch draws posterior samples of the hierarchical model and estimates the posterior means from them. The analytical branch's endpoint representation is the stored, normalized posterior grid in `df` (columns alpha, beta, normed_exp_trans plus grid identifiers X, Z), exported as CSV with selected columns only. The PyMC branch's endpoint is the stored posterior sample set `trace.posterior` (ab, X, Z, theta), saved with its own native xarray to_netcdf writer. The scalar mean estimates on both branches exist only as unnamed top-level display expressions, so this append-only export does not recompute them; they are exactly recoverable from the exported artifacts.",
+      "export_code": "# --- Export: terminal scientific results (appended by preparation stage) ---\nimport os as _export_os\n\n_export_out_dir = \"/work/outputs\"\n_export_os.makedirs(_export_out_dir, exist_ok=True)\n\n# Endpoint 1: analytical marginal posterior of (alpha, beta) on the\n# (log(alpha/beta), log(alpha+beta)) grid, normalized to a probability mass.\n# Export only the endpoint fields and grid identifiers; the intermediate\n# log_posterior / log_jacobian / transformed / exp_trans columns are omitted.\ndf[[\"X\", \"Z\", \"alpha\", \"beta\", \"normed_exp_trans\"]].to_csv(\n    _export_os.path.join(_export_out_dir, \"rat_tumor_analytic_posterior_grid.csv\"),\n    index=False,\n)\n\n# Endpoint 2: PyMC posterior samples (ab, X, Z, theta) of the hierarchical\n# rat-tumor model, saved with the posterior group's own native writer.\ntrace.posterior.to_netcdf(\n    _export_os.path.join(_export_out_dir, \"rat_tumor_pymc_posterior_samples.nc\")\n)",
+      "unresolved_assumptions": [
+        "Availability of a NetCDF writing backend (e.g. scipy, h5netcdf or netcdf4) in the offline execution environment for trace.posterior.to_netcdf; if absent, the export would need a different serialization decided at execution/repair time.",
+        "The exported grid CSV size (approximately 40,400 rows from the 101 x 400 meshgrid) is expected to fit comfortably within the disk limit; actual size should be confirmed at execution.",
+        "Whether the downstream task requires the scalar posterior-mean estimates as files rather than as derivable quantities recoverable exactly from the two exported artifacts; if required, a later construction step must compute them rather than this append-only export."
+      ]
+    },
+    "source": {
+      "id": "pymc-rat-tumor",
+      "license": "MIT",
+      "provenance": {
+        "data_lineage": "Counts from71prior rat-tumor experiments embedded in the original notebook; it cites Bayesian Data Analysis3, page102. Observed historical counts, not newly simulated input data.",
+        "data_redistribution_review": "Notebook MIT notice retained; exact data lineage and any derived materialized inputs still need a separate redistribution review before publication. No automatic public task/data release.",
+        "input_preservation": "Original source bytes and complete source analysis. No operator-specified task, endpoint selection, input reduction or method change.",
+        "notebook": {
+          "git_blob_sha1": "03bc551e9f57aebd5e9633b8cd83db2f8351acbe",
+          "license": "MIT",
+          "license_sha256": "45dee27689bcc6c2618f1be74ef13decde2ac4bf1ae534d36eafe16cc9cb7065",
+          "license_text": "MIT License\n\nCopyright (c) 2020 PyMC\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n",
+          "license_url": "https://github.com/pymc-devs/pymc-examples/blob/17c8f90dc90691b41587dfdf477698d74cf5c18c/LICENSE",
+          "revision": "17c8f90dc90691b41587dfdf477698d74cf5c18c",
+          "sha256": "b1b2280ac15f9367c50ba7dde7793be23a49e7f858ef12a3713ce22f39b92c9e",
+          "url": "https://github.com/pymc-devs/pymc-examples/blob/17c8f90dc90691b41587dfdf477698d74cf5c18c/examples/generalized_linear_models/GLM-hierarchical-binomial-model.ipynb"
+        }
+      },
+      "source_revision": "17c8f90dc90691b41587dfdf477698d74cf5c18c",
+      "source_sha256": "b1b2280ac15f9367c50ba7dde7793be23a49e7f858ef12a3713ce22f39b92c9e",
+      "title": "PyMC: hierarchical binomial modeling of rat-tumor experiments",
+      "url": "https://github.com/pymc-devs/pymc-examples/blob/17c8f90dc90691b41587dfdf477698d74cf5c18c/examples/generalized_linear_models/GLM-hierarchical-binomial-model.ipynb"
+    }
+  },
+  "source_imports": {
+    "analysis": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 22,
+        "statement": "import arviz as az"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 23,
+        "statement": "import matplotlib.pyplot as plt"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 24,
+        "statement": "import numpy as np"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 25,
+        "statement": "import pandas as pd"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 26,
+        "statement": "import pymc as pm"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 27,
+        "statement": "import pytensor.tensor as pt"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 29,
+        "statement": "from scipy.special import gammaln"
+      }
+    ],
+    "exports": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 2,
+        "statement": "import os as _export_os"
+      }
+    ],
+    "scope": "Literal source statements and locations only; dynamic imports, native libraries and availability remain unverified."
+  },
+  "source_operations": {
+    "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+    "operations": [
+      {
+        "column": 0,
+        "end_column": 28,
+        "end_line": 32,
+        "function": "az.style.use",
+        "id": "call-32-0",
+        "line": 32,
+        "source": "az.style.use(\"arviz-variat\")"
+      },
+      {
+        "column": 4,
+        "end_column": 2,
+        "end_line": 82,
+        "function": "np.array",
+        "id": "call-76-4",
+        "line": 76,
+        "source": "np.array([\n    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,\n    1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  1,  5,  2,\n    5,  3,  2,  7,  7,  3,  3,  2,  9, 10,  4,  4,  4,  4,  4,  4,  4,\n    10,  4,  4,  4,  5, 11, 12,  5,  5,  6,  5,  6,  6,  6,  6, 16, 15,\n    15,  9,  4\n])"
+      },
+      {
+        "column": 4,
+        "end_column": 2,
+        "end_line": 89,
+        "function": "np.array",
+        "id": "call-83-4",
+        "line": 83,
+        "source": "np.array([\n    20, 20, 20, 20, 20, 20, 20, 19, 19, 19, 19, 18, 18, 17, 20, 20, 20,\n    20, 19, 19, 18, 18, 25, 24, 23, 20, 20, 20, 20, 20, 20, 10, 49, 19,\n    46, 27, 17, 49, 47, 20, 20, 13, 48, 50, 20, 20, 20, 20, 20, 20, 20,\n    48, 19, 19, 19, 22, 46, 49, 20, 20, 23, 19, 22, 20, 20, 20, 52, 46,\n    47, 24, 14\n])"
+      },
+      {
+        "column": 4,
+        "end_column": 10,
+        "end_line": 92,
+        "function": "len",
+        "id": "call-92-4",
+        "line": 92,
+        "source": "len(n)"
+      },
+      {
+        "column": 16,
+        "end_column": 25,
+        "end_line": 100,
+        "function": "zip",
+        "id": "call-100-16",
+        "line": 100,
+        "source": "zip(y, n)"
+      },
+      {
+        "column": 12,
+        "end_column": 33,
+        "end_line": 102,
+        "function": "gammaln",
+        "id": "call-102-12",
+        "line": 102,
+        "source": "gammaln(alpha + beta)"
+      },
+      {
+        "column": 14,
+        "end_column": 28,
+        "end_line": 103,
+        "function": "gammaln",
+        "id": "call-103-14",
+        "line": 103,
+        "source": "gammaln(alpha)"
+      },
+      {
+        "column": 14,
+        "end_column": 27,
+        "end_line": 104,
+        "function": "gammaln",
+        "id": "call-104-14",
+        "line": 104,
+        "source": "gammaln(beta)"
+      },
+      {
+        "column": 14,
+        "end_column": 32,
+        "end_line": 105,
+        "function": "gammaln",
+        "id": "call-105-14",
+        "line": 105,
+        "source": "gammaln(alpha + Y)"
+      },
+      {
+        "column": 14,
+        "end_column": 35,
+        "end_line": 106,
+        "function": "gammaln",
+        "id": "call-106-14",
+        "line": 106,
+        "source": "gammaln(beta + N - Y)"
+      },
+      {
+        "column": 14,
+        "end_column": 39,
+        "end_line": 107,
+        "function": "gammaln",
+        "id": "call-107-14",
+        "line": 107,
+        "source": "gammaln(alpha + beta + N)"
+      },
+      {
+        "column": 20,
+        "end_column": 33,
+        "end_line": 114,
+        "function": "np.log",
+        "id": "call-114-20",
+        "line": 114,
+        "source": "np.log(A + B)"
+      },
+      {
+        "column": 11,
+        "end_column": 20,
+        "end_line": 118,
+        "function": "np.exp",
+        "id": "call-118-11",
+        "line": 118,
+        "source": "np.exp(y)"
+      },
+      {
+        "column": 24,
+        "end_column": 33,
+        "end_line": 118,
+        "function": "np.exp",
+        "id": "call-118-24",
+        "line": 118,
+        "source": "np.exp(x)"
+      },
+      {
+        "column": 11,
+        "end_column": 20,
+        "end_line": 122,
+        "function": "np.exp",
+        "id": "call-122-11",
+        "line": 122,
+        "source": "np.exp(x)"
+      },
+      {
+        "column": 23,
+        "end_column": 42,
+        "end_line": 122,
+        "function": "trans_to_beta",
+        "id": "call-122-23",
+        "line": 122,
+        "source": "trans_to_beta(x, y)"
+      },
+      {
+        "column": 7,
+        "end_column": 70,
+        "end_line": 126,
+        "function": "np.meshgrid",
+        "id": "call-126-7",
+        "line": 126,
+        "source": "np.meshgrid(np.arange(-2.3, -1.3, 0.01), np.arange(1, 5, 0.01))"
+      },
+      {
+        "column": 19,
+        "end_column": 46,
+        "end_line": 126,
+        "function": "np.arange",
+        "id": "call-126-19",
+        "line": 126,
+        "source": "np.arange(-2.3, -1.3, 0.01)"
+      },
+      {
+        "column": 48,
+        "end_column": 69,
+        "end_line": 126,
+        "function": "np.arange",
+        "id": "call-126-48",
+        "line": 126,
+        "source": "np.arange(1, 5, 0.01)"
+      },
+      {
+        "column": 20,
+        "end_column": 29,
+        "end_line": 127,
+        "function": "X.ravel",
+        "id": "call-127-20",
+        "line": 127,
+        "source": "X.ravel()"
+      },
+      {
+        "column": 31,
+        "end_column": 40,
+        "end_line": 127,
+        "function": "Z.ravel",
+        "id": "call-127-31",
+        "line": 127,
+        "source": "Z.ravel()"
+      },
+      {
+        "column": 5,
+        "end_column": 50,
+        "end_line": 128,
+        "function": "pd.DataFrame",
+        "id": "call-128-5",
+        "line": 128,
+        "source": "pd.DataFrame(param_space, columns=[\"X\", \"Z\"])"
+      },
+      {
+        "column": 14,
+        "end_column": 40,
+        "end_line": 131,
+        "function": "trans_to_alpha",
+        "id": "call-131-14",
+        "line": 131,
+        "source": "trans_to_alpha(df.X, df.Z)"
+      },
+      {
+        "column": 13,
+        "end_column": 38,
+        "end_line": 132,
+        "function": "trans_to_beta",
+        "id": "call-132-13",
+        "line": 132,
+        "source": "trans_to_beta(df.X, df.Z)"
+      },
+      {
+        "column": 22,
+        "end_column": 50,
+        "end_line": 134,
+        "function": "log_prior",
+        "id": "call-134-22",
+        "line": 134,
+        "source": "log_prior(df.alpha, df.beta)"
+      },
+      {
+        "column": 53,
+        "end_column": 92,
+        "end_line": 134,
+        "function": "log_likelihood",
+        "id": "call-134-53",
+        "line": 134,
+        "source": "log_likelihood(df.alpha, df.beta, y, n)"
+      },
+      {
+        "column": 21,
+        "end_column": 37,
+        "end_line": 135,
+        "function": "np.log",
+        "id": "call-135-21",
+        "line": 135,
+        "source": "np.log(df.alpha)"
+      },
+      {
+        "column": 40,
+        "end_column": 55,
+        "end_line": 135,
+        "function": "np.log",
+        "id": "call-135-40",
+        "line": 135,
+        "source": "np.log(df.beta)"
+      },
+      {
+        "column": 18,
+        "end_column": 63,
+        "end_line": 138,
+        "function": "np.exp",
+        "id": "call-138-18",
+        "line": 138,
+        "source": "np.exp(df.transformed - df.transformed.max())"
+      },
+      {
+        "column": 42,
+        "end_column": 62,
+        "end_line": 138,
+        "function": "df.transformed.max",
+        "id": "call-138-42",
+        "line": 138,
+        "source": "df.transformed.max()"
+      },
+      {
+        "column": 40,
+        "end_column": 58,
+        "end_line": 141,
+        "function": "df.exp_trans.sum",
+        "id": "call-141-40",
+        "line": 141,
+        "source": "df.exp_trans.sum()"
+      },
+      {
+        "column": 10,
+        "end_column": 34,
+        "end_line": 144,
+        "function": "df.set_index",
+        "id": "call-144-10-to-144-34",
+        "line": 144,
+        "source": "df.set_index([\"X\", \"Z\"])"
+      },
+      {
+        "column": 10,
+        "end_column": 54,
+        "end_line": 144,
+        "function": "df.set_index(['X', 'Z']).exp_trans.unstack",
+        "id": "call-144-10-to-144-54",
+        "line": 144,
+        "source": "df.set_index([\"X\", \"Z\"]).exp_trans.unstack()"
+      },
+      {
+        "column": 10,
+        "end_column": 38,
+        "end_line": 146,
+        "function": "plt.subplots",
+        "id": "call-146-10",
+        "line": 146,
+        "source": "plt.subplots(figsize=(8, 8))"
+      },
+      {
+        "column": 0,
+        "end_column": 26,
+        "end_line": 147,
+        "function": "ax.contourf",
+        "id": "call-147-0",
+        "line": 147,
+        "source": "ax.contourf(X, Z, surface)"
+      },
+      {
+        "column": 0,
+        "end_column": 51,
+        "end_line": 148,
+        "function": "ax.set_xlabel",
+        "id": "call-148-0",
+        "line": 148,
+        "source": "ax.set_xlabel(r\"$\\log(\\alpha/\\beta)$\", fontsize=16)"
+      },
+      {
+        "column": 0,
+        "end_column": 51,
+        "end_line": 149,
+        "function": "ax.set_ylabel",
+        "id": "call-149-0",
+        "line": 149,
+        "source": "ax.set_ylabel(r\"$\\log(\\alpha+\\beta)$\", fontsize=16)"
+      },
+      {
+        "column": 13,
+        "end_column": 75,
+        "end_line": 151,
+        "function": "np.unravel_index",
+        "id": "call-151-13",
+        "line": 151,
+        "source": "np.unravel_index(np.argmax(surface, axis=None), surface.shape)"
+      },
+      {
+        "column": 30,
+        "end_column": 59,
+        "end_line": 151,
+        "function": "np.argmax",
+        "id": "call-151-30",
+        "line": 151,
+        "source": "np.argmax(surface, axis=None)"
+      },
+      {
+        "column": 0,
+        "end_column": 51,
+        "end_line": 152,
+        "function": "ax.scatter",
+        "id": "call-152-0",
+        "line": 152,
+        "source": "ax.scatter([X[0, ix_x]], [Z[ix_z, 0]], color=\"red\")"
+      },
+      {
+        "column": 13,
+        "end_column": 36,
+        "end_line": 154,
+        "function": "np.round",
+        "id": "call-154-13",
+        "line": 154,
+        "source": "np.round(X[0, ix_x], 2)"
+      },
+      {
+        "column": 39,
+        "end_column": 62,
+        "end_line": 154,
+        "function": "np.round",
+        "id": "call-154-39",
+        "line": 154,
+        "source": "np.round(Z[ix_z, 0], 2)"
+      },
+      {
+        "column": 0,
+        "end_column": 1,
+        "end_line": 164,
+        "function": "ax.annotate",
+        "id": "call-156-0",
+        "line": 156,
+        "source": "ax.annotate(\n    text,\n    xy=(X[0, ix_x], Z[ix_z, 0]),\n    xytext=(-1.6, 3.5),\n    ha=\"center\",\n    fontsize=16,\n    color=\"white\",\n    arrowprops={\"facecolor\": \"white\"},\n)"
+      },
+      {
+        "column": 0,
+        "end_column": 38,
+        "end_line": 175,
+        "function": "(df.alpha * df.normed_exp_trans).sum",
+        "id": "call-175-0-to-175-38",
+        "line": 175,
+        "source": "(df.alpha * df.normed_exp_trans).sum()"
+      },
+      {
+        "column": 0,
+        "end_column": 47,
+        "end_line": 175,
+        "function": "(df.alpha * df.normed_exp_trans).sum().round",
+        "id": "call-175-0-to-175-47",
+        "line": 175,
+        "source": "(df.alpha * df.normed_exp_trans).sum().round(3)"
+      },
+      {
+        "column": 0,
+        "end_column": 37,
+        "end_line": 178,
+        "function": "(df.beta * df.normed_exp_trans).sum",
+        "id": "call-178-0-to-178-37",
+        "line": 178,
+        "source": "(df.beta * df.normed_exp_trans).sum()"
+      },
+      {
+        "column": 0,
+        "end_column": 46,
+        "end_line": 178,
+        "function": "(df.beta * df.normed_exp_trans).sum().round",
+        "id": "call-178-0-to-178-46",
+        "line": 178,
+        "source": "(df.beta * df.normed_exp_trans).sum().round(3)"
+      },
+      {
+        "column": 14,
+        "end_column": 26,
+        "end_line": 187,
+        "function": "np.arange",
+        "id": "call-187-14",
+        "line": 187,
+        "source": "np.arange(N)"
+      },
+      {
+        "column": 11,
+        "end_column": 48,
+        "end_line": 194,
+        "function": "pt.log",
+        "id": "call-194-11",
+        "line": 194,
+        "source": "pt.log(pt.pow(pt.sum(value), -5 / 2))"
+      },
+      {
+        "column": 18,
+        "end_column": 47,
+        "end_line": 194,
+        "function": "pt.pow",
+        "id": "call-194-18",
+        "line": 194,
+        "source": "pt.pow(pt.sum(value), -5 / 2)"
+      },
+      {
+        "column": 25,
+        "end_column": 38,
+        "end_line": 194,
+        "function": "pt.sum",
+        "id": "call-194-25",
+        "line": 194,
+        "source": "pt.sum(value)"
+      },
+      {
+        "column": 5,
+        "end_column": 28,
+        "end_line": 197,
+        "function": "pm.Model",
+        "id": "call-197-5",
+        "line": 197,
+        "source": "pm.Model(coords=coords)"
+      },
+      {
+        "column": 12,
+        "end_column": 31,
+        "end_line": 199,
+        "function": "pm.Data",
+        "id": "call-199-12",
+        "line": 199,
+        "source": "pm.Data(\"n_val\", n)"
+      },
+      {
+        "column": 9,
+        "end_column": 52,
+        "end_line": 200,
+        "function": "pm.HalfNormal",
+        "id": "call-200-9",
+        "line": 200,
+        "source": "pm.HalfNormal(\"ab\", sigma=10, dims=\"param\")"
+      },
+      {
+        "column": 4,
+        "end_column": 40,
+        "end_line": 201,
+        "function": "pm.Potential",
+        "id": "call-201-4",
+        "line": 201,
+        "source": "pm.Potential(\"p(a, b)\", logp_ab(ab))"
+      },
+      {
+        "column": 28,
+        "end_column": 39,
+        "end_line": 201,
+        "function": "logp_ab",
+        "id": "call-201-28",
+        "line": 201,
+        "source": "logp_ab(ab)"
+      },
+      {
+        "column": 8,
+        "end_column": 52,
+        "end_line": 203,
+        "function": "pm.Deterministic",
+        "id": "call-203-8",
+        "line": 203,
+        "source": "pm.Deterministic(\"X\", pt.log(ab[0] / ab[1]))"
+      },
+      {
+        "column": 30,
+        "end_column": 51,
+        "end_line": 203,
+        "function": "pt.log",
+        "id": "call-203-30",
+        "line": 203,
+        "source": "pt.log(ab[0] / ab[1])"
+      },
+      {
+        "column": 8,
+        "end_column": 49,
+        "end_line": 204,
+        "function": "pm.Deterministic",
+        "id": "call-204-8",
+        "line": 204,
+        "source": "pm.Deterministic(\"Z\", pt.log(pt.sum(ab)))"
+      },
+      {
+        "column": 30,
+        "end_column": 48,
+        "end_line": 204,
+        "function": "pt.log",
+        "id": "call-204-30",
+        "line": 204,
+        "source": "pt.log(pt.sum(ab))"
+      },
+      {
+        "column": 37,
+        "end_column": 47,
+        "end_line": 204,
+        "function": "pt.sum",
+        "id": "call-204-37",
+        "line": 204,
+        "source": "pt.sum(ab)"
+      },
+      {
+        "column": 12,
+        "end_column": 68,
+        "end_line": 206,
+        "function": "pm.Beta",
+        "id": "call-206-12",
+        "line": 206,
+        "source": "pm.Beta(\"theta\", alpha=ab[0], beta=ab[1], dims=\"obs_id\")"
+      },
+      {
+        "column": 8,
+        "end_column": 54,
+        "end_line": 208,
+        "function": "pm.Binomial",
+        "id": "call-208-8",
+        "line": 208,
+        "source": "pm.Binomial(\"y\", p=theta, observed=y, n=n_val)"
+      },
+      {
+        "column": 12,
+        "end_column": 64,
+        "end_line": 209,
+        "function": "pm.sample",
+        "id": "call-209-12",
+        "line": 209,
+        "source": "pm.sample(draws=2000, tune=2000, target_accept=0.95)"
+      },
+      {
+        "column": 0,
+        "end_column": 67,
+        "end_line": 212,
+        "function": "az.plot_rank_dist",
+        "id": "call-212-0",
+        "line": 212,
+        "source": "az.plot_rank_dist(trace, var_names=[\"ab\", \"X\", \"Z\"], compact=False)"
+      },
+      {
+        "column": 0,
+        "end_column": 41,
+        "end_line": 216,
+        "function": "az.plot_pair",
+        "id": "call-216-0",
+        "line": 216,
+        "source": "az.plot_pair(trace, var_names=[\"X\", \"Z\"])"
+      },
+      {
+        "column": 0,
+        "end_column": 37,
+        "end_line": 220,
+        "function": "az.plot_dist",
+        "id": "call-220-0",
+        "line": 220,
+        "source": "az.plot_dist(trace, var_names=[\"ab\"])"
+      },
+      {
+        "column": 0,
+        "end_column": 45,
+        "end_line": 223,
+        "function": "trace.posterior['ab'].mean",
+        "id": "call-223-0",
+        "line": 223,
+        "source": "trace.posterior[\"ab\"].mean((\"chain\", \"draw\"))"
+      }
+    ],
+    "source_sha256": "11637310cbf77714fcca876df1ddb8a195474d47edad73337de070c1c158a10c"
+  }
+}

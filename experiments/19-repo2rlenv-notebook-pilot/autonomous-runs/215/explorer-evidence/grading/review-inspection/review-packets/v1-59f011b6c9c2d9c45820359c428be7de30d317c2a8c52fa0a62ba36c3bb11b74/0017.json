@@ -1,0 +1,17 @@
+{
+  "worker_review": {
+    "additional_exclusions": [],
+    "artifact_inventory_sha256": "c331b6629e81f26cc9c4c93ee1e7e716f2e6fef0c4ea59bf7e67032c2b915c8b",
+    "assessment": "Controlled execution succeeded: derivation staged inputs/rat_tumor_counts.csv (71 verbatim source count pairs) and built the three private reference projections (analytic_posterior_grid.csv copied byte-for-byte from the recorded reference export sha 14cbefc7...0104; pymc_ab_posterior_draws.csv projected from the recorded ab variable with the documented identity mapping; posterior_mean_estimates.csv as exact column projections of those exports), and the oracle ran the full public task (both branches, 4-chain NUTS) within the reference limit. I reviewed the controller's complete installed-asset value-hints report (asset-value-hints.json: 55 findings across 7 asset files, all owned by pandas, scipy and matplotlib, referencing only analytic_posterior_grid.csv). Every finding is a coincidental numeric-magnitude match between a generic library-test literal (e.g. 2.3, 1.57, 1.5 in JSON round-trip tests, linspace endpoints, polar-plot coordinates) and a grid-coordinate cell of the reference grid CSV. The X/Z grid coordinates are fully and publicly specified in the task statement (100 x-values from -2.3 step 0.01; 400 z-values from 1.0 step 0.01), so these coincidences expose no information beyond the published contract. There are zero findings against posterior_mean_estimates.csv and none against the MCMC draws: the requested scientific endpoints (normalized posterior mass, mass-weighted posterior means, posterior-sample means, and the 8,000 ab draws) have no value matches in any installed package. The matched candidate files are packaged unit tests of general-purpose libraries (pandas JSON/to_numpy tests, scipy special-matrix tests, matplotlib pyplot tests) that contain no rat-tumor binomial hierarchical model, no BDA3 p.102 counts and no posterior-of-(alpha,beta) analysis; they are retained unchanged as parts of the installed scientific stack. No installed file supplies a full or partial answer to the requested outputs, therefore no additional exclusions are declared. Residual gaps of the hint mechanism (integer constants, string literals, comments, nonpriority files, non-CSV formats such as the .nc) do not alter this assessment: the requested quantities are computed by the solver from the supplied 71-pair input, not distributed with any installed package.",
+    "asset_catalog_sha256": "817f496ae7d2cacfb50b9aa5968b529dcb4c426f121f5712d89ceb7fc0648985"
+  },
+  "executed_exclusions": {
+    "excluded_files_absent": true,
+    "files": []
+  },
+  "asset_catalog": {
+    "bytes": 1173126,
+    "sha256": "817f496ae7d2cacfb50b9aa5968b529dcb4c426f121f5712d89ceb7fc0648985"
+  },
+  "scope": "Worker scientific assessment plus controller-observed cleanup; not independent answer-isolation approval."
+}
