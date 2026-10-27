@@ -5469,3 +5469,7 @@ The published PyMC HTML now embeds 13 actual stages and 13 solver steps. Browser
 ### 2026-10-27 — Scanpy grading transport recovered without resubmission
 
 A read-only live observation of 220 recorded 183 completed commands, each with one session submission. One grading command completed successfully in 93.27 seconds, but response recovery added 562.50 seconds to its controller clock. The archived transport metadata records recovery and no command reexecution; later commands completed. This is a partial timing observation, not task qualification or a final cleanup receipt. The original campaign, frozen worker, scientific inputs and repair allowance remain unchanged. [Timing receipt](panel-rounds/108/transport-observation-220.json).
+
+### 2026-10-27 — Conditional Scanpy source/data publication preflight
+
+While 220 continues grader validation, its exact notebook/seed identities were checked against pinned source notices. The root BSD-3-Clause notice and documentation configuration were fetched from the recorded source revision; the recursive tree had no additional license/notice paths. Figshare version 1 still declares CC BY 4.0 for the NeurIPS 2021 dataset, and the two expected H5 metadata sizes/provider MD5 values match the seed. No biological data was downloaded in this preflight. This neither verifies the campaign's actual staged inputs nor establishes task qualification or release readiness. Retained primary-source readbacks are separate from generated science; [conditional receipt](autonomous-runs/220/publication-preflight.json).
