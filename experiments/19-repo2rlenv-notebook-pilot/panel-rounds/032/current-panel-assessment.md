@@ -23,7 +23,7 @@ The latest completed outcomes are **one qualified/published task, four rejected 
 
 The successor has 155 affected tests, 25 preparation/packaging tests and 10 source-admission/AST checks. These are not fresh scientific qualification. A shorter control request is permitted only after a certified pre-dispatch refusal; executed or uncertain outcomes are not retried automatically. Scientific verdicts, required negative controls, original deadlines, resource maxima, two-reference-dispatch limit and repair budgets remain unchanged.
 
-[Matchms 214](../106/development-panel.json) is funded for a fresh original-source test of the same 232 runtime hashes as 213. It is not yet submitted. No previous generated task, answer, environment recipe or diagnostic will be supplied.
+[Matchms 214](../106/development-panel.json) is submitted, initially pending, for a fresh original-source test of the same 232 runtime hashes as 213. Typed admission found only 213 active and verified all earlier terminal cleanup. No previous generated task, answer, environment recipe or diagnostic was supplied.
 
 ## Latest qualified release
 
@@ -48,6 +48,6 @@ Validate the general fixes on original-source runs and establish credible reliab
 
 A possible future reference-budget change from two dispatches to the same cumulative 20-minute computation maximum remains undecided. Frozen runs retain two dispatches. Pyteomics and Sgkit redistribution remain unestablished.
 
-**$200 authorized / $200 conservative holds / $0 unallocated**, including full $5 reservations for active 213 and planned 214. Complete creation-to-cleanup lifetimes, 300-second margins at both ends, $0.10 margin and upward quarter-dollar rounding retain $1 for Matchms 210, $0.50 for Sgkit 209 and $0.50 for PyMC 212. Their verified refinements release the $5 used for 214. No scientific outcome, invoice, free-credit assumption or new-campaign $5 reservation changes. [Ledger](../../aggregate-budget.json), [210 audit](../103/closed-210-applied.json), [209 audit](../105/closed-209-applied.json), [212 audit](../105/closed-212-applied.json).
+**$200 authorized / $200 conservative holds / $0 unallocated**, including full $5 reservations for 213 and submitted 214. Complete creation-to-cleanup lifetimes, 300-second margins at both ends, $0.10 margin and upward quarter-dollar rounding retain $1 for Matchms 210, $0.50 for Sgkit 209 and $0.50 for PyMC 212. Their verified refinements release the $5 used for 214. No scientific outcome, invoice, free-credit assumption or new-campaign $5 reservation changes. [Ledger](../../aggregate-budget.json), [210 audit](../103/closed-210-applied.json), [209 audit](../105/closed-209-applied.json), [212 audit](../105/closed-212-applied.json).
 
 Keep #19 open and PR #23 draft/unmerged. Publish only qualified, rights-cleared tasks and verify anonymous downloads. Never merge the research branch; supported promotion requires a fresh branch from main and relevant validation.
