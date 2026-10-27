@@ -10,11 +10,14 @@ from pathlib import Path
 
 EXPERIMENT = Path(__file__).resolve().parents[2]
 PREFIX = "experiments/19-repo2rlenv-notebook-pilot/"
+QUESTION_REPAIR_AUDITOR = "e674d133567c5647cf69f9a485a75a91323f49bc212aa82883ab2c49ba1ecab7"
+QUESTION_REPAIR_PROFILE = "7ee8d1d97273a2d07d1568599641cd1cb974417a1f7ae8f6cb556ab766b8b0e5"
 AUDITORS = {
     "036241de95a1d148af94020839568966c80bb14bba7202c36d73cbc4324cb772",
     # Earlier handled-timeout auditor, before optional observed-clock refinement.
     "25fcbda8ca350cc04434d8c150b25527ae44e868766acfa9be8134184cb50c29",
     "857053031d2eadcf0c22d659d1896ba3c391214eb795f4d8fd3e446483723664",
+    QUESTION_REPAIR_AUDITOR,
 }
 
 
@@ -27,7 +30,11 @@ def refinement(proof, row, number):
     record = records[0]
     assert row["state"] == "terminal_full_lifecycle_resource_bound_reconciled"
     assert Decimal(row["ceiling_usd"]) == Decimal(record["retained_usd"]) == 2
-    assert record["original_and_fresh_seven_owner_cleanup_verified"] is True
+    if proof["helper_sha256"] == QUESTION_REPAIR_AUDITOR:
+        assert proof.get("repair_profile_helper_sha256") == QUESTION_REPAIR_PROFILE
+        assert record.get("original_and_fresh_eight_owner_cleanup_verified") is True
+    else:
+        assert record["original_and_fresh_seven_owner_cleanup_verified"] is True
     assert record["native_auto_snapshot_default"] is False
     assert record["native_snapshot_overrides"] is False
     assert record["conservatively_priced_parallel_sandboxes"] == 2

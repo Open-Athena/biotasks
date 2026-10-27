@@ -1,3 +1,4 @@
+import hashlib
 import importlib.util
 import json
 from copy import deepcopy
@@ -14,6 +15,7 @@ spec.loader.exec_module(module)
 
 PROOFS = [
     (151, "043/cross-domain-resource-reconciliation.json"),
+    (161, "068/question-repair-161-applied.json"),
     (176, "080/completed-176-applied.json"),
     (195, "100/refined-195-applied.json"),
     (198, "101/closed-198-native-applied.json"),
@@ -35,6 +37,38 @@ def test_real_strict_proofs_keep_the_entire_original_bound_plus_margin(number, n
     assert retained == Decimal("1.50")
     assert retained - Decimal(original["resource_charge_upper_bound_usd"]) == Decimal("0.115500")
     assert (proof, row) == before
+
+
+def test_question_repair_auditor_and_profile_match_the_original_proof():
+    proof, _, _ = evidence(161, "068/question-repair-161-applied.json")
+    folder = module.EXPERIMENT / "panel-rounds/068"
+    for name, field in [
+        ("reconcile_question_repair.py", "helper_sha256"),
+        ("question_repair_resource_profile.py", "repair_profile_helper_sha256"),
+    ]:
+        assert hashlib.sha256((folder / name).read_bytes()).hexdigest() == proof[field]
+
+
+@pytest.mark.parametrize(
+    "defect",
+    ["wrong_profile", "missing_profile", "missing_eighth_owner", "cleanup_failed", "snapshot"],
+)
+def test_question_repair_requires_its_own_complete_cleanup_and_profile(defect):
+    proof, row, number = evidence(161, "068/question-repair-161-applied.json")
+    record = proof["records"][0]
+    if defect == "wrong_profile":
+        proof["repair_profile_helper_sha256"] = "unknown"
+    elif defect == "missing_profile":
+        del proof["repair_profile_helper_sha256"]
+    elif defect == "missing_eighth_owner":
+        del record["original_and_fresh_eight_owner_cleanup_verified"]
+        record["original_and_fresh_seven_owner_cleanup_verified"] = True
+    elif defect == "cleanup_failed":
+        record["original_and_fresh_eight_owner_cleanup_verified"] = False
+    else:
+        record["native_snapshot_overrides"] = True
+    with pytest.raises(AssertionError):
+        module.refinement(proof, row, number)
 
 
 @pytest.mark.parametrize(
