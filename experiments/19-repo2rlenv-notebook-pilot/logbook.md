@@ -5317,3 +5317,11 @@ Those funds reserve original Sgkit209with a full5USD, same232runtimehashes and p
 ### 2026-10-27 — Submit original Sgkit alongside Pyteomics
 
 209is submitted from publiceb83a158/private4e190630. Its232runtimefilehashes exactly match208, with original194notebook/provenance only and all scientific/model/resource/time/repair limits unchanged. Typed admission found only208active. No prior task, answer, staging recipe, exclusion or failure hint was supplied. Full5USDreservation is synchronized to the original claim;197.25held/2.75free. Neither active run is scientifically qualified, and210remains unfunded/unsubmitted.
+
+### 2026-10-27 — Pyteomics208rejects setup; retain shell-policy violation
+
+208completed with an autonomous generated-setup rejection after14.32minutes/41requests. Both controlled reference tests failed: a missing relative input directory, then an unavailable plotting-style alias. The final GLM recipe adaptation was not retested, so no reference/export/native/solver success is claimed. Full601original files/7,310,163bytes,21rootfiles and original/fresh SDK-ID/owner cleanup are verified. No operator scientific fix or rerun.
+
+Original operation0026also proves that the worker computed scientific filters, peptide aggregates/joins and CSV exports through the setup shell, contrary to the prompt. These calculations are not counted as controlled reference validation. The candidate remains rejected; the source is not labelled scientifically broken. Keep this evidence when improving general setup discipline.
+
+The unchanged unused-stage auditor released only four208dollars for undispatched stages, preserving its full used-stage dollar. That funds original Matchms210with a full5USD, same232runtimefilehashes and unchanged policy as208/209.198.25held/1.75freewithin200authorized;210not submitted yet. A user question is pending about replacing two tests with the same cumulative20minute maximum compute allowance for future versions. No existing/frozen run changes until that decision is made.
