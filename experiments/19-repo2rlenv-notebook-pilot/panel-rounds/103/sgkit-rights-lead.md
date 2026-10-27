@@ -1,0 +1,7 @@
+# Sgkit input-rights lead — not clearance
+
+The [official tutorial](https://sgkit-dev.github.io/sgkit/latest/examples/relatedness_tutorial.html) attributes its observed pig data to Cleveland, Hickey and Forni (2012), DOI [10.1534/g3.111.001453](https://doi.org/10.1534/g3.111.001453), and downloads two transformed files from the sgkit-data bucket. Software licensing alone does not establish their redistribution terms.
+
+The [primary full-text XML](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3337471/fullTextXML), retrieved on 27 October 2026, identifies the article’s license as CC BY 3.0 and includes the original pig dataset as supporting File S1 (`supp_2.4.429_FileS1.zip`). The full-text record is 72,457 bytes, SHA256 `0e0636c5fec2c6418c38f99688602e2c14c72959946dabce8556dd9076005cbd`. Original XML and retrieval metadata are retained in the durable private handoff. The author-institution [publication record](https://www.research.ed.ac.uk/en/publications/a-common-dataset-for-genomic-analysis-of-livestock-populations/) independently records the article license.
+
+This is a promising lineage/rights lead, not permission inferred for the exact staged derivatives. Before publication, establish the original supplemental terms and the mapping from that dataset to the two exact staged inputs, retain attribution/notices and document transformations. No raw data or task has been published on this basis. The running 209 worker still receives its original source/provenance only; this operator research is not a task-specific generation hint.
