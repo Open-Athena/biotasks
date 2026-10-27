@@ -17,6 +17,8 @@ AUDITORS = {
     # Earlier handled-timeout auditor, before optional observed-clock refinement.
     "25fcbda8ca350cc04434d8c150b25527ae44e868766acfa9be8134184cb50c29",
     "857053031d2eadcf0c22d659d1896ba3c391214eb795f4d8fd3e446483723664",
+    # Same full-lifetime bound with handled native solver-timeout verification.
+    "edb6b56d9a1277e2da02d9cf8c3c420e7b79241f33a94b909707a14cfb86d93f",
     QUESTION_REPAIR_AUDITOR,
 }
 

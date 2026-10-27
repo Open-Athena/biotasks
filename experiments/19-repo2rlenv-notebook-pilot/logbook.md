@@ -5594,3 +5594,9 @@ Reserved the unchanged full5USDfor a fresh original217COBRApy source trial226, u
 
 
 Original226passed frozen-input/provider preflight and typed pool admission (all preceding hosts terminal, cleanup checked), then was submitted once and confirmed RUNNING. Exact frozen237-file worker/publicrevision280f8f67468b62e6fefa39731913445ad9469697, original217source assets unchanged and no prior generated outputs/hints. Ledger state synchronized without additional money:199.50held/0.50free, including full5USD226reservation. The existing model/resource/offline/time/reference/repair limits remain; no scientific/native outcome is inferred. [Submission and state](panel-rounds/110/submission-226.json).
+
+### 27 October 2026 — Original-source grading and unchanged-bound reserve margin
+
+226 has completed preparation, setup, clean replay, specification and construction and reached grading. The same typed job remains RUNNING; an observation-window expiry is not a restart cue. Reviewed the full proposal against current issue scope: evidence-backed generated-candidate rejection is allowed and does not diagnose a broken notebook; unsupported review and infrastructure failures remain distinct reassessment work. No minimum yield or new timing/repair allowance is adopted.
+
+Verified the exact committed handled-solver-timeout auditor used for closed222, admitted only that source fingerprint to the existing margin helper and ran43accounting/refusal checks (34,504KiBpeak). Its entire original1.384500USDfull-lifetime bound is unchanged; retain1.50USDand release0.50USDof excess margin. Aggregate199held/1free still includes226's full5USDreservation; no further campaign is funded. Ruff lint/format and all237frozen worker hashes pass. These are post-run operator accounting changes, not a modified worker or scientific claim. [Proof and live state](panel-rounds/110/README.md).

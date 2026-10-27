@@ -20,6 +20,7 @@ PROOFS = [
     (195, "100/refined-195-applied.json"),
     (198, "101/closed-198-native-applied.json"),
     (215, "108/closed-215-native-applied.json"),
+    (222, "108/closed-222-native-applied.json"),
 ]
 
 
@@ -91,8 +92,9 @@ def test_question_repair_requires_its_own_complete_cleanup_and_profile(defect):
         "wrong_campaign",
     ],
 )
-def test_unproved_or_already_applied_margin_cannot_be_released(defect):
-    proof, row, number = evidence()
+@pytest.mark.parametrize("number,name", [PROOFS[-2], PROOFS[-1]])
+def test_unproved_or_already_applied_margin_cannot_be_released(defect, number, name):
+    proof, row, number = evidence(number, name)
     record = proof["records"][0]
     if defect == "dry_run":
         proof["applied"] = False
