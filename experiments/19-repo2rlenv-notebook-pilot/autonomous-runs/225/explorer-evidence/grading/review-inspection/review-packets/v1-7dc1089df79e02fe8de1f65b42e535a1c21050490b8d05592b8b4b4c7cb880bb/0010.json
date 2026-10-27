@@ -1,0 +1,69 @@
+{
+  "source_sha256": "ca70f4196402ccbf531e8e6b69b5d147340d2c9675610c5025256cbc66ac89e0",
+  "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+  "operations": [
+    {
+      "id": "call-38-7",
+      "line": 38,
+      "column": 7,
+      "end_line": 38,
+      "end_column": 40,
+      "function": "nk.data",
+      "source": "nk.data(\"bio_resting_5min_100hz\")"
+    },
+    {
+      "id": "call-39-0",
+      "line": 39,
+      "column": 0,
+      "end_line": 39,
+      "end_column": 11,
+      "function": "data.head",
+      "source": "data.head()"
+    },
+    {
+      "id": "call-44-14",
+      "line": 44,
+      "column": 14,
+      "end_line": 44,
+      "end_column": 58,
+      "function": "nk.ecg_peaks",
+      "source": "nk.ecg_peaks(data[\"ECG\"], sampling_rate=100)"
+    },
+    {
+      "id": "call-57-11",
+      "line": 57,
+      "column": 11,
+      "end_line": 57,
+      "end_column": 59,
+      "function": "nk.hrv_time",
+      "source": "nk.hrv_time(peaks, sampling_rate=100, show=True)"
+    },
+    {
+      "id": "call-66-11",
+      "line": 66,
+      "column": 11,
+      "end_line": 66,
+      "end_column": 80,
+      "function": "nk.hrv_frequency",
+      "source": "nk.hrv_frequency(peaks, sampling_rate=100, show=True, normalize=True)"
+    },
+    {
+      "id": "call-73-16",
+      "line": 73,
+      "column": 16,
+      "end_line": 73,
+      "end_column": 69,
+      "function": "nk.hrv_nonlinear",
+      "source": "nk.hrv_nonlinear(peaks, sampling_rate=100, show=True)"
+    },
+    {
+      "id": "call-84-14",
+      "line": 84,
+      "column": 14,
+      "end_line": 84,
+      "end_column": 57,
+      "function": "nk.hrv",
+      "source": "nk.hrv(peaks, sampling_rate=100, show=True)"
+    }
+  ]
+}

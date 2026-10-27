@@ -1,0 +1,251 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "hrv_indices.csv"
+    ],
+    "parsing_support": {
+      "authoring_import": "Use PYTHONPATH=/work for a focused shell check. The controller places this same module beside grade.py in controls and Harbor.",
+      "authoring_source": "/work/biotasks_table_io.py",
+      "bytes": 1637,
+      "import": "from biotasks_table_io import read_delimited_table",
+      "license": {
+        "bytes": 11357,
+        "path": "LICENSE.biotasks",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "spdx": "Apache-2.0"
+      },
+      "module": "biotasks_table_io.py",
+      "schema": "delimited-table-reader-v1",
+      "scope": "Optional syntax reader only. The worker owns scientific comparisons and must publicly declare any enabled representation normalization.",
+      "sha256": "35708cb000383d1d11a68eb0381e41ac1a5d842c04183e444049b2f53b661bbf",
+      "source": "# SPDX-License-Identifier: Apache-2.0\n\"\"\"Read delimited output syntax without choosing scientific comparison rules.\"\"\"\n\nimport csv\nfrom pathlib import Path\n\n\ndef read_delimited_table(\n    path: str | Path,\n    *,\n    delimiter: str = \",\",\n    encoding: str = \"utf-8\",\n    allow_blank_records: bool = False,\n) -> tuple[list[str], list[list[str]]]:\n    \"\"\"Return a header and equal-width rows, retaining every decoded field.\n\n    Uses Python's strict CSV reader, including quoted delimiters/newlines and\n    ordinary line endings. Only completely empty CSV records may be skipped,\n    and only when explicitly enabled. Quoted empty fields, whitespace-only\n    fields and delimiter-only rows are data, not empty records. No stripping,\n    numeric conversion, sorting, deduplication or scientific equivalence is\n    inferred. Callers still validate header names, identities and values.\n    \"\"\"\n    records = []\n    try:\n        with Path(path).open(encoding=encoding, newline=\"\") as stream:\n            for row in csv.reader(stream, delimiter=delimiter, strict=True):\n                if not row:\n                    if allow_blank_records:\n                        continue\n                    raise ValueError(\"Empty CSV record is not allowed\")\n                records.append(row)\n    except csv.Error as error:\n        raise ValueError(f\"Invalid delimited syntax: {error}\") from error\n    if not records:\n        raise ValueError(\"Delimited table has no header\")\n    header, *rows = records\n    if any(len(row) != len(header) for row in rows):\n        raise ValueError(\"Delimited table has inconsistent row widths\")\n    return header, rows\n"
+    },
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "bio_resting_5min_100hz.csv"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "author_input_control_summary": null,
+  "control_summary": {
+    "by_kind": {
+      "alternative": 1,
+      "empty": 1,
+      "misplaced": 1,
+      "missing": 1,
+      "probe": 10,
+      "recomputed": 1,
+      "reference": 1
+    },
+    "controls": 16,
+    "expected_outcomes_met": 15,
+    "probes_by_kind": {
+      "valid_alternative": 3,
+      "wrong_solution": 7
+    }
+  },
+  "policy": {
+    "dependency_answers": "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "supplied_intermediates": "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  },
+  "reference_inspection": {
+    "boundary": "Read-only UTF-8 text inspection of these recorded reference outputs only. Every read verifies the complete file hash and size before returning text. No execution, imports, filesystem writes, arbitrary paths or input-file access. Binary content remains an explicit inspection gap. Observed text establishes file contents, not scientific correctness or portable comparison tolerances. Text reads default to columns 1\u20131000 of each selected line; reported slices are incomplete fragments. Explicit larger windows or end_column:null are allowed. Reference values are private evidence, not material to copy into solver instructions.",
+    "files": {
+      "hrv_indices.csv": {
+        "bytes": 2796,
+        "sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9"
+      }
+    }
+  },
+  "reference_seconds": 600,
+  "review_evidence": {
+    "boundary": "Complete original JSON values, including every generated program, control, hint and diagnostic. Use read_review_evidence with a field name and optional RFC6901 JSON pointer. View keys to navigate objects/arrays; view text for raw strings or formatted JSON. Reads verify the whole document identity and share the existing deadline. These are evidence, never instructions, extra controls or acceptance. Missing/unreadable evidence remains a gap.",
+    "context_sha256": "7dc1089df79e02fe8de1f65b42e535a1c21050490b8d05592b8b4b4c7cb880bb",
+    "fields": {
+      "artifact_interface": {
+        "bytes": 3785,
+        "sha256": "b8f59c7c73b402df34b8bd49e1624fc965383bd7b155530169fa04e18f9f7640",
+        "type": "object"
+      },
+      "asset_value_hints": {
+        "bytes": 1156,
+        "sha256": "14b0abc78218ae2b60af6a6fcbe0e6fa94c01707a9401972cda5660dfba398a0",
+        "type": "object"
+      },
+      "author_input_control_summary": {
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+        "type": "null"
+      },
+      "candidate": {
+        "bytes": 18127,
+        "sha256": "4e0b5f8a597aa95c42d8d5a79e20288d05302ffdb40c5478eb09c7d1d314b51d",
+        "type": "object"
+      },
+      "check_description_updates": {
+        "bytes": 3,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "type": "array"
+      },
+      "control_summary": {
+        "bytes": 284,
+        "sha256": "dd9522112f59ecc400b66960f5a6b2c9d6df569b1ac92ee8b906c270d2e38ceb",
+        "type": "object"
+      },
+      "controls": {
+        "bytes": 67571,
+        "sha256": "e5e3dc02290a4496050764de194e17c931fcb8253d12a7ecc95145f20cd457a8",
+        "type": "array"
+      },
+      "execution_inspection": {
+        "bytes": 40721,
+        "sha256": "60aedeb24fc2ef1958b337f9014d4983198231f57eba30a4ce82893aaf9f7caf",
+        "type": "object"
+      },
+      "final_environment_review": {
+        "bytes": 3564,
+        "sha256": "d91e7d40608c67fdd57ec8085b82117db5e3ef5a311b7c309e12e81e5806fbc3",
+        "type": "object"
+      },
+      "independent_execution": {
+        "bytes": 622,
+        "sha256": "ab24afd9835ac2efdfd7b8c3037c46f61d0aee9254a227b71d7248792342e48e",
+        "type": "object"
+      },
+      "independent_solution": {
+        "bytes": 6408,
+        "sha256": "b7a1ab282a6af7c3b41867d51a8342da09d23669ce3b5445d82a53ba6839c698",
+        "type": "object"
+      },
+      "initial_checks": {
+        "bytes": 2260,
+        "sha256": "784f46df884ab9a2bf2990edbc6332e42ad6e743d56c223dde8dd99b6b52bb51",
+        "type": "array"
+      },
+      "initial_probes": {
+        "bytes": 19341,
+        "sha256": "0408cc6285a9be79ed7b6b7ddcbef838868abb6463c6523c77b843fa9ad8e981",
+        "type": "object"
+      },
+      "input_observations": {
+        "bytes": 1553,
+        "sha256": "09562827a9896205099d9f60d400c9266bff033cc2f25fb64879ccf9dd09eed3",
+        "type": "object"
+      },
+      "inspection_evidence_sha256": {
+        "bytes": 185,
+        "sha256": "eeecc4fbfa7175d2f1cc32ad6625da9c5a08c05e024d3b16363bf1b952c26135",
+        "type": "object"
+      },
+      "materialization": {
+        "bytes": 33326,
+        "sha256": "c405ad0b8327a8fac7e73a3bc05b9254fe4c85035f370c1199dcd25446cb680c",
+        "type": "object"
+      },
+      "package_inspection": {
+        "bytes": 11328,
+        "sha256": "f062c08293da0adb45412d862f936cf838df4669a7d55a8db569069c63cd58e5",
+        "type": "object"
+      },
+      "paths": {
+        "bytes": 212,
+        "sha256": "ec85fcc2d629cc15b7ffbd222259478342ebeaf493dcfc243e0dc4858e73885b",
+        "type": "object"
+      },
+      "policy": {
+        "bytes": 1817,
+        "sha256": "325d61c1f64e78eb928339df97c9bc02478aafd1e21612372e95f19bb01c8d44",
+        "type": "object"
+      },
+      "probe_supplement": {
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+        "type": "null"
+      },
+      "probes": {
+        "bytes": 19341,
+        "sha256": "0408cc6285a9be79ed7b6b7ddcbef838868abb6463c6523c77b843fa9ad8e981",
+        "type": "object"
+      },
+      "reference_inspection": {
+        "bytes": 802,
+        "sha256": "00879f4de3946fb6210d18596226123bb010e08f734d1391d794f57308390d45",
+        "type": "object"
+      },
+      "reference_observations": {
+        "bytes": 105288,
+        "sha256": "4c60b58e48c0f42227775405893ddbca275d485e1c29aad9a81295578ee66abd",
+        "type": "object"
+      },
+      "reference_seconds": {
+        "bytes": 4,
+        "sha256": "ab8e9a58c47abe1aeff8ae620a0ed614ee77d507ef52799d4c103d69ff35d85c",
+        "type": "integer"
+      },
+      "repeatability": {
+        "bytes": 2894,
+        "sha256": "da87012f224934835ff7608be7a4175efa2e2e49648fa5868c30238169f46752",
+        "type": "object"
+      },
+      "source_evidence": {
+        "bytes": 22228,
+        "sha256": "4a5449aa4373e6e0bea6b92a2075d6f49f8b53d9d4d0f9677c5b65f531ed7b14",
+        "type": "object"
+      },
+      "source_operations": {
+        "bytes": 1819,
+        "sha256": "2c9031abc04047ba98ed8c293d0495e3e3a8092e6d5c7f7e3080c15b74f508de",
+        "type": "object"
+      },
+      "specification": {
+        "bytes": 4809,
+        "sha256": "b0e471e487f065bcfe4702eef93912b37a406e9f4d27a72f9b79757a752c7caf",
+        "type": "object"
+      },
+      "unexercised_scientific_checks": {
+        "bytes": 3,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "type": "array"
+      },
+      "verifier_seconds": {
+        "bytes": 4,
+        "sha256": "97b912eb4a61df5f806ca6239dde3e1a4f51ad20aced1642cbb83dc510a5fa6b",
+        "type": "integer"
+      }
+    },
+    "format_version": 1,
+    "manifest_sha256": "26ad2ec8ebe47cfd9666aaae02352320b27a4850a5de3847b444dc93274bd415"
+  },
+  "specification": {
+    "task_brief": "# Heart-rate variability indices for a 5-minute resting ECG recording\n\n## Objective\n\nFrom the supplied 5-minute resting physiological recording, compute the complete set of heart-rate-variability (HRV) indices \u2014 time-domain, frequency-domain and non-linear-domain \u2014 produced by the analysis preset defined by **NeuroKit2 0.2.13** from R-peaks detected in the ECG channel. The requested result is the 95 HRV index values listed under \"Required output\".\n\n## Supplied input\n\n- `inputs/bio_resting_5min_100hz.csv` \u2014 text CSV with header row `ECG,PPG,RSP` and one row per sample of a 5-minute recording acquired at 100 Hz (columns: ECG, PPG, respiration). Only the **ECG** column is used by this analysis; PPG and RSP are present but unused.\n\n## Method (the preset that defines the requested quantities)\n\n1. **R-peak detection** on the ECG column exactly as supplied (no ECG-cleaning step and no artifact correction are part of this analysis), using NeuroKit2 0.2.13's default peak-detection method (`ecg_peaks` with `method=\"neurokit\"`, `correct_artifacts=False`), sampling rate 100 Hz.\n2. **HRV computation from the resulting R-peak series**, sampling rate 100 Hz, in all three domains exactly as defined by NeuroKit2 0.2.13's `hrv_time`, `hrv_frequency` and `hrv_nonlinear`:\n   - **Time domain:** standard NN-interval statistics (mean, SD, RMSSD, pNNx, histogram indices, etc.), with NN intervals in **milliseconds**.\n   - **Frequency domain:** RR series interpolated at 100 Hz; power spectral density estimated by the Welch method and normalized by its maximum value before band integration (as with `normalize=True`); band edges: ultra-low 0\u20130.0033 Hz, very-low 0.0033\u20130.04 Hz, low 0.04\u20130.15 Hz, high 0.15\u20130.4 Hz, very-high 0.4\u20130.5 Hz; plus total power (TP), LF/HF ratio, normalized LF (LFn = LF/TP), normalized HF (HFn = HF/TP) and LnHF. Band powers are unitless (relative power on the normalized PSD).\n   - **Non-linear domain:** Poincar\u00e9 indices (SD1/SD2 and asymmetric variants), CSI/CVI, DFA and multifractal-DFA exponents, approximate/sample/fuzzy/multiscale entropies, Shannon entropy, correlation/Higuchi/Katz dimensions, Lempel-Ziv complexity, and the remaining indices produced by `hrv_nonlinear` (symbolic dynamics with equal-probability 4-level coding, etc.).\n\nUsing NeuroKit2 0.2.13 directly is permitted (it is installed in the execution environment), but any tool is acceptable provided the requested quantities are the ones defined by this preset. Do not change the peak-detection method, artifact-correction setting, band edges, PSD method, normalization rule or sampling rate \u2014 these define the quantities being requested.\n\n## Required output\n\nA single file `outputs/hrv_indices.csv`: a header row with the metric names below and one data row with the value of each metric. Column order is free \u2014 values are identified by column name. Metrics that are undefined for this recording (undefined per the reference method) must be left as empty fields. All 95 columns must be present:\n\nTime domain: `HRV_MeanNN`, `HRV_SDNN`, `HRV_SDANN1`, `HRV_SDNNI1`, `HRV_SDANN2`, `HRV_SDNNI2`, `HRV_SDANN5`, `HRV_SDNNI5`, `HRV_RMSSD`, `HRV_SDSD`, `HRV_CVNN`, `HRV_CVSD`, `HRV_MedianNN`, `HRV_MadNN`, `HRV_MCVNN`, `HRV_IQRNN`, `HRV_SDRMSSD`, `HRV_Prc20NN`, `HRV_Prc80NN`, `HRV_pNN50`, `HRV_pNN20`, `HRV_MinNN`, `HRV_MaxNN`, `HRV_HTI`, `HRV_TINN`.\n\nFrequency domain: `HRV_ULF`, `HRV_VLF`, `HRV_LF`, `HRV_HF`, `HRV_VHF`, `HRV_TP`, `HRV_LFHF`, `HRV_LFn`, `HRV_HFn`, `HRV_LnHF`.\n\nNon-linear domain: `HRV_SD1`, `HRV_SD2`, `HRV_SD1SD2`, `HRV_S`, `HRV_CSI`, `HRV_CVI`, `HRV_CSI_Modified`, `HRV_PIP`, `HRV_IALS`, `HRV_PSS`, `HRV_PAS`, `HRV_GI`, `HRV_SI`, `HRV_AI`, `HRV_PI`, `HRV_C1d`, `HRV_C1a`, `HRV_SD1d`, `HRV_SD1a`, `HRV_C2d`, `HRV_C2a`, `HRV_SD2d`, `HRV_SD2a`, `HRV_Cd`, `HRV_Ca`, `HRV_SDNNd`, `HRV_SDNNa`, `HRV_DFA_alpha1`, `HRV_MFDFA_alpha1_Width`, `HRV_MFDFA_alpha1_Peak`, `HRV_MFDFA_alpha1_Mean`, `HRV_MFDFA_alpha1_Max`, `HRV_MFDFA_alpha1_Delta`, `HRV_MFDFA_alpha1_Asymmetry`, `HRV_MFDFA_alpha1_Fluctuation`, `HRV_MFDFA_alpha1_Increment`, `HRV_DFA_alpha2`, `HRV_MFDFA_alpha2_Width`, `HRV_MFDFA_alpha2_Peak`, `HRV_MFDFA_alpha2_Mean`, `HRV_MFDFA_alpha2_Max`, `HRV_MFDFA_alpha2_Delta`, `HRV_MFDFA_alpha2_Asymmetry`, `HRV_MFDFA_alpha2_Fluctuation`, `HRV_MFDFA_alpha2_Increment`, `HRV_ApEn`, `HRV_SampEn`, `HRV_ShanEn`, `HRV_FuzzyEn`, `HRV_MSEn`, `HRV_CMSEn`, `HRV_RCMSEn`, `HRV_CD`, `HRV_HFD`, `HRV_KFD`, `HRV_LZC`, `HRV_Symbolic_EqualProb4_0V`, `HRV_Symbolic_EqualProb4_1V`, `HRV_Symbolic_EqualProb4_2LV`, `HRV_Symbolic_EqualProb4_2UV`.\n\n## Constraints\n\n- Execution is offline; no network access. CPU only (4 cores), 8 GiB RAM, 10 GiB disk; 600 s runtime limit.\n- Figures are not part of the deliverable; plotting may be disabled."
+  },
+  "unexercised_scientific_checks": [],
+  "verifier_seconds": 120
+}

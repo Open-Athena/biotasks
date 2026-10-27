@@ -1,0 +1,92 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "hrv_indices.csv"
+    ],
+    "parsing_support": {
+      "authoring_import": "Use PYTHONPATH=/work for a focused shell check. The controller places this same module beside grade.py in controls and Harbor.",
+      "authoring_source": "/work/biotasks_table_io.py",
+      "bytes": 1637,
+      "import": "from biotasks_table_io import read_delimited_table",
+      "license": {
+        "bytes": 11357,
+        "path": "LICENSE.biotasks",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "spdx": "Apache-2.0"
+      },
+      "module": "biotasks_table_io.py",
+      "schema": "delimited-table-reader-v1",
+      "scope": "Optional syntax reader only. The worker owns scientific comparisons and must publicly declare any enabled representation normalization.",
+      "sha256": "35708cb000383d1d11a68eb0381e41ac1a5d842c04183e444049b2f53b661bbf",
+      "source": "# SPDX-License-Identifier: Apache-2.0\n\"\"\"Read delimited output syntax without choosing scientific comparison rules.\"\"\"\n\nimport csv\nfrom pathlib import Path\n\n\ndef read_delimited_table(\n    path: str | Path,\n    *,\n    delimiter: str = \",\",\n    encoding: str = \"utf-8\",\n    allow_blank_records: bool = False,\n) -> tuple[list[str], list[list[str]]]:\n    \"\"\"Return a header and equal-width rows, retaining every decoded field.\n\n    Uses Python's strict CSV reader, including quoted delimiters/newlines and\n    ordinary line endings. Only completely empty CSV records may be skipped,\n    and only when explicitly enabled. Quoted empty fields, whitespace-only\n    fields and delimiter-only rows are data, not empty records. No stripping,\n    numeric conversion, sorting, deduplication or scientific equivalence is\n    inferred. Callers still validate header names, identities and values.\n    \"\"\"\n    records = []\n    try:\n        with Path(path).open(encoding=encoding, newline=\"\") as stream:\n            for row in csv.reader(stream, delimiter=delimiter, strict=True):\n                if not row:\n                    if allow_blank_records:\n                        continue\n                    raise ValueError(\"Empty CSV record is not allowed\")\n                records.append(row)\n    except csv.Error as error:\n        raise ValueError(f\"Invalid delimited syntax: {error}\") from error\n    if not records:\n        raise ValueError(\"Delimited table has no header\")\n    header, *rows = records\n    if any(len(row) != len(header) for row in rows):\n        raise ValueError(\"Delimited table has inconsistent row widths\")\n    return header, rows\n"
+    },
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "bio_resting_5min_100hz.csv"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "checks": [
+    {
+      "artifacts": [
+        "hrv_indices.csv"
+      ],
+      "id": "file_present",
+      "kind": "structural",
+      "public_requirement": "The file hrv_indices.csv exists at the declared output root."
+    },
+    {
+      "artifacts": [
+        "hrv_indices.csv"
+      ],
+      "id": "structure_valid",
+      "kind": "structural",
+      "public_requirement": "The submission is a valid CSV table with exactly 95 data columns named precisely as listed in 'Required output', each appearing exactly once; column order is free but no column may be missing, duplicated, renamed or extra. Exactly one data row is present with every field either a decimal numeric literal or an explicit empty field. Blank CSV records, quoted or literal NaN/Inf and any non-numeric, non-finite, or binary content fail."
+    },
+    {
+      "artifacts": [
+        "hrv_indices.csv"
+      ],
+      "id": "time_domain_values",
+      "kind": "scientific",
+      "public_requirement": "Every time-domain metric value (25 columns HRV_MeanNN..HRV_TINN) matches the reference value within relative tolerance 1e-6 of the reference magnitude plus absolute floor 1e-9. Empty fields must correspond exactly to metrics undefined in the reference (HRV_SDANN2, HRV_SDNNI2, HRV_SDANN5, HRV_SDNNI5): an empty field where the reference is defined, or a number where the reference is undefined, is wrong."
+    },
+    {
+      "artifacts": [
+        "hrv_indices.csv"
+      ],
+      "id": "frequency_domain_values",
+      "kind": "scientific",
+      "public_requirement": "Every frequency-domain metric value (10 columns HRV_ULF..HRV_LnHF) matches the reference value within relative tolerance 1e-6 of the reference magnitude plus absolute floor 1e-9, with NaN-valued cells serialized as an empty HRV_ULF field exactly as in the reference; incorrect emptiness, presence, or magnitude fails."
+    },
+    {
+      "artifacts": [
+        "hrv_indices.csv"
+      ],
+      "id": "nonlinear_domain_values",
+      "kind": "scientific",
+      "public_requirement": "Every non-linear-domain metric value (60 columns HRV_SD1..HRV_Symbolic_EqualProb4_2UV) matches the reference value within relative tolerance 1e-6 of the reference magnitude plus absolute floor 1e-9; the section must contain no unspecified rows or additional values, and exactly one value is accepted per metric."
+    }
+  ],
+  "output_paths": [
+    "hrv_indices.csv"
+  ],
+  "paths": {
+    "reference_outputs": "/work/reference",
+    "working_directory": "/work/probe"
+  },
+  "public_instruction": "# Heart-rate variability indices for a 5-minute resting ECG recording\n\n## Objective\n\nFrom the supplied 5-minute resting physiological recording, compute the complete set of heart-rate-variability (HRV) indices \u2014 time-domain, frequency-domain and non-linear-domain \u2014 produced by the analysis preset defined by **NeuroKit2 0.2.13** from R-peaks detected in the ECG channel. The requested result is the 95 HRV index values listed under \"Required output\".\n\n## Supplied input\n\n- `inputs/bio_resting_5min_100hz.csv` \u2014 text CSV with header row `ECG,PPG,RSP` and one row per sample of a 5-minute recording acquired at 100 Hz (columns: ECG, PPG, respiration). Only the **ECG** column is used by this analysis; PPG and RSP are present but unused.\n\n## Method (the preset that defines the requested quantities)\n\n1. **R-peak detection** on the ECG column exactly as supplied (no ECG-cleaning step and no artifact correction are part of this analysis), using NeuroKit2 0.2.13's default peak-detection method (`ecg_peaks` with `method=\"neurokit\"`, `correct_artifacts=False`), sampling rate 100 Hz.\n2. **HRV computation from the resulting R-peak series**, sampling rate 100 Hz, in all three domains exactly as defined by NeuroKit2 0.2.13's `hrv_time`, `hrv_frequency` and `hrv_nonlinear`:\n   - **Time domain:** standard NN-interval statistics (mean, SD, RMSSD, pNNx, histogram indices, etc.), with NN intervals in **milliseconds**.\n   - **Frequency domain:** RR series interpolated at 100 Hz; power spectral density estimated by the Welch method and normalized by its maximum value before band integration (as with `normalize=True`); band edges: ultra-low 0\u20130.0033 Hz, very-low 0.0033\u20130.04 Hz, low 0.04\u20130.15 Hz, high 0.15\u20130.4 Hz, very-high 0.4\u20130.5 Hz; plus total power (TP), LF/HF ratio, normalized LF (LFn = LF/TP), normalized HF (HFn = HF/TP) and LnHF. Band powers are unitless (relative power on the normalized PSD).\n   - **Non-linear domain:** Poincar\u00e9 indices (SD1/SD2 and asymmetric variants), CSI/CVI, DFA and multifractal-DFA exponents, approximate/sample/fuzzy/multiscale entropies, Shannon entropy, correlation/Higuchi/Katz dimensions, Lempel-Ziv complexity, and the remaining indices produced by `hrv_nonlinear` (symbolic dynamics with equal-probability 4-level coding, etc.).\n\nUsing NeuroKit2 0.2.13 directly is permitted (it is installed in the execution environment), but any tool is acceptable provided the requested quantities are the ones defined by this preset. Do not change the peak-detection method, artifact-correction setting, band edges, PSD method, normalization rule or sampling rate \u2014 these define the quantities being requested.\n\n## Required output\n\nA single file `outputs/hrv_indices.csv`: a header row with the metric names below and one data row with the value of each metric. Column order is free \u2014 values are identified by column name. Metrics that are undefined for this recording (undefined per the reference method) must be left as empty fields. All 95 columns must be present:\n\nTime domain: `HRV_MeanNN`, `HRV_SDNN`, `HRV_SDANN1`, `HRV_SDNNI1`, `HRV_SDANN2`, `HRV_SDNNI2`, `HRV_SDANN5`, `HRV_SDNNI5`, `HRV_RMSSD`, `HRV_SDSD`, `HRV_CVNN`, `HRV_CVSD`, `HRV_MedianNN`, `HRV_MadNN`, `HRV_MCVNN`, `HRV_IQRNN`, `HRV_SDRMSSD`, `HRV_Prc20NN`, `HRV_Prc80NN`, `HRV_pNN50`, `HRV_pNN20`, `HRV_MinNN`, `HRV_MaxNN`, `HRV_HTI`, `HRV_TINN`.\n\nFrequency domain: `HRV_ULF`, `HRV_VLF`, `HRV_LF`, `HRV_HF`, `HRV_VHF`, `HRV_TP`, `HRV_LFHF`, `HRV_LFn`, `HRV_HFn`, `HRV_LnHF`.\n\nNon-linear domain: `HRV_SD1`, `HRV_SD2`, `HRV_SD1SD2`, `HRV_S`, `HRV_CSI`, `HRV_CVI`, `HRV_CSI_Modified`, `HRV_PIP`, `HRV_IALS`, `HRV_PSS`, `HRV_PAS`, `HRV_GI`, `HRV_SI`, `HRV_AI`, `HRV_PI`, `HRV_C1d`, `HRV_C1a`, `HRV_SD1d`, `HRV_SD1a`, `HRV_C2d`, `HRV_C2a`, `HRV_SD2d`, `HRV_SD2a`, `HRV_Cd`, `HRV_Ca`, `HRV_SDNNd`, `HRV_SDNNa`, `HRV_DFA_alpha1`, `HRV_MFDFA_alpha1_Width`, `HRV_MFDFA_alpha1_Peak`, `HRV_MFDFA_alpha1_Mean`, `HRV_MFDFA_alpha1_Max`, `HRV_MFDFA_alpha1_Delta`, `HRV_MFDFA_alpha1_Asymmetry`, `HRV_MFDFA_alpha1_Fluctuation`, `HRV_MFDFA_alpha1_Increment`, `HRV_DFA_alpha2`, `HRV_MFDFA_alpha2_Width`, `HRV_MFDFA_alpha2_Peak`, `HRV_MFDFA_alpha2_Mean`, `HRV_MFDFA_alpha2_Max`, `HRV_MFDFA_alpha2_Delta`, `HRV_MFDFA_alpha2_Asymmetry`, `HRV_MFDFA_alpha2_Fluctuation`, `HRV_MFDFA_alpha2_Increment`, `HRV_ApEn`, `HRV_SampEn`, `HRV_ShanEn`, `HRV_FuzzyEn`, `HRV_MSEn`, `HRV_CMSEn`, `HRV_RCMSEn`, `HRV_CD`, `HRV_HFD`, `HRV_KFD`, `HRV_LZC`, `HRV_Symbolic_EqualProb4_0V`, `HRV_Symbolic_EqualProb4_1V`, `HRV_Symbolic_EqualProb4_2LV`, `HRV_Symbolic_EqualProb4_2UV`.\n\n## Constraints\n\n- Execution is offline; no network access. CPU only (4 cores), 8 GiB RAM, 10 GiB disk; 600 s runtime limit.\n- Figures are not part of the deliverable; plotting may be disabled.\n\n## Acceptance rules\n\n## Acceptance rules for `hrv_indices.csv`\n\n- **File and path**: a single file named `hrv_indices.csv` must exist directly at the declared output root (no extra directory layers such as `outputs/outputs/`).\n- **Table shape**: the file is a comma-delimited CSV with decimal point, read with a strict RFC 4180-style reader; ordinary quoted fields are data. It must contain a header row and exactly one data row \u2014 no additional, blank or ragged records.\n- **Columns**: the header must contain exactly the 95 named metric columns listed in \"Required output\", each appearing exactly once (no duplicates, no renames, no extras, none missing). Column order is free; values are identified by column name. The header names are compared literally after CSV unquoting, without whitespace stripping.\n- **Values**: each field must be a plain decimal numeric literal (finite; scientific notation is acceptable). `NaN`, `Inf`, `-Inf` (literal or quoted) and any non-numeric text are rejected. A value for a metric that is undefined in the reference must be an explicit empty field (no characters between the delimiters), not a `NaN` marker; and where the reference is defined, an empty field is rejected.\n- **Empty-field identity**: emptiness is part of the answer \u2014 a submission value where the reference has no defined value fails, and an empty field where the reference is defined fails.\n- **Numeric comparison**: values are compared after parsing as 64-bit floating point; text formatting is otherwise free (digit count/floating repr not compared, provided the parsed value is finite and within tolerance). Each submission value must satisfy |submission \u2212 reference| \u2264 1e-6 \u00b7 |reference| + 1e-9, with the denominator being the reference value's magnitude. Exact zero (as a reference value) is accepted only when the submission value is within the absolute floor of 1e-9. Nonfinite submissions never compare equal to anything.\n- **Reference values**: tolerances are evaluated against the privately stored reference computation (NeuroKit2 0.2.13 preset defined in the method section); the grader does not reimplement the analysis in this step.",
+  "reference_seconds": 600,
+  "verifier_seconds": 120
+}

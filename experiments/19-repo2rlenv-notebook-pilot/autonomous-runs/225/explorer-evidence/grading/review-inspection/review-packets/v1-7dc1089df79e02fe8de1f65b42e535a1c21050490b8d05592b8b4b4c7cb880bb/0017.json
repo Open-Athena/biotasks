@@ -1,0 +1,17 @@
+{
+  "worker_review": {
+    "additional_exclusions": [],
+    "artifact_inventory_sha256": "ebb60ff485955911db7116344fdb618611593e34a631d26bb17e9118f262a3c5",
+    "assessment": "Inspected the final executed environment after successful controlled derivation and oracle execution. (1) Inventory integrity: the staged candidate input /work/author/derive-case/bundle/inputs/bio_resting_5min_100hz.csv is byte-identical to the recorded original recording (sha256 6a33ff8ae229f608354563044ff4a4d1c4e927c817e9269a4dec6173abefc385), and destination/reference/hrv_indices.csv is byte-identical to the recorded reference export (sha256 e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9). The reference table is retained only in the controller-side reference bundle, which is hidden from the isolated oracle; the oracle reads only the supplied raw signal CSV and embeds no measured values. (2) Supplied input cleanliness: the raw recording contains no HRV metric values (no 'HRV_' tokens; it is the source's own input data, not an outcome), so the only solver-visible file cannot expose any of the 95 requested answers. (3) Installed asset catalog (8696 regular files, 3047 candidates, all 29 distributions reviewed in the returned coverage): the advisory numeric-match report over hash/size-verified installed Python sources versus the final CSV references returned finding_count 0 — no installed file reproduces any requested HRV magnitude. NeuroKit2 0.2.13 (320 installed files) ships no bundled example data (verified: nk.data fetches remotely and no CSV/data fixtures exist under the distribution), so no answer-bearing dataset file is installed. (4) Priority match disposition: the only priority match, matplotlib/tests/test_pyplot.py (sha256 939bbd7b646a35bc7eb20a9ed497ee857c0a5931d179d558a5f524a1cf2eb394), is the library's own test suite; its match is a source-import-name coincidence ('pyplot'), its dedicated-matches list is empty (it produces no value corresponding to any requested output), and it plays no role in the computation. It is scientifically unrelated to every requested HRV quantity. It is not removed: it is library-owned material in a mandatory runtime dependency, the match is not answer exposure, and removing unrelated redistributable test files offers no scientific benefit or leakage reduction for the single-table HRV deliverable. The neurokit2/hrv/*.py files flagged earlier are the pinned method-definition code the oracle must import; the entire task is defined by that pinned package, so they cannot be removed, and they contain no measured answers. (5) Conclusion: no installed file both exposes a requested answer and is unused; additional_exclusions is empty and no files were deleted. The environment is suitable for blind independent solving: the solver receives only the raw 5-minute recording and must recompute all 95 HRV indices from R-peak detection onward. Sample-based name/catalog inspection plus the zero-match advisory report support but do not formally prove the absence of every conceivable leak; that residual gap is covered by the later independent validation stage.",
+    "asset_catalog_sha256": "2ed83b334c0e4297ce7a1117cf5f2054de48fa26b383c9120fa970ca261a26b8"
+  },
+  "executed_exclusions": {
+    "excluded_files_absent": true,
+    "files": []
+  },
+  "asset_catalog": {
+    "bytes": 1206505,
+    "sha256": "2ed83b334c0e4297ce7a1117cf5f2054de48fa26b383c9120fa970ca261a26b8"
+  },
+  "scope": "Worker scientific assessment plus controller-observed cleanup; not independent answer-isolation approval."
+}

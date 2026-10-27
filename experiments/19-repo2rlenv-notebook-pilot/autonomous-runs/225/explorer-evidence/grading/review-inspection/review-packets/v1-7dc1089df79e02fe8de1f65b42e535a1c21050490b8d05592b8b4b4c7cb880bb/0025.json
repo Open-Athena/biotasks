@@ -1,0 +1,42 @@
+[
+  {
+    "id": "file_present",
+    "kind": "structural",
+    "artifacts": [
+      "hrv_indices.csv"
+    ],
+    "public_requirement": "The file hrv_indices.csv exists at the declared output root."
+  },
+  {
+    "id": "structure_valid",
+    "kind": "structural",
+    "artifacts": [
+      "hrv_indices.csv"
+    ],
+    "public_requirement": "The submission is a valid CSV table with exactly 95 data columns named precisely as listed in 'Required output', each appearing exactly once; column order is free but no column may be missing, duplicated, renamed or extra. Exactly one data row is present with every field either a decimal numeric literal or an explicit empty field. Blank CSV records, quoted or literal NaN/Inf and any non-numeric, non-finite, or binary content fail."
+  },
+  {
+    "id": "time_domain_values",
+    "kind": "scientific",
+    "artifacts": [
+      "hrv_indices.csv"
+    ],
+    "public_requirement": "Every time-domain metric value (25 columns HRV_MeanNN..HRV_TINN) matches the reference value within relative tolerance 1e-6 of the reference magnitude plus absolute floor 1e-9. Empty fields must correspond exactly to metrics undefined in the reference (HRV_SDANN2, HRV_SDNNI2, HRV_SDANN5, HRV_SDNNI5): an empty field where the reference is defined, or a number where the reference is undefined, is wrong."
+  },
+  {
+    "id": "frequency_domain_values",
+    "kind": "scientific",
+    "artifacts": [
+      "hrv_indices.csv"
+    ],
+    "public_requirement": "Every frequency-domain metric value (10 columns HRV_ULF..HRV_LnHF) matches the reference value within relative tolerance 1e-6 of the reference magnitude plus absolute floor 1e-9, with NaN-valued cells serialized as an empty HRV_ULF field exactly as in the reference; incorrect emptiness, presence, or magnitude fails."
+  },
+  {
+    "id": "nonlinear_domain_values",
+    "kind": "scientific",
+    "artifacts": [
+      "hrv_indices.csv"
+    ],
+    "public_requirement": "Every non-linear-domain metric value (60 columns HRV_SD1..HRV_Symbolic_EqualProb4_2UV) matches the reference value within relative tolerance 1e-6 of the reference magnitude plus absolute floor 1e-9; the section must contain no unspecified rows or additional values, and exactly one value is accepted per metric."
+  }
+]

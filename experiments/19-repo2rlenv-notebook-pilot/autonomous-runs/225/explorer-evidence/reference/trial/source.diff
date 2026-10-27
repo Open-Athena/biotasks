@@ -1,0 +1,26 @@
+--- original.py
++++ analysis.py
+@@ -26,6 +26,23 @@
+ # Note: this cell is hidden using the "remove-input" tag
+ # Make bigger images
+ import matplotlib.pyplot as plt
++
++# --- Offline input adaptation (environment-only; no scientific change) ---
++# The original notebook relies on nk.data() fetching its example dataset from
++# https://raw.githubusercontent.com/neuropsychology/NeuroKit/master/data/ .
++# The exact dataset file is staged at /inputs/ so the offline reference can
++# read identical bytes through the unchanged nk.data() code path.
++_orig_pd_read_csv = nk.pd.read_csv
++
++
++def _offline_read_csv(path, *args, **kwargs):
++    _nk_data_prefix = "https://raw.githubusercontent.com/neuropsychology/NeuroKit/master/data/"
++    if isinstance(path, str) and path.startswith(_nk_data_prefix):
++        return _orig_pd_read_csv("/inputs/" + path[len(_nk_data_prefix):], *args, **kwargs)
++    return _orig_pd_read_csv(path, *args, **kwargs)
++
++
++nk.pd.read_csv = _offline_read_csv
+ 
+ 
+ plt.rcParams["figure.figsize"] = [15, 5]

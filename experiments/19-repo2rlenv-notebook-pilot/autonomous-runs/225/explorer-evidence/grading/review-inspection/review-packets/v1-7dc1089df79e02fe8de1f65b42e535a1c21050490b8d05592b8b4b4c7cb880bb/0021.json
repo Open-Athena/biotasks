@@ -1,0 +1,190 @@
+{
+  "disposition": "ready",
+  "probes": [
+    {
+      "name": "wrong-time-mediannn",
+      "kind": "wrong_solution",
+      "focus": "general",
+      "rationale": "Time domain must match the reference values. This shifts HRV_MedianNN from 690.0 to 701.0 (about 1.6% change), which is far outside the stated relative tolerance, while all other cells, identities and empty-field pattern are preserved.",
+      "evidence": [
+        {
+          "path": "hrv_indices.csv",
+          "quote": "HRV_MeanNN,HRV_SDNN,HRV_SDANN1,HRV_SDNNI1,HRV_SDANN2,HRV_SDNNI2,HRV_SDANN5,HRV_SDNNI5,HRV_RMSSD,HRV_SDSD,HRV_CVNN,HRV_CVSD,HRV_MedianNN,HRV_MadNN"
+        }
+      ],
+      "script": "\"\"\"Wrong solution: shift a time-domain HRV metric value.\n\nSets HRV_MedianNN to a value +11ms from the reference, which is a\nplausible alternative median NN interval but far outside the stated\n1e-6 relative tolerance.\n\"\"\"\nimport csv\nfrom pathlib import Path\n\nFILENAME = \"hrv_indices.csv\"\n\n\ndef main():\n    p = Path(FILENAME)\n    with p.open(newline=\"\", encoding=\"utf-8\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2\n    header, values = rows\n    assert len(header) == 95\n    assert len(values) == 95\n    i = header.index(\"HRV_MedianNN\")\n    old = float(values[i])\n    values[i] = repr(old + 11.0)\n    assert abs(float(values[i]) - old) > 1e-6 * abs(old) + 1e-9\n    tmp = p.with_suffix(\".csv.tmp\")\n    with tmp.open(\"w\", newline=\"\", encoding=\"utf-8\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(values)\n    tmp.replace(p)\n    print(\"mutated HRV_MedianNN\", old, \"->\", values[i])\n\n\nmain()\n",
+      "check_ids": [
+        "time_domain_values"
+      ]
+    },
+    {
+      "name": "wrong-frequency-lf-and-ulf",
+      "kind": "wrong_solution",
+      "focus": "general",
+      "rationale": "Frequency domain must match reference values, including HRV_ULF empty since ULF is undefined for a 5-minute recording interpolated at 100 Hz. This scales HRV_LF by 5% (out of tolerance) and puts a plausible value in the empty HRV_ULF field, breaking both magnitude and empty-field identity while remaining a parseable single-row CSV.",
+      "evidence": [
+        {
+          "path": "hrv_indices.csv",
+          "quote": "HRV_ULF,HRV_VLF,HRV_LF,HRV_HF,HRV_VHF,HRV_TP,HRV_LFHF,HRV_LFn,HRV_HFn,HRV_LnHF"
+        },
+        {
+          "path": "hrv_indices.csv",
+          "quote": "234.375,,0.01731007726584816,0.04802607886179408,0.06023186865189019"
+        }
+      ],
+      "script": "\"\"\"Wrong solution: wrong frequency-domain values.\n\n- HRV_LF is scaled up by 5%, far outside the 1e-6 tolerance.\n- HRV_ULF, which must be an empty field, is given a plausible\n  but unsupported value.\n\"\"\"\nimport csv\nfrom pathlib import Path\n\nFILENAME = \"hrv_indices.csv\"\n\n\ndef main():\n    p = Path(FILENAME)\n    with p.open(newline=\"\", encoding=\"utf-8\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2\n    header, values = rows\n    assert len(header) == 95 and len(values) == 95\n    i = header.index(\"HRV_LF\")\n    old = float(values[i])\n    values[i] = repr(old * 1.05)\n    assert abs(float(values[i]) - old) > 1e-6 * abs(old) + 1e-9\n    j = header.index(\"HRV_ULF\")\n    assert values[j] == \"\"\n    values[j] = \"0.005\"\n    tmp = p.with_suffix(\".csv.tmp\")\n    with tmp.open(\"w\", newline=\"\", encoding=\"utf-8\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(values)\n    tmp.replace(p)\n    print(\"mutated HRV_LF\", old, \"->\", values[i], \"; filled HRV_ULF\")\n\n\nmain()\n",
+      "check_ids": [
+        "frequency_domain_values"
+      ]
+    },
+    {
+      "name": "wrong-nonlinear-values",
+      "kind": "wrong_solution",
+      "focus": "general",
+      "rationale": "Non-linear domain values must match. This perturbs representative values across non-linear families (Poincare SD1, DFA alpha1, SampEn, Higuchi FD, symbolic dynamics probability) by far-out-of-tolerance amounts while keeping all identities and row structure valid.",
+      "evidence": [
+        {
+          "path": "hrv_indices.csv",
+          "quote": "HRV_Symbolic_EqualProb4_0V,HRV_Symbolic_EqualProb4_1V,HRV_Symbolic_EqualProb4_2LV,HRV_Symbolic_EqualProb4_2UV"
+        },
+        {
+          "path": "hrv_indices.csv",
+          "quote": "1.8563723883918795,1.9130710664404325,0.8544746504250169,0.21261682242990654,0.48130841121495327,0.14485981308411214,0.16121495327102803"
+        }
+      ],
+      "script": "\"\"\"Wrong solution: perturb several non-linear HRV index values.\n\nChanges HRV_SD1, HRV_DFA_alpha1, HRV_SampEn, HRV_HFD, and\nHRV_Symbolic_EqualProb4_1V by amounts far outside tolerance.\n\"\"\"\nimport csv\nfrom pathlib import Path\n\nFILENAME = \"hrv_indices.csv\"\n\nPERTURB = {\n    \"HRV_SD1\": 4.5,\n    \"HRV_DFA_alpha1\": 0.11,\n    \"HRV_SampEn\": 0.2,\n    \"HRV_HFD\": 0.3,\n    \"HRV_Symbolic_EqualProb4_1V\": 0.07,\n}\n\n\ndef main():\n    p = Path(FILENAME)\n    with p.open(newline=\"\", encoding=\"utf-8\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2\n    header, values = rows\n    assert len(header) == 95 and len(values) == 95\n    for name, delta in PERTURB.items():\n        i = header.index(name)\n        old = float(values[i])\n        values[i] = repr(old + delta)\n        assert abs(float(values[i]) - old) > 1e-6 * abs(old) + 1e-9\n    tmp = p.with_suffix(\".csv.tmp\")\n    with tmp.open(\"w\", newline=\"\", encoding=\"utf-8\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(values)\n    tmp.replace(p)\n    print(\"perturbed\", sorted(PERTURB))\n\n\nmain()\n",
+      "check_ids": [
+        "nonlinear_domain_values"
+      ]
+    },
+    {
+      "name": "wrong-empty-field-identity",
+      "kind": "wrong_solution",
+      "focus": "general",
+      "rationale": "Empty-field identity is part of the answer. This probe fills the undefined HRV_SDNNI5 (empty in reference since a 5-minute recording has no 5-minute sub-window) with a plausible SDNNI value, and empties the defined HRV_SDNN, while keeping the CSV structurally valid and everything else unchanged.",
+      "evidence": [
+        {
+          "path": "hrv_indices.csv",
+          "quote": "HRV_SDNN,HRV_SDANN1,HRV_SDNNI1,HRV_SDANN2,HRV_SDNNI2,HRV_SDANN5,HRV_SDNNI5,HRV_RMSSD,HRV_SDSD,HRV_CVNN,HRV_CVSD,HRV_MedianNN"
+        },
+        {
+          "path": "hrv_indices.csv",
+          "quote": "696.3953488372093,62.135891206172104,10.060727541349376,60.27503600273103,,,,,"
+        }
+      ],
+      "script": "\"\"\"Wrong solution: flipped empty-field identity for the time domain.\n\n- HRV_SDNNI5, empty in the reference, is filled with a plausible value.\n- HRV_SDNN, defined, is emptied.\n\"\"\"\nimport csv\nfrom pathlib import Path\n\nFILENAME = \"hrv_indices.csv\"\n\n\ndef main():\n    p = Path(FILENAME)\n    with p.open(newline=\"\", encoding=\"utf-8\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2\n    header, values = rows\n    assert len(header) == 95 and len(values) == 95\n    i = header.index(\"HRV_SDNNI5\")\n    assert values[i] == \"\"\n    values[i] = \"60.0\"\n    j = header.index(\"HRV_SDNN\")\n    assert values[j] != \"\"\n    values[j] = \"\"\n    tmp = p.with_suffix(\".csv.tmp\")\n    with tmp.open(\"w\", newline=\"\", encoding=\"utf-8\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(values)\n    tmp.replace(p)\n    print(\"filled HRV_SDNNI5, emptied HRV_SDNN\")\n\n\nmain()\n",
+      "check_ids": [
+        "time_domain_values"
+      ]
+    },
+    {
+      "name": "wrong-all-values-same-digit",
+      "kind": "wrong_solution",
+      "focus": "general",
+      "rationale": "Extreme wrong-value control that remains structurally valid: replaces every defined value with a single-digit placeholder, preserving all identities and the correct empty-field pattern. Since every defined metric is far outside tolerance and most reference values are not small (e.g., HRV_MeanNN 696.4, HRV_TP 0.137), all three scientific checks must fail. Asserts there is at least one large-magnitude reference value so this cannot be a valid tolerance-preserving encoding.",
+      "evidence": [
+        {
+          "path": "hrv_indices.csv",
+          "quote": "696.3953488372093,62.135891206172104,10.060727541349376,60.27503600273103"
+        }
+      ],
+      "script": "\"\"\"Wrong solution: all values replaced with a single-digit digest value.\n\nStructurally valid CSV with intact identities, empty-field pattern and\nrow count, but every defined value is wrong by orders of magnitude.\n\"\"\"\nimport csv\nfrom pathlib import Path\n\nFILENAME = \"hrv_indices.csv\"\n\n\ndef main():\n    p = Path(FILENAME)\n    with p.open(newline=\"\", encoding=\"utf-8\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2\n    header, values = rows\n    assert len(header) == 95 and len(values) == 95\n    # ensure at least one reference value is far from 9.0 so that replacing\n    # it with a single digit is far outside tolerance\n    i = header.index(\"HRV_MeanNN\")\n    old = float(values[i])\n    assert abs(9.0 - old) > 1e-6 * abs(old) + 1e-9\n    w = [\"\" if x == \"\" else \"9\" for x in values]\n    assert w != values\n    tmp = p.with_suffix(\".csv.tmp\")\n    with tmp.open(\"w\", newline=\"\", encoding=\"utf-8\") as fh:\n        writer = csv.writer(fh, lineterminator=\"\\n\")\n        writer.writerow(header)\n        writer.writerow(w)\n    tmp.replace(p)\n    print(\"replaced all defined values with 9; rest of file unchanged\")\n\n\nmain()\n",
+      "check_ids": [
+        "time_domain_values",
+        "frequency_domain_values",
+        "nonlinear_domain_values"
+      ]
+    },
+    {
+      "name": "valid-reencode-precision",
+      "kind": "valid_alternative",
+      "focus": "general",
+      "rationale": "Public rule states text formatting is free and only parsed finite values are compared within tolerance. This probe reformats every finite value with a different decimal encoding (%.18g) that parses back to the exact same double and leaves all mandatory emptiness intact, testing that the implementation honors formatting freedom without rounding to a different value.",
+      "evidence": [
+        {
+          "path": "hrv_indices.csv",
+          "quote": "0.7413829049877843,2.37398038596473,1.2144704708675143,0.9125443600194378"
+        }
+      ],
+      "script": "\"\"\"Valid representation control: different digit encoding of equal values.\n\nRe-encodes all finite values using %.18g, which round-trips to the\nexact same double, while leaving the five mandatory empty fields\n(HRV_SDANN2, HRV_SDNNI2, HRV_SDANN5, HRV_SDNNI5, HRV_ULF) intact.\n\"\"\"\nimport csv\nfrom pathlib import Path\n\nFILENAME = \"hrv_indices.csv\"\n\n\ndef main():\n    p = Path(FILENAME)\n    with p.open(newline=\"\", encoding=\"utf-8\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2\n    header, values = rows\n    assert len(header) == 95 and len(values) == 95\n    out = []\n    for x in values:\n        if x == \"\":\n            out.append(\"\")\n        else:\n            out.append(\"%.18g\" % float(x))\n    for a, b in zip(values, out):\n        if a == \"\":\n            assert b == \"\"\n        else:\n            assert float(a) == float(b)  # exact same double\n    tmp = p.with_suffix(\".csv.tmp\")\n    with tmp.open(\"w\", newline=\"\", encoding=\"utf-8\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(out)\n    tmp.replace(p)\n    print(\"re-encoded all finite values with %.18g\")\n\n\nmain()\n",
+      "check_ids": [
+        "time_domain_values",
+        "frequency_domain_values",
+        "nonlinear_domain_values"
+      ]
+    },
+    {
+      "name": "valid-column-permutation",
+      "kind": "valid_alternative",
+      "focus": "general",
+      "rationale": "Public rule states column order is free and values are identified by column name. This probe rotates the first 10 columns to the end, keeping every name exactly once and every value paired with its original column, testing that the grader matches values by name and not by position.",
+      "evidence": [
+        {
+          "path": "hrv_indices.csv",
+          "quote": "HRV_VLF,HRV_LF,HRV_HF,HRV_VHF,HRV_TP,HRV_LFHF,HRV_LFn,HRV_HFn,HRV_LnHF,HRV_SD1,HRV_SD2"
+        }
+      ],
+      "script": "\"\"\"Valid representation control: permute the column order.\n\nColumn order is explicitly free; values are identified by column name.\nRotates the first 10 columns to the end while keeping every\n(name, value) association intact.\n\"\"\"\nimport csv\nfrom pathlib import Path\n\nFILENAME = \"hrv_indices.csv\"\n\n\ndef main():\n    p = Path(FILENAME)\n    with p.open(newline=\"\", encoding=\"utf-8\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2\n    header, values = rows\n    assert len(header) == 95 and len(values) == 95\n    perm = list(range(3, 10)) + [0, 1, 2] + list(range(10, 95))\n    assert sorted(perm) == list(range(95))\n    header2 = [header[i] for i in perm]\n    values2 = [values[i] for i in perm]\n    assert len(header2) == 95 and len(set(header2)) == 95\n    tmp = p.with_suffix(\".csv.tmp\")\n    with tmp.open(\"w\", newline=\"\", encoding=\"utf-8\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header2)\n        w.writerow(values2)\n    tmp.replace(p)\n    print(\"reordered\", len(header2), \"columns; first/last:\", header2[0], header2[-1])\n\n\nmain()\n",
+      "check_ids": [
+        "time_domain_values",
+        "frequency_domain_values",
+        "nonlinear_domain_values"
+      ]
+    },
+    {
+      "name": "tiny-shift-within-tolerance",
+      "kind": "valid_alternative",
+      "focus": "general",
+      "rationale": "A change within the explicitly permitted 1e-6 relative tolerance is a valid alternative, not a wrong result. This probe shifts HRV_SampEn by 1e-13, far inside the allowed tolerance (about 1e-13 relative for a value near 1.26), to verify that the grader accepts any faithful value within the stated tolerance rather than requiring exact text equality.",
+      "evidence": [
+        {
+          "path": "hrv_indices.csv",
+          "quote": "1.1836484532861742,1.2599314579739807,4.282683406115447,1.0635329445370547"
+        }
+      ],
+      "script": "\"\"\"Valid representation control: small shift inside the 1e-6 tolerance.\n\nShifts HRV_SampEn by 1e-13, far inside the allowed tolerance.\n\"\"\"\nimport csv\nfrom pathlib import Path\n\nFILENAME = \"hrv_indices.csv\"\n\n\ndef main():\n    p = Path(FILENAME)\n    with p.open(newline=\"\", encoding=\"utf-8\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2\n    header, values = rows\n    assert len(header) == 95 and len(values) == 95\n    i = header.index(\"HRV_SampEn\")\n    old = float(values[i])\n    values[i] = repr(old + 1e-13)\n    assert abs(float(values[i]) - old) <= 1e-6 * abs(old) + 1e-9\n    tmp = p.with_suffix(\".csv.tmp\")\n    with tmp.open(\"w\", newline=\"\", encoding=\"utf-8\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(values)\n    tmp.replace(p)\n    print(\"shifted HRV_SampEn by 1e-13 of\", old)\n\n\nmain()\n",
+      "check_ids": [
+        "time_domain_values",
+        "frequency_domain_values",
+        "nonlinear_domain_values"
+      ]
+    },
+    {
+      "name": "tolerance-boundary-outside",
+      "kind": "wrong_solution",
+      "focus": "general",
+      "rationale": "Tests the numeric tolerance boundary: shifts HRV_CVI by 2.9e-6 relative, roughly double the stated 1e-6 relative tolerance, so the value must be rejected even though it is a small difference that would pass a looser (e.g. 1e-5) tolerance.",
+      "evidence": [
+        {
+          "path": "hrv_indices.csv",
+          "quote": "1.4713325928606957,4.758251679217147,427.25988859940844,0.5581395348837209"
+        }
+      ],
+      "script": "\"\"\"Tolerance boundary control: slightly out-of-tolerance change.\n\nShifts HRV_CVI by 2.9e-6 relative to the reference, about twice the\nstated 1e-6 relative tolerance.\n\"\"\"\nimport csv\nfrom pathlib import Path\n\nFILENAME = \"hrv_indices.csv\"\n\n\ndef main():\n    p = Path(FILENAME)\n    with p.open(newline=\"\", encoding=\"utf-8\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2\n    header, values = rows\n    assert len(header) == 95 and len(values) == 95\n    i = header.index(\"HRV_CVI\")\n    old = float(values[i])\n    delta = 2.9e-6 * abs(old)\n    values[i] = repr(old + delta)\n    assert abs(float(values[i]) - old) > 1e-6 * abs(old) + 1e-9\n    tmp = p.with_suffix(\".csv.tmp\")\n    with tmp.open(\"w\", newline=\"\", encoding=\"utf-8\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(values)\n    tmp.replace(p)\n    print(\"shifted HRV_CVI by\", delta, \"of\", old)\n\n\nmain()\n",
+      "check_ids": [
+        "time_domain_values",
+        "frequency_domain_values",
+        "nonlinear_domain_values"
+      ]
+    },
+    {
+      "name": "nonfinite-value-rejected",
+      "kind": "wrong_solution",
+      "focus": "general",
+      "rationale": "Public rule rejects non-finite or non-numeric values anywhere they appear in a defined cell. This probe sets two otherwise-correct defined cells to the text 'nan' and 'Infinity', which parse as non-finite floats and must be rejected, while the file remains parseable as a well-formed single-row CSV.",
+      "evidence": [
+        {
+          "path": "hrv_indices.csv",
+          "quote": "HRV_MeanNN,HRV_SDNN,HRV_SDANN1,HRV_SDNNI1,HRV_SDANN2,HRV_SDNNI2,HRV_SDANN5,HRV_SDNNI5,HRV_RMSSD,HRV_SDSD"
+        }
+      ],
+      "script": "\"\"\"Non-finite value control (structurally valid CSV).\n\nSets two cells to 'nan' and 'Infinity'; the implementation must\nreject non-finite values wherever they appear in a defined cell.\n\"\"\"\nimport csv\nfrom pathlib import Path\n\nFILENAME = \"hrv_indices.csv\"\n\n\ndef main():\n    p = Path(FILENAME)\n    with p.open(newline=\"\", encoding=\"utf-8\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2\n    header, values = rows\n    assert len(header) == 95 and len(values) == 95\n    i = header.index(\"HRV_MeanNN\")\n    j = header.index(\"HRV_SDNN\")\n    assert values[i] and values[j]\n    values[i] = \"Infinity\"\n    values[j] = \"nan\"\n    tmp = p.with_suffix(\".csv.tmp\")\n    with tmp.open(\"w\", newline=\"\", encoding=\"utf-8\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(values)\n    tmp.replace(p)\n    print(\"set HRV_MeanNN=Infinity, HRV_SDNN=nan\")\n\n\nmain()\n",
+      "check_ids": [
+        "structure_valid"
+      ]
+    }
+  ],
+  "concerns": [
+    "Terminology: the public rule states an empty field must be left for metrics undefined in the reference; the reference artifact represents these as empty fields, and any non-finite textual marker (e.g. 'NaN'/'Inf'/'nan') is rejected. The scientific requirement here is numeric/identity accuracy, not re-implementation."
+  ]
+}

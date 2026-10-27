@@ -27,6 +27,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("number", type=int)
     parser.add_argument("presentation", type=Path)
+    parser.add_argument("--snapshot", action="store_true")
+    parser.add_argument("--freeze", type=Path)
     args = parser.parse_args()
     case = f"{args.number:03}"
     public = EXP / f"autonomous-runs/{case}"
@@ -34,7 +36,7 @@ def main():
     dest = EXP / prefix
     assert not dest.exists()
     archive = BASE / f"archives/{case}"
-    original = archive / "files"
+    original = archive / ("snapshot-restored/files" if args.snapshot else "files")
     release = BASE / f"release{case}"
     verified = read(release / "anonymous-download-verification.json")
     assert verified["verified"] and verified["anonymous"]
@@ -55,6 +57,12 @@ def main():
 
     profile = replace(profile)
     profile.update(read(args.presentation))
+    # Optional stages belong to the selected execution, not the prior example.
+    profile["stages"] = [
+        stage
+        for stage in profile["stages"]
+        if not stage[0].startswith(("specification-revision-", "specification-rereview-"))
+    ]
     pipeline = read(original / "pipeline.json")
     assert pipeline["status"] == "validated" and not pipeline["operator_interventions"]
     profile["release"] = {
@@ -74,7 +82,14 @@ def main():
     profile["verifier_report"] = (
         profile["trajectory_glob"].rsplit("/agent/", 1)[0] + "/verifier/report.json"
     )
-    manifest_raw = (archive / "sealed-manifest.json").read_bytes()
+    if args.snapshot:
+        verified_snapshot = read(release / "primary-snapshot-verification.json")
+        manifest_raw = (archive / "snapshot-restored/snapshot-files.json").read_bytes()
+        assert verified_snapshot["archive_role"] == "primary"
+        assert verified_snapshot["member_manifest_sha256"] == sha(manifest_raw)
+        assert verified_snapshot["original_per_file_seal_reconstructed"] is False
+    else:
+        manifest_raw = (archive / "sealed-manifest.json").read_bytes()
     rows = {row["path"]: row for row in json.loads(manifest_raw)["files"]}
     selected = {}
     public.mkdir(parents=True, exist_ok=True)
@@ -105,7 +120,8 @@ def main():
         (public / target).write_bytes(source.read_bytes())
     payload = BASE / f"launch/{case}-payload"
     config = read(payload / "campaign-config.json")
-    frozen = read(EXP / f"panel-rounds/108/freeze-{case}.json")
+    frozen = read(args.freeze or EXP / f"panel-rounds/108/freeze-{case}.json")
+    assert frozen["campaign"] == args.number
     with tarfile.open(payload / "biotasks.tar") as source:
         for target, key in [("source.ipynb", "notebook_file"), ("seed.json", "seed_file")]:
             name = "experiments/19-repo2rlenv-notebook-pilot/" + config[key]
@@ -284,6 +300,9 @@ def main():
             {
                 "campaign": args.number,
                 "original_archive_manifest_sha256": sha(manifest_raw),
+                "original_archive_format": "quiescent-tar-v1"
+                if args.snapshot
+                else "per-file-export-v1",
                 "files": selected,
                 "scientific_artifacts_modified": False,
                 "publication_revision": publication["commit_sha"],

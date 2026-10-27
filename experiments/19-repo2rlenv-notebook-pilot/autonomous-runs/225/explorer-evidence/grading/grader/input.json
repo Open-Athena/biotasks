@@ -1,0 +1,3748 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "hrv_indices.csv"
+    ],
+    "parsing_support": {
+      "authoring_import": "Use PYTHONPATH=/work for a focused shell check. The controller places this same module beside grade.py in controls and Harbor.",
+      "authoring_source": "/work/biotasks_table_io.py",
+      "bytes": 1637,
+      "import": "from biotasks_table_io import read_delimited_table",
+      "license": {
+        "bytes": 11357,
+        "path": "LICENSE.biotasks",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "spdx": "Apache-2.0"
+      },
+      "module": "biotasks_table_io.py",
+      "schema": "delimited-table-reader-v1",
+      "scope": "Optional syntax reader only. The worker owns scientific comparisons and must publicly declare any enabled representation normalization.",
+      "sha256": "35708cb000383d1d11a68eb0381e41ac1a5d842c04183e444049b2f53b661bbf",
+      "source": "# SPDX-License-Identifier: Apache-2.0\n\"\"\"Read delimited output syntax without choosing scientific comparison rules.\"\"\"\n\nimport csv\nfrom pathlib import Path\n\n\ndef read_delimited_table(\n    path: str | Path,\n    *,\n    delimiter: str = \",\",\n    encoding: str = \"utf-8\",\n    allow_blank_records: bool = False,\n) -> tuple[list[str], list[list[str]]]:\n    \"\"\"Return a header and equal-width rows, retaining every decoded field.\n\n    Uses Python's strict CSV reader, including quoted delimiters/newlines and\n    ordinary line endings. Only completely empty CSV records may be skipped,\n    and only when explicitly enabled. Quoted empty fields, whitespace-only\n    fields and delimiter-only rows are data, not empty records. No stripping,\n    numeric conversion, sorting, deduplication or scientific equivalence is\n    inferred. Callers still validate header names, identities and values.\n    \"\"\"\n    records = []\n    try:\n        with Path(path).open(encoding=encoding, newline=\"\") as stream:\n            for row in csv.reader(stream, delimiter=delimiter, strict=True):\n                if not row:\n                    if allow_blank_records:\n                        continue\n                    raise ValueError(\"Empty CSV record is not allowed\")\n                records.append(row)\n    except csv.Error as error:\n        raise ValueError(f\"Invalid delimited syntax: {error}\") from error\n    if not records:\n        raise ValueError(\"Delimited table has no header\")\n    header, *rows = records\n    if any(len(row) != len(header) for row in rows):\n        raise ValueError(\"Delimited table has inconsistent row widths\")\n    return header, rows\n"
+    },
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "bio_resting_5min_100hz.csv"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "independent_execution": {
+    "execution": {
+      "exit_code": 0,
+      "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+      "role_process_cleanup_verified": true,
+      "stderr": "",
+      "stdout": "R-peaks detected: 431\nWrote /work/probe/solution-case/outputs/hrv_indices.csv with 95 columns (90 defined)\n",
+      "timed_out": false
+    },
+    "outputs": [
+      {
+        "bytes": 2796,
+        "path": "hrv_indices.csv",
+        "sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9"
+      }
+    ],
+    "status": "executed_without_answer_access"
+  },
+  "independent_solution": {
+    "code": "#!/usr/bin/env python3\n\"\"\"Compute the 95 HRV indices (NeuroKit2 0.2.13 preset) from a 5-minute resting ECG.\n\nUsage: python solve.py --input-dir INPUT_DIR --output-dir OUTPUT_DIR\n\nInputs (read-only):  <input-dir>/bio_resting_5min_100hz.csv  (header ECG,PPG,RSP; 100 Hz, 30000 samples)\nOutput:              <output-dir>/hrv_indices.csv           (header + one data row, 95 columns)\n\"\"\"\nimport argparse\nimport os\n\nimport matplotlib\nmatplotlib.use(\"Agg\")  # figures are not part of the deliverable; plotting disabled\n\nimport neurokit2 as nk\nimport numpy as np\nimport pandas as pd\n\nTIME = [\n    \"HRV_MeanNN\", \"HRV_SDNN\", \"HRV_SDANN1\", \"HRV_SDNNI1\", \"HRV_SDANN2\", \"HRV_SDNNI2\",\n    \"HRV_SDANN5\", \"HRV_SDNNI5\", \"HRV_RMSSD\", \"HRV_SDSD\", \"HRV_CVNN\", \"HRV_CVSD\",\n    \"HRV_MedianNN\", \"HRV_MadNN\", \"HRV_MCVNN\", \"HRV_IQRNN\", \"HRV_SDRMSSD\", \"HRV_Prc20NN\",\n    \"HRV_Prc80NN\", \"HRV_pNN50\", \"HRV_pNN20\", \"HRV_MinNN\", \"HRV_MaxNN\", \"HRV_HTI\", \"HRV_TINN\",\n]\nFREQ = [\n    \"HRV_ULF\", \"HRV_VLF\", \"HRV_LF\", \"HRV_HF\", \"HRV_VHF\", \"HRV_TP\", \"HRV_LFHF\",\n    \"HRV_LFn\", \"HRV_HFn\", \"HRV_LnHF\",\n]\nNONLINEAR = [\n    \"HRV_SD1\", \"HRV_SD2\", \"HRV_SD1SD2\", \"HRV_S\", \"HRV_CSI\", \"HRV_CVI\", \"HRV_CSI_Modified\",\n    \"HRV_PIP\", \"HRV_IALS\", \"HRV_PSS\", \"HRV_PAS\", \"HRV_GI\", \"HRV_SI\", \"HRV_AI\", \"HRV_PI\",\n    \"HRV_C1d\", \"HRV_C1a\", \"HRV_SD1d\", \"HRV_SD1a\", \"HRV_C2d\", \"HRV_C2a\", \"HRV_SD2d\", \"HRV_SD2a\",\n    \"HRV_Cd\", \"HRV_Ca\", \"HRV_SDNNd\", \"HRV_SDNNa\", \"HRV_DFA_alpha1\",\n    \"HRV_MFDFA_alpha1_Width\", \"HRV_MFDFA_alpha1_Peak\", \"HRV_MFDFA_alpha1_Mean\",\n    \"HRV_MFDFA_alpha1_Max\", \"HRV_MFDFA_alpha1_Delta\", \"HRV_MFDFA_alpha1_Asymmetry\",\n    \"HRV_MFDFA_alpha1_Fluctuation\", \"HRV_MFDFA_alpha1_Increment\", \"HRV_DFA_alpha2\",\n    \"HRV_MFDFA_alpha2_Width\", \"HRV_MFDFA_alpha2_Peak\", \"HRV_MFDFA_alpha2_Mean\",\n    \"HRV_MFDFA_alpha2_Max\", \"HRV_MFDFA_alpha2_Delta\", \"HRV_MFDFA_alpha2_Asymmetry\",\n    \"HRV_MFDFA_alpha2_Fluctuation\", \"HRV_MFDFA_alpha2_Increment\",\n    \"HRV_ApEn\", \"HRV_SampEn\", \"HRV_ShanEn\", \"HRV_FuzzyEn\", \"HRV_MSEn\", \"HRV_CMSEn\", \"HRV_RCMSEn\",\n    \"HRV_CD\", \"HRV_HFD\", \"HRV_KFD\", \"HRV_LZC\",\n    \"HRV_Symbolic_EqualProb4_0V\", \"HRV_Symbolic_EqualProb4_1V\",\n    \"HRV_Symbolic_EqualProb4_2LV\", \"HRV_Symbolic_EqualProb4_2UV\",\n]\nCOLUMNS = TIME + FREQ + NONLINEAR\nDELIVERABLE = list(COLUMNS)\nassert len(DELIVERABLE) == 95, len(DELIVERABLE)\n\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument(\"--input-dir\", required=True)\n    ap.add_argument(\"--output-dir\", required=True)\n    args = ap.parse_args()\n\n    sampling_rate = 100\n\n    csv_path = os.path.join(args.input_dir, \"bio_resting_5min_100hz.csv\")\n    df = pd.read_csv(csv_path)\n    ecg = df[\"ECG\"].to_numpy(dtype=float)  # ECG column exactly as supplied (PPG/RSP unused)\n\n    # 1. R-peak detection: NeuroKit2 0.2.13 default method, no cleaning, no artifact correction.\n    _, info = nk.ecg_peaks(\n        ecg,\n        sampling_rate=sampling_rate,\n        method=\"neurokit\",\n        correct_artifacts=False,\n    )\n    peaks = np.asarray(info[\"ECG_R_Peaks\"], dtype=int)\n\n    # 2. HRV in the three domains exactly as defined by NeuroKit2 0.2.13.\n    idx_time = nk.hrv_time(peaks, sampling_rate=sampling_rate)\n\n    idx_freq = nk.hrv_frequency(\n        peaks,\n        sampling_rate=sampling_rate,\n        ulf=(0, 0.0033),\n        vlf=(0.0033, 0.04),\n        lf=(0.04, 0.15),\n        hf=(0.15, 0.4),\n        vhf=(0.4, 0.5),\n        psd_method=\"welch\",\n        normalize=True,\n        interpolation_rate=100,\n    )\n\n    idx_nl = nk.hrv_nonlinear(peaks, sampling_rate=sampling_rate)\n\n    # Merge: NaN / undefined metrics are emitted as empty fields.\n    out = {}\n    for frame in (idx_time, idx_freq, idx_nl):\n        for col in frame.columns:\n            if col not in out:\n                val = frame[col].iloc[0]\n                if isinstance(val, float) and np.isnan(val):\n                    out[col] = \"\"\n                else:\n                    out[col] = val\n\n    row = {name: out.get(name, \"\") for name in DELIVERABLE}\n\n    os.makedirs(args.output_dir, exist_ok=True)\n    out_path = os.path.join(args.output_dir, \"hrv_indices.csv\")\n    pd.DataFrame([row], columns=DELIVERABLE).to_csv(out_path, index=False)\n\n    n_defined = sum(1 for v in row.values() if v != \"\")\n    print(f\"R-peaks detected: {len(peaks)}\")\n    print(f\"Wrote {out_path} with {len(row)} columns ({n_defined} defined)\")\n\n\nif __name__ == \"__main__\":\n    main()\n",
+    "disposition": "ready",
+    "rationale": "Implemented the NeuroKit2 0.2.13 HRV preset exactly as specified: pd.read_csv -> ECG column as supplied (no ecg_clean, no artifact correction) -> nk.ecg_peaks(sampling_rate=100, method=\"neurokit\", correct_artifacts=False) [431 R-peaks] -> nk.hrv_time, nk.hrv_frequency (ulf=(0,0.0033), vlf=(0.0033,0.04), lf=(0.04,0.15), hf=(0.15,0.4), vhf=(0.4,0.5), psd_method=\"welch\", normalize=True, interpolation_rate=100) and nk.hrv_nonlinear, all with sampling_rate=100. These kwargs match the installed 0.2.13 function signatures verbatim (verified by inspect.signature), so this is a direct invocation of the defining preset rather than a lookalike. Output is the single required file hrv_indices.csv with a header and one data row containing all 95 named columns; NaN metrics are written as empty fields. 90 of 95 metrics are defined; the 5 blanks are method-inherent, not failures: SDANN2/SDNNI2 need >=6 min and SDANN5/SDNNI5 need >=15 min of data (5-min recording), and HRV_ULF is NaN because with interpolation_rate=100 the Welch frequency resolution (0.01 Hz) places no bin strictly inside the 0-0.0033 Hz ULF band. Verified fresh end-to-end runs succeed in ~6 s with no warnings (well under the 600 s limit); representation uses pandas' default full-precision float text (repr round-trip), so no precision is lost at the CSV boundary. Limitations: values are produced by the installed library on the supplied input only; agreement with the hidden reference values has not been observed and is not claimed, and the empty-field semantics for NaN were chosen per the public contract (\"metrics undefined per the reference method must be left as empty fields\")."
+  },
+  "input_observations": {
+    "observations": {
+      "files": [
+        {
+          "bytes": 1784368,
+          "input_preview": {
+            "byte_prefix_truncated": true,
+            "compression": "none",
+            "displayed_lines_truncated": true,
+            "sample_sha256": "0b85cb9667e75fd0cb6b52e0e6b709b89526fdcad1d9be2267d0b1eaf02118fb",
+            "sampled_bytes": 4096,
+            "scope": "Byte prefix only; no inferred header, schema or record count.",
+            "status": "utf8_text_prefix",
+            "text": "ECG,PPG,RSP\n0.003766485194893143,-0.1025390625,0.4946524989068091\n-0.01746591697758673,-0.10375976562502318,0.5024827168260766\n-0.015679137008246923,-0.107421875,0.5111024935799695\n-0.0015977050524144634,-0.11085510253907337,0.5187909668065165\n"
+          },
+          "local_path": "/inputs/bio_resting_5min_100hz.csv",
+          "sha256": "6a33ff8ae229f608354563044ff4a4d1c4e927c817e9269a4dec6173abefc385",
+          "source": "https://raw.githubusercontent.com/neuropsychology/NeuroKit/ff419d983568ef492eb8d229af643c0ef0100b32/data/bio_resting_5min_100hz.csv (byte-identical, sha256 6a33ff8ae229f608354563044ff4a4d1c4e927c817e9269a4dec6173abefc385, to the master-branch file served by nk.data at the pinned NeuroKit2 0.2.13)"
+        }
+      ]
+    },
+    "scope": "Recorded input-byte observations, not inferred schemas or full-file validation. Missing samples are an evidence gap, not proof of input properties.",
+    "source": {
+      "path": "trial/result.json",
+      "sha256": "ecb80e824ce450acb6f20219623e4eb76a3a6de5ed6a57d7f141166dd38c6b37"
+    },
+    "status": "recorded"
+  },
+  "materialization": {
+    "candidate": {
+      "derive_code": "#!/usr/bin/env python3\n\"\"\"Materialize supplied inputs and the reference artifact for the HRV task.\n\n- Copy the original ECG/PPG/RSP recording byte-for-byte into destination/inputs/.\n- Copy the recorded combined HRV table byte-for-byte into destination/reference/.\nNothing is recomputed, re-serialized or transformed: the requested output schema\n(single row, the 95 named HRV columns) is exactly the recorded reference export.\n\"\"\"\nimport argparse\nimport json\nimport shutil\nfrom pathlib import Path\n\nINPUT_NAME = \"bio_resting_5min_100hz.csv\"\nREFERENCE_NAME = \"hrv_indices.csv\"\n\n\ndef find_source_input(manifest):\n    \"\"\"Locate the original recording inside the source-inputs manifest.\"\"\"\n    matches = []\n\n    def walk(node):\n        if isinstance(node, str):\n            if Path(node).name == INPUT_NAME and Path(node).is_file():\n                matches.append(node)\n        elif isinstance(node, dict):\n            for value in node.values():\n                walk(value)\n        elif isinstance(node, list):\n            for value in node:\n                walk(value)\n\n    walk(manifest)\n    if len(matches) != 1:\n        raise SystemExit(\n            \"expected exactly one %s in the source manifest, found: %r\"\n            % (INPUT_NAME, matches)\n        )\n    return Path(matches[0])\n\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument(\"--source-inputs\", required=True)\n    ap.add_argument(\"--reference-dir\", required=True)\n    ap.add_argument(\"--destination\", required=True)\n    args = ap.parse_args()\n\n    destination = Path(args.destination)\n    inputs_dir = destination / \"inputs\"\n    reference_out = destination / \"reference\"\n    inputs_dir.mkdir(parents=True, exist_ok=True)\n    reference_out.mkdir(parents=True, exist_ok=True)\n\n    with open(args.source_inputs, \"r\", encoding=\"utf-8\") as handle:\n        manifest = json.load(handle)\n    src_input = find_source_input(manifest)\n    shutil.copyfile(src_input, inputs_dir / INPUT_NAME)\n\n    reference_src = Path(args.reference_dir) / REFERENCE_NAME\n    if not reference_src.is_file():\n        raise SystemExit(\"missing reference artifact: %s\" % reference_src)\n    # The requested deliverable is this table itself (same columns, same single\n    # data row), so the reference bytes are copied verbatim.\n    shutil.copyfile(reference_src, reference_out / REFERENCE_NAME)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "disposition": "ready",
+      "environment_review": {
+        "additional_exclusions": [],
+        "artifact_inventory_sha256": "ebb60ff485955911db7116344fdb618611593e34a631d26bb17e9118f262a3c5",
+        "assessment": "Inspected the final executed environment after successful controlled derivation and oracle execution. (1) Inventory integrity: the staged candidate input /work/author/derive-case/bundle/inputs/bio_resting_5min_100hz.csv is byte-identical to the recorded original recording (sha256 6a33ff8ae229f608354563044ff4a4d1c4e927c817e9269a4dec6173abefc385), and destination/reference/hrv_indices.csv is byte-identical to the recorded reference export (sha256 e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9). The reference table is retained only in the controller-side reference bundle, which is hidden from the isolated oracle; the oracle reads only the supplied raw signal CSV and embeds no measured values. (2) Supplied input cleanliness: the raw recording contains no HRV metric values (no 'HRV_' tokens; it is the source's own input data, not an outcome), so the only solver-visible file cannot expose any of the 95 requested answers. (3) Installed asset catalog (8696 regular files, 3047 candidates, all 29 distributions reviewed in the returned coverage): the advisory numeric-match report over hash/size-verified installed Python sources versus the final CSV references returned finding_count 0 \u2014 no installed file reproduces any requested HRV magnitude. NeuroKit2 0.2.13 (320 installed files) ships no bundled example data (verified: nk.data fetches remotely and no CSV/data fixtures exist under the distribution), so no answer-bearing dataset file is installed. (4) Priority match disposition: the only priority match, matplotlib/tests/test_pyplot.py (sha256 939bbd7b646a35bc7eb20a9ed497ee857c0a5931d179d558a5f524a1cf2eb394), is the library's own test suite; its match is a source-import-name coincidence ('pyplot'), its dedicated-matches list is empty (it produces no value corresponding to any requested output), and it plays no role in the computation. It is scientifically unrelated to every requested HRV quantity. It is not removed: it is library-owned material in a mandatory runtime dependency, the match is not answer exposure, and removing unrelated redistributable test files offers no scientific benefit or leakage reduction for the single-table HRV deliverable. The neurokit2/hrv/*.py files flagged earlier are the pinned method-definition code the oracle must import; the entire task is defined by that pinned package, so they cannot be removed, and they contain no measured answers. (5) Conclusion: no installed file both exposes a requested answer and is unused; additional_exclusions is empty and no files were deleted. The environment is suitable for blind independent solving: the solver receives only the raw 5-minute recording and must recompute all 95 HRV indices from R-peak detection onward. Sample-based name/catalog inspection plus the zero-match advisory report support but do not formally prove the absence of every conceivable leak; that residual gap is covered by the later independent validation stage.",
+        "asset_catalog_sha256": "2ed83b334c0e4297ce7a1117cf5f2054de48fa26b383c9120fa970ca261a26b8"
+      },
+      "input_paths": [
+        "bio_resting_5min_100hz.csv"
+      ],
+      "instruction": "# Heart-rate variability indices for a 5-minute resting ECG recording\n\n## Objective\n\nFrom the supplied 5-minute resting physiological recording, compute the complete set of heart-rate-variability (HRV) indices \u2014 time-domain, frequency-domain and non-linear-domain \u2014 produced by the analysis preset defined by **NeuroKit2 0.2.13** from R-peaks detected in the ECG channel. The requested result is the 95 HRV index values listed under \"Required output\".\n\n## Supplied input\n\n- `inputs/bio_resting_5min_100hz.csv` \u2014 text CSV with header row `ECG,PPG,RSP` and one row per sample of a 5-minute recording acquired at 100 Hz (columns: ECG, PPG, respiration). Only the **ECG** column is used by this analysis; PPG and RSP are present but unused.\n\n## Method (the preset that defines the requested quantities)\n\n1. **R-peak detection** on the ECG column exactly as supplied (no ECG-cleaning step and no artifact correction are part of this analysis), using NeuroKit2 0.2.13's default peak-detection method (`ecg_peaks` with `method=\"neurokit\"`, `correct_artifacts=False`), sampling rate 100 Hz.\n2. **HRV computation from the resulting R-peak series**, sampling rate 100 Hz, in all three domains exactly as defined by NeuroKit2 0.2.13's `hrv_time`, `hrv_frequency` and `hrv_nonlinear`:\n   - **Time domain:** standard NN-interval statistics (mean, SD, RMSSD, pNNx, histogram indices, etc.), with NN intervals in **milliseconds**.\n   - **Frequency domain:** RR series interpolated at 100 Hz; power spectral density estimated by the Welch method and normalized by its maximum value before band integration (as with `normalize=True`); band edges: ultra-low 0\u20130.0033 Hz, very-low 0.0033\u20130.04 Hz, low 0.04\u20130.15 Hz, high 0.15\u20130.4 Hz, very-high 0.4\u20130.5 Hz; plus total power (TP), LF/HF ratio, normalized LF (LFn = LF/TP), normalized HF (HFn = HF/TP) and LnHF. Band powers are unitless (relative power on the normalized PSD).\n   - **Non-linear domain:** Poincar\u00e9 indices (SD1/SD2 and asymmetric variants), CSI/CVI, DFA and multifractal-DFA exponents, approximate/sample/fuzzy/multiscale entropies, Shannon entropy, correlation/Higuchi/Katz dimensions, Lempel-Ziv complexity, and the remaining indices produced by `hrv_nonlinear` (symbolic dynamics with equal-probability 4-level coding, etc.).\n\nUsing NeuroKit2 0.2.13 directly is permitted (it is installed in the execution environment), but any tool is acceptable provided the requested quantities are the ones defined by this preset. Do not change the peak-detection method, artifact-correction setting, band edges, PSD method, normalization rule or sampling rate \u2014 these define the quantities being requested.\n\n## Required output\n\nA single file `outputs/hrv_indices.csv`: a header row with the metric names below and one data row with the value of each metric. Column order is free \u2014 values are identified by column name. Metrics that are undefined for this recording (undefined per the reference method) must be left as empty fields. All 95 columns must be present:\n\nTime domain: `HRV_MeanNN`, `HRV_SDNN`, `HRV_SDANN1`, `HRV_SDNNI1`, `HRV_SDANN2`, `HRV_SDNNI2`, `HRV_SDANN5`, `HRV_SDNNI5`, `HRV_RMSSD`, `HRV_SDSD`, `HRV_CVNN`, `HRV_CVSD`, `HRV_MedianNN`, `HRV_MadNN`, `HRV_MCVNN`, `HRV_IQRNN`, `HRV_SDRMSSD`, `HRV_Prc20NN`, `HRV_Prc80NN`, `HRV_pNN50`, `HRV_pNN20`, `HRV_MinNN`, `HRV_MaxNN`, `HRV_HTI`, `HRV_TINN`.\n\nFrequency domain: `HRV_ULF`, `HRV_VLF`, `HRV_LF`, `HRV_HF`, `HRV_VHF`, `HRV_TP`, `HRV_LFHF`, `HRV_LFn`, `HRV_HFn`, `HRV_LnHF`.\n\nNon-linear domain: `HRV_SD1`, `HRV_SD2`, `HRV_SD1SD2`, `HRV_S`, `HRV_CSI`, `HRV_CVI`, `HRV_CSI_Modified`, `HRV_PIP`, `HRV_IALS`, `HRV_PSS`, `HRV_PAS`, `HRV_GI`, `HRV_SI`, `HRV_AI`, `HRV_PI`, `HRV_C1d`, `HRV_C1a`, `HRV_SD1d`, `HRV_SD1a`, `HRV_C2d`, `HRV_C2a`, `HRV_SD2d`, `HRV_SD2a`, `HRV_Cd`, `HRV_Ca`, `HRV_SDNNd`, `HRV_SDNNa`, `HRV_DFA_alpha1`, `HRV_MFDFA_alpha1_Width`, `HRV_MFDFA_alpha1_Peak`, `HRV_MFDFA_alpha1_Mean`, `HRV_MFDFA_alpha1_Max`, `HRV_MFDFA_alpha1_Delta`, `HRV_MFDFA_alpha1_Asymmetry`, `HRV_MFDFA_alpha1_Fluctuation`, `HRV_MFDFA_alpha1_Increment`, `HRV_DFA_alpha2`, `HRV_MFDFA_alpha2_Width`, `HRV_MFDFA_alpha2_Peak`, `HRV_MFDFA_alpha2_Mean`, `HRV_MFDFA_alpha2_Max`, `HRV_MFDFA_alpha2_Delta`, `HRV_MFDFA_alpha2_Asymmetry`, `HRV_MFDFA_alpha2_Fluctuation`, `HRV_MFDFA_alpha2_Increment`, `HRV_ApEn`, `HRV_SampEn`, `HRV_ShanEn`, `HRV_FuzzyEn`, `HRV_MSEn`, `HRV_CMSEn`, `HRV_RCMSEn`, `HRV_CD`, `HRV_HFD`, `HRV_KFD`, `HRV_LZC`, `HRV_Symbolic_EqualProb4_0V`, `HRV_Symbolic_EqualProb4_1V`, `HRV_Symbolic_EqualProb4_2LV`, `HRV_Symbolic_EqualProb4_2UV`.\n\n## Constraints\n\n- Execution is offline; no network access. CPU only (4 cores), 8 GiB RAM, 10 GiB disk; 600 s runtime limit.\n- Figures are not part of the deliverable; plotting may be disabled.",
+      "operation_coverage": [
+        {
+          "artifact_paths": [
+            "bio_resting_5min_100hz.csv"
+          ],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-38-7"
+          ],
+          "rationale": "Data staging: loads the 5-min 100 Hz resting recording (30000x3 ECG/PPG/RSP) that nk.data() fetches remotely in the source. The identical bytes (sha256 6a33ff8ae...) were staged at /inputs/bio_resting_5min_100hz.csv and are supplied to the solver unchanged; the oracle performs no further derivation from this call.",
+          "role": "supplied_input"
+        },
+        {
+          "artifact_paths": [],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-39-0"
+          ],
+          "rationale": "Display-only diagnostic printing the first five rows of the raw data; no value is computed or exported.",
+          "role": "diagnostic"
+        },
+        {
+          "artifact_paths": [],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-44-14"
+          ],
+          "rationale": "Executed upstream scientific step: defines the R-peak series on the raw ECG column (package defaults method='neurokit', correct_artifacts=False, sampling_rate=100) used by every HRV function. It is retained as solver work inside the oracle rather than supplied as an intermediate, preserving the substantial downstream analysis; it produces no directly exported artifact.",
+          "role": "support"
+        },
+        {
+          "artifact_paths": [
+            "hrv_indices.csv"
+          ],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-57-11"
+          ],
+          "rationale": "Time-domain endpoint. nk.hrv() internally calls hrv_time on the same peaks with the same sampling_rate=100 and package defaults; the notebook's standalone call differs only in show=True, which only controls plotting. The per-column value fingerprints of the recorded hrv_time.csv are identical to the corresponding columns of the combined hrv_indices.csv (e.g. HRV_MeanNN 696.3953488372093, empty HRV_SDANN2/5), so this endpoint's values are fully contained in the requested single output as an exact column subset.",
+          "role": "result"
+        },
+        {
+          "artifact_paths": [
+            "hrv_indices.csv"
+          ],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-66-11"
+          ],
+          "rationale": "Frequency-domain endpoint. The explicit normalize=True equals the package default used inside nk.hrv(); the standalone call otherwise receives the same peaks and sampling_rate=100 and differs only in show=True (plot-only). The recorded hrv_freq.csv columns match the frequency columns of hrv_indices.csv value-for-value (e.g. HRV_LF 0.04802607886179408, empty HRV_ULF), so these endpoints are contained in the requested single output.",
+          "role": "result"
+        },
+        {
+          "artifact_paths": [
+            "hrv_indices.csv"
+          ],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-73-16"
+          ],
+          "rationale": "Non-linear-domain endpoint. nk.hrv() internally calls hrv_nonlinear on the same peaks with sampling_rate=100; the standalone call differs only in show=True (plot-only, the Poincar\u00e9 scattergram). The recorded hrv_nonlinear.csv columns match the non-linear columns of hrv_indices.csv value-for-value (e.g. HRV_SD1 49.34128100482926), so these 60 endpoints are contained in the requested single output.",
+          "role": "result"
+        },
+        {
+          "artifact_paths": [
+            "hrv_indices.csv"
+          ],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-84-14"
+          ],
+          "rationale": "Culminating endpoint: nk.hrv(peaks, sampling_rate=100) concatenates the three domain results on the same peak series into one table; its recorded export is exactly the requested 95-column single-row output (sha256 e2dc559a...). The oracle reproduces this call with show disabled (plot-only difference) and writes hrv_indices.csv.",
+          "role": "result"
+        }
+      ],
+      "oracle_code": "#!/usr/bin/env python3\n\"\"\"Solve the public HRV task from the supplied inputs only.\n\nReads the 5-minute 100 Hz ECG/PPG/RSP recording, detects R-peaks on the raw\nECG column with NeuroKit2 0.2.13 defaults, computes all HRV indices with\nnk.hrv() (which combines hrv_time, hrv_frequency and hrv_nonlinear on the\nsame peaks), and writes the 95 named metric columns as one CSV row.\n\"\"\"\nimport argparse\nimport os\nfrom pathlib import Path\n\nos.environ.setdefault(\"MPLBACKEND\", \"Agg\")\n\nimport neurokit2 as nk  # noqa: E402\nimport pandas as pd  # noqa: E402\n\nCOLUMNS = [\n    # Time domain\n    \"HRV_MeanNN\", \"HRV_SDNN\", \"HRV_SDANN1\", \"HRV_SDNNI1\", \"HRV_SDANN2\",\n    \"HRV_SDNNI2\", \"HRV_SDANN5\", \"HRV_SDNNI5\", \"HRV_RMSSD\", \"HRV_SDSD\",\n    \"HRV_CVNN\", \"HRV_CVSD\", \"HRV_MedianNN\", \"HRV_MadNN\", \"HRV_MCVNN\",\n    \"HRV_IQRNN\", \"HRV_SDRMSSD\", \"HRV_Prc20NN\", \"HRV_Prc80NN\", \"HRV_pNN50\",\n    \"HRV_pNN20\", \"HRV_MinNN\", \"HRV_MaxNN\", \"HRV_HTI\", \"HRV_TINN\",\n    # Frequency domain\n    \"HRV_ULF\", \"HRV_VLF\", \"HRV_LF\", \"HRV_HF\", \"HRV_VHF\", \"HRV_TP\",\n    \"HRV_LFHF\", \"HRV_LFn\", \"HRV_HFn\", \"HRV_LnHF\",\n    # Non-linear domain\n    \"HRV_SD1\", \"HRV_SD2\", \"HRV_SD1SD2\", \"HRV_S\", \"HRV_CSI\", \"HRV_CVI\",\n    \"HRV_CSI_Modified\", \"HRV_PIP\", \"HRV_IALS\", \"HRV_PSS\", \"HRV_PAS\",\n    \"HRV_GI\", \"HRV_SI\", \"HRV_AI\", \"HRV_PI\", \"HRV_C1d\", \"HRV_C1a\",\n    \"HRV_SD1d\", \"HRV_SD1a\", \"HRV_C2d\", \"HRV_C2a\", \"HRV_SD2d\", \"HRV_SD2a\",\n    \"HRV_Cd\", \"HRV_Ca\", \"HRV_SDNNd\", \"HRV_SDNNa\", \"HRV_DFA_alpha1\",\n    \"HRV_MFDFA_alpha1_Width\", \"HRV_MFDFA_alpha1_Peak\",\n    \"HRV_MFDFA_alpha1_Mean\", \"HRV_MFDFA_alpha1_Max\",\n    \"HRV_MFDFA_alpha1_Delta\", \"HRV_MFDFA_alpha1_Asymmetry\",\n    \"HRV_MFDFA_alpha1_Fluctuation\", \"HRV_MFDFA_alpha1_Increment\",\n    \"HRV_DFA_alpha2\",\n    \"HRV_MFDFA_alpha2_Width\", \"HRV_MFDFA_alpha2_Peak\",\n    \"HRV_MFDFA_alpha2_Mean\", \"HRV_MFDFA_alpha2_Max\",\n    \"HRV_MFDFA_alpha2_Delta\", \"HRV_MFDFA_alpha2_Asymmetry\",\n    \"HRV_MFDFA_alpha2_Fluctuation\", \"HRV_MFDFA_alpha2_Increment\",\n    \"HRV_ApEn\", \"HRV_SampEn\", \"HRV_ShanEn\", \"HRV_FuzzyEn\", \"HRV_MSEn\",\n    \"HRV_CMSEn\", \"HRV_RCMSEn\", \"HRV_CD\", \"HRV_HFD\", \"HRV_KFD\", \"HRV_LZC\",\n    \"HRV_Symbolic_EqualProb4_0V\", \"HRV_Symbolic_EqualProb4_1V\",\n    \"HRV_Symbolic_EqualProb4_2LV\", \"HRV_Symbolic_EqualProb4_2UV\",\n]\n\nINPUT_NAME = \"bio_resting_5min_100hz.csv\"\nOUTPUT_NAME = \"hrv_indices.csv\"\n\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument(\"--input-dir\", required=True)\n    ap.add_argument(\"--output-dir\", required=True)\n    args = ap.parse_args()\n\n    input_dir = Path(args.input_dir)\n    output_dir = Path(args.output_dir)\n    output_dir.mkdir(parents=True, exist_ok=True)\n\n    data = pd.read_csv(input_dir / INPUT_NAME)\n    ecg = data[\"ECG\"]\n\n    # Step 1: R-peak detection on the raw ECG column (NeuroKit2 0.2.13\n    # defaults: method=\"neurokit\", correct_artifacts=False), 100 Hz.\n    peaks, info = nk.ecg_peaks(ecg, sampling_rate=100)\n\n    # Step 2: all-domain HRV from the same peak series at 100 Hz. nk.hrv()\n    # combines hrv_time, hrv_frequency (normalize default) and hrv_nonlinear.\n    # show only controls plotting, so it is disabled here.\n    hrv = nk.hrv(peaks, sampling_rate=100, show=False)\n\n    missing = [column for column in COLUMNS if column not in hrv.columns]\n    if missing:\n        raise SystemExit(\"missing expected HRV columns: %r\" % missing)\n\n    result = hrv[COLUMNS].copy()\n    result.to_csv(output_dir / OUTPUT_NAME, index=False)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "output_paths": [
+        "hrv_indices.csv"
+      ],
+      "rationale": "SCOPE. The source notebook (inputs/original.py) computes HRV indices for one 5-min resting recording (bio_resting_5min_100hz, 100 Hz) via nk.ecg_peaks on the raw ECG column, then nk.hrv_time / nk.hrv_frequency(normalize=True) / nk.hrv_nonlinear / nk.hrv all with sampling_rate=100 on the same peaks. The public task requests the combined 95-metric table; the three domain tables are exact column subsets of the combined table for the same peaks and parameters. SUBSUMPTION EVIDENCE (recorded, not re-derived here): the reference observations show per-column value fingerprints identical between hrv_time.csv / hrv_freq.csv / hrv_nonlinear.csv and the corresponding columns of hrv_indices.csv (e.g. HRV_MeanNN 696.3953488372093, HRV_LF 0.04802607886179408, HRV_SD1 49.34128100482926, empty HRV_ULF/HRV_SDANN2/5); the review additionally traced nk.hrv's internals (hrv.py 100-115: it calls hrv_time, hrv_frequency, hrv_nonlinear on the same peaks; show only controls plotting; hrv_frequency's normalize default is True, matching the notebook's explicit normalize=True). Hence all eligible source endpoints (all 95 metrics, in all three branches) are preserved by the single requested output. No hrv_rsa branch was taken (no RSP columns in peaks; no RSA columns in the reference export).\n\nINPUT DERIVATION. Only one scientific input exists: the original recording, staged byte-for-byte from the exact nk.data() 'master'-branch URL (sha256 6a33ff8ae..., verified identical at notebook source revision ff419d98). derive_code copies it verbatim into destination/inputs/bio_resting_5min_100hz.csv (no reading/re-serialization) and copies the recorded reference export /work/reference/hrv_indices.csv byte-for-byte into destination/reference/hrv_indices.csv. No supplied intermediate (e.g. peaks) is given: R-peak detection stays solver work, keeping the downstream analysis substantial. No projection or unit conversion is needed anywhere: hrv_indices.csv already has exactly the requested schema (one data row, 95 columns, empty fields for undefined metrics), so the reference bytes are retained unchanged.\n\nORACLE FIDELITY. The oracle reads the supplied CSV, takes data[\"ECG\"] (the source passes the same raw Series; no ecg_clean call exists in the source), runs nk.ecg_peaks(ecg, sampling_rate=100) (defaults method=\"neurokit\", correct_artifacts=False per ecg_peaks.py) and nk.hrv(peaks, sampling_rate=100, show=False). show is plot-only per the review's source trace; disabling it changes no numeric output. Column selection reorders to the public column order (order is free by contract; values unchanged). NaN metrics serialize as empty fields, matching the reference CSV convention (pandas default, same writer family as the source export). The offline source adaptation in trial/source.diff (nk.pd.read_csv URL redirect) was environment-only and is irrelevant to the oracle, which reads the staged file directly.\n\nUNITS/SCALES. Time-domain NN metrics are milliseconds (verified by observed magnitudes, e.g. MeanNN ~696); frequency-domain band powers are unitless relative powers on the max-normalized PSD, LFHF/LFn/HFn ratios dimensionless, LnHF natural-log of the normalized HF power; entropy/fractal indices follow the pinned package definitions. Per the review, entropy log bases and other operational definitions are defined by the pinned package version and are identified to the solver as such; their independent verification is left to the comparison stage, not asserted publicly.\n\nLEAKAGE. The only supplied file is raw signals (ECG/PPG/RSP), containing no HRV values. The oracle embeds no measured answers, touches only --input-dir/--output-dir, and uses the installed environment offline. The combined reference table required for grading is kept only in destination/reference (hidden from the solver). The dependency-asset summary found no HRV-value fixtures in installed distributions (the two neurokit2 same-stem matches are the library's own function modules required for computation; the matplotlib match is the library's own test suite); no exclusions are proposed at this stage (environment_review is null pending post-execution inspection of the actual final inventory).\n\nOPEN QUESTIONS FOR LATER STAGES. (1) Cross-implementation numerical equivalence and tolerance calibration (records at Python float repr precision are the source-faithful serialization) belong to the comparison/validation stage. (2) Repeatability is established only on this stack (2 byte-identical offline replays). (3) No source-faithful recovery was needed: every eligible endpoint already exists in the recorded combined export.\n\nENDPOINT ACCOUNTING. nk.data -> supplied input file; data.head -> display-only diagnostic; nk.ecg_peaks -> solver-executed upstream support step (R-peak series definition); the four HRV calls -> the requested 95-metric output, with the three domain calls subsumed by the combined call as verified value-identical column subsets (detailed in operation_coverage). Figures and the peaks/info intermediates are excluded as non-result material, consistent with the preparation plan."
+    },
+    "execution": {
+      "derivation": {
+        "exit_code": 0,
+        "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+        "role_process_cleanup_verified": true,
+        "stderr": "",
+        "stdout": "",
+        "timed_out": false
+      },
+      "environment": {
+        "asset_catalog": {
+          "bytes": 1206505,
+          "sha256": "2ed83b334c0e4297ce7a1117cf5f2054de48fa26b383c9120fa970ca261a26b8"
+        },
+        "asset_summary": {
+          "candidate_files": 3047,
+          "distribution_coverage": [
+            {
+              "candidate_files": 2,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "certifi",
+              "installed_regular_files_inspected": 14
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "charset-normalizer",
+              "installed_regular_files_inspected": 23
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "cloudpickle",
+              "installed_regular_files_inspected": 9
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "contourpy",
+              "installed_regular_files_inspected": 26
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "cycler",
+              "installed_regular_files_inspected": 9
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "fonttools",
+              "installed_regular_files_inspected": 375
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "idna",
+              "installed_regular_files_inspected": 18
+            },
+            {
+              "candidate_files": 92,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "joblib",
+              "installed_regular_files_inspected": 143
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "kiwisolver",
+              "installed_regular_files_inspected": 12
+            },
+            {
+              "candidate_files": 112,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "matplotlib",
+              "installed_regular_files_inspected": 603
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "narwhals",
+              "installed_regular_files_inspected": 170
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "neurokit2",
+              "installed_regular_files_inspected": 320
+            },
+            {
+              "candidate_files": 493,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "numpy",
+              "installed_regular_files_inspected": 928
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "packaging",
+              "installed_regular_files_inspected": 31
+            },
+            {
+              "candidate_files": 1116,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "pandas",
+              "installed_regular_files_inspected": 1515
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "pillow",
+              "installed_regular_files_inspected": 141
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "pyparsing",
+              "installed_regular_files_inspected": 25
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "python-dateutil",
+              "installed_regular_files_inspected": 29
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "pytz",
+              "installed_regular_files_inspected": 618
+            },
+            {
+              "candidate_files": 25,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "PyWavelets",
+              "installed_regular_files_inspected": 61
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "requests",
+              "installed_regular_files_inspected": 28
+            },
+            {
+              "candidate_files": 406,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "scikit-learn",
+              "installed_regular_files_inspected": 1010
+            },
+            {
+              "candidate_files": 680,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "scipy",
+              "installed_regular_files_inspected": 1434
+            },
+            {
+              "candidate_files": 121,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "setuptools",
+              "installed_regular_files_inspected": 460
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "six",
+              "installed_regular_files_inspected": 8
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "threadpoolctl",
+              "installed_regular_files_inspected": 7
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "tzdata",
+              "installed_regular_files_inspected": 635
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "urllib3",
+              "installed_regular_files_inspected": 44
+            }
+          ],
+          "installed_files_inspected": 8696,
+          "priority_matches": [
+            {
+              "bytes": 16820,
+              "distribution": "matplotlib",
+              "eligible_for_declared_removal": true,
+              "matches": [],
+              "packaged_test_or_example": true,
+              "path": "matplotlib/tests/test_pyplot.py",
+              "sha256": "939bbd7b646a35bc7eb20a9ed497ee857c0a5931d179d558a5f524a1cf2eb394",
+              "source_import_group_matches": [],
+              "source_import_matches": [
+                "pyplot"
+              ]
+            }
+          ],
+          "scope": "Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit.",
+          "source_import_terms": [
+            "neurokit2",
+            "pyplot"
+          ]
+        },
+        "asset_value_hints": {
+          "bytes": 1112,
+          "distance_is_not_grading_tolerance": true,
+          "finding_count": 0,
+          "scope": "Advisory magnitude matches in hash/size-verified Python files owned by the actual installed distribution and final CSV/TSV references. No package imports, scientific execution, network requests, removal or isolation verdict. Integer-valued constants, comments, strings, nonpriority files and other formats are gaps. Matches can be unrelated; absence is not approval.",
+          "sha256": "e1b948b082f40e82f33f7e3732aa36118a3b1e5ed290c5db531e754e8a5d084c",
+          "source": {
+            "asset_catalog_sha256": "2ed83b334c0e4297ce7a1117cf5f2054de48fa26b383c9120fa970ca261a26b8",
+            "reference_inventory_sha256": "37146fbe31b61cc4f4cba1079bff8be154a8912792afe45a7336e27483d09a42"
+          }
+        },
+        "exclusions": {
+          "files": []
+        },
+        "removal_receipt": {
+          "excluded_files_absent": true,
+          "files": []
+        }
+      },
+      "environment_removal_receipt": {
+        "excluded_files_absent": true,
+        "files": []
+      },
+      "inputs": [
+        {
+          "bytes": 1784368,
+          "path": "bio_resting_5min_100hz.csv",
+          "sha256": "6a33ff8ae229f608354563044ff4a4d1c4e927c817e9269a4dec6173abefc385"
+        }
+      ],
+      "oracle": {
+        "exit_code": 0,
+        "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+        "role_process_cleanup_verified": true,
+        "stderr": "",
+        "stdout": "",
+        "timed_out": false
+      },
+      "oracle_isolation": {
+        "exit_code": 0,
+        "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+        "role_process_cleanup_verified": true,
+        "stderr": "",
+        "stdout": "isolated\n",
+        "timed_out": false
+      },
+      "oracle_outputs": [
+        {
+          "bytes": 2796,
+          "path": "hrv_indices.csv",
+          "sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9"
+        }
+      ],
+      "reference": [
+        {
+          "bytes": 2796,
+          "path": "hrv_indices.csv",
+          "sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9"
+        }
+      ],
+      "status": "executed_requires_scientific_validation"
+    }
+  },
+  "paths": {
+    "independent_outputs": "/work/alternative",
+    "recomputed_outputs": "/work/recomputed",
+    "reference_outputs": "/work/reference",
+    "task_inputs": "/work/task-inputs",
+    "working_directory": "/work/author"
+  },
+  "policy": {
+    "dependency_answers": "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "supplied_intermediates": "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  },
+  "reference_observations": {
+    "outputs": [
+      {
+        "bytes": 570,
+        "download_hash_verified": true,
+        "file": "hrv_time.csv",
+        "sha256": "4da5b39c6b59c52576201d9534822e520f2a8e4b5167c06e83a6174db347310f",
+        "structural_profile": {
+          "columns": [
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "696.3953488372093"
+              ],
+              "finite_numeric": 1,
+              "maximum": 696.3953488372093,
+              "minimum": 696.3953488372093,
+              "name": "HRV_MeanNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "b7d7ab154a26fde0a12f987addf966a9cc016a5cee0c6396c5cd363b975629be",
+              "other": 0,
+              "position": 0
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "62.135891206172104"
+              ],
+              "finite_numeric": 1,
+              "maximum": 62.135891206172104,
+              "minimum": 62.135891206172104,
+              "name": "HRV_SDNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "935450512ec679bab329ae1712e25e4a9411a520b427e658e6e5d8503221b8bb",
+              "other": 0,
+              "position": 1
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "10.060727541349376"
+              ],
+              "finite_numeric": 1,
+              "maximum": 10.060727541349376,
+              "minimum": 10.060727541349376,
+              "name": "HRV_SDANN1",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "d194a5ebcd98324d7dc2d1b0d5390629258b7f086ec7c31fa60798f922ec6286",
+              "other": 0,
+              "position": 2
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "60.27503600273103"
+              ],
+              "finite_numeric": 1,
+              "maximum": 60.27503600273103,
+              "minimum": 60.27503600273103,
+              "name": "HRV_SDNNI1",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "01eed3668cc2098cf8f1295ecebea6a7fd516a11b3926ab0ac4726bd1a03986b",
+              "other": 0,
+              "position": 3
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 0,
+              "empty": 1,
+              "examples": [],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "HRV_SDANN2",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+              "other": 0,
+              "position": 4
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 0,
+              "empty": 1,
+              "examples": [],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "HRV_SDNNI2",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+              "other": 0,
+              "position": 5
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 0,
+              "empty": 1,
+              "examples": [],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "HRV_SDANN5",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+              "other": 0,
+              "position": 6
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 0,
+              "empty": 1,
+              "examples": [],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "HRV_SDNNI5",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+              "other": 0,
+              "position": 7
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "69.69798316887554"
+              ],
+              "finite_numeric": 1,
+              "maximum": 69.69798316887554,
+              "minimum": 69.69798316887554,
+              "name": "HRV_RMSSD",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "6b0186c2996762ef59077c790ac070e15e044fc87d9ac59753a0b5d31e99265d",
+              "other": 0,
+              "position": 8
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "69.77910878189152"
+              ],
+              "finite_numeric": 1,
+              "maximum": 69.77910878189152,
+              "minimum": 69.77910878189152,
+              "name": "HRV_SDSD",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "45dbe5915508c1a420f842ed0dca20c2fb70f23a7fcba921bf182079fb9e2219",
+              "other": 0,
+              "position": 9
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.08922502327151112"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.08922502327151112,
+              "minimum": 0.08922502327151112,
+              "name": "HRV_CVNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "6bfc5d95881c50620e737abfd019d6c35e2df7e5f4d6071575cba6d715d1ccea",
+              "other": 0,
+              "position": 10
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.10008392974659035"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.10008392974659035,
+              "minimum": 0.10008392974659035,
+              "name": "HRV_CVSD",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "f0d18d83e4edff2e4df551609780f81937870ae398fd9f60eab992b1f2745c40",
+              "other": 0,
+              "position": 11
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "690.0"
+              ],
+              "finite_numeric": 1,
+              "maximum": 690.0,
+              "minimum": 690.0,
+              "name": "HRV_MedianNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "4b66cd5f28958ebb724786de207119f3492474fb1990b2231fb05176b1c843a8",
+              "other": 0,
+              "position": 12
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "44.477999999999994"
+              ],
+              "finite_numeric": 1,
+              "maximum": 44.477999999999994,
+              "minimum": 44.477999999999994,
+              "name": "HRV_MadNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "95995f41094ae19acb97bd6d2e9852e3b4b42f7877c3ad944d0df4bc13e176f2",
+              "other": 0,
+              "position": 13
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.06446086956521738"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.06446086956521738,
+              "minimum": 0.06446086956521738,
+              "name": "HRV_MCVNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "1cf1eea85cf349cc388c144067df9a85ed954f3b8916c587e86b0bbd222478b3",
+              "other": 0,
+              "position": 14
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "60.0"
+              ],
+              "finite_numeric": 1,
+              "maximum": 60.0,
+              "minimum": 60.0,
+              "name": "HRV_IQRNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "1d60b87bd114ebd01342b395fc233474286079041afe4d3e80396751851a0a6e",
+              "other": 0,
+              "position": 15
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.8915019973478892"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.8915019973478892,
+              "minimum": 0.8915019973478892,
+              "name": "HRV_SDRMSSD",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "36270cb2a74fb7080b07d7e755eef41b113e196117a9c2797b2b20e08a3e7722",
+              "other": 0,
+              "position": 16
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "660.0"
+              ],
+              "finite_numeric": 1,
+              "maximum": 660.0,
+              "minimum": 660.0,
+              "name": "HRV_Prc20NN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "19685181076010ea0ee3f702bae0603dc1056d4a567460649a6fbf429b1efade",
+              "other": 0,
+              "position": 17
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "740.0"
+              ],
+              "finite_numeric": 1,
+              "maximum": 740.0,
+              "minimum": 740.0,
+              "name": "HRV_Prc80NN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "5c1d1505cb53e5aae3d8f9f37b2d3f85ad17518da4da1a0c602601e8798ca83f",
+              "other": 0,
+              "position": 18
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "14.651162790697676"
+              ],
+              "finite_numeric": 1,
+              "maximum": 14.651162790697676,
+              "minimum": 14.651162790697676,
+              "name": "HRV_pNN50",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "2e75aa66fa159510d2a0ee53e6ddffe5777ec07b0e1de0f8ab728f1ba39acc41",
+              "other": 0,
+              "position": 19
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "49.30232558139535"
+              ],
+              "finite_numeric": 1,
+              "maximum": 49.30232558139535,
+              "minimum": 49.30232558139535,
+              "name": "HRV_pNN20",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "ced3e4eea40de3fb7f550f8134184fc8884658bd49d298f2c21779f26dbefddb",
+              "other": 0,
+              "position": 20
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "470.0"
+              ],
+              "finite_numeric": 1,
+              "maximum": 470.0,
+              "minimum": 470.0,
+              "name": "HRV_MinNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "602dbaeb13795d7a8c8de9db75393d2363071090d0212018d958d3a21b038ac0",
+              "other": 0,
+              "position": 21
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1420.0"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1420.0,
+              "minimum": 1420.0,
+              "name": "HRV_MaxNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "a6412a5b0b58c2a43de23cc49d4736abd9dba0e05f803c105ba77d9ff49659b7",
+              "other": 0,
+              "position": 22
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "7.962962962962963"
+              ],
+              "finite_numeric": 1,
+              "maximum": 7.962962962962963,
+              "minimum": 7.962962962962963,
+              "name": "HRV_HTI",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "66cd3c4ef13bdde4456c0782cf8f096cf10c3eac2d2296920768cf2e254e7f6b",
+              "other": 0,
+              "position": 23
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "234.375"
+              ],
+              "finite_numeric": 1,
+              "maximum": 234.375,
+              "minimum": 234.375,
+              "name": "HRV_TINN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "45eb774e86363bce8e8033a4de1df161254cad5ec0dc56807d31dd892c03c344",
+              "other": 0,
+              "position": 24
+            }
+          ],
+          "distinct_limit_per_column": 40000,
+          "duplicate_header_names": false,
+          "format": "delimited",
+          "limitations": [
+            "Numeric ranges use float conversion, not semantic type inference.",
+            "Distinct values use SHA-256 identities and the declared cap.",
+            "Column fingerprints exclude ragged rows; empty fields are included.",
+            "Examples are limited to three values and 256 characters each."
+          ],
+          "ragged_rows": 0,
+          "row_count": 1
+        }
+      },
+      {
+        "bytes": 258,
+        "download_hash_verified": true,
+        "file": "hrv_freq.csv",
+        "sha256": "81749e0b404a7d3e2821a065cf952547bc02a4c08a4356508a0e887b682f4959",
+        "structural_profile": {
+          "columns": [
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 0,
+              "empty": 1,
+              "examples": [],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "HRV_ULF",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+              "other": 0,
+              "position": 0
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.01731007726584816"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.01731007726584816,
+              "minimum": 0.01731007726584816,
+              "name": "HRV_VLF",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "cc7a2dfeeb58f9d6b2297710ec433f004db8227a688c8496d50e6272f6ab021a",
+              "other": 0,
+              "position": 1
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.04802607886179408"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.04802607886179408,
+              "minimum": 0.04802607886179408,
+              "name": "HRV_LF",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "dbdd8ac4e37a936ad8d8addb58ce3b8e858cc5f24fd602cecfcfc94f916bc5a9",
+              "other": 0,
+              "position": 2
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.06023186865189019"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.06023186865189019,
+              "minimum": 0.06023186865189019,
+              "name": "HRV_HF",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "42dc868028b8d8129752c8eadac220ecd1c4dc2fcf85202b4777ae7e4da40b92",
+              "other": 0,
+              "position": 3
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.011185774793627324"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.011185774793627324,
+              "minimum": 0.011185774793627324,
+              "name": "HRV_VHF",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "8c707a23b88a131ebd5e9475b567333229575f054c83db5b943434a40aea2b8a",
+              "other": 0,
+              "position": 4
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.13675379957315975"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.13675379957315975,
+              "minimum": 0.13675379957315975,
+              "name": "HRV_TP",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "13eabbac4032bc669487b7eb1fc777f8ed17d912c8ee1ae7b0455300440d8ed5",
+              "other": 0,
+              "position": 5
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.797353293807977"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.797353293807977,
+              "minimum": 0.797353293807977,
+              "name": "HRV_LFHF",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "e0f93ee93d5017a6e0602c28c2c4fdac0503dd9457a547f7e9177c41cf17da77",
+              "other": 0,
+              "position": 6
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.3511864314680439"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.3511864314680439,
+              "minimum": 0.3511864314680439,
+              "name": "HRV_LFn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "ed37ad3f8b1ffbc1477bec4148981924c5dd94280beada16ca3760576e84cae0",
+              "other": 0,
+              "position": 7
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.44044018403794105"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.44044018403794105,
+              "minimum": 0.44044018403794105,
+              "name": "HRV_HFn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "bbf3566b0583f17c684e0efc36a7a4666e481ddc889de8257538e9389a099a2c",
+              "other": 0,
+              "position": 8
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "-2.8095536871398052"
+              ],
+              "finite_numeric": 1,
+              "maximum": -2.8095536871398052,
+              "minimum": -2.8095536871398052,
+              "name": "HRV_LnHF",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "3b1a4766faa453109add767afbfc11003ec91d610f538009bb88c95bd0e1d88b",
+              "other": 0,
+              "position": 9
+            }
+          ],
+          "distinct_limit_per_column": 100000,
+          "duplicate_header_names": false,
+          "format": "delimited",
+          "limitations": [
+            "Numeric ranges use float conversion, not semantic type inference.",
+            "Distinct values use SHA-256 identities and the declared cap.",
+            "Column fingerprints exclude ragged rows; empty fields are included.",
+            "Examples are limited to three values and 256 characters each."
+          ],
+          "ragged_rows": 0,
+          "row_count": 1
+        }
+      },
+      {
+        "bytes": 1968,
+        "download_hash_verified": true,
+        "file": "hrv_nonlinear.csv",
+        "sha256": "8afda790b4fb63cca4ce57cbe0fa510a0f8618a0a4ebd6dd4ef14519ac02d279",
+        "structural_profile": {
+          "columns": [
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "49.34128100482926"
+              ],
+              "finite_numeric": 1,
+              "maximum": 49.34128100482926,
+              "minimum": 49.34128100482926,
+              "name": "HRV_SD1",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "e0b8dc97a0c16e253c374dec5a7c3d6814fdd943ffdd8f66163b6507c2969856",
+              "other": 0,
+              "position": 0
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "72.59743491590363"
+              ],
+              "finite_numeric": 1,
+              "maximum": 72.59743491590363,
+              "minimum": 72.59743491590363,
+              "name": "HRV_SD2",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "0e7baa24a604fbb9b0fb81c542071d3aed108d156da6f4b30aa25b59d64988a8",
+              "other": 0,
+              "position": 1
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.679655983189845"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.679655983189845,
+              "minimum": 0.679655983189845,
+              "name": "HRV_SD1SD2",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "ff4bed6a0b706e1326d6d10b40488dfe541f30fbb2e7d6958bf6c699532fe0da",
+              "other": 0,
+              "position": 2
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "11253.343335830747"
+              ],
+              "finite_numeric": 1,
+              "maximum": 11253.343335830747,
+              "minimum": 11253.343335830747,
+              "name": "HRV_S",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "4a2e3141a3df7e2232fca873c7cd3f7f6464997bca3de1d59f74721bb0781edb",
+              "other": 0,
+              "position": 3
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.4713325928606957"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.4713325928606957,
+              "minimum": 1.4713325928606957,
+              "name": "HRV_CSI",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "54c2b1b5f1c5a6d2da0ab5a812f4f34fe5b73c6bd41bbc76c122ec265e6600f0",
+              "other": 0,
+              "position": 4
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "4.758251679217147"
+              ],
+              "finite_numeric": 1,
+              "maximum": 4.758251679217147,
+              "minimum": 4.758251679217147,
+              "name": "HRV_CVI",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "d223c0bfa90e64cbd6ceab6ec43b86ee5138e67872f101bed09fa5c28f144036",
+              "other": 0,
+              "position": 5
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "427.25988859940844"
+              ],
+              "finite_numeric": 1,
+              "maximum": 427.25988859940844,
+              "minimum": 427.25988859940844,
+              "name": "HRV_CSI_Modified",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "80062ba02797215adeb9094eb2c67414575cbcd181f6507abb331d82f6a71ead",
+              "other": 0,
+              "position": 6
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.5581395348837209"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.5581395348837209,
+              "minimum": 0.5581395348837209,
+              "name": "HRV_PIP",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "482a4b099ec4709b51b1fb027ad91aaeb43aa427f73dd6d2e8ef4ecead5a3788",
+              "other": 0,
+              "position": 7
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.5116883116883117"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.5116883116883117,
+              "minimum": 0.5116883116883117,
+              "name": "HRV_IALS",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "2d54357e90b53a982a504b4246657312f9a4ce272a081924c139aeebaf34d870",
+              "other": 0,
+              "position": 8
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.7360406091370558"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.7360406091370558,
+              "minimum": 0.7360406091370558,
+              "name": "HRV_PSS",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "6e865f164681c3d12583a37d8dc89d88c061c33d95859c617c17f027f438440a",
+              "other": 0,
+              "position": 9
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.15"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.15,
+              "minimum": 0.15,
+              "name": "HRV_PAS",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "5c322a50757b4417443dc0d1a853632b5082c31398ca2c2ca2dcc745555180d5",
+              "other": 0,
+              "position": 10
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "50.26385224274406"
+              ],
+              "finite_numeric": 1,
+              "maximum": 50.26385224274406,
+              "minimum": 50.26385224274406,
+              "name": "HRV_GI",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "04cd9936d15d2770d6f04337705ec687ce500775c2a86fcca96dd624366cec0a",
+              "other": 0,
+              "position": 11
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "50.23572209987396"
+              ],
+              "finite_numeric": 1,
+              "maximum": 50.23572209987396,
+              "minimum": 50.23572209987396,
+              "name": "HRV_SI",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "89186263b78d54fbd87760e62e24d88f105f3322d69f5f0566bc404c914ca013",
+              "other": 0,
+              "position": 12
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "50.28115653739895"
+              ],
+              "finite_numeric": 1,
+              "maximum": 50.28115653739895,
+              "minimum": 50.28115653739895,
+              "name": "HRV_AI",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "da56a13c46909ca3c92f3b5af2aed036e7424d671179bb0186688c6671ab2584",
+              "other": 0,
+              "position": 13
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "44.675324675324674"
+              ],
+              "finite_numeric": 1,
+              "maximum": 44.675324675324674,
+              "minimum": 44.675324675324674,
+              "name": "HRV_PI",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "738320ab1e9cd7802d7d6fd9d22f081a1b083eaedd3bed0018fc033bb6641361",
+              "other": 0,
+              "position": 14
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.5096928982725528"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.5096928982725528,
+              "minimum": 0.5096928982725528,
+              "name": "HRV_C1d",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "7908c372b8f45d5db8adc99598bb9df79a3e7de9d5129c4a18435884bf7d749c",
+              "other": 0,
+              "position": 15
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.490307101727447"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.490307101727447,
+              "minimum": 0.490307101727447,
+              "name": "HRV_C1a",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "80c699fe0a1a5d68ae5cb03e15ec443b7a1b55551feccbb10d658b58be9b7b80",
+              "other": 0,
+              "position": 16
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "35.22623809701072"
+              ],
+              "finite_numeric": 1,
+              "maximum": 35.22623809701072,
+              "minimum": 35.22623809701072,
+              "name": "HRV_SD1d",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "85ad13e02828320e9b5bc2659b04aeaa67316207d5d4d57813afe2c3fe260351",
+              "other": 0,
+              "position": 17
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "34.5498420949365"
+              ],
+              "finite_numeric": 1,
+              "maximum": 34.5498420949365,
+              "minimum": 34.5498420949365,
+              "name": "HRV_SD1a",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "fa62f9b3277534f23d5840d6062c9a4320b6abe328dab0c5df58954199f643c3",
+              "other": 0,
+              "position": 18
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.5209717736499618"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.5209717736499618,
+              "minimum": 0.5209717736499618,
+              "name": "HRV_C2d",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "842062d35a8dc00e561ce9747be008f5bb8b8920d0306cd682cda60345178195",
+              "other": 0,
+              "position": 19
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.47902822635003806"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.47902822635003806,
+              "minimum": 0.47902822635003806,
+              "name": "HRV_C2a",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "41a09fd672b8a03a96df348f5a1989efeeeb8335992fc4ecf4e2b43e8c7acf11",
+              "other": 0,
+              "position": 20
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "52.399648405921354"
+              ],
+              "finite_numeric": 1,
+              "maximum": 52.399648405921354,
+              "minimum": 52.399648405921354,
+              "name": "HRV_SD2d",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "e8506410aaf544dfc7deff415be66a483f9fff42d7f34026fedeb3fc257fb5e2",
+              "other": 0,
+              "position": 21
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "50.24603868271298"
+              ],
+              "finite_numeric": 1,
+              "maximum": 50.24603868271298,
+              "minimum": 50.24603868271298,
+              "name": "HRV_SD2a",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "bb0ac4efe77b571cbdcc74e14959eca273f4aad45f6ec79ea27360efe366a9ef",
+              "other": 0,
+              "position": 22
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.5174079273534969"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.5174079273534969,
+              "minimum": 0.5174079273534969,
+              "name": "HRV_Cd",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "a14226df36737554ffaed1b83c8b3858f6a58d7bf72a18a743602fc30bb11b04",
+              "other": 0,
+              "position": 23
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.482592072646503"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.482592072646503,
+              "minimum": 0.482592072646503,
+              "name": "HRV_Ca",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "8296ab9e6897527b23be4c10f2f763da4fe5b03e228553755ec4bd06af5d4922",
+              "other": 0,
+              "position": 24
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "44.64645004662446"
+              ],
+              "finite_numeric": 1,
+              "maximum": 44.64645004662446,
+              "minimum": 44.64645004662446,
+              "name": "HRV_SDNNd",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "6fcfc898b6fd37de3ddbca88ae2c41e8b9e89a9a6b94cea9a745e39de7d97060",
+              "other": 0,
+              "position": 25
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "43.11818637239822"
+              ],
+              "finite_numeric": 1,
+              "maximum": 43.11818637239822,
+              "minimum": 43.11818637239822,
+              "name": "HRV_SDNNa",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "e0a4282baef67bf5f320e6b4411cfd1c7a2a96a001cac875d5f654f40a1eb43a",
+              "other": 0,
+              "position": 26
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.7413829049877843"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.7413829049877843,
+              "minimum": 0.7413829049877843,
+              "name": "HRV_DFA_alpha1",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "445333140ab652c911fbbad8e7414ee87ff197539d60a3cd6d334325280d5f67",
+              "other": 0,
+              "position": 27
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "2.37398038596473"
+              ],
+              "finite_numeric": 1,
+              "maximum": 2.37398038596473,
+              "minimum": 2.37398038596473,
+              "name": "HRV_MFDFA_alpha1_Width",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "f00c28a3c12466d4f53ccedb61b1d900b064020bb70e85b13fbc80d60f4e91de",
+              "other": 0,
+              "position": 28
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.2144704708675143"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.2144704708675143,
+              "minimum": 1.2144704708675143,
+              "name": "HRV_MFDFA_alpha1_Peak",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "f4c2b93e150fbdd0baebe484b57e84b6adf1bb863c5e20e1f48ccde6d926ad61",
+              "other": 0,
+              "position": 29
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.9125443600194378"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.9125443600194378,
+              "minimum": 0.9125443600194378,
+              "name": "HRV_MFDFA_alpha1_Mean",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "01e8c203f8ed05cae114d780e5c5ba73ec88d1833ee14d3c93a5b303bdec69bb",
+              "other": 0,
+              "position": 30
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "-0.32239508750288337"
+              ],
+              "finite_numeric": 1,
+              "maximum": -0.32239508750288337,
+              "minimum": -0.32239508750288337,
+              "name": "HRV_MFDFA_alpha1_Max",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "7fc50068d7a720b9e90dd4f2cf956b08e770cd4562866edb78084a808de5c47d",
+              "other": 0,
+              "position": 31
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.7504596844298423"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.7504596844298423,
+              "minimum": 0.7504596844298423,
+              "name": "HRV_MFDFA_alpha1_Delta",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "8615a2a032b1805e853be385015dfeb7881d76b2bcda82310c81a0aff86ab7e0",
+              "other": 0,
+              "position": 32
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "-0.6271813839040548"
+              ],
+              "finite_numeric": 1,
+              "maximum": -0.6271813839040548,
+              "minimum": -0.6271813839040548,
+              "name": "HRV_MFDFA_alpha1_Asymmetry",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "bc3eacbee7e2af99d6366e78778f02d02e1ae5707216731746e471d654123f6a",
+              "other": 0,
+              "position": 33
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.0022458324357362072"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.0022458324357362072,
+              "minimum": 0.0022458324357362072,
+              "name": "HRV_MFDFA_alpha1_Fluctuation",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "6362c1a78f327ab61da2c656cc6f1a4d864e834a30b57a966b716c7e966d799b",
+              "other": 0,
+              "position": 34
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.34771722892713336"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.34771722892713336,
+              "minimum": 0.34771722892713336,
+              "name": "HRV_MFDFA_alpha1_Increment",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "ccacd8542f3e606df83db927e3aaedafb90f278373e22fe8fae77984f65d8c78",
+              "other": 0,
+              "position": 35
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.710152116994895"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.710152116994895,
+              "minimum": 0.710152116994895,
+              "name": "HRV_DFA_alpha2",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "db9f19850936cc0fd915d67fa33e2b489541234325329bf6c2f5a281e6266509",
+              "other": 0,
+              "position": 36
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.41284999234860686"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.41284999234860686,
+              "minimum": 0.41284999234860686,
+              "name": "HRV_MFDFA_alpha2_Width",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "b2a8211118923d96ef761268ec1cfda44e4ac5d90070bbaefd99f15382dc67a2",
+              "other": 0,
+              "position": 37
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.6651894948233759"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.6651894948233759,
+              "minimum": 0.6651894948233759,
+              "name": "HRV_MFDFA_alpha2_Peak",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "b40eb37742e78b44d0239a91a1c5c0c34ce1d218a080e8950f03579f3e44eb59",
+              "other": 0,
+              "position": 38
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.5283710409471836"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.5283710409471836,
+              "minimum": 0.5283710409471836,
+              "name": "HRV_MFDFA_alpha2_Mean",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "96f3af039c928677cd6e78cc19d8dcf24c7c1a6499c3439b0b2fc3b5b9a7ad18",
+              "other": 0,
+              "position": 39
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.0"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.0,
+              "minimum": 1.0,
+              "name": "HRV_MFDFA_alpha2_Max",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "04ccf7c6c4dcb87c3ef5a52903dff2cd92365e790d641ba8eaa73b21b92ed477",
+              "other": 0,
+              "position": 40
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.0750148438699232"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.0750148438699232,
+              "minimum": 1.0750148438699232,
+              "name": "HRV_MFDFA_alpha2_Delta",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "8d29a9094c26e3c3e0678134b3c67eaaae2b7ded8a017aaa6e2750a44be774ef",
+              "other": 0,
+              "position": 41
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "-0.8313999186432441"
+              ],
+              "finite_numeric": 1,
+              "maximum": -0.8313999186432441,
+              "minimum": -0.8313999186432441,
+              "name": "HRV_MFDFA_alpha2_Asymmetry",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "527165a6599fb455e1dadf91c944140f75d87f7943263e50b9bb0e0f4fb15992",
+              "other": 0,
+              "position": 42
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.00013685087673774297"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.00013685087673774297,
+              "minimum": 0.00013685087673774297,
+              "name": "HRV_MFDFA_alpha2_Fluctuation",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "e68bb221df1d3248587d443c71a1970334125128cd3ed3b64be7af7f2a46133f",
+              "other": 0,
+              "position": 43
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.012984350110936637"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.012984350110936637,
+              "minimum": 0.012984350110936637,
+              "name": "HRV_MFDFA_alpha2_Increment",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "a1f0558373e6afaf502dc100c9ea679f1daf135e2e96f23916ea38864e7348a0",
+              "other": 0,
+              "position": 44
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.1836484532861742"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.1836484532861742,
+              "minimum": 1.1836484532861742,
+              "name": "HRV_ApEn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "5dd54728180651a0cab6b5a0578ff51bbecd9618ce5ffe8452c42ac67085f114",
+              "other": 0,
+              "position": 45
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.2599314579739807"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.2599314579739807,
+              "minimum": 1.2599314579739807,
+              "name": "HRV_SampEn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "9147cf81748a47234e927f08bee3fe4b17b25b233efc7145491b25e28720cbfa",
+              "other": 0,
+              "position": 46
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "4.282683406115447"
+              ],
+              "finite_numeric": 1,
+              "maximum": 4.282683406115447,
+              "minimum": 4.282683406115447,
+              "name": "HRV_ShanEn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "0fb88a251c1a361493d0a77560de02088d78d1c7b46f778becbab9bfd1329843",
+              "other": 0,
+              "position": 47
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.0635329445370547"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.0635329445370547,
+              "minimum": 1.0635329445370547,
+              "name": "HRV_FuzzyEn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "5eba4ef6a7a521f42e402933fdaacd6bfc3124a464f6e38197ab3e208b02a6e9",
+              "other": 0,
+              "position": 48
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.2668768643889061"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.2668768643889061,
+              "minimum": 1.2668768643889061,
+              "name": "HRV_MSEn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "7f4c7d4ed4d9dd7f6c22090261f48e8039a415c992079fc15922f70b54ac8cc5",
+              "other": 0,
+              "position": 49
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.446925274367955"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.446925274367955,
+              "minimum": 1.446925274367955,
+              "name": "HRV_CMSEn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "343d52371fbd59d9bbf3dce6b4b70b837ecf7f773582d2cd8d842883ad8f7663",
+              "other": 0,
+              "position": 50
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.630370229631"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.630370229631,
+              "minimum": 1.630370229631,
+              "name": "HRV_RCMSEn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "6a9b867d64b02f3ef872fa9b2558cf78c6636a7bbd2d0203a0617c27591eb4a9",
+              "other": 0,
+              "position": 51
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.2097521306213086"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.2097521306213086,
+              "minimum": 1.2097521306213086,
+              "name": "HRV_CD",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "9317d5b7ddd548d3eb3ed2117f0879470738e01043b95a629f96b65c783543d0",
+              "other": 0,
+              "position": 52
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.8563723883918795"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.8563723883918795,
+              "minimum": 1.8563723883918795,
+              "name": "HRV_HFD",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "13184ec9be340ddac912903a598664ee89fca13780ce96975f6b0e71a9fac4b9",
+              "other": 0,
+              "position": 53
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.9130710664404325"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.9130710664404325,
+              "minimum": 1.9130710664404325,
+              "name": "HRV_KFD",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "93891bf9ec59e858675e76089fabe93eaf2d7dc849fb09a9cb2ccd4df17ce67c",
+              "other": 0,
+              "position": 54
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.8544746504250169"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.8544746504250169,
+              "minimum": 0.8544746504250169,
+              "name": "HRV_LZC",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "2f37e1a174357c2b16fb24ae0aae1b98200df0a11224565f4ccc64022d9a5135",
+              "other": 0,
+              "position": 55
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.21261682242990654"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.21261682242990654,
+              "minimum": 0.21261682242990654,
+              "name": "HRV_Symbolic_EqualProb4_0V",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "595c4790e3bf98acfc28f28bd6d3f75596d5aa647928bc43960e62f52124b068",
+              "other": 0,
+              "position": 56
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.48130841121495327"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.48130841121495327,
+              "minimum": 0.48130841121495327,
+              "name": "HRV_Symbolic_EqualProb4_1V",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "4f016c25ee59012a94e5072dbee9a2f20dd710642c759b862025e12506c8b103",
+              "other": 0,
+              "position": 57
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.14485981308411214"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.14485981308411214,
+              "minimum": 0.14485981308411214,
+              "name": "HRV_Symbolic_EqualProb4_2LV",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "4670f83a011a30e5acc0306a9fbbb63f6fb161f5ce01503982764840a79a5f3e",
+              "other": 0,
+              "position": 58
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.16121495327102803"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.16121495327102803,
+              "minimum": 0.16121495327102803,
+              "name": "HRV_Symbolic_EqualProb4_2UV",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "4941cff1fa1175e20f4b3edc0e31c4f08a85741782963e202b133101cda6fbf0",
+              "other": 0,
+              "position": 59
+            }
+          ],
+          "distinct_limit_per_column": 16666,
+          "duplicate_header_names": false,
+          "format": "delimited",
+          "limitations": [
+            "Numeric ranges use float conversion, not semantic type inference.",
+            "Distinct values use SHA-256 identities and the declared cap.",
+            "Column fingerprints exclude ragged rows; empty fields are included.",
+            "Examples are limited to three values and 256 characters each."
+          ],
+          "ragged_rows": 0,
+          "row_count": 1
+        }
+      },
+      {
+        "bytes": 2796,
+        "download_hash_verified": true,
+        "file": "hrv_indices.csv",
+        "sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9",
+        "structural_profile": {
+          "columns": [
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "696.3953488372093"
+              ],
+              "finite_numeric": 1,
+              "maximum": 696.3953488372093,
+              "minimum": 696.3953488372093,
+              "name": "HRV_MeanNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "b7d7ab154a26fde0a12f987addf966a9cc016a5cee0c6396c5cd363b975629be",
+              "other": 0,
+              "position": 0
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "62.135891206172104"
+              ],
+              "finite_numeric": 1,
+              "maximum": 62.135891206172104,
+              "minimum": 62.135891206172104,
+              "name": "HRV_SDNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "935450512ec679bab329ae1712e25e4a9411a520b427e658e6e5d8503221b8bb",
+              "other": 0,
+              "position": 1
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "10.060727541349376"
+              ],
+              "finite_numeric": 1,
+              "maximum": 10.060727541349376,
+              "minimum": 10.060727541349376,
+              "name": "HRV_SDANN1",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "d194a5ebcd98324d7dc2d1b0d5390629258b7f086ec7c31fa60798f922ec6286",
+              "other": 0,
+              "position": 2
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "60.27503600273103"
+              ],
+              "finite_numeric": 1,
+              "maximum": 60.27503600273103,
+              "minimum": 60.27503600273103,
+              "name": "HRV_SDNNI1",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "01eed3668cc2098cf8f1295ecebea6a7fd516a11b3926ab0ac4726bd1a03986b",
+              "other": 0,
+              "position": 3
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 0,
+              "empty": 1,
+              "examples": [],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "HRV_SDANN2",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+              "other": 0,
+              "position": 4
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 0,
+              "empty": 1,
+              "examples": [],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "HRV_SDNNI2",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+              "other": 0,
+              "position": 5
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 0,
+              "empty": 1,
+              "examples": [],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "HRV_SDANN5",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+              "other": 0,
+              "position": 6
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 0,
+              "empty": 1,
+              "examples": [],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "HRV_SDNNI5",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+              "other": 0,
+              "position": 7
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "69.69798316887554"
+              ],
+              "finite_numeric": 1,
+              "maximum": 69.69798316887554,
+              "minimum": 69.69798316887554,
+              "name": "HRV_RMSSD",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "6b0186c2996762ef59077c790ac070e15e044fc87d9ac59753a0b5d31e99265d",
+              "other": 0,
+              "position": 8
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "69.77910878189152"
+              ],
+              "finite_numeric": 1,
+              "maximum": 69.77910878189152,
+              "minimum": 69.77910878189152,
+              "name": "HRV_SDSD",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "45dbe5915508c1a420f842ed0dca20c2fb70f23a7fcba921bf182079fb9e2219",
+              "other": 0,
+              "position": 9
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.08922502327151112"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.08922502327151112,
+              "minimum": 0.08922502327151112,
+              "name": "HRV_CVNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "6bfc5d95881c50620e737abfd019d6c35e2df7e5f4d6071575cba6d715d1ccea",
+              "other": 0,
+              "position": 10
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.10008392974659035"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.10008392974659035,
+              "minimum": 0.10008392974659035,
+              "name": "HRV_CVSD",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "f0d18d83e4edff2e4df551609780f81937870ae398fd9f60eab992b1f2745c40",
+              "other": 0,
+              "position": 11
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "690.0"
+              ],
+              "finite_numeric": 1,
+              "maximum": 690.0,
+              "minimum": 690.0,
+              "name": "HRV_MedianNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "4b66cd5f28958ebb724786de207119f3492474fb1990b2231fb05176b1c843a8",
+              "other": 0,
+              "position": 12
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "44.477999999999994"
+              ],
+              "finite_numeric": 1,
+              "maximum": 44.477999999999994,
+              "minimum": 44.477999999999994,
+              "name": "HRV_MadNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "95995f41094ae19acb97bd6d2e9852e3b4b42f7877c3ad944d0df4bc13e176f2",
+              "other": 0,
+              "position": 13
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.06446086956521738"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.06446086956521738,
+              "minimum": 0.06446086956521738,
+              "name": "HRV_MCVNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "1cf1eea85cf349cc388c144067df9a85ed954f3b8916c587e86b0bbd222478b3",
+              "other": 0,
+              "position": 14
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "60.0"
+              ],
+              "finite_numeric": 1,
+              "maximum": 60.0,
+              "minimum": 60.0,
+              "name": "HRV_IQRNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "1d60b87bd114ebd01342b395fc233474286079041afe4d3e80396751851a0a6e",
+              "other": 0,
+              "position": 15
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.8915019973478892"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.8915019973478892,
+              "minimum": 0.8915019973478892,
+              "name": "HRV_SDRMSSD",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "36270cb2a74fb7080b07d7e755eef41b113e196117a9c2797b2b20e08a3e7722",
+              "other": 0,
+              "position": 16
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "660.0"
+              ],
+              "finite_numeric": 1,
+              "maximum": 660.0,
+              "minimum": 660.0,
+              "name": "HRV_Prc20NN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "19685181076010ea0ee3f702bae0603dc1056d4a567460649a6fbf429b1efade",
+              "other": 0,
+              "position": 17
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "740.0"
+              ],
+              "finite_numeric": 1,
+              "maximum": 740.0,
+              "minimum": 740.0,
+              "name": "HRV_Prc80NN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "5c1d1505cb53e5aae3d8f9f37b2d3f85ad17518da4da1a0c602601e8798ca83f",
+              "other": 0,
+              "position": 18
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "14.651162790697676"
+              ],
+              "finite_numeric": 1,
+              "maximum": 14.651162790697676,
+              "minimum": 14.651162790697676,
+              "name": "HRV_pNN50",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "2e75aa66fa159510d2a0ee53e6ddffe5777ec07b0e1de0f8ab728f1ba39acc41",
+              "other": 0,
+              "position": 19
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "49.30232558139535"
+              ],
+              "finite_numeric": 1,
+              "maximum": 49.30232558139535,
+              "minimum": 49.30232558139535,
+              "name": "HRV_pNN20",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "ced3e4eea40de3fb7f550f8134184fc8884658bd49d298f2c21779f26dbefddb",
+              "other": 0,
+              "position": 20
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "470.0"
+              ],
+              "finite_numeric": 1,
+              "maximum": 470.0,
+              "minimum": 470.0,
+              "name": "HRV_MinNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "602dbaeb13795d7a8c8de9db75393d2363071090d0212018d958d3a21b038ac0",
+              "other": 0,
+              "position": 21
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1420.0"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1420.0,
+              "minimum": 1420.0,
+              "name": "HRV_MaxNN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "a6412a5b0b58c2a43de23cc49d4736abd9dba0e05f803c105ba77d9ff49659b7",
+              "other": 0,
+              "position": 22
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "7.962962962962963"
+              ],
+              "finite_numeric": 1,
+              "maximum": 7.962962962962963,
+              "minimum": 7.962962962962963,
+              "name": "HRV_HTI",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "66cd3c4ef13bdde4456c0782cf8f096cf10c3eac2d2296920768cf2e254e7f6b",
+              "other": 0,
+              "position": 23
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "234.375"
+              ],
+              "finite_numeric": 1,
+              "maximum": 234.375,
+              "minimum": 234.375,
+              "name": "HRV_TINN",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "45eb774e86363bce8e8033a4de1df161254cad5ec0dc56807d31dd892c03c344",
+              "other": 0,
+              "position": 24
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 0,
+              "empty": 1,
+              "examples": [],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "HRV_ULF",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+              "other": 0,
+              "position": 25
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.01731007726584816"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.01731007726584816,
+              "minimum": 0.01731007726584816,
+              "name": "HRV_VLF",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "cc7a2dfeeb58f9d6b2297710ec433f004db8227a688c8496d50e6272f6ab021a",
+              "other": 0,
+              "position": 26
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.04802607886179408"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.04802607886179408,
+              "minimum": 0.04802607886179408,
+              "name": "HRV_LF",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "dbdd8ac4e37a936ad8d8addb58ce3b8e858cc5f24fd602cecfcfc94f916bc5a9",
+              "other": 0,
+              "position": 27
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.06023186865189019"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.06023186865189019,
+              "minimum": 0.06023186865189019,
+              "name": "HRV_HF",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "42dc868028b8d8129752c8eadac220ecd1c4dc2fcf85202b4777ae7e4da40b92",
+              "other": 0,
+              "position": 28
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.011185774793627324"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.011185774793627324,
+              "minimum": 0.011185774793627324,
+              "name": "HRV_VHF",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "8c707a23b88a131ebd5e9475b567333229575f054c83db5b943434a40aea2b8a",
+              "other": 0,
+              "position": 29
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.13675379957315975"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.13675379957315975,
+              "minimum": 0.13675379957315975,
+              "name": "HRV_TP",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "13eabbac4032bc669487b7eb1fc777f8ed17d912c8ee1ae7b0455300440d8ed5",
+              "other": 0,
+              "position": 30
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.797353293807977"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.797353293807977,
+              "minimum": 0.797353293807977,
+              "name": "HRV_LFHF",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "e0f93ee93d5017a6e0602c28c2c4fdac0503dd9457a547f7e9177c41cf17da77",
+              "other": 0,
+              "position": 31
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.3511864314680439"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.3511864314680439,
+              "minimum": 0.3511864314680439,
+              "name": "HRV_LFn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "ed37ad3f8b1ffbc1477bec4148981924c5dd94280beada16ca3760576e84cae0",
+              "other": 0,
+              "position": 32
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.44044018403794105"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.44044018403794105,
+              "minimum": 0.44044018403794105,
+              "name": "HRV_HFn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "bbf3566b0583f17c684e0efc36a7a4666e481ddc889de8257538e9389a099a2c",
+              "other": 0,
+              "position": 33
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "-2.8095536871398052"
+              ],
+              "finite_numeric": 1,
+              "maximum": -2.8095536871398052,
+              "minimum": -2.8095536871398052,
+              "name": "HRV_LnHF",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "3b1a4766faa453109add767afbfc11003ec91d610f538009bb88c95bd0e1d88b",
+              "other": 0,
+              "position": 34
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "49.34128100482926"
+              ],
+              "finite_numeric": 1,
+              "maximum": 49.34128100482926,
+              "minimum": 49.34128100482926,
+              "name": "HRV_SD1",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "e0b8dc97a0c16e253c374dec5a7c3d6814fdd943ffdd8f66163b6507c2969856",
+              "other": 0,
+              "position": 35
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "72.59743491590363"
+              ],
+              "finite_numeric": 1,
+              "maximum": 72.59743491590363,
+              "minimum": 72.59743491590363,
+              "name": "HRV_SD2",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "0e7baa24a604fbb9b0fb81c542071d3aed108d156da6f4b30aa25b59d64988a8",
+              "other": 0,
+              "position": 36
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.679655983189845"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.679655983189845,
+              "minimum": 0.679655983189845,
+              "name": "HRV_SD1SD2",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "ff4bed6a0b706e1326d6d10b40488dfe541f30fbb2e7d6958bf6c699532fe0da",
+              "other": 0,
+              "position": 37
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "11253.343335830747"
+              ],
+              "finite_numeric": 1,
+              "maximum": 11253.343335830747,
+              "minimum": 11253.343335830747,
+              "name": "HRV_S",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "4a2e3141a3df7e2232fca873c7cd3f7f6464997bca3de1d59f74721bb0781edb",
+              "other": 0,
+              "position": 38
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.4713325928606957"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.4713325928606957,
+              "minimum": 1.4713325928606957,
+              "name": "HRV_CSI",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "54c2b1b5f1c5a6d2da0ab5a812f4f34fe5b73c6bd41bbc76c122ec265e6600f0",
+              "other": 0,
+              "position": 39
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "4.758251679217147"
+              ],
+              "finite_numeric": 1,
+              "maximum": 4.758251679217147,
+              "minimum": 4.758251679217147,
+              "name": "HRV_CVI",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "d223c0bfa90e64cbd6ceab6ec43b86ee5138e67872f101bed09fa5c28f144036",
+              "other": 0,
+              "position": 40
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "427.25988859940844"
+              ],
+              "finite_numeric": 1,
+              "maximum": 427.25988859940844,
+              "minimum": 427.25988859940844,
+              "name": "HRV_CSI_Modified",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "80062ba02797215adeb9094eb2c67414575cbcd181f6507abb331d82f6a71ead",
+              "other": 0,
+              "position": 41
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.5581395348837209"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.5581395348837209,
+              "minimum": 0.5581395348837209,
+              "name": "HRV_PIP",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "482a4b099ec4709b51b1fb027ad91aaeb43aa427f73dd6d2e8ef4ecead5a3788",
+              "other": 0,
+              "position": 42
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.5116883116883117"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.5116883116883117,
+              "minimum": 0.5116883116883117,
+              "name": "HRV_IALS",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "2d54357e90b53a982a504b4246657312f9a4ce272a081924c139aeebaf34d870",
+              "other": 0,
+              "position": 43
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.7360406091370558"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.7360406091370558,
+              "minimum": 0.7360406091370558,
+              "name": "HRV_PSS",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "6e865f164681c3d12583a37d8dc89d88c061c33d95859c617c17f027f438440a",
+              "other": 0,
+              "position": 44
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.15"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.15,
+              "minimum": 0.15,
+              "name": "HRV_PAS",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "5c322a50757b4417443dc0d1a853632b5082c31398ca2c2ca2dcc745555180d5",
+              "other": 0,
+              "position": 45
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "50.26385224274406"
+              ],
+              "finite_numeric": 1,
+              "maximum": 50.26385224274406,
+              "minimum": 50.26385224274406,
+              "name": "HRV_GI",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "04cd9936d15d2770d6f04337705ec687ce500775c2a86fcca96dd624366cec0a",
+              "other": 0,
+              "position": 46
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "50.23572209987396"
+              ],
+              "finite_numeric": 1,
+              "maximum": 50.23572209987396,
+              "minimum": 50.23572209987396,
+              "name": "HRV_SI",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "89186263b78d54fbd87760e62e24d88f105f3322d69f5f0566bc404c914ca013",
+              "other": 0,
+              "position": 47
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "50.28115653739895"
+              ],
+              "finite_numeric": 1,
+              "maximum": 50.28115653739895,
+              "minimum": 50.28115653739895,
+              "name": "HRV_AI",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "da56a13c46909ca3c92f3b5af2aed036e7424d671179bb0186688c6671ab2584",
+              "other": 0,
+              "position": 48
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "44.675324675324674"
+              ],
+              "finite_numeric": 1,
+              "maximum": 44.675324675324674,
+              "minimum": 44.675324675324674,
+              "name": "HRV_PI",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "738320ab1e9cd7802d7d6fd9d22f081a1b083eaedd3bed0018fc033bb6641361",
+              "other": 0,
+              "position": 49
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.5096928982725528"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.5096928982725528,
+              "minimum": 0.5096928982725528,
+              "name": "HRV_C1d",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "7908c372b8f45d5db8adc99598bb9df79a3e7de9d5129c4a18435884bf7d749c",
+              "other": 0,
+              "position": 50
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.490307101727447"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.490307101727447,
+              "minimum": 0.490307101727447,
+              "name": "HRV_C1a",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "80c699fe0a1a5d68ae5cb03e15ec443b7a1b55551feccbb10d658b58be9b7b80",
+              "other": 0,
+              "position": 51
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "35.22623809701072"
+              ],
+              "finite_numeric": 1,
+              "maximum": 35.22623809701072,
+              "minimum": 35.22623809701072,
+              "name": "HRV_SD1d",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "85ad13e02828320e9b5bc2659b04aeaa67316207d5d4d57813afe2c3fe260351",
+              "other": 0,
+              "position": 52
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "34.5498420949365"
+              ],
+              "finite_numeric": 1,
+              "maximum": 34.5498420949365,
+              "minimum": 34.5498420949365,
+              "name": "HRV_SD1a",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "fa62f9b3277534f23d5840d6062c9a4320b6abe328dab0c5df58954199f643c3",
+              "other": 0,
+              "position": 53
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.5209717736499618"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.5209717736499618,
+              "minimum": 0.5209717736499618,
+              "name": "HRV_C2d",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "842062d35a8dc00e561ce9747be008f5bb8b8920d0306cd682cda60345178195",
+              "other": 0,
+              "position": 54
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.47902822635003806"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.47902822635003806,
+              "minimum": 0.47902822635003806,
+              "name": "HRV_C2a",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "41a09fd672b8a03a96df348f5a1989efeeeb8335992fc4ecf4e2b43e8c7acf11",
+              "other": 0,
+              "position": 55
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "52.399648405921354"
+              ],
+              "finite_numeric": 1,
+              "maximum": 52.399648405921354,
+              "minimum": 52.399648405921354,
+              "name": "HRV_SD2d",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "e8506410aaf544dfc7deff415be66a483f9fff42d7f34026fedeb3fc257fb5e2",
+              "other": 0,
+              "position": 56
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "50.24603868271298"
+              ],
+              "finite_numeric": 1,
+              "maximum": 50.24603868271298,
+              "minimum": 50.24603868271298,
+              "name": "HRV_SD2a",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "bb0ac4efe77b571cbdcc74e14959eca273f4aad45f6ec79ea27360efe366a9ef",
+              "other": 0,
+              "position": 57
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.5174079273534969"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.5174079273534969,
+              "minimum": 0.5174079273534969,
+              "name": "HRV_Cd",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "a14226df36737554ffaed1b83c8b3858f6a58d7bf72a18a743602fc30bb11b04",
+              "other": 0,
+              "position": 58
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.482592072646503"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.482592072646503,
+              "minimum": 0.482592072646503,
+              "name": "HRV_Ca",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "8296ab9e6897527b23be4c10f2f763da4fe5b03e228553755ec4bd06af5d4922",
+              "other": 0,
+              "position": 59
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "44.64645004662446"
+              ],
+              "finite_numeric": 1,
+              "maximum": 44.64645004662446,
+              "minimum": 44.64645004662446,
+              "name": "HRV_SDNNd",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "6fcfc898b6fd37de3ddbca88ae2c41e8b9e89a9a6b94cea9a745e39de7d97060",
+              "other": 0,
+              "position": 60
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "43.11818637239822"
+              ],
+              "finite_numeric": 1,
+              "maximum": 43.11818637239822,
+              "minimum": 43.11818637239822,
+              "name": "HRV_SDNNa",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "e0a4282baef67bf5f320e6b4411cfd1c7a2a96a001cac875d5f654f40a1eb43a",
+              "other": 0,
+              "position": 61
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.7413829049877843"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.7413829049877843,
+              "minimum": 0.7413829049877843,
+              "name": "HRV_DFA_alpha1",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "445333140ab652c911fbbad8e7414ee87ff197539d60a3cd6d334325280d5f67",
+              "other": 0,
+              "position": 62
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "2.37398038596473"
+              ],
+              "finite_numeric": 1,
+              "maximum": 2.37398038596473,
+              "minimum": 2.37398038596473,
+              "name": "HRV_MFDFA_alpha1_Width",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "f00c28a3c12466d4f53ccedb61b1d900b064020bb70e85b13fbc80d60f4e91de",
+              "other": 0,
+              "position": 63
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.2144704708675143"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.2144704708675143,
+              "minimum": 1.2144704708675143,
+              "name": "HRV_MFDFA_alpha1_Peak",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "f4c2b93e150fbdd0baebe484b57e84b6adf1bb863c5e20e1f48ccde6d926ad61",
+              "other": 0,
+              "position": 64
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.9125443600194378"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.9125443600194378,
+              "minimum": 0.9125443600194378,
+              "name": "HRV_MFDFA_alpha1_Mean",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "01e8c203f8ed05cae114d780e5c5ba73ec88d1833ee14d3c93a5b303bdec69bb",
+              "other": 0,
+              "position": 65
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "-0.32239508750288337"
+              ],
+              "finite_numeric": 1,
+              "maximum": -0.32239508750288337,
+              "minimum": -0.32239508750288337,
+              "name": "HRV_MFDFA_alpha1_Max",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "7fc50068d7a720b9e90dd4f2cf956b08e770cd4562866edb78084a808de5c47d",
+              "other": 0,
+              "position": 66
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.7504596844298423"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.7504596844298423,
+              "minimum": 0.7504596844298423,
+              "name": "HRV_MFDFA_alpha1_Delta",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "8615a2a032b1805e853be385015dfeb7881d76b2bcda82310c81a0aff86ab7e0",
+              "other": 0,
+              "position": 67
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "-0.6271813839040548"
+              ],
+              "finite_numeric": 1,
+              "maximum": -0.6271813839040548,
+              "minimum": -0.6271813839040548,
+              "name": "HRV_MFDFA_alpha1_Asymmetry",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "bc3eacbee7e2af99d6366e78778f02d02e1ae5707216731746e471d654123f6a",
+              "other": 0,
+              "position": 68
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.0022458324357362072"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.0022458324357362072,
+              "minimum": 0.0022458324357362072,
+              "name": "HRV_MFDFA_alpha1_Fluctuation",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "6362c1a78f327ab61da2c656cc6f1a4d864e834a30b57a966b716c7e966d799b",
+              "other": 0,
+              "position": 69
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.34771722892713336"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.34771722892713336,
+              "minimum": 0.34771722892713336,
+              "name": "HRV_MFDFA_alpha1_Increment",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "ccacd8542f3e606df83db927e3aaedafb90f278373e22fe8fae77984f65d8c78",
+              "other": 0,
+              "position": 70
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.710152116994895"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.710152116994895,
+              "minimum": 0.710152116994895,
+              "name": "HRV_DFA_alpha2",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "db9f19850936cc0fd915d67fa33e2b489541234325329bf6c2f5a281e6266509",
+              "other": 0,
+              "position": 71
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.41284999234860686"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.41284999234860686,
+              "minimum": 0.41284999234860686,
+              "name": "HRV_MFDFA_alpha2_Width",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "b2a8211118923d96ef761268ec1cfda44e4ac5d90070bbaefd99f15382dc67a2",
+              "other": 0,
+              "position": 72
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.6651894948233759"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.6651894948233759,
+              "minimum": 0.6651894948233759,
+              "name": "HRV_MFDFA_alpha2_Peak",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "b40eb37742e78b44d0239a91a1c5c0c34ce1d218a080e8950f03579f3e44eb59",
+              "other": 0,
+              "position": 73
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.5283710409471836"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.5283710409471836,
+              "minimum": 0.5283710409471836,
+              "name": "HRV_MFDFA_alpha2_Mean",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "96f3af039c928677cd6e78cc19d8dcf24c7c1a6499c3439b0b2fc3b5b9a7ad18",
+              "other": 0,
+              "position": 74
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.0"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.0,
+              "minimum": 1.0,
+              "name": "HRV_MFDFA_alpha2_Max",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "04ccf7c6c4dcb87c3ef5a52903dff2cd92365e790d641ba8eaa73b21b92ed477",
+              "other": 0,
+              "position": 75
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.0750148438699232"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.0750148438699232,
+              "minimum": 1.0750148438699232,
+              "name": "HRV_MFDFA_alpha2_Delta",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "8d29a9094c26e3c3e0678134b3c67eaaae2b7ded8a017aaa6e2750a44be774ef",
+              "other": 0,
+              "position": 76
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "-0.8313999186432441"
+              ],
+              "finite_numeric": 1,
+              "maximum": -0.8313999186432441,
+              "minimum": -0.8313999186432441,
+              "name": "HRV_MFDFA_alpha2_Asymmetry",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "527165a6599fb455e1dadf91c944140f75d87f7943263e50b9bb0e0f4fb15992",
+              "other": 0,
+              "position": 77
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.00013685087673774297"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.00013685087673774297,
+              "minimum": 0.00013685087673774297,
+              "name": "HRV_MFDFA_alpha2_Fluctuation",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "e68bb221df1d3248587d443c71a1970334125128cd3ed3b64be7af7f2a46133f",
+              "other": 0,
+              "position": 78
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.012984350110936637"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.012984350110936637,
+              "minimum": 0.012984350110936637,
+              "name": "HRV_MFDFA_alpha2_Increment",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "a1f0558373e6afaf502dc100c9ea679f1daf135e2e96f23916ea38864e7348a0",
+              "other": 0,
+              "position": 79
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.1836484532861742"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.1836484532861742,
+              "minimum": 1.1836484532861742,
+              "name": "HRV_ApEn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "5dd54728180651a0cab6b5a0578ff51bbecd9618ce5ffe8452c42ac67085f114",
+              "other": 0,
+              "position": 80
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.2599314579739807"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.2599314579739807,
+              "minimum": 1.2599314579739807,
+              "name": "HRV_SampEn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "9147cf81748a47234e927f08bee3fe4b17b25b233efc7145491b25e28720cbfa",
+              "other": 0,
+              "position": 81
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "4.282683406115447"
+              ],
+              "finite_numeric": 1,
+              "maximum": 4.282683406115447,
+              "minimum": 4.282683406115447,
+              "name": "HRV_ShanEn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "0fb88a251c1a361493d0a77560de02088d78d1c7b46f778becbab9bfd1329843",
+              "other": 0,
+              "position": 82
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.0635329445370547"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.0635329445370547,
+              "minimum": 1.0635329445370547,
+              "name": "HRV_FuzzyEn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "5eba4ef6a7a521f42e402933fdaacd6bfc3124a464f6e38197ab3e208b02a6e9",
+              "other": 0,
+              "position": 83
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.2668768643889061"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.2668768643889061,
+              "minimum": 1.2668768643889061,
+              "name": "HRV_MSEn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "7f4c7d4ed4d9dd7f6c22090261f48e8039a415c992079fc15922f70b54ac8cc5",
+              "other": 0,
+              "position": 84
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.446925274367955"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.446925274367955,
+              "minimum": 1.446925274367955,
+              "name": "HRV_CMSEn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "343d52371fbd59d9bbf3dce6b4b70b837ecf7f773582d2cd8d842883ad8f7663",
+              "other": 0,
+              "position": 85
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.630370229631"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.630370229631,
+              "minimum": 1.630370229631,
+              "name": "HRV_RCMSEn",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "6a9b867d64b02f3ef872fa9b2558cf78c6636a7bbd2d0203a0617c27591eb4a9",
+              "other": 0,
+              "position": 86
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.2097521306213086"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.2097521306213086,
+              "minimum": 1.2097521306213086,
+              "name": "HRV_CD",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "9317d5b7ddd548d3eb3ed2117f0879470738e01043b95a629f96b65c783543d0",
+              "other": 0,
+              "position": 87
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.8563723883918795"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.8563723883918795,
+              "minimum": 1.8563723883918795,
+              "name": "HRV_HFD",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "13184ec9be340ddac912903a598664ee89fca13780ce96975f6b0e71a9fac4b9",
+              "other": 0,
+              "position": 88
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "1.9130710664404325"
+              ],
+              "finite_numeric": 1,
+              "maximum": 1.9130710664404325,
+              "minimum": 1.9130710664404325,
+              "name": "HRV_KFD",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "93891bf9ec59e858675e76089fabe93eaf2d7dc849fb09a9cb2ccd4df17ce67c",
+              "other": 0,
+              "position": 89
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.8544746504250169"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.8544746504250169,
+              "minimum": 0.8544746504250169,
+              "name": "HRV_LZC",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "2f37e1a174357c2b16fb24ae0aae1b98200df0a11224565f4ccc64022d9a5135",
+              "other": 0,
+              "position": 90
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.21261682242990654"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.21261682242990654,
+              "minimum": 0.21261682242990654,
+              "name": "HRV_Symbolic_EqualProb4_0V",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "595c4790e3bf98acfc28f28bd6d3f75596d5aa647928bc43960e62f52124b068",
+              "other": 0,
+              "position": 91
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.48130841121495327"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.48130841121495327,
+              "minimum": 0.48130841121495327,
+              "name": "HRV_Symbolic_EqualProb4_1V",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "4f016c25ee59012a94e5072dbee9a2f20dd710642c759b862025e12506c8b103",
+              "other": 0,
+              "position": 92
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.14485981308411214"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.14485981308411214,
+              "minimum": 0.14485981308411214,
+              "name": "HRV_Symbolic_EqualProb4_2LV",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "4670f83a011a30e5acc0306a9fbbb63f6fb161f5ce01503982764840a79a5f3e",
+              "other": 0,
+              "position": 93
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1,
+              "empty": 0,
+              "examples": [
+                "0.16121495327102803"
+              ],
+              "finite_numeric": 1,
+              "maximum": 0.16121495327102803,
+              "minimum": 0.16121495327102803,
+              "name": "HRV_Symbolic_EqualProb4_2UV",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "4941cff1fa1175e20f4b3edc0e31c4f08a85741782963e202b133101cda6fbf0",
+              "other": 0,
+              "position": 94
+            }
+          ],
+          "distinct_limit_per_column": 10526,
+          "duplicate_header_names": false,
+          "format": "delimited",
+          "limitations": [
+            "Numeric ranges use float conversion, not semantic type inference.",
+            "Distinct values use SHA-256 identities and the declared cap.",
+            "Column fingerprints exclude ragged rows; empty fields are included.",
+            "Examples are limited to three values and 256 characters each."
+          ],
+          "ragged_rows": 0,
+          "row_count": 1
+        }
+      }
+    ],
+    "scope": "Structural observations only"
+  },
+  "reference_seconds": 600,
+  "repeatability": {
+    "all_output_differences_limited_to_table_serialization_or_row_order": true,
+    "all_outputs_byte_identical_to_original": true,
+    "cleanup_verified": true,
+    "comparison_rules_validated": false,
+    "construction_run": false,
+    "finished": 1793135846.5124044,
+    "limitations": "Finite repeated runs, not a grading contract or portability proof. Fresh processes/workspaces share the rebuilt environment and caches; base image tag is reused, not an immutable image digest.",
+    "model_calls": 0,
+    "output_observations": [
+      [
+        {
+          "baseline_sha256": "4da5b39c6b59c52576201d9534822e520f2a8e4b5167c06e83a6174db347310f",
+          "byte_identical": true,
+          "path": "hrv_time.csv",
+          "replay_sha256": "4da5b39c6b59c52576201d9534822e520f2a8e4b5167c06e83a6174db347310f"
+        },
+        {
+          "baseline_sha256": "81749e0b404a7d3e2821a065cf952547bc02a4c08a4356508a0e887b682f4959",
+          "byte_identical": true,
+          "path": "hrv_freq.csv",
+          "replay_sha256": "81749e0b404a7d3e2821a065cf952547bc02a4c08a4356508a0e887b682f4959"
+        },
+        {
+          "baseline_sha256": "8afda790b4fb63cca4ce57cbe0fa510a0f8618a0a4ebd6dd4ef14519ac02d279",
+          "byte_identical": true,
+          "path": "hrv_nonlinear.csv",
+          "replay_sha256": "8afda790b4fb63cca4ce57cbe0fa510a0f8618a0a4ebd6dd4ef14519ac02d279"
+        },
+        {
+          "baseline_sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9",
+          "byte_identical": true,
+          "path": "hrv_indices.csv",
+          "replay_sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9"
+        }
+      ],
+      [
+        {
+          "baseline_sha256": "4da5b39c6b59c52576201d9534822e520f2a8e4b5167c06e83a6174db347310f",
+          "byte_identical": true,
+          "path": "hrv_time.csv",
+          "replay_sha256": "4da5b39c6b59c52576201d9534822e520f2a8e4b5167c06e83a6174db347310f"
+        },
+        {
+          "baseline_sha256": "81749e0b404a7d3e2821a065cf952547bc02a4c08a4356508a0e887b682f4959",
+          "byte_identical": true,
+          "path": "hrv_freq.csv",
+          "replay_sha256": "81749e0b404a7d3e2821a065cf952547bc02a4c08a4356508a0e887b682f4959"
+        },
+        {
+          "baseline_sha256": "8afda790b4fb63cca4ce57cbe0fa510a0f8618a0a4ebd6dd4ef14519ac02d279",
+          "byte_identical": true,
+          "path": "hrv_nonlinear.csv",
+          "replay_sha256": "8afda790b4fb63cca4ce57cbe0fa510a0f8618a0a4ebd6dd4ef14519ac02d279"
+        },
+        {
+          "baseline_sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9",
+          "byte_identical": true,
+          "path": "hrv_indices.csv",
+          "replay_sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9"
+        }
+      ]
+    ],
+    "reference_tests": 2,
+    "semantic_fidelity_validated": false,
+    "solver_run": false,
+    "started": 1793135769.2159839,
+    "status": "repeatability_observed_requires_comparison_review"
+  },
+  "source_evidence": {
+    "candidate/dependency-exclusions.json": "{\"files\": []}\n",
+    "candidate/pyproject.toml": "[project]\nname = \"neurokit-hrv-setup\"\nversion = \"0.1.0\"\ndescription = \"Environment for the NeuroKit2 HRV reference analysis\"\nrequires-python = \">=3.13,<3.14\"\ndependencies = [\n    \"neurokit2==0.2.13\",\n]\n",
+    "inputs/exports.py": "import os\n\nos.makedirs(\"/work/outputs\", exist_ok=True)\n\nhrv_time.to_csv(\"/work/outputs/hrv_time.csv\", index=False)\nhrv_freq.to_csv(\"/work/outputs/hrv_freq.csv\", index=False)\nhrv_nonlinear.to_csv(\"/work/outputs/hrv_nonlinear.csv\", index=False)\nhrv_indices.to_csv(\"/work/outputs/hrv_indices.csv\", index=False)\n",
+    "inputs/original.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3\n#     language: python\n#     name: python3\n# ---\n\n# # Heart Rate Variability (HRV)\n\n# NeuroKit2 is the most comprehensive package when it comes to HRV indices, and this example shows how to use NeuroKit2 to compute heart rate variability (HRV) indices in the time-, frequency-, and non-linear domain.\n#\n# For a comprehensive review of the most up-to-date HRV indices, a discussion of their significance in psychology, and a step-by-step guide for HRV analysis using **NeuroKit2**, the [Heart Rate Variability in Psychology: A Review of HRV Indices and an Analysis Tutorial](https://doi.org/10.3390/s21123998) paper is a good place to start. \n\n# ## Compute HRV features\n\n# Load the NeuroKit package\nimport neurokit2 as nk\n\n# Note: this cell is hidden using the \"remove-input\" tag\n# Make bigger images\nimport matplotlib.pyplot as plt\n\n\nplt.rcParams[\"figure.figsize\"] = [15, 5]\nplt.rcParams[\"font.size\"] = 14\n\n# ## Download Dataset\n\n# First, let's download the resting rate data (sampled at 100Hz) using `nk.data()`.\n\ndata = nk.data(\"bio_resting_5min_100hz\")\ndata.head()  # Print first 5 rows\n\n# You can see that it consists of three different signals, pertaining to ECG, PPG (an alternative determinant of heart rate as compared to ECG), and RSP (respiration). Now, let's extract the ECG signal in the shape of a vector (i.e., a one-dimensional array), and find the peaks using [ecg_peaks()](https://neuropsychology.github.io/NeuroKit/functions/ecg.html#ecg-peaks).\n\n# Find peaks\npeaks, info = nk.ecg_peaks(data[\"ECG\"], sampling_rate=100)\n\n# *Note: It is critical that you specify the correct sampling rate of your signal throughout many processing functions, as this allows NeuroKit to have a time reference.*\n\n# This produces two elements, `peaks` which is a DataFrame of same length as the input signal in which occurences of R-peaks are marked with 1 in a list of zeros. `info` is a dictionary of the sample points at which these R-peaks occur. \n#\n# HRV is the temporal variation between consecutive heartbeats (**RR intervals**). Here, we will use `peaks` i.e. occurrences of the heartbeat peaks, as the input argument in the following HRV functions to extract the indices. \n\n# ## Time-Domain Analysis\n\n# First, let's extract the time-domain indices.\n\n# Extract clean EDA and SCR features\nhrv_time = nk.hrv_time(peaks, sampling_rate=100, show=True)\nhrv_time\n\n# These features include the RMSSD (square root of the mean of the sum of successive differences between adjacent RR intervals), MeanNN (mean of RR intervals) so on and so forth. You can also visualize the distribution of R-R intervals by specifying `show=True` in [hrv_time()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html#hrv-time).\n\n# ## Frequency-Domain Analysis\n\n# Now, let's extract the frequency domain features, which involve extracting for example the spectral power density pertaining to different frequency bands. Again, you can visualize the power across frequency bands by specifying `show=True` in [hrv_frequency()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html#hrv-frequency).\n\nhrv_freq = nk.hrv_frequency(peaks, sampling_rate=100, show=True, normalize=True)\nhrv_freq\n\n# ## Non-Linear Domain Analysis\n\n# Now, let's compute the non-linear indices with [hrv_nonlinear()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html#hrv-nonlinear).\n\nhrv_nonlinear = nk.hrv_nonlinear(peaks, sampling_rate=100, show=True)\nhrv_nonlinear\n\n# This will produce a Poincar\u00e9 plot which plots each RR interval against the next successive one.\n#\n# Note that there exist many more [**complexity indices**](https://neuropsychology.github.io/NeuroKit/functions/complexity.html), that are available in NeuroKit2, and that could be applied to HRV. The ``hrv_nonlinear()`` function only includes the most commonly used indices.\n\n# ## All Domains\n\n# Finally, if you'd like to extract HRV indices from all three domains, you can simply input `peaks` into [hrv()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html), where you can specify `show=True` to visualize the combination of plots depicting the RR intervals distribution, power spectral density for frequency domains, and the poincare scattergram.\n\nhrv_indices = nk.hrv(peaks, sampling_rate=100, show=True)\nhrv_indices\n",
+    "inputs/plan.json": "{\n  \"artifacts\": [\n    {\n      \"description\": \"Time-domain HRV indices (RMSSD, MeanNN, etc.) for the resting 5-min ECG recording.\",\n      \"path\": \"hrv_time.csv\",\n      \"source_evidence\": \"The narrative section 'Time-Domain Analysis' interprets these features in their own right (RMSSD, MeanNN, ...). Produced by 'hrv_time = nk.hrv_time(peaks, sampling_rate=100, show=True)' and still held in 'hrv_time' at completion.\"\n    },\n    {\n      \"description\": \"Frequency-domain HRV spectral power indices across frequency bands.\",\n      \"path\": \"hrv_freq.csv\",\n      \"source_evidence\": \"The narrative section 'Frequency-Domain Analysis' extracts and interprets spectral power density per band. Produced by 'hrv_freq = nk.hrv_frequency(peaks, sampling_rate=100, show=True, normalize=True)' and still held in 'hrv_freq' at completion.\"\n    },\n    {\n      \"description\": \"Non-linear domain HRV indices (Poincar\\u00e9 SD1/SD2, entropy and related measures).\",\n      \"path\": \"hrv_nonlinear.csv\",\n      \"source_evidence\": \"The narrative section 'Non-Linear Domain Analysis' computes and discusses the non-linear indices from hrv_nonlinear(). Produced by 'hrv_nonlinear = nk.hrv_nonlinear(peaks, sampling_rate=100, show=True)' and still held in 'hrv_nonlinear' at completion.\"\n    },\n    {\n      \"description\": \"Combined HRV indices across all three domains for the same R-peak series.\",\n      \"path\": \"hrv_indices.csv\",\n      \"source_evidence\": \"The final section 'All Domains' presents the consolidated result: 'hrv_indices = nk.hrv(peaks, sampling_rate=100, show=True)'. It is the source's culminating end product and persists in 'hrv_indices' at completion.\"\n    }\n  ],\n  \"disposition\": \"prepare\",\n  \"excluded_outputs\": [\n    \"Raw signal data (ECG, PPG, RSP) loaded via nk.data('bio_resting_5min_100hz') \\u2014 source inputs for the analysis, not scientific outcomes of it.\",\n    \"peaks signal DataFrame and info dict from nk.ecg_peaks \\u2014 intermediates preparing the R-peak series consumed by the HRV functions; the narrative does not interpret them as independent results.\",\n    \"Plots generated by show=True in hrv_time, hrv_frequency, hrv_nonlinear and hrv (RR-interval distribution, power spectral density, Poincar\\u00e9 scattergram) \\u2014 visualizations whose underlying numeric content exists either inside the plotting functions or is already captured in the exported HRV index tables; no figure capture is added and no plot-only values are reconstructed.\"\n  ],\n  \"explanation\": \"The notebook's terminal scientific products are the HRV indices tables themselves, which the narrative interprets in each domain (time, frequency, non-linear) plus the combined all-domains result. All four DataFrames (hrv_time, hrv_freq, hrv_nonlinear, hrv_indices) persist unmodified at script completion, so the appended code only writes each stored table to CSV with its own pandas writer, preserving column labels (the index names) and row ordering. Plots and peak detection are excluded as visual/intermediate material.\",\n  \"export_code\": \"import os\\n\\nos.makedirs(\\\"/work/outputs\\\", exist_ok=True)\\n\\nhrv_time.to_csv(\\\"/work/outputs/hrv_time.csv\\\", index=False)\\nhrv_freq.to_csv(\\\"/work/outputs/hrv_freq.csv\\\", index=False)\\nhrv_nonlinear.to_csv(\\\"/work/outputs/hrv_nonlinear.csv\\\", index=False)\\nhrv_indices.to_csv(\\\"/work/outputs/hrv_indices.csv\\\", index=False)\\n\",\n  \"unresolved_assumptions\": [\n    \"Assumes the four HRV result DataFrames hold a single row of named metric columns as returned by NeuroKit2 at the source revision; actual column sets and any NaN entries are only verifiable at execution.\",\n    \"Assumes neurokit2 and its plotting backends (matplotlib, underlying scipy) import and run within the offline CPU-only limits; dependency resolution is an execution-stage concern.\"\n  ]\n}\n",
+    "outcome.json": "{\n  \"dependency_asset_review\": \"Compared the full dependency catalog (8696 installed files, 3049 candidates, coverage list inspected) with the notebook's endpoints. Priority matches: (1) matplotlib/tests/test_pyplot.py \\u2014 the library's own test suite; no HRV values, no part of any source computation; import-name match only (\\\"pyplot\\\"). (2) neurokit2/hrv/hrv_time.py and (3) neurokit2/hrv/hrv_nonlinear.py \\u2014 these matched only via same-stem coincidence with the notebook's output filenames; they are the library functions the source calls (nk.hrv_time, nk.hrv_nonlinear) and are required inputs to the computation, so removal is not declared. NeuroKit2 0.2.13 installs no bundled example data (320 files inspected; nk.data fetches CSVs remotely), so the staged /inputs/bio_resting_5min_100hz.csv is the only scientific answer-bearing data file, and it is a source input, not a bundled asset. No distribution in the coverage list (scipy, sklearn, pandas, numpy, etc.) yielded an HRV-value fixture; sample-based inspection only, not an exhaustive semantic audit of every file. Exclusion list is empty.\",\n  \"disposition\": \"tested\",\n  \"explanation\": \"Environment prepared and a full offline reference test passed. Base image CPython 3.13.13 with uv resolved neurokit2==0.2.13 (plus pandas 2.3.3, scipy 1.18.1, matplotlib 3.11.2, scikit-learn 1.9.1, numpy 2.5.4, PyWavelets, etc.). The single external scientific input, nk.data(\\\"bio_resting_5min_100hz.csv\\\") (30000x3 ECG/PPG/RSP, 5-min @100 Hz), was staged from the exact 'master' URL nk.data() fetches and verified byte-identical (sha256 6a33ff8ae...) to the file at the notebook source revision ff419d98; clean-root restaging in the controlled test was byte-identical. The reference ran offline with MPLBACKEND=Agg and exit code 0 in ~8 s, producing all four planned artifacts: hrv_time.csv (570 B), hrv_freq.csv (258 B), hrv_nonlinear.csv (1968 B), hrv_indices.csv (2796 B); staged input matched its recorded hash after the run. Note the passing run proves completion and artifact production, not scientific fidelity or grader validity.\",\n  \"source_adaptations\": [\n    \"Inserted an offline input-loading adapter immediately after 'import matplotlib.pyplot as plt' (top of the source, before any computation): nk.data() builds URLs under https://raw.githubusercontent.com/neuropsychology/NeuroKit/master/data/ and calls nk.pd.read_csv on them; since the exported 'neurokit2.data' module exposes the pandas instance it uses as nk.pd, the adapter wraps nk.pd.read_csv to redirect that exact URL prefix to the identical bytes staged at /inputs/. This preserves the scientific contract: the same CSV is read through nk.data()'s unchanged code path (verified by smoke test in the setup shell \\u2014 30000x3 DataFrame with the expected ECG/PPG/RSP header). No algorithm, parameter, filtering, or plotting change; all imports and scientific calls are unchanged.\"\n  ],\n  \"unresolved_assumptions\": [\n    \"The dataset was retrieved from NeuroKit's 'master' branch (the pinned source lib nk.data() requests); the worker verified it is byte-identical to the file at the notebook's source revision ff419d98, but long-term drift of the master branch cannot be ruled out beyond the pinned sha256 check in stage-inputs.sh (which would fail loudly rather than load altered data).\",\n    \"Column sets and any NaN cells in the four HRV DataFrames (e.g. rarely reported indices) were not manually inspected beyond the produced artifact sizes; single-row structure matched the preparation plan's assumption.\",\n    \"The dependency-asset audit is discovery-based (priority/candidate inspection, whole-catalog review of names and the executed usage), not an exhaustive semantic proof that no installed file contains HRV-like numbers; the four exported tables are the only scientific answer artifacts produced by this analysis.\"\n  ]\n}\n",
+    "trial/dependency-assets-summary.json": "{\n  \"candidate_files\": 3049,\n  \"distribution_coverage\": [\n    {\n      \"candidate_files\": 2,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"certifi\",\n      \"installed_regular_files_inspected\": 14\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"charset-normalizer\",\n      \"installed_regular_files_inspected\": 23\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"cloudpickle\",\n      \"installed_regular_files_inspected\": 9\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"contourpy\",\n      \"installed_regular_files_inspected\": 26\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"cycler\",\n      \"installed_regular_files_inspected\": 9\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"fonttools\",\n      \"installed_regular_files_inspected\": 375\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"idna\",\n      \"installed_regular_files_inspected\": 18\n    },\n    {\n      \"candidate_files\": 92,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"joblib\",\n      \"installed_regular_files_inspected\": 143\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"kiwisolver\",\n      \"installed_regular_files_inspected\": 12\n    },\n    {\n      \"candidate_files\": 112,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"matplotlib\",\n      \"installed_regular_files_inspected\": 603\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"narwhals\",\n      \"installed_regular_files_inspected\": 170\n    },\n    {\n      \"candidate_files\": 2,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"neurokit2\",\n      \"installed_regular_files_inspected\": 320\n    },\n    {\n      \"candidate_files\": 493,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"numpy\",\n      \"installed_regular_files_inspected\": 928\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"packaging\",\n      \"installed_regular_files_inspected\": 31\n    },\n    {\n      \"candidate_files\": 1116,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pandas\",\n      \"installed_regular_files_inspected\": 1515\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pillow\",\n      \"installed_regular_files_inspected\": 141\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pyparsing\",\n      \"installed_regular_files_inspected\": 25\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"python-dateutil\",\n      \"installed_regular_files_inspected\": 29\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pytz\",\n      \"installed_regular_files_inspected\": 618\n    },\n    {\n      \"candidate_files\": 25,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"PyWavelets\",\n      \"installed_regular_files_inspected\": 61\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"requests\",\n      \"installed_regular_files_inspected\": 28\n    },\n    {\n      \"candidate_files\": 406,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"scikit-learn\",\n      \"installed_regular_files_inspected\": 1010\n    },\n    {\n      \"candidate_files\": 680,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"scipy\",\n      \"installed_regular_files_inspected\": 1434\n    },\n    {\n      \"candidate_files\": 121,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"setuptools\",\n      \"installed_regular_files_inspected\": 460\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"six\",\n      \"installed_regular_files_inspected\": 8\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"threadpoolctl\",\n      \"installed_regular_files_inspected\": 7\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"tzdata\",\n      \"installed_regular_files_inspected\": 635\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"urllib3\",\n      \"installed_regular_files_inspected\": 44\n    }\n  ],\n  \"installed_files_inspected\": 8696,\n  \"priority_matches\": [\n    {\n      \"bytes\": 16820,\n      \"distribution\": \"matplotlib\",\n      \"eligible_for_declared_removal\": true,\n      \"matches\": [],\n      \"packaged_test_or_example\": true,\n      \"path\": \"matplotlib/tests/test_pyplot.py\",\n      \"sha256\": \"939bbd7b646a35bc7eb20a9ed497ee857c0a5931d179d558a5f524a1cf2eb394\",\n      \"source_import_group_matches\": [],\n      \"source_import_matches\": [\n        \"pyplot\"\n      ]\n    },\n    {\n      \"bytes\": 40687,\n      \"distribution\": \"neurokit2\",\n      \"eligible_for_declared_removal\": true,\n      \"matches\": [\n        {\n          \"output\": \"hrv_nonlinear.csv\",\n          \"reasons\": [\n            \"same_stem\"\n          ]\n        }\n      ],\n      \"packaged_test_or_example\": false,\n      \"path\": \"neurokit2/hrv/hrv_nonlinear.py\",\n      \"sha256\": \"7ea09ce77c343534dfad955ba2b4e1f76ebca653a637e2013fee66b6035d0903\",\n      \"source_import_group_matches\": [],\n      \"source_import_matches\": []\n    },\n    {\n      \"bytes\": 14011,\n      \"distribution\": \"neurokit2\",\n      \"eligible_for_declared_removal\": true,\n      \"matches\": [\n        {\n          \"output\": \"hrv_time.csv\",\n          \"reasons\": [\n            \"same_stem\"\n          ]\n        }\n      ],\n      \"packaged_test_or_example\": false,\n      \"path\": \"neurokit2/hrv/hrv_time.py\",\n      \"sha256\": \"32a15fa59622bba8cf170744dadec0c5928e3b61ffaac2a2cf88c0f2886b25ca\",\n      \"source_import_group_matches\": [],\n      \"source_import_matches\": []\n    }\n  ],\n  \"scope\": \"Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit.\",\n  \"source_import_terms\": [\n    \"neurokit2\",\n    \"pyplot\"\n  ]\n}\n",
+    "trial/dependency-exclusions-applied.json": "{\n  \"files\": [],\n  \"excluded_files_absent\": true\n}\n",
+    "trial/environment.txt": "certifi==2026.10.23\ncharset-normalizer==3.5.2\ncloudpickle==3.1.2\ncontourpy==1.4.0\ncycler==0.12.1\nfonttools==4.68.0\nidna==3.20\njoblib==1.6.0\nkiwisolver==1.5.1\nmatplotlib==3.11.2\nnarwhals==2.28.0\nneurokit2==0.2.13\nnumpy==2.5.4\npackaging==26.3\npandas==2.3.3\npillow==13.0.0\npyparsing==3.3.3\npython-dateutil==3.0.0\npytz==2026.5\npywavelets==1.10.0\nrequests==2.34.2\nscikit-learn==1.9.1\nscipy==1.18.1\nsetuptools==81.0.0\nsix==1.17.0\nthreadpoolctl==3.7.0\ntzdata==2026.5\nurllib3==2.8.0\n",
+    "trial/source.diff": "--- original.py\n+++ analysis.py\n@@ -26,6 +26,23 @@\n # Note: this cell is hidden using the \"remove-input\" tag\n # Make bigger images\n import matplotlib.pyplot as plt\n+\n+# --- Offline input adaptation (environment-only; no scientific change) ---\n+# The original notebook relies on nk.data() fetching its example dataset from\n+# https://raw.githubusercontent.com/neuropsychology/NeuroKit/master/data/ .\n+# The exact dataset file is staged at /inputs/ so the offline reference can\n+# read identical bytes through the unchanged nk.data() code path.\n+_orig_pd_read_csv = nk.pd.read_csv\n+\n+\n+def _offline_read_csv(path, *args, **kwargs):\n+    _nk_data_prefix = \"https://raw.githubusercontent.com/neuropsychology/NeuroKit/master/data/\"\n+    if isinstance(path, str) and path.startswith(_nk_data_prefix):\n+        return _orig_pd_read_csv(\"/inputs/\" + path[len(_nk_data_prefix):], *args, **kwargs)\n+    return _orig_pd_read_csv(path, *args, **kwargs)\n+\n+\n+nk.pd.read_csv = _offline_read_csv\n \n \n plt.rcParams[\"figure.figsize\"] = [15, 5]\n"
+  },
+  "source_operations": {
+    "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+    "operations": [
+      {
+        "column": 7,
+        "end_column": 40,
+        "end_line": 38,
+        "function": "nk.data",
+        "id": "call-38-7",
+        "line": 38,
+        "source": "nk.data(\"bio_resting_5min_100hz\")"
+      },
+      {
+        "column": 0,
+        "end_column": 11,
+        "end_line": 39,
+        "function": "data.head",
+        "id": "call-39-0",
+        "line": 39,
+        "source": "data.head()"
+      },
+      {
+        "column": 14,
+        "end_column": 58,
+        "end_line": 44,
+        "function": "nk.ecg_peaks",
+        "id": "call-44-14",
+        "line": 44,
+        "source": "nk.ecg_peaks(data[\"ECG\"], sampling_rate=100)"
+      },
+      {
+        "column": 11,
+        "end_column": 59,
+        "end_line": 57,
+        "function": "nk.hrv_time",
+        "id": "call-57-11",
+        "line": 57,
+        "source": "nk.hrv_time(peaks, sampling_rate=100, show=True)"
+      },
+      {
+        "column": 11,
+        "end_column": 80,
+        "end_line": 66,
+        "function": "nk.hrv_frequency",
+        "id": "call-66-11",
+        "line": 66,
+        "source": "nk.hrv_frequency(peaks, sampling_rate=100, show=True, normalize=True)"
+      },
+      {
+        "column": 16,
+        "end_column": 69,
+        "end_line": 73,
+        "function": "nk.hrv_nonlinear",
+        "id": "call-73-16",
+        "line": 73,
+        "source": "nk.hrv_nonlinear(peaks, sampling_rate=100, show=True)"
+      },
+      {
+        "column": 14,
+        "end_column": 57,
+        "end_line": 84,
+        "function": "nk.hrv",
+        "id": "call-84-14",
+        "line": 84,
+        "source": "nk.hrv(peaks, sampling_rate=100, show=True)"
+      }
+    ],
+    "source_sha256": "ca70f4196402ccbf531e8e6b69b5d147340d2c9675610c5025256cbc66ac89e0"
+  },
+  "specification": {
+    "task_brief": "# Heart-rate variability indices for a 5-minute resting ECG recording\n\n## Objective\n\nFrom the supplied 5-minute resting physiological recording, compute the complete set of heart-rate-variability (HRV) indices \u2014 time-domain, frequency-domain and non-linear-domain \u2014 produced by the analysis preset defined by **NeuroKit2 0.2.13** from R-peaks detected in the ECG channel. The requested result is the 95 HRV index values listed under \"Required output\".\n\n## Supplied input\n\n- `inputs/bio_resting_5min_100hz.csv` \u2014 text CSV with header row `ECG,PPG,RSP` and one row per sample of a 5-minute recording acquired at 100 Hz (columns: ECG, PPG, respiration). Only the **ECG** column is used by this analysis; PPG and RSP are present but unused.\n\n## Method (the preset that defines the requested quantities)\n\n1. **R-peak detection** on the ECG column exactly as supplied (no ECG-cleaning step and no artifact correction are part of this analysis), using NeuroKit2 0.2.13's default peak-detection method (`ecg_peaks` with `method=\"neurokit\"`, `correct_artifacts=False`), sampling rate 100 Hz.\n2. **HRV computation from the resulting R-peak series**, sampling rate 100 Hz, in all three domains exactly as defined by NeuroKit2 0.2.13's `hrv_time`, `hrv_frequency` and `hrv_nonlinear`:\n   - **Time domain:** standard NN-interval statistics (mean, SD, RMSSD, pNNx, histogram indices, etc.), with NN intervals in **milliseconds**.\n   - **Frequency domain:** RR series interpolated at 100 Hz; power spectral density estimated by the Welch method and normalized by its maximum value before band integration (as with `normalize=True`); band edges: ultra-low 0\u20130.0033 Hz, very-low 0.0033\u20130.04 Hz, low 0.04\u20130.15 Hz, high 0.15\u20130.4 Hz, very-high 0.4\u20130.5 Hz; plus total power (TP), LF/HF ratio, normalized LF (LFn = LF/TP), normalized HF (HFn = HF/TP) and LnHF. Band powers are unitless (relative power on the normalized PSD).\n   - **Non-linear domain:** Poincar\u00e9 indices (SD1/SD2 and asymmetric variants), CSI/CVI, DFA and multifractal-DFA exponents, approximate/sample/fuzzy/multiscale entropies, Shannon entropy, correlation/Higuchi/Katz dimensions, Lempel-Ziv complexity, and the remaining indices produced by `hrv_nonlinear` (symbolic dynamics with equal-probability 4-level coding, etc.).\n\nUsing NeuroKit2 0.2.13 directly is permitted (it is installed in the execution environment), but any tool is acceptable provided the requested quantities are the ones defined by this preset. Do not change the peak-detection method, artifact-correction setting, band edges, PSD method, normalization rule or sampling rate \u2014 these define the quantities being requested.\n\n## Required output\n\nA single file `outputs/hrv_indices.csv`: a header row with the metric names below and one data row with the value of each metric. Column order is free \u2014 values are identified by column name. Metrics that are undefined for this recording (undefined per the reference method) must be left as empty fields. All 95 columns must be present:\n\nTime domain: `HRV_MeanNN`, `HRV_SDNN`, `HRV_SDANN1`, `HRV_SDNNI1`, `HRV_SDANN2`, `HRV_SDNNI2`, `HRV_SDANN5`, `HRV_SDNNI5`, `HRV_RMSSD`, `HRV_SDSD`, `HRV_CVNN`, `HRV_CVSD`, `HRV_MedianNN`, `HRV_MadNN`, `HRV_MCVNN`, `HRV_IQRNN`, `HRV_SDRMSSD`, `HRV_Prc20NN`, `HRV_Prc80NN`, `HRV_pNN50`, `HRV_pNN20`, `HRV_MinNN`, `HRV_MaxNN`, `HRV_HTI`, `HRV_TINN`.\n\nFrequency domain: `HRV_ULF`, `HRV_VLF`, `HRV_LF`, `HRV_HF`, `HRV_VHF`, `HRV_TP`, `HRV_LFHF`, `HRV_LFn`, `HRV_HFn`, `HRV_LnHF`.\n\nNon-linear domain: `HRV_SD1`, `HRV_SD2`, `HRV_SD1SD2`, `HRV_S`, `HRV_CSI`, `HRV_CVI`, `HRV_CSI_Modified`, `HRV_PIP`, `HRV_IALS`, `HRV_PSS`, `HRV_PAS`, `HRV_GI`, `HRV_SI`, `HRV_AI`, `HRV_PI`, `HRV_C1d`, `HRV_C1a`, `HRV_SD1d`, `HRV_SD1a`, `HRV_C2d`, `HRV_C2a`, `HRV_SD2d`, `HRV_SD2a`, `HRV_Cd`, `HRV_Ca`, `HRV_SDNNd`, `HRV_SDNNa`, `HRV_DFA_alpha1`, `HRV_MFDFA_alpha1_Width`, `HRV_MFDFA_alpha1_Peak`, `HRV_MFDFA_alpha1_Mean`, `HRV_MFDFA_alpha1_Max`, `HRV_MFDFA_alpha1_Delta`, `HRV_MFDFA_alpha1_Asymmetry`, `HRV_MFDFA_alpha1_Fluctuation`, `HRV_MFDFA_alpha1_Increment`, `HRV_DFA_alpha2`, `HRV_MFDFA_alpha2_Width`, `HRV_MFDFA_alpha2_Peak`, `HRV_MFDFA_alpha2_Mean`, `HRV_MFDFA_alpha2_Max`, `HRV_MFDFA_alpha2_Delta`, `HRV_MFDFA_alpha2_Asymmetry`, `HRV_MFDFA_alpha2_Fluctuation`, `HRV_MFDFA_alpha2_Increment`, `HRV_ApEn`, `HRV_SampEn`, `HRV_ShanEn`, `HRV_FuzzyEn`, `HRV_MSEn`, `HRV_CMSEn`, `HRV_RCMSEn`, `HRV_CD`, `HRV_HFD`, `HRV_KFD`, `HRV_LZC`, `HRV_Symbolic_EqualProb4_0V`, `HRV_Symbolic_EqualProb4_1V`, `HRV_Symbolic_EqualProb4_2LV`, `HRV_Symbolic_EqualProb4_2UV`.\n\n## Constraints\n\n- Execution is offline; no network access. CPU only (4 cores), 8 GiB RAM, 10 GiB disk; 600 s runtime limit.\n- Figures are not part of the deliverable; plotting may be disabled."
+  },
+  "verifier_seconds": 120
+}

@@ -1,0 +1,54 @@
+{
+  "asset_value_assessments": [],
+  "decision": "revise",
+  "issues": [
+    "Control record 'tolerance-boundary-outside' is a failed control (passed_control: false) in the current candidate's execution set (control_summary: 16 controls, expected_outcomes_met 15). The probe declares check_ids [time_domain_values, frequency_domain_values, nonlinear_domain_values], but its script only shifts HRV_CVI (a non-linear metric) by 2.9e-6 relative. The grader itself behaved correctly: report.passed=false with exactly the affected check failing ('HRV_CVI: 4.758265478147017 vs reference 4.758251679217147 (diff 1.38e-05, allowed 4.76e-06)') while time and frequency remained within tolerance, consistent with the other single-domain wrong_solution probes that each declare only the affected check (wrong-time-mediannn -> time_domain_values, wrong-frequency-lf-and-ulf -> frequency_domain_values). Repair within the allowed annotation-correction route: correct this probe's expected check IDs to nonlinear_domain_values (or extend the mutation to genuinely affect all three domains) and re-run the complete control suite fresh on the new candidate; the original failed record remains attached to the current candidate hash."
+  ],
+  "question_issues": [],
+  "rationale": "The public question, acceptance addendum, checks and grader implementation are scientifically sound and internally consistent: the requested quantities are exactly the 95-column NeuroKit2 0.2.13 nk.hrv() preset on R-peaks from the raw ECG column (the brief's band edges, normalize=True PSD behavior, LFn/HFn = band/TP and LFHF = LF/HF definitions all match the recorded reference values), the grader compares by column name with correct output-root placement, enforces single-row/95-column structure, exact empty-field identity in both directions, and a defensible 1e-6-relative/1e-9-absolute tolerance justified by pinned-library byte-identical reproduction; wrong-result coverage exists for every scientific check; source coverage is complete (the four per-domain/combined HRV tables are exact column subsets of the requested output). However, one executed control (tolerance-boundary-outside, passed_control: false) fails its declared expectation because the probe's check_ids annotation lists all three domain checks while its mutation only affects HRV_CVI and therefore only nonlinear_domain_values; the grader correctly rejected the probe, making this a probe annotation defect requiring correction plus fresh execution of all controls before packaging. Minor observation (not a defect): the public check descriptions enumerate the five reference-empty metrics (HRV_SDANN2/SDNNI2/SDANN5/SDNNI5, HRV_ULF); these are method-inherent for a 5-minute recording and were reproduced independently by the blind solver, so the disclosure does not remove meaningful scientific burden.",
+  "scientific_admission": {
+    "answer_isolation": {
+      "blockers": [],
+      "decision": "approve",
+      "evidence": [
+        "artifact_interface output_paths = ['hrv_indices.csv']; grader reads reference_dir/hrv_indices.csv and submission_dir/hrv_indices.csv only, with no solver-workspace input access (grader_code lines 130-136).",
+        "input_observations: the only solver-visible file is bio_resting_5min_100hz.csv (sha256 6a33ff8ae...), byte-identical to the pinned NeuroKit master-branch data file; final_environment_review confirms no 'HRV_' tokens inside the recording.",
+        "final_environment_review: destination/reference/hrv_indices.csv is retained only in the controller-side reference bundle; controller-verified exclusion receipt (excluded_files_absent: true, files: []); NeuroKit2 0.2.13 ships no bundled example data.",
+        "asset_value_hints (controller-generated): findings = [] with zero numeric-literal matches across 3047 hash-verified installed-source candidates spanning all 29 installed distributions against every hrv_indices.csv numeric cell (reference_coverage: numeric_cells_inspected, relative_discovery_distance 1e-8).",
+        "independent_execution: status executed_without_answer_access; the blind oracle recomputed from the raw signal CSV alone and produced a byte-identical hrv_indices.csv (sha256 e2dc559a...), demonstrating the answers are fully recomputable from the supplied input."
+      ],
+      "output_paths": [
+        "hrv_indices.csv"
+      ],
+      "rationale": "The actual solver-visible inputs and installed assets do not disclose any requested answer. The only solver-visible file is the raw 5-minute recording, which contains no HRV values, and the grader reads the reference only from the controller-supplied reference directory that is not part of the solver environment. The controller-generated asset-value hint scan over hash-verified installed Python source across all 29 installed distributions (pinned neurokit2 0.2.13 plus scientific dependencies) found zero matches against any reference numeric cell, the recorded environment review found no answer-bearing fixture, and the blind independent execution without answer access reproduced the exact reference file byte-identically from the raw recording alone. Residual limits are disclosed: the hint scan covers floating literals in installed Python sources and the numeric cells of hrv_indices.csv, and the environment review is discovery-based rather than an exhaustive semantic proof over non-Python content; no candidate for a copied answer artifact or test fixture was identified in the recorded catalog, and the successful blind recomputation shows the answers are derivable from the supplied input only."
+    },
+    "comparisons": [
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Reference provenance: source_evidence original.py calls nk.ecg_peaks(data['ECG'], sampling_rate=100), nk.hrv_time, nk.hrv_frequency(show=True, normalize=True), nk.hrv_nonlinear and nk.hrv(peaks, sampling_rate=100); exports.py writes hrv_indices.csv via pandas; repeatability records two fresh replays byte-identical to the reference (sha256 e2dc559a..., 2796 bytes) for hrv_time.csv, hrv_freq.csv, hrv_nonlinear.csv and hrv_indices.csv.",
+          "independent_execution (executed_without_answer_access) recomputed hrv_indices.csv from the staged recording with pinned NeuroKit2 0.2.13 (431 R-peaks) to the byte-identical file; the controller-derived recomputation control also passed.",
+          "Valid-value acceptance: reference, recomputed and alternative controls pass all five checks; representation probes (valid-reencode-precision with %.18g round-trip, valid-column-permutation exercising name-based identity, tiny-shift-within-tolerance with a 1e-13 shift on HRV_SampEn) all pass.",
+          "Wrong-value rejection for every scientific check: wrong-time-mediannn fails only time_domain_values (HRV_MedianNN 701.0 vs 690.0); wrong-frequency-lf-and-ulf fails only frequency_domain_values (HRV_LF 5% scale plus filled HRV_ULF empty field); wrong-nonlinear-values fails only nonlinear_domain_values (5 perturbed metrics); wrong-empty-field-identity fails time_domain_values on both empty-field directions; wrong-all-values-same-digit fails all three domain checks; tolerance-boundary-outside fails nonlinear_domain_values at 2.9e-6 relative; nonfinite-value-rejected fails structure_valid on 'nan'/'Infinity' text.",
+          "Structural enforcement: exactly one data row, exactly 95 named columns with no duplicates, extras or missing, nonfinite and NUL/binary content rejected (grader_code lines 51-117 and 156-207); the reference is read dynamically with no expected values or shapes embedded beyond the contract's own 95-column list.",
+          "Tolerance basis: REL_TOL=1e-6 with the reference magnitude as denominator plus ABS_TOL=1e-9 (grader_code lines 12-13 and 112-116); the public rule states the same numbers, and reference values are written at 16-plus significant digits so the 1e-6 relative margin is far above text round-tripping while the measured 2.9e-6-relative boundary shift is rejected."
+        ],
+        "output_paths": [
+          "hrv_indices.csv"
+        ],
+        "rationale": "The single output hrv_indices.csv is compared by column name against a dynamically read reference table produced by the pinned NeuroKit2 0.2.13 preset; identity mapping, single-row structure, empty-field obligations and numeric tolerance are enforced consistently with the disclosed public contract, and positive as well as negative coverage exists for every scientific check. The comparison implements valid-answer acceptance and consequential wrong-answer rejection without relying on crashes or malformed files (all wrong-value probes remain parseable single-row tables that fail through value or emptiness mismatches); no permissive rule, hardcoded answer, control-name detection or solver-input shortcut was found in the grader code."
+      }
+    ]
+  },
+  "source_coverage": {
+    "decision": "approve",
+    "omitted_scientific_endpoints": [],
+    "rationale": "All seven source operations are accounted for with justified roles. nk.data (call-38-7) is the supplied input, staged byte-identically (sha256 6a33ff8ae...) from the exact master-branch URL nk.data fetches, so no scientific derivation is hidden there; data.head (call-39-0) is display-only. ecg_peaks (call-44-14) is retained as solver work inside the oracle rather than supplied, preserving the substantial downstream analysis. The three per-domain results and the combined result (calls 57, 66, 73, 84) are all contained in the requested single 95-column output: the recorded hrv_time.csv, hrv_freq.csv and hrv_nonlinear.csv per-column value fingerprints are identical to the corresponding columns of hrv_indices.csv (empty HRV_SDANN2/5, empty HRV_ULF, HRV_SD1), so no domain endpoint is dropped - they are exact column subsets of the requested deliverable, and the repeatability replay of all four CSVs was byte-identical. The preparation plan's excluded outputs (raw signals = source input; peaks intermediate = solver work; show=True figures) are visualization or intermediate material whose numeric content is fully contained in the exported tables; no plot-only scientific result was discarded. The public question's method description (band edges, normalize=True PSD semantics, LFn/HFn = band/TP, LFHF = LF/HF, millisecond NN intervals) matches the recorded reference values, and the 30000x3 100 Hz recording premise is confirmed by the recorded input observations.",
+    "remaining_validation": [
+      "The required probe annotation correction for control 'tolerance-boundary-outside' must be followed by a fresh full execution of the control suite on the new candidate; this remaining validation concerns control execution, not source coverage itself."
+    ],
+    "scientific_scope_changes": [],
+    "unsupported_evidence_claims": []
+  }
+}
