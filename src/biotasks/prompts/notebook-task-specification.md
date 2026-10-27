@@ -187,6 +187,14 @@ output projection is allowed when it retains the selected scientific result;
 explain its derivation privately. Preserve recorded reference artifacts; describe
 any permitted source-faithful recovery separately rather than replacing them.
 
+Derive each output's observational unit from the source computation. Trace grouping,
+joins, aggregation and duplicate handling before specifying keys or multiplicity.
+An input record, a distinct entity and a grouped result are different possible
+units. Do not promise one output per input record when the source aggregates
+records, or collapse records merely because their coordinates or labels coincide.
+Explain consequential distinctions in the public question and cite their source
+privately; leave genuinely unresolved population or identity questions explicit.
+
 Treat notebook headings and column labels as claims about quantities, not proof
 of their units or scale. Trace a consequential reported quantity to its producing
 operation, including reader/library unit conversions and any explicit subsequent

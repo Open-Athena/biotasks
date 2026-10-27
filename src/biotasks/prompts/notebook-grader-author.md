@@ -133,6 +133,11 @@ paths when needed; a passing reference does not validate those alternatives.
 Specify exactly what is compared: files, identifiers, columns, row alignment and
 ordering, duplicates, missing values, nonfinite numbers, categorical identities,
 and numeric comparisons. Every acceptance rule must appear in the public text.
+Before submitting, trace every requested scientific field or parameter to an
+actual executable comparison, including values inside native scientific formats.
+File-level coverage and a named group of checks do not establish that every
+promised quantity is checked. Briefly identify this mapping in the rationale;
+report an unsupported comparison instead of silently omitting it.
 For relative numeric tolerances, state the reference/denominator convention so
 the acceptance boundary is determined by the public rule.
 Explain cross-file consistency without confusing tables with different row units.

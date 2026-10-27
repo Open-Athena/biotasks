@@ -64,6 +64,10 @@ Check:
   clearly named public reference procedure can specify behavior by reference.
   Do not turn this into an exhaustive API recipe or reject a question just because
   it leaves scientifically irrelevant implementation details open.
+  Trace the unit of each result through grouping, joins, aggregation and duplicate
+  handling. Input records, distinct entities and grouped results need not have the
+  same identities or multiplicities; the public requirement must match the source
+  computation rather than assume one output row per input record.
 - Distinguish recorded observations from unmeasured proposals. Output profiles,
   partial previews and one reference do not prove biological validity, portability
   or calibrated precision. Contradictory or unsupported claims that affect the
@@ -83,6 +87,11 @@ notebook broken merely because its generated proposal is defective.
 Each blocking finding must cite at least one exact nonempty quotation from a key
 in `evidence_text`, explain the problem and identify the required change. These
 quotes ground the finding; they do not by themselves prove its scientific claim.
+Before reporting a blocker, read the complete affected section and check whether
+another clause or supplied artifact already resolves the concern. Explain any
+relevant counterevidence and why the defect remains. Distinguish an actual
+contradiction from an allowed choice, and name only artifacts present or explicitly
+proposed in this version. A plausible concern alone is not an established defect.
 Return `findings` as a JSON array of objects, not a string containing JSON.
 Copy each `path` literally from the `evidence_text` map and quote a literal
 substring of its decoded value. Do not paraphrase, splice separate fragments or

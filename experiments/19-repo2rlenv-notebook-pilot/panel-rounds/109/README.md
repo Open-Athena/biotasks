@@ -13,3 +13,7 @@ Outcome, scientific/native qualification, shared-reader use, compressed final-ex
 Post-run publication now has an explicit original-snapshot path, verified by128 release/support tests including real snapshot roundtrips and tampering/refusal cases. It checks both original manifests, recovery/source binding and every member, without manufacturing a per-file seal; all existing scientific/source gates remain. These operator-side changes do not alter the frozen235-file worker225. Live snapshot qualification/publication remains pending. [Checks](snapshot-publication-checks.json).
 
 Consolidated81 duplicate source-archive paths across138 submitted staging copies using the existing atomic hardlink helper. Every path/content/permission and original claim/input identity remains;489,340,928 bytes of filesystem space recovered. No remote object, model or sandbox changed. [Receipt](source-cache-consolidation.json).
+
+225 has completed grading and reached native Harbor trials. The final scientific/native outcome, actual shared-reader use and primary snapshot readback remain pending. [Observation](live-observation-225.json).
+
+Prepared a separate general prompt candidate for record/entity/result identity, counterevidence-aware review and complete scientific-field comparisons. Canonical packaged CLI bytes match all three edited files from outside the checkout. No seed-specific names, values or methods were added. The candidate is not part of frozen225 and has no live efficacy claim. [Candidate](prompt-candidate.json).
