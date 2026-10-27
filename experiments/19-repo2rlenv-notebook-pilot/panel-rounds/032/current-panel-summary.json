@@ -1,15 +1,16 @@
 {
-  "observed_at": "2026-10-27T03:29:44.520487+00:00",
+  "observed_at": "2026-10-27T03:48:51.829492+00:00",
   "scope": "Latest completed attempt per source across development versions, including infrastructure outcomes. Not a common-version holdout or success-rate estimate.",
   "source_count": 10,
   "counts": {
     "generated_candidate_rejected": 3,
-    "infrastructure_failed": 4,
+    "infrastructure_failed": 3,
     "validated_published": 2,
-    "source_fidelity_rejection": 1
+    "source_fidelity_rejection": 1,
+    "source_input_unavailable_rejection": 1
   },
   "runtime_minutes_all_outcomes": {
-    "min": 14.32,
+    "min": 8.36,
     "max": 114.9
   },
   "native_completed_runtime_minutes": {
@@ -286,33 +287,33 @@
       "public_runtime_revision": "23fd6d275b8d7bafca6186595bbd0e18668c8bcf"
     },
     {
-      "campaign": 209,
+      "campaign": 211,
       "domain": "Statistical genetics",
       "source_url": "https://github.com/sgkit-dev/sgkit/blob/a8bc952b6a0b85e156e1bc826597922448ffd078/docs/examples/relatedness_tutorial.ipynb",
       "source_id": "sgkit-relatedness",
-      "factory_revision_recorded": "eb83a158da70f9e8f20c6ee156a3a182406ebb31",
-      "classification": "infrastructure_failed",
-      "audited_state": "infrastructure_failed_frozen_input_restaging_checksum_mismatch",
-      "original_pipeline_status": "infrastructure_failed",
+      "factory_revision_recorded": "da45986ee60796415f4ac4ff9dab5a98b2f54107",
+      "classification": "source_input_unavailable_rejection",
+      "audited_state": "autonomous_original_input_unavailable_rejection",
+      "original_pipeline_status": "rejected",
       "operator_interventions": 0,
-      "pipeline_minutes": 36.27,
-      "accounted_model_request_attempts": 63,
+      "pipeline_minutes": 8.36,
+      "accounted_model_request_attempts": 27,
       "native_complete": false,
       "published": false,
       "full_original_archive_verified": true,
-      "source_archive_manifest_sha256": "89621ce3aae3f52201c061863bd8481a87a2ea0a5f16c89fee1881c022a8dc43",
-      "public_result_path": "panel-rounds/103/result-209.json",
-      "public_result_sha256": "1d209ce3795f334b661eae42e526efd3cb29c66953e45ac9d349688a10fd9f43",
-      "public_performance_path": "panel-rounds/103/performance-209-detail.json",
-      "public_performance_sha256": "0f261a91178363b0784a53ce962ed35048d7c2b46400e4d89e2037284b1f38c6",
+      "source_archive_manifest_sha256": "fda09c3c1c02ef527ccdcf47830314bd593387954359b9630ddf34403e270dc2",
+      "public_result_path": "panel-rounds/104/result-211.json",
+      "public_result_sha256": "194c0ec29767d9c0090a67551f46b15393b09a7b897545581805402a55cae8c4",
+      "public_performance_path": "panel-rounds/104/performance-211-detail.json",
+      "public_performance_sha256": "7e2cb53c43d4002654016cce61c3c62247c7ad9ee671fdf88de8bb9760002224",
       "previous_selected_outcome": {
-        "campaign": 194,
+        "campaign": 209,
         "classification": "infrastructure_failed",
-        "public_result_path": "panel-rounds/099/result-194.json",
-        "public_result_sha256": "aaa193caa455daee432a80e2bdf0ec49fedadd6a01e404c6f3f4403301ef96b4",
+        "public_result_path": "panel-rounds/103/result-209.json",
+        "public_result_sha256": "1d209ce3795f334b661eae42e526efd3cb29c66953e45ac9d349688a10fd9f43",
         "retained": true
       },
-      "public_runtime_revision": "eb83a158da70f9e8f20c6ee156a3a182406ebb31"
+      "public_runtime_revision": "da45986ee60796415f4ac4ff9dab5a98b2f54107"
     },
     {
       "campaign": 197,
@@ -340,7 +341,7 @@
   ],
   "active_campaigns": [
     210,
-    211
+    212
   ],
   "historically_published_domains": [
     "matchms-spectral-matching",
@@ -365,11 +366,11 @@
   "does_not_establish_pipeline_readiness": true,
   "active_campaign_evidence": [
     "../103/submission-210.json",
-    "../104/submission-211.json"
+    "../104/submission-212.json"
   ],
   "next_common_version_panel": "../104/development-panel.json",
   "active_campaigns_not_scientifically_qualified": true,
-  "next_common_version_completed_cases": 0,
+  "next_common_version_completed_cases": 1,
   "next_common_version_qualified_tasks": 0,
   "next_common_version_reserved_queued_cases": [],
   "previous103_completed_cases": 2
