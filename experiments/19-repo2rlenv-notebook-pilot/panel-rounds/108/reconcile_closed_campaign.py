@@ -1,6 +1,6 @@
 """Refine closed SDK holds while retaining the original full native-stage hold.
 
-Accounting only: exact frozen105 sources, complete original archives, terminal
+Accounting only: exact frozen72/105/108 sources, complete original archives, terminal
 observations and fresh ID/owner cleanup are required. No scientific verdict,
 new-campaign reservation, time allowance or invoice claim changes.
 """
@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import subprocess
 import sys
 import tarfile
 from datetime import UTC, datetime
@@ -23,7 +24,36 @@ from closed_session_bound import closed_session_bound  # noqa: E402
 BASE = {"setup-raw", "replay", "materialization-raw", "grading"}
 
 
+def rejected_profile(pipeline):
+    """Price only known completed SDK prefixes ending in an ordinary rejection."""
+    assert pipeline["autonomous"] is True and pipeline["operator_interventions"] == 0
+    stages = pipeline["stages"]
+    names = [row["name"] for row in stages]
+    prefixes = {
+        ("preparation", "setup", "replay", "specification"): {"setup-raw", "replay"},
+        ("preparation", "setup", "replay", "specification", "construction", "grading"): BASE,
+    }
+    assert tuple(names) in prefixes
+    assert [row["status"] for row in stages] == ["completed"] * (len(stages) - 1) + ["rejected"]
+    assert not pipeline.get("failed_stage")
+    assert pipeline["rejection"]["stage"] == names[-1]
+    folders = prefixes[tuple(names)]
+    assert pipeline["daytona_reserved_usd"] == len(folders)
+    assert 0 < pipeline["finished"] - pipeline["started"] <= 7200
+    assert pipeline["started"] <= stages[0]["started"]
+    assert stages[-1]["finished"] <= pipeline["finished"]
+    assert all(row["started"] <= row["finished"] for row in stages)
+    assert all(a["finished"] <= b["started"] for a, b in zip(stages, stages[1:], strict=False))
+    repair = pipeline.get("quality_repair")
+    if repair is not None:
+        assert repair["kind"] == "specification_review"
+        assert repair["target"] == "task_specification" and repair["allowance_consumed"] is True
+    return set(folders), Decimal("0.00")
+
+
 def profile(pipeline):
+    if pipeline.get("status") == "rejected":
+        return rejected_profile(pipeline)
     assert pipeline["autonomous"] is True and pipeline["operator_interventions"] == 0
     assert pipeline["status"] == "infrastructure_failed"
     stages = pipeline["stages"]
@@ -76,7 +106,7 @@ def digest(raw):
 
 
 def admit_resource_family(runtime, version, native_hold):
-    if version == 105:
+    if version in (105, 108):
         count, expected = (
             232,
             (
@@ -111,7 +141,8 @@ def main():
     parser.add_argument("--private-root", type=Path, required=True)
     parser.add_argument("--proof", type=Path, required=True)
     parser.add_argument("--snapshot", action="store_true")
-    parser.add_argument("--runtime-round", type=int, choices=(72, 105), default=105)
+    parser.add_argument("--runtime-round", type=int, choices=(72, 105, 108), default=105)
+    parser.add_argument("--previous-unused-proof", type=Path)
     parser.add_argument("--apply", action="store_true")
     args = parser.parse_args()
     assert not args.proof.exists() and args.proof.resolve().is_relative_to(EXPERIMENT)
@@ -156,7 +187,8 @@ def main():
         ),
         key=lambda row: row["observed_at"],
     )
-    assert terminal["state"] == "FAILED" and terminal["terminal"]
+    expected_terminal = "SUCCEEDED" if pipeline["status"] == "rejected" else "FAILED"
+    assert terminal["state"] == expected_terminal and terminal["terminal"]
     assert terminal["claim_sha256"] == digest(claim_raw)
     payload = launch / f"{args.number:03}-payload"
     config_raw = (payload / "campaign-config.json").read_bytes()
@@ -224,7 +256,7 @@ def main():
     )
     direct_key, claim_key = (
         ("all_original_sdk_claim_ids_checked", "original_sdk_claims")
-        if native_hold
+        if "all_original_sdk_claim_ids_checked" in cleanup
         else ("all_original_claim_ids_checked", "original_sandbox_claims")
     )
     assert cleanup[direct_key] and sorted(cleanup[claim_key], key=lambda row: row["id"]) == sorted(
@@ -256,14 +288,46 @@ def main():
         for row in ledger["reservations"]
         if row["scope"].startswith(f"autonomous-panel-{args.number:03}:")
     )
-    assert Decimal(row["ceiling_usd"]) == 5
+    prior_hold = Decimal(row["ceiling_usd"])
+    previous_unused_hash = None
+    if args.previous_unused_proof is None:
+        assert prior_hold == 5
+    else:
+        assert not native_hold and pipeline["status"] == "rejected"
+        previous_path = args.previous_unused_proof.resolve()
+        relative = previous_path.relative_to(EXPERIMENT.resolve())
+        previous_raw = previous_path.read_bytes()
+        # This must be the committed output of the unchanged unused-stage audit,
+        # not a new caller-written assertion about a lower starting hold.
+        committed = subprocess.check_output(
+            ["git", "show", "HEAD:" + PREFIX + relative.as_posix()], cwd=EXPERIMENT.parents[1]
+        )
+        assert committed == previous_raw
+        previous = json.loads(previous_raw)
+        assert previous["applied"] is True
+        assert previous["reconciliation_helper_sha256"] == digest(
+            (EXPERIMENT / "panel-rounds/037/reconcile_unused_stages.py").read_bytes()
+        )
+        candidates = [r for r in previous["records"] if r["campaign"] == args.number]
+        assert len(candidates) == 1
+        earlier = candidates[0]
+        assert earlier["source_archive_manifest_sha256"] == manifest_hash
+        assert earlier["terminal"]["claim_sha256"] == digest(claim_raw)
+        assert earlier["prior_hold_usd"] == "5.00"
+        assert prior_hold == Decimal(earlier["retained_full_dispatched_stage_hold_usd"])
+        mapping = {"setup-raw": "setup", "materialization-raw": "construction"}
+        assert set(earlier["dispatched_stages"]) == {mapping.get(n, n) for n in folders}
+        assert row["state"] == "unused_stage_allowances_released_used_holds_unchanged"
+        assert str(relative) in row["reconciliation"]
+        previous_unused_hash = digest(previous_raw)
+    assert 0 < retained <= prior_hold <= 5
     row.update(
         ceiling_usd=f"{retained:.2f}",
         state="terminal_closed_sdk_holds_refined_native_hold_unchanged",
         reconciliation="All closed SDK lifetimes plus300seconds at EACH end, unchanged full native-stage hold,0.10margin/upward quarter-dollar rounding. See "
         + args.proof.resolve().relative_to(EXPERIMENT).as_posix(),
     )
-    released = Decimal(5) - retained
+    released = prior_hold - retained
     ledger.update(
         reserved_upper_bound_usd=f"{held - released:.2f}",
         unallocated_usd=f"{Decimal(200) - held + released:.2f}",
@@ -289,6 +353,9 @@ def main():
         "unchanged_full_native_stage_hold_usd": str(native_hold),
         "margin_usd": "0.10",
         "rounding": "upward_to_0.25USD",
+        "prior_hold_usd": f"{prior_hold:.2f}",
+        "previous_unused_proof_sha256": previous_unused_hash,
+        "runtime_round": args.runtime_round,
         "retained_usd": f"{retained:.2f}",
         "released_usd": f"{released:.2f}",
         "source_ledger_sha256": digest(before),

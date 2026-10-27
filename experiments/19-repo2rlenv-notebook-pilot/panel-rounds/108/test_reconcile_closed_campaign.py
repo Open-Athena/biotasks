@@ -13,7 +13,7 @@ module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 
 
-@pytest.mark.parametrize("version", [72, 105])
+@pytest.mark.parametrize("version", [72, 105, 108])
 def test_exact_recorded_creator_family_is_required(version):
     runtime = json.loads(
         (module.EXPERIMENT / f"panel-rounds/{version:03}/runtime-identity.json").read_text()
@@ -152,5 +152,73 @@ def test_incomplete_or_misbound_session_clocks_cannot_release_holds(defect):
         sessions["grading"]["started"] = 800
     else:
         sessions["grading"]["finished"] = 1500
+    with pytest.raises(AssertionError):
+        module.price(pipeline, sessions)
+
+
+def rejected_evidence(stage, repair):
+    pipeline, sessions = evidence()
+    pipeline.update(status="rejected", rejection={"stage": stage})
+    del pipeline["failed_stage"]
+    del sessions["grading-comparison-repair"]
+    if stage == "specification":
+        pipeline["stages"] = pipeline["stages"][:4]
+        sessions = {name: row for name, row in sessions.items() if name in {"setup-raw", "replay"}}
+    pipeline["stages"][-1]["status"] = "rejected"
+    pipeline["finished"] = pipeline["stages"][-1]["finished"]
+    pipeline["daytona_reserved_usd"] = len(sessions)
+    pipeline["quality_repair"] = (
+        {"kind": "specification_review", "target": "task_specification", "allowance_consumed": True}
+        if repair
+        else None
+    )
+    return pipeline, sessions
+
+
+@pytest.mark.parametrize("stage,retained", [("specification", "0.25"), ("grading", "0.50")])
+@pytest.mark.parametrize("repair", [False, True])
+def test_rejected_sdk_prefixes_keep_every_lifetime_and_both_margins(stage, retained, repair):
+    pipeline, sessions = rejected_evidence(stage, repair)
+    before = deepcopy((pipeline, sessions))
+    clocks, upper, native, keep = module.price(pipeline, sessions)
+    assert native == 0 and keep == Decimal(retained)
+    assert all(row["priced_seconds"] == "700" for row in clocks.values())
+    assert keep >= upper + Decimal("0.10")
+    assert (pipeline, sessions) == before
+
+
+@pytest.mark.parametrize(
+    "defect",
+    [
+        "last_completed",
+        "prior_rejected",
+        "failure_field",
+        "wrong_stage",
+        "reservation",
+        "repair_target",
+        "extra_sdk",
+        "native",
+    ],
+)
+def test_rejection_profiles_refuse_unproved_dispatch_or_repair_shapes(defect):
+    pipeline, sessions = rejected_evidence("specification", True)
+    if defect == "last_completed":
+        pipeline["stages"][-1]["status"] = "completed"
+    elif defect == "prior_rejected":
+        pipeline["stages"][0]["status"] = "rejected"
+    elif defect == "failure_field":
+        pipeline["failed_stage"] = "specification"
+    elif defect == "wrong_stage":
+        pipeline["rejection"]["stage"] = "setup"
+    elif defect == "reservation":
+        pipeline["daytona_reserved_usd"] = 1
+    elif defect == "repair_target":
+        pipeline["quality_repair"]["target"] = "independent_solution"
+    elif defect == "extra_sdk":
+        sessions["unknown"] = dict(sessions["replay"])
+    else:
+        pipeline["stages"].append(
+            {"name": "native", "status": "rejected", "started": 610, "finished": 620}
+        )
     with pytest.raises(AssertionError):
         module.price(pipeline, sessions)
