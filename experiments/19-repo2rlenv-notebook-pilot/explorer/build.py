@@ -1,6 +1,7 @@
 """Build the latest standalone explorer using only versioned, selected evidence."""
 
 import argparse
+import gzip
 import hashlib
 import html
 import json
@@ -63,17 +64,29 @@ def content(text, suffix):
     return code(text, language)
 
 
+def evidence_text(path):
+    raw = path.read_bytes()
+    if path.suffix == ".gz":
+        raw = gzip.decompress(raw)
+    return raw.decode()
+
+
 def artifact(relative, label=None, opened=False):
     path = ((ROOT / relative[5:]) if relative.startswith("repo:") else (EXP / relative)).resolve()
     path.relative_to(ROOT)
-    text = path.read_text()
+    text = evidence_text(path)
     sources[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
     title = html.escape(label or path.name)
     url = BASE + str(path.relative_to(ROOT))
+    suffix = Path(path.stem).suffix if path.suffix == ".gz" else path.suffix
+    note = ""
+    if suffix == ".ipynb" and len(text) > 24000:
+        text = text[:24000]
+        note = '<p class="meta">Notebook JSON excerpt. The pinned source link provides the full original; all source cells are rendered below.</p>'
     return (
         f"<details{' open' if opened else ''}><summary>{title}</summary>"
         f'<p class="meta"><a href="{url}">{html.escape(relative)}</a></p>'
-        f'<div class="document">{content(text, path.suffix)}</div></details>'
+        f'{note}<div class="document">{content(text, suffix)}</div></details>'
     )
 
 
@@ -106,7 +119,7 @@ if len(set(stage_ids)) != len(stage_ids) or set(stage_ids) & {
 def evidence_json(relative):
     path = EXP / relative
     sources[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
-    return json.loads(path.read_text())
+    return json.loads(evidence_text(path))
 
 
 seeds = evidence_json(profile["seed"])

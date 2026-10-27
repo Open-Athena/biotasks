@@ -1,5 +1,6 @@
 """Select unchanged recorded evidence for the latest qualified example viewer."""
 
+import gzip
 import hashlib
 import json
 import tarfile
@@ -72,6 +73,7 @@ def main():
             "publication": "autonomous-runs/215/publication.json",
         },
     )
+    profile["notebook"] = PREFIX + "source.ipynb.gz"
     native = json.loads((ORIGINAL / "native/result.json").read_text())
     trajectory_path = Path("native") / native["solver"]["result_path"]
     trajectory_path = trajectory_path.parent / "agent/trajectory.json"
@@ -115,8 +117,24 @@ def main():
             raw = source.extractfile(name).read()
             frozen = json.loads((EXP / "panel-rounds/108/freeze-215.json").read_text())
             assert sha(raw) == frozen["source_assets"][name]
-            put(target, raw, {"frozen_original_source_asset": name, "byte_preserved": True})
+            if target == "source.ipynb":
+                compressed = gzip.compress(raw, mtime=0)
+                assert gzip.decompress(compressed) == raw
+                put(
+                    target + ".gz",
+                    compressed,
+                    {
+                        "frozen_original_source_asset": name,
+                        "lossless_gzip": True,
+                        "uncompressed_sha256": sha(raw),
+                        "byte_preserved_after_decompression": True,
+                    },
+                )
+            else:
+                put(target, raw, {"frozen_original_source_asset": name, "byte_preserved": True})
     copy_original("native/tasks/autonomous-panel-215/environment/SOURCE-LICENSES.json")
+
+    display_paths = {}
 
     def output_document(name, paths, role):
         text = [
@@ -128,19 +146,39 @@ def main():
             "| --- | ---: | --- |",
         ]
         for path in paths:
-            copy_original(path)
             row = rows[path]
+            exact_downloads = [
+                name
+                for name, item in rows.items()
+                if name.startswith("native/tasks/autonomous-panel-215/tests/reference/")
+                and item["sha256"] == row["sha256"]
+                and item["bytes"] == row["bytes"]
+            ]
+            published_name = Path(exact_downloads[0]).name if exact_downloads else Path(path).name
             download = (
                 f"https://huggingface.co/datasets/{publication['repo_id']}/resolve/"
-                f"{publication['commit_sha']}/tasks/autonomous-panel-215/tests/reference/{Path(path).name}"
+                f"{publication['commit_sha']}/tasks/autonomous-panel-215/tests/reference/{published_name}"
             )
             native_path = "native/tasks/autonomous-panel-215/tests/reference/" + Path(path).name
             label = Path(path).name
-            if native_path in rows and row["sha256"] == rows[native_path]["sha256"]:
+            if exact_downloads:
                 label = f"[{label}]({download})"
             else:
                 label += " (original export shown in this stage; published representation differs)"
             text.append(f"| {label} | {row['bytes']} | `{row['sha256']}` |")
+            if row["bytes"] > 1024 * 1024:
+                assert exact_downloads, "Large display output needs an exact published download"
+                preview_name = path + ".preview.md"
+                preview = "\n".join(original(path).decode().splitlines()[:31])
+                generated(
+                    preview_name,
+                    f"# {Path(path).name} — display preview\n\nFirst 30 data rows; values are not recomputed. [Download the complete original]({download}). Original size: {row['bytes']} bytes; SHA256 `{row['sha256']}`.\n\n```csv\n{preview}\n```\n",
+                    [path],
+                )
+                display_paths[path] = preview_name
+            else:
+                copy_original(path)
+                display_paths[path] = path
         generated(name, "\n".join(text) + "\n", paths)
 
     reference_paths = sorted(
@@ -181,7 +219,7 @@ def main():
                     "Original persisted exports and verified downloads",
                 ],
             ]
-            + [[PREFIX + path, Path(path).name] for path in reference_paths],
+            + [[PREFIX + display_paths[path], Path(path).name] for path in reference_paths],
         ]
     )
     by_id["materialize"][5] = [
@@ -191,7 +229,7 @@ def main():
         [
             "Reference outputs",
             [[PREFIX + "output-artifacts.md", "Final output inventory and downloads"]]
-            + [[PREFIX + path, Path(path).name] for path in final_paths],
+            + [[PREFIX + display_paths[path], Path(path).name] for path in final_paths],
         ]
     )
     initial = by_id["initial-review"]
