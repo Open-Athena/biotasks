@@ -1,0 +1,9 @@
+# Explicit late-absence pricing for either original archive format
+
+The original snapshot-only price extension had two assumptions tied to its first caller: it required a fallback snapshot, and decoded only that cleanup verifier’s field names. A genuine regular original archive has independently verified inventories and equivalent direct-ID evidence under different names. No fallback snapshot or deletion record should be fabricated to fit the auditor.
+
+The opt-in now accepts one complete supported claim schema. Mixed, partial and unknown schemas are refused; exact owner/ID/resource matching, chronology, whole original archive/root readback and source-family gates remain unchanged. The default still refuses an empty original cleanup list. The opt-in prices uncertain post-session time through the later exact-ID absence with the original clock margins and conservative upward rounding.
+
+The first candidate passed167offline checks but correctly failed on the real regular-archive field schema. That candidate and refusal are retained. The corrected candidate passes180checks in an immutable matching old scientific source view, including both formats and ambiguous/missing/mismatched claim failures. All232scientific runtime files remain unchanged in that view; only the operator auditor and its test differ.
+
+The real199dry run retains$1against a$0.70760438486283resource upper bound and proposes releasing$4. It prices691.5426384seconds after the original grading session through the previously observed direct-ID absence; the original empty deletion list remains empty. This is a conservative exposure bound, not an invoice or a newly observed deletion time. The original scientific failure and no-release status are unchanged. Applied bookkeeping, if any, is separately recorded in round103.

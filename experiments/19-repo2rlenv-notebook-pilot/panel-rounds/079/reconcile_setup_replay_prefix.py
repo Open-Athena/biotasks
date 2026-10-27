@@ -266,9 +266,18 @@ def price_through_fresh_absence(pipeline, claims, sessions, clean, unrecorded):
     """Price uncertain post-cleanup time; never synthesize a deletion receipt."""
     assert unrecorded and set(unrecorded) <= set(claims)
     assert len(unrecorded) == len(set(unrecorded))
-    assert clean["all_original_claim_ids_checked"] is True
+    # The two independently verified archive readers name the same direct-ID
+    # evidence differently. Accept one complete schema, never mix their fields.
+    layouts = [
+        ("all_original_claim_ids_checked", "original_sandbox_claims"),
+        ("all_original_sdk_claim_ids_checked", "original_sdk_claims"),
+    ]
+    selected = [pair for pair in layouts if any(key in clean for key in pair)]
+    assert len(selected) == 1
+    checked_key, claims_key = selected[0]
+    assert clean.get(checked_key) is True and claims_key in clean
     assert clean["fresh_original_ids_absent"] is True
-    recorded = clean["original_sandbox_claims"]
+    recorded = clean[claims_key]
     assert len(recorded) == len(claims)
     by_owner = {row["owner"]: row for row in recorded}
     assert len(by_owner) == len(recorded)
@@ -450,8 +459,11 @@ def main():
     folders, _, expected_sources = profile_config(a.profile)
     assert not a.proof.exists()
     assert not a.snapshot or a.profile == "common_grading_failure"
+    # Both original archive formats have independently verified inventories.
+    # Explicit late-absence pricing uses the same source/claim/time guards;
+    # it must not require or manufacture a fallback snapshot for a regular seal.
     assert not a.price_through_fresh_absence or (
-        a.snapshot and a.profile == "common_grading_failure" and not a.refine_existing
+        a.profile == "common_grading_failure" and not a.refine_existing
     )
     archive = a.private_root / f"archives/{a.number:03}"
     content_root, manifest, manifest_hash, snapshot_evidence = archive_inventory(

@@ -108,6 +108,37 @@ def test_snapshot_reader_names_the_original_format_and_never_manufactures_a_regu
         module.archive_inventory(archive)
 
 
+@pytest.mark.parametrize("defect", [None, "unverified", "wrong_hash", "duplicate", "root"])
+def test_regular_original_inventory_keeps_its_own_readback_guards(tmp_path, defect):
+    archive = tmp_path / "regular"
+    row = {"path": "pipeline.json", "bytes": 2, "sha256": module.digest(b"{}"), "mode": 384}
+    write(
+        archive / "sealed-manifest.json", {"files": [row, row] if defect == "duplicate" else [row]}
+    )
+    raw = (archive / "sealed-manifest.json").read_bytes()
+    write(
+        archive / "independent-readback.json",
+        {
+            "all_files_download_verified": defect != "unverified",
+            "source_manifest_sha256": "wrong" if defect == "wrong_hash" else module.digest(raw),
+        },
+    )
+    write(
+        archive / "root-evidence/readback.json",
+        {
+            "all_manifest_files_hash_size_mode_verified": defect != "root",
+        },
+    )
+    if defect:
+        with pytest.raises(AssertionError):
+            module.archive_inventory(archive)
+    else:
+        root, rows, identity, extra = module.archive_inventory(archive)
+        assert root == archive / "files" and set(rows) == {"pipeline.json"}
+        assert identity == module.digest(raw) and extra is None
+        assert not (archive / "snapshot-restored").exists()
+
+
 @pytest.mark.parametrize(
     "defect",
     [
@@ -174,8 +205,16 @@ def absence_evidence():
     return pipeline, claims, sessions, clean
 
 
-def test_uncertain_tail_prices_every_second_until_later_direct_absence_without_rewriting_clocks():
+@pytest.mark.parametrize("regular", [False, True])
+def test_uncertain_tail_prices_every_second_until_later_direct_absence_without_rewriting_clocks(
+    regular,
+):
     args = absence_evidence()
+    if regular:
+        args[3]["all_original_sdk_claim_ids_checked"] = args[3].pop(
+            "all_original_claim_ids_checked"
+        )
+        args[3]["original_sdk_claims"] = args[3].pop("original_sandbox_claims")
     before = copy.deepcopy(args)
     added, rows = module.price_through_fresh_absence(*args, ["grading"])
     seconds = Decimal(2000) - Decimal(str(args[2]["grading"]["finished"]))
@@ -184,6 +223,7 @@ def test_uncertain_tail_prices_every_second_until_later_direct_absence_without_r
     assert args == before
 
 
+@pytest.mark.parametrize("regular", [False, True])
 @pytest.mark.parametrize(
     "defect",
     [
@@ -198,7 +238,9 @@ def test_uncertain_tail_prices_every_second_until_later_direct_absence_without_r
         "duplicate_folder",
     ],
 )
-def test_late_absence_pricing_requires_all_bound_claims_and_an_actual_later_observation(defect):
+def test_late_absence_pricing_requires_all_bound_claims_and_an_actual_later_observation(
+    defect, regular
+):
     pipeline, claims, sessions, clean = absence_evidence()
     folders = ["grading"]
     if defect == "missing_id_check":
@@ -220,8 +262,26 @@ def test_late_absence_pricing_requires_all_bound_claims_and_an_actual_later_obse
         folders = ["other"]
     elif defect == "duplicate_folder":
         folders = ["grading", "grading"]
+    if regular:
+        clean["all_original_sdk_claim_ids_checked"] = clean.pop("all_original_claim_ids_checked")
+        clean["original_sdk_claims"] = clean.pop("original_sandbox_claims")
     with pytest.raises(AssertionError):
         module.price_through_fresh_absence(pipeline, claims, sessions, clean, folders)
+
+
+@pytest.mark.parametrize("defect", ["mixed", "partial", "unknown"])
+def test_late_absence_evidence_does_not_mix_or_guess_claim_schemas(defect):
+    pipeline, claims, sessions, clean = absence_evidence()
+    if defect == "mixed":
+        clean["all_original_sdk_claim_ids_checked"] = True
+        clean["original_sdk_claims"] = clean["original_sandbox_claims"]
+    elif defect == "partial":
+        clean.pop("original_sandbox_claims")
+    else:
+        clean.pop("all_original_claim_ids_checked")
+        clean.pop("original_sandbox_claims")
+    with pytest.raises(AssertionError):
+        module.price_through_fresh_absence(pipeline, claims, sessions, clean, ["grading"])
 
 
 def test_tail_bound_retains_margin_and_rounding_and_never_exceeds_the_original_reservation():
