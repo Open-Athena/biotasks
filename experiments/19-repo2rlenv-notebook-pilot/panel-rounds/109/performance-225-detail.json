@@ -1,0 +1,148 @@
+{
+  "source_archive_format": "quiescent-tar-v1",
+  "source_archive_manifest_sha256": "21ed5eb27b0c0038176977c0ef01c5226789eac5eacc673e1c304814f60e2df0",
+  "pipeline_status": "validated",
+  "source_id": "neurokit-hrv",
+  "elapsed_pipeline_seconds": 2258.384,
+  "stage_elapsed_seconds": {
+    "preparation": 8.61,
+    "setup": 212.002,
+    "replay": 77.308,
+    "specification": 111.852,
+    "construction": 191.82,
+    "grading": 1466.004,
+    "native": 184.959
+  },
+  "stage_status": {
+    "preparation": "completed",
+    "setup": "completed",
+    "replay": "completed",
+    "specification": "completed",
+    "construction": "completed",
+    "grading": "completed",
+    "native": "completed"
+  },
+  "accounted_model_request_attempts": 139,
+  "request_ledgers": [
+    {
+      "path": "grading/requests.sqlite",
+      "sha256": "b9f9976be643bf0db381cae2fc78c91ce9f4f2df716d1560bdc256cc640a681b",
+      "count": 98,
+      "calls": [
+        {
+          "scope": "grader",
+          "state": "response_received",
+          "count": 6
+        },
+        {
+          "scope": "independent",
+          "state": "response_received",
+          "count": 16
+        },
+        {
+          "scope": "probes",
+          "state": "response_received",
+          "count": 12
+        },
+        {
+          "scope": "repair",
+          "state": "response_received",
+          "count": 1
+        },
+        {
+          "scope": "review",
+          "state": "response_received",
+          "count": 35
+        },
+        {
+          "scope": "review-repair",
+          "state": "response_received",
+          "count": 28
+        }
+      ]
+    },
+    {
+      "path": "materialization-raw/requests.sqlite",
+      "sha256": "24100791ba96c328dc9b2d36567dd39297a8156135c8106f85632a3e537c2fa6",
+      "count": 5,
+      "calls": [
+        {
+          "scope": "materialize",
+          "state": "response_received",
+          "count": 5
+        }
+      ]
+    },
+    {
+      "path": "native/requests.sqlite",
+      "sha256": "a97dec5af6825457e3caa2f85c88af81c20dd5ebc2e72c654b32509e6c1ae501",
+      "count": 8,
+      "calls": [
+        {
+          "scope": "solver",
+          "state": "http_200",
+          "count": 8
+        }
+      ]
+    },
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "5cfe3518377c24110ab632046ddef435215d3bc0277f2db79c8e8d08115ddb3c",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "replay/requests.sqlite",
+      "sha256": "e2f280d7b17f832639376556a77f40ca2dc283bfd9df736e7768584274fcf1fa",
+      "count": 0,
+      "calls": []
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "e14baad2e5422370462bc396c26efbed42f7f0095f053a6f1c4f17ebe3eb4bd9",
+      "count": 13,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 13
+        }
+      ]
+    },
+    {
+      "path": "specification-review/requests.sqlite",
+      "sha256": "618b4b4008b24d9514833f903853c46bf0c7fac94e661a1a0f7121cd93aad5fd",
+      "count": 6,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 6
+        }
+      ]
+    },
+    {
+      "path": "specification/requests.sqlite",
+      "sha256": "4d1f8a879ac9e2b08c75d182277bdbca70c63f0c9eb4b87bcabf287200872bfe",
+      "count": 8,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 8
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 131,
+  "distinct_author_response_operations_within_stage": 131,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. Stage intervals include incomplete stages; interpret them with stage_status. No live run or model call.",
+  "logical_quality_repair_allowances_used": 1
+}
