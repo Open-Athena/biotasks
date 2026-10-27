@@ -1,0 +1,63 @@
+{
+  "observed_at": "2026-10-27T05:28:56.628449+00:00",
+  "campaign": 213,
+  "source_claim_sha256": "c93d1dfe94ef676b9bbe673adbb1636a0a6735e83ee05992e9acf4926e78fd81",
+  "readonly_observation_sha256": "b5ea40825bc069a0b57524cf8aeb58cff2af95a3907f832b1064848a644f4c61",
+  "provisional_live_metadata": true,
+  "complete_original_archive_crosscheck_pending": true,
+  "observer_exit_code": 0,
+  "records": [
+    {
+      "campaign": 213,
+      "artifact_feedback": [
+        {
+          "request": 2,
+          "tool": "revise_artifact",
+          "controller_feedback": "Artifact rejected; call revise_artifact with only changed fields, or submit_artifact for a complete replacement: Review evidence quote is absent from the cited text"
+        },
+        {
+          "request": 5,
+          "tool": "submit_artifact",
+          "controller_feedback": "Artifact rejected; call revise_artifact with only changed fields, or submit_artifact for a complete replacement: Review evidence quote is absent from the cited text"
+        },
+        {
+          "request": 6,
+          "tool": "submit_artifact",
+          "controller_feedback": "Artifact rejected; call revise_artifact with only changed fields, or submit_artifact for a complete replacement: 1 validation error for SpecificationReview\nfindings\n  Input should be a valid list [type=list_type, input_value='[{\"evidence\": [{\"path\": ...TTACKluENE reviewed\"}}]', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/list_type"
+        }
+      ]
+    },
+    {
+      "campaign": 213,
+      "review_request_index": 8,
+      "request_bytes": 449828,
+      "request_top_level_keys": [
+        "chat_template_kwargs",
+        "messages",
+        "model",
+        "parallel_tool_calls",
+        "stream",
+        "temperature",
+        "tool_choice",
+        "tools",
+        "top_p"
+      ],
+      "messages_found": true,
+      "message_count": 17,
+      "tool_calls_by_name": {
+        "submit_artifact": 3,
+        "revise_artifact": 1,
+        "read_reference_file": 3
+      },
+      "tool_result_count": 7,
+      "tool_errors_by_type": {
+        "ValueError": 1
+      },
+      "max_identical_call_repetitions": 1,
+      "model_reasoning_or_evidence_values_emitted": false
+    }
+  ],
+  "new_jobs": 0,
+  "new_model_calls": 0,
+  "scientific_edits": 0
+}

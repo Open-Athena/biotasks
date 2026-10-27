@@ -83,6 +83,13 @@ notebook broken merely because its generated proposal is defective.
 Each blocking finding must cite at least one exact nonempty quotation from a key
 in `evidence_text`, explain the problem and identify the required change. These
 quotes ground the finding; they do not by themselves prove its scientific claim.
+Return `findings` as a JSON array of objects, not a string containing JSON.
+Copy each `path` literally from the `evidence_text` map and quote a literal
+substring of its decoded value. Do not paraphrase, splice separate fragments or
+insert ellipses. A new tool response is not automatically part of that map;
+you can cite the proposal's exact unsupported claim and explain the missing
+support. If validation names a finding/evidence index, correct that citation
+without deleting a real blocker to obtain approval.
 Explain how the defect affects the scientific task or its source fidelity. A
 contradiction confined to a proposed future comparator or hypothetical probe
 does not establish a defect in the scientific target. The later independent

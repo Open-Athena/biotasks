@@ -85,10 +85,24 @@ def specification_review_context(context, proposal, *, parent_sha256):
 def validate_specification_review(value, context):
     """Ground findings in supplied text, without claiming semantic verification."""
     review = SpecificationReview.model_validate(value)
-    for finding in review.findings:
-        for item in finding.evidence:
+    for finding_index, finding in enumerate(review.findings):
+        for evidence_index, item in enumerate(finding.evidence):
+            location = f"findings[{finding_index}].evidence[{evidence_index}]"
             if item.path not in context["evidence_text"] or not item.quote.strip():
-                raise ValueError("Review finding lacks a supplied evidence path and quote")
+                raise ValueError(
+                    f"{location}: Review finding lacks a supplied evidence path and quote. "
+                    f"Received path {json.dumps(item.path, ensure_ascii=False)}. "
+                    "Choose a literal evidence_text key from "
+                    + json.dumps(sorted(context["evidence_text"]), ensure_ascii=False)
+                    + " and a nonblank exact quotation from that value."
+                )
             if item.quote not in context["evidence_text"][item.path]:
-                raise ValueError("Review evidence quote is absent from the cited text")
+                raise ValueError(
+                    f"{location}: Review evidence quote is absent from the cited text. "
+                    f"evidence_text[{json.dumps(item.path, ensure_ascii=False)}] does not contain "
+                    f"{json.dumps(item.quote, ensure_ascii=False)}. Copy a literal substring "
+                    "from that supplied text after JSON decoding; do not paraphrase, join "
+                    "separate fragments or insert ellipses. Tool responses do not add text "
+                    "to evidence_text. Repair the citation without hiding a real finding."
+                )
     return review
