@@ -32,7 +32,7 @@ A separate read-only audit flags Scanpy's near-exact embedding coordinates and a
 
 Complete original science/root exports and fresh cleanup are verified for all six. Scanpy uses its original quiescent fallback snapshot; its absent regular seal was not reconstructed. These outcomes do not establish broken notebooks. One accepted task from six development cases does not establish reliability on new notebooks. [Plan](../108/development-panel.json), [Scanpy](../108/result-220.json).
 
-Bioframe 221 has its full funding reservation and frozen original inputs but is not submitted; Pyteomics, MDAnalysis and Sgkit remain unfunded/unfrozen. No worker code, prompt or repair allowance was changed for the observed failures. [Identical-runtime proof, including frozen 221](../108/same-runtime-215-through-221.json).
+Bioframe 221 is running from its frozen original inputs; Pyteomics, MDAnalysis and Sgkit remain unfunded/unfrozen. No worker code, prompt or repair allowance was changed for the observed failures. [Identical-runtime proof, including frozen 221](../108/same-runtime-215-through-221.json).
 
 ## Latest qualified release and inspection
 
