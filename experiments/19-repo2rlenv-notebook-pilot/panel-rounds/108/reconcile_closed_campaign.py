@@ -75,12 +75,43 @@ def digest(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
+def admit_resource_family(runtime, version, native_hold):
+    if version == 105:
+        count, expected = (
+            232,
+            (
+                "7ff0e8dbcc69ebaf927c431740eb63ad2965a507514d349ca3767aff6187c685",
+                "cfeefdda2dc0f2ba4a62618e9202b6ef3af038a48ff78a35337e1567fcfe25f3",
+                "be1e5009087203457ee9ccaae19774cf0624a9a76a300cc431a4637f210218da",
+            ),
+        )
+    else:
+        assert version == 72 and native_hold == 0
+        count, expected = (
+            217,
+            (
+                "66bfc69435da1de099cdfc07637913abe332344c10e6725ca82ac382fe522188",
+                "9a2354335a74410931129d58526c16d121ddce2f86b0b35806dd75378d4d60f8",
+                "d85850aea0d2f70242d45d1abb898aac5b9b7742aaf1d14371bee775d2fea8b7",
+            ),
+        )
+    assert len(runtime) == count
+    assert (
+        tuple(
+            runtime[PREFIX + name]
+            for name in ("run_autonomous.py", "run_reference_setup.py", "reference_setup.py")
+        )
+        == expected
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("number", type=int)
     parser.add_argument("--private-root", type=Path, required=True)
     parser.add_argument("--proof", type=Path, required=True)
     parser.add_argument("--snapshot", action="store_true")
+    parser.add_argument("--runtime-round", type=int, choices=(72, 105), default=105)
     parser.add_argument("--apply", action="store_true")
     args = parser.parse_args()
     assert not args.proof.exists() and args.proof.resolve().is_relative_to(EXPERIMENT)
@@ -142,21 +173,11 @@ def main():
         "disk_gib": 10,
         "gpu": False,
     }
-    runtime_raw = (EXPERIMENT / "panel-rounds/105/runtime-identity.json").read_bytes()
+    runtime_raw = (
+        EXPERIMENT / f"panel-rounds/{args.runtime_round:03}/runtime-identity.json"
+    ).read_bytes()
     runtime = json.loads(runtime_raw)["runtime_files"]
-    assert len(runtime) == 232
-    assert (
-        runtime[PREFIX + "run_autonomous.py"]
-        == "7ff0e8dbcc69ebaf927c431740eb63ad2965a507514d349ca3767aff6187c685"
-    )
-    assert (
-        runtime[PREFIX + "run_reference_setup.py"]
-        == "cfeefdda2dc0f2ba4a62618e9202b6ef3af038a48ff78a35337e1567fcfe25f3"
-    )
-    assert (
-        runtime[PREFIX + "reference_setup.py"]
-        == "be1e5009087203457ee9ccaae19774cf0624a9a76a300cc431a4637f210218da"
-    )
+    admit_resource_family(runtime, args.runtime_round, native_hold)
     packet = payload / "biotasks.tar"
     with packet.open("rb") as stream:
         assert (
@@ -249,7 +270,7 @@ def main():
         last_updated_at=datetime.now(UTC).isoformat(),
     )
     ledger["current_summary"] = (
-        f"200USD authorized/{ledger['reserved_upper_bound_usd']}USD conservative holds/{ledger['unallocated_usd']}USD unallocated. All current hosts terminal; recorded resources absent. No invoice/credits or future campaign funding inferred."
+        f"200USD authorized/{ledger['reserved_upper_bound_usd']}USD conservative holds/{ledger['unallocated_usd']}USD unallocated. Refined closed holds for {args.number}; other campaign states and allowances unchanged. No invoice/credits or future campaign funding inferred."
     )
     after = (json.dumps(ledger, indent=2) + "\n").encode()
     record = {

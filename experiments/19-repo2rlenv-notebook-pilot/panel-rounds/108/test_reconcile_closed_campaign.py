@@ -1,4 +1,5 @@
 import importlib.util
+import json
 from copy import deepcopy
 from decimal import Decimal
 from pathlib import Path
@@ -10,6 +11,27 @@ spec = importlib.util.spec_from_file_location(
 )
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
+
+
+@pytest.mark.parametrize("version", [72, 105])
+def test_exact_recorded_creator_family_is_required(version):
+    runtime = json.loads(
+        (module.EXPERIMENT / f"panel-rounds/{version:03}/runtime-identity.json").read_text()
+    )["runtime_files"]
+    module.admit_resource_family(runtime, version, 0)
+    wrong = {**runtime, module.PREFIX + "run_reference_setup.py": "unknown"}
+    with pytest.raises(AssertionError):
+        module.admit_resource_family(wrong, version, 0)
+
+
+def test_legacy_native_or_unknown_families_keep_their_full_holds():
+    runtime = json.loads(
+        (module.EXPERIMENT / "panel-rounds/072/runtime-identity.json").read_text()
+    )["runtime_files"]
+    with pytest.raises(AssertionError):
+        module.admit_resource_family(runtime, 72, 1)
+    with pytest.raises(AssertionError):
+        module.admit_resource_family(runtime, 999, 0)
 
 
 def evidence(native=False):
