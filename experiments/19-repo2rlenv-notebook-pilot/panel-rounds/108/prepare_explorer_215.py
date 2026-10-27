@@ -36,9 +36,10 @@ def main():
 
     def replace(value):
         if isinstance(value, str):
-            return value.replace("autonomous-runs/198/", "autonomous-runs/215/").replace(
+            result = value.replace("autonomous-runs/198/", "autonomous-runs/215/").replace(
                 "autonomous-panel-198", "autonomous-panel-215"
             )
+            return result + ".gz" if result == PREFIX + "source.ipynb" else result
         if isinstance(value, list):
             return [replace(item) for item in value]
         if isinstance(value, dict):
