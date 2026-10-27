@@ -1,0 +1,44 @@
+{
+  "observed_at": "2026-10-27T18:28:40.115628+00:00",
+  "accepted_scientific_native": true,
+  "publication_ready": false,
+  "gate": "check_scientific_release.py",
+  "gate_sha256": "05e9c7f7b76267899c5d975093cf61c07023fbccf1b2f234b3ad82615088c869",
+  "gate_exit_status": 0,
+  "bundle_hash": "sha256:585b2ff97708b79cc936c88ad32d0521f16530d7a8e0e88f801bffc0b2113d09",
+  "native_trials": [
+    {
+      "agent": "oracle",
+      "reward": 1.0,
+      "exception_type": null,
+      "result_sha256": "bb6d0ceb149c30178e4d9a3a2535edc624fb185205d1e8ad851252ef841ac08b"
+    },
+    {
+      "agent": "nop",
+      "reward": 0.0,
+      "exception_type": null,
+      "result_sha256": "adf5a60e801ea6c58eb1b0ae27798a943f7265e90ef75b3d7c81ed92bbf437fc"
+    },
+    {
+      "agent": "terminus-2",
+      "reward": 0.0,
+      "exception_type": "AgentTimeoutError",
+      "result_sha256": "fcbbd06f7c8a201ff0b26e93ff963c6600246c98a8873cb501241ba42f74106a"
+    }
+  ],
+  "controls": 18,
+  "final_review_bound_to_exact_candidate_and_original_inputs": true,
+  "every_scientific_check_has_executed_negative": true,
+  "all_controls_candidate_hash_bound": true,
+  "task_instruction_grader_checks_match_exact_candidate": true,
+  "archive_readback": "archive-readback.json",
+  "cleanup": "provider-cleanup.json",
+  "actual_input_source_archive_matches": "decoded-source-value-check.json",
+  "limitations": [
+    "Acceptance follows existing BioTasks scientific/native gates and recorded GLM reviews; not a universal scientific correctness or software portability claim.",
+    "All workers use GLM-5.3; native high requested, served effort unverified.",
+    "Representative selection uses the disclosed versioned reference preset; no broad cross-library equivalence claim.",
+    "A blind solver timeout is recorded rather than requiring task simplification.",
+    "Controller completion is separate from host timeout and incomplete ordinary export."
+  ]
+}

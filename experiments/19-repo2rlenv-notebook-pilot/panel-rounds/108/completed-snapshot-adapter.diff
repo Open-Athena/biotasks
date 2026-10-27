@@ -1,0 +1,136 @@
+--- experiments/19-repo2rlenv-notebook-pilot/panel-rounds/054/reconcile_completed_timeout_resource_bound.py
++++ experiments/19-repo2rlenv-notebook-pilot/panel-rounds/108/reconcile_completed_snapshot.py
+@@ -7,7 +7,9 @@
+ import argparse
+ import ast
+ import hashlib
++import importlib.util
+ import json
++import sys
+ import tarfile
+ import tomllib
+ import zipfile
+@@ -15,8 +17,15 @@
+ from decimal import Decimal
+ from pathlib import Path
+ 
+-from native_resource_record import verify_native_resource_record
+-from serial_clock_bound import observed_bound
++HISTORICAL = Path(__file__).resolve().parents[1] / "054"
++sys.path.insert(0, str(HISTORICAL))
++from native_resource_record import verify_native_resource_record  # noqa: E402
++from serial_clock_bound import observed_bound  # noqa: E402
++
++SNAPSHOT_READER = Path(__file__).resolve().parents[1] / "079/reconcile_setup_replay_prefix.py"
++_spec = importlib.util.spec_from_file_location("completed_snapshot_reader", SNAPSHOT_READER)
++_reader = importlib.util.module_from_spec(_spec)
++_spec.loader.exec_module(_reader)
+ 
+ parser = argparse.ArgumentParser(description=__doc__)
+ parser.add_argument("numbers", type=int, nargs="+")
+@@ -25,12 +34,14 @@
+ parser.add_argument("--ledger", type=Path, required=True)
+ parser.add_argument("--proof", type=Path, required=True)
+ parser.add_argument("--apply", action="store_true")
++parser.add_argument("--snapshot", action="store_true")
+ parser.add_argument(
+     "--refine-observed-clock",
+     action="store_true",
+     help="Refine an existing2USDhold only after exact SDK/source/native clocks and all original gates pass",
+ )
+ args = parser.parse_args()
++assert not args.refine_observed_clock, "This format adapter retains full approved clocks"
+ assert len(set(args.numbers)) == len(args.numbers) and not args.proof.exists()
+ ledger_before = args.ledger.read_bytes()
+ ledger = json.loads(ledger_before)
+@@ -40,17 +51,14 @@
+ records = []
+ for number in args.numbers:
+     archive = args.private_root / f"archives/{number:03}"
+-    raw_manifest = (archive / "sealed-manifest.json").read_bytes()
+-    manifest = {r["path"]: r for r in json.loads(raw_manifest)["files"]}
+-    readback = json.loads((archive / "independent-readback.json").read_text())
+-    assert readback["all_files_download_verified"]
+-    assert readback["source_manifest_sha256"] == hashlib.sha256(raw_manifest).hexdigest()
+-    root_readback = json.loads((archive / "root-evidence/readback.json").read_text())
+-    assert root_readback["all_manifest_files_hash_size_mode_verified"]
++    content_root, manifest, manifest_sha, snapshot_evidence = _reader.archive_inventory(
++        archive, snapshot=args.snapshot
++    )
++    readback = {"source_manifest_sha256": manifest_sha}
+     checked = {}
+ 
+-    def original(name, archive=archive, manifest=manifest, checked=checked):
+-        raw = (archive / "files" / name).read_bytes()
++    def original(name, content_root=content_root, manifest=manifest, checked=checked):
++        raw = (content_root / name).read_bytes()
+         assert hashlib.sha256(raw).hexdigest() == manifest[name]["sha256"]
+         assert len(raw) == manifest[name]["bytes"]
+         checked[name] = manifest[name]["sha256"]
+@@ -88,7 +96,33 @@
+     clean = json.loads((archive / "fresh-provider-cleanup.json").read_text())
+     assert clean["complete"] and clean["original_all_cleanup_passed"]
+     assert clean["fresh_original_ids_absent"] and not clean["sandboxes"]
+-    assert clean["source_archive_manifest_sha256"] == readback["source_manifest_sha256"]
++    assert (
++        clean[
++            "source_snapshot_manifest_sha256" if args.snapshot else "source_archive_manifest_sha256"
++        ]
++        == manifest_sha
++    )
++    if args.snapshot:
++        assert (
++            clean["source_transport_manifest_sha256"]
++            == snapshot_evidence["transport_manifest_sha256"]
++        )
++        assert clean["ordinary_autonomous_export_seal_reconstructed"] is False
++        assert (
++            snapshot_evidence["source_claim_sha256"]
++            == hashlib.sha256(
++                (args.private_root / f"launch/{number:03}-submission.json").read_bytes()
++            ).hexdigest()
++        )
++        bootstrap_raw = (archive / "root-evidence/files/bootstrap-status.json").read_bytes()
++        assert (
++            claim["inputs"]["files"]["bootstrap.py"]
++            == snapshot_evidence["original_bootstrap_sha256"]
++        )
++        bootstrap = json.loads(bootstrap_raw)
++        assert bootstrap["completed"] is False and bootstrap["error_type"] == "TimeoutExpired"
++        assert pipeline["finished"] <= bootstrap["finished"]
++        assert bootstrap["finished"] - bootstrap["started"] <= 7500
+     assert clean["source_configuration_sha256"] == hashlib.sha256(raw_config).hexdigest()
+     expected_cleanup = {
+         "setup-raw/cleanup.json",
+@@ -255,6 +289,8 @@
+     records.append(
+         {
+             "campaign": number,
++            "source_archive_format": "quiescent-tar-v1" if args.snapshot else "per-file-export-v1",
++            "snapshot_evidence": snapshot_evidence,
+             "source_manifest_sha256": readback["source_manifest_sha256"],
+             "checked_originals": checked,
+             "actual_serial_pipeline_seconds": str(pipeline["finished"] - pipeline["started"]),
+@@ -306,10 +342,10 @@
+     "base_strict_auditor_sha256": "036241de95a1d148af94020839568966c80bb14bba7202c36d73cbc4324cb772",
+     "observed_clock_refinement": args.refine_observed_clock,
+     "observed_clock_helper_sha256": hashlib.sha256(
+-        Path(__file__).with_name("serial_clock_bound.py").read_bytes()
++        (HISTORICAL / "serial_clock_bound.py").read_bytes()
+     ).hexdigest(),
+     "native_resource_record_validator_sha256": hashlib.sha256(
+-        Path(__file__).with_name("native_resource_record.py").read_bytes()
++        (HISTORICAL / "native_resource_record.py").read_bytes()
+     ).hexdigest(),
+     "profile_difference": (
+         "Retain every original seven-owner/native/backend/archive/cleanup gate, require the exact already-admitted SDK creator family and enclose every SDK/native clock in the original serial campaign. Reprice TWO complete resource profiles over that observed interval with300seconds at each end, plus0.10USD/upward0.25USDrounding. New execution reservations and scientific outcomes unchanged."
+@@ -317,6 +353,9 @@
+         else "Allow only a handled600secondsolverAgentTimeoutError with originalresultverification, completedwrapper, returncode0 and retries0; all original resource/interval/archive/cleanup/backend constraints retained."
+     ),
+     "new_resources_or_models": 0,
++    "format_adapter_base_sha256": "857053031d2eadcf0c22d659d1896ba3c391214eb795f4d8fd3e446483723664",
++    "snapshot_reader_sha256": hashlib.sha256(SNAPSHOT_READER.read_bytes()).hexdigest(),
++    "snapshot_format_adapted_only": args.snapshot,
+ }
+ args.proof.parent.mkdir(parents=True, exist_ok=True)
+ args.proof.write_text(json.dumps(proof, indent=2) + "\n")

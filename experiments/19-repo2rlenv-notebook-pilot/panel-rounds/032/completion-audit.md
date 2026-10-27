@@ -4,19 +4,19 @@ Checked 27 October 2026. **Issue #19 remains incomplete.**
 
 | Requirement | Authoritative evidence | Assessment |
 | --- | --- | --- |
-| Autonomous notebook to validated task or justified rejection | Seven cases completed on frozen 108 without operator scientific edits; one qualified release, four candidate rejects, one questionable review rejection and one infrastructure failure | Demonstrated exact outcomes; yield and review reliability remain concerns |
-| Diverse Python panel | Ten planned domains; seven audited on the common factory | Pyteomics 222 running after source execution and clean replay; MDAnalysis and Sgkit unstarted |
-| Same factory | Cases 215–222 have identical 232-file runtime hashes and original source-only inputs | Eight cases dispatched, seven audited; 222 running in setup; two other sources unprepared |
-| Scientific/native validation | PyMC 215 passed 19 controls and native reference/empty/blind solver 1/0/1 | Proved for 215; rejected cases have no native qualification |
-| Publication/download | Exact 215 public bundle and revision passed forced anonymous empty-cache readback | Proved for 215 only |
-| Latest HTML | PyMC 215 with actual stages, prompts, inputs, outputs and attempt; browser/mobile/contrast/public readback pass | Verified; no new qualified release replaces it |
-| Evidence/cleanup | Complete science/root exports for 215–221, with original fallback snapshot for 220; all original SDK IDs and executed native owners checked absent | Verified within explicit native-ID recording limits |
-| General changes and checks | 114 affected runtime tests and source-admission checks; accounting checks are separate | Does not substitute for the remaining live panel |
-| Funds | $200 authorized; $197.00 held; $3.00 unallocated; closed 220/221 retain $1/$0.75 and 222 has a full $5 reservation | 222 running; holds are not invoices or credits |
-| Promotion | PR #23 open, draft and unmerged | Supported extraction and sufficient validation remain; never merge the research branch |
+| Autonomous notebook to validated task or justified rejection | Eight cases completed on frozen108 without operator scientific edits; PyMC publicly released, Pyteomics passes scientific/native gates but cannot yet be published, six other outcomes expose generated-artifact/review/infrastructure failures | Autonomy demonstrated for exact outcomes; broad reliability and yield remain concerns |
+| Diverse Python panel | Ten planned domains; eight audited on the common factory | MDAnalysis and Sgkit remain unstarted |
+| Same factory | Cases215–222 have identical232-file runtimes and original source-only inputs | No task, answer, recipe or diagnostic hints reused |
+| Scientific/native validation | PyMC215:19 controls and native reference/empty/solver1/0/1; Pyteomics222:18 controls and1/0/0 with solver timeout | Existing gates pass for these two bundles; not universal scientific correctness or software portability |
+| Publication/download | Exact215 public revision passed forced anonymous empty-cache readback | Proved for215 only;222 external-data redistribution grant unresolved |
+| Latest HTML | PyMC215 with actual stages, prompts, inputs, outputs and attempt; browser/mobile/contrast/public readback pass | Verified; remains latest qualified public release |
+| Evidence/cleanup | Complete science/root exports215–222, including original quiescent fallback snapshots220/222; original SDK IDs and executed native owners checked absent | Verified within explicit native-ID recording limits;222 host timeout remains recorded |
+| General changes and checks |114 affected runtime tests and source-admission checks; accounting checks are separate | Does not substitute for remaining live panel |
+| Funds |$200 authorized; $194 held, $6 unallocated after222 closed-resource audit | Holds are not invoices or credits; reserve a full$5 before a new run |
+| Promotion |PR23 open, draft and unmerged | Supported extraction and sufficient validation remain; never merge research branch |
 
-Next: complete the three remaining original Python sources on the same factory, then assess general failure patterns. Preserve failed responses, controls and rejection reasons. Scanpy's exact embedding/label target concern also remains unresolved; its recorded infrastructure failure is not a scientific verdict. Publish only scientifically qualified, rights-cleared tasks with verified downloads. Rejections caused by generated artifacts or review errors must not be described as broken notebooks.
+Next: complete the two remaining original Python sources on the same factory, then address recurring general failure patterns. Preserve original failures and distinguish generated-contract defects from broken notebooks. Scanpy's exact embedding/label target concern remains unresolved; its infrastructure failure does not decide scientific suitability. Publish only qualified, rights-cleared tasks with verified downloads.
 
-Original campaign/resource/model/repair limits remain. The proposed three-hour window and cumulative-reference-budget change are unanswered; no numerical yield threshold has been adopted. [Detailed assessment](current-panel-assessment.md), [common plan](../108/development-panel.json).
+The Pyteomics controller completed before the host timed out; original fallback recovery preserved all evidence without reconstructing a normal export seal. [Result](../108/result-222.json), [acceptance audit](../../autonomous-runs/222/acceptance-audit.json). Redundant compressed local transport caches210/214/220 were evicted only after fresh remote full-hash and local complete-member verification; original remote objects, unpacked members, manifests and readback receipts remain. Strict checks requiring a compressed local cache must restore and reverify it first. [Eviction receipt](../../factory-checks/archive-recovery/transport-cache-eviction-20261027.json).
 
-Pyteomics reference/replay completion is a live milestone, not a qualified task: [record](../108/reference-completed-222.json). A second quality repair in a later version is under discussion, not adopted; the current fixed panel retains one.
+Original campaign/resource/model/repair limits remain. Proposed timing changes and a second later-version quality repair are unanswered and not adopted; no numerical yield threshold is assumed. [Common plan](../108/development-panel.json).
