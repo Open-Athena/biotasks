@@ -1,12 +1,12 @@
 {
-  "observed_at": "2026-10-27T09:07:08.724740+00:00",
+  "observed_at": "2026-10-27T10:03:09.012148+00:00",
   "scope": "Latest completed attempt per source across development versions, including infrastructure outcomes. Not a common-version holdout or success-rate estimate.",
   "source_count": 10,
   "counts": {
-    "generated_candidate_rejected": 3,
-    "infrastructure_failed": 4,
+    "generated_candidate_rejected": 4,
+    "infrastructure_failed": 2,
     "source_fidelity_rejection": 1,
-    "validated_published": 1,
+    "validated_published": 2,
     "source_input_unavailable_rejection": 1
   },
   "runtime_minutes_all_outcomes": {
@@ -49,26 +49,26 @@
       }
     },
     {
-      "campaign": 199,
+      "campaign": 216,
       "domain": "Protein sequence profiles",
       "source_url": "https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/docs/examples/msa_to_hmm.ipynb",
       "source_id": "pyhmmer-msa-to-hmm",
-      "factory_revision_recorded": "23fd6d275b8d7bafca6186595bbd0e18668c8bcf",
-      "classification": "infrastructure_failed",
-      "audited_state": "infrastructure_failed_after_idle_sandbox_deletion",
-      "original_pipeline_status": "infrastructure_failed",
+      "factory_revision_recorded": "4459762f00517f89cd8053e4c105e77c1af315cb",
+      "classification": "generated_candidate_rejected",
+      "audited_state": "autonomous_generated_grading_rejection",
+      "original_pipeline_status": "rejected",
       "operator_interventions": 0,
-      "pipeline_minutes": 80.49,
-      "accounted_model_request_attempts": 281,
+      "pipeline_minutes": 58.74,
+      "accounted_model_request_attempts": 170,
       "native_complete": false,
       "published": false,
       "full_original_archive_verified": true,
-      "source_archive_manifest_sha256": "231889677352753f804f6b52d25eb460b23da8ded7dd075cb84925e53a3fb919",
-      "public_result_path": "panel-rounds/101/result-199.json",
-      "public_result_sha256": "9544ed0ff535cb7826d03c3ef7d80fbdde65a69ac7660f8abd6e3845f09e3f8a",
-      "public_performance_path": "panel-rounds/101/performance-199-detail.json",
-      "public_performance_sha256": "e0a05f24a5cb7080f5d8e58ca3e144052fee8e0c1a4f056c0a10834713d6cd31",
-      "public_runtime_revision": "23fd6d275b8d7bafca6186595bbd0e18668c8bcf",
+      "source_archive_manifest_sha256": "4b5ea586178011630f59067bdb9c76bf07b123ff30253dc5b3921998ad47a41a",
+      "public_result_path": "panel-rounds/108/result-216.json",
+      "public_result_sha256": "b42b542157cc24df1a24e27e286b47f258c59e44d4523e010d054648907563ee",
+      "public_performance_path": "panel-rounds/108/performance-216-detail.json",
+      "public_performance_sha256": "514c8b9d24aaeeb89320439955a173673c1e065bbff53d2a83f3ad213989fa25",
+      "public_runtime_revision": "04b0780739387193c9dda4bb75f80531e428c5ed",
       "previous_scientific_outcome": {
         "campaign": 134,
         "classification": "generated_candidate_rejected",
@@ -78,12 +78,13 @@
       },
       "prior_qualified_run_preserved": 161,
       "previous_selected_outcome": {
-        "campaign": 188,
-        "classification": "generated_candidate_rejected",
-        "public_result_path": "panel-rounds/093/result-188.json",
-        "public_result_sha256": "fa979619143d91f187dc922657be471e0c82e6e3d72c030cb52cb475df925e09",
+        "campaign": 199,
+        "classification": "infrastructure_failed",
+        "public_result_path": "panel-rounds/101/result-199.json",
+        "public_result_sha256": "9544ed0ff535cb7826d03c3ef7d80fbdde65a69ac7660f8abd6e3845f09e3f8a",
         "retained": true
-      }
+      },
+      "source_archive_format": "per-file-export-v1"
     },
     {
       "campaign": 214,
@@ -322,42 +323,37 @@
       "public_runtime_revision": "da45986ee60796415f4ac4ff9dab5a98b2f54107"
     },
     {
-      "campaign": 213,
+      "campaign": 215,
       "domain": "Bayesian biological inference",
       "source_url": "https://github.com/pymc-devs/pymc-examples/blob/17c8f90dc90691b41587dfdf477698d74cf5c18c/examples/generalized_linear_models/GLM-hierarchical-binomial-model.ipynb",
       "source_id": "pymc-rat-tumor",
-      "factory_revision_recorded": "835ed3a9308286c55431844405522364350f18ce",
-      "classification": "infrastructure_failed",
-      "audited_state": "infrastructure_failed_before_solver_dispatch_after_passing_controls",
-      "original_pipeline_status": "infrastructure_failed",
+      "factory_revision_recorded": "1e2731d08ae02fa29af4dd237d11d2cd58957ee5",
+      "classification": "validated_published",
+      "audited_state": "validated_published",
+      "original_pipeline_status": "validated",
       "operator_interventions": 0,
-      "pipeline_minutes": 109.76,
-      "accounted_model_request_attempts": 151,
-      "native_complete": false,
-      "published": false,
+      "pipeline_minutes": 86.33,
+      "accounted_model_request_attempts": 126,
+      "native_complete": true,
+      "published": true,
       "full_original_archive_verified": true,
-      "public_result_path": "panel-rounds/105/result-213.json",
-      "public_result_sha256": "de3d93a7c9bde59c1264b6b1d624d4148d0951f8655e8c438716d2205069764f",
-      "public_performance_path": "panel-rounds/105/performance-213-detail.json",
-      "public_performance_sha256": "1c399f25fa85c073c25159dbb13ebe7e95d35b1f2c0285312be4c56aee9bd572",
-      "public_runtime_revision": "f979dc675488b9e6e4372c26307df90ea60095b2",
-      "source_archive_format": "quiescent-tar-v1",
-      "source_snapshot_manifest_sha256": "11040e7469b5ab9a68fa4899b34ad1f1afdfb46a4adae26d4a028c560daaf953",
+      "public_result_path": "panel-rounds/108/result-215.json",
+      "public_result_sha256": "2c24335c471ee45b12adb520a95a77dcf1df12d60e2d25423218c4856c92f3b5",
+      "public_performance_path": "panel-rounds/108/performance-215-detail.json",
+      "public_performance_sha256": "1ef14dee4be170bc0164d9da67ff90e2787141758c6ff9fb71bc02c56cb48c66",
+      "public_runtime_revision": "19d3547a730af3e0724e18dd6aa3a7b33e84ab91",
+      "source_archive_format": "per-file-export-v1",
       "previous_selected_outcome": {
-        "campaign": 212,
-        "classification": "generated_candidate_rejected",
-        "public_result_path": "panel-rounds/104/result-212.json",
-        "public_result_sha256": "f6b421db4eed2bc695709e4adb85f5e7ce927c6f3471e981880126b1ff1c7318",
+        "campaign": 213,
+        "classification": "infrastructure_failed",
+        "public_result_path": "panel-rounds/105/result-213.json",
+        "public_result_sha256": "de3d93a7c9bde59c1264b6b1d624d4148d0951f8655e8c438716d2205069764f",
         "retained": true
       },
-      "source_archive_manifest_sha256": "050d07f9d092e13c99bc4627a7c34facabdd6d3cfb0b17f08463fc1860518fb1",
-      "cleanup_scope": "All recorded creations freshly absent. Solver nondispatch proved from exact submitted sources/patch chain, archived wheel and original traceback; original missing receipt preserved."
+      "source_archive_manifest_sha256": "f8aea321cbc04660245fbd2137161d5c183e57886ddba7f2b0b61eafc80e0538"
     }
   ],
-  "active_campaigns": [
-    215,
-    216
-  ],
+  "active_campaigns": [],
   "historically_published_domains": [
     "matchms-spectral-matching",
     "neurokit-hrv",
@@ -367,8 +363,8 @@
   ],
   "historically_published_domain_count": 5,
   "fixed_224_round": "../090/fixed-round-outcomes.json",
-  "latest_qualified_release": 198,
-  "latest_qualified_release_publication_revision": "166d99e941b7e154fc6360f48e739bd19127cfb2",
+  "latest_qualified_release": 215,
+  "latest_qualified_release_publication_revision": "1a27dec5aceb5d0b592fce41b129a996893b89b9",
   "prior_assessment_snapshot_revision": "f01792fa",
   "limits": [
     "Latest independently archived scientific outcome per source across development versions; subsequent infrastructure failures are explicit separately. Not a common-version holdout or success-rate estimate.",
@@ -379,31 +375,18 @@
     "No new models, scientific execution or resources were used by this read-only rollup."
   ],
   "does_not_establish_pipeline_readiness": true,
-  "active_campaign_evidence": [
-    "../108/submission-215.json",
-    "../108/submission-216.json"
-  ],
+  "active_campaign_evidence": [],
   "next_common_version_panel": "../108/development-panel.json",
   "active_campaigns_not_scientifically_qualified": true,
-  "next_common_version_completed_cases": 0,
-  "next_common_version_qualified_tasks": 0,
+  "next_common_version_completed_cases": 2,
+  "next_common_version_qualified_tasks": 1,
   "next_common_version_reserved_queued_cases": [],
   "previous103_completed_cases": 2,
   "previous104_completed_cases": 2,
   "current_common_version_panel": "../108/development-panel.json",
-  "active_validation": [
-    {
-      "campaign": 215,
-      "factory_runtime_version": 108,
-      "state": "running",
-      "stage_last_observed": "grading"
-    },
-    {
-      "campaign": 216,
-      "factory_runtime_version": 108,
-      "state": "running",
-      "stage_last_observed": "grading"
-    }
-  ],
-  "current_candidate": "../108/README.md"
+  "active_validation": [],
+  "current_candidate": "../108/README.md",
+  "whole_common_version_assessment_complete": false,
+  "latest_viewer_run": 198,
+  "viewer_refresh_pending_for": 215
 }
