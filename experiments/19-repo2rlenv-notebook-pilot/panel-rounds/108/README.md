@@ -10,4 +10,6 @@ Closed resource holds were refined only after complete original evidence, exact 
 
 The [source-intake audit](source-intake-audit.json) verifies all ten planned notebook/provenance assets against their original submitted archive and source hashes. All ten configurations match the approved policy baseline. It selects no generated task artifacts and neither freezes, funds nor launches a campaign. Scientific suitability, input availability and redistribution remain separate execution/release checks.
 
+[Partial live review metadata](batch-observation-215.json) shows PyMC 215 using eight batch evidence calls, twelve single reads and three execution lookups, with no tool errors reported in that observed transcript. This confirms live use of the batch reader, not final task acceptance or a measured speedup.
+
 Neither new task is yet qualified. All original model, resource, two-hour campaign, ten-minute reference/solver, two-minute verifier, two-reference-dispatch and repair limits remain. The proposed three-hour window is unanswered and has not been adopted. Keep the research issue open and PR draft/unmerged until the full assessment supports readiness.
