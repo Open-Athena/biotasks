@@ -1,0 +1,38 @@
+{
+  "observed_at": "2026-10-28T01:35:46.608904+00:00",
+  "source_sha256": "f2371cc3b8864b89de02b5bb1a68c332e29dadbffc1ba4f5a187e151fb5b65c1",
+  "scope": "Presentation format controls only, not biological validation. Tiny synthetic text/binary inputs test extension-independent display and chunk-safe UTF8 detection.",
+  "cases": [
+    {
+      "name": "arbitrary-extension.bin",
+      "bytes": 21,
+      "sha256": "92eec20c90c818b6f962d623777c8865406fdad143c6ac55ac9d270289c1d39a",
+      "expected_text": true,
+      "actual_text": true
+    },
+    {
+      "name": "mislabelled-text.csv",
+      "bytes": 6,
+      "sha256": "ffdb519b788f33bddc8647611c3a24cc5e1a9ef5780c1f6f828a637c309ad8f1",
+      "expected_text": false,
+      "actual_text": false
+    },
+    {
+      "name": "nul-in-valid-utf8.dat",
+      "bytes": 12,
+      "sha256": "b960c4abfc875bf9dff3fb6feb74251fcb4481ea13a9faeb2b699154f92f9449",
+      "expected_text": false,
+      "actual_text": false
+    },
+    {
+      "name": "utf8-chunk-boundary.dat",
+      "bytes": 65538,
+      "sha256": "0f00e641c1e82bc3a746c74afcbdea2b2d4212f599a4593bade29def57bb47af",
+      "expected_text": true,
+      "actual_text": true
+    }
+  ],
+  "passed": true,
+  "temporary_fixture_directory_removed": true,
+  "scientific_outputs_or_worker_modified": false
+}
