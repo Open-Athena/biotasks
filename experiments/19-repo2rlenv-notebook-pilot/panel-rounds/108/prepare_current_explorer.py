@@ -124,6 +124,7 @@ def main():
     config = read(payload / "campaign-config.json")
     frozen = read(args.freeze or EXP / f"panel-rounds/108/freeze-{case}.json")
     assert frozen["campaign"] == args.number
+    profile["runtime_revision"] = frozen["public_runtime_revision"]
     with tarfile.open(payload / "biotasks.tar") as source:
         for target, key in [("source.ipynb", "notebook_file"), ("seed.json", "seed_file")]:
             name = "experiments/19-repo2rlenv-notebook-pilot/" + config[key]

@@ -1,0 +1,197 @@
+{
+  "derive_code": "import argparse\nimport gzip\nimport json\nimport os\nimport shutil\n\n\ndef _format_growth(value):\n    if value is None:\n        return \"\"\n    value = float(value)\n    if value != value:  # NaN (infeasible solves in deletion tables / optimize)\n        return \"\"\n    return repr(value)\n\n\ndef main():\n    parser = argparse.ArgumentParser()\n    parser.add_argument(\"--source-inputs\", required=True)\n    parser.add_argument(\"--reference-dir\", required=True)\n    parser.add_argument(\"--destination\", required=True)\n    args = parser.parse_args()\n\n    with open(args.source_inputs) as handle:\n        json.load(handle)  # recorded original inputs: empty manifest (no external files)\n\n    inputs_dir = os.path.join(args.destination, \"inputs\")\n    reference_dir = os.path.join(args.destination, \"reference\")\n    os.makedirs(inputs_dir, exist_ok=True)\n    os.makedirs(reference_dir, exist_ok=True)\n\n    # Task input: the exact SBML bytes of the bundled \"textbook\" model that the\n    # source loads via load_model(\"textbook\") (cobra package data; no network).\n    import cobra\n\n    bundled_model = os.path.join(os.path.dirname(cobra.__file__), \"data\", \"textbook.xml.gz\")\n    with gzip.open(bundled_model, \"rb\") as src, open(\n        os.path.join(inputs_dir, \"e_coli_core.xml\"), \"wb\"\n    ) as dst:\n        shutil.copyfileobj(src, dst)\n\n    # Recorded reference exports: copy the three CSVs byte-for-byte. Their\n    # schema (knockouts,growth,status; sorted ';'-joined labels; empty growth\n    # for infeasible rows) already matches the requested output contract, so\n    # they are not re-serialized.\n    for name in (\n        \"single_gene_deletions.csv\",\n        \"single_reaction_deletions.csv\",\n        \"double_reaction_deletions.csv\",\n    ):\n        shutil.copyfile(\n            os.path.join(args.reference_dir, name),\n            os.path.join(reference_dir, name),\n        )\n\n    # --- Endpoint recovery (permitted by the endpoint-recovery policy) ---\n    # The source's with-block optima (source lines 32-44) were only printed,\n    # never stored, and the with-context managers restore the model between\n    # blocks. We recover them by rerunning the unchanged knockout/optimize\n    # sequence on the same model: the only required state is the freshly\n    # loaded model, so the recovered rows have a clean, documented lineage.\n    from cobra.io import read_sbml_model\n\n    model = read_sbml_model(os.path.join(inputs_dir, \"e_coli_core.xml\"))\n    solution = model.optimize()\n    rows = [(\"\", _format_growth(solution.objective_value), solution.status)]\n    with model:\n        model.reactions.PFK.knock_out()\n        solution = model.optimize()\n        rows.append((\"PFK\", _format_growth(solution.objective_value), solution.status))\n    with model:\n        model.genes.b1723.knock_out()\n        solution = model.optimize()\n        rows.append((\"b1723\", _format_growth(solution.objective_value), solution.status))\n        model.genes.b3916.knock_out()\n        solution = model.optimize()\n        rows.append((\"b1723;b3916\", _format_growth(solution.objective_value), solution.status))\n\n    with open(os.path.join(reference_dir, \"pfk_knockout_optima.csv\"), \"w\", newline=\"\") as handle:\n        handle.write(\"knockouts,growth,status\\n\")\n        for knockouts, growth, status in rows:\n            handle.write(\"%s,%s,%s\\n\" % (knockouts, growth, status))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "disposition": "ready",
+  "environment_review": {
+    "additional_exclusions": [],
+    "artifact_inventory_sha256": "efcacaec3088051bdc3d4ba928a9396b430cda799bd9e988254849b24d4221e1",
+    "assessment": "Controlled derivation and oracle execution succeeded. Verification performed with the authoring shell against the final inventory and the read-only inspection catalog. (1) The derivation bundle contains exactly the input e_coli_core.xml (sha256 0abebb80...) and the four reference CSVs; the three recorded CSVs are byte-identical copies of the originals in the read-only reference directory (shas 576e00fe..., e2766a64..., 9169de53...), and that directory itself remains untouched with only the three original artifacts, as required. (2) The recovered pfk_knockout_optima.csv was produced by rerunning the unchanged source knockout and optimize sequence (lines 32-44) on the freshly supplied model; its four values (wild type 0.8739..., PFK 0.7040..., b1723 0.8739..., b1723;b3916 0.7040..., all optimal) are cross-consistent with the reference stdout recorded in the private review (0.874 / 0.704 / 0.874 / 0.704) and with the b1723 row of single_gene_deletions.csv and the PFK row of single_reaction_deletions.csv; no baseline artifact exists for this endpoint, so independent validation remains noted as pending. (3) The supplied model re-parses to 137 genes and 95 reactions with the biomass objective, matching the source population. Installed-asset inspection: the final catalog (6726 installed files, 2372 removal-eligible candidates across 31 distributions, catalog sha 4a47faf4...) was inspected. All priority candidates are packaged test or example modules of numpy, pandas and optlang whose only connection to the source is generic import-name or path overlap (io, time, pandas); none contain deletion results or knockout values. The advisory numeric-value hints report (distance 1e-08, which is not a grading tolerance) inspected literals in every eligible candidate and all numeric cells of all four final CSVs including the recovered endpoint and found zero matches; no installed Python source exposes any requested growth, status or knockout-set value. The earlier setup audit additionally confirmed by grep that the only occurrences of this analysis distinctive tokens (b1723, ATPM, TKT1, textbook) live in the cobra package data and modules, which are the required model input and runtime code that the source load_model call reads and which must be retained, and in an unrelated sympy mechanics test whose numeric overlap is coincidental. The cobra data directory holds the model SBML input (required data), not answers; the requested outputs are LP optima over all knockout sets and are not stored anywhere in package data. No dedicated test distribution for this task exists and no unused answer asset was established, therefore no additional exclusions are declared and required data, runtime code and notices are preserved. Remaining gaps acknowledged: the hints scan covers numeric literals in priority Python files only, so integers, strings and other formats are not answered by it, but the catalog-wide candidate review and value-hint scan together found no requested-answer exposure, and the reference-answer CSVs live only in the controller-held reference directory, which is hidden from the isolated oracle.",
+    "asset_catalog_sha256": "4a47faf4fb86c499fae855a1c5744a8a7831a3a1ffb218e1b8ffd299e793507c"
+  },
+  "input_paths": [
+    "e_coli_core.xml"
+  ],
+  "instruction": "# Growth effects of gene and reaction knockouts in the E. coli core metabolic model\n\n## Objective\nYou are given the curated \"textbook\" E. coli core metabolic model (BiGG id `e_coli_core`) as an SBML file. Using flux balance analysis (FBA), determine how every possible single-gene deletion, every single-reaction deletion, every pairwise reaction deletion, and four specific knockout scenarios that illustrate gene-level redundancy for phosphofructokinase affect the maximal achievable growth.\n\nBy \"growth\" we mean the optimal value of the model's biomass objective (the raw LP objective value; no rounding, clamping or sign correction). For every knockout scenario, report that optimum together with the status reported by the LP solve (e.g. `optimal` or `infeasible`).\n\n## Supplied input\n- `inputs/e_coli_core.xml` \u2014 the E. coli core metabolic model in SBML format, including its biomass objective reaction and gene\u2013protein\u2013reaction (GPR) associations. Use the model exactly as supplied; do not modify it, its medium, bounds or objective.\n\n## Knockout semantics\n- **Reaction knockout**: the reaction carries no flux; its flux is constrained to zero in both directions.\n- **Gene knockout**: a reaction is disabled only if its GPR rule evaluates to false once the knocked-out gene(s) are removed. If a reaction has a remaining functional isozyme gene (an OR in the GPR), the reaction still carries flux; a gene whose removal disables no reaction therefore has no growth effect even though the gene is knocked out.\n\n## Required outputs\nProduce four CSV files, all with the columns `knockouts,growth,status`:\n\n- `knockouts`: the identifier(s) of the knocked-out entity, exactly as defined in the supplied model. For a knockout of multiple entities, the ids are sorted lexicographically and joined with `;` (e.g. `b1723;b3916`, `Biomass_Ecoli_core;LDH_D`); a single-entity knockout uses just that entity's id.\n- `growth`: the optimal objective value of the LP after the knockout, as reported by the solver at full double precision, with no rounding, clamping or sign correction. Tiny negative values of magnitude around 1e-14 that arise from solver noise are expected and must be reported as-is. Leave this field empty when the knockout makes the problem infeasible.\n- `status`: the LP solve status string, e.g. `optimal` or `infeasible`.\n\n### 1. `single_gene_deletions.csv`\nOne row for **every gene defined in the supplied model** (137 genes), including genes whose deletion disables no reaction.\n\n### 2. `single_reaction_deletions.csv`\nOne row for **every reaction defined in the supplied model** (95 reactions, including boundary/exchange reactions).\n\n### 3. `double_reaction_deletions.csv`\nOne row for **each distinct knockout set {r_i, r_j}** obtained by pairing every reaction in the model with every reaction in the model and reducing each ordered pair to an unordered set; the i = j cases contribute the single-reaction sets {r_i}. This yields the 95 singleton sets plus all C(95,2) = 4465 pairs, i.e. 4560 rows. Do not apply gene-level GPR logic here \u2014 both reactions are knocked out directly.\n\n### 4. `pfk_knockout_optima.csv`\nExactly four rows, with the same column convention and an empty `knockouts` field for the no-knockout row:\n\n- *(empty)* \u2014 the unmodified (wild-type) model, no knockout;\n- `PFK` \u2014 the PFK reaction knocked out;\n- `b1723` \u2014 gene b1723 (pfkA) knocked out;\n- `b1723;b3916` \u2014 genes b1723 (pfkA) and b3916 (pfkB) knocked out simultaneously.\n\nThese quantify isozyme redundancy: the isozyme pfkB can compensate for a pfkA deletion, but not when both genes are removed.\n\n## Conventions\n- Row order in every file carries no scientific meaning; any row ordering is acceptable.\n- Growth is reported in the model's native biomass-objective units (the raw LP objective value).\n- Use the knockout populations exactly as defined above; do not skip entities that have no reaction associations or no growth effect.\n- Do not round any value (`growth` is written at full double precision).\n\n## Environment and resources\nCPU only (up to 4 cores), 8 GiB RAM, no network access. Your program must complete within 600 seconds. Any software stack that satisfies the definitions above is acceptable; the results, not the tool, are what is compared.\n\nExact acceptance criteria (including numerical tolerances appropriate for LP-solver variation) are finalized separately during validation before the contract takes effect; produce results faithful to the definitions above.\n",
+  "operation_coverage": [
+    {
+      "artifact_paths": [
+        "e_coli_core.xml"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-25-14"
+      ],
+      "rationale": "load_model(\"textbook\") reads the bundled cobra package-data SBML (cobra/data/textbook.xml.gz); no other input exists (recorded original-input manifest is empty). The declared task input e_coli_core.xml is the byte-exact SBML document gzip-decompressed from that bundled file, so every downstream result is computed on the model this call produced.",
+      "role": "supplied_input"
+    },
+    {
+      "artifact_paths": [
+        "pfk_knockout_optima.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-32-0",
+        "call-32-26",
+        "call-39-0",
+        "call-39-26"
+      ],
+      "rationale": "The wild-type (no-knockout) optimum, printed twice before the with-blocks (the with-context restores the model, so both prints reflect the same unmodified model state). Recovered unchanged as the empty-knockouts row of pfk_knockout_optima.csv by rerunning the same optimize() on the supplied model.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "pfk_knockout_optima.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-34-4",
+        "call-35-4",
+        "call-35-31"
+      ],
+      "rationale": "PFK reaction knockout inside a with-context and the printed optimum of the knocked-out model; recovered unchanged as the 'PFK' row of pfk_knockout_optima.csv (same knock_out() + optimize() sequence, model restored by the context manager).",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "pfk_knockout_optima.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-41-4",
+        "call-42-4",
+        "call-42-32"
+      ],
+      "rationale": "Gene b1723 (pfkA) knockout inside a with-context and its printed optimum; recovered unchanged as the 'b1723' row of pfk_knockout_optima.csv. The value is scientifically identical to the b1723 row of single_gene_deletions.csv but is delivered here as the redundancy-narrative endpoint.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "pfk_knockout_optima.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-43-4",
+        "call-44-4",
+        "call-44-32"
+      ],
+      "rationale": "Sequential knockouts of b1723 then b3916 within a single with-context, with the printed optimum of the doubly knocked-out model; recovered unchanged as the 'b1723;b3916' row of pfk_knockout_optima.csv. This combination is not subsumed by any retained table.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "single_gene_deletions.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-50-19"
+      ],
+      "rationale": "deletion_results = single_gene_deletion(cobra_model): all single-gene deletions over the complete textbook model. Recorded reference export copied byte-for-byte into reference/ and requested as outputs/single_gene_deletions.csv.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": "call-50-19",
+      "operation_ids": [
+        "call-54-0"
+      ],
+      "rationale": "The same single_gene_deletion function on the same unmodified model, restricted to the genes[:20] prefix; each returned row is the corresponding row of the retained full table single_gene_deletions.csv (identical single-knockout LPs, model state and parameters). Narrative: 'These can also be done for only a subset of genes'.",
+      "role": "redundant"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": "call-96-9",
+      "operation_ids": [
+        "call-58-0"
+      ],
+      "rationale": "The same single_reaction_deletion function on the same unmodified model, restricted to the reactions[:20] prefix; each returned row is the corresponding row of the retained full table single_reaction_deletions.csv (identical single-knockout LPs, model state and parameters).",
+      "role": "redundant"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-64-0-to-65-40",
+        "call-64-0-to-65-49"
+      ],
+      "rationale": "Bare-expression API-mechanics demonstration of double_gene_deletion on a positional 5-gene slice of the textbook model: the returned value is neither stored nor printed in the script run (it is absent from the reference stdout), and .round(4) is display formatting on that discarded value. The narrative introduces it solely as mechanics ('Double deletions run in a similar way') and interprets no result. No interpreted scientific quantity exists to preserve; excluded per the review, which flags this as a residual judgment call (faithful recomputation would be possible if reviewers disagree).",
+      "role": "diagnostic"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-26-14",
+        "call-69-8",
+        "call-70-0",
+        "call-72-5",
+        "call-73-0",
+        "call-76-8",
+        "call-77-0",
+        "call-79-5",
+        "call-80-0",
+        "call-83-0"
+      ],
+      "rationale": "iJO1366 model load plus the multiprocessing timing benchmark: time() timers, double_gene_deletion on ecoli_model.genes[:25] with processes=2 and processes=1, and the printed elapsed times / 'Speedup of %.2fx'. Nondeterministic timing diagnostic that the narrative frames exclusively as such; no deletion findings from these runs are consumed anywhere. (The printed '200 genes' text contradicting the 25-gene slice is a notebook text bug, diagnostic either way.)",
+      "role": "diagnostic"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": "call-97-9",
+      "operation_ids": [
+        "call-87-0-to-88-44"
+      ],
+      "rationale": "The same double_reaction_deletion function on the same unmodified model, restricted to reactions[2:7]; every returned row is the corresponding row of the retained full table double_reaction_deletions.csv, whose whole-population unordered knockout sets include these sets (identical LPs, model state and parameters).",
+      "role": "redundant"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-87-0-to-88-53"
+      ],
+      "rationale": "The display-formatting call .round(4) applied to the discarded reactions[2:7] demonstration value of double_reaction_deletion; display formatting only, no scientific quantity computed or consumed.",
+      "role": "presentation"
+    },
+    {
+      "artifact_paths": [
+        "single_reaction_deletions.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-96-9"
+      ],
+      "rationale": "single = single_reaction_deletion(cobra_model): all single-reaction deletions over the complete textbook model. Recorded reference export copied byte-for-byte into reference/ and requested as outputs/single_reaction_deletions.csv.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [
+        "double_reaction_deletions.csv"
+      ],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-97-9"
+      ],
+      "rationale": "double = double_reaction_deletion(cobra_model): all distinct unordered reaction knockout sets {r_i, r_j} over the full reaction list (including the i=j singletons) of the complete textbook model. Recorded reference export copied byte-for-byte into reference/ and requested as outputs/double_reaction_deletions.csv.",
+      "role": "result"
+    },
+    {
+      "artifact_paths": [],
+      "counterpart_id": null,
+      "operation_ids": [
+        "call-99-0",
+        "call-100-0",
+        "call-108-0",
+        "call-109-0"
+      ],
+      "rationale": "Display-only .knockout indexer prints for the 'Accessing individual deletion results' demonstration (e.g. ATPM, {ATPM,TKT1}, {ATPM,PFK}). Each printed value is exactly a row of the retained tables single_reaction_deletions.csv and double_reaction_deletions.csv \u2014 no new computation, entity or parameter.",
+      "role": "presentation"
+    }
+  ],
+  "oracle_code": "import argparse\nimport math\nimport os\n\n\ndef _format_growth(value):\n    if value is None:\n        return \"\"\n    value = float(value)\n    if math.isnan(value):\n        return \"\"\n    return repr(value)\n\n\ndef _format_knockouts(ids):\n    return \";\".join(sorted(str(identifier) for identifier in ids))\n\n\ndef _frame_rows(frame):\n    if \"ids\" in frame.columns:\n        ids_series = frame[\"ids\"].tolist()\n    else:\n        ids_series = frame.index.tolist()\n    growth_series = frame[\"growth\"].tolist()\n    status_series = frame[\"status\"].tolist()\n    rows = []\n    for ids, growth, status in zip(ids_series, growth_series, status_series):\n        rows.append(\n            (_format_knockouts(ids), _format_growth(growth), str(status))\n        )\n    rows.sort(key=lambda row: row[0])\n    return rows\n\n\ndef _write_csv(path, header, rows):\n    with open(path, \"w\", newline=\"\") as handle:\n        handle.write(header + \"\\n\")\n        for row in rows:\n            handle.write(\",\".join(row) + \"\\n\")\n\n\ndef main():\n    parser = argparse.ArgumentParser()\n    parser.add_argument(\"--input-dir\", required=True)\n    parser.add_argument(\"--output-dir\", required=True)\n    args = parser.parse_args()\n\n    from cobra.io import read_sbml_model\n    from cobra.flux_analysis import (\n        single_gene_deletion,\n        single_reaction_deletion,\n        double_reaction_deletion,\n    )\n\n    model = read_sbml_model(os.path.join(args.input_dir, \"e_coli_core.xml\"))\n    os.makedirs(args.output_dir, exist_ok=True)\n\n    gene_frame = single_gene_deletion(model)\n    reaction_frame = single_reaction_deletion(model)\n    double_frame = double_reaction_deletion(model)\n\n    header = \"knockouts,growth,status\"\n    _write_csv(\n        os.path.join(args.output_dir, \"single_gene_deletions.csv\"),\n        header,\n        _frame_rows(gene_frame),\n    )\n    _write_csv(\n        os.path.join(args.output_dir, \"single_reaction_deletions.csv\"),\n        header,\n        _frame_rows(reaction_frame),\n    )\n    _write_csv(\n        os.path.join(args.output_dir, \"double_reaction_deletions.csv\"),\n        header,\n        _frame_rows(double_frame),\n    )\n\n    # Phosphofructokinase redundancy scenarios, mirroring the defined semantics:\n    # wild type, PFK reaction knockout, pfkA gene knockout, and the\n    # simultaneous pfkA + pfkB double gene knockout (sequential knockouts of\n    # both genes on the same model within one context).\n    rows = []\n    solution = model.optimize()\n    rows.append((\"\", _format_growth(solution.objective_value), solution.status))\n    with model:\n        model.reactions.PFK.knock_out()\n        solution = model.optimize()\n        rows.append((\"PFK\", _format_growth(solution.objective_value), solution.status))\n    with model:\n        model.genes.b1723.knock_out()\n        solution = model.optimize()\n        rows.append((\"b1723\", _format_growth(solution.objective_value), solution.status))\n        model.genes.b3916.knock_out()\n        solution = model.optimize()\n        rows.append(\n            (\"b1723;b3916\", _format_growth(solution.objective_value), solution.status)\n        )\n    _write_csv(os.path.join(args.output_dir, \"pfk_knockout_optima.csv\"), header, rows)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "output_paths": [
+    "single_gene_deletions.csv",
+    "single_reaction_deletions.csv",
+    "double_reaction_deletions.csv",
+    "pfk_knockout_optima.csv"
+  ],
+  "rationale": "SCOPE. The source notebook's terminal scientific products are the complete-model FBA deletion analyses of the unmodified \"textbook\" E. coli core model: all single-gene deletions (call-50-19 -> single_gene_deletions.csv), all single-reaction deletions (call-96-9 -> single_reaction_deletions.csv), all unordered reaction-pair/single-reaction knockout sets (call-97-9 -> double_reaction_deletions.csv), plus the interpreted knockout demonstrations of the first section (calls 32-44 -> pfk_knockout_optima.csv). All four are requested outputs; no scientific branch of the source is silently dropped.\n\nINPUT DERIVATION. The recorded original-input manifest is empty because the source has no external data file: load_model(\"textbook\") reads cobrapy's bundled package data (cobra/data/textbook.xml.gz), confirmed offline-capable in outcome.json. The task input inputs/e_coli_core.xml is produced by gzip-decompressing that bundled file, so the solver receives the byte-exact SBML document the source parsed. No model attribute, medium, bound or objective is changed. The three recorded CSVs are copied byte-for-byte from the reference directory (their schema \u2014 knockouts,growth,status with labels formed by exports.py as sorted ';'-joined ids, empty growth for infeasible rows, unrounded floats including sub-1e-14 negative noise, statuses optimal/infeasible \u2014 already matches the public contract, so no re-serialization or projection is performed). Row counts 137 / 95 / 4560 (= 95 singletons + C(95,2) pairs, matching deletion.py's frozenset-population construction verified in the pinned review) are cross-checked against the reference structural observations.\n\nENDPOINT RECOVERY. The PFK/pfkA/pfkB optima existed only transiently inside with-blocks (printed, never stored; with-contexts restore the model). Per the endpoint-recovery policy, derive_code recovers them by rerunning the unchanged knockout/optimize sequence of source lines 32-44 on the same model: wild-type optimize(), PFK.knock_out() then optimize(), b1723 knock_out() then optimize(), then b3916 knock_out() (sequential, inside one with-block) then optimize(). Required state is only the freshly loaded model; lineage is fully documented here and the recovered file is written separately under destination/reference/pfk_knockout_optima.csv while the original reference artifacts are left untouched. This recovered endpoint still needs independent validation (it has no recorded baseline artifact; the private stdout cross-check 0.874/0.704/0.874/0.704 is consistent with the b1723 and PFK rows of recorded tables 1 and 2, but only the two gene-level rows b1723 and b1723;b3916 plus the wild type add information beyond those projections). The oracle computes the same four scenarios independently from the supplied model. Methods, inputs and populations are unchanged from the source.\n\nGRAIN AND ALIGNMENT. One row per knockout set (frozenset of gene or reaction ids), labels = ids sorted lexicographically and joined with ';' (exactly exports.py's convention; reference examples confirm e.g. 'Biomass_Ecoli_core;LDH_D'). Populations are every model gene (137) and every model reaction (95), including boundary/exchange reactions and genes with no reaction associations \u2014 no entity filtering or data loss. No duplicate-entity-key annotation issue arises (each row is a distinct knockout set). Infeasible rows carry solver status and empty growth, mirroring the recorded exports (2/2/352 empty growth cells).\n\nEXCLUSIONS (source-backed, distinguished from export-inventory limits). (1) The iJO1366 double-gene-deletion multiprocessing benchmark (call-26-14, calls 69-83) is a nondeterministic timing diagnostic framed solely as such by the narrative (\"Speedup of %.2fx\"); its deletion values are never consumed. The notebook's printed \"200 genes\" contradicting the 25-gene slice is a text bug in a diagnostic. (2) The positionally-sliced double_gene_deletion(cobra_model, cobra_model.genes[-5:]).round(4) (calls 64-65) is an API-mechanics demonstration whose value is discarded: it is a bare expression absent from the reference stdout, and .round(4) is display formatting; the narrative does not interpret its results. The review records this as a residual judgment call \u2014 faithful recomputation as a fifth output remains possible if validation disagrees; no source-faithful blocker exists. (3) The subset demonstrations single_gene_deletion(genes[:20]), single_reaction_deletion(reactions[:20]) and double_reaction_deletion(reactions[2:7]) are pure restrictions of retained tables 1-3 (classifiers flagged redundant against the producing whole-population calls). (4) The .knockout indexer prints are display reads of retained table rows.\n\nLEAKAGE. derive_code and oracle_code embed no measured answer values or reference-derived constants (gene/reaction ids PFK, b1723, b3916 and model filenames are input identifiers defined by the supplied model and the public question, not results). The oracle reads only inputs/e_coli_core.xml and uses installed packages; it never accesses destination/reference or any cache. The reference CSVs containing answers live only under destination/reference, which is hidden from the isolated oracle. Known environment consideration from the setup audit: cobrapy's package data necessarily contains the textbook model itself (an input, not an answer) and must be retained.\n\nREMAINING COMPARISON QUESTIONS (left to validation, not resolved here): replay observations show run-dependent row order (set iteration) and low-order float digit variation between LP solves, so comparison must be row-multiset based on the knockouts key with a numerical tolerance appropriate for LP-solver noise (including retaining tiny negative values and empty-vs-value infeasible rows rather than byte identity); and pfk_knockout_optima.csv has no recorded baseline and therefore needs independent scientific validation of its four values. Grading tolerances are deliberately not stated in the public question."
+}

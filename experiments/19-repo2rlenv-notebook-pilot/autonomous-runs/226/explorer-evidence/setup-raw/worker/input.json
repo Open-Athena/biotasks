@@ -1,0 +1,509 @@
+{
+  "limits": {
+    "base_image": "python:3.13.13-slim-bookworm",
+    "campaign_seconds": 7200,
+    "gpu": false,
+    "max_requests": null,
+    "max_tests": 2,
+    "network": "Internet during setup only; reference is offline",
+    "reference_seconds": 600,
+    "request_timeout_seconds": 600,
+    "setup_seconds": 1800,
+    "task_cpus": 4,
+    "task_disk_gib": 10,
+    "task_memory_gib": 8
+  },
+  "paths": {
+    "exports.py": "/work/frozen/exports.py",
+    "original.py": "/work/frozen/original.py",
+    "plan.json": "/work/frozen/plan.json",
+    "reference_cwd": "/work/run",
+    "setup": "/work/setup"
+  },
+  "preparation": {
+    "conversion": {
+      "code_cells": 12,
+      "converter": "jupytext",
+      "converter_version": "1.19.6",
+      "directory_normalizations": [],
+      "documentation_execution_policy": {},
+      "equivalence_basis": "Python statements after recorded presentation and directory normalization",
+      "executable_ast_sha256": "9d9d1367351fd5dcb65ff6e5966c435e5317c8d7567d75fb7bdd695625e27ed4",
+      "executed": false,
+      "format": "py:nomarker",
+      "ignored_cell_editor_metadata": [],
+      "ignored_editor_metadata": {},
+      "ignored_presentation_tags": [
+        {
+          "cell_index": 4,
+          "tags": []
+        },
+        {
+          "cell_index": 6,
+          "tags": []
+        },
+        {
+          "cell_index": 18,
+          "tags": []
+        },
+        {
+          "cell_index": 22,
+          "tags": []
+        },
+        {
+          "cell_index": 24,
+          "tags": []
+        }
+      ],
+      "markdown_cells": 14,
+      "markdown_representation": "line_comments",
+      "ordered_code_equivalence": true,
+      "presentation_normalizations": [],
+      "profile": "python-narrative-v6",
+      "script_sha256": "14e0c28982c8edd8c4c2ca691e8d1e33c587646d5db6ac906c376b14cbb73bd8",
+      "source_sha256": "64da8bc313b923ae2e536964cb0db903e94d9eefa6ee7c8b593ebe2000507115",
+      "stored_outputs_used_as_evidence": false
+    },
+    "plan": {
+      "artifacts": [
+        {
+          "description": "Growth rates for all single gene knockouts of the complete textbook model.",
+          "path": "single_gene_deletions.csv",
+          "source_evidence": "Produced by `deletion_results = single_gene_deletion(cobra_model)` under '## Single Deletions' with the narrative 'Perform all single gene deletions on a model'. It is the whole-model gene deletion outcome the notebook uses to discuss how gene knockouts affect growth via redundancy."
+        },
+        {
+          "description": "Growth rates for all single reaction knockouts of the complete textbook model.",
+          "path": "single_reaction_deletions.csv",
+          "source_evidence": "Held in `single` from the '## Accessing individual deletion results' section (`single = single_reaction_deletion(cobra_model)`), whose individual entries (e.g. `single.knockout[ATPM]`) the notebook explicitly prints and interprets as findings."
+        },
+        {
+          "description": "Growth rates for all pairwise reaction knockouts of the complete textbook model.",
+          "path": "double_reaction_deletions.csv",
+          "source_evidence": "Held in `double` from the '## Accessing individual deletion results' section (`double = double_reaction_deletion(cobra_model)`), whose entries such as `double.knockout[{ATPM, TKT1}]` are printed and interpreted as the notebook's final demonstration of deletion-effect analysis."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "Scientific non-target (timing diagnostic): the i JO1366 double gene deletion runs with `processes=2` and `processes=1`, with `t1`, `t2` and the printed speedup. The narrative frames these exclusively as a multiprocessing benchmark ('Speedup of %.2fx'), not as interpreted deletion findings.",
+        "Scientific non-target (API demonstrations, not stored): the subset deletion calls `single_gene_deletion(cobra_model, cobra_model.genes[:20])`, `single_reaction_deletion(cobra_model, cobra_model.reactions[:20])`, `double_gene_deletion(cobra_model, cobra_model.genes[-5:]).round(4)` and `double_reaction_deletion(cobra_model, cobra_model.reactions[2:7]).round(4)`. These are display-only illustrations of the same functions on smaller subsets; the complete-model results covering them are exported above.",
+        "Endpoint unavailable for append-only export (printed demonstration values): the knocked-out model growth rates shown by `print('pfk knocked out: ', cobra_model.optimize())` and the pfkA/pfkB prints inside `with cobra_model:` blocks. These optimum values exist only transiently inside the context-managed prints; the with-blocks restore the wild-type model and no variable holds the knocked-out optima at completion. Capturing them would require storing results inside the original `with` blocks or re-running the knockouts, which this append-only step may not do. Recovery would need to record the optimize() return values within those original context blocks in the source script."
+      ],
+      "explanation": "The notebook's terminal scientific products are the systematic in-silico deletion results for the complete textbook model: all single gene deletions (`deletion_results`), all single reaction deletions (`single`), and all double reaction deletions (`double`), which the narrative interprets via growth values and the `knockout` indexer. These three DataFrames still hold their values at script completion. The appended code copies each stored DataFrame, serializes the frozenset/set deletion indices into a deterministic 'knockouts' identifier string, and writes each table to CSV under /work/outputs using pandas' native writer. No analysis is recomputed or altered. The e coli double-deletion runs are multiprocessing timing benchmarks, and the subset/printed knockout examples are API demonstrations, not independent endpoints.",
+      "export_code": "import os as _export_os\nimport pandas as _export_pd\n\n_export_dir = \"/work/outputs\"\n_export_os.makedirs(_export_dir, exist_ok=True)\n\n\ndef _write_deletion_results(frame, filename):\n    export_frame = frame.copy()\n    export_frame.index = _export_pd.Index(\n        [\";\".join(sorted(str(identifier) for identifier in knockout_ids))\n         for knockout_ids in export_frame.index],\n        name=\"knockouts\",\n    )\n    export_frame.to_csv(_export_os.path.join(_export_dir, filename))\n\n\n_write_deletion_results(deletion_results, \"single_gene_deletions.csv\")\n_write_deletion_results(single, \"single_reaction_deletions.csv\")\n_write_deletion_results(double, \"double_reaction_deletions.csv\")",
+      "unresolved_assumptions": [
+        "The exact column set of the deletion DataFrames (e.g. whether a 'status' column is present alongside 'growth') depends on the cobrapy version resolved at execution; the export writes the stored frames whole, including any such columns, without assuming a specific schema.",
+        "The deletion index entries are assumed to be iterables of gene/reaction identifiers (sets/frozensets), as documented in the notebook; if a version returns plain-string indices, the identifier-joining helper would need adjustment.",
+        "Whether `double_reaction_deletion(cobra_model)` completes within the 600 s CPU-only reference limit is untested here."
+      ]
+    },
+    "source": {
+      "id": "cobrapy-deletions",
+      "license": "GPL-2.0",
+      "provenance": {
+        "data_lineage": "Curated E. coli textbook and iJO1366 metabolic models, not observed flux measurements.",
+        "data_redistribution_review": "Not independently established; no automatic public release. Raw notebook and generated data/task bundles remain private pending source-specific review.",
+        "input_preservation": "Original notebook bytes; no cell edits, input reductions or task design supplied by the operator.",
+        "notebook": {
+          "git_blob_sha1": "85fe767397e2ae6455700dc174753b3a27c7b29b",
+          "license": "GPL-2.0",
+          "license_url": "https://github.com/opencobra/cobrapy/blob/a9c5ced29670bed5035fb19e87e7b0b588adb62d/LICENSE",
+          "revision": "a9c5ced29670bed5035fb19e87e7b0b588adb62d",
+          "sha256": "64da8bc313b923ae2e536964cb0db903e94d9eefa6ee7c8b593ebe2000507115",
+          "url": "https://github.com/opencobra/cobrapy/blob/a9c5ced29670bed5035fb19e87e7b0b588adb62d/documentation_builder/deletions.ipynb"
+        }
+      },
+      "source_revision": "a9c5ced29670bed5035fb19e87e7b0b588adb62d",
+      "source_sha256": "64da8bc313b923ae2e536964cb0db903e94d9eefa6ee7c8b593ebe2000507115",
+      "title": "Single and double metabolic gene/reaction deletions",
+      "url": "https://github.com/opencobra/cobrapy/blob/a9c5ced29670bed5035fb19e87e7b0b588adb62d/documentation_builder/deletions.ipynb"
+    }
+  },
+  "source_imports": {
+    "analysis": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 17,
+        "statement": "import pandas"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 18,
+        "statement": "from time import time"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 20,
+        "statement": "from cobra.io import load_model"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 21,
+        "statement": "from cobra.flux_analysis import (\n    single_gene_deletion, single_reaction_deletion, double_gene_deletion,\n    double_reaction_deletion)"
+      }
+    ],
+    "exports": [
+      {
+        "context": [
+          "module"
+        ],
+        "line": 1,
+        "statement": "import os as _export_os"
+      },
+      {
+        "context": [
+          "module"
+        ],
+        "line": 2,
+        "statement": "import pandas as _export_pd"
+      }
+    ],
+    "scope": "Literal source statements and locations only; dynamic imports, native libraries and availability remain unverified."
+  },
+  "source_operations": {
+    "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+    "operations": [
+      {
+        "column": 14,
+        "end_column": 36,
+        "end_line": 25,
+        "function": "load_model",
+        "id": "call-25-14",
+        "line": 25,
+        "source": "load_model(\"textbook\")"
+      },
+      {
+        "column": 14,
+        "end_column": 35,
+        "end_line": 26,
+        "function": "load_model",
+        "id": "call-26-14",
+        "line": 26,
+        "source": "load_model(\"iJO1366\")"
+      },
+      {
+        "column": 0,
+        "end_column": 49,
+        "end_line": 32,
+        "function": "print",
+        "id": "call-32-0",
+        "line": 32,
+        "source": "print('complete model: ', cobra_model.optimize())"
+      },
+      {
+        "column": 26,
+        "end_column": 48,
+        "end_line": 32,
+        "function": "cobra_model.optimize",
+        "id": "call-32-26",
+        "line": 32,
+        "source": "cobra_model.optimize()"
+      },
+      {
+        "column": 4,
+        "end_column": 41,
+        "end_line": 34,
+        "function": "cobra_model.reactions.PFK.knock_out",
+        "id": "call-34-4",
+        "line": 34,
+        "source": "cobra_model.reactions.PFK.knock_out()"
+      },
+      {
+        "column": 4,
+        "end_column": 54,
+        "end_line": 35,
+        "function": "print",
+        "id": "call-35-4",
+        "line": 35,
+        "source": "print('pfk knocked out: ', cobra_model.optimize())"
+      },
+      {
+        "column": 31,
+        "end_column": 53,
+        "end_line": 35,
+        "function": "cobra_model.optimize",
+        "id": "call-35-31",
+        "line": 35,
+        "source": "cobra_model.optimize()"
+      },
+      {
+        "column": 0,
+        "end_column": 49,
+        "end_line": 39,
+        "function": "print",
+        "id": "call-39-0",
+        "line": 39,
+        "source": "print('complete model: ', cobra_model.optimize())"
+      },
+      {
+        "column": 26,
+        "end_column": 48,
+        "end_line": 39,
+        "function": "cobra_model.optimize",
+        "id": "call-39-26",
+        "line": 39,
+        "source": "cobra_model.optimize()"
+      },
+      {
+        "column": 4,
+        "end_column": 39,
+        "end_line": 41,
+        "function": "cobra_model.genes.b1723.knock_out",
+        "id": "call-41-4",
+        "line": 41,
+        "source": "cobra_model.genes.b1723.knock_out()"
+      },
+      {
+        "column": 4,
+        "end_column": 55,
+        "end_line": 42,
+        "function": "print",
+        "id": "call-42-4",
+        "line": 42,
+        "source": "print('pfkA knocked out: ', cobra_model.optimize())"
+      },
+      {
+        "column": 32,
+        "end_column": 54,
+        "end_line": 42,
+        "function": "cobra_model.optimize",
+        "id": "call-42-32",
+        "line": 42,
+        "source": "cobra_model.optimize()"
+      },
+      {
+        "column": 4,
+        "end_column": 39,
+        "end_line": 43,
+        "function": "cobra_model.genes.b3916.knock_out",
+        "id": "call-43-4",
+        "line": 43,
+        "source": "cobra_model.genes.b3916.knock_out()"
+      },
+      {
+        "column": 4,
+        "end_column": 55,
+        "end_line": 44,
+        "function": "print",
+        "id": "call-44-4",
+        "line": 44,
+        "source": "print('pfkB knocked out: ', cobra_model.optimize())"
+      },
+      {
+        "column": 32,
+        "end_column": 54,
+        "end_line": 44,
+        "function": "cobra_model.optimize",
+        "id": "call-44-32",
+        "line": 44,
+        "source": "cobra_model.optimize()"
+      },
+      {
+        "column": 19,
+        "end_column": 52,
+        "end_line": 50,
+        "function": "single_gene_deletion",
+        "id": "call-50-19",
+        "line": 50,
+        "source": "single_gene_deletion(cobra_model)"
+      },
+      {
+        "column": 0,
+        "end_column": 57,
+        "end_line": 54,
+        "function": "single_gene_deletion",
+        "id": "call-54-0",
+        "line": 54,
+        "source": "single_gene_deletion(cobra_model, cobra_model.genes[:20])"
+      },
+      {
+        "column": 0,
+        "end_column": 65,
+        "end_line": 58,
+        "function": "single_reaction_deletion",
+        "id": "call-58-0",
+        "line": 58,
+        "source": "single_reaction_deletion(cobra_model, cobra_model.reactions[:20])"
+      },
+      {
+        "column": 0,
+        "end_column": 40,
+        "end_line": 65,
+        "function": "double_gene_deletion",
+        "id": "call-64-0-to-65-40",
+        "line": 64,
+        "source": "double_gene_deletion(\n    cobra_model, cobra_model.genes[-5:])"
+      },
+      {
+        "column": 0,
+        "end_column": 49,
+        "end_line": 65,
+        "function": "double_gene_deletion(cobra_model, cobra_model.genes[-5:]).round",
+        "id": "call-64-0-to-65-49",
+        "line": 64,
+        "source": "double_gene_deletion(\n    cobra_model, cobra_model.genes[-5:]).round(4)"
+      },
+      {
+        "column": 8,
+        "end_column": 14,
+        "end_line": 69,
+        "function": "time",
+        "id": "call-69-8",
+        "line": 69,
+        "source": "time()"
+      },
+      {
+        "column": 0,
+        "end_column": 53,
+        "end_line": 71,
+        "function": "double_gene_deletion",
+        "id": "call-70-0",
+        "line": 70,
+        "source": "double_gene_deletion(\n    ecoli_model, ecoli_model.genes[:25], processes=2)"
+      },
+      {
+        "column": 5,
+        "end_column": 11,
+        "end_line": 72,
+        "function": "time",
+        "id": "call-72-5",
+        "line": 72,
+        "source": "time()"
+      },
+      {
+        "column": 0,
+        "end_column": 35,
+        "end_line": 74,
+        "function": "print",
+        "id": "call-73-0",
+        "line": 73,
+        "source": "print(\"Double gene deletions for 200 genes completed in \"\n      \"%.2f sec with 2 cores\" % t1)"
+      },
+      {
+        "column": 8,
+        "end_column": 14,
+        "end_line": 76,
+        "function": "time",
+        "id": "call-76-8",
+        "line": 76,
+        "source": "time()"
+      },
+      {
+        "column": 0,
+        "end_column": 53,
+        "end_line": 78,
+        "function": "double_gene_deletion",
+        "id": "call-77-0",
+        "line": 77,
+        "source": "double_gene_deletion(\n    ecoli_model, ecoli_model.genes[:25], processes=1)"
+      },
+      {
+        "column": 5,
+        "end_column": 11,
+        "end_line": 79,
+        "function": "time",
+        "id": "call-79-5",
+        "line": 79,
+        "source": "time()"
+      },
+      {
+        "column": 0,
+        "end_column": 34,
+        "end_line": 81,
+        "function": "print",
+        "id": "call-80-0",
+        "line": 80,
+        "source": "print(\"Double gene deletions for 200 genes completed in \"\n      \"%.2f sec with 1 core\" % t2)"
+      },
+      {
+        "column": 0,
+        "end_column": 37,
+        "end_line": 83,
+        "function": "print",
+        "id": "call-83-0",
+        "line": 83,
+        "source": "print(\"Speedup of %.2fx\" % (t2 / t1))"
+      },
+      {
+        "column": 0,
+        "end_column": 44,
+        "end_line": 88,
+        "function": "double_reaction_deletion",
+        "id": "call-87-0-to-88-44",
+        "line": 87,
+        "source": "double_reaction_deletion(\n    cobra_model, cobra_model.reactions[2:7])"
+      },
+      {
+        "column": 0,
+        "end_column": 53,
+        "end_line": 88,
+        "function": "double_reaction_deletion(cobra_model, cobra_model.reactions[2:7]).round",
+        "id": "call-87-0-to-88-53",
+        "line": 87,
+        "source": "double_reaction_deletion(\n    cobra_model, cobra_model.reactions[2:7]).round(4)"
+      },
+      {
+        "column": 9,
+        "end_column": 46,
+        "end_line": 96,
+        "function": "single_reaction_deletion",
+        "id": "call-96-9",
+        "line": 96,
+        "source": "single_reaction_deletion(cobra_model)"
+      },
+      {
+        "column": 9,
+        "end_column": 46,
+        "end_line": 97,
+        "function": "double_reaction_deletion",
+        "id": "call-97-9",
+        "line": 97,
+        "source": "double_reaction_deletion(cobra_model)"
+      },
+      {
+        "column": 0,
+        "end_column": 30,
+        "end_line": 99,
+        "function": "print",
+        "id": "call-99-0",
+        "line": 99,
+        "source": "print(single.knockout[\"ATPM\"])"
+      },
+      {
+        "column": 0,
+        "end_column": 40,
+        "end_line": 100,
+        "function": "print",
+        "id": "call-100-0",
+        "line": 100,
+        "source": "print(double.knockout[{\"ATPM\", \"TKT1\"}])"
+      },
+      {
+        "column": 0,
+        "end_column": 39,
+        "end_line": 108,
+        "function": "print",
+        "id": "call-108-0",
+        "line": 108,
+        "source": "print(single.knockout[atpm, tkt1, pfk])"
+      },
+      {
+        "column": 0,
+        "end_column": 57,
+        "end_line": 109,
+        "function": "print",
+        "id": "call-109-0",
+        "line": 109,
+        "source": "print(double.knockout[{atpm, tkt1}, {atpm, pfk}, {atpm}])"
+      }
+    ],
+    "source_sha256": "14e0c28982c8edd8c4c2ca691e8d1e33c587646d5db6ac906c376b14cbb73bd8"
+  }
+}

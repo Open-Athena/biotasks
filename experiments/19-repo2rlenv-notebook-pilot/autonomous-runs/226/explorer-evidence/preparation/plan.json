@@ -1,0 +1,32 @@
+{
+  "artifacts": [
+    {
+      "description": "Growth rates for all single gene knockouts of the complete textbook model.",
+      "path": "single_gene_deletions.csv",
+      "source_evidence": "Produced by `deletion_results = single_gene_deletion(cobra_model)` under '## Single Deletions' with the narrative 'Perform all single gene deletions on a model'. It is the whole-model gene deletion outcome the notebook uses to discuss how gene knockouts affect growth via redundancy."
+    },
+    {
+      "description": "Growth rates for all single reaction knockouts of the complete textbook model.",
+      "path": "single_reaction_deletions.csv",
+      "source_evidence": "Held in `single` from the '## Accessing individual deletion results' section (`single = single_reaction_deletion(cobra_model)`), whose individual entries (e.g. `single.knockout[ATPM]`) the notebook explicitly prints and interprets as findings."
+    },
+    {
+      "description": "Growth rates for all pairwise reaction knockouts of the complete textbook model.",
+      "path": "double_reaction_deletions.csv",
+      "source_evidence": "Held in `double` from the '## Accessing individual deletion results' section (`double = double_reaction_deletion(cobra_model)`), whose entries such as `double.knockout[{ATPM, TKT1}]` are printed and interpreted as the notebook's final demonstration of deletion-effect analysis."
+    }
+  ],
+  "disposition": "prepare",
+  "excluded_outputs": [
+    "Scientific non-target (timing diagnostic): the i JO1366 double gene deletion runs with `processes=2` and `processes=1`, with `t1`, `t2` and the printed speedup. The narrative frames these exclusively as a multiprocessing benchmark ('Speedup of %.2fx'), not as interpreted deletion findings.",
+    "Scientific non-target (API demonstrations, not stored): the subset deletion calls `single_gene_deletion(cobra_model, cobra_model.genes[:20])`, `single_reaction_deletion(cobra_model, cobra_model.reactions[:20])`, `double_gene_deletion(cobra_model, cobra_model.genes[-5:]).round(4)` and `double_reaction_deletion(cobra_model, cobra_model.reactions[2:7]).round(4)`. These are display-only illustrations of the same functions on smaller subsets; the complete-model results covering them are exported above.",
+    "Endpoint unavailable for append-only export (printed demonstration values): the knocked-out model growth rates shown by `print('pfk knocked out: ', cobra_model.optimize())` and the pfkA/pfkB prints inside `with cobra_model:` blocks. These optimum values exist only transiently inside the context-managed prints; the with-blocks restore the wild-type model and no variable holds the knocked-out optima at completion. Capturing them would require storing results inside the original `with` blocks or re-running the knockouts, which this append-only step may not do. Recovery would need to record the optimize() return values within those original context blocks in the source script."
+  ],
+  "explanation": "The notebook's terminal scientific products are the systematic in-silico deletion results for the complete textbook model: all single gene deletions (`deletion_results`), all single reaction deletions (`single`), and all double reaction deletions (`double`), which the narrative interprets via growth values and the `knockout` indexer. These three DataFrames still hold their values at script completion. The appended code copies each stored DataFrame, serializes the frozenset/set deletion indices into a deterministic 'knockouts' identifier string, and writes each table to CSV under /work/outputs using pandas' native writer. No analysis is recomputed or altered. The e coli double-deletion runs are multiprocessing timing benchmarks, and the subset/printed knockout examples are API demonstrations, not independent endpoints.",
+  "export_code": "import os as _export_os\nimport pandas as _export_pd\n\n_export_dir = \"/work/outputs\"\n_export_os.makedirs(_export_dir, exist_ok=True)\n\n\ndef _write_deletion_results(frame, filename):\n    export_frame = frame.copy()\n    export_frame.index = _export_pd.Index(\n        [\";\".join(sorted(str(identifier) for identifier in knockout_ids))\n         for knockout_ids in export_frame.index],\n        name=\"knockouts\",\n    )\n    export_frame.to_csv(_export_os.path.join(_export_dir, filename))\n\n\n_write_deletion_results(deletion_results, \"single_gene_deletions.csv\")\n_write_deletion_results(single, \"single_reaction_deletions.csv\")\n_write_deletion_results(double, \"double_reaction_deletions.csv\")",
+  "unresolved_assumptions": [
+    "The exact column set of the deletion DataFrames (e.g. whether a 'status' column is present alongside 'growth') depends on the cobrapy version resolved at execution; the export writes the stored frames whole, including any such columns, without assuming a specific schema.",
+    "The deletion index entries are assumed to be iterables of gene/reaction identifiers (sets/frozensets), as documented in the notebook; if a version returns plain-string indices, the identifier-joining helper would need adjustment.",
+    "Whether `double_reaction_deletion(cobra_model)` completes within the 600 s CPU-only reference limit is untested here."
+  ]
+}

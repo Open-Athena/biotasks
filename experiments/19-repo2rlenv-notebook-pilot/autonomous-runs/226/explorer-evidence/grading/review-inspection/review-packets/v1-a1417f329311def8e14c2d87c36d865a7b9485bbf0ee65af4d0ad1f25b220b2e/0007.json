@@ -1,0 +1,41 @@
+{
+  "output_paths": [
+    "double_reaction_deletions.csv",
+    "pfk_knockout_optima.csv",
+    "single_gene_deletions.csv",
+    "single_reaction_deletions.csv"
+  ],
+  "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+  "grader_root_arguments": [
+    "--reference-dir",
+    "--submission-dir"
+  ],
+  "solution_output_root_argument": "--output-dir",
+  "native_output_root": "/workspace/outputs",
+  "native_grader_submission_dir": "/workspace/outputs",
+  "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+  "trusted_inputs": {
+    "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+    "input_paths": [
+      "e_coli_core.xml"
+    ],
+    "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+  },
+  "parsing_support": {
+    "schema": "delimited-table-reader-v1",
+    "module": "biotasks_table_io.py",
+    "sha256": "35708cb000383d1d11a68eb0381e41ac1a5d842c04183e444049b2f53b661bbf",
+    "bytes": 1637,
+    "license": {
+      "path": "LICENSE.biotasks",
+      "spdx": "Apache-2.0",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "bytes": 11357
+    },
+    "import": "from biotasks_table_io import read_delimited_table",
+    "authoring_source": "/work/biotasks_table_io.py",
+    "authoring_import": "Use PYTHONPATH=/work for a focused shell check. The controller places this same module beside grade.py in controls and Harbor.",
+    "scope": "Optional syntax reader only. The worker owns scientific comparisons and must publicly declare any enabled representation normalization.",
+    "source": "# SPDX-License-Identifier: Apache-2.0\n\"\"\"Read delimited output syntax without choosing scientific comparison rules.\"\"\"\n\nimport csv\nfrom pathlib import Path\n\n\ndef read_delimited_table(\n    path: str | Path,\n    *,\n    delimiter: str = \",\",\n    encoding: str = \"utf-8\",\n    allow_blank_records: bool = False,\n) -> tuple[list[str], list[list[str]]]:\n    \"\"\"Return a header and equal-width rows, retaining every decoded field.\n\n    Uses Python's strict CSV reader, including quoted delimiters/newlines and\n    ordinary line endings. Only completely empty CSV records may be skipped,\n    and only when explicitly enabled. Quoted empty fields, whitespace-only\n    fields and delimiter-only rows are data, not empty records. No stripping,\n    numeric conversion, sorting, deduplication or scientific equivalence is\n    inferred. Callers still validate header names, identities and values.\n    \"\"\"\n    records = []\n    try:\n        with Path(path).open(encoding=encoding, newline=\"\") as stream:\n            for row in csv.reader(stream, delimiter=delimiter, strict=True):\n                if not row:\n                    if allow_blank_records:\n                        continue\n                    raise ValueError(\"Empty CSV record is not allowed\")\n                records.append(row)\n    except csv.Error as error:\n        raise ValueError(f\"Invalid delimited syntax: {error}\") from error\n    if not records:\n        raise ValueError(\"Delimited table has no header\")\n    header, *rows = records\n    if any(len(row) != len(header) for row in rows):\n        raise ValueError(\"Delimited table has inconsistent row widths\")\n    return header, rows\n"
+  }
+}

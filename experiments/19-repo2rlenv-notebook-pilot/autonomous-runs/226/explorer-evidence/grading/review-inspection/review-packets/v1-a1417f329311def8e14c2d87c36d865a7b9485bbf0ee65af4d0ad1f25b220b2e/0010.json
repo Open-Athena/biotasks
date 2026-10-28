@@ -1,0 +1,339 @@
+{
+  "source_sha256": "14e0c28982c8edd8c4c2ca691e8d1e33c587646d5db6ac906c376b14cbb73bd8",
+  "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+  "operations": [
+    {
+      "id": "call-25-14",
+      "line": 25,
+      "column": 14,
+      "end_line": 25,
+      "end_column": 36,
+      "function": "load_model",
+      "source": "load_model(\"textbook\")"
+    },
+    {
+      "id": "call-26-14",
+      "line": 26,
+      "column": 14,
+      "end_line": 26,
+      "end_column": 35,
+      "function": "load_model",
+      "source": "load_model(\"iJO1366\")"
+    },
+    {
+      "id": "call-32-0",
+      "line": 32,
+      "column": 0,
+      "end_line": 32,
+      "end_column": 49,
+      "function": "print",
+      "source": "print('complete model: ', cobra_model.optimize())"
+    },
+    {
+      "id": "call-32-26",
+      "line": 32,
+      "column": 26,
+      "end_line": 32,
+      "end_column": 48,
+      "function": "cobra_model.optimize",
+      "source": "cobra_model.optimize()"
+    },
+    {
+      "id": "call-34-4",
+      "line": 34,
+      "column": 4,
+      "end_line": 34,
+      "end_column": 41,
+      "function": "cobra_model.reactions.PFK.knock_out",
+      "source": "cobra_model.reactions.PFK.knock_out()"
+    },
+    {
+      "id": "call-35-4",
+      "line": 35,
+      "column": 4,
+      "end_line": 35,
+      "end_column": 54,
+      "function": "print",
+      "source": "print('pfk knocked out: ', cobra_model.optimize())"
+    },
+    {
+      "id": "call-35-31",
+      "line": 35,
+      "column": 31,
+      "end_line": 35,
+      "end_column": 53,
+      "function": "cobra_model.optimize",
+      "source": "cobra_model.optimize()"
+    },
+    {
+      "id": "call-39-0",
+      "line": 39,
+      "column": 0,
+      "end_line": 39,
+      "end_column": 49,
+      "function": "print",
+      "source": "print('complete model: ', cobra_model.optimize())"
+    },
+    {
+      "id": "call-39-26",
+      "line": 39,
+      "column": 26,
+      "end_line": 39,
+      "end_column": 48,
+      "function": "cobra_model.optimize",
+      "source": "cobra_model.optimize()"
+    },
+    {
+      "id": "call-41-4",
+      "line": 41,
+      "column": 4,
+      "end_line": 41,
+      "end_column": 39,
+      "function": "cobra_model.genes.b1723.knock_out",
+      "source": "cobra_model.genes.b1723.knock_out()"
+    },
+    {
+      "id": "call-42-4",
+      "line": 42,
+      "column": 4,
+      "end_line": 42,
+      "end_column": 55,
+      "function": "print",
+      "source": "print('pfkA knocked out: ', cobra_model.optimize())"
+    },
+    {
+      "id": "call-42-32",
+      "line": 42,
+      "column": 32,
+      "end_line": 42,
+      "end_column": 54,
+      "function": "cobra_model.optimize",
+      "source": "cobra_model.optimize()"
+    },
+    {
+      "id": "call-43-4",
+      "line": 43,
+      "column": 4,
+      "end_line": 43,
+      "end_column": 39,
+      "function": "cobra_model.genes.b3916.knock_out",
+      "source": "cobra_model.genes.b3916.knock_out()"
+    },
+    {
+      "id": "call-44-4",
+      "line": 44,
+      "column": 4,
+      "end_line": 44,
+      "end_column": 55,
+      "function": "print",
+      "source": "print('pfkB knocked out: ', cobra_model.optimize())"
+    },
+    {
+      "id": "call-44-32",
+      "line": 44,
+      "column": 32,
+      "end_line": 44,
+      "end_column": 54,
+      "function": "cobra_model.optimize",
+      "source": "cobra_model.optimize()"
+    },
+    {
+      "id": "call-50-19",
+      "line": 50,
+      "column": 19,
+      "end_line": 50,
+      "end_column": 52,
+      "function": "single_gene_deletion",
+      "source": "single_gene_deletion(cobra_model)"
+    },
+    {
+      "id": "call-54-0",
+      "line": 54,
+      "column": 0,
+      "end_line": 54,
+      "end_column": 57,
+      "function": "single_gene_deletion",
+      "source": "single_gene_deletion(cobra_model, cobra_model.genes[:20])"
+    },
+    {
+      "id": "call-58-0",
+      "line": 58,
+      "column": 0,
+      "end_line": 58,
+      "end_column": 65,
+      "function": "single_reaction_deletion",
+      "source": "single_reaction_deletion(cobra_model, cobra_model.reactions[:20])"
+    },
+    {
+      "id": "call-64-0-to-65-40",
+      "line": 64,
+      "column": 0,
+      "end_line": 65,
+      "end_column": 40,
+      "function": "double_gene_deletion",
+      "source": "double_gene_deletion(\n    cobra_model, cobra_model.genes[-5:])"
+    },
+    {
+      "id": "call-64-0-to-65-49",
+      "line": 64,
+      "column": 0,
+      "end_line": 65,
+      "end_column": 49,
+      "function": "double_gene_deletion(cobra_model, cobra_model.genes[-5:]).round",
+      "source": "double_gene_deletion(\n    cobra_model, cobra_model.genes[-5:]).round(4)"
+    },
+    {
+      "id": "call-69-8",
+      "line": 69,
+      "column": 8,
+      "end_line": 69,
+      "end_column": 14,
+      "function": "time",
+      "source": "time()"
+    },
+    {
+      "id": "call-70-0",
+      "line": 70,
+      "column": 0,
+      "end_line": 71,
+      "end_column": 53,
+      "function": "double_gene_deletion",
+      "source": "double_gene_deletion(\n    ecoli_model, ecoli_model.genes[:25], processes=2)"
+    },
+    {
+      "id": "call-72-5",
+      "line": 72,
+      "column": 5,
+      "end_line": 72,
+      "end_column": 11,
+      "function": "time",
+      "source": "time()"
+    },
+    {
+      "id": "call-73-0",
+      "line": 73,
+      "column": 0,
+      "end_line": 74,
+      "end_column": 35,
+      "function": "print",
+      "source": "print(\"Double gene deletions for 200 genes completed in \"\n      \"%.2f sec with 2 cores\" % t1)"
+    },
+    {
+      "id": "call-76-8",
+      "line": 76,
+      "column": 8,
+      "end_line": 76,
+      "end_column": 14,
+      "function": "time",
+      "source": "time()"
+    },
+    {
+      "id": "call-77-0",
+      "line": 77,
+      "column": 0,
+      "end_line": 78,
+      "end_column": 53,
+      "function": "double_gene_deletion",
+      "source": "double_gene_deletion(\n    ecoli_model, ecoli_model.genes[:25], processes=1)"
+    },
+    {
+      "id": "call-79-5",
+      "line": 79,
+      "column": 5,
+      "end_line": 79,
+      "end_column": 11,
+      "function": "time",
+      "source": "time()"
+    },
+    {
+      "id": "call-80-0",
+      "line": 80,
+      "column": 0,
+      "end_line": 81,
+      "end_column": 34,
+      "function": "print",
+      "source": "print(\"Double gene deletions for 200 genes completed in \"\n      \"%.2f sec with 1 core\" % t2)"
+    },
+    {
+      "id": "call-83-0",
+      "line": 83,
+      "column": 0,
+      "end_line": 83,
+      "end_column": 37,
+      "function": "print",
+      "source": "print(\"Speedup of %.2fx\" % (t2 / t1))"
+    },
+    {
+      "id": "call-87-0-to-88-44",
+      "line": 87,
+      "column": 0,
+      "end_line": 88,
+      "end_column": 44,
+      "function": "double_reaction_deletion",
+      "source": "double_reaction_deletion(\n    cobra_model, cobra_model.reactions[2:7])"
+    },
+    {
+      "id": "call-87-0-to-88-53",
+      "line": 87,
+      "column": 0,
+      "end_line": 88,
+      "end_column": 53,
+      "function": "double_reaction_deletion(cobra_model, cobra_model.reactions[2:7]).round",
+      "source": "double_reaction_deletion(\n    cobra_model, cobra_model.reactions[2:7]).round(4)"
+    },
+    {
+      "id": "call-96-9",
+      "line": 96,
+      "column": 9,
+      "end_line": 96,
+      "end_column": 46,
+      "function": "single_reaction_deletion",
+      "source": "single_reaction_deletion(cobra_model)"
+    },
+    {
+      "id": "call-97-9",
+      "line": 97,
+      "column": 9,
+      "end_line": 97,
+      "end_column": 46,
+      "function": "double_reaction_deletion",
+      "source": "double_reaction_deletion(cobra_model)"
+    },
+    {
+      "id": "call-99-0",
+      "line": 99,
+      "column": 0,
+      "end_line": 99,
+      "end_column": 30,
+      "function": "print",
+      "source": "print(single.knockout[\"ATPM\"])"
+    },
+    {
+      "id": "call-100-0",
+      "line": 100,
+      "column": 0,
+      "end_line": 100,
+      "end_column": 40,
+      "function": "print",
+      "source": "print(double.knockout[{\"ATPM\", \"TKT1\"}])"
+    },
+    {
+      "id": "call-108-0",
+      "line": 108,
+      "column": 0,
+      "end_line": 108,
+      "end_column": 39,
+      "function": "print",
+      "source": "print(single.knockout[atpm, tkt1, pfk])"
+    },
+    {
+      "id": "call-109-0",
+      "line": 109,
+      "column": 0,
+      "end_line": 109,
+      "end_column": 57,
+      "function": "print",
+      "source": "print(double.knockout[{atpm, tkt1}, {atpm, pfk}, {atpm}])"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+[
+  {
+    "id": "structure_single_gene_table",
+    "kind": "structural",
+    "artifacts": [
+      "single_gene_deletions.csv"
+    ],
+    "public_requirement": "`single_gene_deletions.csv` is a comma-delimited CSV with header exactly `knockouts,growth,status`, every row having exactly three fields, no duplicate `knockouts` entries, and exactly one row for every gene defined in the supplied model ( keyed on the gene id; all 137 model genes must be covered, none missing, none invented)."
+  },
+  {
+    "id": "structure_single_reaction_table",
+    "kind": "structural",
+    "artifacts": [
+      "single_reaction_deletions.csv"
+    ],
+    "public_requirement": "`single_reaction_deletions.csv` is a comma-delimited CSV with header exactly `knockouts,growth,status`, every row having exactly three fields, no duplicate `knockouts` entries, and exactly one row for every reaction defined in the supplied model, including boundary/exchange reactions (keyed on the BiGG reaction id; all 95 model reactions must be covered, none missing, none invented)."
+  },
+  {
+    "id": "structure_double_reaction_table",
+    "kind": "structural",
+    "artifacts": [
+      "double_reaction_deletions.csv"
+    ],
+    "public_requirement": "`double_reaction_deletions.csv` is a comma-delimited CSV with header exactly `knockouts,growth,status`, every row having exactly three fields, no duplicate `knockouts` entries, and exactly one row for each of the 95 single-reaction sets plus each of the C(95,2) unordered reaction pairs, i.e. 4560 rows, each `knockouts` label being the sorted ';'-joined pair of reaction ids."
+  },
+  {
+    "id": "structure_pfk_table",
+    "kind": "structural",
+    "artifacts": [
+      "pfk_knockout_optima.csv"
+    ],
+    "public_requirement": "`pfk_knockout_optima.csv` is a comma-delimited CSV with header exactly `knockouts,growth,status` and exactly the four rows whose `knockouts` labels are the empty string, `PFK`, `b1723` and `b1723;b3916`."
+  },
+  {
+    "id": "values_single_gene_deletions",
+    "kind": "scientific",
+    "artifacts": [
+      "single_gene_deletions.csv"
+    ],
+    "public_requirement": "For every gene of the supplied model, the reported FBA growth optimum and status match the reference under the serialized-value conventions: identical status text; growth absent exactly when status is not `optimal`; and growth differences no larger than max(1e-9 × max(|reference value|, |submission value|), 1e-11), reference being the denominator convention."
+  },
+  {
+    "id": "values_single_reaction_deletions",
+    "kind": "scientific",
+    "artifacts": [
+      "single_reaction_deletions.csv"
+    ],
+    "public_requirement": "For every reaction of the supplied model, the reported FBA growth optimum and status match the reference under the serialized-value conventions: identical status text; growth absent exactly when status is not `optimal`; and growth differences no larger than max(1e-9 × max(|reference value|, |submission value|), 1e-11)."
+  },
+  {
+    "id": "values_double_reaction_deletions",
+    "kind": "scientific",
+    "artifacts": [
+      "double_reaction_deletions.csv"
+    ],
+    "public_requirement": "For every single-reaction and unordered reaction-pair knockout set, the reported FBA growth optimum and status match the reference under the serialized-value conventions: identical status text; growth absent exactly when status is not `optimal`; and growth differences no larger than max(1e-9 × max(|reference value|, |submission value|), 1e-11)."
+  },
+  {
+    "id": "values_pfk_knockout_optima",
+    "kind": "scientific",
+    "artifacts": [
+      "pfk_knockout_optima.csv"
+    ],
+    "public_requirement": "The four reported scenario optima and statuses match the reference under the same serialized-value conventions, including the empty `knockouts` wild-type row."
+  },
+  {
+    "id": "cross_table_consistency",
+    "kind": "scientific",
+    "artifacts": [
+      "double_reaction_deletions.csv",
+      "pfk_knockout_optima.csv",
+      "single_gene_deletions.csv",
+      "single_reaction_deletions.csv"
+    ],
+    "public_requirement": "Across the submitted files, equal knockout problems carry equal results under the same tolerance: (a) every single-reaction set row of `double_reaction_deletions.csv` agrees with the corresponding row of `single_reaction_deletions.csv`; (b) the PFK reaction-knockout rows of `pfk_knockout_optima.csv` and `single_reaction_deletions.csv` agree; (c) the pfkA-inactive rows agree, i.e. the `b1723` gene row of `pfk_knockout_optima.csv` with the `b1723` row of `single_gene_deletions.csv`, and the wild-type row of `pfk_knockout_optima.csv` with the `b1723` row of `single_gene_deletions.csv` (pfkB isozyme compensation); and (d) the `b1723;b3916` row of `pfk_knockout_optima.csv` agrees with the `PFK` row of `single_reaction_deletions.csv` and `pfk_knockout_optima.csv` (both genes participating in PFK removed together are equivalent to the PFK reaction knockout). These relations are grounded in the supplied model's GPR associations, which place b1723 and b3916 in PFK only."
+  }
+]

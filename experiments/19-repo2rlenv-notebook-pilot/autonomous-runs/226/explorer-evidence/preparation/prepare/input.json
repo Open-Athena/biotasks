@@ -1,0 +1,77 @@
+{
+  "baseline_script": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3 (ipykernel)\n#     language: python\n#     name: python3\n# ---\n\n# # Simulating Deletions\n\nimport pandas\nfrom time import time\n\nfrom cobra.io import load_model\nfrom cobra.flux_analysis import (\n    single_gene_deletion, single_reaction_deletion, double_gene_deletion,\n    double_reaction_deletion)\n\ncobra_model = load_model(\"textbook\")\necoli_model = load_model(\"iJO1366\")\n\n# ## Knocking out single genes and reactions\n\n# A commonly asked question when analyzing metabolic models is what will happen if a certain reaction was not allowed to have any flux at all. This can tested using cobrapy by\n\nprint('complete model: ', cobra_model.optimize())\nwith cobra_model:\n    cobra_model.reactions.PFK.knock_out()\n    print('pfk knocked out: ', cobra_model.optimize())\n\n# For evaluating genetic manipulation strategies, it is more interesting to examine what happens if given genes are knocked out as doing so can affect no reactions in case of redundancy, or more reactions if gene when is participating in more than one reaction.\n\nprint('complete model: ', cobra_model.optimize())\nwith cobra_model:\n    cobra_model.genes.b1723.knock_out()\n    print('pfkA knocked out: ', cobra_model.optimize())\n    cobra_model.genes.b3916.knock_out()\n    print('pfkB knocked out: ', cobra_model.optimize())\n\n# ## Single Deletions\n\n# Perform all single gene deletions on a model\n\ndeletion_results = single_gene_deletion(cobra_model)\n\n# These can also be done for only a subset of genes\n\nsingle_gene_deletion(cobra_model, cobra_model.genes[:20])\n\n# This can also be done for reactions\n\nsingle_reaction_deletion(cobra_model, cobra_model.reactions[:20])\n\n# ## Double Deletions\n\n# Double deletions run in a similar way.\n\ndouble_gene_deletion(\n    cobra_model, cobra_model.genes[-5:]).round(4)\n\n# By default, the double deletion function will automatically use multiprocessing, splitting the task over up to 4 cores if they are available. The number of cores can be manually specified as well. Setting use of a single core will disable use of the multiprocessing library, which often aids debugging.\n\nstart = time()  # start timer()\ndouble_gene_deletion(\n    ecoli_model, ecoli_model.genes[:25], processes=2)\nt1 = time() - start\nprint(\"Double gene deletions for 200 genes completed in \"\n      \"%.2f sec with 2 cores\" % t1)\n\nstart = time()  # start timer()\ndouble_gene_deletion(\n    ecoli_model, ecoli_model.genes[:25], processes=1)\nt2 = time() - start\nprint(\"Double gene deletions for 200 genes completed in \"\n      \"%.2f sec with 1 core\" % t2)\n\nprint(\"Speedup of %.2fx\" % (t2 / t1))\n\n# Double deletions can also be run for reactions.\n\ndouble_reaction_deletion(\n    cobra_model, cobra_model.reactions[2:7]).round(4)\n\n# ## Accessing individual deletion results\n#\n# Note that the indices for deletions are python [set](https://docs.python.org/3.8/library/stdtypes.html#set-types-set-frozenset) objects. This is the appropriate type since the order of deletions does not matter. Deleting reaction 1 and reaction 2 will have the same effect as deleting reaction 2 and reaction 1. \n#\n# To make it easier to access results all DataFrames returned by COBRAPpy deletion functions have a `knockout` indexer that makes that a bit simpler. Each entry in the indexer is treated as a single deletion entry. So you need to pass sets for double deletions.\n\nsingle = single_reaction_deletion(cobra_model)\ndouble = double_reaction_deletion(cobra_model)\n\nprint(single.knockout[\"ATPM\"])\nprint(double.knockout[{\"ATPM\", \"TKT1\"}])\n\n# This can be used to get several deletions at once and will also work for Reaction or Gene objects (depending on what you deleted) directly.\n\natpm = cobra_model.reactions.ATPM\ntkt1 = cobra_model.reactions.TKT1\npfk = cobra_model.reactions.PFK\n\nprint(single.knockout[atpm, tkt1, pfk])\nprint(double.knockout[{atpm, tkt1}, {atpm, pfk}, {atpm}])\n\n\n\n",
+  "conversion": {
+    "code_cells": 12,
+    "converter": "jupytext",
+    "converter_version": "1.19.6",
+    "directory_normalizations": [],
+    "documentation_execution_policy": {},
+    "equivalence_basis": "Python statements after recorded presentation and directory normalization",
+    "executable_ast_sha256": "9d9d1367351fd5dcb65ff6e5966c435e5317c8d7567d75fb7bdd695625e27ed4",
+    "executed": false,
+    "format": "py:nomarker",
+    "ignored_cell_editor_metadata": [],
+    "ignored_editor_metadata": {},
+    "ignored_presentation_tags": [
+      {
+        "cell_index": 4,
+        "tags": []
+      },
+      {
+        "cell_index": 6,
+        "tags": []
+      },
+      {
+        "cell_index": 18,
+        "tags": []
+      },
+      {
+        "cell_index": 22,
+        "tags": []
+      },
+      {
+        "cell_index": 24,
+        "tags": []
+      }
+    ],
+    "markdown_cells": 14,
+    "markdown_representation": "line_comments",
+    "ordered_code_equivalence": true,
+    "presentation_normalizations": [],
+    "profile": "python-narrative-v6",
+    "script_sha256": "14e0c28982c8edd8c4c2ca691e8d1e33c587646d5db6ac906c376b14cbb73bd8",
+    "source_sha256": "64da8bc313b923ae2e536964cb0db903e94d9eefa6ee7c8b593ebe2000507115",
+    "stored_outputs_used_as_evidence": false
+  },
+  "limits": {
+    "base_image": "python:3.13.13-slim-bookworm",
+    "gpu": false,
+    "network": "Internet during setup only; reference is offline",
+    "reference_seconds": 600,
+    "setup_seconds": 1800,
+    "task_cpus": 4,
+    "task_disk_gib": 10,
+    "task_memory_gib": 8
+  },
+  "source": {
+    "id": "cobrapy-deletions",
+    "license": "GPL-2.0",
+    "provenance": {
+      "data_lineage": "Curated E. coli textbook and iJO1366 metabolic models, not observed flux measurements.",
+      "data_redistribution_review": "Not independently established; no automatic public release. Raw notebook and generated data/task bundles remain private pending source-specific review.",
+      "input_preservation": "Original notebook bytes; no cell edits, input reductions or task design supplied by the operator.",
+      "notebook": {
+        "git_blob_sha1": "85fe767397e2ae6455700dc174753b3a27c7b29b",
+        "license": "GPL-2.0",
+        "license_url": "https://github.com/opencobra/cobrapy/blob/a9c5ced29670bed5035fb19e87e7b0b588adb62d/LICENSE",
+        "revision": "a9c5ced29670bed5035fb19e87e7b0b588adb62d",
+        "sha256": "64da8bc313b923ae2e536964cb0db903e94d9eefa6ee7c8b593ebe2000507115",
+        "url": "https://github.com/opencobra/cobrapy/blob/a9c5ced29670bed5035fb19e87e7b0b588adb62d/documentation_builder/deletions.ipynb"
+      }
+    },
+    "source_revision": "a9c5ced29670bed5035fb19e87e7b0b588adb62d",
+    "source_sha256": "64da8bc313b923ae2e536964cb0db903e94d9eefa6ee7c8b593ebe2000507115",
+    "title": "Single and double metabolic gene/reaction deletions",
+    "url": "https://github.com/opencobra/cobrapy/blob/a9c5ced29670bed5035fb19e87e7b0b588adb62d/documentation_builder/deletions.ipynb"
+  }
+}

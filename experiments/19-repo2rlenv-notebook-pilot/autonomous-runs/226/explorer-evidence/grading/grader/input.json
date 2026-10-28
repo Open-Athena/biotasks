@@ -1,0 +1,1519 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "double_reaction_deletions.csv",
+      "pfk_knockout_optima.csv",
+      "single_gene_deletions.csv",
+      "single_reaction_deletions.csv"
+    ],
+    "parsing_support": {
+      "authoring_import": "Use PYTHONPATH=/work for a focused shell check. The controller places this same module beside grade.py in controls and Harbor.",
+      "authoring_source": "/work/biotasks_table_io.py",
+      "bytes": 1637,
+      "import": "from biotasks_table_io import read_delimited_table",
+      "license": {
+        "bytes": 11357,
+        "path": "LICENSE.biotasks",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "spdx": "Apache-2.0"
+      },
+      "module": "biotasks_table_io.py",
+      "schema": "delimited-table-reader-v1",
+      "scope": "Optional syntax reader only. The worker owns scientific comparisons and must publicly declare any enabled representation normalization.",
+      "sha256": "35708cb000383d1d11a68eb0381e41ac1a5d842c04183e444049b2f53b661bbf",
+      "source": "# SPDX-License-Identifier: Apache-2.0\n\"\"\"Read delimited output syntax without choosing scientific comparison rules.\"\"\"\n\nimport csv\nfrom pathlib import Path\n\n\ndef read_delimited_table(\n    path: str | Path,\n    *,\n    delimiter: str = \",\",\n    encoding: str = \"utf-8\",\n    allow_blank_records: bool = False,\n) -> tuple[list[str], list[list[str]]]:\n    \"\"\"Return a header and equal-width rows, retaining every decoded field.\n\n    Uses Python's strict CSV reader, including quoted delimiters/newlines and\n    ordinary line endings. Only completely empty CSV records may be skipped,\n    and only when explicitly enabled. Quoted empty fields, whitespace-only\n    fields and delimiter-only rows are data, not empty records. No stripping,\n    numeric conversion, sorting, deduplication or scientific equivalence is\n    inferred. Callers still validate header names, identities and values.\n    \"\"\"\n    records = []\n    try:\n        with Path(path).open(encoding=encoding, newline=\"\") as stream:\n            for row in csv.reader(stream, delimiter=delimiter, strict=True):\n                if not row:\n                    if allow_blank_records:\n                        continue\n                    raise ValueError(\"Empty CSV record is not allowed\")\n                records.append(row)\n    except csv.Error as error:\n        raise ValueError(f\"Invalid delimited syntax: {error}\") from error\n    if not records:\n        raise ValueError(\"Delimited table has no header\")\n    header, *rows = records\n    if any(len(row) != len(header) for row in rows):\n        raise ValueError(\"Delimited table has inconsistent row widths\")\n    return header, rows\n"
+    },
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "e_coli_core.xml"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "independent_execution": {
+    "execution": {
+      "exit_code": 0,
+      "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+      "role_process_cleanup_verified": true,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    "outputs": [
+      {
+        "bytes": 176414,
+        "path": "double_reaction_deletions.csv",
+        "sha256": "57424ad43ff2518d206ca417855092ecf0d779c39665cf717d3069ff1d1ef9dc"
+      },
+      {
+        "bytes": 155,
+        "path": "pfk_knockout_optima.csv",
+        "sha256": "673224fcc9f689db0e28e0a6bd909c30d00304521ab1d2860ce81c3c7b372b54"
+      },
+      {
+        "bytes": 4537,
+        "path": "single_gene_deletions.csv",
+        "sha256": "aa77dafafcf1b4db4bf47a2831994aacb7c17f06c2e83e6206685f676a18339e"
+      },
+      {
+        "bytes": 3176,
+        "path": "single_reaction_deletions.csv",
+        "sha256": "692fbb70608c3f454a41d518684ea96ee3fec97c4f8b0420ff26e396ec1aebe5"
+      }
+    ],
+    "status": "executed_without_answer_access"
+  },
+  "independent_solution": {
+    "code": "#!/usr/bin/env python\n\"\"\"Growth effects of gene/reaction knockouts in the E. coli core model (FBA).\n\nInputs (read-only):\n    <input-dir>/e_coli_core.xml\n\nOutputs (in <output-dir>):\n    single_gene_deletions.csv\n    single_reaction_deletions.csv\n    double_reaction_deletions.csv\n    pfk_knockout_optima.csv\n\nAll files have columns: knockouts,growth,status\n - knockouts: entity ids, lexicographically sorted, ';'-joined\n - growth: raw LP objective value at full double precision (repr),\n   empty when the solve is not optimal\n - status: solver status string, e.g. 'optimal' or 'infeasible'\n\"\"\"\nimport argparse\nimport os\n\nimport cobra\nfrom cobra.flux_analysis import (\n    double_reaction_deletion,\n    single_gene_deletion,\n    single_reaction_deletion,\n)\nimport pandas as pd\n\n\ndef growth_str(growth, status):\n    \"\"\"Format the raw LP optimum, leaving it empty for non-optimal solves.\"\"\"\n    if status != \"optimal\" or pd.isna(growth):\n        return \"\"\n    return repr(float(growth))\n\n\ndef write_frame(df, path):\n    \"\"\"Convert a cobra deletion DataFrame ('ids','growth','status') to CSV.\"\"\"\n    rows = []\n    for _, r in df.iterrows():\n        ids = sorted(r[\"ids\"])  # frozenset of ids -> sorted list\n        rows.append({\n            \"knockouts\": \";\".join(ids),\n            \"growth\": growth_str(r[\"growth\"], r[\"status\"]),\n            \"status\": r[\"status\"],\n        })\n    out = pd.DataFrame(rows, columns=[\"knockouts\", \"growth\", \"status\"])\n    out.to_csv(path, index=False)\n\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument(\"--input-dir\", required=True)\n    ap.add_argument(\"--output-dir\", required=True)\n    args = ap.parse_args()\n\n    os.makedirs(args.output_dir, exist_ok=True)\n\n    model = cobra.io.read_sbml_model(\n        os.path.join(args.input_dir, \"e_coli_core.xml\")\n    )\n\n    # 1. every single gene deletion (137 genes, incl. no-effect genes)\n    res = single_gene_deletion(model, processes=4)\n    write_frame(res, os.path.join(args.output_dir, \"single_gene_deletions.csv\"))\n\n    # 2. every single reaction deletion (95 reactions, incl. exchanges)\n    res = single_reaction_deletion(model, processes=4)\n    write_frame(res, os.path.join(args.output_dir, \"single_reaction_deletions.csv\"))\n\n    # 3. every distinct pair (plus singletons): 95 + C(95,2) = 4560 rows\n    res = double_reaction_deletion(model, processes=4)\n    write_frame(res, os.path.join(args.output_dir, \"double_reaction_deletions.csv\"))\n\n    # 4. PFK / pfkA / pfkB knockout scenarios\n    with model:\n        rows = []\n\n        # wild type (no knockout)\n        growth = model.slim_optimize()\n        rows.append((\"\", growth, model.solver.status))\n\n        # PFK reaction knockout\n        model.reactions.PFK.knock_out()\n        growth = model.slim_optimize()\n        rows.append((\"PFK\", growth, model.solver.status))\n\n        # restore, then gene b1723 (pfkA) knockout only\n    with model:\n        model.genes.b1723.knock_out()\n        growth = model.slim_optimize()\n        rows.append((\"b1723\", growth, model.solver.status))\n\n    with model:\n        # genes b1723 (pfkA) and b3916 (pfkB) knocked out simultaneously\n        model.genes.b1723.knock_out()\n        model.genes.b3916.knock_out()\n        growth = model.slim_optimize()\n        rows.append((\"b1723;b3916\", growth, model.solver.status))\n\n    rows_out = [\n        {\n            \"knockouts\": ko,\n            \"growth\": growth_str(g, st),\n            \"status\": st,\n        }\n        for (ko, g, st) in rows\n    ]\n    pd.DataFrame(rows_out, columns=[\"knockouts\", \"growth\", \"status\"]).to_csv(\n        os.path.join(args.output_dir, \"pfk_knockout_optima.csv\"), index=False\n    )\n\n\nif __name__ == \"__main__\":\n    main()\n",
+    "disposition": "ready",
+    "rationale": "Uses cobra 0.32.1 (installed) with its native deletion machinery, which implements exactly the public knockout semantics: reaction KO via Reaction.knock_out() (flux forced to zero both directions) and gene KO via Gene.knock_out() (GPR evaluation, isozyme ORs preserved). Model file is loaded unmodified from --input-dir/e_coli_core.xml. single_gene_deletion and single_reaction_deletion cover all model-defined genes/reactants; double_reaction_deletion enumerates all 95+C(95,2)=4560 unordered sets exactly as specified (cobra reduces ordered pairs to frozensets). The four PFK rows are computed by direct model-controlled knockouts (wild type, PFK reaction, gene b1723, genes b1723+B3916) using slim_optimize, reporting the raw LP objective and model.solver.status with model state restored between contexts. growth is written at full double precision via repr (e.g. tiny negatives like -3.64e-15 kept as-is) and is left empty with status 'infeasible' when the LP is infeasible. Boundary choice: cobra's DataFrame (ids/growth/status) is the saved/artifact boundary; ids are sorted lexicographically and ';'-joined, except the m**a prior version's stray line was removed and PFK rows are computed on fresh model contexts. Verified end-to-end on supplied input: 137/95/4560/4 rows, statuses optimal/infeasible consistent with FBA expectations. No confirmation of agreement with the hidden reference has been established - only that outputs match the stated public contract. Runtime ~35 s including a full double-deletion run, well under the 600 s limit."
+  },
+  "input_observations": {
+    "observations": {
+      "files": []
+    },
+    "scope": "Recorded input-byte observations, not inferred schemas or full-file validation. Missing samples are an evidence gap, not proof of input properties.",
+    "source": {
+      "path": "trial/result.json",
+      "sha256": "5240278feeade4ef65ac0a97188a8f23fef8f67805054a95baaeacac9c8c59a8"
+    },
+    "status": "recorded"
+  },
+  "materialization": {
+    "candidate": {
+      "derive_code": "import argparse\nimport gzip\nimport json\nimport os\nimport shutil\n\n\ndef _format_growth(value):\n    if value is None:\n        return \"\"\n    value = float(value)\n    if value != value:  # NaN (infeasible solves in deletion tables / optimize)\n        return \"\"\n    return repr(value)\n\n\ndef main():\n    parser = argparse.ArgumentParser()\n    parser.add_argument(\"--source-inputs\", required=True)\n    parser.add_argument(\"--reference-dir\", required=True)\n    parser.add_argument(\"--destination\", required=True)\n    args = parser.parse_args()\n\n    with open(args.source_inputs) as handle:\n        json.load(handle)  # recorded original inputs: empty manifest (no external files)\n\n    inputs_dir = os.path.join(args.destination, \"inputs\")\n    reference_dir = os.path.join(args.destination, \"reference\")\n    os.makedirs(inputs_dir, exist_ok=True)\n    os.makedirs(reference_dir, exist_ok=True)\n\n    # Task input: the exact SBML bytes of the bundled \"textbook\" model that the\n    # source loads via load_model(\"textbook\") (cobra package data; no network).\n    import cobra\n\n    bundled_model = os.path.join(os.path.dirname(cobra.__file__), \"data\", \"textbook.xml.gz\")\n    with gzip.open(bundled_model, \"rb\") as src, open(\n        os.path.join(inputs_dir, \"e_coli_core.xml\"), \"wb\"\n    ) as dst:\n        shutil.copyfileobj(src, dst)\n\n    # Recorded reference exports: copy the three CSVs byte-for-byte. Their\n    # schema (knockouts,growth,status; sorted ';'-joined labels; empty growth\n    # for infeasible rows) already matches the requested output contract, so\n    # they are not re-serialized.\n    for name in (\n        \"single_gene_deletions.csv\",\n        \"single_reaction_deletions.csv\",\n        \"double_reaction_deletions.csv\",\n    ):\n        shutil.copyfile(\n            os.path.join(args.reference_dir, name),\n            os.path.join(reference_dir, name),\n        )\n\n    # --- Endpoint recovery (permitted by the endpoint-recovery policy) ---\n    # The source's with-block optima (source lines 32-44) were only printed,\n    # never stored, and the with-context managers restore the model between\n    # blocks. We recover them by rerunning the unchanged knockout/optimize\n    # sequence on the same model: the only required state is the freshly\n    # loaded model, so the recovered rows have a clean, documented lineage.\n    from cobra.io import read_sbml_model\n\n    model = read_sbml_model(os.path.join(inputs_dir, \"e_coli_core.xml\"))\n    solution = model.optimize()\n    rows = [(\"\", _format_growth(solution.objective_value), solution.status)]\n    with model:\n        model.reactions.PFK.knock_out()\n        solution = model.optimize()\n        rows.append((\"PFK\", _format_growth(solution.objective_value), solution.status))\n    with model:\n        model.genes.b1723.knock_out()\n        solution = model.optimize()\n        rows.append((\"b1723\", _format_growth(solution.objective_value), solution.status))\n        model.genes.b3916.knock_out()\n        solution = model.optimize()\n        rows.append((\"b1723;b3916\", _format_growth(solution.objective_value), solution.status))\n\n    with open(os.path.join(reference_dir, \"pfk_knockout_optima.csv\"), \"w\", newline=\"\") as handle:\n        handle.write(\"knockouts,growth,status\\n\")\n        for knockouts, growth, status in rows:\n            handle.write(\"%s,%s,%s\\n\" % (knockouts, growth, status))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "disposition": "ready",
+      "environment_review": {
+        "additional_exclusions": [],
+        "artifact_inventory_sha256": "efcacaec3088051bdc3d4ba928a9396b430cda799bd9e988254849b24d4221e1",
+        "assessment": "Controlled derivation and oracle execution succeeded. Verification performed with the authoring shell against the final inventory and the read-only inspection catalog. (1) The derivation bundle contains exactly the input e_coli_core.xml (sha256 0abebb80...) and the four reference CSVs; the three recorded CSVs are byte-identical copies of the originals in the read-only reference directory (shas 576e00fe..., e2766a64..., 9169de53...), and that directory itself remains untouched with only the three original artifacts, as required. (2) The recovered pfk_knockout_optima.csv was produced by rerunning the unchanged source knockout and optimize sequence (lines 32-44) on the freshly supplied model; its four values (wild type 0.8739..., PFK 0.7040..., b1723 0.8739..., b1723;b3916 0.7040..., all optimal) are cross-consistent with the reference stdout recorded in the private review (0.874 / 0.704 / 0.874 / 0.704) and with the b1723 row of single_gene_deletions.csv and the PFK row of single_reaction_deletions.csv; no baseline artifact exists for this endpoint, so independent validation remains noted as pending. (3) The supplied model re-parses to 137 genes and 95 reactions with the biomass objective, matching the source population. Installed-asset inspection: the final catalog (6726 installed files, 2372 removal-eligible candidates across 31 distributions, catalog sha 4a47faf4...) was inspected. All priority candidates are packaged test or example modules of numpy, pandas and optlang whose only connection to the source is generic import-name or path overlap (io, time, pandas); none contain deletion results or knockout values. The advisory numeric-value hints report (distance 1e-08, which is not a grading tolerance) inspected literals in every eligible candidate and all numeric cells of all four final CSVs including the recovered endpoint and found zero matches; no installed Python source exposes any requested growth, status or knockout-set value. The earlier setup audit additionally confirmed by grep that the only occurrences of this analysis distinctive tokens (b1723, ATPM, TKT1, textbook) live in the cobra package data and modules, which are the required model input and runtime code that the source load_model call reads and which must be retained, and in an unrelated sympy mechanics test whose numeric overlap is coincidental. The cobra data directory holds the model SBML input (required data), not answers; the requested outputs are LP optima over all knockout sets and are not stored anywhere in package data. No dedicated test distribution for this task exists and no unused answer asset was established, therefore no additional exclusions are declared and required data, runtime code and notices are preserved. Remaining gaps acknowledged: the hints scan covers numeric literals in priority Python files only, so integers, strings and other formats are not answered by it, but the catalog-wide candidate review and value-hint scan together found no requested-answer exposure, and the reference-answer CSVs live only in the controller-held reference directory, which is hidden from the isolated oracle.",
+        "asset_catalog_sha256": "4a47faf4fb86c499fae855a1c5744a8a7831a3a1ffb218e1b8ffd299e793507c"
+      },
+      "input_paths": [
+        "e_coli_core.xml"
+      ],
+      "instruction": "# Growth effects of gene and reaction knockouts in the E. coli core metabolic model\n\n## Objective\nYou are given the curated \"textbook\" E. coli core metabolic model (BiGG id `e_coli_core`) as an SBML file. Using flux balance analysis (FBA), determine how every possible single-gene deletion, every single-reaction deletion, every pairwise reaction deletion, and four specific knockout scenarios that illustrate gene-level redundancy for phosphofructokinase affect the maximal achievable growth.\n\nBy \"growth\" we mean the optimal value of the model's biomass objective (the raw LP objective value; no rounding, clamping or sign correction). For every knockout scenario, report that optimum together with the status reported by the LP solve (e.g. `optimal` or `infeasible`).\n\n## Supplied input\n- `inputs/e_coli_core.xml` \u2014 the E. coli core metabolic model in SBML format, including its biomass objective reaction and gene\u2013protein\u2013reaction (GPR) associations. Use the model exactly as supplied; do not modify it, its medium, bounds or objective.\n\n## Knockout semantics\n- **Reaction knockout**: the reaction carries no flux; its flux is constrained to zero in both directions.\n- **Gene knockout**: a reaction is disabled only if its GPR rule evaluates to false once the knocked-out gene(s) are removed. If a reaction has a remaining functional isozyme gene (an OR in the GPR), the reaction still carries flux; a gene whose removal disables no reaction therefore has no growth effect even though the gene is knocked out.\n\n## Required outputs\nProduce four CSV files, all with the columns `knockouts,growth,status`:\n\n- `knockouts`: the identifier(s) of the knocked-out entity, exactly as defined in the supplied model. For a knockout of multiple entities, the ids are sorted lexicographically and joined with `;` (e.g. `b1723;b3916`, `Biomass_Ecoli_core;LDH_D`); a single-entity knockout uses just that entity's id.\n- `growth`: the optimal objective value of the LP after the knockout, as reported by the solver at full double precision, with no rounding, clamping or sign correction. Tiny negative values of magnitude around 1e-14 that arise from solver noise are expected and must be reported as-is. Leave this field empty when the knockout makes the problem infeasible.\n- `status`: the LP solve status string, e.g. `optimal` or `infeasible`.\n\n### 1. `single_gene_deletions.csv`\nOne row for **every gene defined in the supplied model** (137 genes), including genes whose deletion disables no reaction.\n\n### 2. `single_reaction_deletions.csv`\nOne row for **every reaction defined in the supplied model** (95 reactions, including boundary/exchange reactions).\n\n### 3. `double_reaction_deletions.csv`\nOne row for **each distinct knockout set {r_i, r_j}** obtained by pairing every reaction in the model with every reaction in the model and reducing each ordered pair to an unordered set; the i = j cases contribute the single-reaction sets {r_i}. This yields the 95 singleton sets plus all C(95,2) = 4465 pairs, i.e. 4560 rows. Do not apply gene-level GPR logic here \u2014 both reactions are knocked out directly.\n\n### 4. `pfk_knockout_optima.csv`\nExactly four rows, with the same column convention and an empty `knockouts` field for the no-knockout row:\n\n- *(empty)* \u2014 the unmodified (wild-type) model, no knockout;\n- `PFK` \u2014 the PFK reaction knocked out;\n- `b1723` \u2014 gene b1723 (pfkA) knocked out;\n- `b1723;b3916` \u2014 genes b1723 (pfkA) and b3916 (pfkB) knocked out simultaneously.\n\nThese quantify isozyme redundancy: the isozyme pfkB can compensate for a pfkA deletion, but not when both genes are removed.\n\n## Conventions\n- Row order in every file carries no scientific meaning; any row ordering is acceptable.\n- Growth is reported in the model's native biomass-objective units (the raw LP objective value).\n- Use the knockout populations exactly as defined above; do not skip entities that have no reaction associations or no growth effect.\n- Do not round any value (`growth` is written at full double precision).\n\n## Environment and resources\nCPU only (up to 4 cores), 8 GiB RAM, no network access. Your program must complete within 600 seconds. Any software stack that satisfies the definitions above is acceptable; the results, not the tool, are what is compared.\n\nExact acceptance criteria (including numerical tolerances appropriate for LP-solver variation) are finalized separately during validation before the contract takes effect; produce results faithful to the definitions above.\n",
+      "operation_coverage": [
+        {
+          "artifact_paths": [
+            "e_coli_core.xml"
+          ],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-25-14"
+          ],
+          "rationale": "load_model(\"textbook\") reads the bundled cobra package-data SBML (cobra/data/textbook.xml.gz); no other input exists (recorded original-input manifest is empty). The declared task input e_coli_core.xml is the byte-exact SBML document gzip-decompressed from that bundled file, so every downstream result is computed on the model this call produced.",
+          "role": "supplied_input"
+        },
+        {
+          "artifact_paths": [
+            "pfk_knockout_optima.csv"
+          ],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-32-0",
+            "call-32-26",
+            "call-39-0",
+            "call-39-26"
+          ],
+          "rationale": "The wild-type (no-knockout) optimum, printed twice before the with-blocks (the with-context restores the model, so both prints reflect the same unmodified model state). Recovered unchanged as the empty-knockouts row of pfk_knockout_optima.csv by rerunning the same optimize() on the supplied model.",
+          "role": "result"
+        },
+        {
+          "artifact_paths": [
+            "pfk_knockout_optima.csv"
+          ],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-34-4",
+            "call-35-4",
+            "call-35-31"
+          ],
+          "rationale": "PFK reaction knockout inside a with-context and the printed optimum of the knocked-out model; recovered unchanged as the 'PFK' row of pfk_knockout_optima.csv (same knock_out() + optimize() sequence, model restored by the context manager).",
+          "role": "result"
+        },
+        {
+          "artifact_paths": [
+            "pfk_knockout_optima.csv"
+          ],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-41-4",
+            "call-42-4",
+            "call-42-32"
+          ],
+          "rationale": "Gene b1723 (pfkA) knockout inside a with-context and its printed optimum; recovered unchanged as the 'b1723' row of pfk_knockout_optima.csv. The value is scientifically identical to the b1723 row of single_gene_deletions.csv but is delivered here as the redundancy-narrative endpoint.",
+          "role": "result"
+        },
+        {
+          "artifact_paths": [
+            "pfk_knockout_optima.csv"
+          ],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-43-4",
+            "call-44-4",
+            "call-44-32"
+          ],
+          "rationale": "Sequential knockouts of b1723 then b3916 within a single with-context, with the printed optimum of the doubly knocked-out model; recovered unchanged as the 'b1723;b3916' row of pfk_knockout_optima.csv. This combination is not subsumed by any retained table.",
+          "role": "result"
+        },
+        {
+          "artifact_paths": [
+            "single_gene_deletions.csv"
+          ],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-50-19"
+          ],
+          "rationale": "deletion_results = single_gene_deletion(cobra_model): all single-gene deletions over the complete textbook model. Recorded reference export copied byte-for-byte into reference/ and requested as outputs/single_gene_deletions.csv.",
+          "role": "result"
+        },
+        {
+          "artifact_paths": [],
+          "counterpart_id": "call-50-19",
+          "operation_ids": [
+            "call-54-0"
+          ],
+          "rationale": "The same single_gene_deletion function on the same unmodified model, restricted to the genes[:20] prefix; each returned row is the corresponding row of the retained full table single_gene_deletions.csv (identical single-knockout LPs, model state and parameters). Narrative: 'These can also be done for only a subset of genes'.",
+          "role": "redundant"
+        },
+        {
+          "artifact_paths": [],
+          "counterpart_id": "call-96-9",
+          "operation_ids": [
+            "call-58-0"
+          ],
+          "rationale": "The same single_reaction_deletion function on the same unmodified model, restricted to the reactions[:20] prefix; each returned row is the corresponding row of the retained full table single_reaction_deletions.csv (identical single-knockout LPs, model state and parameters).",
+          "role": "redundant"
+        },
+        {
+          "artifact_paths": [],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-64-0-to-65-40",
+            "call-64-0-to-65-49"
+          ],
+          "rationale": "Bare-expression API-mechanics demonstration of double_gene_deletion on a positional 5-gene slice of the textbook model: the returned value is neither stored nor printed in the script run (it is absent from the reference stdout), and .round(4) is display formatting on that discarded value. The narrative introduces it solely as mechanics ('Double deletions run in a similar way') and interprets no result. No interpreted scientific quantity exists to preserve; excluded per the review, which flags this as a residual judgment call (faithful recomputation would be possible if reviewers disagree).",
+          "role": "diagnostic"
+        },
+        {
+          "artifact_paths": [],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-26-14",
+            "call-69-8",
+            "call-70-0",
+            "call-72-5",
+            "call-73-0",
+            "call-76-8",
+            "call-77-0",
+            "call-79-5",
+            "call-80-0",
+            "call-83-0"
+          ],
+          "rationale": "iJO1366 model load plus the multiprocessing timing benchmark: time() timers, double_gene_deletion on ecoli_model.genes[:25] with processes=2 and processes=1, and the printed elapsed times / 'Speedup of %.2fx'. Nondeterministic timing diagnostic that the narrative frames exclusively as such; no deletion findings from these runs are consumed anywhere. (The printed '200 genes' text contradicting the 25-gene slice is a notebook text bug, diagnostic either way.)",
+          "role": "diagnostic"
+        },
+        {
+          "artifact_paths": [],
+          "counterpart_id": "call-97-9",
+          "operation_ids": [
+            "call-87-0-to-88-44"
+          ],
+          "rationale": "The same double_reaction_deletion function on the same unmodified model, restricted to reactions[2:7]; every returned row is the corresponding row of the retained full table double_reaction_deletions.csv, whose whole-population unordered knockout sets include these sets (identical LPs, model state and parameters).",
+          "role": "redundant"
+        },
+        {
+          "artifact_paths": [],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-87-0-to-88-53"
+          ],
+          "rationale": "The display-formatting call .round(4) applied to the discarded reactions[2:7] demonstration value of double_reaction_deletion; display formatting only, no scientific quantity computed or consumed.",
+          "role": "presentation"
+        },
+        {
+          "artifact_paths": [
+            "single_reaction_deletions.csv"
+          ],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-96-9"
+          ],
+          "rationale": "single = single_reaction_deletion(cobra_model): all single-reaction deletions over the complete textbook model. Recorded reference export copied byte-for-byte into reference/ and requested as outputs/single_reaction_deletions.csv.",
+          "role": "result"
+        },
+        {
+          "artifact_paths": [
+            "double_reaction_deletions.csv"
+          ],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-97-9"
+          ],
+          "rationale": "double = double_reaction_deletion(cobra_model): all distinct unordered reaction knockout sets {r_i, r_j} over the full reaction list (including the i=j singletons) of the complete textbook model. Recorded reference export copied byte-for-byte into reference/ and requested as outputs/double_reaction_deletions.csv.",
+          "role": "result"
+        },
+        {
+          "artifact_paths": [],
+          "counterpart_id": null,
+          "operation_ids": [
+            "call-99-0",
+            "call-100-0",
+            "call-108-0",
+            "call-109-0"
+          ],
+          "rationale": "Display-only .knockout indexer prints for the 'Accessing individual deletion results' demonstration (e.g. ATPM, {ATPM,TKT1}, {ATPM,PFK}). Each printed value is exactly a row of the retained tables single_reaction_deletions.csv and double_reaction_deletions.csv \u2014 no new computation, entity or parameter.",
+          "role": "presentation"
+        }
+      ],
+      "oracle_code": "import argparse\nimport math\nimport os\n\n\ndef _format_growth(value):\n    if value is None:\n        return \"\"\n    value = float(value)\n    if math.isnan(value):\n        return \"\"\n    return repr(value)\n\n\ndef _format_knockouts(ids):\n    return \";\".join(sorted(str(identifier) for identifier in ids))\n\n\ndef _frame_rows(frame):\n    if \"ids\" in frame.columns:\n        ids_series = frame[\"ids\"].tolist()\n    else:\n        ids_series = frame.index.tolist()\n    growth_series = frame[\"growth\"].tolist()\n    status_series = frame[\"status\"].tolist()\n    rows = []\n    for ids, growth, status in zip(ids_series, growth_series, status_series):\n        rows.append(\n            (_format_knockouts(ids), _format_growth(growth), str(status))\n        )\n    rows.sort(key=lambda row: row[0])\n    return rows\n\n\ndef _write_csv(path, header, rows):\n    with open(path, \"w\", newline=\"\") as handle:\n        handle.write(header + \"\\n\")\n        for row in rows:\n            handle.write(\",\".join(row) + \"\\n\")\n\n\ndef main():\n    parser = argparse.ArgumentParser()\n    parser.add_argument(\"--input-dir\", required=True)\n    parser.add_argument(\"--output-dir\", required=True)\n    args = parser.parse_args()\n\n    from cobra.io import read_sbml_model\n    from cobra.flux_analysis import (\n        single_gene_deletion,\n        single_reaction_deletion,\n        double_reaction_deletion,\n    )\n\n    model = read_sbml_model(os.path.join(args.input_dir, \"e_coli_core.xml\"))\n    os.makedirs(args.output_dir, exist_ok=True)\n\n    gene_frame = single_gene_deletion(model)\n    reaction_frame = single_reaction_deletion(model)\n    double_frame = double_reaction_deletion(model)\n\n    header = \"knockouts,growth,status\"\n    _write_csv(\n        os.path.join(args.output_dir, \"single_gene_deletions.csv\"),\n        header,\n        _frame_rows(gene_frame),\n    )\n    _write_csv(\n        os.path.join(args.output_dir, \"single_reaction_deletions.csv\"),\n        header,\n        _frame_rows(reaction_frame),\n    )\n    _write_csv(\n        os.path.join(args.output_dir, \"double_reaction_deletions.csv\"),\n        header,\n        _frame_rows(double_frame),\n    )\n\n    # Phosphofructokinase redundancy scenarios, mirroring the defined semantics:\n    # wild type, PFK reaction knockout, pfkA gene knockout, and the\n    # simultaneous pfkA + pfkB double gene knockout (sequential knockouts of\n    # both genes on the same model within one context).\n    rows = []\n    solution = model.optimize()\n    rows.append((\"\", _format_growth(solution.objective_value), solution.status))\n    with model:\n        model.reactions.PFK.knock_out()\n        solution = model.optimize()\n        rows.append((\"PFK\", _format_growth(solution.objective_value), solution.status))\n    with model:\n        model.genes.b1723.knock_out()\n        solution = model.optimize()\n        rows.append((\"b1723\", _format_growth(solution.objective_value), solution.status))\n        model.genes.b3916.knock_out()\n        solution = model.optimize()\n        rows.append(\n            (\"b1723;b3916\", _format_growth(solution.objective_value), solution.status)\n        )\n    _write_csv(os.path.join(args.output_dir, \"pfk_knockout_optima.csv\"), header, rows)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "output_paths": [
+        "single_gene_deletions.csv",
+        "single_reaction_deletions.csv",
+        "double_reaction_deletions.csv",
+        "pfk_knockout_optima.csv"
+      ],
+      "rationale": "SCOPE. The source notebook's terminal scientific products are the complete-model FBA deletion analyses of the unmodified \"textbook\" E. coli core model: all single-gene deletions (call-50-19 -> single_gene_deletions.csv), all single-reaction deletions (call-96-9 -> single_reaction_deletions.csv), all unordered reaction-pair/single-reaction knockout sets (call-97-9 -> double_reaction_deletions.csv), plus the interpreted knockout demonstrations of the first section (calls 32-44 -> pfk_knockout_optima.csv). All four are requested outputs; no scientific branch of the source is silently dropped.\n\nINPUT DERIVATION. The recorded original-input manifest is empty because the source has no external data file: load_model(\"textbook\") reads cobrapy's bundled package data (cobra/data/textbook.xml.gz), confirmed offline-capable in outcome.json. The task input inputs/e_coli_core.xml is produced by gzip-decompressing that bundled file, so the solver receives the byte-exact SBML document the source parsed. No model attribute, medium, bound or objective is changed. The three recorded CSVs are copied byte-for-byte from the reference directory (their schema \u2014 knockouts,growth,status with labels formed by exports.py as sorted ';'-joined ids, empty growth for infeasible rows, unrounded floats including sub-1e-14 negative noise, statuses optimal/infeasible \u2014 already matches the public contract, so no re-serialization or projection is performed). Row counts 137 / 95 / 4560 (= 95 singletons + C(95,2) pairs, matching deletion.py's frozenset-population construction verified in the pinned review) are cross-checked against the reference structural observations.\n\nENDPOINT RECOVERY. The PFK/pfkA/pfkB optima existed only transiently inside with-blocks (printed, never stored; with-contexts restore the model). Per the endpoint-recovery policy, derive_code recovers them by rerunning the unchanged knockout/optimize sequence of source lines 32-44 on the same model: wild-type optimize(), PFK.knock_out() then optimize(), b1723 knock_out() then optimize(), then b3916 knock_out() (sequential, inside one with-block) then optimize(). Required state is only the freshly loaded model; lineage is fully documented here and the recovered file is written separately under destination/reference/pfk_knockout_optima.csv while the original reference artifacts are left untouched. This recovered endpoint still needs independent validation (it has no recorded baseline artifact; the private stdout cross-check 0.874/0.704/0.874/0.704 is consistent with the b1723 and PFK rows of recorded tables 1 and 2, but only the two gene-level rows b1723 and b1723;b3916 plus the wild type add information beyond those projections). The oracle computes the same four scenarios independently from the supplied model. Methods, inputs and populations are unchanged from the source.\n\nGRAIN AND ALIGNMENT. One row per knockout set (frozenset of gene or reaction ids), labels = ids sorted lexicographically and joined with ';' (exactly exports.py's convention; reference examples confirm e.g. 'Biomass_Ecoli_core;LDH_D'). Populations are every model gene (137) and every model reaction (95), including boundary/exchange reactions and genes with no reaction associations \u2014 no entity filtering or data loss. No duplicate-entity-key annotation issue arises (each row is a distinct knockout set). Infeasible rows carry solver status and empty growth, mirroring the recorded exports (2/2/352 empty growth cells).\n\nEXCLUSIONS (source-backed, distinguished from export-inventory limits). (1) The iJO1366 double-gene-deletion multiprocessing benchmark (call-26-14, calls 69-83) is a nondeterministic timing diagnostic framed solely as such by the narrative (\"Speedup of %.2fx\"); its deletion values are never consumed. The notebook's printed \"200 genes\" contradicting the 25-gene slice is a text bug in a diagnostic. (2) The positionally-sliced double_gene_deletion(cobra_model, cobra_model.genes[-5:]).round(4) (calls 64-65) is an API-mechanics demonstration whose value is discarded: it is a bare expression absent from the reference stdout, and .round(4) is display formatting; the narrative does not interpret its results. The review records this as a residual judgment call \u2014 faithful recomputation as a fifth output remains possible if validation disagrees; no source-faithful blocker exists. (3) The subset demonstrations single_gene_deletion(genes[:20]), single_reaction_deletion(reactions[:20]) and double_reaction_deletion(reactions[2:7]) are pure restrictions of retained tables 1-3 (classifiers flagged redundant against the producing whole-population calls). (4) The .knockout indexer prints are display reads of retained table rows.\n\nLEAKAGE. derive_code and oracle_code embed no measured answer values or reference-derived constants (gene/reaction ids PFK, b1723, b3916 and model filenames are input identifiers defined by the supplied model and the public question, not results). The oracle reads only inputs/e_coli_core.xml and uses installed packages; it never accesses destination/reference or any cache. The reference CSVs containing answers live only under destination/reference, which is hidden from the isolated oracle. Known environment consideration from the setup audit: cobrapy's package data necessarily contains the textbook model itself (an input, not an answer) and must be retained.\n\nREMAINING COMPARISON QUESTIONS (left to validation, not resolved here): replay observations show run-dependent row order (set iteration) and low-order float digit variation between LP solves, so comparison must be row-multiset based on the knockouts key with a numerical tolerance appropriate for LP-solver noise (including retaining tiny negative values and empty-vs-value infeasible rows rather than byte identity); and pfk_knockout_optima.csv has no recorded baseline and therefore needs independent scientific validation of its four values. Grading tolerances are deliberately not stated in the public question."
+    },
+    "execution": {
+      "derivation": {
+        "exit_code": 0,
+        "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+        "role_process_cleanup_verified": true,
+        "stderr": "",
+        "stdout": "",
+        "timed_out": false
+      },
+      "environment": {
+        "asset_catalog": {
+          "bytes": 949940,
+          "sha256": "4a47faf4fb86c499fae855a1c5744a8a7831a3a1ffb218e1b8ffd299e793507c"
+        },
+        "asset_summary": {
+          "candidate_files": 2372,
+          "distribution_coverage": [
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "annotated-types",
+              "installed_regular_files_inspected": 9
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "anyio",
+              "installed_regular_files_inspected": 55
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "appdirs",
+              "installed_regular_files_inspected": 8
+            },
+            {
+              "candidate_files": 2,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "certifi",
+              "installed_regular_files_inspected": 14
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "cobra",
+              "installed_regular_files_inspected": 86
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "depinfo",
+              "installed_regular_files_inspected": 28
+            },
+            {
+              "candidate_files": 22,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "future",
+              "installed_regular_files_inspected": 219
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "h11",
+              "installed_regular_files_inspected": 19
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "httpcore",
+              "installed_regular_files_inspected": 38
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "httpx",
+              "installed_regular_files_inspected": 31
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "idna",
+              "installed_regular_files_inspected": 18
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "markdown-it-py",
+              "installed_regular_files_inspected": 76
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "mdurl",
+              "installed_regular_files_inspected": 13
+            },
+            {
+              "candidate_files": 36,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "mpmath",
+              "installed_regular_files_inspected": 94
+            },
+            {
+              "candidate_files": 493,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "numpy",
+              "installed_regular_files_inspected": 928
+            },
+            {
+              "candidate_files": 21,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "optlang",
+              "installed_regular_files_inspected": 47
+            },
+            {
+              "candidate_files": 1116,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "pandas",
+              "installed_regular_files_inspected": 1515
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "pydantic",
+              "installed_regular_files_inspected": 113
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "pydantic_core",
+              "installed_regular_files_inspected": 13
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "Pygments",
+              "installed_regular_files_inspected": 351
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "python-dateutil",
+              "installed_regular_files_inspected": 29
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "python-libsbml",
+              "installed_regular_files_inspected": 10
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "pytz",
+              "installed_regular_files_inspected": 618
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "rich",
+              "installed_regular_files_inspected": 107
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "ruamel.yaml",
+              "installed_regular_files_inspected": 41
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "six",
+              "installed_regular_files_inspected": 8
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "swiglpk",
+              "installed_regular_files_inspected": 14
+            },
+            {
+              "candidate_files": 682,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "sympy",
+              "installed_regular_files_inspected": 1571
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "typing-inspection",
+              "installed_regular_files_inspected": 11
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "typing_extensions",
+              "installed_regular_files_inspected": 7
+            },
+            {
+              "candidate_files": 0,
+              "dedicated_test_distribution_hint": false,
+              "distribution": "tzdata",
+              "installed_regular_files_inspected": 635
+            }
+          ],
+          "installed_files_inspected": 6726,
+          "priority_matches": [
+            {
+              "bytes": 106044,
+              "distribution": "numpy",
+              "eligible_for_declared_removal": true,
+              "matches": [],
+              "packaged_test_or_example": true,
+              "path": "numpy/lib/tests/test_io.py",
+              "sha256": "241ac332374da2f05191969ff24054cf7ff029dea39b7dfc71fb75d75bd00c46",
+              "source_import_group_matches": [],
+              "source_import_matches": [
+                "io"
+              ]
+            },
+            {
+              "bytes": 3869,
+              "distribution": "optlang",
+              "eligible_for_declared_removal": true,
+              "matches": [],
+              "packaged_test_or_example": true,
+              "path": "optlang/tests/test_io.py",
+              "sha256": "9197fd79bed180226c1ededd14b9ccfb8427d2fbdc0b5e07e7e5ae31520f14e1",
+              "source_import_group_matches": [],
+              "source_import_matches": [
+                "io"
+              ]
+            },
+            {
+              "bytes": 1475,
+              "distribution": "pandas",
+              "eligible_for_declared_removal": true,
+              "matches": [],
+              "packaged_test_or_example": true,
+              "path": "pandas/tests/extension/base/io.py",
+              "sha256": "48dbc26ba2d7a3ee15f76066e80d5164f5f07c376ede14d62e37bcfc3dd7c28f",
+              "source_import_group_matches": [],
+              "source_import_matches": [
+                "io"
+              ]
+            },
+            {
+              "bytes": 4708,
+              "distribution": "pandas",
+              "eligible_for_declared_removal": true,
+              "matches": [],
+              "packaged_test_or_example": true,
+              "path": "pandas/tests/frame/methods/test_at_time.py",
+              "sha256": "26b4181653482325b5c43be098613bcd17e35e798a3042e1f52b62c346ed19b3",
+              "source_import_group_matches": [],
+              "source_import_matches": [
+                "time"
+              ]
+            },
+            {
+              "bytes": 8083,
+              "distribution": "pandas",
+              "eligible_for_declared_removal": true,
+              "matches": [],
+              "packaged_test_or_example": true,
+              "path": "pandas/tests/frame/methods/test_between_time.py",
+              "sha256": "ac3fa4d5ae0b54e6be9cc94b5ce6993bb8936b784bfc2f6d821aadf03596d10b",
+              "source_import_group_matches": [],
+              "source_import_matches": [
+                "time"
+              ]
+            },
+            {
+              "bytes": 77668,
+              "distribution": "pandas",
+              "eligible_for_declared_removal": true,
+              "matches": [],
+              "packaged_test_or_example": true,
+              "path": "pandas/tests/io/json/test_pandas.py",
+              "sha256": "3e3eec15301b451c1a9acf152d111453bfd48b71928337ba848f8ae766046d4f",
+              "source_import_group_matches": [],
+              "source_import_matches": [
+                "pandas"
+              ]
+            },
+            {
+              "bytes": 2481,
+              "distribution": "pandas",
+              "eligible_for_declared_removal": true,
+              "matches": [],
+              "packaged_test_or_example": true,
+              "path": "pandas/tests/io/pytables/test_time_series.py",
+              "sha256": "85dbb0f86301bda87264787a255acb2abc6f537351d2f9747164d66a6960670e",
+              "source_import_group_matches": [],
+              "source_import_matches": [
+                "time"
+              ]
+            },
+            {
+              "bytes": 11832,
+              "distribution": "pandas",
+              "eligible_for_declared_removal": true,
+              "matches": [],
+              "packaged_test_or_example": true,
+              "path": "pandas/tests/resample/test_time_grouper.py",
+              "sha256": "4fc3be2bade4e57cc4083fbab410ecaa4cc29d56fe711fd7d1dfc72993c33aeb",
+              "source_import_group_matches": [],
+              "source_import_matches": [
+                "time"
+              ]
+            },
+            {
+              "bytes": 2417,
+              "distribution": "pandas",
+              "eligible_for_declared_removal": true,
+              "matches": [],
+              "packaged_test_or_example": true,
+              "path": "pandas/tests/tools/test_to_time.py",
+              "sha256": "7be4261aee6701ef5c953f27f5b75ae5a1301c11f865a5ea073b39fa62963184",
+              "source_import_group_matches": [],
+              "source_import_matches": [
+                "time"
+              ]
+            }
+          ],
+          "scope": "Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit.",
+          "source_import_terms": [
+            "double_gene_deletion",
+            "double_reaction_deletion",
+            "flux_analysis",
+            "io",
+            "load_model",
+            "pandas",
+            "single_gene_deletion",
+            "single_reaction_deletion",
+            "time"
+          ]
+        },
+        "asset_value_hints": {
+          "bytes": 3580,
+          "distance_is_not_grading_tolerance": true,
+          "finding_count": 0,
+          "scope": "Advisory magnitude matches in hash/size-verified Python files owned by the actual installed distribution and final CSV/TSV references. No package imports, scientific execution, network requests, removal or isolation verdict. Integer-valued constants, comments, strings, nonpriority files and other formats are gaps. Matches can be unrelated; absence is not approval.",
+          "sha256": "40ac910ab38b351acf947c3820d986f01957b50388f41d5716e4671e8a99f28d",
+          "source": {
+            "asset_catalog_sha256": "4a47faf4fb86c499fae855a1c5744a8a7831a3a1ffb218e1b8ffd299e793507c",
+            "reference_inventory_sha256": "6479cbb4710743d6f32c9ed71174391968a7515705bd61607ae72bf0f48335de"
+          }
+        },
+        "exclusions": {
+          "files": []
+        },
+        "removal_receipt": {
+          "excluded_files_absent": true,
+          "files": []
+        }
+      },
+      "environment_removal_receipt": {
+        "excluded_files_absent": true,
+        "files": []
+      },
+      "inputs": [
+        {
+          "bytes": 351123,
+          "path": "e_coli_core.xml",
+          "sha256": "0abebb806ce94922d7c7eb6cadca8c2fa5c4500d0db8e119d3c6224ae59e212d"
+        }
+      ],
+      "oracle": {
+        "exit_code": 0,
+        "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+        "role_process_cleanup_verified": true,
+        "stderr": "",
+        "stdout": "",
+        "timed_out": false
+      },
+      "oracle_isolation": {
+        "exit_code": 0,
+        "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+        "role_process_cleanup_verified": true,
+        "stderr": "",
+        "stdout": "isolated\n",
+        "timed_out": false
+      },
+      "oracle_outputs": [
+        {
+          "bytes": 176904,
+          "path": "double_reaction_deletions.csv",
+          "sha256": "58dc77444b26231cc7192c71489267cdad57dcb71574825e0a17ee0a89f2e461"
+        },
+        {
+          "bytes": 155,
+          "path": "pfk_knockout_optima.csv",
+          "sha256": "673224fcc9f689db0e28e0a6bd909c30d00304521ab1d2860ce81c3c7b372b54"
+        },
+        {
+          "bytes": 4523,
+          "path": "single_gene_deletions.csv",
+          "sha256": "b51f0608fab5e0cb05d4e73b133b9fc55158a0fb4d852a80b85a870e3f020036"
+        },
+        {
+          "bytes": 3114,
+          "path": "single_reaction_deletions.csv",
+          "sha256": "b12fb85aa5edb3b39d679018af2f2a71ffbd9572fa738ad686873a1b837bcbda"
+        }
+      ],
+      "reference": [
+        {
+          "bytes": 176807,
+          "path": "double_reaction_deletions.csv",
+          "sha256": "9169de53c4e3e7bacaed2393c94738d86dc24e9ae9543c7edc88b044c4b40fd7"
+        },
+        {
+          "bytes": 155,
+          "path": "pfk_knockout_optima.csv",
+          "sha256": "673224fcc9f689db0e28e0a6bd909c30d00304521ab1d2860ce81c3c7b372b54"
+        },
+        {
+          "bytes": 4528,
+          "path": "single_gene_deletions.csv",
+          "sha256": "576e00fe2d6a9326312503ad0306b7951256e4f9cd2b2b53ccfb1bec12765ef8"
+        },
+        {
+          "bytes": 3222,
+          "path": "single_reaction_deletions.csv",
+          "sha256": "e2766a640076e1e2ef184112195092d91f02c7b5e7fd7d6794064fbed2963b61"
+        }
+      ],
+      "status": "executed_requires_scientific_validation"
+    }
+  },
+  "paths": {
+    "independent_outputs": "/work/alternative",
+    "recomputed_outputs": "/work/recomputed",
+    "reference_outputs": "/work/reference",
+    "task_inputs": "/work/task-inputs",
+    "working_directory": "/work/author"
+  },
+  "policy": {
+    "dependency_answers": "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "supplied_intermediates": "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  },
+  "reference_observations": {
+    "outputs": [
+      {
+        "bytes": 4528,
+        "download_hash_verified": true,
+        "file": "single_gene_deletions.csv",
+        "sha256": "576e00fe2d6a9326312503ad0306b7951256e4f9cd2b2b53ccfb1bec12765ef8",
+        "structural_profile": {
+          "columns": [
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 137,
+              "empty": 0,
+              "examples": [
+                "b2279",
+                "b0728",
+                "b0726"
+              ],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "knockouts",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "388c147d2188ec388fa09ef447a620e5b670eab49dc28905a4772b549d2fb9dd",
+              "other": 137,
+              "position": 0
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 37,
+              "empty": 2,
+              "examples": [
+                "0.2116629497353111",
+                "0.8583074080226888",
+                "0.8583074080226889"
+              ],
+              "finite_numeric": 135,
+              "maximum": 0.8739215069684313,
+              "minimum": -3.743396437539173e-15,
+              "name": "growth",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "7bb931c3429140ab40f4fdd0309be0b3c8dd952f8ae55809b85d41168b7cfabf",
+              "other": 0,
+              "position": 1
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 2,
+              "empty": 0,
+              "examples": [
+                "optimal",
+                "infeasible"
+              ],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "status",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "67aeac8456a899de3ec0171e960f79bf8927621b3075b70dc1242bd51d374661",
+              "other": 137,
+              "position": 2
+            }
+          ],
+          "distinct_limit_per_column": 100000,
+          "duplicate_header_names": false,
+          "format": "delimited",
+          "limitations": [
+            "Numeric ranges use float conversion, not semantic type inference.",
+            "Distinct values use SHA-256 identities and the declared cap.",
+            "Column fingerprints exclude ragged rows; empty fields are included.",
+            "Examples are limited to three values and 256 characters each."
+          ],
+          "ragged_rows": 0,
+          "row_count": 137
+        }
+      },
+      {
+        "bytes": 3222,
+        "download_hash_verified": true,
+        "file": "single_reaction_deletions.csv",
+        "sha256": "e2766a640076e1e2ef184112195092d91f02c7b5e7fd7d6794064fbed2963b61",
+        "structural_profile": {
+          "columns": [
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 95,
+              "empty": 0,
+              "examples": [
+                "THD2",
+                "G6PDH2r",
+                "AKGDH"
+              ],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "knockouts",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "7ad8545728fd44e9a593495a213f5cfc65f37fc98609bd21a8a70c588570bf35",
+              "other": 95,
+              "position": 0
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 44,
+              "empty": 2,
+              "examples": [
+                "0.8739215069684307",
+                "0.8638133095040009",
+                "0.8583074080226889"
+              ],
+              "finite_numeric": 93,
+              "maximum": 0.9166474637510491,
+              "minimum": -3.743396437539173e-15,
+              "name": "growth",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "6483a0b1c459519ae3382270efcbeec180c7bcf1e48157410dd818fb58204536",
+              "other": 0,
+              "position": 1
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 2,
+              "empty": 0,
+              "examples": [
+                "optimal",
+                "infeasible"
+              ],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "status",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "3c52dedfce43c835eb7c4c05d20d51f26a0e1ed72919c324d3b12e4dd137944d",
+              "other": 95,
+              "position": 2
+            }
+          ],
+          "distinct_limit_per_column": 100000,
+          "duplicate_header_names": false,
+          "format": "delimited",
+          "limitations": [
+            "Numeric ranges use float conversion, not semantic type inference.",
+            "Distinct values use SHA-256 identities and the declared cap.",
+            "Column fingerprints exclude ragged rows; empty fields are included.",
+            "Examples are limited to three values and 256 characters each."
+          ],
+          "ragged_rows": 0,
+          "row_count": 95
+        }
+      },
+      {
+        "bytes": 176807,
+        "download_hash_verified": true,
+        "file": "double_reaction_deletions.csv",
+        "sha256": "9169de53c4e3e7bacaed2393c94738d86dc24e9ae9543c7edc88b044c4b40fd7",
+        "structural_profile": {
+          "columns": [
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 4560,
+              "empty": 0,
+              "examples": [
+                "Biomass_Ecoli_core;LDH_D",
+                "ADK1;TPI",
+                "EX_for_e;EX_glc__D_e"
+              ],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "knockouts",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "6862af5bf336fba50a1b071379ad6d4e08301d8f4a63dac96d1f379dffcc587d",
+              "other": 4560,
+              "position": 0
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 1554,
+              "empty": 352,
+              "examples": [
+                "0.0",
+                "0.48197184320492087",
+                "0.8142975075325237"
+              ],
+              "finite_numeric": 4208,
+              "maximum": 0.9166474637510509,
+              "minimum": -6.792337470353887e-14,
+              "name": "growth",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "92ab220d8a56626a868998a516278407bea23416c9ab6076dad5006faf5a0cde",
+              "other": 0,
+              "position": 1
+            },
+            {
+              "distinct_capped": false,
+              "distinct_nonempty": 2,
+              "empty": 0,
+              "examples": [
+                "optimal",
+                "infeasible"
+              ],
+              "finite_numeric": 0,
+              "maximum": null,
+              "minimum": null,
+              "name": "status",
+              "nonfinite_numeric": 0,
+              "ordered_values_sha256": "3d7d275f3e43a5e436c305f41a90b2487257948b237691bf3c14a75592f42a66",
+              "other": 4560,
+              "position": 2
+            }
+          ],
+          "distinct_limit_per_column": 100000,
+          "duplicate_header_names": false,
+          "format": "delimited",
+          "limitations": [
+            "Numeric ranges use float conversion, not semantic type inference.",
+            "Distinct values use SHA-256 identities and the declared cap.",
+            "Column fingerprints exclude ragged rows; empty fields are included.",
+            "Examples are limited to three values and 256 characters each."
+          ],
+          "ragged_rows": 0,
+          "row_count": 4560
+        }
+      }
+    ],
+    "scope": "Structural observations only"
+  },
+  "reference_seconds": 600,
+  "repeatability": {
+    "all_output_differences_limited_to_table_serialization_or_row_order": false,
+    "all_outputs_byte_identical_to_original": false,
+    "cleanup_verified": true,
+    "comparison_rules_validated": false,
+    "construction_run": false,
+    "finished": 1793140960.023336,
+    "limitations": "Finite repeated runs, not a grading contract or portability proof. Fresh processes/workspaces share the rebuilt environment and caches; base image tag is reused, not an immutable image digest.",
+    "model_calls": 0,
+    "output_observations": [
+      [
+        {
+          "baseline_sha256": "576e00fe2d6a9326312503ad0306b7951256e4f9cd2b2b53ccfb1bec12765ef8",
+          "byte_identical": false,
+          "path": "single_gene_deletions.csv",
+          "replay_sha256": "4f48c948341be6a630ab1e92433bdf4b49adddbd5820fd4804f53775131f5398",
+          "table_observation": {
+            "baseline": {
+              "header": [
+                "knockouts",
+                "growth",
+                "status"
+              ],
+              "row_multiset_sha256_sum": "58b310f87056bc9142a7a63d1a7bdf75ec7de6df0bff3218c98c29f885d9bb00",
+              "rows": 137
+            },
+            "replay": {
+              "header": [
+                "knockouts",
+                "growth",
+                "status"
+              ],
+              "row_multiset_sha256_sum": "90fe7668e256220913f97965edb016b73b26acdbd24b02bb001a392a4793d19c",
+              "rows": 137
+            },
+            "same_header_and_row_multiset": false,
+            "scientific_equivalence_established": false
+          }
+        },
+        {
+          "baseline_sha256": "e2766a640076e1e2ef184112195092d91f02c7b5e7fd7d6794064fbed2963b61",
+          "byte_identical": false,
+          "path": "single_reaction_deletions.csv",
+          "replay_sha256": "6875df79e55bced6ddd4ec4a922e55635a385da02d9de125909f5e0f636c9856",
+          "table_observation": {
+            "baseline": {
+              "header": [
+                "knockouts",
+                "growth",
+                "status"
+              ],
+              "row_multiset_sha256_sum": "c97ee744b264b369ce811d6684b24f75df901cb039edb99e039b5cfb682ad891",
+              "rows": 95
+            },
+            "replay": {
+              "header": [
+                "knockouts",
+                "growth",
+                "status"
+              ],
+              "row_multiset_sha256_sum": "75ec0ee6b5527d3bccff45c76bc33d186feb87c96c35dcc29879076fbf4a6901",
+              "rows": 95
+            },
+            "same_header_and_row_multiset": false,
+            "scientific_equivalence_established": false
+          }
+        },
+        {
+          "baseline_sha256": "9169de53c4e3e7bacaed2393c94738d86dc24e9ae9543c7edc88b044c4b40fd7",
+          "byte_identical": false,
+          "path": "double_reaction_deletions.csv",
+          "replay_sha256": "4c685a5b459d9b9e735f1e33809df7439ee266573513245cf2c09a11d20845c3",
+          "table_observation": {
+            "baseline": {
+              "header": [
+                "knockouts",
+                "growth",
+                "status"
+              ],
+              "row_multiset_sha256_sum": "e162ce7a3d83e0b6d8d602feccd1237925e0c0820a42a484c843dbfc43cbf293",
+              "rows": 4560
+            },
+            "replay": {
+              "header": [
+                "knockouts",
+                "growth",
+                "status"
+              ],
+              "row_multiset_sha256_sum": "cfb8362615b1c445ef521ee41eb6a9b0c79d2018d63974cee3c625d2017827d3",
+              "rows": 4560
+            },
+            "same_header_and_row_multiset": false,
+            "scientific_equivalence_established": false
+          }
+        }
+      ],
+      [
+        {
+          "baseline_sha256": "576e00fe2d6a9326312503ad0306b7951256e4f9cd2b2b53ccfb1bec12765ef8",
+          "byte_identical": false,
+          "path": "single_gene_deletions.csv",
+          "replay_sha256": "60a979d5e30da44830e53b2c7274f70037f6a22ca0d5777020fcfae8828f0315",
+          "table_observation": {
+            "baseline": {
+              "header": [
+                "knockouts",
+                "growth",
+                "status"
+              ],
+              "row_multiset_sha256_sum": "58b310f87056bc9142a7a63d1a7bdf75ec7de6df0bff3218c98c29f885d9bb00",
+              "rows": 137
+            },
+            "replay": {
+              "header": [
+                "knockouts",
+                "growth",
+                "status"
+              ],
+              "row_multiset_sha256_sum": "c5828c5957f866569349139d6a1ece30f52a194d15d1a49e2ec20910ab476afb",
+              "rows": 137
+            },
+            "same_header_and_row_multiset": false,
+            "scientific_equivalence_established": false
+          }
+        },
+        {
+          "baseline_sha256": "e2766a640076e1e2ef184112195092d91f02c7b5e7fd7d6794064fbed2963b61",
+          "byte_identical": false,
+          "path": "single_reaction_deletions.csv",
+          "replay_sha256": "30a987bac3e06ac76bebe5e83cfa4b0e4a6e885a537c29d3858553ef902d2358",
+          "table_observation": {
+            "baseline": {
+              "header": [
+                "knockouts",
+                "growth",
+                "status"
+              ],
+              "row_multiset_sha256_sum": "c97ee744b264b369ce811d6684b24f75df901cb039edb99e039b5cfb682ad891",
+              "rows": 95
+            },
+            "replay": {
+              "header": [
+                "knockouts",
+                "growth",
+                "status"
+              ],
+              "row_multiset_sha256_sum": "461922efb95f9069acc93dd866ac2dc09c5ad570e42e8dc0fd84ed65acbae5f7",
+              "rows": 95
+            },
+            "same_header_and_row_multiset": false,
+            "scientific_equivalence_established": false
+          }
+        },
+        {
+          "baseline_sha256": "9169de53c4e3e7bacaed2393c94738d86dc24e9ae9543c7edc88b044c4b40fd7",
+          "byte_identical": false,
+          "path": "double_reaction_deletions.csv",
+          "replay_sha256": "373cb5692f2edfcc4de7a2ecea431c4c205581189c23267599c7d070f325220d",
+          "table_observation": {
+            "baseline": {
+              "header": [
+                "knockouts",
+                "growth",
+                "status"
+              ],
+              "row_multiset_sha256_sum": "e162ce7a3d83e0b6d8d602feccd1237925e0c0820a42a484c843dbfc43cbf293",
+              "rows": 4560
+            },
+            "replay": {
+              "header": [
+                "knockouts",
+                "growth",
+                "status"
+              ],
+              "row_multiset_sha256_sum": "e5b87e32c6420b10106fdf024962d14fc724ab7d262a82208ad948a7a1b6e32e",
+              "rows": 4560
+            },
+            "same_header_and_row_multiset": false,
+            "scientific_equivalence_established": false
+          }
+        }
+      ]
+    ],
+    "reference_tests": 2,
+    "semantic_fidelity_validated": false,
+    "solver_run": false,
+    "started": 1793140870.0404513,
+    "status": "repeatability_observed_requires_comparison_review"
+  },
+  "source_evidence": {
+    "candidate/dependency-exclusions.json": "{\"files\": []}\n",
+    "candidate/pyproject.toml": "[project]\nname = \"cobrapy-deletions-setup\"\nversion = \"0.1.0\"\nrequires-python = \">=3.13\"\ndependencies = [\n  \"cobra==0.32.1\",\n]\n",
+    "inputs/exports.py": "import os as _export_os\nimport pandas as _export_pd\n\n_export_dir = \"/work/outputs\"\n_export_os.makedirs(_export_dir, exist_ok=True)\n\n\ndef _format_knockout_ids(knockout_ids):\n    if isinstance(knockout_ids, (set, frozenset, list, tuple)):\n        return \";\".join(sorted(str(identifier) for identifier in knockout_ids))\n    return str(knockout_ids)\n\n\ndef _write_deletion_results(frame, filename):\n    export_frame = frame.copy()\n    if \"ids\" in export_frame.columns:\n        labels = [\n            _format_knockout_ids(value)\n            for value in export_frame[\"ids\"].tolist()\n        ]\n        export_frame = export_frame.drop(columns=\"ids\")\n    else:\n        labels = [\n            _format_knockout_ids(value)\n            for value in export_frame.index.tolist()\n        ]\n    export_frame.index = _export_pd.Index(labels, name=\"knockouts\")\n    export_frame.to_csv(_export_os.path.join(_export_dir, filename))\n\n\n_write_deletion_results(deletion_results, \"single_gene_deletions.csv\")\n_write_deletion_results(single, \"single_reaction_deletions.csv\")\n_write_deletion_results(double, \"double_reaction_deletions.csv\")",
+    "inputs/original.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3 (ipykernel)\n#     language: python\n#     name: python3\n# ---\n\n# # Simulating Deletions\n\nimport pandas\nfrom time import time\n\nfrom cobra.io import load_model\nfrom cobra.flux_analysis import (\n    single_gene_deletion, single_reaction_deletion, double_gene_deletion,\n    double_reaction_deletion)\n\ncobra_model = load_model(\"textbook\")\necoli_model = load_model(\"iJO1366\")\n\n# ## Knocking out single genes and reactions\n\n# A commonly asked question when analyzing metabolic models is what will happen if a certain reaction was not allowed to have any flux at all. This can tested using cobrapy by\n\nprint('complete model: ', cobra_model.optimize())\nwith cobra_model:\n    cobra_model.reactions.PFK.knock_out()\n    print('pfk knocked out: ', cobra_model.optimize())\n\n# For evaluating genetic manipulation strategies, it is more interesting to examine what happens if given genes are knocked out as doing so can affect no reactions in case of redundancy, or more reactions if gene when is participating in more than one reaction.\n\nprint('complete model: ', cobra_model.optimize())\nwith cobra_model:\n    cobra_model.genes.b1723.knock_out()\n    print('pfkA knocked out: ', cobra_model.optimize())\n    cobra_model.genes.b3916.knock_out()\n    print('pfkB knocked out: ', cobra_model.optimize())\n\n# ## Single Deletions\n\n# Perform all single gene deletions on a model\n\ndeletion_results = single_gene_deletion(cobra_model)\n\n# These can also be done for only a subset of genes\n\nsingle_gene_deletion(cobra_model, cobra_model.genes[:20])\n\n# This can also be done for reactions\n\nsingle_reaction_deletion(cobra_model, cobra_model.reactions[:20])\n\n# ## Double Deletions\n\n# Double deletions run in a similar way.\n\ndouble_gene_deletion(\n    cobra_model, cobra_model.genes[-5:]).round(4)\n\n# By default, the double deletion function will automatically use multiprocessing, splitting the task over up to 4 cores if they are available. The number of cores can be manually specified as well. Setting use of a single core will disable use of the multiprocessing library, which often aids debugging.\n\nstart = time()  # start timer()\ndouble_gene_deletion(\n    ecoli_model, ecoli_model.genes[:25], processes=2)\nt1 = time() - start\nprint(\"Double gene deletions for 200 genes completed in \"\n      \"%.2f sec with 2 cores\" % t1)\n\nstart = time()  # start timer()\ndouble_gene_deletion(\n    ecoli_model, ecoli_model.genes[:25], processes=1)\nt2 = time() - start\nprint(\"Double gene deletions for 200 genes completed in \"\n      \"%.2f sec with 1 core\" % t2)\n\nprint(\"Speedup of %.2fx\" % (t2 / t1))\n\n# Double deletions can also be run for reactions.\n\ndouble_reaction_deletion(\n    cobra_model, cobra_model.reactions[2:7]).round(4)\n\n# ## Accessing individual deletion results\n#\n# Note that the indices for deletions are python [set](https://docs.python.org/3.8/library/stdtypes.html#set-types-set-frozenset) objects. This is the appropriate type since the order of deletions does not matter. Deleting reaction 1 and reaction 2 will have the same effect as deleting reaction 2 and reaction 1. \n#\n# To make it easier to access results all DataFrames returned by COBRAPpy deletion functions have a `knockout` indexer that makes that a bit simpler. Each entry in the indexer is treated as a single deletion entry. So you need to pass sets for double deletions.\n\nsingle = single_reaction_deletion(cobra_model)\ndouble = double_reaction_deletion(cobra_model)\n\nprint(single.knockout[\"ATPM\"])\nprint(double.knockout[{\"ATPM\", \"TKT1\"}])\n\n# This can be used to get several deletions at once and will also work for Reaction or Gene objects (depending on what you deleted) directly.\n\natpm = cobra_model.reactions.ATPM\ntkt1 = cobra_model.reactions.TKT1\npfk = cobra_model.reactions.PFK\n\nprint(single.knockout[atpm, tkt1, pfk])\nprint(double.knockout[{atpm, tkt1}, {atpm, pfk}, {atpm}])\n\n\n\n",
+    "inputs/plan.json": "{\n  \"artifacts\": [\n    {\n      \"description\": \"Growth rates for all single gene knockouts of the complete textbook model.\",\n      \"path\": \"single_gene_deletions.csv\",\n      \"source_evidence\": \"Produced by `deletion_results = single_gene_deletion(cobra_model)` under '## Single Deletions' with the narrative 'Perform all single gene deletions on a model'. It is the whole-model gene deletion outcome the notebook uses to discuss how gene knockouts affect growth via redundancy.\"\n    },\n    {\n      \"description\": \"Growth rates for all single reaction knockouts of the complete textbook model.\",\n      \"path\": \"single_reaction_deletions.csv\",\n      \"source_evidence\": \"Held in `single` from the '## Accessing individual deletion results' section (`single = single_reaction_deletion(cobra_model)`), whose individual entries (e.g. `single.knockout[ATPM]`) the notebook explicitly prints and interprets as findings.\"\n    },\n    {\n      \"description\": \"Growth rates for all pairwise reaction knockouts of the complete textbook model.\",\n      \"path\": \"double_reaction_deletions.csv\",\n      \"source_evidence\": \"Held in `double` from the '## Accessing individual deletion results' section (`double = double_reaction_deletion(cobra_model)`), whose entries such as `double.knockout[{ATPM, TKT1}]` are printed and interpreted as the notebook's final demonstration of deletion-effect analysis.\"\n    }\n  ],\n  \"disposition\": \"prepare\",\n  \"excluded_outputs\": [\n    \"Scientific non-target (timing diagnostic): the i JO1366 double gene deletion runs with `processes=2` and `processes=1`, with `t1`, `t2` and the printed speedup. The narrative frames these exclusively as a multiprocessing benchmark ('Speedup of %.2fx'), not as interpreted deletion findings.\",\n    \"Scientific non-target (API demonstrations, not stored): the subset deletion calls `single_gene_deletion(cobra_model, cobra_model.genes[:20])`, `single_reaction_deletion(cobra_model, cobra_model.reactions[:20])`, `double_gene_deletion(cobra_model, cobra_model.genes[-5:]).round(4)` and `double_reaction_deletion(cobra_model, cobra_model.reactions[2:7]).round(4)`. These are display-only illustrations of the same functions on smaller subsets; the complete-model results covering them are exported above.\",\n    \"Endpoint unavailable for append-only export (printed demonstration values): the knocked-out model growth rates shown by `print('pfk knocked out: ', cobra_model.optimize())` and the pfkA/pfkB prints inside `with cobra_model:` blocks. These optimum values exist only transiently inside the context-managed prints; the with-blocks restore the wild-type model and no variable holds the knocked-out optima at completion. Capturing them would require storing results inside the original `with` blocks or re-running the knockouts, which this append-only step may not do. Recovery would need to record the optimize() return values within those original context blocks in the source script.\"\n  ],\n  \"explanation\": \"The notebook's terminal scientific products are the systematic in-silico deletion results for the complete textbook model: all single gene deletions (`deletion_results`), all single reaction deletions (`single`), and all double reaction deletions (`double`), which the narrative interprets via growth values and the `knockout` indexer. These three DataFrames still hold their values at script completion. The appended code copies each stored DataFrame, serializes the frozenset/set deletion indices into a deterministic 'knockouts' identifier string, and writes each table to CSV under /work/outputs using pandas' native writer. No analysis is recomputed or altered. The e coli double-deletion runs are multiprocessing timing benchmarks, and the subset/printed knockout examples are API demonstrations, not independent endpoints.\",\n  \"export_code\": \"import os as _export_os\\nimport pandas as _export_pd\\n\\n_export_dir = \\\"/work/outputs\\\"\\n_export_os.makedirs(_export_dir, exist_ok=True)\\n\\n\\ndef _format_knockout_ids(knockout_ids):\\n    if isinstance(knockout_ids, (set, frozenset, list, tuple)):\\n        return \\\";\\\".join(sorted(str(identifier) for identifier in knockout_ids))\\n    return str(knockout_ids)\\n\\n\\ndef _write_deletion_results(frame, filename):\\n    export_frame = frame.copy()\\n    if \\\"ids\\\" in export_frame.columns:\\n        labels = [\\n            _format_knockout_ids(value)\\n            for value in export_frame[\\\"ids\\\"].tolist()\\n        ]\\n        export_frame = export_frame.drop(columns=\\\"ids\\\")\\n    else:\\n        labels = [\\n            _format_knockout_ids(value)\\n            for value in export_frame.index.tolist()\\n        ]\\n    export_frame.index = _export_pd.Index(labels, name=\\\"knockouts\\\")\\n    export_frame.to_csv(_export_os.path.join(_export_dir, filename))\\n\\n\\n_write_deletion_results(deletion_results, \\\"single_gene_deletions.csv\\\")\\n_write_deletion_results(single, \\\"single_reaction_deletions.csv\\\")\\n_write_deletion_results(double, \\\"double_reaction_deletions.csv\\\")\",\n  \"unresolved_assumptions\": [\n    \"The exact column set of the deletion DataFrames (e.g. whether a 'status' column is present alongside 'growth') depends on the cobrapy version resolved at execution; the export writes the stored frames whole, including any such columns, without assuming a specific schema.\",\n    \"The deletion index entries are assumed to be iterables of gene/reaction identifiers (sets/frozensets), as documented in the notebook; if a version returns plain-string indices, the identifier-joining helper would need adjustment.\",\n    \"Whether `double_reaction_deletion(cobra_model)` completes within the 600 s CPU-only reference limit is untested here.\"\n  ]\n}\n",
+    "outcome.json": "{\n  \"dependency_asset_review\": \"Reviewed the dependency_assets catalog from the successful second reference test (6726 installed files inspected, 2372 candidates across 31 distributions). All priority matches were packaged test/example files whose only overlap with the source's import names are generic terms (\\\"io\\\", \\\"time\\\", \\\"pandas\\\") in their filenames, not scientific answers; none contain this analysis's deletion results. Grep checks across installed site-packages for this analysis's distinctive values (0.8739, b1723, ATPM, TKT1, textbook) found matches only in: (1) cobra/data/textbook.xml.gz and cobra/data/mini.json / cobra core modules \\u2014 the required model inputs loaded by the unchanged source and library code, which must not be removed; (2) sympy physics test_kane.py, an unrelated mechanics test whose generic numeric overlap is coincidental and contains no deletion results. cobra's data directory holds model SBML inputs (required by load_model), not answers. No distribution was found to be a dedicated test distribution for this task and no unused answer asset was established, so dependency-exclusions.json declares an empty file list.\",\n  \"disposition\": \"tested\",\n  \"explanation\": \"The cobrapy deletions notebook runs fully offline and reproducibly. Key finding: in cobra 0.32.1, load_model() first consults the local \\\"Cobrapy\\\" package-data repository (cobra.io.web.cobrapy_repository), which bundles both models this notebook needs (cobra/data/textbook.xml.gz and cobra/data/iJO1366.xml.gz), so no network access or external input staging is required. Shared libraries needed by the wheel stack (python-libsbml requires libexpat.so.1; swiglpk requires libglpk.so.40 and libgomp.so.1) are declared in system-packages.json. The first controlled reference dispatch executed the entire analysis successfully but the appended export code failed on the frozenset-to-string serialization in single_gene_deletions.csv (TypeError: 'int' object is not iterable); that analysis-completing exception consumed the one unused validation repair for the exports. The second dispatch completed with exit 0 and produced all three declared CSVs: single_gene_deletions.csv (4528 B), single_reaction_deletions.csv (3222 B), double_reaction_deletions.csv (176807 B), with full double-reaction deletion of the textbook model (2583 pairs) finishing in ~12 s total runtime. Observed execution output matches published cobrapy documentation values (growth 0.874 complete, 0.704 PFK knockout, ATPM 0.916647, {ATPM,TKT1} 0.90584, {ATPM,PFK} 0.704037), confirming the original computations, parameters, seeds-free FBA solving, and all branches ran unmodified.\",\n  \"source_adaptations\": [],\n  \"unresolved_assumptions\": [\n    \"Deletion DataFrame row values for genes/reactions are only lexicographically verified by the exported CSVs; the growth numerical values are cross-checked against this test's observed stdout and published cobrapy documentation examples, not against an independent rerun.\",\n    \"The relative timing speedup print (t2/t1) is nondeterministic between runs by design (multiprocessing benchmark); this affects only the excluded timing diagnostic, not exported results.\",\n    \"Later fresh-sandbox replay and independent scientific review remain necessary to confirm no other inherited state (e.g., the already-updated apt indexes in the setup sandbox) affects the clean build.\"\n  ]\n}\n",
+    "trial/dependency-assets-summary.json": "{\n  \"candidate_files\": 2372,\n  \"distribution_coverage\": [\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"annotated-types\",\n      \"installed_regular_files_inspected\": 9\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"anyio\",\n      \"installed_regular_files_inspected\": 55\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"appdirs\",\n      \"installed_regular_files_inspected\": 8\n    },\n    {\n      \"candidate_files\": 2,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"certifi\",\n      \"installed_regular_files_inspected\": 14\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"cobra\",\n      \"installed_regular_files_inspected\": 86\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"depinfo\",\n      \"installed_regular_files_inspected\": 28\n    },\n    {\n      \"candidate_files\": 22,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"future\",\n      \"installed_regular_files_inspected\": 219\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"h11\",\n      \"installed_regular_files_inspected\": 19\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"httpcore\",\n      \"installed_regular_files_inspected\": 38\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"httpx\",\n      \"installed_regular_files_inspected\": 31\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"idna\",\n      \"installed_regular_files_inspected\": 18\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"markdown-it-py\",\n      \"installed_regular_files_inspected\": 76\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"mdurl\",\n      \"installed_regular_files_inspected\": 13\n    },\n    {\n      \"candidate_files\": 36,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"mpmath\",\n      \"installed_regular_files_inspected\": 94\n    },\n    {\n      \"candidate_files\": 493,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"numpy\",\n      \"installed_regular_files_inspected\": 928\n    },\n    {\n      \"candidate_files\": 21,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"optlang\",\n      \"installed_regular_files_inspected\": 47\n    },\n    {\n      \"candidate_files\": 1116,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pandas\",\n      \"installed_regular_files_inspected\": 1515\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pydantic\",\n      \"installed_regular_files_inspected\": 113\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pydantic_core\",\n      \"installed_regular_files_inspected\": 13\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"Pygments\",\n      \"installed_regular_files_inspected\": 351\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"python-dateutil\",\n      \"installed_regular_files_inspected\": 29\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"python-libsbml\",\n      \"installed_regular_files_inspected\": 10\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"pytz\",\n      \"installed_regular_files_inspected\": 618\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"rich\",\n      \"installed_regular_files_inspected\": 107\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"ruamel.yaml\",\n      \"installed_regular_files_inspected\": 41\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"six\",\n      \"installed_regular_files_inspected\": 8\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"swiglpk\",\n      \"installed_regular_files_inspected\": 14\n    },\n    {\n      \"candidate_files\": 682,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"sympy\",\n      \"installed_regular_files_inspected\": 1571\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"typing-inspection\",\n      \"installed_regular_files_inspected\": 11\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"typing_extensions\",\n      \"installed_regular_files_inspected\": 7\n    },\n    {\n      \"candidate_files\": 0,\n      \"dedicated_test_distribution_hint\": false,\n      \"distribution\": \"tzdata\",\n      \"installed_regular_files_inspected\": 635\n    }\n  ],\n  \"installed_files_inspected\": 6726,\n  \"priority_matches\": [\n    {\n      \"bytes\": 106044,\n      \"distribution\": \"numpy\",\n      \"eligible_for_declared_removal\": true,\n      \"matches\": [],\n      \"packaged_test_or_example\": true,\n      \"path\": \"numpy/lib/tests/test_io.py\",\n      \"sha256\": \"241ac332374da2f05191969ff24054cf7ff029dea39b7dfc71fb75d75bd00c46\",\n      \"source_import_group_matches\": [],\n      \"source_import_matches\": [\n        \"io\"\n      ]\n    },\n    {\n      \"bytes\": 3869,\n      \"distribution\": \"optlang\",\n      \"eligible_for_declared_removal\": true,\n      \"matches\": [],\n      \"packaged_test_or_example\": true,\n      \"path\": \"optlang/tests/test_io.py\",\n      \"sha256\": \"9197fd79bed180226c1ededd14b9ccfb8427d2fbdc0b5e07e7e5ae31520f14e1\",\n      \"source_import_group_matches\": [],\n      \"source_import_matches\": [\n        \"io\"\n      ]\n    },\n    {\n      \"bytes\": 1475,\n      \"distribution\": \"pandas\",\n      \"eligible_for_declared_removal\": true,\n      \"matches\": [],\n      \"packaged_test_or_example\": true,\n      \"path\": \"pandas/tests/extension/base/io.py\",\n      \"sha256\": \"48dbc26ba2d7a3ee15f76066e80d5164f5f07c376ede14d62e37bcfc3dd7c28f\",\n      \"source_import_group_matches\": [],\n      \"source_import_matches\": [\n        \"io\"\n      ]\n    },\n    {\n      \"bytes\": 4708,\n      \"distribution\": \"pandas\",\n      \"eligible_for_declared_removal\": true,\n      \"matches\": [],\n      \"packaged_test_or_example\": true,\n      \"path\": \"pandas/tests/frame/methods/test_at_time.py\",\n      \"sha256\": \"26b4181653482325b5c43be098613bcd17e35e798a3042e1f52b62c346ed19b3\",\n      \"source_import_group_matches\": [],\n      \"source_import_matches\": [\n        \"time\"\n      ]\n    },\n    {\n      \"bytes\": 8083,\n      \"distribution\": \"pandas\",\n      \"eligible_for_declared_removal\": true,\n      \"matches\": [],\n      \"packaged_test_or_example\": true,\n      \"path\": \"pandas/tests/frame/methods/test_between_time.py\",\n      \"sha256\": \"ac3fa4d5ae0b54e6be9cc94b5ce6993bb8936b784bfc2f6d821aadf03596d10b\",\n      \"source_import_group_matches\": [],\n      \"source_import_matches\": [\n        \"time\"\n      ]\n    },\n    {\n      \"bytes\": 77668,\n      \"distribution\": \"pandas\",\n      \"eligible_for_declared_removal\": true,\n      \"matches\": [],\n      \"packaged_test_or_example\": true,\n      \"path\": \"pandas/tests/io/json/test_pandas.py\",\n      \"sha256\": \"3e3eec15301b451c1a9acf152d111453bfd48b71928337ba848f8ae766046d4f\",\n      \"source_import_group_matches\": [],\n      \"source_import_matches\": [\n        \"pandas\"\n      ]\n    },\n    {\n      \"bytes\": 2481,\n      \"distribution\": \"pandas\",\n      \"eligible_for_declared_removal\": true,\n      \"matches\": [],\n      \"packaged_test_or_example\": true,\n      \"path\": \"pandas/tests/io/pytables/test_time_series.py\",\n      \"sha256\": \"85dbb0f86301bda87264787a255acb2abc6f537351d2f9747164d66a6960670e\",\n      \"source_import_group_matches\": [],\n      \"source_import_matches\": [\n        \"time\"\n      ]\n    },\n    {\n      \"bytes\": 11832,\n      \"distribution\": \"pandas\",\n      \"eligible_for_declared_removal\": true,\n      \"matches\": [],\n      \"packaged_test_or_example\": true,\n      \"path\": \"pandas/tests/resample/test_time_grouper.py\",\n      \"sha256\": \"4fc3be2bade4e57cc4083fbab410ecaa4cc29d56fe711fd7d1dfc72993c33aeb\",\n      \"source_import_group_matches\": [],\n      \"source_import_matches\": [\n        \"time\"\n      ]\n    },\n    {\n      \"bytes\": 2417,\n      \"distribution\": \"pandas\",\n      \"eligible_for_declared_removal\": true,\n      \"matches\": [],\n      \"packaged_test_or_example\": true,\n      \"path\": \"pandas/tests/tools/test_to_time.py\",\n      \"sha256\": \"7be4261aee6701ef5c953f27f5b75ae5a1301c11f865a5ea073b39fa62963184\",\n      \"source_import_group_matches\": [],\n      \"source_import_matches\": [\n        \"time\"\n      ]\n    }\n  ],\n  \"scope\": \"Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit.\",\n  \"source_import_terms\": [\n    \"double_gene_deletion\",\n    \"double_reaction_deletion\",\n    \"flux_analysis\",\n    \"io\",\n    \"load_model\",\n    \"pandas\",\n    \"single_gene_deletion\",\n    \"single_reaction_deletion\",\n    \"time\"\n  ]\n}\n",
+    "trial/dependency-exclusions-applied.json": "{\n  \"files\": [],\n  \"excluded_files_absent\": true\n}\n",
+    "trial/environment.txt": "annotated-types==0.8.0\nanyio==4.15.1\nappdirs==1.4.4\ncertifi==2026.10.23\ncobra==0.32.1\ndepinfo==2.2.0\nfuture==1.0.0\nh11==0.16.0\nhttpcore==1.0.9\nhttpx==0.28.1\nidna==3.20\nmarkdown-it-py==4.2.0\nmdurl==0.1.2\nmpmath==1.3.0\nnumpy==2.5.4\noptlang==1.9.1\npandas==2.3.3\npydantic==2.14.1\npydantic-core==2.50.1\npygments==2.21.0\npython-dateutil==3.0.0\npython-libsbml==5.21.2\npytz==2026.5\nrich==15.0.0\nruamel-yaml==0.19.1\nsix==1.17.0\nswiglpk==5.0.13\nsympy==1.14.0\ntyping-extensions==4.16.0\ntyping-inspection==0.4.4\ntzdata==2026.5\n",
+    "trial/source.diff": ""
+  },
+  "source_operations": {
+    "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+    "operations": [
+      {
+        "column": 14,
+        "end_column": 36,
+        "end_line": 25,
+        "function": "load_model",
+        "id": "call-25-14",
+        "line": 25,
+        "source": "load_model(\"textbook\")"
+      },
+      {
+        "column": 14,
+        "end_column": 35,
+        "end_line": 26,
+        "function": "load_model",
+        "id": "call-26-14",
+        "line": 26,
+        "source": "load_model(\"iJO1366\")"
+      },
+      {
+        "column": 0,
+        "end_column": 49,
+        "end_line": 32,
+        "function": "print",
+        "id": "call-32-0",
+        "line": 32,
+        "source": "print('complete model: ', cobra_model.optimize())"
+      },
+      {
+        "column": 26,
+        "end_column": 48,
+        "end_line": 32,
+        "function": "cobra_model.optimize",
+        "id": "call-32-26",
+        "line": 32,
+        "source": "cobra_model.optimize()"
+      },
+      {
+        "column": 4,
+        "end_column": 41,
+        "end_line": 34,
+        "function": "cobra_model.reactions.PFK.knock_out",
+        "id": "call-34-4",
+        "line": 34,
+        "source": "cobra_model.reactions.PFK.knock_out()"
+      },
+      {
+        "column": 4,
+        "end_column": 54,
+        "end_line": 35,
+        "function": "print",
+        "id": "call-35-4",
+        "line": 35,
+        "source": "print('pfk knocked out: ', cobra_model.optimize())"
+      },
+      {
+        "column": 31,
+        "end_column": 53,
+        "end_line": 35,
+        "function": "cobra_model.optimize",
+        "id": "call-35-31",
+        "line": 35,
+        "source": "cobra_model.optimize()"
+      },
+      {
+        "column": 0,
+        "end_column": 49,
+        "end_line": 39,
+        "function": "print",
+        "id": "call-39-0",
+        "line": 39,
+        "source": "print('complete model: ', cobra_model.optimize())"
+      },
+      {
+        "column": 26,
+        "end_column": 48,
+        "end_line": 39,
+        "function": "cobra_model.optimize",
+        "id": "call-39-26",
+        "line": 39,
+        "source": "cobra_model.optimize()"
+      },
+      {
+        "column": 4,
+        "end_column": 39,
+        "end_line": 41,
+        "function": "cobra_model.genes.b1723.knock_out",
+        "id": "call-41-4",
+        "line": 41,
+        "source": "cobra_model.genes.b1723.knock_out()"
+      },
+      {
+        "column": 4,
+        "end_column": 55,
+        "end_line": 42,
+        "function": "print",
+        "id": "call-42-4",
+        "line": 42,
+        "source": "print('pfkA knocked out: ', cobra_model.optimize())"
+      },
+      {
+        "column": 32,
+        "end_column": 54,
+        "end_line": 42,
+        "function": "cobra_model.optimize",
+        "id": "call-42-32",
+        "line": 42,
+        "source": "cobra_model.optimize()"
+      },
+      {
+        "column": 4,
+        "end_column": 39,
+        "end_line": 43,
+        "function": "cobra_model.genes.b3916.knock_out",
+        "id": "call-43-4",
+        "line": 43,
+        "source": "cobra_model.genes.b3916.knock_out()"
+      },
+      {
+        "column": 4,
+        "end_column": 55,
+        "end_line": 44,
+        "function": "print",
+        "id": "call-44-4",
+        "line": 44,
+        "source": "print('pfkB knocked out: ', cobra_model.optimize())"
+      },
+      {
+        "column": 32,
+        "end_column": 54,
+        "end_line": 44,
+        "function": "cobra_model.optimize",
+        "id": "call-44-32",
+        "line": 44,
+        "source": "cobra_model.optimize()"
+      },
+      {
+        "column": 19,
+        "end_column": 52,
+        "end_line": 50,
+        "function": "single_gene_deletion",
+        "id": "call-50-19",
+        "line": 50,
+        "source": "single_gene_deletion(cobra_model)"
+      },
+      {
+        "column": 0,
+        "end_column": 57,
+        "end_line": 54,
+        "function": "single_gene_deletion",
+        "id": "call-54-0",
+        "line": 54,
+        "source": "single_gene_deletion(cobra_model, cobra_model.genes[:20])"
+      },
+      {
+        "column": 0,
+        "end_column": 65,
+        "end_line": 58,
+        "function": "single_reaction_deletion",
+        "id": "call-58-0",
+        "line": 58,
+        "source": "single_reaction_deletion(cobra_model, cobra_model.reactions[:20])"
+      },
+      {
+        "column": 0,
+        "end_column": 40,
+        "end_line": 65,
+        "function": "double_gene_deletion",
+        "id": "call-64-0-to-65-40",
+        "line": 64,
+        "source": "double_gene_deletion(\n    cobra_model, cobra_model.genes[-5:])"
+      },
+      {
+        "column": 0,
+        "end_column": 49,
+        "end_line": 65,
+        "function": "double_gene_deletion(cobra_model, cobra_model.genes[-5:]).round",
+        "id": "call-64-0-to-65-49",
+        "line": 64,
+        "source": "double_gene_deletion(\n    cobra_model, cobra_model.genes[-5:]).round(4)"
+      },
+      {
+        "column": 8,
+        "end_column": 14,
+        "end_line": 69,
+        "function": "time",
+        "id": "call-69-8",
+        "line": 69,
+        "source": "time()"
+      },
+      {
+        "column": 0,
+        "end_column": 53,
+        "end_line": 71,
+        "function": "double_gene_deletion",
+        "id": "call-70-0",
+        "line": 70,
+        "source": "double_gene_deletion(\n    ecoli_model, ecoli_model.genes[:25], processes=2)"
+      },
+      {
+        "column": 5,
+        "end_column": 11,
+        "end_line": 72,
+        "function": "time",
+        "id": "call-72-5",
+        "line": 72,
+        "source": "time()"
+      },
+      {
+        "column": 0,
+        "end_column": 35,
+        "end_line": 74,
+        "function": "print",
+        "id": "call-73-0",
+        "line": 73,
+        "source": "print(\"Double gene deletions for 200 genes completed in \"\n      \"%.2f sec with 2 cores\" % t1)"
+      },
+      {
+        "column": 8,
+        "end_column": 14,
+        "end_line": 76,
+        "function": "time",
+        "id": "call-76-8",
+        "line": 76,
+        "source": "time()"
+      },
+      {
+        "column": 0,
+        "end_column": 53,
+        "end_line": 78,
+        "function": "double_gene_deletion",
+        "id": "call-77-0",
+        "line": 77,
+        "source": "double_gene_deletion(\n    ecoli_model, ecoli_model.genes[:25], processes=1)"
+      },
+      {
+        "column": 5,
+        "end_column": 11,
+        "end_line": 79,
+        "function": "time",
+        "id": "call-79-5",
+        "line": 79,
+        "source": "time()"
+      },
+      {
+        "column": 0,
+        "end_column": 34,
+        "end_line": 81,
+        "function": "print",
+        "id": "call-80-0",
+        "line": 80,
+        "source": "print(\"Double gene deletions for 200 genes completed in \"\n      \"%.2f sec with 1 core\" % t2)"
+      },
+      {
+        "column": 0,
+        "end_column": 37,
+        "end_line": 83,
+        "function": "print",
+        "id": "call-83-0",
+        "line": 83,
+        "source": "print(\"Speedup of %.2fx\" % (t2 / t1))"
+      },
+      {
+        "column": 0,
+        "end_column": 44,
+        "end_line": 88,
+        "function": "double_reaction_deletion",
+        "id": "call-87-0-to-88-44",
+        "line": 87,
+        "source": "double_reaction_deletion(\n    cobra_model, cobra_model.reactions[2:7])"
+      },
+      {
+        "column": 0,
+        "end_column": 53,
+        "end_line": 88,
+        "function": "double_reaction_deletion(cobra_model, cobra_model.reactions[2:7]).round",
+        "id": "call-87-0-to-88-53",
+        "line": 87,
+        "source": "double_reaction_deletion(\n    cobra_model, cobra_model.reactions[2:7]).round(4)"
+      },
+      {
+        "column": 9,
+        "end_column": 46,
+        "end_line": 96,
+        "function": "single_reaction_deletion",
+        "id": "call-96-9",
+        "line": 96,
+        "source": "single_reaction_deletion(cobra_model)"
+      },
+      {
+        "column": 9,
+        "end_column": 46,
+        "end_line": 97,
+        "function": "double_reaction_deletion",
+        "id": "call-97-9",
+        "line": 97,
+        "source": "double_reaction_deletion(cobra_model)"
+      },
+      {
+        "column": 0,
+        "end_column": 30,
+        "end_line": 99,
+        "function": "print",
+        "id": "call-99-0",
+        "line": 99,
+        "source": "print(single.knockout[\"ATPM\"])"
+      },
+      {
+        "column": 0,
+        "end_column": 40,
+        "end_line": 100,
+        "function": "print",
+        "id": "call-100-0",
+        "line": 100,
+        "source": "print(double.knockout[{\"ATPM\", \"TKT1\"}])"
+      },
+      {
+        "column": 0,
+        "end_column": 39,
+        "end_line": 108,
+        "function": "print",
+        "id": "call-108-0",
+        "line": 108,
+        "source": "print(single.knockout[atpm, tkt1, pfk])"
+      },
+      {
+        "column": 0,
+        "end_column": 57,
+        "end_line": 109,
+        "function": "print",
+        "id": "call-109-0",
+        "line": 109,
+        "source": "print(double.knockout[{atpm, tkt1}, {atpm, pfk}, {atpm}])"
+      }
+    ],
+    "source_sha256": "14e0c28982c8edd8c4c2ca691e8d1e33c587646d5db6ac906c376b14cbb73bd8"
+  },
+  "specification": {
+    "task_brief": "# Growth effects of gene and reaction knockouts in the E. coli core metabolic model\n\n## Objective\nYou are given the curated \"textbook\" E. coli core metabolic model (BiGG id `e_coli_core`) as an SBML file. Using flux balance analysis (FBA), determine how every possible single-gene deletion, every single-reaction deletion, every pairwise reaction deletion, and four specific knockout scenarios that illustrate gene-level redundancy for phosphofructokinase affect the maximal achievable growth.\n\nBy \"growth\" we mean the optimal value of the model's biomass objective (the raw LP objective value; no rounding, clamping or sign correction). For every knockout scenario, report that optimum together with the status reported by the LP solve (e.g. `optimal` or `infeasible`).\n\n## Supplied input\n- `inputs/e_coli_core.xml` \u2014 the E. coli core metabolic model in SBML format, including its biomass objective reaction and gene\u2013protein\u2013reaction (GPR) associations. Use the model exactly as supplied; do not modify it, its medium, bounds or objective.\n\n## Knockout semantics\n- **Reaction knockout**: the reaction carries no flux; its flux is constrained to zero in both directions.\n- **Gene knockout**: a reaction is disabled only if its GPR rule evaluates to false once the knocked-out gene(s) are removed. If a reaction has a remaining functional isozyme gene (an OR in the GPR), the reaction still carries flux; a gene whose removal disables no reaction therefore has no growth effect even though the gene is knocked out.\n\n## Required outputs\nProduce four CSV files, all with the columns `knockouts,growth,status`:\n\n- `knockouts`: the identifier(s) of the knocked-out entity, exactly as defined in the supplied model. For a knockout of multiple entities, the ids are sorted lexicographically and joined with `;` (e.g. `b1723;b3916`, `Biomass_Ecoli_core;LDH_D`); a single-entity knockout uses just that entity's id.\n- `growth`: the optimal objective value of the LP after the knockout, as reported by the solver at full double precision, with no rounding, clamping or sign correction. Tiny negative values of magnitude around 1e-14 that arise from solver noise are expected and must be reported as-is. Leave this field empty when the knockout makes the problem infeasible.\n- `status`: the LP solve status string, e.g. `optimal` or `infeasible`.\n\n### 1. `single_gene_deletions.csv`\nOne row for **every gene defined in the supplied model** (137 genes), including genes whose deletion disables no reaction.\n\n### 2. `single_reaction_deletions.csv`\nOne row for **every reaction defined in the supplied model** (95 reactions, including boundary/exchange reactions).\n\n### 3. `double_reaction_deletions.csv`\nOne row for **each distinct knockout set {r_i, r_j}** obtained by pairing every reaction in the model with every reaction in the model and reducing each ordered pair to an unordered set; the i = j cases contribute the single-reaction sets {r_i}. This yields the 95 singleton sets plus all C(95,2) = 4465 pairs, i.e. 4560 rows. Do not apply gene-level GPR logic here \u2014 both reactions are knocked out directly.\n\n### 4. `pfk_knockout_optima.csv`\nExactly four rows, with the same column convention and an empty `knockouts` field for the no-knockout row:\n\n- *(empty)* \u2014 the unmodified (wild-type) model, no knockout;\n- `PFK` \u2014 the PFK reaction knocked out;\n- `b1723` \u2014 gene b1723 (pfkA) knocked out;\n- `b1723;b3916` \u2014 genes b1723 (pfkA) and b3916 (pfkB) knocked out simultaneously.\n\nThese quantify isozyme redundancy: the isozyme pfkB can compensate for a pfkA deletion, but not when both genes are removed.\n\n## Conventions\n- Row order in every file carries no scientific meaning; any row ordering is acceptable.\n- Growth is reported in the model's native biomass-objective units (the raw LP objective value).\n- Use the knockout populations exactly as defined above; do not skip entities that have no reaction associations or no growth effect.\n- Do not round any value (`growth` is written at full double precision).\n\n## Environment and resources\nCPU only (up to 4 cores), 8 GiB RAM, no network access. Your program must complete within 600 seconds. Any software stack that satisfies the definitions above is acceptable; the results, not the tool, are what is compared.\n\nExact acceptance criteria (including numerical tolerances appropriate for LP-solver variation) are finalized separately during validation before the contract takes effect; produce results faithful to the definitions above.\n"
+  },
+  "verifier_seconds": 120
+}
