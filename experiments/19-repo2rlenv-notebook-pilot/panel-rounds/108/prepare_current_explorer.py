@@ -61,7 +61,9 @@ def main():
     profile["stages"] = [
         stage
         for stage in profile["stages"]
-        if not stage[0].startswith(("specification-revision-", "specification-rereview-"))
+        if not stage[0].startswith(
+            ("specification-revision-", "specification-rereview-", "preparation-runtime-repair")
+        )
     ]
     pipeline = read(original / "pipeline.json")
     assert pipeline["status"] == "validated" and not pipeline["operator_interventions"]
@@ -173,6 +175,41 @@ def main():
     initial_outputs = output_group("reference/trial/outputs", "reference-output-downloads.md")
     final_outputs = output_group("materialization/reference", "output-artifacts.md")
     by_id = {s[0]: s for s in profile["stages"]}
+    repair = "preparation/runtime-repair"
+    if repair + "/prepare/system-prompt.md" in rows:
+        profile["stages"].insert(
+            profile["stages"].index(by_id["worker"]) + 1,
+            [
+                "preparation-runtime-repair",
+                "Repair terminal exports during setup",
+                "GLM-5.3 · native high requested",
+                "Within the preceding setup session, an export failure triggered the existing preparation repair. The worker received the recorded failure and repaired generated export code while preserving the original scientific source and selected endpoints.",
+                "run_preparation.py",
+                [
+                    [
+                        "Prompt",
+                        [[prefix + repair + "/prepare/system-prompt.md", "Actual repair prompt"]],
+                    ],
+                    [
+                        "Input",
+                        [
+                            [
+                                prefix + repair + "/prepare/input.json",
+                                "Recorded failure and repair input",
+                            ]
+                        ],
+                    ],
+                    [
+                        "Output",
+                        [
+                            [prefix + repair + "/exports.py", "Repaired terminal-result exports"],
+                            [prefix + repair + "/plan.json", "Recorded endpoint inventory"],
+                            [prefix + repair + "/source.diff", "Append-only source difference"],
+                        ],
+                    ],
+                ],
+            ],
+        )
     for key, heading, group in [
         ("worker", "Output artifacts", initial_outputs),
         ("materialize", "Reference outputs", final_outputs),
