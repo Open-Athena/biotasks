@@ -219,6 +219,11 @@ Record the facts a later validation worker needs:
   Do not invent uniqueness, completeness or ordering guarantees absent from evidence.
 - Numerical quantities: definitions, units, missing-value meaning and relevant
   boundaries. Leave precision, thresholds and numerical tolerances uncalibrated.
+- Computational hand-offs: trace consequential saved/reloaded representations
+  separately from final exports. Preserve intentional source quantization; do
+  not assume that exporting an object means later source computations reloaded
+  it. If a boundary changes the requested quantity, resolve its public meaning
+  or flag the ambiguity for validation without prescribing incidental API calls.
 - Scientific choices: populations, partitions, selected features and statistical
   methods that change the requested quantity. These are not rounding errors.
 

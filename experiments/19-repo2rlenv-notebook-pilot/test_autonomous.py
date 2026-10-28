@@ -125,6 +125,9 @@ def test_setup_time_admission_receipt_survives_bounded_diagnostics(tmp_path, sta
         "construction",
         "grading",
         "native",
+        "native-review-rejected",
+        "native-review-needs_evidence",
+        "native-review-infrastructure_failed",
         "question",
         "question-semantic",
         "question-joint",
@@ -385,6 +388,19 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         )
         return {"publication_ready": failure != "native"}
 
+    async def native_review(config, *, native, root, deadline, **kwargs):
+        assert native == root.parent / "native"
+        assert deadline == pipeline.deadline - 300
+        assert config["max_requests"] is None
+        called.append("native-review")
+        result = {
+            "status": failure.removeprefix("native-review-")
+            if failure and failure.startswith("native-review-")
+            else "validated"
+        }
+        m.write(root / "review.json", result)
+        return result
+
     exported = []
 
     def export_final(root, prefix, *, deadline, snapshot=False):
@@ -402,6 +418,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         "run_specification": {"run": specify},
         "specification_inputs": {"specification_context": lambda *a, **k: {"files": {}}},
         "run_scientific_native": {"run": native},
+        "native_review": {"run": native_review},
         "iris_bootstrap": {"export_on_host": export_final},
     }.items():
         monkeypatch.setitem(sys.modules, name, types.SimpleNamespace(**attrs))
@@ -519,7 +536,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         endpoint="unused",
         credential="unused",
     )
-    if failure in {"infrastructure", "native"}:
+    if failure in {"infrastructure", "native", "native-review-infrastructure_failed"}:
         with pytest.raises(ConnectionError if failure == "infrastructure" else RuntimeError):
             asyncio.run(pipeline.execute())
     else:
@@ -535,6 +552,9 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             "construction": "rejected",
             "grading": "rejected",
             "native": "infrastructure_failed",
+            "native-review-rejected": "rejected",
+            "native-review-needs_evidence": "rejected",
+            "native-review-infrastructure_failed": "infrastructure_failed",
             "question": "validated",
             "question-semantic": "validated",
             "question-joint": "validated",
@@ -609,7 +629,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         if failure in {"question-semantic", "question-joint"}:
             assert receipt["quality_repair"]["kind"] == "public_question_diagnosis"
         assert receipt["daytona_reserved_usd"] == (5 if completed else 4)
-        assert len(receipt["stages"]) == (7 if completed else 6)
+        assert len(receipt["stages"]) == (8 if completed else 6)
     else:
         expected = [
             "prepare",
@@ -619,10 +639,11 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             "run_notebook_grader.py",
             "run_notebook_grader.py",
             "native",
+            "native-review",
         ]
-        stop = {"construction": 5, "grading": 6}.get(failure, 7)
+        stop = {"construction": 5, "grading": 6, "native": 7}.get(failure, 8)
         assert called == expected[:stop]
-        assert receipt["daytona_reserved_usd"] == stop - 2
+        assert receipt["daytona_reserved_usd"] == min(stop - 2, 5)
     if failure in {"construction", "grading"}:
         assert receipt["rejection"]["stage"] == failure
         assert receipt["stages"][-1]["status"] == "rejected"

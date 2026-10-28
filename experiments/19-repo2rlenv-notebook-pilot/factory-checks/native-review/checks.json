@@ -1,0 +1,92 @@
+{
+  "observed_at": "2026-10-28T02:31:39.955639+00:00",
+  "source_parent_revision": "7b51adb0d60783018f2e999154c21e575cb8819e",
+  "source_files": {
+    "experiments/19-repo2rlenv-notebook-pilot/native_review.py": "c5d2f0161776c24a13a512e6946dea69307d9acef6caa16e2bcd1ce2b2d5861a",
+    "experiments/19-repo2rlenv-notebook-pilot/test_native_review.py": "369fd401497ee3404d63d05ebf60b2ecd6b7a2597c0c215a53c75c0c86185d27",
+    "experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py": "2bc0494e80974e1228f7462cfa5337b8f40b50a013a75e8d00829d4bb1f527d3",
+    "experiments/19-repo2rlenv-notebook-pilot/test_autonomous.py": "9e546aab14706f41cb3a19d2007ebe26444cac84de004913a0edbac15a71a00a",
+    "experiments/19-repo2rlenv-notebook-pilot/factory-checks/native-review/replay_capture.py": "8971071ab3c3a8b5d88f67d0cab70c46a5a141e2e9b55df8cac28079f3f2c8de",
+    "src/biotasks/prompts/notebook-native-review.md": "6cf90136c063c658acabbe24cfb3e2f153bdb867dde1f78f555cc5d94446b52c",
+    "src/biotasks/prompts/notebook-task-specification.md": "63023143be65dbe13fdd4a9e78d10753b3b8a96ba8916d24307826c60c024e70"
+  },
+  "final_tests": {
+    "passed": 100,
+    "exit_status": 0,
+    "seconds_pytest": 4.36,
+    "peak_rss_kib": 167792,
+    "guard_estimate_mib": 300,
+    "guard_start": "2026-10-28T02:30:14.809265+00:00",
+    "guard_end": "2026-10-28T02:30:20.330444+00:00",
+    "files": [
+      "test_native_review.py",
+      "test_autonomous.py",
+      "test_scientific_native.py",
+      "tests/test_prompts.py"
+    ],
+    "parallel_test_workers": 1,
+    "scope": "Synthetic task/evidence and mocked worker control flow; actual upstream imports/hash/citation validators. No GLM/provider/scientific computation.",
+    "warnings": "120 pinned Harbor Task.checksum deprecation warnings"
+  },
+  "initial_environment_failures": [
+    {
+      "status": "interrupted",
+      "exit_status": 130,
+      "reason": "Missing local hashing dependencies; sandboxed asyncio/thread control-flow check stalled and was interrupted. No live model or provider invocation."
+    },
+    {
+      "status": "error",
+      "missing_dependency": "dirhash",
+      "exit_status": 1
+    },
+    {
+      "status": "error",
+      "missing_dependency": "pathspec",
+      "exit_status": 1
+    }
+  ],
+  "test_dependency_manifest": {
+    "upstream_lock_sha256": "802079f608b3a83a31fb495bda4ec51fa3c3613b8ab1b6edf8f5760ec7868ec3",
+    "wheels": [
+      {
+        "path": "attrs-26.1.0-py3-none-any.whl",
+        "sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309",
+        "bytes": 67548
+      },
+      {
+        "path": "dirhash-0.5.0-py3-none-any.whl",
+        "sha256": "523dfd6b058c64f45b31604376926c6e2bd2ea301d0df23095d4055674e38b09",
+        "bytes": 13119
+      },
+      {
+        "path": "pathspec-1.1.1-py3-none-any.whl",
+        "sha256": "a00ce642f577bf7f473932318056212bc4f8bfdf53128c78bbd5af0b9b20b189",
+        "bytes": 57328
+      },
+      {
+        "path": "scantree-0.0.4-py3-none-any.whl",
+        "sha256": "7616ab65aa6b7f16fcf8e6fa1d9afaa99a27ab72bba05c61b691853b96763174",
+        "bytes": 20690
+      }
+    ]
+  },
+  "intermediate_focused_tests_passed": [
+    92,
+    99
+  ],
+  "final_original_archive_capture": {
+    "report": "replay-227.json",
+    "peak_rss_kib": 85544,
+    "elapsed_wall_seconds": 0.94,
+    "exit_status": 0
+  },
+  "ruff_format_and_lint": "pass",
+  "git_diff_check": "pass",
+  "full_repository_ci_run": false,
+  "new_stage": "native-review after native trials before validated",
+  "frozen_live_factory_changed": false,
+  "scientific_suitability_established": false,
+  "new_model_requests": 0,
+  "new_jobs_or_sandboxes": 0,
+  "new_spending_authorized_or_allocated": false
+}

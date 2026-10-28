@@ -169,6 +169,8 @@ def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
         "grading/review.json",
         "grading/review-repair.json",
         "native/result.json",
+        "native-review/result.json",
+        "native-review/review.json",
     )
     selected += tuple(
         path.replace("grading/", "grading-question-repair/", 1)
@@ -922,6 +924,32 @@ class Pipeline:
                     raise RuntimeError("Native infrastructure failed; not a notebook rejection")
 
             await self.step("native", native, paid=True)
+
+            async def review_native():
+                from native_review import run
+
+                review_root = self.root / "native-review"
+                result = await run(
+                    self.config_for("native-review", "native_review.py"),
+                    native=self.root / "native",
+                    root=review_root,
+                    endpoint=self.endpoint,
+                    credential=self.credential,
+                    deadline=self.deadline - 300,
+                )
+                self.receipt["native_review"] = result
+                if result["status"] == "infrastructure_failed":
+                    raise RuntimeError("Reviewed native infrastructure failure")
+                if result["status"] in {"rejected", "needs_evidence"}:
+                    raise Rejected(
+                        "native-review", result["status"], str(review_root / "review.json")
+                    )
+                if result["status"] != "validated":
+                    raise ValueError("Unrecognized native review outcome")
+
+            # This is an explicit additional review stage, not another native
+            # trial. It shares the campaign deadline and adds no sandbox/repair.
+            await self.step("native-review", review_native)
             self.receipt.update(
                 status="validated", task_directory=self.relative(self.root / "native/tasks")
             )
