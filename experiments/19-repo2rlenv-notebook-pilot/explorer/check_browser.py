@@ -9,6 +9,11 @@ from playwright.sync_api import sync_playwright
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--index", type=Path, default=Path(__file__).with_name("index.html"))
 parser.add_argument("--screenshot", type=Path)
+parser.add_argument(
+    "--screenshot-view",
+    choices=["notebook", "task", "attempt", "pipeline", "review"],
+    default="notebook",
+)
 args = parser.parse_args()
 index = args.index.resolve()
 manifest = json.loads(index.with_name("source-manifest.json").read_text())
@@ -83,7 +88,17 @@ with sync_playwright() as p:
     assert contrast >= 7, contrast
     if args.screenshot:
         args.screenshot.parent.mkdir(parents=True, exist_ok=True)
-        notebook_code.scroll_into_view_if_needed()
+        if args.screenshot_view == "notebook":
+            notebook_code.scroll_into_view_if_needed()
+        else:
+            label = {
+                "task": "Task",
+                "attempt": "Attempt",
+                "pipeline": "Pipeline",
+                "review": "Validation",
+            }[args.screenshot_view]
+            page.get_by_role("link", name=label, exact=True).click()
+            page.locator("#" + args.screenshot_view).scroll_into_view_if_needed()
         page.screenshot(path=str(args.screenshot))
     assert not errors, errors
     browser.close()
