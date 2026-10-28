@@ -10,7 +10,7 @@ import json
 import re
 import subprocess
 import sys
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 EXPERIMENT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(EXPERIMENT))
@@ -54,6 +54,31 @@ def notebook_notice_identity(notices):
     return declared[0]
 
 
+def artifact_directory(root, pipeline, campaign, field, default):
+    """Follow a recorded repair inside this campaign's verified snapshot only."""
+    repair = pipeline.get("quality_repair") or {}
+    value = repair.get(field)
+    if value is None:
+        name = default
+    else:
+        if not isinstance(value, str):
+            raise ValueError("Repaired artifact directory must be a relative path")
+        path = PurePosixPath(value)
+        if (
+            path.as_posix() != value
+            or len(path.parts) != 3
+            or path.parts[:2] != ("autonomous-work", campaign)
+            or ".." in path.parts
+            or "\\" in value
+        ):
+            raise ValueError("Repaired artifact directory is outside the original campaign")
+        name = path.parts[2]
+    target = root / name
+    if target.is_symlink() or not target.is_dir() or target.resolve().parent != root.resolve():
+        raise ValueError("Original artifact directory is absent or unsafe")
+    return target
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("number", type=int)
@@ -82,6 +107,15 @@ def main():
     claim = read(Path(snapshot_config["claim"]))
     assert freeze["input_revision"] == pipeline["factory_revision"] == claim["factory_revision"]
     assert freeze["payload_files"] == claim["inputs"]["files"]
+    config_raw = (payload / "campaign-config.json").read_bytes()
+    assert (
+        hashlib.sha256(config_raw).hexdigest() == claim["inputs"]["files"]["campaign-config.json"]
+    )
+    campaign = json.loads(config_raw)["campaign"]
+    grading = artifact_directory(files, pipeline, campaign, "effective_grading", "grading")
+    materialization = artifact_directory(
+        files, pipeline, campaign, "effective_materialization", "materialization"
+    )
     bootstrap = read(archive / "root-evidence/files/bootstrap-status.json")
     assert bootstrap["completed"] is True and not bootstrap.get("error_type")
     cleanup = read(archive / "fresh-provider-cleanup.json")
@@ -118,7 +152,7 @@ def main():
             str(EXPERIMENT / "check_scientific_release.py"),
             str(files / "native"),
             str(task),
-            str(files / "grading"),
+            str(grading),
         ],
         capture_output=True,
         text=True,
@@ -139,6 +173,10 @@ def main():
             "bootstrap_completed": True,
             "historical_recovery_receipt_filename_does_not_imply_host_failure": True,
             "fresh_provider_cleanup_verified": True,
+            "selected_artifact_directories": {
+                "grading": grading.name,
+                "materialization": materialization.name,
+            },
         },
     )
     evidence_names = (
@@ -155,8 +193,8 @@ def main():
         ).strip(),
         "native": str(files / "native"),
         "task": str(task),
-        "grading": str(files / "grading"),
-        "materialization": str(files / "materialization"),
+        "grading": str(grading),
+        "materialization": str(materialization),
         "stage": str(output / "staged"),
         "labeled": str(output / "labeled"),
         "plan": str(output / "release-plan.json"),
