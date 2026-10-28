@@ -4,6 +4,8 @@ Presentation only; descriptions never become worker inputs or scientific artifac
 """
 
 import argparse
+import codecs
+import copy as copying
 import gzip
 import hashlib
 import json
@@ -21,6 +23,21 @@ def read(path):
 
 def sha(raw):
     return hashlib.sha256(raw).hexdigest()
+
+
+def text_artifact(path):
+    """Identify readable UTF-8 without assuming a biology-specific extension."""
+    decoder = codecs.getincrementaldecoder("utf-8")()
+    try:
+        with path.open("rb") as stream:
+            while chunk := stream.read(65536):
+                text = decoder.decode(chunk)
+                if any(not char.isprintable() and char not in "\r\n\t" for char in text):
+                    return False
+            decoder.decode(b"", final=True)
+    except UnicodeDecodeError:
+        return False
+    return True
 
 
 def main():
@@ -62,11 +79,37 @@ def main():
         stage
         for stage in profile["stages"]
         if not stage[0].startswith(
-            ("specification-revision-", "specification-rereview-", "preparation-runtime-repair")
+            (
+                "specification-revision-",
+                "specification-rereview-",
+                "preparation-runtime-repair",
+                "comparison-repair",
+                "apply-comparison-repair",
+                "repaired-",
+            )
         )
     ]
     pipeline = read(original / "pipeline.json")
     assert pipeline["status"] == "validated" and not pipeline["operator_interventions"]
+    released_config = read(release / "configuration.json")
+    grading_directory = Path(released_config["grading"]).name
+    materialization_directory = Path(released_config["materialization"]).name
+
+    def final_paths(value):
+        if isinstance(value, str):
+            return value.replace(prefix + "grading/", prefix + grading_directory + "/").replace(
+                prefix + "materialization/", prefix + materialization_directory + "/"
+            )
+        if isinstance(value, list):
+            return [final_paths(item) for item in value]
+        if isinstance(value, dict):
+            return {key: final_paths(item) for key, item in value.items()}
+        return value
+
+    # The task/validation views select the final artifact. The pipeline retains
+    # initial-stage paths so it does not silently relabel an earlier failure.
+    for key in profile.keys() - {"stages"}:
+        profile[key] = final_paths(profile[key])
     profile["release"] = {
         "repository": publication["repo_id"],
         "publication": f"autonomous-runs/{case}/publication.json",
@@ -140,12 +183,9 @@ def main():
                 put(target, raw, {"frozen_original_source_asset": name, "byte_preserved": True})
 
     def output_group(directory, document):
-        paths = sorted(
-            p
-            for p in rows
-            if p.startswith(directory + "/") and Path(p).suffix in {".csv", ".tsv", ".json"}
-        )
+        paths = sorted(p for p in rows if p.startswith(directory + "/"))
         assert paths
+        inline = []
         text = [
             "# Output artifacts",
             "",
@@ -167,14 +207,21 @@ def main():
                 url = f"https://huggingface.co/datasets/{publication['repo_id']}/resolve/{publication['commit_sha']}/tasks/autonomous-panel-{case}/tests/reference/{Path(exact[0]).name}"
                 label = f"[{label}]({url})"
             text.append(f"| {label} | {row['bytes']} | `{row['sha256']}` |")
-            copy(path)
+            if text_artifact(original / path):
+                copy(path)
+                inline.append(path)
         display(document, "\n".join(text) + "\n", paths)
         return [[prefix + document, "Original output inventory"]] + [
-            [prefix + p, Path(p).name] for p in paths
+            [prefix + p, Path(p).name] for p in inline
         ]
 
     initial_outputs = output_group("reference/trial/outputs", "reference-output-downloads.md")
-    final_outputs = output_group("materialization/reference", "output-artifacts.md")
+    final_outputs = output_group(materialization_directory + "/reference", "output-artifacts.md")
+    materialization_outputs = (
+        final_outputs
+        if materialization_directory == "materialization"
+        else (output_group("materialization/reference", "initial-output-artifacts.md"))
+    )
     by_id = {s[0]: s for s in profile["stages"]}
     repair = "preparation/runtime-repair"
     if repair + "/prepare/system-prompt.md" in rows:
@@ -213,26 +260,171 @@ def main():
         )
     for key, heading, group in [
         ("worker", "Output artifacts", initial_outputs),
-        ("materialize", "Reference outputs", final_outputs),
+        ("materialize", "Reference outputs", materialization_outputs),
     ]:
         by_id[key][5] = [g for g in by_id[key][5] if g[0] != heading] + [[heading, group]]
+
     # Rebuild the variable review packet from this run; no previous packet paths survive.
-    review = by_id["initial-review"]
-    review[3] = (
-        "Review scientific comparisons, source coverage, answer isolation and executed controls using this run's immutable evidence packet."
-    )
-    review[5] = [g for g in review[5] if g[0] != "Evidence available to the review tools"]
-    descriptor = read(original / "grading/review/input.json")["review_evidence"]
-    packet_name = (
-        f"grading/review-inspection/review-packets/v1-{descriptor['context_sha256']}/manifest.json"
-    )
-    packet = read(original / packet_name)
-    evidence = [[prefix + packet_name, "Complete identity-bound evidence index"]]
-    for field, row in packet["fields"].items():
-        path = str(Path(packet_name).parent / row["path"])
-        assert rows[path]["sha256"] == row["sha256"]
-        evidence.append([prefix + path, field])
-    review[5].insert(-1, ["Evidence available to the review tools", evidence])
+    def review_packet(review, directory):
+        review[3] = (
+            "Review scientific comparisons, source coverage, answer isolation and executed controls using this stage's immutable evidence packet."
+        )
+        review[5] = [g for g in review[5] if g[0] != "Evidence available to the review tools"]
+        descriptor = read(original / directory / "review/input.json")["review_evidence"]
+        packet_name = f"{directory}/review-inspection/review-packets/v1-{descriptor['context_sha256']}/manifest.json"
+        packet = read(original / packet_name)
+        evidence = [[prefix + packet_name, "Complete identity-bound evidence index"]]
+        for field, row in packet["fields"].items():
+            path = str(Path(packet_name).parent / row["path"])
+            assert rows[path]["sha256"] == row["sha256"]
+            evidence.append([prefix + path, field])
+        review[5].insert(-1, ["Evidence available to the review tools", evidence])
+
+    review_packet(by_id["initial-review"], "grading")
+    repair_record = pipeline.get("quality_repair") or {}
+    if repair_record.get("kind") in {"comparison_diagnosis", "public_question_diagnosis"}:
+        assert repair_record["allowance_consumed"] is True
+        insert = profile["stages"].index(by_id["initial-review"]) + 1
+        additions = [
+            [
+                "comparison-repair",
+                "Diagnose and repair the comparison",
+                "GLM-5.3 · native high requested",
+                "Use the recorded scientific defect and source inspection to propose the one permitted repair. The initial artifacts remain unchanged.",
+                "run_specification.py",
+                [
+                    [
+                        "Prompt",
+                        [
+                            [
+                                prefix + "comparison-repair/specify/system-prompt.md",
+                                "Actual repair prompt",
+                            ]
+                        ],
+                    ],
+                    [
+                        "Input",
+                        [
+                            [
+                                prefix + "comparison-repair/specify/input.json",
+                                "Recorded defect and inspection context",
+                            ]
+                        ],
+                    ],
+                    [
+                        "Output",
+                        [
+                            [
+                                prefix + "comparison-repair/comparison-repair.json",
+                                "Recorded diagnosis and repair",
+                            ]
+                        ],
+                    ],
+                ],
+            ]
+        ]
+        if materialization_directory != "materialization":
+            additions.append(
+                [
+                    "apply-comparison-repair",
+                    "Apply the recorded question repair",
+                    "Programmatic",
+                    "Apply the worker's revised instruction while preserving the original data, scientific computation and earlier candidate. No additional model call.",
+                    "question_repair.py",
+                    [
+                        [
+                            "Input",
+                            [
+                                [
+                                    prefix + "comparison-repair/comparison-repair.json",
+                                    "Worker's repair decision",
+                                ]
+                            ],
+                        ],
+                        [
+                            "Output",
+                            [
+                                [
+                                    prefix + materialization_directory + "/instruction.md",
+                                    "Revised public question",
+                                ],
+                                [
+                                    prefix + materialization_directory + "/manifest.json",
+                                    "Repaired materialization identities",
+                                ],
+                            ],
+                        ],
+                        ["Reference outputs", final_outputs],
+                    ],
+                ]
+            )
+        independent = copying.deepcopy(by_id["independent"])
+        independent[0], independent[1] = (
+            "repaired-independent",
+            "Independent implementation after repair",
+        )
+        independent[5] = final_paths(independent[5])
+        additions.extend(
+            [
+                independent,
+                [
+                    "repaired-validation",
+                    "Revalidate the repaired comparison",
+                    "Programmatic",
+                    "Execute the repaired grader and retained probe programs against fresh isolated controls. The grader/probes come from the recorded repair; this stage does not invent additional authoring calls.",
+                    "grading_session.py",
+                    [
+                        [
+                            "Input",
+                            [
+                                [
+                                    prefix + grading_directory + "/frozen-grader.json",
+                                    "Frozen repaired grader and probe context",
+                                ],
+                                [
+                                    prefix + grading_directory + "/probes.json",
+                                    "Retained probe programs",
+                                ],
+                            ],
+                        ],
+                        [
+                            "Output",
+                            [
+                                [
+                                    prefix + grading_directory + "/grade.py",
+                                    "Executed repaired grader",
+                                ],
+                                [
+                                    prefix + grading_directory + "/final-controls.json",
+                                    "Final executed controls",
+                                ],
+                                [prefix + grading_directory + "/result.json", "Validation outcome"],
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        )
+        review = copying.deepcopy(by_id["initial-review"])
+        review[0], review[1] = "repaired-review", "Review repaired scientific admission"
+        review[5] = final_paths(review[5])
+        review_packet(review, grading_directory)
+        additions.append(review)
+        profile["stages"][insert:insert] = additions
+        # A blocked initial review does not produce final-controls.json. Show
+        # its actual stop record instead of manufacturing that missing output.
+        for group in by_id["initial-review"][5]:
+            group[1] = [
+                item
+                for item in group[1]
+                if not (
+                    item[0] == prefix + "grading/final-controls.json"
+                    and "grading/final-controls.json" not in rows
+                )
+            ]
+        by_id["initial-review"][5].append(
+            ["Outcome", [[prefix + "grading/result.json", "Initial review outcome"]]]
+        )
     # Include every specification review/repair that actually occurred, in order.
     reviews = pipeline.get("specification_reviews", [])
     insert = profile["stages"].index(by_id["specification-review"]) + 1
