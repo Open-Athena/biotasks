@@ -17,6 +17,7 @@ import subprocess
 import time
 from pathlib import Path
 
+from admission_profile import NATIVE_REVIEW_PROFILE
 from campaign_budget import (
     SANDBOX_STAGES,
     STAGE_RESERVATION_USD,
@@ -273,6 +274,7 @@ class Pipeline:
         self.current = "intake"
         self.receipt = dict(
             status="running",
+            native_review_profile=NATIVE_REVIEW_PROFILE,
             autonomous=True,
             operator_interventions=0,
             reasoning_effort_requested=self.reasoning_effort,

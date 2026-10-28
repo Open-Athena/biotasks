@@ -4,6 +4,7 @@ import json
 import shlex
 from pathlib import Path
 
+from admission_profile import NATIVE_REVIEW_PROFILE
 from grader_support import MANIFEST, MODULE, NOTICE, load_support
 from materialization_protocol import Materialization
 from reference_environment import UV_VERSION, validate_environment
@@ -240,6 +241,7 @@ def package(
                 "recipe_version": revision,
                 "reward_kinds": ["binary"],
                 "scope": "scientific task with explicit supplied intermediates",
+                "native_review_profile": NATIVE_REVIEW_PROFILE,
             },
             environment={
                 "cpus": 4,

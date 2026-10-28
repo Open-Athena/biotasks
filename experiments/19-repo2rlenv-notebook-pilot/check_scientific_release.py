@@ -5,6 +5,7 @@ import json
 import sys
 from pathlib import Path
 
+from admission_profile import task_review_profile
 from grader_support import MANIFEST, MODULE, load_support
 from release_review import check_final_review
 from repo2rlenv.emitter.bundle import inspect_bundle
@@ -81,6 +82,12 @@ if support is not None:
     assert (task / "tests" / MODULE).read_bytes() == (grading / MODULE).read_bytes()
     assert read(task / "tests" / MANIFEST) == support
     assert all(c["execution"].get("parsing_support") == support for c in controls)
+profile = task_review_profile(task)
+native_review = None
+if profile is not None:
+    from native_review import check_recorded
+
+    native_review = check_recorded(native, profile, identity["bundle_hash"])
 print(
     json.dumps(
         dict(
@@ -91,6 +98,8 @@ print(
             scientific_admission_review_verified=True,
             asset_value_hints_review_verified=True,
             executed_scientific_negative_coverage_verified=True,
+            native_review_profile=profile,
+            native_contract_review=native_review,
             accepted=True,
         ),
         indent=2,

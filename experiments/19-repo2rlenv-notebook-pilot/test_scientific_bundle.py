@@ -198,6 +198,9 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(
         attribution={"notebook_license": {"text": "Fixture source notice\n"}},
     )
     task = package(**options)
+    from admission_profile import NATIVE_REVIEW_PROFILE, task_review_profile
+
+    assert task_review_profile(task) == NATIVE_REVIEW_PROFILE
     if parsing_support:
         from grader_support import MANIFEST, MODULE, NOTICE, load_support
 

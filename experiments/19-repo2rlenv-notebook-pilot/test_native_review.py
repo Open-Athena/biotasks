@@ -6,6 +6,7 @@ import time
 
 import native_review as review_module
 import pytest
+from admission_profile import NATIVE_REVIEW_PROFILE
 from repo2rlenv.emitter.bundle import TaskBundle, TaskFile, inspect_bundle, write_bundle
 from repo2rlenv.quality.loop.artifacts import parse_task
 from repo2rlenv.quality.loop.models import Review
@@ -16,8 +17,7 @@ def save(path, data):
     path.write_text(json.dumps(data))
 
 
-@pytest.fixture
-def native(tmp_path):
+def make_native(tmp_path):
     root = tmp_path / "native"
     bundle = TaskBundle(
         name="fixture",
@@ -29,7 +29,12 @@ def native(tmp_path):
             "environment/Dockerfile": TaskFile.text("FROM scratch\n"),
             "environment/observations.bin": TaskFile(b"\xff\0\x01"),
         },
-        metadata={"recipe": "fixture", "recipe_version": "1", "reward_kinds": ["binary"]},
+        metadata={
+            "recipe": "fixture",
+            "recipe_version": "1",
+            "reward_kinds": ["binary"],
+            "native_review_profile": NATIVE_REVIEW_PROFILE,
+        },
     )
     task = write_bundle(bundle, root / "tasks")
     checksum = parse_task(task).checksum
@@ -66,6 +71,11 @@ def native(tmp_path):
         dict(status="native_validated_solver_attempt_recorded", controls=rows[:2], solver=rows[2]),
     )
     return root
+
+
+@pytest.fixture
+def native(tmp_path):
+    return make_native(tmp_path)
 
 
 def assessment(path, quote, *, status="pass"):

@@ -88,10 +88,17 @@ def verify_bundle_licenses(task, licenses):
 
 def release_execution_provenance(config, validation):
     """Bind an unattended label to this source's archived pipeline and native result."""
+    from admission_profile import NATIVE_REVIEW_PROFILE
+
+    required_review = validation.get("native_review_profile")
+    if required_review not in (None, NATIVE_REVIEW_PROFILE):
+        raise ValueError("Unknown release native-review profile")
     pipeline_path = config.get("autonomous_pipeline")
     manifest_path = config.get("autonomous_archive_manifest")
     snapshot_config = config.get("autonomous_snapshot")
     if pipeline_path is None and manifest_path is None and snapshot_config is None:
+        if required_review is not None:
+            raise ValueError("Reviewed-profile releases require archived pipeline evidence")
         return "assisted", {}
     if (
         not pipeline_path
@@ -146,13 +153,24 @@ def release_execution_provenance(config, validation):
     if len(seeds) != 1 or pipeline.get("source") != seeds[0]:
         raise ValueError("Unattended execution belongs to a different release source")
     stages = pipeline.get("stages", [])
+    expected_stages = [
+        "preparation",
+        "setup",
+        "replay",
+        "specification",
+        "construction",
+        "grading",
+        "native",
+    ]
+    if required_review is not None:
+        expected_stages.append("native-review")
     if (
         pipeline.get("status") != "validated"
         or pipeline.get("autonomous") is not True
         or type(pipeline.get("operator_interventions")) is not int
         or pipeline["operator_interventions"] != 0
-        or [stage.get("name") for stage in stages]
-        != ["preparation", "setup", "replay", "specification", "construction", "grading", "native"]
+        or [stage.get("name") for stage in stages] != expected_stages
+        or pipeline.get("native_review_profile") != required_review
         or any(stage.get("status") != "completed" for stage in stages)
         or native.get("status") != "native_validated_solver_attempt_recorded"
         or native.get("publication_ready") is not True
@@ -174,6 +192,20 @@ def release_execution_provenance(config, validation):
             ),
         }
     }
+    if required_review is not None:
+        from native_review import check_recorded
+
+        proof = check_recorded(Path(config["native"]), required_review, validation["bundle_hash"])
+        if validation.get("native_contract_review") != proof:
+            raise ValueError("Native review differs from release validation evidence")
+        if pipeline.get("native_review") != proof["result"]:
+            raise ValueError("Pipeline admission differs from its native review")
+        for relative, expected_hash in proof["evidence_files"].items():
+            _, actual_hash = archived(pipeline_path.parent / relative)
+            if actual_hash != expected_hash:
+                raise ValueError("Native review differs from its original archive")
+        documents["native-contract-review.json"] = proof
+        documents["autonomous-execution.json"]["native_review_profile"] = required_review
     if snapshot is not None:
         documents["autonomous-execution.json"]["archive_format"] = "original-snapshot-v1"
         documents["autonomous-snapshot-provenance.json"] = snapshot.evidence

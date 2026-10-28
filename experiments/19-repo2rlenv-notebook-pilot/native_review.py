@@ -10,6 +10,7 @@ import time
 from pathlib import Path
 
 import httpx
+from admission_profile import NATIVE_REVIEW_PROFILE
 from design_stage import completion_transport
 from model_profile import native_effort
 from openai import AsyncOpenAI
@@ -228,7 +229,12 @@ async def run(config, *, native, root, endpoint, credential, deadline, complete=
         request_timeout_sec=config["request_timeout_seconds"],
     )
     client = None
-    result = dict(status="incomplete", started=time.time(), bundle_hash=evidence["bundle_hash"])
+    result = dict(
+        status="incomplete",
+        profile=NATIVE_REVIEW_PROFILE,
+        started=time.time(),
+        bundle_hash=evidence["bundle_hash"],
+    )
     try:
         if complete is None:
             client = AsyncOpenAI(
@@ -271,3 +277,58 @@ async def run(config, *, native, root, endpoint, credential, deadline, complete=
         result["finished"] = time.time()
         save_record(root / "result.json", result)
     return result
+
+
+def check_recorded(native, profile, bundle_hash):
+    """Revalidate a completed review from original evidence; no model invocation."""
+    if profile != NATIVE_REVIEW_PROFILE:
+        raise ValueError("A known explicit native-review profile is required")
+    native = Path(native)
+    root = native.parent / "native-review"
+    identities = {}
+
+    def recorded(relative):
+        path = checked_path(root, relative)
+        identities["native-review/" + relative] = digest(path)
+        return json.loads(path.read_text())
+
+    result = recorded("result.json")
+    if (
+        result.get("status") != "validated"
+        or result.get("profile") != profile
+        or result.get("bundle_hash") != bundle_hash
+    ):
+        raise ValueError("Native contract review is incomplete, rejected or for another bundle")
+    evidence, trials = collect(native)
+    if evidence["bundle_hash"] != bundle_hash or recorded("input.json") != evidence:
+        raise ValueError("Native review input differs from this task and its captured trials")
+    review = Review.model_validate(recorded("review.json"))
+    artifact = recorded("review/artifact-stage/artifact.json")
+    if artifact.get("artifact") != review.model_dump():
+        raise ValueError("Native review differs from the worker's recorded submission")
+    inputs = recorded("review/input.json")
+    packet = ReviewPacket.open_recorded(
+        root / "review-packets", inputs.get("review_evidence"), deadline=time.time() + 60
+    )
+    if packet.reconstruct() != evidence:
+        raise ValueError("Native review packet differs from its original inputs")
+    inline = {k: v for k, v in evidence.items() if k in ReviewPacket.INLINE_FIELDS}
+    if {k: v for k, v in inputs.items() if k != "review_evidence"} != inline:
+        raise ValueError("Native review inline context differs from its packet")
+    for path in sorted(packet.root.iterdir()):
+        relative = path.relative_to(root).as_posix()
+        recorded(relative)
+    validate(review, evidence, trials)
+    if admission(review) != "validated" or result.get("rollout") != review.rollout:
+        raise ValueError("Native review does not establish a legitimate sound outcome")
+    recheck(native, evidence["inventory"])
+    return {
+        "profile": profile,
+        "bundle_hash": bundle_hash,
+        "review": review.model_dump(),
+        "result": result,
+        "evidence_files": identities,
+        "context_sha256": packet.context_sha256,
+        "original_rewards": [trial.reward for trial in trials],
+        "scope": "Revalidated recorded review; no new model call or reward change.",
+    }
