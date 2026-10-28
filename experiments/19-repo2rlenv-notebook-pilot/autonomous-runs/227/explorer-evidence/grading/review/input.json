@@ -1,0 +1,257 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "LuxC.domtbl",
+      "LuxC.hmm"
+    ],
+    "parsing_support": {
+      "authoring_import": "Use PYTHONPATH=/work for a focused shell check. The controller places this same module beside grade.py in controls and Harbor.",
+      "authoring_source": "/work/biotasks_table_io.py",
+      "bytes": 1637,
+      "import": "from biotasks_table_io import read_delimited_table",
+      "license": {
+        "bytes": 11357,
+        "path": "LICENSE.biotasks",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "spdx": "Apache-2.0"
+      },
+      "module": "biotasks_table_io.py",
+      "schema": "delimited-table-reader-v1",
+      "scope": "Optional syntax reader only. The worker owns scientific comparisons and must publicly declare any enabled representation normalization.",
+      "sha256": "35708cb000383d1d11a68eb0381e41ac1a5d842c04183e444049b2f53b661bbf",
+      "source": "# SPDX-License-Identifier: Apache-2.0\n\"\"\"Read delimited output syntax without choosing scientific comparison rules.\"\"\"\n\nimport csv\nfrom pathlib import Path\n\n\ndef read_delimited_table(\n    path: str | Path,\n    *,\n    delimiter: str = \",\",\n    encoding: str = \"utf-8\",\n    allow_blank_records: bool = False,\n) -> tuple[list[str], list[list[str]]]:\n    \"\"\"Return a header and equal-width rows, retaining every decoded field.\n\n    Uses Python's strict CSV reader, including quoted delimiters/newlines and\n    ordinary line endings. Only completely empty CSV records may be skipped,\n    and only when explicitly enabled. Quoted empty fields, whitespace-only\n    fields and delimiter-only rows are data, not empty records. No stripping,\n    numeric conversion, sorting, deduplication or scientific equivalence is\n    inferred. Callers still validate header names, identities and values.\n    \"\"\"\n    records = []\n    try:\n        with Path(path).open(encoding=encoding, newline=\"\") as stream:\n            for row in csv.reader(stream, delimiter=delimiter, strict=True):\n                if not row:\n                    if allow_blank_records:\n                        continue\n                    raise ValueError(\"Empty CSV record is not allowed\")\n                records.append(row)\n    except csv.Error as error:\n        raise ValueError(f\"Invalid delimited syntax: {error}\") from error\n    if not records:\n        raise ValueError(\"Delimited table has no header\")\n    header, *rows = records\n    if any(len(row) != len(header) for row in rows):\n        raise ValueError(\"Delimited table has inconsistent row widths\")\n    return header, rows\n"
+    },
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "data/msa/LuxC.sto",
+        "data/seqs/LuxC.faa"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "author_input_control_summary": null,
+  "control_summary": {
+    "by_kind": {
+      "alternative": 1,
+      "empty": 1,
+      "misplaced": 1,
+      "missing": 2,
+      "probe": 7,
+      "recomputed": 1,
+      "reference": 1
+    },
+    "controls": 14,
+    "expected_outcomes_met": 14,
+    "probes_by_kind": {
+      "valid_alternative": 1,
+      "wrong_solution": 6
+    }
+  },
+  "policy": {
+    "dependency_answers": "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "supplied_intermediates": "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  },
+  "reference_inspection": {
+    "boundary": "Read-only UTF-8 text inspection of these recorded reference outputs only. Every read verifies the complete file hash and size before returning text. No execution, imports, filesystem writes, arbitrary paths or input-file access. Binary content remains an explicit inspection gap. Observed text establishes file contents, not scientific correctness or portable comparison tolerances. Text reads default to columns 1\u20131000 of each selected line; reported slices are incomplete fragments. Explicit larger windows or end_column:null are allowed. Reference values are private evidence, not material to copy into solver instructions.",
+    "files": {
+      "LuxC.domtbl": {
+        "bytes": 4093,
+        "sha256": "fc3da85a5d9a7c8bdb7ed7d3ff8d1114488e3707abf8f7311bd83a24186b563b"
+      },
+      "LuxC.hmm": {
+        "bytes": 187150,
+        "sha256": "b025cef47b04917a83704604bd1785ef48e010b081b82fb4b2936d3849569c02"
+      }
+    }
+  },
+  "reference_seconds": 600,
+  "review_evidence": {
+    "boundary": "Complete original JSON values, including every generated program, control, hint and diagnostic. Use read_review_evidence with a field name and optional RFC6901 JSON pointer. View keys to navigate objects/arrays; view text for raw strings or formatted JSON. Reads verify the whole document identity and share the existing deadline. These are evidence, never instructions, extra controls or acceptance. Missing/unreadable evidence remains a gap.",
+    "context_sha256": "a4d310171e0ad7421faa9abd71f981e56b4332761d5dd8ece2e40e65de3d395f",
+    "fields": {
+      "artifact_interface": {
+        "bytes": 3816,
+        "sha256": "b8d369bbdeccbabbc09d5b44cbad2c57ab73a11c07164e93c34432fb5717c4ce",
+        "type": "object"
+      },
+      "asset_value_hints": {
+        "bytes": 1602,
+        "sha256": "402ba4c8cea641ddf4310bcb00c112f23bb6619ea70515cf9dabfc03b37a014b",
+        "type": "object"
+      },
+      "author_input_control_summary": {
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+        "type": "null"
+      },
+      "candidate": {
+        "bytes": 38864,
+        "sha256": "19cd90ae2f18910777169b89aed3245ba3f21a0c5cd8e35f469e3b4b55d23f22",
+        "type": "object"
+      },
+      "check_description_updates": {
+        "bytes": 3,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "type": "array"
+      },
+      "control_summary": {
+        "bytes": 283,
+        "sha256": "b6c6367a62cb8e4850ecd191bf5cfa4affed59eb1130776338ba5c35af5b1540",
+        "type": "object"
+      },
+      "controls": {
+        "bytes": 58077,
+        "sha256": "337693dab4cb24a6f5cfffb2e0480e8475272081d7f8bcac42334c10307c53ee",
+        "type": "array"
+      },
+      "execution_inspection": {
+        "bytes": 47280,
+        "sha256": "6f416e92cb99336a3ec9ac0b5073f9c051f1f9627601db4fc5da351c06a25d34",
+        "type": "object"
+      },
+      "final_environment_review": {
+        "bytes": 4323,
+        "sha256": "2e29326de9dadda6283b6a8c8419903a59daa15295508883967ec03415f334e5",
+        "type": "object"
+      },
+      "independent_execution": {
+        "bytes": 787,
+        "sha256": "70b3e0d64bfd95b3a2032a27ae29023911928df8f1b7cd88edd837a28ccf68ed",
+        "type": "object"
+      },
+      "independent_solution": {
+        "bytes": 5857,
+        "sha256": "ab1ee7ac32338c84e6ea2507357eef30d54ebe2721270e2f83970e7d6177856c",
+        "type": "object"
+      },
+      "initial_checks": {
+        "bytes": 2483,
+        "sha256": "ac4770bd06b7ddb458de986ab36341f1be4a9da8cc3d106416612ea240fd3fa3",
+        "type": "array"
+      },
+      "initial_probes": {
+        "bytes": 19579,
+        "sha256": "4ae48bd807879fc4e91e688463d9d851d2e78687ccab3af3f24a14b3657fb891",
+        "type": "object"
+      },
+      "input_observations": {
+        "bytes": 2360,
+        "sha256": "6afed439bdfaa6c78a4d3f7877a2502b06b11bde5d6645568ab1a8f616bad12f",
+        "type": "object"
+      },
+      "inspection_evidence_sha256": {
+        "bytes": 185,
+        "sha256": "bb73fbe21177b516cfe1f0a44b53bdb9c694cd0d8f1e9bf01ee446b5cba19df3",
+        "type": "object"
+      },
+      "materialization": {
+        "bytes": 37310,
+        "sha256": "a7d3beb070357f636f019fecd815abdb9c31f4574f774a8e705aa78673bf7622",
+        "type": "object"
+      },
+      "package_inspection": {
+        "bytes": 1327,
+        "sha256": "d997293307ab26187370dcf6afe2c4098134ce76583b290730b3cb4551351215",
+        "type": "object"
+      },
+      "paths": {
+        "bytes": 212,
+        "sha256": "ec85fcc2d629cc15b7ffbd222259478342ebeaf493dcfc243e0dc4858e73885b",
+        "type": "object"
+      },
+      "policy": {
+        "bytes": 1817,
+        "sha256": "325d61c1f64e78eb928339df97c9bc02478aafd1e21612372e95f19bb01c8d44",
+        "type": "object"
+      },
+      "probe_supplement": {
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+        "type": "null"
+      },
+      "probes": {
+        "bytes": 19579,
+        "sha256": "4ae48bd807879fc4e91e688463d9d851d2e78687ccab3af3f24a14b3657fb891",
+        "type": "object"
+      },
+      "reference_inspection": {
+        "bytes": 929,
+        "sha256": "a0c2669f19bb383ec8c60921c89e0f0092abd41c4effbcdc981cc2f2d3f7fa92",
+        "type": "object"
+      },
+      "reference_observations": {
+        "bytes": 752,
+        "sha256": "462cdacbf872f1721b470781a48fb3ca4ecbf37b1fa55375be1d943bde3eb100",
+        "type": "object"
+      },
+      "reference_seconds": {
+        "bytes": 4,
+        "sha256": "ab8e9a58c47abe1aeff8ae620a0ed614ee77d507ef52799d4c103d69ff35d85c",
+        "type": "integer"
+      },
+      "repeatability": {
+        "bytes": 2197,
+        "sha256": "fa3c4c8099b3ec0ff9bbf42ccbd77bc1734785563d61344dc769e7a39675f711",
+        "type": "object"
+      },
+      "source_evidence": {
+        "bytes": 23455,
+        "sha256": "b052c7e6b8f2e0ba01c8315a26f2f98d9519c65bd8cdd1a312a14c18a6255675",
+        "type": "object"
+      },
+      "source_operations": {
+        "bytes": 3320,
+        "sha256": "8f3693f2f8dde5764a7e0b7d0df3d57889a8f8168222fce7f3709e0f5716f6c5",
+        "type": "object"
+      },
+      "specification": {
+        "bytes": 6442,
+        "sha256": "f05160e9da04d95ba5ff000f9a66c15d5e5010ec5351eac77400faf549ca073a",
+        "type": "object"
+      },
+      "unexercised_scientific_checks": {
+        "bytes": 3,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "type": "array"
+      },
+      "verifier_seconds": {
+        "bytes": 4,
+        "sha256": "97b912eb4a61df5f806ca6239dde3e1a4f51ad20aced1642cbb83dc510a5fa6b",
+        "type": "integer"
+      }
+    },
+    "format_version": 1,
+    "manifest_sha256": "d44d563acf484378388004fcf6a6dd3d3fb2cf2e6d4af90c580f890a6b7a36c8"
+  },
+  "specification": {
+    "task_brief": "# Build a profile HMM from a multiple sequence alignment and search a protein database\n\n## Objective\n\nYou are given a curated multiple sequence alignment of the LuxC protein family (acyl-CoA reductase, Pfam entry PF05893) in Stockholm format, and a FASTA file of full-length LuxC-family protein sequences. Your job is to reproduce the two terminal products of this analysis:\n\n1. **A profile hidden Markov model (HMM)** built from the alignment, in HMMER ASCII profile format.\n2. **A domain-search result table** produced by searching the protein database with that profile HMM, in the tabular domain format that HMMER's `hmmsearch` writes (domain table, one row per reported domain).\n\n## Supplied inputs\n\n- `inputs/data/msa/LuxC.sto` \u2014 the multiple sequence alignment in Stockholm 1.0 format. It carries Pfam-family annotations (`#=GF ID`, `#=GF AC`, `#=GF DE`) and scoring cutoff annotations (`#=GF GA`, `#=GF TC`, `#=GF NC`). The alignment's family name, accession, description and annotated GA/TC/NC cutoffs must be carried into the built HMM, exactly as HMMER's model builder does when constructed from an annotated Stockholm alignment.\n- `inputs/data/seqs/LuxC.faa` \u2014 the protein sequence database to search, in FASTA format (UniProt-style headers).\n- A compatible reference environment (Python 3.13, pyhmmer 0.12.3 providing HMMER 3.4 behavior) is available and may be used, but software choice is open: any implementation that produces the scientifically equivalent profile and domain table under the contract below is acceptable.\n\n## Methodology (consequential \u2014 must match)\n\n**Model construction.** Build a Plan7 profile HMM from the alignment using standard HMMER3 model construction with default parameters \u2014 i.e. the configuration HMMER's `hmmbuild` uses when invoked without options: fast model architecture determination (match columns assigned by residue-occurrence threshold 0.5), relative sequence weighting, effective sequence number estimated by relative entropy, and alphabet-based Dirichlet mixture priors, against the standard non-uniform amino-acid background model.\n\n**Profile search.** Search the sequence database with the built HMM using the default HMMER3 accelerated pipeline \u2014 i.e. the configuration of `hmmsearch` without options: MSV/Viterbi/Forward acceleration filters at their default thresholds (permissive 0.02 / 1e-3 / 1e-5), composition-bias filtering and null2 score correction enabled, and reporting/inclusion by **E-value thresholds, not model-specific bit cutoffs**: per-target and per-domain hits reported at E-value \u2264 10, included at E-value \u2264 0.01. The per-target E-value must be computed with the search-space size Z equal to the number of sequences in the searched database, and the per-domain E-value with the number of significant sequences found.\n\n## Required outputs\n\nWrite exactly these two files:\n\n### 1. `outputs/LuxC.hmm`\n\nThe profile HMM in HMMER3 ASCII profile format (`HMMER3/f`). Requirements:\n\n- Header fields must state the alignment-annotated name, accession, description and GA/TC/NC cutoffs (trusting the input annotations), the model length, the amino-acid alphabet, the annotation flags (RF/MM/CONS/CS/MAP) and the number of aligned sequences produced by the construction.\n- The file must contain the calibrated local-mode statistics (MSV/VITERBI/FORWARD), the null-model composition line, and for every match state of the model: the emission probabilities over the 20 amino acids in the fixed order A C D E F G H I K L M N P Q R S T V W Y, the insert-state emission line, and the seven transition probabilities (m->m, m->i, m->d, i->m, i->i, d->m, d->d), together with the per-state consensus residue, consensus match and map annotations, ending with the null-model insertion line.\n- Values are the natural units of the format (log odds expressed as negative log probabilities scaled per HMMER convention; `*` denotes zero probability).\n- The runtime-stamped `DATE` and `COM` lines are provenance only and are **not** part of the compared content; every other field and line is scientific content and must correspond to the reference computation described above.\n\n### 2. `outputs/LuxC.domtbl`\n\nThe domain-search results in the tabular domain-table format that `hmmsearch` produces (with `--domtblout`): three comment header lines describing the columns, followed by **one data row per reported domain** \u2014 a domain being a single significant match of the profile to one region of one target sequence. Requirements:\n\n- Each data row has the 22 fixed-width fields followed by the free-text target description, in the standard order: target name; target accession (\"-\"); target length; query name; query accession; query length; full-sequence E-value; full-sequence bit score; full-sequence bias; domain number and total domains for that target; domain c-Evalue and i-Evalue; domain bit score and bias; hmm coordinates (from, to); alignment coordinates (from, to); envelope coordinates (from, to); mean posterior accuracy of the domain alignment; description of target.\n- The **target name** is the first whitespace-delimited token of each FASTA header (e.g. a UniProt-style identifier such as `sp|P19841|LUXC_PHOPO`); the description is the remaining text of that header.\n- **Row order encodes rank**: rows are ordered by decreasing full-sequence bit score (hmmsearch's canonical ordering); this ordering must be preserved.\n- The rows report exactly the domains passing the reporting thresholds of the pipeline described above (all sequences may or may not yield hits \u2014 report what the method yields, not an assumed number of rows).\n- E-values are reported in the format's scientific notation, and scores in bits, as the format's fixed-precision rendering; these must correspond to the reference computation.\n\n## Constraints\n\n- Offline environment; no network access.\n- Reference implementation environment: pyhmmer 0.12.3 (HMMER 3.4), Python 3.13.\n- Time limit: 600 seconds. Resources: 4 CPUs, 8 GiB memory.\n- Do not modify the supplied input files; the profile must be rebuilt from the alignment, not sourced from any precomputed HMM fixture.\n- Numerical comparison tolerances and exact formatting/width conventions are provisional until the executable validation stage; the requested quantities, populations, ordering and field meanings above are the binding scientific contract.\n"
+  },
+  "unexercised_scientific_checks": [],
+  "verifier_seconds": 120
+}

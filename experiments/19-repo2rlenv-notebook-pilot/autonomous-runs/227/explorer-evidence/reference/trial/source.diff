@@ -1,0 +1,20 @@
+--- original.py
++++ analysis.py
+@@ -23,7 +23,7 @@
+ 
+ # A new HMM can be built from a single sequence, or from a multiple sequence alignment. Let's load an alignment in digital mode so that we can build our HMM. We can use a `MSAFile` to read an alignment from a file in one of the supported formats (such as [Stockholm](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-stockholm), [Clustal](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-clustal), [aligned FASTA](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-fasta), *etc*; see the `MSAFile` documentation for the complete list):
+ 
+-with pyhmmer.easel.MSAFile("data/msa/LuxC.sto", digital=True, alphabet=alphabet) as msa_file:
++with pyhmmer.easel.MSAFile("/inputs/data/msa/LuxC.sto", digital=True, alphabet=alphabet) as msa_file:
+     msa = msa_file.read()
+ 
+ # <div class="alert alert-info">
+@@ -91,7 +91,7 @@
+ # Once a pHMM has been obtained, it can be applied to a sequence database with the `pyhmmer.plan7.Pipeline` object. Let's iterate over the protein sequences in a FASTA to see if our new HMM gets any hits:
+ 
+ pipeline = pyhmmer.plan7.Pipeline(alphabet, background=background)
+-with pyhmmer.easel.SequenceFile("data/seqs/LuxC.faa", digital=True, alphabet=alphabet) as seq_file:
++with pyhmmer.easel.SequenceFile("/inputs/data/seqs/LuxC.faa", digital=True, alphabet=alphabet) as seq_file:
+     hits = pipeline.search_hmm(hmm, seq_file)
+ 
+ # We can then query the `TopHits` object to access the domain hits in the sequences:

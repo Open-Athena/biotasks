@@ -1,0 +1,32 @@
+[
+  {
+    "id": "hmm_present",
+    "public_requirement": "outputs/LuxC.hmm exists, is non-empty UTF-8 text, and starts with the HMMER3/f ASCII profile header line.",
+    "rationale": "Baseline presence/encodability control for the first requested artifact before any scientific comparison."
+  },
+  {
+    "id": "domtbl_present",
+    "public_requirement": "outputs/LuxC.domtbl exists, is non-empty UTF-8 text, and starts with the three comment header lines of the hmmsearch domain table.",
+    "rationale": "Baseline presence/encodability control for the second requested artifact before any scientific comparison."
+  },
+  {
+    "id": "hmm_header",
+    "public_requirement": "The profile header carries the reference model's scientific fields — NAME, ACC, DESC, LENG, ALPH, the annotation flags RF/MM/CONS/CS/MAP, NSEQ, EFFN, CKSUM, GA/TC/NC and the three STATS LOCAL MSV/VITERBI/FORWARD lines (DATE/COM excluded). NAME, ACC, DESC, GA/TC/NC and NSEQ must agree with the alignment's #=GF ID/AC/DE, GA/TC/NC and SQ annotations.",
+    "rationale": "Every header field the question names is compared token-level against the reference at its printed precision (exact for integer fields) and simultaneously grounded in the trusted Stockholm #=GF annotations and sequence count via BIOTASKS_TRUSTED_INPUT_DIR, so a wrong accession, cutoff, sequence count, effective sequence number or calibrated local-mode statistic is rejected."
+  },
+  {
+    "id": "hmm_model",
+    "public_requirement": "The calibrated model block — alphabet and transition-order header lines, the COMPO composition line, the null-model insert and transition lines, and for every match state the 20 emission parameters, insert-state emission line, seven transition parameters and the five per-state annotation tokens (`*` for zero-probability parameters), ending with the // terminator — matches the reference profile state by state. Parameter values are compared as the negative natural-log model probabilities the writer serializes, at the reference's printed precision; `*` is a format token compared by identity.",
+    "rationale": "State-by-state token comparison at the reference's printed precision: a wrong emission score, insert emission, transition, MAP index or consensus residue inside a structurally intact model is rejected on its value, and a model block whose line count or layout disagrees with its declared LENG is reported as a layout mismatch after the common prefix has been token-compared, so wrong values inside a mis-sized block are never hidden behind the count abort."
+  },
+  {
+    "id": "domtbl_rows",
+    "public_requirement": "The domain table has the reference's three comment header lines and exactly the reference data rows in the same rank order; each row's 22 fixed fields and the free-text target description match the corresponding reference row, and target names, lengths and descriptions agree with the searched database.",
+    "rationale": "Row count, rank order, all 22 fixed fields and the description are compared token-level against the reference (exact integers, half-a-last-place tolerance for printed decimals), with the target name, ungapped length and description grounded in the trusted FASTA header, so invented identifiers, wrong coordinates, wrong scores/E-values and reordering or dropped rows are all rejected."
+  },
+  {
+    "id": "domtbl_profile_consistency",
+    "public_requirement": "The domain table is internally consistent and input-grounded: query name/accession/length equal the profile's NAME/ACC/LENG; hmm coordinates lie within 1..profile length, alignment and envelope coordinates within 1..target length; domain numbers run 1..n per target; rows are ordered by non-increasing full-sequence bit score; and every reported full-sequence E-value is at most the reporting threshold 10.",
+    "rationale": "Cross-artifact relations the question requires: the submission's own domain table must cohere with the submission's own profile and with the searched database, and a profile whose model block does not match its declared LENG also fails this check, so the domain table cannot be consistent with a malformed profile."
+  }
+]

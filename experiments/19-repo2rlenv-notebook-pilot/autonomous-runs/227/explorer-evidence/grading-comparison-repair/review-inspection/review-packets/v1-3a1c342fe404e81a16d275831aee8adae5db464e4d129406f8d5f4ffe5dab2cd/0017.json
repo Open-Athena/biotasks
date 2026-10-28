@@ -1,0 +1,28 @@
+{
+  "worker_review": {
+    "additional_exclusions": [],
+    "artifact_inventory_sha256": "5caa6a214767def43e866463919df0af9bd53be6e4411b57928a520ec7ab44c0",
+    "assessment": "Controlled derivation and oracle execution succeeded (derivation staged both inputs byte-identically; the oracle rebuilt the profile HMM from inputs/data/msa/LuxC.sto and reproduced both requested outputs). Review of the final environment against the executed outputs: (1) The two answer-bearing fixtures were removed and verified absent by the controller receipt in this run: pyhmmer/tests/data/hmms/txt/LuxC.hmm (sha256 e7a4dd57..., the same profile parameters asLuxC.hmm) and pyhmmer/tests/data/msa/LuxC.hmmalign.sto (sha256 d0a997a8..., the printed first-hit domain alignment); no additional exclusions are needed because they are already absent from the installed tree and re-declaring them is impossible. (2) Remaining LuxC-named installed candidates were inspected with the authoring shell against the final reference outputs (/work/author/derive-case/bundle/reference, byte-identical to the recorded reference: LuxC.hmm 187150 B sha256 b025cef4..., LuxC.domtbl 4093 B sha256 fc3da85e...): pyhmmer/tests/data/msa/LuxC.sto (sha256 e2cf20e9..., byte-identical to the declared scientific input) and pyhmmer/tests/data/seqs/LuxC.faa (sha256 7ce47aae..., byte-identical to the declared scientific input) are required data, not answers, and their presence is harmless because they are exactly the bytes the solver needs to reconstruct anyway; pyhmmer/tests/data/msa/LuxC.sto.ssi (176 SSI index of the input alignment) and pyhmmer/tests/data/msa/LuxC.weighted.sto (9,318 B, a weighted Pfam-B-derived alignment variant, different bytes from the input, never read or computed by this analysis, contains no HMM parameters or domain scores) are inert and expose no requested answer; pyhmmer/tests/data/msa/LuxC.faa (5,993 B) is a gapped aligned-FASTA rendering of the input alignment used by other unittests, not a profile or a domain-search result. (3) The installed_asset_value_hints report (asset_catalog_sha256 7a611267...) shows finding_count 0 across all hash/size-verified Python files owned by the installed distributions (pyhmmer, psutil): no numeric answer magnitudes from the final outputs appear in installed Python source, and both final outputs are flagged unsupported_format (no CSV/TSV reference content). (4) Independent shell checks: grep for the reference domtbl's answer-bearing target identifiers, E-value/score strings and row content across the pyhmmer tests tree returned only the declared inputs and unrelated family fixtures (PF02826/Thioesterase/KR/bmyD/RREFam/RF00001 concern different queries and sequences); the LuxC references in test modules are resource-path strings for the (removed) fixtures, not answer values. (5) The test files that referenceLuxC data by path (test_hmmer.py lines 808-810, test_plan7/test_pipeline.py lines 31/271) point at the removed fixture files and the byte-identical input copies; they contain no expected answer values for this task. Conclusion: the final environment exposes no full or partial copy of either requested answer beyond the byte-identical input copies the solver legitimately requires; the scientific candidate is unchanged from the executed run and no further removals are warranted. Residual limits: this is a targeted review of the recorded distribution file inventory plus targeted greps, not a filesystem-wide or semantic audit of every byte.",
+    "asset_catalog_sha256": "7a61126703f5b0cc9e5677b1dee0fd93b0aec79d043f2f623dddb1de4c7b61fc"
+  },
+  "executed_exclusions": {
+    "excluded_files_absent": true,
+    "files": [
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/data/hmms/txt/LuxC.hmm",
+        "sha256": "e7a4dd57c83fb17cc12640f20c4f02f126d8230b16d6c6ef596bf791c8075865"
+      },
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/data/msa/LuxC.hmmalign.sto",
+        "sha256": "d0a997a87b371b7348170176ca510cc7346d4fc3494b295d2da96ea9254ac4af"
+      }
+    ]
+  },
+  "asset_catalog": {
+    "bytes": 43791,
+    "sha256": "7a61126703f5b0cc9e5677b1dee0fd93b0aec79d043f2f623dddb1de4c7b61fc"
+  },
+  "scope": "Worker scientific assessment plus controller-observed cleanup; not independent answer-isolation approval."
+}

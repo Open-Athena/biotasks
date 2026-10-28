@@ -1,0 +1,27 @@
+{
+  "artifacts": [
+    {
+      "description": "The profile HMM built from the LuxC multiple sequence alignment, in HMMER ASCII profile format.",
+      "path": "LuxC.hmm",
+      "source_evidence": "The narrative section 'Saving the resulting HMM' states the HMM is the product to keep 'to avoid having to rebuild it every time' and that it is compatible with hmmsearch; it is produced by `builder.build_msa(msa, background)` in the baseline and held in the `hmm` variable, still in scope at completion. Its own writer `hmm.write` is used for the export."
+    },
+    {
+      "description": "Domain hits of the LuxC pHMM against the LuxC.faa protein database, in hmmsearch domain-table tabular format.",
+      "path": "LuxC.domtbl",
+      "source_evidence": "The narrative section 'Applying the HMM to a sequence database' describes searching the sequence database and concludes 'we can save the results in tabular format similar to what hmmsearch would have produced'; the terminal result is the `hits` TopHits object from `pipeline.search_hmm(hmm, seq_file)`, still in scope at completion. Its own writer `hits.write(..., format='domains')` is used for the export."
+    }
+  ],
+  "disposition": "prepare",
+  "excluded_outputs": [
+    "msa (the loaded LuxC Stockholm alignment): a scientific non-target \u2014 it is the input to HMM construction, not an independently interpreted result of the analysis.",
+    "hmm.consensus (displayed consensus sequence): a scientific non-target \u2014 used in the narrative only as an inspection of the built HMM; its content is preserved within the exported LuxC.hmm profile and it has no separate downstream interpretation.",
+    "ali / hits[0].domains[0].alignment (printed first-hit domain alignment): a scientific non-target \u2014 an inspection example showing how to query the TopHits object; the scientifically interpreted search results are exported via the domtbl table, and values computed only for display are not separately exported.",
+    "builder/background (Builder and Background objects): scientific non-targets \u2014 model-construction machinery and parameters, not analyzed results."
+  ],
+  "explanation": "The notebook has two terminal scientific products: the profile HMM built from the LuxC alignment (saved by the source for reuse and compatibility with hmmsearch) and the domain-search results from applying that HMM to the LuxC.faa protein database (saved in hmmsearch-style tabular format). Both `hmm` and `hits` are still in scope at script completion and already have their own writers (`HMM.write` and `TopHits.write`). The appended code writes both to /work/outputs using those native writers, performing no new computation. The source's own writes to LuxC.hmm and LuxC.domtbl in the working directory are left untouched.",
+  "export_code": "import os\n\n_export_output_dir = \"/work/outputs\"\nos.makedirs(_export_output_dir, exist_ok=True)\n\nwith open(os.path.join(_export_output_dir, \"LuxC.hmm\"), \"wb\") as _export_file:\n    hmm.write(_export_file)\n\nwith open(os.path.join(_export_output_dir, \"LuxC.domtbl\"), \"wb\") as _export_file:\n    hits.write(_export_file, format=\"domains\")\n",
+  "unresolved_assumptions": [
+    "The installed pyhmmer version's `TopHits.write(file, format=\"domains\")` and `HMM.write` APIs match the baseline's usage; this is inherited from the unexecuted source and remains an execution-stage question.",
+    "Whether the working-directory files LuxC.hmm and LuxC.domtbl written by the original script collide with any execution-stage directory layout is not assessed here; the baseline was left unchanged."
+  ]
+}

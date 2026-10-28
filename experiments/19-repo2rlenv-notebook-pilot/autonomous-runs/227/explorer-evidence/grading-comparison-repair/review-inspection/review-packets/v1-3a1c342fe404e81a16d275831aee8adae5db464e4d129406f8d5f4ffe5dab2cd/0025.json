@@ -1,0 +1,51 @@
+[
+  {
+    "artifacts": [
+      "LuxC.hmm"
+    ],
+    "id": "hmm_present",
+    "kind": "structural",
+    "public_requirement": "outputs/LuxC.hmm exists, is non-empty UTF-8 text, and starts with the HMMER3/f ASCII profile header line."
+  },
+  {
+    "artifacts": [
+      "LuxC.domtbl"
+    ],
+    "id": "domtbl_present",
+    "kind": "structural",
+    "public_requirement": "outputs/LuxC.domtbl exists, is non-empty UTF-8 text, and starts with the three comment header lines of the hmmsearch domain table."
+  },
+  {
+    "artifacts": [
+      "LuxC.hmm"
+    ],
+    "id": "hmm_header",
+    "kind": "scientific",
+    "public_requirement": "The profile header carries the reference model's scientific fields — NAME, ACC, DESC, LENG, ALPH, the annotation flags RF/MM/CONS/CS/MAP, NSEQ, EFFN, CKSUM, GA/TC/NC and the three STATS LOCAL MSV/VITERBI/FORWARD lines (DATE/COM excluded). NAME, ACC, DESC, GA/TC/NC and NSEQ must agree with the alignment's #=GF ID/AC/DE, GA/TC/NC and SQ annotations."
+  },
+  {
+    "artifacts": [
+      "LuxC.hmm"
+    ],
+    "id": "hmm_model",
+    "kind": "scientific",
+    "public_requirement": "The calibrated model block — alphabet and transition-order header lines, the COMPO null-model triple, and for every match state the 20 emission scores, insert-state line, seven transition scores and the five per-state annotation tokens (`*` for impossible transitions), ending with the // terminator — matches the reference profile state by state."
+  },
+  {
+    "artifacts": [
+      "LuxC.domtbl"
+    ],
+    "id": "domtbl_rows",
+    "kind": "scientific",
+    "public_requirement": "The domain table has the reference's three comment header lines and exactly the reference data rows in the same rank order; each row's 22 fixed fields and the free-text target description match the corresponding reference row, and target names, lengths and descriptions agree with the searched database."
+  },
+  {
+    "artifacts": [
+      "LuxC.domtbl",
+      "LuxC.hmm"
+    ],
+    "id": "domtbl_profile_consistency",
+    "kind": "scientific",
+    "public_requirement": "The domain table is internally consistent and input-grounded: query name/accession/length equal the profile's NAME/ACC/LENG; hmm coordinates lie within 1..profile length, alignment and envelope coordinates within 1..target length; domain numbers run 1..n per target; rows are ordered by non-increasing full-sequence bit score; and every reported full-sequence E-value is at most the reporting threshold 10."
+  }
+]

@@ -1,0 +1,132 @@
+{
+  "source_sha256": "ef782563dff5d24c1f56d86e0dbbf53a36245109e025754f04a1626530b3382f",
+  "boundary": "Literal call sites, including nested/conditional/function-body calls; not a runtime DAG or an eligibility judgment. The worker must interpret source and narrative.",
+  "operations": [
+    {
+      "id": "call-20-11",
+      "line": 20,
+      "column": 11,
+      "end_line": 20,
+      "end_column": 41,
+      "function": "pyhmmer.easel.Alphabet.amino",
+      "source": "pyhmmer.easel.Alphabet.amino()"
+    },
+    {
+      "id": "call-26-5",
+      "line": 26,
+      "column": 5,
+      "end_line": 26,
+      "end_column": 80,
+      "function": "pyhmmer.easel.MSAFile",
+      "source": "pyhmmer.easel.MSAFile(\"data/msa/LuxC.sto\", digital=True, alphabet=alphabet)"
+    },
+    {
+      "id": "call-27-10",
+      "line": 27,
+      "column": 10,
+      "end_line": 27,
+      "end_column": 25,
+      "function": "msa_file.read",
+      "source": "msa_file.read()"
+    },
+    {
+      "id": "call-52-10",
+      "line": 52,
+      "column": 10,
+      "end_line": 52,
+      "end_column": 41,
+      "function": "pyhmmer.plan7.Builder",
+      "source": "pyhmmer.plan7.Builder(alphabet)"
+    },
+    {
+      "id": "call-53-13",
+      "line": 53,
+      "column": 13,
+      "end_line": 53,
+      "end_column": 47,
+      "function": "pyhmmer.plan7.Background",
+      "source": "pyhmmer.plan7.Background(alphabet)"
+    },
+    {
+      "id": "call-54-12",
+      "line": 54,
+      "column": 12,
+      "end_line": 54,
+      "end_column": 46,
+      "function": "builder.build_msa",
+      "source": "builder.build_msa(msa, background)"
+    },
+    {
+      "id": "call-86-5",
+      "line": 86,
+      "column": 5,
+      "end_line": 86,
+      "end_column": 27,
+      "function": "open",
+      "source": "open(\"LuxC.hmm\", \"wb\")"
+    },
+    {
+      "id": "call-87-4",
+      "line": 87,
+      "column": 4,
+      "end_line": 87,
+      "end_column": 26,
+      "function": "hmm.write",
+      "source": "hmm.write(output_file)"
+    },
+    {
+      "id": "call-93-11",
+      "line": 93,
+      "column": 11,
+      "end_line": 93,
+      "end_column": 66,
+      "function": "pyhmmer.plan7.Pipeline",
+      "source": "pyhmmer.plan7.Pipeline(alphabet, background=background)"
+    },
+    {
+      "id": "call-94-5",
+      "line": 94,
+      "column": 5,
+      "end_line": 94,
+      "end_column": 86,
+      "function": "pyhmmer.easel.SequenceFile",
+      "source": "pyhmmer.easel.SequenceFile(\"data/seqs/LuxC.faa\", digital=True, alphabet=alphabet)"
+    },
+    {
+      "id": "call-95-11",
+      "line": 95,
+      "column": 11,
+      "end_line": 95,
+      "end_column": 45,
+      "function": "pipeline.search_hmm",
+      "source": "pipeline.search_hmm(hmm, seq_file)"
+    },
+    {
+      "id": "call-100-0",
+      "line": 100,
+      "column": 0,
+      "end_line": 100,
+      "end_column": 10,
+      "function": "print",
+      "source": "print(ali)"
+    },
+    {
+      "id": "call-104-5",
+      "line": 104,
+      "column": 5,
+      "end_line": 104,
+      "end_column": 30,
+      "function": "open",
+      "source": "open(\"LuxC.domtbl\", \"wb\")"
+    },
+    {
+      "id": "call-105-4",
+      "line": 105,
+      "column": 4,
+      "end_line": 105,
+      "end_column": 35,
+      "function": "hits.write",
+      "source": "hits.write(f, format=\"domains\")"
+    }
+  ]
+}

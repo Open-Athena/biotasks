@@ -1,0 +1,70 @@
+{
+  "asset_value_assessments": [],
+  "decision": "revise",
+  "issues": [
+    "hmm-model-block negative control does not exercise the intended state-by-state value comparison. The mutation edits the state-1 emission (2.07294 -> 2.37294), MAP index (1 -> 2), consensus residue (l -> m) and insert line, but simultaneously truncates the final match state with a matching LENG edit, and every recorded failure for that submission (hmm_header, hmm_model, domtbl_profile_consistency) is the parse-level line-count message 'model block has 1201 lines, expected 1200' (controls[8], probe 'hmm-model-block'). Because parse_hmm aborts at the line-count branch, none of the mutated model-block values were ever token-compared, so rejection of a well-formed scientific error in the model body (wrong emission score, wrong exact-integer MAP index, wrong consensus residue, wrong insert line at an intact 3+3*400 layout) is not demonstrated by any executed mutation. The probe author's concerns note acknowledges the conflation, but the cited substitute (hmm-terminal-star-to-number) only exercises the '*' token-identity path, not the numeric tolerance path. Repair by splitting the probe into a value-only model-block mutation that preserves the 1203-line layout, with fresh full execution of all controls on the revised candidate.",
+    "Candidate private rationale describes the third execution as 'independent (probe)' and '/work/alternative (independent proxy)', but the recorded solution uses the same pyhmmer 0.12.3 Builder/Pipeline library as the reference (independent_solution/rationale), executed without answer access (independent_execution, LuxC.hmm 3a7c93b3..., 187243 B). This is a same-stack reproduction supporting determinism and answer isolation, not an implementation-independent confirmation; the wording should be corrected (the public/addendum text correctly avoids claiming implementation independence)."
+  ],
+  "question_issues": [
+    {
+      "evidence": "The HMMER ASCII writer that produced the reference states this directly: pyhmmer-0.12.3 sdist, vendor/hmmer/src/p7_hmmfile.c lines 2091-2096, printprob() emits -logf(p) of the stored emission/transition/composition probability in %.5f natural-log units ('*' for p==0, 0.00000 for p==1), and p7_hmmfile.c lines 573-623 feed hmm->compo, hmm->mat[k][x], hmm->ins[k][x] and hmm->t[k][x] directly to it with no background division. Log-odds are formed only later in the Plan7 profile (vendor/hmmer/src/p7_profile.c). The reference file confirms it carries #-GF-annotated cutoff/statistics values and node-0 transition values such as 0.01473 = -ln(0.98539), i.e. negative natural-log probabilities of model parameters, not log odds. The base question therefore attaches a false unit/scale description to the compared quantities; a solver reproducing the values as log-odds would be scientifically wrong, and the false label must be corrected (e.g. 'negative natural-log probabilities of the model parameters') rather than excused because all controls pass.",
+      "quote": "Values are the natural units of the format (log odds expressed as negative log probabilities scaled per HMMER convention; `*` denotes zero probability)."
+    }
+  ],
+  "rationale": "All 14 recorded controls executed with expected outcomes (reference, empty, misplaced, recomputed, alternative, 2x missing, 7 probes) and the grader faithfully implements the declared contract: token-level comparison at the reference's printed precision with an exact half-last-place boundary, exact integers, '*' token identity, DATE/COM exclusion, trusted-input grounding via BIOTASKS_TRUSTED_INPUT_DIR for the Stockholm annotations and FASTA target grounding, and correct declared-path placement (the misplaced control under an extra outputs/ layer fails; submission hash keys are at the submission root). Source coverage is complete (13 source operations accounted; the two terminal results are exactly the exported LuxC.hmm and LuxC.domtbl; print(ali) is presentation-only display of already-computed hits), and answer isolation is solid: the answer fixtures pyhmmer/tests/data/hmms/txt/LuxC.hmm and tests/data/msa/LuxC.hmmalign.sto were removed with a controller receipt on this run, remaining LuxC-named files are byte-identical required inputs or inert (verified in the installed tree and the hash-verified release source), no answer literals (domtbl target identifiers, 553.3, 2e-169, 1.989990) appear in installed Python source, and the CKSUM literal 395769323 embedded at test_plan7/test_hmm.py:38 is a deterministic esl_msa_Checksum of the supplied input alignment, not withheld science. However, two defects block packaging: (1) the base question falsely describes the profile's numeric values as 'log odds' when the HMMER writer prints negative natural-log probabilities of the model parameters (verified against the installed vendor source); and (2) the hmm-model-block negative control's executed rejection occurs only through the structural line-count branch, so a well-formed wrong emission/MAP/consensus value in an intact 1203-line model block is never demonstrated as rejected. Both are repairable within the existing contract; revise, not block.",
+  "scientific_admission": {
+    "answer_isolation": {
+      "blockers": [],
+      "decision": "approve",
+      "evidence": [
+        "final_environment_review: answer fixtures pyhmmer/tests/data/hmms/txt/LuxC.hmm (e7a4dd57...) and tests/data/msa/LuxC.hmmalign.sto (d0a997a8...) excluded, excluded_files_absent=true, with fresh 14-control grading on the same run.",
+        "Package source check: the hash-verified sdist holds the LuxC answer HMM only under tests/data/hmms/txt; no LuxC copy exists in hmms/bin or hmms/db.",
+        "Remaining LuxC-named files: LuxC.sto and seqs/LuxC.faa are byte-identical required inputs (e2cf20e9..., 7ce47aae...); LuxC.weighted.sto, LuxC.sto.ssi and msa/LuxC.faa are inert for the requested answers per final_environment_review/worker_review/assessment.",
+        "Indexed-source searches find no domtbl targets (B6ESM7 etc.), 553.3, 2e-169 or EFFN 1.989990; the sole literal CKSUM 395769323 (test_plan7/test_hmm.py:38) equals esl_msa_Checksum of the supplied input alignment per p7_builder.c L420-457, derivable from the task's own inputs; asset_value_hints findings list is empty (no hint IDs).",
+        "independent_execution reproduced LuxC.domtbl byte-identically and LuxC.hmm from inputs alone without answer access."
+      ],
+      "output_paths": [
+        "LuxC.domtbl",
+        "LuxC.hmm"
+      ],
+      "rationale": "Solver-visible inputs and installed assets do not disclose the requested answers: the controller receipt covers the only full answer copies in the installed tree, all executions post-date it, and no answer content was found in installed Python source or remaining files. The environment review's own limit (targeted inventory plus greps, not a byte-level filesystem audit) leaves no identified uninspected candidate, so no blocker is recorded."
+    },
+    "comparisons": [
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "Byte-identical across reference (controls[0]), oracle rebuild (controls[3]) and alternative control (controls[4]), plus independent_execution without answer access and both repeatability runners (fc3da85a..., 4093 B).",
+          "Negative controls: wrong score/E-value (controls[10]), coordinate/tlen grounding and profile consistency (controls[11]), one-unit tolerance boundary (controls[12]) all rejected with explicit tolerance messages.",
+          "Positive representation control (controls[13]) accepts extra printed digits (9.8e-57 -> 9.80e-57, 182.2 -> 182.20) conforming to the declared contract."
+        ],
+        "output_paths": [
+          "LuxC.domtbl"
+        ],
+        "rationale": "The domain table is deterministically reproducible from the declared inputs and byte-identical across all runs; the grader compares it fully at token level with input grounding and profile-consistency cross-checks, rejecting value, identity, order and threshold violations at the documented half-last-place boundary."
+      },
+      {
+        "blockers": [],
+        "decision": "approve",
+        "evidence": [
+          "controls[0]/[3]/[4]: reference, oracle rebuild and alternative executions agree; only DATE/COM provenance lines differ, which the contract excludes; repeat runners confirm the same.",
+          "Negative controls: wrong ACC/NSEQ/EFFN/STATS header values rejected with half-last-place messages (controls[7]); ' *' replaced by numbers rejected on the terminal line (controls[9], 'model line 1203 token 3: token 5.58888 != reference *'); one-unit EFFN boundary rejected (controls[12]).",
+          "hmm_header check grounds NAME/ACC/DESC, GA/TC/NC first pair and NSEQ 13 against #=GF SQ of the trusted input copy via BIOTASKS_TRUSTED_INPUT_DIR.",
+          "The model-block negative control does not reach its intended value comparison (see issues), but the same compare_tokens comparison is value-exercised and rejected for header, domtbl and boundary mutations, and the grader checks structure exactly."
+        ],
+        "output_paths": [
+          "LuxC.hmm"
+        ],
+        "rationale": "The ASCII profile generated from the input MSA matches the reference computation: all computed quantities (header fields, calibrated statistics, per-state emission/insert/transition scores and annotations) agree with the reference across independent rebuilds, differing only in excluded provenance lines. The one negative-control gap is recorded as an actionable issue, not a blocker."
+      }
+    ]
+  },
+  "source_coverage": {
+    "decision": "approve",
+    "omitted_scientific_endpoints": [],
+    "rationale": "All 13 recorded source operations (source_operations/operations, faithful to inputs/original.py) are accounted for in the materialization ledger exactly once: two supplied-input reads (MSAFile of data/msa/LuxC.sto, SequenceFile of data/seqs/LuxC.faa), construction machinery (Alphabet.amino, Builder, Background, Pipeline with all-default parameters), the two scientific results with their writers (build_msa -> hmm.write for LuxC.hmm; search_hmm -> hits.write format='domains' for LuxC.domtbl), two stream-opening support calls, and two presentation-only expressions (hmm.consensus inspection and print(ali)). Every terminal scientific product of the converted source is exported verbatim by inputs/exports.py, so nothing eligible is missing. The print(ali) exclusion is justified from the source itself: it queries the already-computed TopHits (hits[0].domains[0].alignment) as an API demonstration, with its hit's scores, coordinates, E-value and posterior accuracy carried in the domain-table row serialized by the retained hits.write call; it is not persisted, exported or consumed downstream, and the full hmmalign alignment (the removed fixture) was never a product of this source path. No invented analysis, changed method or silent endpoint omission is present; the default-parameter claims in the brief match the pipeline's defaults per the vendored HMMER sources. The false 'log odds' units label in the base question is reported in question_issues rather than here, since it misdescribes the requested values without discarding any endpoint.",
+    "remaining_validation": [],
+    "scientific_scope_changes": [],
+    "unsupported_evidence_claims": []
+  }
+}

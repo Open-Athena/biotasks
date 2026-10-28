@@ -1,0 +1,104 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "LuxC.domtbl",
+      "LuxC.hmm"
+    ],
+    "parsing_support": {
+      "authoring_import": "Use PYTHONPATH=/work for a focused shell check. The controller places this same module beside grade.py in controls and Harbor.",
+      "authoring_source": "/work/biotasks_table_io.py",
+      "bytes": 1637,
+      "import": "from biotasks_table_io import read_delimited_table",
+      "license": {
+        "bytes": 11357,
+        "path": "LICENSE.biotasks",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "spdx": "Apache-2.0"
+      },
+      "module": "biotasks_table_io.py",
+      "schema": "delimited-table-reader-v1",
+      "scope": "Optional syntax reader only. The worker owns scientific comparisons and must publicly declare any enabled representation normalization.",
+      "sha256": "35708cb000383d1d11a68eb0381e41ac1a5d842c04183e444049b2f53b661bbf",
+      "source": "# SPDX-License-Identifier: Apache-2.0\n\"\"\"Read delimited output syntax without choosing scientific comparison rules.\"\"\"\n\nimport csv\nfrom pathlib import Path\n\n\ndef read_delimited_table(\n    path: str | Path,\n    *,\n    delimiter: str = \",\",\n    encoding: str = \"utf-8\",\n    allow_blank_records: bool = False,\n) -> tuple[list[str], list[list[str]]]:\n    \"\"\"Return a header and equal-width rows, retaining every decoded field.\n\n    Uses Python's strict CSV reader, including quoted delimiters/newlines and\n    ordinary line endings. Only completely empty CSV records may be skipped,\n    and only when explicitly enabled. Quoted empty fields, whitespace-only\n    fields and delimiter-only rows are data, not empty records. No stripping,\n    numeric conversion, sorting, deduplication or scientific equivalence is\n    inferred. Callers still validate header names, identities and values.\n    \"\"\"\n    records = []\n    try:\n        with Path(path).open(encoding=encoding, newline=\"\") as stream:\n            for row in csv.reader(stream, delimiter=delimiter, strict=True):\n                if not row:\n                    if allow_blank_records:\n                        continue\n                    raise ValueError(\"Empty CSV record is not allowed\")\n                records.append(row)\n    except csv.Error as error:\n        raise ValueError(f\"Invalid delimited syntax: {error}\") from error\n    if not records:\n        raise ValueError(\"Delimited table has no header\")\n    header, *rows = records\n    if any(len(row) != len(header) for row in rows):\n        raise ValueError(\"Delimited table has inconsistent row widths\")\n    return header, rows\n"
+    },
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir",
+    "trusted_inputs": {
+      "environment_variable": "BIOTASKS_TRUSTED_INPUT_DIR",
+      "input_paths": [
+        "data/msa/LuxC.sto",
+        "data/seqs/LuxC.faa"
+      ],
+      "usage": "The grader may read original task inputs beneath the directory named by this environment variable. The controller supplies a separate immutable copy in factory controls and native Harbor verification and checks its original hashes before and after grading. Never use solver-workspace copies or hardcode a sandbox-specific input directory."
+    }
+  },
+  "checks": [
+    {
+      "artifacts": [
+        "LuxC.hmm"
+      ],
+      "id": "hmm_present",
+      "kind": "structural",
+      "public_requirement": "outputs/LuxC.hmm exists, is non-empty UTF-8 text, and starts with the HMMER3/f ASCII profile header line."
+    },
+    {
+      "artifacts": [
+        "LuxC.domtbl"
+      ],
+      "id": "domtbl_present",
+      "kind": "structural",
+      "public_requirement": "outputs/LuxC.domtbl exists, is non-empty UTF-8 text, and starts with the three comment header lines of the hmmsearch domain table."
+    },
+    {
+      "artifacts": [
+        "LuxC.hmm"
+      ],
+      "id": "hmm_header",
+      "kind": "scientific",
+      "public_requirement": "The profile header carries the reference model's scientific fields \u2014 NAME, ACC, DESC, LENG, ALPH, the annotation flags RF/MM/CONS/CS/MAP, NSEQ, EFFN, CKSUM, GA/TC/NC and the three STATS LOCAL MSV/VITERBI/FORWARD lines (DATE/COM excluded). NAME, ACC, DESC, GA/TC/NC and NSEQ must agree with the alignment's #=GF ID/AC/DE, GA/TC/NC and SQ annotations."
+    },
+    {
+      "artifacts": [
+        "LuxC.hmm"
+      ],
+      "id": "hmm_model",
+      "kind": "scientific",
+      "public_requirement": "The calibrated model block \u2014 alphabet and transition-order header lines, the COMPO null-model triple, and for every match state the 20 emission scores, insert-state line, seven transition scores and the five per-state annotation tokens (`*` for impossible transitions), ending with the // terminator \u2014 matches the reference profile state by state."
+    },
+    {
+      "artifacts": [
+        "LuxC.domtbl"
+      ],
+      "id": "domtbl_rows",
+      "kind": "scientific",
+      "public_requirement": "The domain table has the reference's three comment header lines and exactly the reference data rows in the same rank order; each row's 22 fixed fields and the free-text target description match the corresponding reference row, and target names, lengths and descriptions agree with the searched database."
+    },
+    {
+      "artifacts": [
+        "LuxC.domtbl",
+        "LuxC.hmm"
+      ],
+      "id": "domtbl_profile_consistency",
+      "kind": "scientific",
+      "public_requirement": "The domain table is internally consistent and input-grounded: query name/accession/length equal the profile's NAME/ACC/LENG; hmm coordinates lie within 1..profile length, alignment and envelope coordinates within 1..target length; domain numbers run 1..n per target; rows are ordered by non-increasing full-sequence bit score; and every reported full-sequence E-value is at most the reporting threshold 10."
+    }
+  ],
+  "output_paths": [
+    "LuxC.domtbl",
+    "LuxC.hmm"
+  ],
+  "paths": {
+    "reference_outputs": "/work/reference",
+    "working_directory": "/work/probe"
+  },
+  "public_instruction": "# Build a profile HMM from a multiple sequence alignment and search a protein database\n\n## Objective\n\nYou are given a curated multiple sequence alignment of the LuxC protein family (acyl-CoA reductase, Pfam entry PF05893) in Stockholm format, and a FASTA file of full-length LuxC-family protein sequences. Your job is to reproduce the two terminal products of this analysis:\n\n1. **A profile hidden Markov model (HMM)** built from the alignment, in HMMER ASCII profile format.\n2. **A domain-search result table** produced by searching the protein database with that profile HMM, in the tabular domain format that HMMER's `hmmsearch` writes (domain table, one row per reported domain).\n\n## Supplied inputs\n\n- `inputs/data/msa/LuxC.sto` \u2014 the multiple sequence alignment in Stockholm 1.0 format. It carries Pfam-family annotations (`#=GF ID`, `#=GF AC`, `#=GF DE`) and scoring cutoff annotations (`#=GF GA`, `#=GF TC`, `#=GF NC`). The alignment's family name, accession, description and annotated GA/TC/NC cutoffs must be carried into the built HMM, exactly as HMMER's model builder does when constructed from an annotated Stockholm alignment.\n- `inputs/data/seqs/LuxC.faa` \u2014 the protein sequence database to search, in FASTA format (UniProt-style headers).\n- A compatible reference environment (Python 3.13, pyhmmer 0.12.3 providing HMMER 3.4 behavior) is available and may be used, but software choice is open: any implementation that produces the scientifically equivalent profile and domain table under the contract below is acceptable.\n\n## Methodology (consequential \u2014 must match)\n\n**Model construction.** Build a Plan7 profile HMM from the alignment using standard HMMER3 model construction with default parameters \u2014 i.e. the configuration HMMER's `hmmbuild` uses when invoked without options: fast model architecture determination (match columns assigned by residue-occurrence threshold 0.5), relative sequence weighting, effective sequence number estimated by relative entropy, and alphabet-based Dirichlet mixture priors, against the standard non-uniform amino-acid background model.\n\n**Profile search.** Search the sequence database with the built HMM using the default HMMER3 accelerated pipeline \u2014 i.e. the configuration of `hmmsearch` without options: MSV/Viterbi/Forward acceleration filters at their default thresholds (permissive 0.02 / 1e-3 / 1e-5), composition-bias filtering and null2 score correction enabled, and reporting/inclusion by **E-value thresholds, not model-specific bit cutoffs**: per-target and per-domain hits reported at E-value \u2264 10, included at E-value \u2264 0.01. The per-target E-value must be computed with the search-space size Z equal to the number of sequences in the searched database, and the per-domain E-value with the number of significant sequences found.\n\n## Required outputs\n\nWrite exactly these two files:\n\n### 1. `outputs/LuxC.hmm`\n\nThe profile HMM in HMMER3 ASCII profile format (`HMMER3/f`). Requirements:\n\n- Header fields must state the alignment-annotated name, accession, description and GA/TC/NC cutoffs (trusting the input annotations), the model length, the amino-acid alphabet, the annotation flags (RF/MM/CONS/CS/MAP) and the number of aligned sequences produced by the construction.\n- The file must contain the calibrated local-mode statistics (MSV/VITERBI/FORWARD), the null-model composition line, and for every match state of the model: the emission probabilities over the 20 amino acids in the fixed order A C D E F G H I K L M N P Q R S T V W Y, the insert-state emission line, and the seven transition probabilities (m->m, m->i, m->d, i->m, i->i, d->m, d->d), together with the per-state consensus residue, consensus match and map annotations, ending with the null-model insertion line.\n- Values are the natural units of the format (log odds expressed as negative log probabilities scaled per HMMER convention; `*` denotes zero probability).\n- The runtime-stamped `DATE` and `COM` lines are provenance only and are **not** part of the compared content; every other field and line is scientific content and must correspond to the reference computation described above.\n\n### 2. `outputs/LuxC.domtbl`\n\nThe domain-search results in the tabular domain-table format that `hmmsearch` produces (with `--domtblout`): three comment header lines describing the columns, followed by **one data row per reported domain** \u2014 a domain being a single significant match of the profile to one region of one target sequence. Requirements:\n\n- Each data row has the 22 fixed-width fields followed by the free-text target description, in the standard order: target name; target accession (\"-\"); target length; query name; query accession; query length; full-sequence E-value; full-sequence bit score; full-sequence bias; domain number and total domains for that target; domain c-Evalue and i-Evalue; domain bit score and bias; hmm coordinates (from, to); alignment coordinates (from, to); envelope coordinates (from, to); mean posterior accuracy of the domain alignment; description of target.\n- The **target name** is the first whitespace-delimited token of each FASTA header (e.g. a UniProt-style identifier such as `sp|P19841|LUXC_PHOPO`); the description is the remaining text of that header.\n- **Row order encodes rank**: rows are ordered by decreasing full-sequence bit score (hmmsearch's canonical ordering); this ordering must be preserved.\n- The rows report exactly the domains passing the reporting thresholds of the pipeline described above (all sequences may or may not yield hits \u2014 report what the method yields, not an assumed number of rows).\n- E-values are reported in the format's scientific notation, and scores in bits, as the format's fixed-precision rendering; these must correspond to the reference computation.\n\n## Constraints\n\n- Offline environment; no network access.\n- Reference implementation environment: pyhmmer 0.12.3 (HMMER 3.4), Python 3.13.\n- Time limit: 600 seconds. Resources: 4 CPUs, 8 GiB memory.\n- Do not modify the supplied input files; the profile must be rebuilt from the alignment, not sourced from any precomputed HMM fixture.\n- Numerical comparison tolerances and exact formatting/width conventions are provisional until the executable validation stage; the requested quantities, populations, ordering and field meanings above are the binding scientific contract.\n\n## Acceptance rules\n\n# Acceptance rules \u2014 LuxC profile HMM build and domain search (addendum)\n\n## Output files\n\nProduce exactly two files at the declared output root: `LuxC.hmm` (HMMER3/f ASCII profile) and `LuxC.domtbl` (hmmsearch domain table). No other file names are accepted; a correct file placed under an extra `outputs/` subdirectory is at the wrong declared path.\n\n## Numeric comparison convention\n\nAll numeric fields are compared as parsed values, not as raw bytes:\n\n- Every field is taken as a whitespace-delimited token; the reference's own printed precision defines the scale.\n- A submitted value is accepted if and only if it differs from the reference value by at most half a unit in the last printed decimal place of the reference token (`1e-9` relative guard against binary rounding in the bound itself). This boundary is exact: adding or subtracting one unit in the reference's last printed place is rejected; printing additional digits of the same quantity (e.g. `2.07294` as `2.072940`) is accepted, since it preserves the decoded value.\n- Tokens that are plain integers in the reference (lengths, coordinates, counts, checksum) require exact integer equality \u2014 the number of sequences, model length, target/query lengths, state indices, hmm/alignment/envelope coordinates, domain numbers and the CKSUM are all exact.\n- `*` is a format token, not a number: a `*` in the reference must remain `*` in the submission at the corresponding position. A `*` must never be treated as zero (or vice versa), and nonfinite or unparseable values fail.\n- Non-numeric tokens (names, accessions, the amino-acid letters, the per-state MAP/CONS/CS/RF/MM annotation tokens) require exact string identity.\n- The `DATE` and `COM` lines of the profile, and the bracketed HMMER version stamp on the first line, are runtime provenance and are excluded from comparison; every other line and field is compared. The domtbl file is compared in full.\n\n## LuxC.hmm \u2014 what is compared\n\n1. First line declares `HMMER3/f` (the trailing bracketed version stamp is not compared).\n2. All other header fields, in the reference's field order: `NAME` (luxC), `ACC`, `DESC`, `LENG`, `ALPH`, flag lines `RF no`, `MM no`, `CONS yes`, `CS no`, `MAP yes`, `NSEQ`, `EFFN`, `CKSUM`, the `GA`/`TC`/`NC` cutoff lines, and the three calibrated statistics lines `STATS LOCAL MSV`, `STATS LOCAL VITERBI`, `STATS LOCAL FORWARD`. `NAME`, `ACC`, `DESC`, `GA`/`TC`/`NC` and `NSEQ` must also equal the annotations and sequence count of the supplied `#=GF` Stockholm alignment (the alignment's `#=GF GA/TC/NC` first pair, before the first `;`, is what HMMER carries into the header).\n3. The amino-acid alphabet line fixing the emission order `A C D E F G H I K L M N P Q R S T V W Y` and the transition-order header line `m->m m->i m->d i->m i->i d->m d->d`.\n4. The three null-model lines (COMPO emission line, null-model insert emission line, null-model transition line, ending with `*` where the reference has `*`).\n5. For each of the `LENG` match states, in state order: the match-state line (state index, the 20 emission scores, then `MAP` index and the four annotation tokens `CS RF MM CONS`), the insert-emission line and the seven-transition line, including the final state's terminal transition line.\n6. The model block is terminated by `//`; the line structure (token counts per line type) must match the reference writer's layout, with no extra or missing fields.\n\n## LuxC.domtbl \u2014 what is compared\n\n1. The three `#`-prefixed comment header lines, exactly as the reference writer emits them.\n2. The number of data rows and their order (decreasing full-sequence bit score \u2014 hmmsearch's canonical domain-table ordering).\n3. Every row, field by field: the 22 fixed fields (target name, accession `-`, `tlen`, query name, query accession, `qlen`, full-sequence E-value, bit score and bias, domain number `of` total, c-Evalue, i-Evalue, domain bit score and bias, hmm from/to, ali from/to, env from/to, mean posterior accuracy) and the free-text target description. Integers and E-values per the numeric rules above; description text exactly.\n4. Grounding to the database file: the target name is the first whitespace-delimited token of a FASTA header in the supplied database; `tlen` equals that sequence's ungapped length and the description equals the remainder of that header.\n\n## Cross-checks\n\n- The submitted domain table must be consistent with the submitted profile: query name/accession equal `NAME`/`ACC`; `qlen` equals `LENG`; hmm coordinates within `1..LENG`; alignment and envelope coordinates within `1..tlen`; domain numbers running `1..n` within each target; rows in non-increasing full-sequence bit-score order; and every reported full-sequence E-value at most the reporting threshold 10 (the default hmmsearch E-value reporting rule).\n\n## Duplicates, missing values and malformed content\n\nMissing files, empty files, non-UTF-8 content, truncated model blocks, rows with fewer than 23 fields, duplicated rows standing in for missing distinct hits, nonfinite values, and blank data lines all fail. Where the reference emits a value that can be parsed as a number, a submission that cannot be parsed at the corresponding position fails that check.",
+  "reference_seconds": 600,
+  "verifier_seconds": 120
+}
