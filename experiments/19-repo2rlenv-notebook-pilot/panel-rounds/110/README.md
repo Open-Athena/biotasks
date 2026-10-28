@@ -1,5 +1,7 @@
 # General contract prompts: source-only reassessment
 
+**Post-release concern for PyHMMER 227:** the recorded blind solver executed both the in-memory model and its exported/reloaded form on the same software stack. The underlying conditional E-value changes by about 0.16%, crossing a rounding boundary from 2.3e-169 to 2.4e-169. The public workflow appears to permit both routes, so the zero reward is not clean evidence of an incorrect solution. Existing 14-control/native results are preserved, but scientific suitability and capability-comparison claims are withheld pending worker review. No task or grader was manually changed. [Recorded execution evidence and general hypotheses](../../autonomous-runs/227/post-release-contract-review.json).
+
 The current 237-file factory has completed **two original-source campaigns**: COBRApy 226 and PyHMMER 227. Both passed the BioTasks scientific/native gates without operator scientific edits, were published with reviewed component notices, and passed forced anonymous empty-cache release downloads. This is **2/10 completed on this version**, not full-panel reliability or evidence isolating the effect of the prompt changes. Preserve the original common108 ten-case baseline and the separate235-file NeuroKit225success. Keep #19 open and PR #23 draft/unmerged.
 
 | Source | Pipeline minutes | Accounted requests | Final controls | Native reference / empty / solver | Repairs |

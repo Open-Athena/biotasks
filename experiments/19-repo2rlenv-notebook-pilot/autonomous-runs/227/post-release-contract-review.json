@@ -1,0 +1,81 @@
+{
+  "observed_at": "2026-10-28T01:48:32.070812+00:00",
+  "campaign": 227,
+  "status": "contract_precision_flow_concern_requires_worker_review",
+  "scope": "Post-run operator inspection of already-recorded executions; no new model call, scientific computation, task edit or reward change.",
+  "source_evidence_revision": "e26c86555e6f0df246c583a105ba65a142e8069d",
+  "trajectory": "autonomous-runs/227/explorer-evidence/native/terminus-2/autonomous-panel-227-native-terminus-2/autonomous-panel-227__LamyrTC/agent/trajectory.json",
+  "trajectory_sha256": "1d804c04de557d3186501169e97f06e40f9f94fbe2f36e68d447b8718c507204",
+  "instruction": "autonomous-runs/227/explorer-evidence/native/tasks/autonomous-panel-227/instruction.md",
+  "instruction_sha256": "61a0dd301721bf6b8e317b35db49d323a53293b03598110a6a0a9187c2333237",
+  "verifier_report": "autonomous-runs/227/explorer-evidence/native/terminus-2/autonomous-panel-227-native-terminus-2/autonomous-panel-227__LamyrTC/verifier/report.json",
+  "verifier_report_sha256": "41d77283fb7e3be48d0881d52ec7889b69357f61ffa1cad260dd729ddfbf5833",
+  "executed_solver_step": 24,
+  "recorded_comparison_rows": [
+    {
+      "model_route": "built",
+      "target_route": "streamed",
+      "hits": 12,
+      "target_evalue": "2.0000828745056979e-169",
+      "conditional_domain_evalue": "2.3465254197319173e-169",
+      "independent_domain_evalue": "2.3465254197319173e-169"
+    },
+    {
+      "model_route": "built",
+      "target_route": "block",
+      "hits": 12,
+      "target_evalue": "2.0000828745056979e-169",
+      "conditional_domain_evalue": "2.3465254197319173e-169",
+      "independent_domain_evalue": "2.3465254197319173e-169"
+    },
+    {
+      "model_route": "serialized",
+      "target_route": "streamed",
+      "hits": 12,
+      "target_evalue": "2.0030982015520424e-169",
+      "conditional_domain_evalue": "2.3503634769528328e-169",
+      "independent_domain_evalue": "2.3503634769528328e-169"
+    },
+    {
+      "model_route": "serialized",
+      "target_route": "block",
+      "hits": 12,
+      "target_evalue": "2.0030982015520424e-169",
+      "conditional_domain_evalue": "2.3503634769528328e-169",
+      "independent_domain_evalue": "2.3503634769528328e-169"
+    }
+  ],
+  "unrounded_conditional_evalue_relative_change": "0.001635634197116000231429494",
+  "printed_values": {
+    "built_in_memory": "2.3e-169",
+    "exported_and_read_back": "2.4e-169"
+  },
+  "native_failed_checks": [
+    {
+      "id": "domtbl_rows",
+      "passed": false,
+      "message": "row 1 field 12: value '2.4e-169' differs from reference '2.3e-169' by more than half a unit in the reference's last printed place"
+    }
+  ],
+  "other_native_checks_passed": [
+    "hmm_present",
+    "domtbl_present",
+    "hmm_header",
+    "hmm_model",
+    "domtbl_profile_consistency"
+  ],
+  "public_instruction_method_quotes": [
+    "**Model construction.** Build a Plan7 profile HMM from the alignment using standard HMMER3 model construction with default parameters \u2014 i.e. the configuration HMMER's `hmmbuild` uses when invoked without options: fast model architecture determination (match columns assigned by residue-occurrence threshold 0.5), relative sequence weighting, effective sequence number estimated by relative entropy, and alphabet-based Dirichlet mixture priors, against the standard non-uniform amino-acid background model.",
+    "**Profile search.** Search the sequence database with the built HMM using the default HMMER3 accelerated pipeline \u2014 i.e. the configuration of `hmmsearch` without options: MSV/Viterbi/Forward acceleration filters at their default thresholds (permissive 0.02 / 1e-3 / 1e-5), composition-bias filtering and null2 score correction enabled, and reporting/inclusion by **E-value thresholds, not model-specific bit cutoffs**: per-target and per-domain hits reported at E-value \u2264 10, included at E-value \u2264 0.01. The per-target E-value must be computed with the search-space size Z equal to the number of sequences in the searched database, and the per-domain E-value with the number of significant sequences found."
+  ],
+  "inference": "The public method describes default hmmbuild/hmmsearch configurations without resolving whether the built in-memory model or its exported/reloaded representation must feed the downstream search. The recorded same-stack comparison shows that this workflow distinction changes a rounded quantity enough to fail the current comparator. Both routes appear plausible under the public question; worker adjudication is still required.",
+  "scientific_suitability": "Withhold capability-comparison/readiness claims until the public precision-flow contract and comparator are reviewed. Existing14control and native1/0/0records remain unchanged.",
+  "blind_solver_zero_is_unambiguous_error": false,
+  "general_pipeline_hypotheses": [
+    "Printed output precision is not itself evidence for numerical stability across permitted computation/serialization routes.",
+    "Independent implementations and positive controls should cover plausible public-contract workflow choices, including lossless versus lossy intermediate reuse when relevant.",
+    "Resolve public precision-flow ambiguity or justify tolerances from executable valid variation; do not add API-specific instructions or manually loosen a single task grader."
+  ],
+  "manual_task_repair_performed": false,
+  "new_computation_or_model_calls": 0
+}
