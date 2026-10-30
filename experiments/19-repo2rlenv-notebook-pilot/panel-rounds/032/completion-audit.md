@@ -1,6 +1,10 @@
+# Wrap-up disposition — 30 October 2026
+
+The user ended further investigation. **Scientific reliability remains incomplete; no further runs are planned.** Preserve the historical assessment below rather than treating its “Next” paragraph as an active execution plan. Keep issue #19 open and PR #23 draft/unmerged. The last 242-file candidate passed source-only admission checks and archive composition for all ten original notebook payloads, but was not adopted by the production dispatcher or run with GLM. [Final source-preparation scope](../111/README.md). No task, grader or reward changed during wrap-up.
+
 # Completion audit
 
-Checked 28 October 2026 after PyHMMER 227 scientific/native qualification, publication, anonymous download and eight-resource cleanup verification, followed by a recorded precision-flow contract concern. **Issue #19 remains incomplete.**
+Historical assessment checked 28 October 2026 after PyHMMER 227 scientific/native qualification, publication, anonymous download and eight-resource cleanup verification, followed by a recorded precision-flow contract concern. **Issue #19 remains incomplete.**
 
 | Requirement | Authoritative evidence | Assessment |
 | --- | --- | --- |
